@@ -170,6 +170,7 @@ class TestAttestation(AzureRecordedTestCase):
         assert open_id_metadata["jwks_uri"] == attestation_isolated_url + "/certs"
         assert open_id_metadata["issuer"] == attestation_isolated_url
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy
     def test_shared_getsigningcertificates(self, attestation_location_short_name):
@@ -180,6 +181,7 @@ class TestAttestation(AzureRecordedTestCase):
                 signer.certificates[0].encode("ascii"), backend=default_backend()
             )
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy
     def test_aad_getsigningcertificates(self, attestation_aad_url):
@@ -191,6 +193,7 @@ class TestAttestation(AzureRecordedTestCase):
                 signer.certificates[0].encode("ascii"), backend=default_backend()
             )
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy
     def test_isolated_getsigningcertificates(self, attestation_isolated_url):
@@ -233,6 +236,7 @@ class TestAttestation(AzureRecordedTestCase):
         # When a draft policy is applied, the token is unsecured.
         assert token.algorithm == "none"
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllInstanceTypes
     @recorded_by_proxy
@@ -262,6 +266,7 @@ class TestAttestation(AzureRecordedTestCase):
         # Call into the attest API asking it to *not* validate the token.
         response, _ = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data, validate_token=False)
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllInstanceTypes
     @recorded_by_proxy
@@ -289,6 +294,7 @@ class TestAttestation(AzureRecordedTestCase):
             print(response)
     """
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy
     def test_tpm_attestation(self, attestation_aad_url):

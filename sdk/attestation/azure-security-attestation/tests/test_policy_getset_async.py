@@ -42,6 +42,7 @@ load_dotenv(find_dotenv())
 
 
 class TestAsyncPolicyGetSet(AzureRecordedTestCase):
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @AllInstanceTypes
@@ -53,6 +54,7 @@ class TestAsyncPolicyGetSet(AzureRecordedTestCase):
         print("Token: ", token)
         await attest_client.close()
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @recorded_by_proxy_async
@@ -73,6 +75,7 @@ class TestAsyncPolicyGetSet(AzureRecordedTestCase):
 
         assert expected_hash == policy_set_response.policy_token_hash
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @recorded_by_proxy_async

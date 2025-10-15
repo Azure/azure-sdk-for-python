@@ -37,6 +37,7 @@ from azure.security.attestation.models import (
 
 
 class TestPolicyGetSet(AzureRecordedTestCase):
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @AllInstanceTypes
@@ -48,6 +49,7 @@ class TestPolicyGetSet(AzureRecordedTestCase):
         assert policy.startswith("version") or len(policy) == 0
         print("Token: ", token)
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @recorded_by_proxy
@@ -68,6 +70,7 @@ class TestPolicyGetSet(AzureRecordedTestCase):
 
         assert expected_hash == policy_set_response.policy_token_hash
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @recorded_by_proxy
