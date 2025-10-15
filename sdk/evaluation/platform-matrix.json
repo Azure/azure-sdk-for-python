@@ -61,6 +61,17 @@
           "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
         }
       }
+    },
+    {
+      "Config": {
+        "Ubuntu2404_313": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
     }
   ]
 }
