@@ -59,7 +59,7 @@ class AzureAppConfigurationClient:
     # pylint:disable=protected-access
     def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         try:
-            if not base_url.lower().startswith(("http://", "https://")):
+            if not base_url.lower().startswith("http"):
                 base_url = f"https://{base_url}"
         except AttributeError as exc:
             raise ValueError("Base URL must be a string.") from exc
