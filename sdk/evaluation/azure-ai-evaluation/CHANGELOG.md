@@ -1,5 +1,14 @@
 # Release History
 
+## 1.13.0 (Unreleased)
+
+### Features Added
+
+-
+
+### Bugs Fixed
+
+-
 
 ## 1.12.0 (2025-10-02)
 
@@ -9,6 +18,12 @@
 
 ### Bugs Fixed
 - Support for multi-level nesting in OpenAI grader (experimental)
+
+## 1.11.2 (2025-10-09)
+
+### Bugs Fixed
+
+- **kwargs in an evaluator signature receives input columns that are not otherwise named in the evaluator's signature
 
 ## 1.11.1 (2025-09-19)
 
