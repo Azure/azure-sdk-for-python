@@ -67,6 +67,7 @@ class TestCallbackChatTargetInitialization:
         target_with_stream = _CallbackChatTarget(callback=mock_callback, stream=True)
         assert target_with_stream._stream is True
 
+
 @pytest.mark.unittest
 class TestCallbackChatTargetPrompts:
     """Test _CallbackChatTarget prompt handling."""
@@ -105,11 +106,7 @@ class TestCallbackChatTargetPrompts:
         request_piece.converted_value = "test prompt"
         request_piece.converted_value_data_type = "text"
         request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
-        request_piece.labels = {
-            "context": {
-                "contexts": ["test context data"]
-            }
-        }
+        request_piece.labels = {"context": {"contexts": ["test context data"]}}
 
         mock_request = MagicMock()
         mock_request.request_pieces = [request_piece]
