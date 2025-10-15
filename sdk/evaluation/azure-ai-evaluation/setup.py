@@ -82,7 +82,7 @@ setup(
         "Jinja2>=3.1.6",
         "aiohttp>=3.0",
     ],
-    extras_require={"redteam": ["pyrit==0.8.1", "duckdb==1.3.2"]},
+    extras_require={"redteam": ['pyrit==0.8.1;python_version>="3.10"', 'duckdb==1.3.2;python_version>="3.10"']},
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
