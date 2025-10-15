@@ -51,6 +51,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
@@ -74,7 +75,7 @@ setup(
         "azure-storage-blob>=12.10.0",
         "httpx>=0.25.1",
         # Dependencies added since Promptflow will soon be made optional
-        "pandas>=2.1.2,<3.0.0",
+        "pandas>=2.2.0,<3.0.0",
         "openai>=1.108.0",
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
