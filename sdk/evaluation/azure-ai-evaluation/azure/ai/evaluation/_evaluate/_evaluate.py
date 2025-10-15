@@ -1041,9 +1041,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     eval_id: Optional[str] = kwargs.get("_eval_id")
     eval_run_id: Optional[str] = kwargs.get("_eval_run_id")
     eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("_eval_meta_data")
-    _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data)
-    if app_insights_configuration := kwargs.get("_app_insights_configuration"):
-        emit_eval_result_events_to_app_insights(app_insights_configuration, result["evaluation_results_list"])
+    if kwargs.get("_convert_to_aoai_evaluation_result", False):
+        _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data)
+        if app_insights_configuration := kwargs.get("_app_insights_configuration"):
+            emit_eval_result_events_to_app_insights(app_insights_configuration, result["_evaluation_results_list"])
 
     if output_path:
         _write_output(output_path, result)
