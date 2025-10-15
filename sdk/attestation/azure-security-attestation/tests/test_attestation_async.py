@@ -139,6 +139,7 @@ _attest_tpm_payload = "eyJwYXlsb2FkIjogeyJ0eXBlIjogImFpa2NlcnQifX0"
 
 
 class TestAsyncAzureAttestation(AzureRecordedTestCase):
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy_async
     async def test_shared_getopenidmetadataasync(self, attestation_location_short_name):
@@ -170,6 +171,7 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         assert open_id_metadata["jwks_uri"] == attestation_isolated_url + "/certs"
         assert open_id_metadata["issuer"] == attestation_isolated_url
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy_async
     async def test_shared_getsigningcertificatesasync(self, **kwargs):
@@ -181,6 +183,7 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
                 signer.certificates[0].encode("ascii"), backend=default_backend()
             )
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy_async
     async def test_aad_getsigningcertificatesasync(self, attestation_aad_url):
@@ -192,6 +195,7 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
                 signer.certificates[0].encode("ascii"), backend=default_backend()
             )
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy_async
     async def test_isolated_getsigningcertificatesasync(self, attestation_isolated_url):
@@ -221,6 +225,7 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         assert response.sgx_collateral is not None
         assert token._get_body()['iss'] == response.issuer
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllInstanceTypes
     @recorded_by_proxy_async
@@ -247,6 +252,7 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         assert response.runtime_claims["jwk"]["crv"] == "P-256"
         assert response.sgx_collateral is not None
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllInstanceTypes
     @recorded_by_proxy_async
@@ -274,6 +280,7 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
             print(response)
     """
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @recorded_by_proxy_async
     async def test_tpm_attestation(self, attestation_aad_url):
