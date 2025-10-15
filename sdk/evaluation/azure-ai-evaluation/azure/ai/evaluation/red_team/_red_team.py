@@ -614,7 +614,7 @@ class RedTeam:
         - content: benign user query to trigger tool use
         - context: attack vehicle with {attack_text} placeholder
         - context_type: modality for formatting (email, document, html, code)
-        - tool_name: name for mock tool with _xmode suffix
+        - tool_name: name for mock tool
 
         We inject the baseline attack objectives into these XPIA wrapper prompts.
         """

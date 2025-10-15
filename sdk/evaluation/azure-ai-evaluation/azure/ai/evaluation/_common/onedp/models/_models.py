@@ -3838,7 +3838,7 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
 
 
 class HourlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Hourly"):
-    """Hourly recurrencce schedule.
+    """Hourly recurrence schedule.
 
     :ivar type: Required. Hourly recurrence pattern.
     :vartype type: str or ~azure.ai.projects.models.HOURLY
