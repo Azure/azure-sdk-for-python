@@ -7,7 +7,6 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import MultiEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
-from azure.ai.evaluation._common._experimental import experimental
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -15,7 +14,6 @@ from ._sexual import SexualEvaluator
 from ._violence import ViolenceEvaluator
 
 
-@experimental
 class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     """
     Initialize a content safety evaluator configured to evaluate content safety metrics for QA scenario.
