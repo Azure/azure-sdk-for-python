@@ -5,7 +5,7 @@
 import logging
 from typing import Union, Any, Dict
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.ai.evaluation._common.onedp import AIProjectClient as RestEvaluationServiceClient
+from azure.ai.evaluation._common.onedp import ProjectsClient as RestEvaluationServiceClient
 from azure.ai.evaluation._common.onedp.models import (
     PendingUploadRequest,
     PendingUploadType,
