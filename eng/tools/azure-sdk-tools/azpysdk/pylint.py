@@ -132,6 +132,7 @@ class pylint(Check):
                     cwd=package_dir,
                     check=True
                 )
+                # todo: why???
                 if pylint_result.stdout:
                     print(pylint_result.stdout)
                 if pylint_result.stderr:
