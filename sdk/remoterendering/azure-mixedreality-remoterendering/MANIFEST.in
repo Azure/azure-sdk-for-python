@@ -1,0 +1,7 @@
+include *.md
+include azure/__init__.py
+include azure/mixedreality/__init__.py
+include LICENSE.txt
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include azure/mixedreality/remoterendering/py.typed
