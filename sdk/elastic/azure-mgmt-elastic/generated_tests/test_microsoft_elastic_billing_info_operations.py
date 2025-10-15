@@ -20,11 +20,11 @@ class TestMicrosoftElasticBillingInfoOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_billing_info_get(self, resource_group):
         response = self.client.billing_info.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
