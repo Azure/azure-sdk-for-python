@@ -132,6 +132,20 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
+        cls._log_data_empty_with_whitespaces = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="  ",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={"test": "attribute"},
+            ),
+            InstrumentationScope("test_name"),
+        )
         cls._log_data_event = _logs.LogData(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
@@ -410,14 +424,21 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._log_data_none)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
-        self.assertEqual(envelope.data.base_data.message, "Log record body cannot be empty. Populating with default message from the exporter for this log record.")
+        self.assertEqual(envelope.data.base_data.message, "n/a")
 
     def test_log_to_envelope_log_empty(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_empty)
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
-        self.assertEqual(envelope.data.base_data.message, "Log record body cannot be empty. Populating with default message from the exporter for this log record.")
+        self.assertEqual(envelope.data.base_data.message, "n/a")
+    
+    def test_log_to_envelope_log_empty_with_whitespaces(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_empty_with_whitespaces)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
+        self.assertEqual(envelope.data.base_type, "MessageData")
+        self.assertEqual(envelope.data.base_data.message, "n/a")
 
     def test_log_to_envelope_log_complex_body(self):
         exporter = self._exporter
