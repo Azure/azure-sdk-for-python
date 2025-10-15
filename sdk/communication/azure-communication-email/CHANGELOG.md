@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0 (2025-09-01)
+
+### Features Added
+
+- Consumers can now provide a value for the `contentId` property when sending emails with attachments.
+  This allows consumers to reference attachments in the email body using the `cid` scheme. The `contentId` property can be set on the `EmailAttachment` object.
+- `EmailClient.begin_send` now supports an optional `operation_id` parameter.
+
 ## 1.0.1b1 (2024-08-28)
 
 ### Features Added
