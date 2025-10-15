@@ -13,7 +13,7 @@ These custom evaluators are also stored in the Evaluator Catalog, but the scope 
 
 This evaluator catalog is backed by Generic Asset Service (that provides versioning support as well as scalable and multi-region support to store all your assets in CosmosDB).
 
-Types of Built_in Evaluators
+Types of Built-in Evaluators
 There are 3 types of evaluators we support as Built-In Evaluators.
 
 1. Code Based - It contains Python file
