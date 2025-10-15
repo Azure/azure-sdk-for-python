@@ -4,6 +4,7 @@
 import base64
 import asyncio
 import json
+import os
 
 from pathlib import Path
 from typing import Callable, Iterator, Literal, Mapping, Union, Any, Type
@@ -167,12 +168,13 @@ def _test_data_dir() -> Path:
 
 class TestRealtimeService(AzureRecordedTestCase):
 
-    @pytest.mark.live_test_only
     @VoiceLivePreparer()
     @recorded_by_proxy
     def test_smoke(self, **kwargs):
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        data_path = _test_data_dir()
+        assert data_path.exists() and data_path.is_dir()
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY")
         assert voicelive_openai_endpoint
         assert voicelive_openai_api_key
 
@@ -181,8 +183,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1", "phi4-mm-realtime", "phi4-mini"])
     async def test_realtime_service(self, model: str, **kwargs):
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         file = _test_data_dir() / "4.wav"
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
@@ -231,8 +233,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
     async def test_realtime_service_with_audio_enhancements(self, model: str, **kwargs):
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         file = _test_data_dir() / "4.wav"
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
@@ -273,8 +275,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         self, model: str, server_sd_conf: dict, **kwargs
     ):
         file = _test_data_dir() / "4.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -315,8 +317,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         self, model: str, semantic_vad_params: dict, **kwargs
     ):
         file = _test_data_dir() / "4.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -344,8 +346,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     async def test_realtime_service_with_filler_word_removal(self, test_audio_file: str, **kwargs):
         model = "gpt-4o-realtime-preview"
         file = _test_data_dir() / test_audio_file
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -378,8 +380,8 @@ class TestRealtimeService(AzureRecordedTestCase):
             "remove_filler_words": True,
         }
 
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -399,8 +401,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4o"])
     async def test_realtime_service_tool_call(self, model: str, **kwargs):
         audio_file = _test_data_dir() / "one-sentence.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -451,8 +453,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         if "realtime" in model:
             pytest.skip("Tool choice is not supported in realtime models yet")
         audio_file = _test_data_dir() / "ask_weather.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -536,8 +538,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "gpt-5", "phi4-mm-realtime"])
     async def test_realtime_service_tool_call_parameter(self, model: str, **kwargs):
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
 
         def get_weather(arguments: Union[str, Mapping[str, Any]]) -> str:
             return json.dumps({"location": "Beijing", "weather": "sunny", "temp_c": 25})
@@ -617,8 +619,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
     async def test_realtime_service_live_session_update(self, model: str, **kwargs):
         audio_file = _test_data_dir() / "ask_weather.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -683,8 +685,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
     async def test_realtime_service_tool_call_no_audio_overlap(self, model: str, **kwargs):
         audio_file = _test_data_dir() / "audio_overlap.input_audio1.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         tools = [
             FunctionTool(
                 name="fetch_merchant_details",
@@ -741,8 +743,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         **kwargs,
     ):
         file = _test_data_dir() / "largest_lake.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -794,8 +796,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         **kwargs,
     ):
         file = _test_data_dir() / "phone.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         turn_detection = turn_detection_cls(end_of_utterance_detection=end_of_detection(timeout_ms=2000))
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
@@ -821,8 +823,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         response_audio_word_timestamps = []
         response_blendshape_visemes = []
         audio_bytes = 0
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -866,8 +868,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4o", "phi4-mm-realtime", "phi4-mini"])
     async def test_realtime_service_wo_turn_detection(self, model: str, **kwargs):
         file = _test_data_dir() / "ask_weather.mp3"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -893,8 +895,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "phi4-mm-realtime"])
     async def test_realtime_service_with_voice_properties(self, model: str, **kwargs):
         file = _test_data_dir() / "largest_lake.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -919,8 +921,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
     async def test_realtime_service_retrieve_item(self, model: str, **kwargs):
         file = _test_data_dir() / "largest_lake.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -958,8 +960,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
     async def test_realtime_service_truncate_item(self, model: str, **kwargs):
         file = _test_data_dir() / "largest_lake.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -1053,8 +1055,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         the service can process audio properly regardless of the input format.
         """
 
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         # Use the appropriate audio file for each format
         if audio_format == InputAudioFormat.PCM16:
             audio_file = _test_data_dir() / "largest_lake.wav"
@@ -1120,8 +1122,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         4. Both resampling enabled and disabled scenarios work correctly
         """
 
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         # Use the specified audio file
         audio_file = _test_data_dir() / f"largest_lake.{sampling_rate // 1000}kHz.wav"
 
@@ -1171,8 +1173,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     async def test_output_formats_with_azure_voice(
         self, model: str, audio_output_format: str, **kwargs
     ):
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         audio_file = _test_data_dir() / "largest_lake.wav"
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
@@ -1209,8 +1211,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         self, model: str, audio_output_format: str, **kwargs
     ):
         audio_file = _test_data_dir() / "largest_lake.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
@@ -1236,8 +1238,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
     async def test_realtime_service_with_echo_cancellation(self, model: str, **kwargs):
         """Test echo cancellation in the realtime service."""
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         file = _test_data_dir() / "4.wav"
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
@@ -1279,8 +1281,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     ):
         """Test echo cancellation functionality with write_loopback_audio for different audio formats."""
         audio_file = _test_data_dir() / "largest_lake.wav"
-        voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
-        voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
+        voicelive_openai_endpoint = os.getenv("VOICELIVE_OPENAI_ENDPOINT", "fake_endpoint")
+        voicelive_openai_api_key = os.getenv("VOICELIVE_OPENAI_API_KEY", "fake_api_key")
         async with connect(
             endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
         ) as conn:
