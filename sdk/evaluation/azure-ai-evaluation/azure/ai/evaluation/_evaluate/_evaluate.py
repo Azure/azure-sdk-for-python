@@ -1864,11 +1864,11 @@ def _convert_results_to_aoai_evaluation_results(
         converted_rows.append(run_output_item)
 
     # Create converted results maintaining the same structure
-    results["evaluation_results_list"] = converted_rows
+    results["_evaluation_results_list"] = converted_rows
     logger.info(f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
     # Calculate summary statistics
     evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
-    results["evaluation_summary"] = evaluation_summary
+    results["_evaluation_summary"] = evaluation_summary
     logger.info(f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
 
 def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metric_list: List[str]) -> str:
