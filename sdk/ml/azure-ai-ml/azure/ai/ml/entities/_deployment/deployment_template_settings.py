@@ -64,26 +64,30 @@ class OnlineRequestSettings(RestTranslatableMixin):
     :type request_timeout_ms: int
     :param max_concurrent_requests_per_instance: defaults to 1
     :type max_concurrent_requests_per_instance: int
-    :param max_queue_wait_ms: defaults to 500
-    :type max_queue_wait_ms: int
     """
 
     def __init__(
         self,
         max_concurrent_requests_per_instance: Optional[int] = None,
         request_timeout_ms: Optional[int] = None,
-        max_queue_wait_ms: Optional[int] = None,
     ):
         self.request_timeout_ms = request_timeout_ms
         self.max_concurrent_requests_per_instance = max_concurrent_requests_per_instance
-        self.max_queue_wait_ms = max_queue_wait_ms
 
     def _to_rest_object(self) -> RestOnlineRequestSettings:
         return RestOnlineRequestSettings(
-            max_queue_wait=to_iso_duration_format_ms(self.max_queue_wait_ms),
             max_concurrent_requests_per_instance=self.max_concurrent_requests_per_instance,
             request_timeout=to_iso_duration_format_ms(self.request_timeout_ms),
         )
+
+    def _to_dict(self) -> dict:
+        """Convert to plain dictionary for API request body."""
+        result = {}
+        if self.max_concurrent_requests_per_instance is not None:
+            result["maxConcurrentRequestsPerInstance"] = self.max_concurrent_requests_per_instance
+        if self.request_timeout_ms is not None:
+            result["requestTimeout"] = to_iso_duration_format_ms(self.request_timeout_ms)
+        return result
 
     def _merge_with(self, other: Optional["OnlineRequestSettings"]) -> None:
         if other:
@@ -91,7 +95,6 @@ class OnlineRequestSettings(RestTranslatableMixin):
                 other.max_concurrent_requests_per_instance or self.max_concurrent_requests_per_instance
             )
             self.request_timeout_ms = other.request_timeout_ms or self.request_timeout_ms
-            self.max_queue_wait_ms = other.max_queue_wait_ms or self.max_queue_wait_ms
 
     @classmethod
     def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> Optional["OnlineRequestSettings"]:
@@ -99,7 +102,6 @@ class OnlineRequestSettings(RestTranslatableMixin):
             OnlineRequestSettings(
                 request_timeout_ms=from_iso_duration_format_ms(settings.request_timeout),
                 max_concurrent_requests_per_instance=settings.max_concurrent_requests_per_instance,
-                max_queue_wait_ms=from_iso_duration_format_ms(settings.max_queue_wait),
             )
             if settings
             else None
@@ -114,7 +116,6 @@ class OnlineRequestSettings(RestTranslatableMixin):
         return (
             self.max_concurrent_requests_per_instance == other.max_concurrent_requests_per_instance
             and self.request_timeout_ms == other.request_timeout_ms
-            and self.max_queue_wait_ms == other.max_queue_wait_ms
         )
 
     def __ne__(self, other: object) -> bool:
@@ -167,10 +168,33 @@ class ProbeSettings(RestTranslatableMixin):
             period=to_iso_duration_format(self.period),
             initial_delay=to_iso_duration_format(self.initial_delay),
             scheme=self.scheme,
-            method=self.method,
+            http_method=self.method,  # REST client expects http_method, not method
             path=self.path,
             port=self.port,
         ) # type: ignore
+
+    def _to_dict(self) -> dict:
+        """Convert to plain dictionary for API request body."""
+        result = {}
+        if self.failure_threshold is not None:
+            result["failureThreshold"] = self.failure_threshold
+        if self.success_threshold is not None:
+            result["successThreshold"] = self.success_threshold
+        if self.timeout is not None:
+            result["timeout"] = to_iso_duration_format(self.timeout)
+        if self.period is not None:
+            result["period"] = to_iso_duration_format(self.period)
+        if self.initial_delay is not None:
+            result["initialDelay"] = to_iso_duration_format(self.initial_delay)
+        if self.scheme is not None:
+            result["scheme"] = self.scheme
+        if self.method is not None:
+            result["httpMethod"] = self.method  # Use camelCase httpMethod for API
+        if self.path is not None:
+            result["path"] = self.path
+        if self.port is not None:
+            result["port"] = self.port
+        return result
 
     def _merge_with(self, other: Optional["ProbeSettings"]) -> None:
         if other:

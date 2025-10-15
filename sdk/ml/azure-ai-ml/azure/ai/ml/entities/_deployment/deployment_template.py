@@ -8,76 +8,11 @@ from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._assets import Environment
+
 from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml._schema._deployment.template.deployment_template import DeploymentTemplateSchema
-
-def seconds_to_hhmmss(seconds: int) -> str:
-    """Convert seconds to HH:MM:SS format for backend."""
-    try:
-        if seconds is None:
-            return "00:01:30"  # 90 seconds default
-        
-        hours = seconds // 3600
-        minutes = (seconds % 3600) // 60
-        secs = seconds % 60
-        return f"{hours:02d}:{minutes:02d}:{secs:02d}"
-    except (ValueError, TypeError):
-        return "00:01:30"  # Safe default
 
 
-def hhmmss_to_seconds(hhmmss_str: str) -> int:
-    """Convert HH:MM:SS format from backend to seconds for user."""
-    try:
-        if not hhmmss_str:
-            return 90  # 90 seconds default
-        
-        parts = hhmmss_str.split(":")
-        if len(parts) == 3:
-            hours, minutes, seconds = map(int, parts)
-            return hours * 3600 + minutes * 60 + seconds
-        return 90  # Safe default
-    except (ValueError, TypeError):
-        return 90  # Safe default
-
-
-def convert_probe_durations_from_backend(probe_dict: dict) -> dict:
-    """Convert probe duration fields from HH:MM:SS (backend) to seconds (user)."""
-    converted = probe_dict.copy()
-    duration_fields = ["initialDelay", "period", "timeout"]
-    
-    for field in duration_fields:
-        if field in converted and converted[field]:
-            converted[field] = hhmmss_to_seconds(converted[field])
-    
-    return converted
-
-
-def convert_probe_durations_to_backend(probe_dict: dict) -> dict:
-    """Convert probe duration fields from seconds (user) to HH:MM:SS (backend)."""
-    converted = probe_dict.copy()
-    # Map user-facing field names to backend field names
-    field_mappings = {
-        "initial_delay": "initialDelay",
-        "period": "period", 
-        "timeout": "timeout"
-    }
-    
-    for user_field, backend_field in field_mappings.items():
-        if user_field in converted and converted[user_field] is not None:
-            # Convert seconds to HH:MM:SS
-            seconds_value = int(converted[user_field])
-            hhmmss_value = seconds_to_hhmmss(seconds_value)
-            # Remove the old field and add the new one
-            del converted[user_field]
-            converted[backend_field] = hhmmss_value
-        elif backend_field in converted and converted[backend_field] is not None:
-            # Already in backend format, convert from seconds to HH:MM:SS
-            if isinstance(converted[backend_field], int):
-                converted[backend_field] = seconds_to_hhmmss(int(converted[backend_field]))
-    
-    return converted
 
 
 class DeploymentTemplate(Resource, RestTranslatableMixin):
@@ -129,7 +64,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         code_configuration: Optional[Dict[str, Any]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         app_insights_enabled: Optional[bool] = None,
-        allowed_instance_types: Optional[str] = None,
+        allowed_instance_type: Optional[str] = None,
         scoring_port: Optional[int] = None,
         scoring_path: Optional[str] = None,
         model_mount_path: Optional[str] = None,
@@ -152,7 +87,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         self.code_configuration = code_configuration
         self.environment_variables = environment_variables
         self.app_insights_enabled = app_insights_enabled
-        self.allowed_instance_types = allowed_instance_types
+        self.allowed_instance_type = allowed_instance_type
         self.scoring_port = scoring_port
         self.scoring_path = scoring_path
         self.model_mount_path = model_mount_path
@@ -171,8 +106,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         """Get request timeout in seconds (user-friendly format)."""
         if self.request_settings and hasattr(self.request_settings, 'request_timeout_ms'):
             if isinstance(self.request_settings.request_timeout_ms, str):
-                # Convert HH:MM:SS format to seconds
-                return hhmmss_to_seconds(self.request_settings.request_timeout_ms)
+                # This shouldn't happen with proper OnlineRequestSettings, return a default
+                return self.request_settings.request_timeout_ms
             else:
                 # Convert milliseconds to seconds
                 return self.request_settings.request_timeout_ms // 1000 if self.request_settings.request_timeout_ms else None
@@ -403,11 +338,12 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         deployment_template_type = get_value(properties, "deploymentTemplateType") or get_value(obj, "deployment_template_type")
         
         # Extract additional fields
-        allowed_instance_types = get_value(properties, "allowedInstanceType") or get_value(obj, "allowed_instance_types")
+        allowed_instance_type = get_value(properties, "allowedInstanceType") or get_value(obj, "allowed_instance_type")
         scoring_port = get_value(properties, "scoringPort") or get_value(obj, "scoring_port")
         scoring_path = get_value(properties, "scoringPath") or get_value(obj, "scoring_path")
         model_mount_path = get_value(properties, "modelMountPath") or get_value(obj, "model_mount_path")
         stage = get_value(properties, "stage") or get_value(obj, "stage")
+        type_field = get_value(properties, "type") or get_value(obj, "type")
         
         # Handle string representations from properties - they come as JSON strings
         import json
@@ -427,186 +363,20 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
             except (ValueError, SyntaxError):
                 environment_variables = {}
         
-        # Parse allowed_instance_types if it's a string
-        if isinstance(allowed_instance_types, str):
+        # Parse allowed_instance_type if it's a string
+        if isinstance(allowed_instance_type, str):
             try:
-                allowed_instance_types = ast.literal_eval(allowed_instance_types)
+                allowed_instance_type = ast.literal_eval(allowed_instance_type)
             except (ValueError, SyntaxError):
-                allowed_instance_types = None
+                allowed_instance_type = None
         
-        # Convert request_settings to OnlineRequestSettings object
-        request_settings_obj = None
-        if request_settings:
-            try:
-                if isinstance(request_settings, str):
-                    # Parse the string representation from properties
-                    request_settings_dict = ast.literal_eval(request_settings)
-                    timeout_val = request_settings_dict.get("requestTimeout", "00:01:30")
-                    max_concurrent = request_settings_dict.get("maxConcurrentRequestsPerInstance", 1)
-                    
-                    # Convert HH:MM:SS to seconds, then to milliseconds
-                    timeout_seconds = hhmmss_to_seconds(timeout_val) if isinstance(timeout_val, str) else 90
-                    
-                    request_settings_obj = OnlineRequestSettings(
-                        request_timeout_ms=timeout_seconds * 1000,
-                        max_concurrent_requests_per_instance=max_concurrent
-                    )
-                elif hasattr(request_settings, '__dict__'):
-                    # It's already a REST client object, convert to our object
-                    timeout_ms = getattr(request_settings, 'request_timeout_ms', None)
-                    max_concurrent = getattr(request_settings, 'max_concurrent_requests_per_instance', 1)
-                    
-                    request_settings_obj = OnlineRequestSettings(
-                        request_timeout_ms=timeout_ms,
-                        max_concurrent_requests_per_instance=max_concurrent
-                    )
-                elif isinstance(request_settings, dict):
-                    # It's a dict, extract fields
-                    timeout_val = request_settings.get("requestTimeout", "00:01:30")
-                    max_concurrent = request_settings.get("maxConcurrentRequestsPerInstance", 1)
-                    
-                    # Convert HH:MM:SS to seconds, then to milliseconds
-                    timeout_seconds = hhmmss_to_seconds(timeout_val) if isinstance(timeout_val, str) else 90
-                    
-                    request_settings_obj = OnlineRequestSettings(
-                        request_timeout_ms=timeout_seconds * 1000,
-                        max_concurrent_requests_per_instance=max_concurrent
-                    )
-            except (AttributeError, ValueError, TypeError, SyntaxError):
-                request_settings_obj = None
+        # Convert request_settings to OnlineRequestSettings object using the built-in conversion method
+        request_settings_obj = OnlineRequestSettings._from_rest_object(request_settings) if request_settings else None
         
-        # Convert probe settings to ProbeSettings objects
-        liveness_probe_obj = None
-        if liveness_probe:
-            try:
-                if isinstance(liveness_probe, str):
-                    # Parse the string representation from properties
-                    liveness_probe_dict = ast.literal_eval(liveness_probe)
-                    
-                    # Convert from backend format
-                    converted_liveness = convert_probe_durations_from_backend(liveness_probe_dict)
-                    
-                    from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
-                    liveness_probe_obj = ProbeSettings(
-                        failure_threshold=converted_liveness.get('failureThreshold'),
-                        success_threshold=converted_liveness.get('successThreshold'),
-                        timeout=converted_liveness.get('timeout'),
-                        period=converted_liveness.get('period'),
-                        initial_delay=converted_liveness.get('initialDelay'),
-                        scheme=liveness_probe_dict.get('scheme'),
-                        method=liveness_probe_dict.get('httpMethod') or liveness_probe_dict.get('method'),
-                        path=liveness_probe_dict.get('path'),
-                        port=liveness_probe_dict.get('port')
-                    )
-                elif hasattr(liveness_probe, '__dict__'):
-                    # It's already a REST client ProbeSettings object, create our version manually
-                    # to avoid deserialization issues with duration formats
-                    failure_threshold = getattr(liveness_probe, 'failure_threshold', None)
-                    success_threshold = getattr(liveness_probe, 'success_threshold', None)
-                    timeout_str = getattr(liveness_probe, 'timeout_seconds', None)
-                    period_str = getattr(liveness_probe, 'period_seconds', None) 
-                    initial_delay_str = getattr(liveness_probe, 'initial_delay_seconds', None)
-                    
-                    # Convert HH:MM:SS format to seconds for user-friendly interface
-                    timeout_sec = hhmmss_to_seconds(timeout_str) if timeout_str else None
-                    period_sec = hhmmss_to_seconds(period_str) if period_str else None
-                    initial_delay_sec = hhmmss_to_seconds(initial_delay_str) if initial_delay_str else None
-                    
-                    from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
-                    liveness_probe_obj = ProbeSettings(
-                        failure_threshold=failure_threshold,
-                        success_threshold=success_threshold,
-                        timeout=timeout_sec,
-                        period=period_sec,
-                        initial_delay=initial_delay_sec,
-                        scheme=getattr(liveness_probe, 'scheme', None),
-                        method=getattr(liveness_probe, 'method', None),
-                        path=getattr(liveness_probe, 'path', None),
-                        port=getattr(liveness_probe, 'port', None)
-                    )
-                elif isinstance(liveness_probe, dict):
-                    # Convert duration fields from HH:MM:SS to seconds
-                    converted_liveness = convert_probe_durations_from_backend(liveness_probe)
-                    from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
-                    liveness_probe_obj = ProbeSettings(
-                        failure_threshold=converted_liveness.get('failureThreshold'),
-                        success_threshold=converted_liveness.get('successThreshold'),
-                        timeout=converted_liveness.get('timeout'),
-                        period=converted_liveness.get('period'),
-                        initial_delay=converted_liveness.get('initialDelay'),
-                        scheme=liveness_probe.get('scheme'),
-                        method=liveness_probe.get('httpMethod') or liveness_probe.get('method'),
-                        path=liveness_probe.get('path'),
-                        port=liveness_probe.get('port')
-                    )
-            except (AttributeError, ValueError, TypeError, SyntaxError):
-                liveness_probe_obj = None
-            
-        readiness_probe_obj = None
-        if readiness_probe:
-            try:
-                if isinstance(readiness_probe, str):
-                    # Parse the string representation from properties
-                    readiness_probe_dict = ast.literal_eval(readiness_probe)
-                    
-                    # Convert from backend format
-                    converted_readiness = convert_probe_durations_from_backend(readiness_probe_dict)
-                    
-                    from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
-                    readiness_probe_obj = ProbeSettings(
-                        failure_threshold=converted_readiness.get('failureThreshold'),
-                        success_threshold=converted_readiness.get('successThreshold'),
-                        timeout=converted_readiness.get('timeout'),
-                        period=converted_readiness.get('period'),
-                        initial_delay=converted_readiness.get('initialDelay'),
-                        scheme=readiness_probe_dict.get('scheme'),
-                        method=readiness_probe_dict.get('httpMethod') or readiness_probe_dict.get('method'),
-                        path=readiness_probe_dict.get('path'),
-                        port=readiness_probe_dict.get('port')
-                    )
-                elif hasattr(readiness_probe, '__dict__'):
-                    # It's already a REST client ProbeSettings object, create our version manually
-                    # to avoid deserialization issues with duration formats
-                    failure_threshold = getattr(readiness_probe, 'failure_threshold', None)
-                    success_threshold = getattr(readiness_probe, 'success_threshold', None)
-                    timeout_str = getattr(readiness_probe, 'timeout_seconds', None)
-                    period_str = getattr(readiness_probe, 'period_seconds', None)
-                    initial_delay_str = getattr(readiness_probe, 'initial_delay_seconds', None)
-                    
-                    # Convert HH:MM:SS format to seconds for user-friendly interface
-                    timeout_sec = hhmmss_to_seconds(timeout_str) if timeout_str else None
-                    period_sec = hhmmss_to_seconds(period_str) if period_str else None
-                    initial_delay_sec = hhmmss_to_seconds(initial_delay_str) if initial_delay_str else None
-                    
-                    from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
-                    readiness_probe_obj = ProbeSettings(
-                        failure_threshold=failure_threshold,
-                        success_threshold=success_threshold,
-                        timeout=timeout_sec,
-                        period=period_sec,
-                        initial_delay=initial_delay_sec,
-                        scheme=getattr(readiness_probe, 'scheme', None),
-                        method=getattr(readiness_probe, 'method', None),
-                        path=getattr(readiness_probe, 'path', None),
-                        port=getattr(readiness_probe, 'port', None)
-                    )
-                elif isinstance(readiness_probe, dict):
-                    # Convert duration fields from HH:MM:SS to seconds
-                    converted_readiness = convert_probe_durations_from_backend(readiness_probe)
-                    from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
-                    readiness_probe_obj = ProbeSettings(
-                        failure_threshold=converted_readiness.get('failureThreshold'),
-                        success_threshold=converted_readiness.get('successThreshold'),
-                        timeout=converted_readiness.get('timeout'),
-                        period=converted_readiness.get('period'),
-                        initial_delay=converted_readiness.get('initialDelay'),
-                        scheme=readiness_probe.get('scheme'),
-                        method=readiness_probe.get('httpMethod') or readiness_probe.get('method'),
-                        path=readiness_probe.get('path'),
-                        port=readiness_probe.get('port')
-                    )
-            except (AttributeError, ValueError, TypeError, SyntaxError):
-                readiness_probe_obj = None
+        # Convert probe settings to ProbeSettings objects using the built-in conversion methods
+        from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
+        liveness_probe_obj = ProbeSettings._from_rest_object(liveness_probe) if liveness_probe else None
+        readiness_probe_obj = ProbeSettings._from_rest_object(readiness_probe) if readiness_probe else None
         
         # Convert string values to appropriate types
         if isinstance(instance_count, str):
@@ -639,11 +409,12 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
             environment_variables=environment_variables,
             app_insights_enabled=get_value(obj, "app_insights_enabled"),  # May not be present in this API format
             deployment_template_type=deployment_template_type,  # Include deployment template type
-            allowed_instance_types=allowed_instance_types,  # Include allowed instance types
+            allowed_instance_type=allowed_instance_type,  # Include allowed instance types
             scoring_port=scoring_port,  # Include scoring port
             scoring_path=scoring_path,  # Include scoring path
             model_mount_path=model_mount_path,  # Include model mount path
             stage=stage,  # Include stage for archive/restore functionality
+            type=type_field,  # Include type field from REST response
         )
         
         # Mark this template as coming from the service so it excludes immutable fields on updates
@@ -668,289 +439,110 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
             'code_configuration': get_value(obj, "code_configuration"),
             'app_insights_enabled': get_value(obj, "app_insights_enabled"),
             'deployment_template_type': deployment_template_type,
-            'allowed_instance_types': allowed_instance_types,
+            'allowed_instance_type': allowed_instance_type,
             'scoring_port': scoring_port,
             'scoring_path': scoring_path,
             'model_mount_path': model_mount_path,
             'stage': stage,  # Store stage for archive/restore functionality
+            'type': type_field,  # Store type field from REST response
         }
         
         return template
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self) -> dict:
         """Convert to REST object format for API submission.
         
         :param exclude_immutable_fields: If True, excludes immutable fields that cannot be updated.
                                        If None, automatically determines based on whether template came from service.
         :type exclude_immutable_fields: bool
         """
-        # Auto-detect if we should preserve original immutable fields (if template came from service)
-        preserve_original_immutable = getattr(self, '_from_service', False)
-        original_fields = getattr(self, '_original_immutable_fields', {})
-            
         result = {
             "name": self.name,
             "version": self.version,
         }
         
-        # Always include mutable fields (description and tags)
+        # Always include type field
+        if hasattr(self, 'type') and self.type:
+            result["type"] = self.type
+        else:
+            result["type"] = "deploymenttemplates"  # Default type if not specified
+        
+        # Add optional basic fields
         if self.description:
             result["description"] = self.description
             
-        if self.tags:
-            result["tags"] = dict(self.tags)
+        if hasattr(self, 'stage') and self.stage:
+            result["stage"] = self.stage
             
-        if self.properties:
-            result["properties"] = dict(self.properties)
+        if hasattr(self, 'deployment_template_type') and self.deployment_template_type:
+            result["deploymentTemplateType"] = self.deployment_template_type  # Use camelCase for API
             
-        # For templates from service, use original values for immutable fields
-        # For new templates, use current values
-        if preserve_original_immutable and original_fields:
-            # Use original immutable field values to avoid modification errors
-            environment_id = original_fields.get('environment_id')
-            environment_variables = original_fields.get('environment_variables')
+        # Add environment information
+        if hasattr(self, 'environment_id') and self.environment_id:
+            result["environmentId"] = self.environment_id
+        elif self.environment:
+            result["environmentId"] = str(self.environment)
             
-            # Use the original REST objects directly, not the converted SDK objects
-            original_request_settings = original_fields.get('request_settings')
-            original_liveness_probe = original_fields.get('liveness_probe')
-            original_readiness_probe = original_fields.get('readiness_probe')
+        if self.environment_variables:
+            result["environmentVariables"] = dict(self.environment_variables)
             
-            instance_count = original_fields.get('instance_count')
-            default_instance_type = original_fields.get('default_instance_type')
-            model = original_fields.get('model')
-            code_configuration = original_fields.get('code_configuration')
-            app_insights_enabled = original_fields.get('app_insights_enabled')
-            deployment_template_type = original_fields.get('deployment_template_type')
-            allowed_instance_types = original_fields.get('allowed_instance_types')
-            scoring_port = original_fields.get('scoring_port')
-            scoring_path = original_fields.get('scoring_path')
-            model_mount_path = original_fields.get('model_mount_path')
-            stage = self.stage  # Always use current stage value for archive/restore functionality
-        else:
-            # Use current values for new templates
-            environment_id = str(self.environment) if self.environment else None
-            environment_variables = dict(self.environment_variables) if self.environment_variables else None
-            original_request_settings = None  # Will be converted from SDK object
-            original_liveness_probe = None    # Will be converted from SDK object
-            original_readiness_probe = None   # Will be converted from SDK object
-            instance_count = self.instance_count
-            default_instance_type = self.instance_type
-            model = self.model
-            code_configuration = self.code_configuration
-            app_insights_enabled = self.app_insights_enabled
-            deployment_template_type = self.deployment_template_type
-            allowed_instance_types = self.allowed_instance_types
-            scoring_port = self.scoring_port
-            scoring_path = self.scoring_path
-            model_mount_path = self.model_mount_path
-            stage = self.stage
+        if hasattr(self, 'model_mount_path') and self.model_mount_path:
+            result["modelMountPath"] = self.model_mount_path
             
-        # Include immutable fields with appropriate values
-        if environment_id:
-            result["environmentId"] = environment_id  # Use environmentId for API (camelCase)
+        # Convert request settings to dictionary for API request body
+        if self.request_settings:
+            request_dict = self.request_settings._to_dict()
+            if request_dict:
+                result["requestSettings"] = request_dict
             
-        if environment_variables:
-            result["environmentVariables"] = environment_variables  # Use environmentVariables for API (camelCase)
-            
-        if instance_count is not None:
-            result["instanceCount"] = instance_count  # Use instanceCount for API (camelCase)
-            
-        if default_instance_type:
-            result["defaultInstanceType"] = default_instance_type  # Use defaultInstanceType for API (camelCase)
-            result["allowedInstanceType"] = [default_instance_type]  # Also set allowedInstanceType (camelCase)
-            
-        # Convert request settings to backend format
-        if preserve_original_immutable and original_request_settings:
-            # Use the original REST object directly 
-            if isinstance(original_request_settings, dict):
-                # It's already a dict, use it as-is
-                result["requestSettings"] = original_request_settings
-            elif hasattr(original_request_settings, '__dict__'):
-                # It's a REST object, need to extract the exact format that came from API
-                # Check if it has the backend field names
-                if hasattr(original_request_settings, 'request_timeout') or hasattr(original_request_settings, 'requestTimeout'):
-                    # Use the exact field names from the original object
-                    request_settings_dict = {}
-                    
-                    # Try different possible field name variations
-                    timeout_val = (getattr(original_request_settings, 'request_timeout', None) or 
-                                 getattr(original_request_settings, 'requestTimeout', None) or
-                                 getattr(original_request_settings, 'request_timeout_ms', None))
-                    
-                    max_concurrent_val = (getattr(original_request_settings, 'max_concurrent_requests_per_instance', None) or
-                                        getattr(original_request_settings, 'maxConcurrentRequestsPerInstance', None))
-                    
-                    if timeout_val is not None:
-                        # If it's already in HH:MM:SS format, keep it
-                        if isinstance(timeout_val, str) and ':' in timeout_val:
-                            request_settings_dict["requestTimeout"] = timeout_val
-                        elif isinstance(timeout_val, int):
-                            # Convert from milliseconds to seconds to HH:MM:SS
-                            timeout_seconds = timeout_val // 1000 if timeout_val > 1000 else timeout_val
-                            request_settings_dict["requestTimeout"] = seconds_to_hhmmss(timeout_seconds)
-                        
-                    if max_concurrent_val is not None:
-                        request_settings_dict["maxConcurrentRequestsPerInstance"] = max_concurrent_val
-                        
-                    result["requestSettings"] = request_settings_dict
-                else:
-                    # Fallback: convert from our SDK object format
-                    request_settings_dict = {}
-                    if hasattr(original_request_settings, 'request_timeout_ms'):
-                        if isinstance(original_request_settings.request_timeout_ms, str):
-                            # It's already in HH:MM:SS format, use as is
-                            request_settings_dict["requestTimeout"] = original_request_settings.request_timeout_ms
-                        else:
-                            # Convert milliseconds to seconds, then to HH:MM:SS format
-                            timeout_seconds = original_request_settings.request_timeout_ms // 1000
-                            request_settings_dict["requestTimeout"] = seconds_to_hhmmss(timeout_seconds)
-                    if hasattr(original_request_settings, 'max_concurrent_requests_per_instance'):
-                        request_settings_dict["maxConcurrentRequestsPerInstance"] = original_request_settings.max_concurrent_requests_per_instance
-                    result["requestSettings"] = request_settings_dict
-        elif self.request_settings:
-            # Convert current SDK object for new templates
-            request_settings_dict = {}
-            
-            if hasattr(self.request_settings, 'request_timeout_ms') and self.request_settings.request_timeout_ms:
-                # Handle both string (HH:MM:SS) and integer (milliseconds) formats
-                if isinstance(self.request_settings.request_timeout_ms, str):
-                    # It's already in HH:MM:SS format, use as is
-                    request_settings_dict["requestTimeout"] = self.request_settings.request_timeout_ms
-                else:
-                    # Convert milliseconds to seconds, then to HH:MM:SS format for backend
-                    timeout_seconds = self.request_settings.request_timeout_ms // 1000
-                    request_settings_dict["requestTimeout"] = seconds_to_hhmmss(timeout_seconds)
-                
-            if hasattr(self.request_settings, 'max_concurrent_requests_per_instance'):
-                request_settings_dict["maxConcurrentRequestsPerInstance"] = self.request_settings.max_concurrent_requests_per_instance
-                
-            result["requestSettings"] = request_settings_dict
-            
-        # Convert probe settings to backend format (seconds -> HH:MM:SS)
-        if preserve_original_immutable and original_liveness_probe:
-            # Use the original REST object directly
-            if isinstance(original_liveness_probe, dict):
-                result["livenessProbe"] = original_liveness_probe
-            elif hasattr(original_liveness_probe, '__dict__'):
-                # It's a REST object, preserve its exact structure
-                liveness_dict = {}
-                
-                # Try to preserve the exact field names and values from the original object
-                all_attrs = dir(original_liveness_probe)
-                for attr in all_attrs:
-                    if not attr.startswith('_') and not callable(getattr(original_liveness_probe, attr)):
-                        value = getattr(original_liveness_probe, attr, None)
-                        if value is not None:
-                            # Convert snake_case to camelCase for API
-                            if attr == 'initial_delay_seconds':
-                                liveness_dict['initialDelay'] = value
-                            elif attr == 'period_seconds':
-                                liveness_dict['period'] = value
-                            elif attr == 'timeout_seconds':
-                                liveness_dict['timeout'] = value
-                            elif attr == 'failure_threshold':
-                                liveness_dict['failureThreshold'] = value
-                            elif attr == 'success_threshold':
-                                liveness_dict['successThreshold'] = value
-                            else:
-                                # Keep other fields as-is
-                                liveness_dict[attr] = value
-                                
+        # Convert probe settings to dictionaries for API request body
+        if self.liveness_probe:
+            liveness_dict = self.liveness_probe._to_dict()
+            if liveness_dict:
                 result["livenessProbe"] = liveness_dict
-        elif self.liveness_probe:
-            try:
-                liveness_dict = convert_probe_durations_to_backend({
-                    "initial_delay": getattr(self.liveness_probe, 'initial_delay', None),
-                    "period": getattr(self.liveness_probe, 'period', None), 
-                    "timeout": getattr(self.liveness_probe, 'timeout', None),
-                    "failure_threshold": getattr(self.liveness_probe, 'failure_threshold', None),
-                    "success_threshold": getattr(self.liveness_probe, 'success_threshold', None),
-                    "scheme": getattr(self.liveness_probe, 'scheme', None),
-                    "method": getattr(self.liveness_probe, 'method', None),
-                    "path": getattr(self.liveness_probe, 'path', None),
-                    "port": getattr(self.liveness_probe, 'port', None), 
-                })
-                result["livenessProbe"] = liveness_dict
-            except (AttributeError, TypeError):
-                pass  # Skip if probe object is malformed
-            
-        if preserve_original_immutable and original_readiness_probe:
-            # Use the original REST object directly
-            if isinstance(original_readiness_probe, dict):
-                result["readinessProbe"] = original_readiness_probe
-            elif hasattr(original_readiness_probe, '__dict__'):
-                # It's a REST object, preserve its exact structure
-                readiness_dict = {}
                 
-                # Try to preserve the exact field names and values from the original object
-                all_attrs = dir(original_readiness_probe)
-                for attr in all_attrs:
-                    if not attr.startswith('_') and not callable(getattr(original_readiness_probe, attr)):
-                        value = getattr(original_readiness_probe, attr, None)
-                        if value is not None:
-                            # Convert snake_case to camelCase for API
-                            if attr == 'initial_delay_seconds':
-                                readiness_dict['initialDelay'] = value
-                            elif attr == 'period_seconds':
-                                readiness_dict['period'] = value
-                            elif attr == 'timeout_seconds':
-                                readiness_dict['timeout'] = value
-                            elif attr == 'failure_threshold':
-                                readiness_dict['failureThreshold'] = value
-                            elif attr == 'success_threshold':
-                                readiness_dict['successThreshold'] = value
-                            else:
-                                # Keep other fields as-is
-                                readiness_dict[attr] = value
-                                
+        if self.readiness_probe:
+            readiness_dict = self.readiness_probe._to_dict()
+            if readiness_dict:
                 result["readinessProbe"] = readiness_dict
-        elif self.readiness_probe:
-            try:
-                readiness_dict = convert_probe_durations_to_backend({
-                    "initial_delay": getattr(self.readiness_probe, 'initial_delay', None),
-                    "period": getattr(self.readiness_probe, 'period', None),
-                    "timeout": getattr(self.readiness_probe, 'timeout', None), 
-                    "failure_threshold": getattr(self.readiness_probe, 'failure_threshold', None),
-                    "success_threshold": getattr(self.readiness_probe, 'success_threshold', None),
-                    "scheme": getattr(self.readiness_probe, 'scheme', None),
-                    "method": getattr(self.readiness_probe, 'method', None),
-                    "path": getattr(self.readiness_probe, 'path', None),
-                    "port": getattr(self.readiness_probe, 'port', None),
-                })
-                result["readinessProbe"] = readiness_dict
-            except (AttributeError, TypeError):
-                pass  # Skip if probe object is malformed
+            
+        # Add instance configuration
+        if hasattr(self, 'instance_type') and self.instance_type:
+            result["defaultInstanceType"] = self.instance_type
+            
+        if hasattr(self, 'instance_count') and self.instance_count is not None:
+            result["instanceCount"] = self.instance_count
+            
+        # Add scoring configuration
+        if hasattr(self, 'scoring_path') and self.scoring_path:
+            result["scoringPath"] = self.scoring_path
+            
+        if hasattr(self, 'scoring_port') and self.scoring_port is not None:
+            result["scoringPort"] = self.scoring_port
             
         # Add other optional fields
-        if model:
-            result["model"] = model
+        if hasattr(self, 'model') and self.model:
+            result["model"] = self.model
             
-        if code_configuration:
-            result["code_configuration"] = code_configuration
+        if hasattr(self, 'code_configuration') and self.code_configuration:
+            result["codeConfiguration"] = self.code_configuration  # Use camelCase for API
             
-        if app_insights_enabled is not None:
-            result["app_insights_enabled"] = app_insights_enabled
+        if hasattr(self, 'app_insights_enabled') and self.app_insights_enabled is not None:
+            result["appInsightsEnabled"] = self.app_insights_enabled  # Use camelCase for API
             
-        if allowed_instance_types:
-            result["allowed_instance_types"] = allowed_instance_types
-            
-        if scoring_port is not None:
-            result["scoringPort"] = scoring_port  # Use camelCase for API
-            
-        if scoring_path:
-            result["scoringPath"] = scoring_path  # Use camelCase for API
-            
-        if model_mount_path:
-            result["modelMountPath"] = model_mount_path  # Use camelCase for API
-            
-        # NOTE: Do NOT include 'type' field - it's not supported by the REST API
-        # The API only supports 'deployment_template_type' which maps to 'deploymentTemplateType' in JSON
-        if deployment_template_type:
-            result["deploymentTemplateType"] = deployment_template_type  # Use camelCase for API
-            
-        # Add stage for archive/restore functionality
-        if stage:
-            result["stage"] = stage
+        # Handle allowed instance types - convert string to array format for API
+        if hasattr(self, 'allowed_instance_type') and self.allowed_instance_type:
+            if isinstance(self.allowed_instance_type, str):
+                # Convert space-separated string to array
+                instance_types_array = self.allowed_instance_type.split()
+            elif isinstance(self.allowed_instance_type, list):
+                instance_types_array = self.allowed_instance_type
+            else:
+                instance_types_array = [str(self.allowed_instance_type)]
+            result["allowedInstanceType"] = instance_types_array  # Use camelCase for API
+        elif hasattr(self, 'instance_type') and self.instance_type:
+            # Fallback to default instance type if no allowed types specified
+            result["allowedInstanceType"] = [self.instance_type]
             
         return result
     
@@ -992,121 +584,26 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         if self.model_mount_path:
             result["modelMountPath"] = self.model_mount_path
         
-        # Add request settings
+        # Add request settings using dictionary conversion for JSON serialization
         if self.request_settings:
-            request_dict = {}
-            if hasattr(self.request_settings, 'request_timeout_ms') and self.request_settings.request_timeout_ms:
-                # Convert to HH:MM:SS format
-                if isinstance(self.request_settings.request_timeout_ms, str):
-                    request_dict["requestTimeout"] = self.request_settings.request_timeout_ms
-                else:
-                    # Convert milliseconds to seconds, then to HH:MM:SS
-                    timeout_seconds = self.request_settings.request_timeout_ms // 1000
-                    hours = timeout_seconds // 3600
-                    minutes = (timeout_seconds % 3600) // 60
-                    seconds = timeout_seconds % 60
-                    request_dict["requestTimeout"] = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-            
-            if hasattr(self.request_settings, 'max_concurrent_requests_per_instance') and self.request_settings.max_concurrent_requests_per_instance:
-                request_dict["maxConcurrentRequestsPerInstance"] = self.request_settings.max_concurrent_requests_per_instance
-            
+            request_dict = self.request_settings._to_dict()
             if request_dict:
                 result["requestSettings"] = request_dict
         
-        # Add liveness probe
+        # Add probe settings using dictionary conversion for JSON serialization
         if self.liveness_probe:
-            probe_dict = {}
-            if hasattr(self.liveness_probe, 'initial_delay') and self.liveness_probe.initial_delay is not None:
-                # Convert seconds to HH:MM:SS format
-                seconds = self.liveness_probe.initial_delay
-                hours = seconds // 3600
-                minutes = (seconds % 3600) // 60
-                secs = seconds % 60
-                probe_dict["initialDelay"] = f"{hours:02d}:{minutes:02d}:{secs:02d}"
-            
-            if hasattr(self.liveness_probe, 'period') and self.liveness_probe.period is not None:
-                seconds = self.liveness_probe.period
-                hours = seconds // 3600
-                minutes = (seconds % 3600) // 60
-                secs = seconds % 60
-                probe_dict["period"] = f"{hours:02d}:{minutes:02d}:{secs:02d}"
-            
-            if hasattr(self.liveness_probe, 'timeout') and self.liveness_probe.timeout is not None:
-                seconds = self.liveness_probe.timeout
-                hours = seconds // 3600
-                minutes = (seconds % 3600) // 60
-                secs = seconds % 60
-                probe_dict["timeout"] = f"{hours:02d}:{minutes:02d}:{secs:02d}"
-            
-            if hasattr(self.liveness_probe, 'failure_threshold') and self.liveness_probe.failure_threshold is not None:
-                probe_dict["failureThreshold"] = self.liveness_probe.failure_threshold
-            
-            if hasattr(self.liveness_probe, 'success_threshold') and self.liveness_probe.success_threshold is not None:
-                probe_dict["successThreshold"] = self.liveness_probe.success_threshold
-            
-            if hasattr(self.liveness_probe, 'path') and self.liveness_probe.path:
-                probe_dict["path"] = self.liveness_probe.path
-            
-            if hasattr(self.liveness_probe, 'port') and self.liveness_probe.port is not None:
-                probe_dict["port"] = self.liveness_probe.port
-            
-            if hasattr(self.liveness_probe, 'scheme') and self.liveness_probe.scheme:
-                probe_dict["scheme"] = self.liveness_probe.scheme.lower()
-            
-            if hasattr(self.liveness_probe, 'method') and self.liveness_probe.method:
-                probe_dict["httpMethod"] = self.liveness_probe.method
-            
-            if probe_dict:
-                result["livenessProbe"] = probe_dict
+            liveness_dict = self.liveness_probe._to_dict()
+            if liveness_dict:
+                result["livenessProbe"] = liveness_dict
         
-        # Add readiness probe (similar to liveness probe)
         if self.readiness_probe:
-            probe_dict = {}
-            if hasattr(self.readiness_probe, 'initial_delay') and self.readiness_probe.initial_delay is not None:
-                seconds = self.readiness_probe.initial_delay
-                hours = seconds // 3600
-                minutes = (seconds % 3600) // 60
-                secs = seconds % 60
-                probe_dict["initialDelay"] = f"{hours:02d}:{minutes:02d}:{secs:02d}"
-            
-            if hasattr(self.readiness_probe, 'period') and self.readiness_probe.period is not None:
-                seconds = self.readiness_probe.period
-                hours = seconds // 3600
-                minutes = (seconds % 3600) // 60
-                secs = seconds % 60
-                probe_dict["period"] = f"{hours:02d}:{minutes:02d}:{secs:02d}"
-            
-            if hasattr(self.readiness_probe, 'timeout') and self.readiness_probe.timeout is not None:
-                seconds = self.readiness_probe.timeout
-                hours = seconds // 3600
-                minutes = (seconds % 3600) // 60
-                secs = seconds % 60
-                probe_dict["timeout"] = f"{hours:02d}:{minutes:02d}:{secs:02d}"
-            
-            if hasattr(self.readiness_probe, 'failure_threshold') and self.readiness_probe.failure_threshold is not None:
-                probe_dict["failureThreshold"] = self.readiness_probe.failure_threshold
-            
-            if hasattr(self.readiness_probe, 'success_threshold') and self.readiness_probe.success_threshold is not None:
-                probe_dict["successThreshold"] = self.readiness_probe.success_threshold
-            
-            if hasattr(self.readiness_probe, 'path') and self.readiness_probe.path:
-                probe_dict["path"] = self.readiness_probe.path
-            
-            if hasattr(self.readiness_probe, 'port') and self.readiness_probe.port is not None:
-                probe_dict["port"] = self.readiness_probe.port
-            
-            if hasattr(self.readiness_probe, 'scheme') and self.readiness_probe.scheme:
-                probe_dict["scheme"] = self.readiness_probe.scheme.lower()
-            
-            if hasattr(self.readiness_probe, 'method') and self.readiness_probe.method:
-                probe_dict["httpMethod"] = self.readiness_probe.method
-            
-            if probe_dict:
-                result["readinessProbe"] = probe_dict
+            readiness_dict = self.readiness_probe._to_dict()
+            if readiness_dict:
+                result["readinessProbe"] = readiness_dict
         
         # Add instance configuration
-        if hasattr(self, 'allowed_instance_types') and self.allowed_instance_types:
-            result["allowedInstanceType"] = self.allowed_instance_types
+        if hasattr(self, 'allowed_instance_type') and self.allowed_instance_type:
+            result["allowedInstanceType"] = self.allowed_instance_type
         if self.instance_type:
             result["defaultInstanceType"] = self.instance_type
         if self.instance_count is not None:

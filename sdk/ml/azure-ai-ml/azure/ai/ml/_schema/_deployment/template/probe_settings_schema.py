@@ -15,9 +15,9 @@ module_logger = logging.getLogger(__name__)
 
 
 class ProbeSettingsSchema(metaclass=PatchedSchemaMeta):
-    period = fields.Str()
-    initial_delay = fields.Str()
-    timeout = fields.Str()
+    period = fields.Int()
+    initial_delay = fields.Int()
+    timeout = fields.Int()
     success_threshold = fields.Int()
     failure_threshold = fields.Int()
     scheme = fields.Str()

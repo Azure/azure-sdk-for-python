@@ -49,7 +49,10 @@ class AzureMachineLearningWorkspaces(object):
         # type: (...) -> None
         _base_url = '{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices'
         self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, **kwargs)
-        self._client = ARMPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        # Remove base_url from kwargs to avoid conflict, then pass as positional argument
+        kwargs_copy = kwargs.copy()
+        kwargs_copy.pop('base_url', None)
+        self._client = ARMPipelineClient(_base_url, config=self._config, **kwargs_copy)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

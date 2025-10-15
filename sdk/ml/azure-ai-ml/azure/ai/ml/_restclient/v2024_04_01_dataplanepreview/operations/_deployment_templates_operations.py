@@ -248,7 +248,7 @@ class DeploymentTemplatesOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'DeploymentTemplate')
-
+        _json["type"] = "deploymenttemplates"
         request = build_create_request_initial(
             registry_name=registry_name,
             name=name,
@@ -273,7 +273,7 @@ class DeploymentTemplatesOperations(object):
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 

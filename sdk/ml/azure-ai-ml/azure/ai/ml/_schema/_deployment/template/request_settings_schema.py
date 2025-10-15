@@ -15,12 +15,11 @@ module_logger = logging.getLogger(__name__)
 
 
 class RequestSettingsSchema(metaclass=PatchedSchemaMeta):
-    request_timeout_ms = fields.Str(required=False)
+    request_timeout_ms = fields.Int(required=False)
     max_concurrent_requests_per_instance = fields.Int(required=False)
-    max_queue_wait_ms = fields.Int(required=False)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
-        from azure.ai.ml.entities import OnlineRequestSettings
+        from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings
 
         return OnlineRequestSettings(**data)

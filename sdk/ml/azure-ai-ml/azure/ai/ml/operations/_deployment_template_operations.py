@@ -78,15 +78,15 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     region = registry.replication_locations[0].location
                 
                 if region:
-                    # import pdb;pdb.set_trace()
                     # Format the endpoint using the detected region
+                    # return f"https://int.experiments.azureml-test.net"
                     return f"https://{region}.api.azureml.ms"
                     
         except Exception as e:
             module_logger.warning("Could not determine registry region dynamically: %s. Using default.", e)
         
         # Fallback to default region if unable to determine dynamically
-        return "https://int.api.azureml.ms"
+        return f"https://int.experiments.azureml-test.net"
 
     def _convert_dict_to_deployment_template(self, dict_data: Dict[str, Any]) -> DeploymentTemplate:
         """Convert dictionary format to DeploymentTemplate object.
@@ -187,7 +187,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         endpoint = self._get_registry_endpoint()
         return cast(
             Iterable[DeploymentTemplate],
-            self._service_client.deployment_templates.list_deployment_templates(
+            self._service_client.deployment_templates.list(
                     endpoint=endpoint,
                     subscription_id=self._operation_scope.subscription_id,
                     resource_group_name=self._operation_scope.resource_group_name,
@@ -342,8 +342,9 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             if hasattr(self._service_client, 'deployment_templates'):
                 endpoint = self._get_registry_endpoint()
                 
+                import pdb;pdb.set_trace()
                 rest_object = deployment_template._to_rest_object()
-                self._service_client.deployment_templates.create(
+                self._service_client.deployment_templates.begin_create(
                     endpoint=endpoint,
                     subscription_id=self._operation_scope.subscription_id,
                     resource_group_name=self._operation_scope.resource_group_name,
@@ -409,7 +410,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         try:
             # Get the existing template
             template = self.get(name=name, version=version)
-            
+            import pdb;pdb.set_trace()
             # Set stage to Archived
             template.stage = "Archived"
             
