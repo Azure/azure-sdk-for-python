@@ -4,6 +4,9 @@
 
 ### Features added
 
+### Sample updates
+* Added fine tuning samples for supervised, reinforcement and dpo types showing how to submit the fine-tuning jobs.
+
 ## 1.1.0b4 (2025-09-12)
 
 ### Bugs Fixed
