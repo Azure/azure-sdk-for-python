@@ -1,4 +1,5 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
+../azure-confidentialledger-certificates
 aiohttp

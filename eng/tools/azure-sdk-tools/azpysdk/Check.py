@@ -11,7 +11,13 @@ from typing import Sequence, Optional, List, Any, Tuple
 import subprocess
 
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import discover_targeted_packages, get_venv_call, install_into_venv, get_venv_python
+from ci_tools.functions import (
+    discover_targeted_packages,
+    get_venv_call,
+    install_into_venv,
+    get_venv_python,
+    get_pip_command,
+)
 from ci_tools.variables import discover_repo_root
 from ci_tools.logging import logger
 
@@ -180,3 +186,24 @@ class Check(abc.ABC):
                     os.remove(temp_req_file.name)
                 except Exception as cleanup_error:
                     logger.warning(f"Failed to remove temporary requirements file: {cleanup_error}")
+
+    def pip_freeze(self, executable: str) -> None:
+        """Run pip freeze in the given virtual environment and log the output. This function handles both isolated and non-isolated
+        environments, as well as calling the proper `uv` executable with additional --python argument if needed."""
+        try:
+            # to uv pip install or freeze to a target environment, we have to add `--python <path to python exe>`
+            # to tell uv which environment to target
+            command = get_pip_command(executable)
+
+            if command[0] == "uv":
+                command += ["freeze", "--python", executable]
+            else:
+                command += ["-m", "pip", "freeze"]
+
+            result = subprocess.run(command, cwd=os.getcwd(), check=True, capture_output=True, text=True)
+            logger.info("Installed packages:")
+            logger.info(result.stdout)
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Failed to run pip freeze: {e}")
+            logger.error(e.stdout)
+            logger.error(e.stderr)
