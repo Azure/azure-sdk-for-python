@@ -4,10 +4,6 @@ description: Simulates a user to complete a conversation
 model:
   api: chat
   parameters:
-    temperature: 0.0
-    top_p: 1.0
-    presence_penalty: 0
-    frequency_penalty: 0
     response_format:
       type: json_object
 

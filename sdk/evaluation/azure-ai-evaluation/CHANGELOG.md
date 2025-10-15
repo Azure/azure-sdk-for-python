@@ -1,5 +1,9 @@
 # Release History
 
+## Unreleased
+
+### Bugs Fixed
+- Updated prompty files to use `max_completion_tokens` instead of `max_tokens` parameter for compatibility with reasoning models (o1, o3 series). Removed unsupported parameters (`temperature`, `top_p`, `presence_penalty`, `frequency_penalty`) from prompty configurations to ensure proper functioning with OpenAI reasoning models.
 
 ## 1.12.0 (2025-10-02)
 
