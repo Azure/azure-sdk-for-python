@@ -68,11 +68,11 @@ setup(
     install_requires=[
         "pyjwt>=2.8.0",
         # pickle support for credentials was added to this release
-        "azure-identity>=1.16.0",
-        "azure-core>=1.30.2",
+        "azure-identity>=1.19.0",
+        "azure-core>=1.31.0",
         "nltk>=3.9.1",
-        "azure-storage-blob>=12.10.0",
-        "httpx>=0.25.1",
+        "azure-storage-blob>=12.19.0",
+        "httpx>=0.27.2",
         # Dependencies added since Promptflow will soon be made optional
         'pandas>=2.1.2,<3.0.0;python_version<"3.14"',
         'pandas>=2.3.3,<3.0.0;python_version>="3.14"',
