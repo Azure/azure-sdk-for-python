@@ -4,7 +4,7 @@ import sys
 
 from typing import Optional, List
 import subprocess
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, check_call
 
 from .Check import Check
 from ci_tools.functions import install_into_venv, get_pip_command
@@ -51,7 +51,6 @@ class pylint(Check):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
-            pip_cmd = get_pip_command(executable)
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
@@ -91,11 +90,8 @@ class pylint(Check):
                 logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
 
-            freeze_result = self.run_venv_command(
-                executable, ["-m"] + pip_cmd + ["freeze"], cwd=package_dir, check=False
-            )
-            logger.debug(f"Running pip freeze with {pip_cmd}")
-            logger.debug(freeze_result.stdout)
+            # debug a pip freeze result
+            self.pip_freeze(executable)
 
             top_level_module = parsed.namespace.split(".")[0]
 
@@ -130,7 +126,7 @@ class pylint(Check):
                         os.path.join(package_dir, top_level_module),
                     ],
                     cwd=package_dir,
-                    check=True
+                    check=True,
                 )
                 # todo: why???
                 if pylint_result.stdout:
@@ -139,9 +135,9 @@ class pylint(Check):
                     print(pylint_result.stderr)
                 results.append(pylint_result.returncode)
             except CalledProcessError as e:
-                if hasattr(e, 'stdout') and e.stdout:
+                if hasattr(e, "stdout") and e.stdout:
                     print(e.stdout)
-                if hasattr(e, 'stderr') and e.stderr:
+                if hasattr(e, "stderr") and e.stderr:
                     print(e.stderr)
                 logger.error(
                     "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
