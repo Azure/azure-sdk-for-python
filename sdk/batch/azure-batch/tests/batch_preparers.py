@@ -313,7 +313,6 @@ class JobPreparer(AzureMgmtPreparer):
                 self.client.create_job(self.resource)
             except azure.core.exceptions.HttpResponseError as e:
                 message = "{}:{} ".format(e.error.code, e.error.message)
-                breakpoint()
                 for v in e.error.values:
                     message += "\n{}: {}".format(v.key, v.value)
                 raise AzureTestError(message)
@@ -326,4 +325,4 @@ class JobPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            self.client.begin_delete_job(name)
+            self.client.begin_delete_job(name).result()

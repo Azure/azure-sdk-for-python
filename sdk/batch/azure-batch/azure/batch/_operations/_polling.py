@@ -73,22 +73,21 @@ class DeleteJobPollingMethod(PollingMethod):
         try:
             job = self._client.get_job(self._job_id)
 
-            # check job state is DELETING state (if not in deleting state then it's succeeded)
-            if job.state != _models.BatchJobState.DELETING:
+            if job.state == _models.BatchJobState.DELETING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
-
-        # testing an invalid job_id will throw a JobNotFound error before actually building the poller
-        # probably don't need this?
 
         except ResourceNotFoundError:
             # Job no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Some other error occurred, operation failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class DisableJobPollingMethod(PollingMethod):
@@ -148,19 +147,21 @@ class DisableJobPollingMethod(PollingMethod):
         try:
             job = self._client.get_job(self._job_id)
 
-            # check job state is not in DISABLING for success
-            if job.state != _models.BatchJobState.DISABLING:
+            if job.state == _models.BatchJobState.DISABLING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
         except ResourceNotFoundError:
-            # Job no longer exists, unexpected for disable operation
-            self._status = "Failed"
+            # If job doesn't exist it could've been deleted while disabling
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class EnableJobPollingMethod(PollingMethod):
@@ -220,19 +221,21 @@ class EnableJobPollingMethod(PollingMethod):
         try:
             job = self._client.get_job(self._job_id)
 
-            # if job is not enabling then done
-            if job.state != _models.BatchJobState.ENABLING:
+            if job.state == _models.BatchJobState.ENABLING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
         except ResourceNotFoundError:
-            # Job no longer exists, unexpected for enable operation
-            self._status = "Failed"
+            # If job doesn't exist it could've been deleted while enabling
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class DeleteJobSchedulePollingMethod(PollingMethod):
@@ -287,8 +290,10 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
         try:
             job_schedule = self._client.get_job_schedule(self._job_schedule_id)
 
-            # check job schedule state is DELETING state (if not in deleting state then it's succeeded)
-            if job_schedule.state != _models.BatchJobScheduleState.DELETING:
+            if job_schedule.state == _models.BatchJobScheduleState.DELETING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
@@ -297,9 +302,9 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
             self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class DeletePoolPollingMethod(PollingMethod):
@@ -358,8 +363,10 @@ class DeletePoolPollingMethod(PollingMethod):
         try:
             pool = self._client.get_pool(self._pool_id)
 
-            # check pool state is DELETING state (if not in deleting state then it's succeeded)
-            if pool.state != _models.BatchPoolState.DELETING:
+            if pool.state == _models.BatchPoolState.DELETING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
@@ -368,9 +375,9 @@ class DeletePoolPollingMethod(PollingMethod):
             self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class DeleteCertificatePollingMethod(PollingMethod):
@@ -428,7 +435,10 @@ class DeleteCertificatePollingMethod(PollingMethod):
             certificate = self._client.get_certificate(self._thumbprint_algorithm, self._thumbprint)
 
             # check certificate state is DELETING state (if not in deleting state then it's succeeded)
-            if certificate.state != _models.BatchCertificateState.DELETING:
+            if certificate.state == _models.BatchCertificateState.DELETING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
@@ -437,9 +447,9 @@ class DeleteCertificatePollingMethod(PollingMethod):
             self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class DeallocateNodePollingMethod(PollingMethod):
@@ -502,8 +512,11 @@ class DeallocateNodePollingMethod(PollingMethod):
             node = self._client.get_node(self._pool_id, self._node_id)
 
             # If node not in DEALLOCATING state then completed
-            # don't check DEALLOCATED (too quick of a state to check?)
-            if node.state != _models.BatchNodeState.DEALLOCATING:
+            # DEALLOCATED is too quick of a state to check for success
+            if node.state == _models.BatchNodeState.DEALLOCATING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
@@ -512,9 +525,9 @@ class DeallocateNodePollingMethod(PollingMethod):
             self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class RebootNodePollingMethod(PollingMethod):
@@ -576,19 +589,21 @@ class RebootNodePollingMethod(PollingMethod):
         try:
             node = self._client.get_node(self._pool_id, self._node_id)
 
-            # Node reboot is complete when it's no longer in REBOOTING state
-            if node.state != _models.BatchNodeState.REBOOTING:
+            if node.state == _models.BatchNodeState.REBOOTING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
         except ResourceNotFoundError:
-            # Node no longer exists, unexpected for reboot operation
-            self._status = "Failed"
+            # Node could be deleted while rebooting
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class ReimageNodePollingMethod(PollingMethod):
@@ -650,19 +665,21 @@ class ReimageNodePollingMethod(PollingMethod):
         try:
             node = self._client.get_node(self._pool_id, self._node_id)
 
-            # Node reimage is complete when it's no longer in REIMAGING state
-            if node.state != _models.BatchNodeState.REIMAGING:
+            if node.state == _models.BatchNodeState.REIMAGING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
         except ResourceNotFoundError:
-            # Node no longer exists, unexpected for reimage operation
-            self._status = "Failed"
+            # Node could be deleted while reimaging
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class RemoveNodePollingMethod(PollingMethod):
@@ -727,15 +744,18 @@ class RemoveNodePollingMethod(PollingMethod):
             if pool.allocation_state == _models.AllocationState.STEADY:
                 self._status = "Succeeded"
                 self._finished = True
+            else:
+                self._status = "InProgress"
+                self._finished = False
 
         except ResourceNotFoundError:
-            # Pool no longer exists, unexpected for remove node operation
-            self._status = "Failed"
+            # Pool could be deleted while removing nodes
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class ResizePoolPollingMethod(PollingMethod):
@@ -800,15 +820,18 @@ class ResizePoolPollingMethod(PollingMethod):
             if pool.allocation_state == _models.AllocationState.STEADY:
                 self._status = "Succeeded"
                 self._finished = True
+            else:
+                self._status = "InProgress"
+                self._finished = False
 
         except ResourceNotFoundError:
-            # Pool no longer exists, unexpected for resize operation
-            self._status = "Failed"
+            # Pool could be deleted while resizing
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class StartNodePollingMethod(PollingMethod):
@@ -870,19 +893,21 @@ class StartNodePollingMethod(PollingMethod):
         try:
             node = self._client.get_node(self._pool_id, self._node_id)
 
-            # Node start is complete when it's no longer in STARTING state
-            if node.state != _models.BatchNodeState.STARTING:
+            if node.state == _models.BatchNodeState.STARTING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
         except ResourceNotFoundError:
-            # Node no longer exists, unexpected for start operation
-            self._status = "Failed"
+            # Node could be deleted during starting
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class StopPoolResizePollingMethod(PollingMethod):
@@ -947,15 +972,18 @@ class StopPoolResizePollingMethod(PollingMethod):
             if pool.allocation_state == _models.AllocationState.STEADY:
                 self._status = "Succeeded"
                 self._finished = True
+            else:
+                self._status = "InProgress"
+                self._finished = False
 
         except ResourceNotFoundError:
-            # Pool no longer exists, unexpected for stop resize operation
-            self._status = "Failed"
+            # Pool could be deleted during stop resize operation
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class TerminateJobPollingMethod(PollingMethod):
@@ -1015,19 +1043,21 @@ class TerminateJobPollingMethod(PollingMethod):
         try:
             job = self._client.get_job(self._job_id)
 
-            # Job termination is complete when it's no longer in TERMINATING state
-            if job.state != _models.BatchJobState.TERMINATING:
+            if job.state == _models.BatchJobState.TERMINATING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
         except ResourceNotFoundError:
-            # Job no longer exists, unexpected for terminate operation
-            self._status = "Failed"
+            # Job could be deleted while terminating
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
 
 
 class TerminateJobSchedulePollingMethod(PollingMethod):
@@ -1088,15 +1118,18 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
             job_schedule = self._client.get_job_schedule(self._job_schedule_id)
 
             # Job schedule termination is complete when it's no longer in TERMINATING state
-            if job_schedule.state != _models.BatchJobScheduleState.TERMINATING:
+            if job_schedule.state == _models.BatchJobScheduleState.TERMINATING:
+                self._status = "InProgress"
+                self._finished = False
+            else:
                 self._status = "Succeeded"
                 self._finished = True
 
         except ResourceNotFoundError:
-            # Job schedule no longer exists, unexpected for terminate operation
-            self._status = "Failed"
+            # Job schedule could be deleted while terminating
+            self._status = "Succeeded"
             self._finished = True
         except AzureError:
-            # Some other error occurred, continue polling
-            self._status = "InProgress"
-            self._finished = False
+            # Another error occurred so LRO failed
+            self._status = "Failed"
+            self._finished = True
