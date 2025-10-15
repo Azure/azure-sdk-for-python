@@ -132,18 +132,16 @@ class pylint(Check):
                     cwd=package_dir,
                     check=True
                 )
-                # Print the pylint output so it's visible to the user
-                # if pylint_result.stdout:
-                #     print(pylint_result.stdout)
-                # if pylint_result.stderr:
-                #     print(pylint_result.stderr)
+                if pylint_result.stdout:
+                    print(pylint_result.stdout)
+                if pylint_result.stderr:
+                    print(pylint_result.stderr)
                 results.append(pylint_result.returncode)
             except CalledProcessError as e:
-                # Print the pylint output even when it fails so it's visible to the user
-                # if hasattr(e, 'stdout') and e.stdout:
-                #     print(e.stdout)
-                # if hasattr(e, 'stderr') and e.stderr:
-                #     print(e.stderr)
+                if hasattr(e, 'stdout') and e.stdout:
+                    print(e.stdout)
+                if hasattr(e, 'stderr') and e.stderr:
+                    print(e.stderr)
                 logger.error(
                     "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
                         package_name, e.returncode
