@@ -12,7 +12,7 @@ from ast import literal_eval
 from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.core.exceptions import HttpResponseError
 
 import jwt
