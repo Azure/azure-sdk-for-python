@@ -1091,7 +1091,8 @@ def _log_events_to_app_insights(
                     # The KEY is "microsoft.custom_event.name", the VALUE is the event name
                     "microsoft.custom_event.name": EVALUATION_EVENT_NAME,
                     # These fields are always present and are already strings
-                    "gen_ai.evaluation.name": event_data.get("metric"),
+                    "gen_ai.evaluation.name": event_data.get("name"),
+                    "gen_ai.evaluator.name": event_data.get("metric"),
                     "gen_ai.evaluation.score.value": event_data.get("score"),
                     "gen_ai.evaluation.score.label": event_data.get("label")
                 }
@@ -1099,6 +1100,8 @@ def _log_events_to_app_insights(
                 # Optional field that may not always be present
                 if "reason" in event_data:
                     log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
+                if "threshold" in event_data:
+                    log_attributes["gen_ai.evaluation.threshold"] = event_data["threshold"]
                 
                 # Handle error from sample if present
                 # Put the error message in error.type to follow OTel semantic conventions
