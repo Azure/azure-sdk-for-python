@@ -32,7 +32,7 @@ from typing import (
 
 from jinja2 import Template
 from openai import AsyncStream
-from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
 from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
@@ -466,7 +466,8 @@ async def format_llm_response(
     is_first_choice: bool,
     response_format: Optional[Mapping[str, Any]] = None,
     outputs: Optional[Mapping[str, Any]] = None,
-) -> Tuple[Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]], int, int, int]:
+    inputs: Optional[Mapping[str, Any]] = None,
+) -> Tuple[Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]], int, int, int, str, str, str, str]:
     """
     Format LLM response
 
@@ -528,6 +529,10 @@ async def format_llm_response(
     input_token_count = 0
     output_token_count = 0
     total_token_count = 0
+    finish_reason = ""
+    sample_input = ""
+    sample_output = ""
+    model_id = ""
 
     if not is_first_choice:
         return (
@@ -552,6 +557,10 @@ async def format_llm_response(
             input_token_count,
             output_token_count,
             total_token_count,
+            finish_reason,
+            model_id,
+            sample_input,
+            sample_output
         )  # we don't actually use this code path since streaming is not used, so set token counts to 0
     else:
         input_token_count = response.usage.prompt_tokens if response.usage and response.usage.prompt_tokens else 0
@@ -559,6 +568,22 @@ async def format_llm_response(
             response.usage.completion_tokens if response.usage and response.usage.completion_tokens else 0
         )
         total_token_count = response.usage.total_tokens if response.usage and response.usage.total_tokens else 0
+        finish_reason = response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
+        print(f"model_id: {response.model}")
+        model_id = response.model if response.model else ""
+        sample_output_list = [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}] if (response.choices and response.choices[0].message.content
+                                                                                                                              and response.choices[0].message.role) else []
+        sample_output = json.dumps(sample_output_list)
+        input_str = f"{json.dumps(inputs)}" if inputs else ""
+        if inputs and len(inputs) > 0:
+            sample_input_json = []         
+            msg = ChatCompletionUserMessageParam(
+                role="user",
+                content=input_str,
+            )
+            sample_input_json.append(msg)
+            sample_input = json.dumps(sample_input_json)
+
 
     # When calling function/tool, function_call/tool_call response will be returned as a field in message,
     # so we need return message directly. Otherwise, we only return content.
@@ -568,7 +593,7 @@ async def format_llm_response(
     else:
         response_content = getattr(response.choices[0].message, "content", "")
     result = format_choice(response_content)
-    return result, input_token_count, output_token_count, total_token_count
+    return result, input_token_count, output_token_count, total_token_count, finish_reason, model_id, sample_input, sample_output
 
 
 def openai_error_retryable(

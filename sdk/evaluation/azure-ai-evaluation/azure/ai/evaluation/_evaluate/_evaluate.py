@@ -318,7 +318,7 @@ def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
         col
         for col in df.columns
         if (
-            col.endswith("input_token_count") or col.endswith("output_token_count") or col.endswith("total_token_count")
+            col.endswith("prompt_tokens") or col.endswith("completion_tokens") or col.endswith("total_tokens")
         )
         and any(col.startswith(f"{metric}.") for metric in all_known_metrics)
     ]
