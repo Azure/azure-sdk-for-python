@@ -320,7 +320,7 @@
 # ServiceOwners: @trrwilson
 
 # PRLabel: %OpenAI
-/sdk/openai/                                                         @trrwilson
+/sdk/openai/                                                         @trrwilson @kashifkhan
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # PRLabel: %Operator Nexus - Network Cloud
