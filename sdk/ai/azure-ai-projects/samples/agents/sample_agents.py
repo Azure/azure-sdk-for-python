@@ -17,7 +17,7 @@ USAGE:
 
     pip install azure-ai-projects azure-identity python-dotenv
 
-    Set this environment variables with your own values:
+    Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The AI model deployment name, to be used by your Agent, as found
