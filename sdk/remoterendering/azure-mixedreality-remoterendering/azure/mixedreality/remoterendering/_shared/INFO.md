@@ -1,0 +1,1 @@
+This is utility code from sdk\mixedreality\azure-mixedreality-authentication\azure\mixedreality\authentication\_shared copied in here to prevent exposing internal details
