@@ -835,6 +835,12 @@
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
+# PRLabel: %contosowidgetmanager
+/sdk/contoso/                                                      @shirelmr @michiisai
+
+# ServiceLabel: %contosowidgetmanager %Mgmt
+# ServiceOwners:                                                   @shirelmr @michiisai
+
 ###########
 # Eng Sys and other
 ###########
