@@ -26,7 +26,7 @@ from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from opentelemetry import _logs
 from opentelemetry.context import Context
-from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler, LogRecord
+from opentelemetry.sdk._logs import LoggerProvider, Logger, LogRecord
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
@@ -1052,10 +1052,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
 
 def _log_events_to_app_insights(
-    connection_string: str,
+    otel_logger,
     events: List[Dict[str, Any]],
     attributes: Optional[Dict[str, Any]] = None,
-    data_source_item: Optional[Dict[str, Any]] = None,
+    data_source_item: Optional[Dict[str, Any]] = None
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
@@ -1068,38 +1068,23 @@ def _log_events_to_app_insights(
     :param attributes: Additional attributes to add to each event
     :type attributes: Optional[Dict[str, Any]]
     """
-    if not connection_string or not events:
-        return
     
     try:
-        # Configure OpenTelemetry logging
-        logger_provider = LoggerProvider()
-        _logs.set_logger_provider(logger_provider)
-        
-        # Create Azure Monitor log exporter
-        azure_log_exporter = AzureMonitorLogExporter(connection_string=connection_string)
-        
-        # Add the exporter to the logger provider
-        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
-        
-        # Create a logger
-        otel_logger = _logs.get_logger(__name__)
-
         # Get the trace_id
-
         trace_id = None
         response_id = None
         conversation_id = None
-        for key, value in data_source_item.items():
-            if key.endswith("trace_id") and value and isinstance(value, str):
-                # Remove dashes if present
-                trace_id_str = str(value).replace("-", "").lower()
-                if len(trace_id_str) == 32:  # Valid trace_id length
-                    trace_id = int(trace_id_str, 16)
-            elif key.endswith("response_id") and value and isinstance(value, str):
-                response_id = value
-            elif key.endswith("conversation_id") and value and isinstance(value, str):
-                conversation_id = value
+        if data_source_item:
+            for key, value in data_source_item.items():
+                if key.endswith("trace_id") and value and isinstance(value, str):
+                    # Remove dashes if present
+                    trace_id_str = str(value).replace("-", "").lower()
+                    if len(trace_id_str) == 32:  # Valid trace_id length
+                        trace_id = int(trace_id_str, 16)
+                elif key.endswith("response_id") and value and isinstance(value, str):
+                    response_id = value
+                elif key.endswith("conversation_id") and value and isinstance(value, str):
+                    conversation_id = value
 
         # Log each event as a separate log record
         for i, event_data in enumerate(events):
@@ -1187,9 +1172,6 @@ def _log_events_to_app_insights(
             except Exception as e:
                 LOGGER.warning(f"Failed to log event {i}: {e}")
         
-        # Force flush to ensure events are sent
-        logger_provider.force_flush(timeout_millis=5000)
-        
     except Exception as e:
         LOGGER.error(f"Failed to log events to App Insights: {e}")
 
@@ -1204,16 +1186,25 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
     :param results: List of evaluation results to log
     :type results: List[Dict]
     """
-    if not app_insights_config or 'connection_string' not in app_insights_config:
-        LOGGER.warning("App Insights configuration is missing or incomplete")
-        return
-    
+
     if not results:
         LOGGER.debug("No results to log to App Insights")
         return
     
     try:
         # Extract only the AppInsights config attributes that exist
+                # Configure OpenTelemetry logging
+        logger_provider = LoggerProvider()
+        _logs.set_logger_provider(logger_provider)
+        
+        # Create Azure Monitor log exporter
+        azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
+        
+        # Add the exporter to the logger provider
+        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
+        
+        # Create a logger
+        otel_logger = _logs.get_logger(__name__)
         app_insights_attributes = {}
         if 'run_type' in app_insights_config:
             app_insights_attributes['run_type'] = app_insights_config['run_type']
@@ -1221,8 +1212,6 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
             app_insights_attributes['schedule_type'] = app_insights_config['schedule_type']
         if 'run_id' in app_insights_config:
             app_insights_attributes['run_id'] = app_insights_config['run_id']
-        if 'response_id' in app_insights_config:
-            app_insights_attributes['response_id'] = app_insights_config['response_id']
         if "agent_id" in app_insights_config:
             app_insights_attributes["agent_id"] = app_insights_config["agent_id"]
         if "agent_name" in app_insights_config:
@@ -1234,11 +1223,13 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         
         for result in results:
             _log_events_to_app_insights(
-                connection_string=app_insights_config["connection_string"],
+                otel_logger=otel_logger,
                 events=result["results"],
                 attributes=app_insights_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None
             )
+        # Force flush to ensure events are sent
+        logger_provider.force_flush()
         LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
         
     except Exception as e:
