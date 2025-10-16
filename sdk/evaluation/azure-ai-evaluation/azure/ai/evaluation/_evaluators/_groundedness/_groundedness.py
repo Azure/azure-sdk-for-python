@@ -33,8 +33,7 @@ logger = logging.getLogger(__name__)
 
 
 class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """
-    Evaluates groundedness score for a given query (optional), response, and context or a multi-turn conversation,
+    """Evaluates groundedness score for a given query (optional), response, and context or a multi-turn conversation,
     including reasoning.
 
     The groundedness measure assesses the correspondence between claims in an AI-generated answer and the source
@@ -66,6 +65,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a GroundednessEvaluator.
 
     .. admonition:: Example with Threshold:
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_groundedness_evaluator]
             :end-before: [END threshold_groundedness_evaluator]
