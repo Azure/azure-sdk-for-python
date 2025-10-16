@@ -1054,7 +1054,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 def _log_events_to_app_insights(
     connection_string: str,
     events: List[Dict[str, Any]],
-    attributes: Optional[Dict[str, Any]] = None
+    attributes: Optional[Dict[str, Any]] = None,
+    data_source_item: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
@@ -1083,7 +1084,23 @@ def _log_events_to_app_insights(
         
         # Create a logger
         otel_logger = _logs.get_logger(__name__)
-        
+
+        # Get the trace_id
+
+        trace_id = None
+        response_id = None
+        conversation_id = None
+        for key, value in data_source_item.items():
+            if key.endswith("trace_id") and value and isinstance(value, str):
+                # Remove dashes if present
+                trace_id_str = str(value).replace("-", "").lower()
+                if len(trace_id_str) == 32:  # Valid trace_id length
+                    trace_id = int(trace_id_str, 16)
+            elif key.endswith("response_id") and value and isinstance(value, str):
+                response_id = value
+            elif key.endswith("conversation_id") and value and isinstance(value, str):
+                conversation_id = value
+
         # Log each event as a separate log record
         for i, event_data in enumerate(events):
             try:
@@ -1149,7 +1166,12 @@ def _log_events_to_app_insights(
                     
                     if "project_id" in attributes:
                         log_attributes["gen_ai.azure_ai_project.id"] = str(attributes["project_id"])
-                
+
+                if response_id:
+                        log_attributes["gen_ai.response.id"] = response_id
+                if conversation_id:
+                    log_attributes["gen_ai.conversation.id"] = conversation_id
+
                 # Create a LogRecord and emit it
                 log_record = LogRecord(
                     timestamp=time.time_ns(),
@@ -1157,7 +1179,9 @@ def _log_events_to_app_insights(
                     body=EVALUATION_EVENT_NAME,
                     attributes=log_attributes
                 )
-                
+                if trace_id:
+                    log_record.trace_id = trace_id
+
                 otel_logger.emit(log_record)
                 
             except Exception as e:
@@ -1212,7 +1236,8 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
             _log_events_to_app_insights(
                 connection_string=app_insights_config["connection_string"],
                 events=result["results"],
-                attributes=app_insights_attributes
+                attributes=app_insights_attributes,
+                data_source_item=result["datasource_item"] if "datasource_item" in result else None
             )
         LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
         
