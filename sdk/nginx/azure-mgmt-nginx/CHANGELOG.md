@@ -1,6 +1,6 @@
 # Release History
 
-## 3.1.0b3 (2025-10-09)
+## 3.1.0b3 (2025-10-16)
 
 ### Features Added
 
@@ -29,11 +29,12 @@
   - Added model `ProxyResource`
   - Added model `Resource`
   - Added model `TrackedResource`
-  - Added model `DefaultWafPolicyOperations`
-  - Added model `WafPolicyOperations`
+  - Added operation group `DefaultWafPolicyOperations`
+  - Added operation group `WafPolicyOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `NginxDeploymentScalingProperties` deleted or renamed its instance variable `profiles`
   - Deleted or renamed model `NginxCertificateListResponse`
   - Deleted or renamed model `NginxConfigurationListResponse`
