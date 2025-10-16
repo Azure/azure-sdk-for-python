@@ -6,6 +6,7 @@ import json
 import os
 import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from io import StringIO
 
 import pytest
@@ -34,6 +35,11 @@ def get_test_item(num):
 
 
 class CosmosEmulatorCredential(object):
+    def __init__(self):
+        # used to verify that get_token was called only once with concurrent clients
+        self.tokens = []
+        self.first_request = True
+
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for the emulator. Based on Azure Core's Access Token Credential.
@@ -47,6 +53,10 @@ class CosmosEmulatorCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
         """
+        if self.first_request:
+            self.first_request = False
+            self.tokens.append("another token")
+
         aad_header_cosmos_emulator = "{\"typ\":\"JWT\",\"alg\":\"RS256\",\"x5t\":\"" \
                                      "CosmosEmulatorPrimaryMaster\",\"kid\":\"CosmosEmulatorPrimaryMaster\"}"
 
@@ -179,6 +189,27 @@ class TestAAD(unittest.TestCase):
             assert scopes == [override_scope], f"Expected only override scope, got: {scopes}"
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
+
+    def test_client_warmup(self):
+        """When multiple clients are created concurrently, only one token request occurs."""
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+
+        credential = CosmosEmulatorCredential()
+        def make_client():
+            client = cosmos_client.CosmosClient(self.host, credential)
+            return client
+
+        clients = []
+        with ThreadPoolExecutor(max_workers=100) as ex:
+            futures = [ex.submit(make_client) for _ in range(100)]
+            for f in as_completed(futures):
+                try:
+                    clients.append(f.result())
+                except Exception:
+                    pass
+
+        assert len(credential.tokens) == 1, f"Expected only one token request, got {credential.tokens}"
+        del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
 
     def test_account_scope_only(self):
         """When account scope is provided, only that scope is used."""
