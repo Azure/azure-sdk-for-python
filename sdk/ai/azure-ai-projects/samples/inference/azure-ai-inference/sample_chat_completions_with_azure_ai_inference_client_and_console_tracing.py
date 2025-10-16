@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-inference azure-identity opentelemetry.sdk
+    pip install azure-ai-inference azure-identity opentelemetry.sdk python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
