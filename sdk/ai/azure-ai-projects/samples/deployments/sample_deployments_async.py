@@ -32,6 +32,7 @@ from azure.ai.projects.models import ModelDeployment
 
 load_dotenv()
 
+
 async def main() -> None:
 
     endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]

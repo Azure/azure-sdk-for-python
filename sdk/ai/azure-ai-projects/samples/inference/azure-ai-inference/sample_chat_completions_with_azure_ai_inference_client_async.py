@@ -34,6 +34,7 @@ from azure.ai.inference.models import UserMessage
 
 load_dotenv()
 
+
 async def main():
 
     endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]

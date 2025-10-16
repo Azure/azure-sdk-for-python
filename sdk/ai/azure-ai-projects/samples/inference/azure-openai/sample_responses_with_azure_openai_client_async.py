@@ -37,6 +37,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 load_dotenv()
 
+
 async def main():
 
     endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]

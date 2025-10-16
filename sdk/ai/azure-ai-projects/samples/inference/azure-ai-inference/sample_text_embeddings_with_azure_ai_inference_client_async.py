@@ -33,6 +33,7 @@ from azure.ai.inference.aio import EmbeddingsClient
 
 load_dotenv()
 
+
 async def main():
 
     endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]

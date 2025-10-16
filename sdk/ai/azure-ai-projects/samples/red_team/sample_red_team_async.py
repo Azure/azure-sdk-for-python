@@ -38,6 +38,7 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
+
 async def sample_red_team_async() -> None:
     """Demonstrates how to perform Red Team operations using the AIProjectClient."""
 
