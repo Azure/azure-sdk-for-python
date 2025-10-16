@@ -1,5 +1,219 @@
 # Release History
 
+## 14.0.0b4 (2025-10-20)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added method `send_request`
+  - Model `BackupPolicyPatch` added property `properties`
+  - Model `CapacityPool` added property `properties`
+  - Model `CapacityPoolPatch` added property `properties`
+  - Model `NetAppAccount` added property `properties`
+  - Model `NetAppAccountPatch` added property `properties`
+  - Enum `NetAppProvisioningState` added member `CREATING`
+  - Enum `NetAppProvisioningState` added member `PATCHING`
+  - Model `RegionInfoResource` added property `properties`
+  - Enum `ReplicationSchedule` added member `ENUM_10_MINUTELY`
+  - Model `SnapshotPolicyPatch` added property `properties`
+  - Model `SnapshotPolicyVolumeList` added property `next_link`
+  - Model `SubvolumeInfo` added property `properties`
+  - Model `UsageResult` added property `properties`
+  - Model `VolumeGroupDetails` added property `properties`
+  - Model `VolumeGroupDetails` added property `system_data`
+  - Model `VolumeGroupVolumeProperties` added property `properties`
+  - Model `VolumeQuotaRule` added property `properties`
+  - Model `VolumeQuotaRulePatch` added property `properties`
+  - Added model `AccountProperties`
+  - Added model `BackupPatchProperties`
+  - Added model `GetKeyVaultStatusResponseProperties`
+  - Added model `PoolPatchProperties`
+  - Added model `PoolProperties`
+  - Added model `SnapshotPatch`
+  - Added model `SubvolumePatchParams`
+  - Added model `SubvolumeProperties`
+  - Added model `UsageProperties`
+  - Added enum `VolumeBackupRelationshipStatus`
+  - Added model `VolumeGroupListProperties`
+  - Added model `VolumeQuotaRulesProperties`
+  - Added enum `VolumeReplicationRelationshipStatus`
+  - Added enum `VolumeRestoreRelationshipStatus`
+
+### Breaking Changes
+
+  - Model `BackupPatch` deleted or renamed its instance variable `label`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `backup_policy_id`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `provisioning_state`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `daily_backups_to_keep`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `weekly_backups_to_keep`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `monthly_backups_to_keep`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `volumes_assigned`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `enabled`
+  - Model `BackupPolicyPatch` deleted or renamed its instance variable `volume_backups`
+  - Model `CapacityPool` deleted or renamed its instance variable `pool_id`
+  - Model `CapacityPool` deleted or renamed its instance variable `size`
+  - Model `CapacityPool` deleted or renamed its instance variable `service_level`
+  - Model `CapacityPool` deleted or renamed its instance variable `provisioning_state`
+  - Model `CapacityPool` deleted or renamed its instance variable `total_throughput_mibps`
+  - Model `CapacityPool` deleted or renamed its instance variable `utilized_throughput_mibps`
+  - Model `CapacityPool` deleted or renamed its instance variable `custom_throughput_mibps`
+  - Model `CapacityPool` deleted or renamed its instance variable `qos_type`
+  - Model `CapacityPool` deleted or renamed its instance variable `cool_access`
+  - Model `CapacityPool` deleted or renamed its instance variable `encryption_type`
+  - Model `CapacityPoolPatch` deleted or renamed its instance variable `size`
+  - Model `CapacityPoolPatch` deleted or renamed its instance variable `qos_type`
+  - Model `CapacityPoolPatch` deleted or renamed its instance variable `cool_access`
+  - Model `CapacityPoolPatch` deleted or renamed its instance variable `custom_throughput_mibps`
+  - Model `GetKeyVaultStatusResponse` deleted or renamed its instance variable `key_vault_uri`
+  - Model `GetKeyVaultStatusResponse` deleted or renamed its instance variable `key_name`
+  - Model `GetKeyVaultStatusResponse` deleted or renamed its instance variable `key_vault_resource_id`
+  - Model `GetKeyVaultStatusResponse` deleted or renamed its instance variable `key_vault_private_endpoints`
+  - Model `NetAppAccount` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetAppAccount` deleted or renamed its instance variable `active_directories`
+  - Model `NetAppAccount` deleted or renamed its instance variable `encryption`
+  - Model `NetAppAccount` deleted or renamed its instance variable `disable_showmount`
+  - Model `NetAppAccount` deleted or renamed its instance variable `nfs_v4_id_domain`
+  - Model `NetAppAccount` deleted or renamed its instance variable `multi_ad_status`
+  - Model `NetAppAccount` deleted or renamed its instance variable `ldap_configuration`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `active_directories`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `encryption`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `disable_showmount`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `nfs_v4_id_domain`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `multi_ad_status`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `ldap_configuration`
+  - Deleted or renamed enum value `NetAppProvisioningState.CANCELED`
+  - Deleted or renamed enum value `NetAppProvisioningState.PROVISIONING`
+  - Deleted or renamed enum value `NetAppProvisioningState.UPDATING`
+  - Model `RegionInfoResource` deleted or renamed its instance variable `storage_to_network_proximity`
+  - Model `RegionInfoResource` deleted or renamed its instance variable `availability_zone_mappings`
+  - Model `SnapshotPolicyPatch` deleted or renamed its instance variable `hourly_schedule`
+  - Model `SnapshotPolicyPatch` deleted or renamed its instance variable `daily_schedule`
+  - Model `SnapshotPolicyPatch` deleted or renamed its instance variable `weekly_schedule`
+  - Model `SnapshotPolicyPatch` deleted or renamed its instance variable `monthly_schedule`
+  - Model `SnapshotPolicyPatch` deleted or renamed its instance variable `enabled`
+  - Model `SnapshotPolicyPatch` deleted or renamed its instance variable `provisioning_state`
+  - Model `SubvolumeInfo` deleted or renamed its instance variable `path`
+  - Model `SubvolumeInfo` deleted or renamed its instance variable `size`
+  - Model `SubvolumeInfo` deleted or renamed its instance variable `parent_path`
+  - Model `SubvolumeInfo` deleted or renamed its instance variable `provisioning_state`
+  - Model `SubvolumePatchRequest` deleted or renamed its instance variable `size`
+  - Model `SubvolumePatchRequest` deleted or renamed its instance variable `path`
+  - Model `UsageResult` deleted or renamed its instance variable `current_value`
+  - Model `UsageResult` deleted or renamed its instance variable `limit`
+  - Model `UsageResult` deleted or renamed its instance variable `unit`
+  - Model `VolumeGroupDetails` deleted or renamed its instance variable `provisioning_state`
+  - Model `VolumeGroupDetails` deleted or renamed its instance variable `group_meta_data`
+  - Model `VolumeGroupDetails` deleted or renamed its instance variable `volumes`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `file_system_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `creation_token`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `service_level`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `usage_threshold`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `export_policy`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `protocol_types`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `provisioning_state`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `snapshot_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `delete_base_snapshot`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `backup_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `baremetal_tenant_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `subnet_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `network_features`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `effective_network_features`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `network_sibling_set_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `storage_to_network_proximity`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `mount_targets`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `volume_type`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `data_protection`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `is_restoring`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `snapshot_directory_visible`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `kerberos_enabled`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `security_style`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `smb_encryption`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `smb_access_based_enumeration`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `smb_non_browsable`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `smb_continuously_available`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `throughput_mibps`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `actual_throughput_mibps`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `encryption_key_source`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `key_vault_private_endpoint_resource_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `ldap_enabled`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `ldap_server_type`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `cool_access`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `coolness_period`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `cool_access_retrieval_policy`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `cool_access_tiering_policy`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `unix_permissions`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `clone_progress`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `file_access_logs`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `avs_data_store`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `data_store_resource_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `is_default_quota_enabled`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `default_user_quota_in_ki_bs`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `default_group_quota_in_ki_bs`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `maximum_number_of_files`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `volume_group_name`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `capacity_pool_resource_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `proximity_placement_group`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `t2_network`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `volume_spec_name`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `encrypted`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `placement_rules`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `enable_subvolumes`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `provisioned_availability_zone`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `is_large_volume`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `originating_resource_id`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `inherited_size_in_bytes`
+  - Model `VolumeGroupVolumeProperties` deleted or renamed its instance variable `language`
+  - Model `VolumeQuotaRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `VolumeQuotaRule` deleted or renamed its instance variable `quota_size_in_ki_bs`
+  - Model `VolumeQuotaRule` deleted or renamed its instance variable `quota_type`
+  - Model `VolumeQuotaRule` deleted or renamed its instance variable `quota_target`
+  - Model `VolumeQuotaRulePatch` deleted or renamed its instance variable `provisioning_state`
+  - Model `VolumeQuotaRulePatch` deleted or renamed its instance variable `quota_size_in_ki_bs`
+  - Model `VolumeQuotaRulePatch` deleted or renamed its instance variable `quota_type`
+  - Model `VolumeQuotaRulePatch` deleted or renamed its instance variable `quota_target`
+  - Deleted or renamed model `BackupPoliciesList`
+  - Deleted or renamed model `BackupVaultsList`
+  - Deleted or renamed model `BackupsList`
+  - Deleted or renamed model `BucketList`
+  - Deleted or renamed model `CapacityPoolList`
+  - Deleted or renamed model `CloudErrorBody`
+  - Deleted or renamed model `ListReplications`
+  - Deleted or renamed model `MountTarget`
+  - Deleted or renamed model `NetAppAccountList`
+  - Deleted or renamed model `QuotaItemList`
+  - Deleted or renamed model `RegionInfosList`
+  - Deleted or renamed model `RelationshipStatus`
+  - Deleted or renamed model `ResourceIdentity`
+  - Deleted or renamed model `SnapshotPoliciesList`
+  - Deleted or renamed model `SnapshotPolicyDetails`
+  - Deleted or renamed model `SnapshotsList`
+  - Deleted or renamed model `SubvolumesList`
+  - Deleted or renamed model `VolumeGroupList`
+  - Deleted or renamed model `VolumeList`
+  - Deleted or renamed model `VolumeQuotaRulesList`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` inserted a `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` deleted or renamed its parameter `network_sibling_set_id` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` deleted or renamed its parameter `subnet_id` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` deleted or renamed its parameter `network_sibling_set_state_id` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` deleted or renamed its parameter `network_features` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_file_path_availability` inserted a `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_file_path_availability` deleted or renamed its parameter `name` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_file_path_availability` deleted or renamed its parameter `subnet_id` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_file_path_availability` deleted or renamed its parameter `availability_zone` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_name_availability` inserted a `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_name_availability` deleted or renamed its parameter `name` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_name_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_name_availability` deleted or renamed its parameter `resource_group` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_quota_availability` inserted a `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_quota_availability` deleted or renamed its parameter `name` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_quota_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.check_quota_availability` deleted or renamed its parameter `resource_group` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.query_network_sibling_set` inserted a `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.query_network_sibling_set` deleted or renamed its parameter `network_sibling_set_id` of kind `positional_or_keyword`
+  - Method `NetAppResourceOperations.query_network_sibling_set` deleted or renamed its parameter `subnet_id` of kind `positional_or_keyword`
+  - Method `VolumesOperations.begin_delete` changed its parameter `force_delete` from `positional_or_keyword` to `keyword_only`
+
 ## 14.0.0b3 (2025-10-09)
 
 ### Bugs Fixed
