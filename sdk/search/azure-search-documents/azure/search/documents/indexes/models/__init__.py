@@ -32,8 +32,7 @@ from ._index import (
     SearchIndex,
 )
 from . import _edm
-from ..._generated.models import SuggestOptions
-from .._generated.models import (
+from ..._generated.indexes.models import (
     SearchAlias,
     AIServicesAccountIdentity,
     AIServicesAccountKey,
@@ -61,9 +60,9 @@ from .._generated.models import (
     BM25SimilarityAlgorithm,
     CharFilter,
     CharFilterName,
+    ChatCompletionCommonModelParameters,
     ChatCompletionExtraParametersBehavior,
     ChatCompletionResponseFormat,
-    ChatCompletionResponseFormatJsonSchemaProperties,
     ChatCompletionResponseFormatType,
     ChatCompletionSchema,
     ChatCompletionSkill,
@@ -74,7 +73,6 @@ from .._generated.models import (
     CognitiveServicesAccount,
     CognitiveServicesAccountKey,
     CommonGramTokenFilter,
-    CommonModelParameters,
     ConditionalSkill,
     CorsOptions,
     CustomEntity,
@@ -137,9 +135,9 @@ from .._generated.models import (
     KeyPhraseExtractionSkill,
     KeyPhraseExtractionSkillLanguage,
     KeywordMarkerTokenFilter,
-    KeywordTokenizerV2,
+    KeywordTokenizer,
     KnowledgeAgent,
-    KnowledgeAgentAzureOpenAIModel,
+    KnowledgeAgentAzureOpenAiModel,
     KnowledgeAgentModel,
     KnowledgeAgentOutputConfiguration,
     KnowledgeAgentModelKind,
@@ -176,7 +174,7 @@ from .._generated.models import (
     OcrSkill,
     OcrSkillLanguage,
     OutputFieldMappingEntry,
-    PathHierarchyTokenizerV2,
+    PathHierarchyTokenizer,
     PatternCaptureTokenFilter,
     PatternReplaceCharFilter,
     PatternReplaceTokenFilter,
@@ -296,15 +294,6 @@ from ._models import (
 
 SearchFieldDataType = _edm
 
-
-class KeywordTokenizer(KeywordTokenizerV2):
-    pass
-
-
-class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
-    pass
-
-
 __all__ = (
     "AIServicesAccountIdentity",
     "AIServicesAccountKey",
@@ -333,10 +322,10 @@ __all__ = (
     "BM25SimilarityAlgorithm",
     "CharFilter",
     "CharFilterName",
+    "ChatCompletionCommonModelParameters",
     "ChatCompletionExtraParametersBehavior",
     "ChatCompletionResponseFormat",
     "ChatCompletionResponseFormatType",
-    "ChatCompletionResponseFormatJsonSchemaProperties",
     "ChatCompletionSchema",
     "ChatCompletionSkill",
     "CjkBigramTokenFilter",
@@ -346,7 +335,6 @@ __all__ = (
     "CognitiveServicesAccount",
     "CognitiveServicesAccountKey",
     "CommonGramTokenFilter",
-    "CommonModelParameters",
     "ComplexField",
     "ConditionalSkill",
     "CorsOptions",
@@ -417,7 +405,7 @@ __all__ = (
     "KeywordTokenizer",
     "LanguageDetectionSkill",
     "KnowledgeAgent",
-    "KnowledgeAgentAzureOpenAIModel",
+    "KnowledgeAgentAzureOpenAiModel",
     "KnowledgeAgentModel",
     "KnowledgeAgentModelKind",
     "KnowledgeAgentOutputConfiguration",
@@ -537,7 +525,6 @@ __all__ = (
     "StopAnalyzer",
     "StopwordsList",
     "StopwordsTokenFilter",
-    "SuggestOptions",
     "SynonymMap",
     "SynonymTokenFilter",
     "TagScoringFunction",
