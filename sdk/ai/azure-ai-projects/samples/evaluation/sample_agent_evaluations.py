@@ -17,13 +17,13 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
 import os, time
-
+from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -34,8 +34,10 @@ from azure.ai.projects.models import (
     AgentEvaluationRedactionConfiguration,
 )
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+load_dotenv()
+
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 with DefaultAzureCredential() as credential:
 

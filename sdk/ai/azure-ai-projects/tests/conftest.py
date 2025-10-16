@@ -8,9 +8,9 @@ import pytest
 from dotenv import load_dotenv, find_dotenv
 from devtools_testutils import remove_batch_sanitizers, add_general_regex_sanitizer, add_body_key_sanitizer
 
-if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override=True):
+if not load_dotenv(find_dotenv(), override=True):
     print(
-        "Failed to apply environment variables for azure-ai-projects tests. This is expected if running in ADO pipeline."
+        "Did not find a .env file. Using default environment variable values for tests."
     )
 
 
