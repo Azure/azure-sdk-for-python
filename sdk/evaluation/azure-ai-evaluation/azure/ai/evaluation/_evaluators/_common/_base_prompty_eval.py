@@ -132,7 +132,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
-        llm_output, input_token_count, output_token_count = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output, input_token_count, output_token_count, total_token_count = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
         if llm_output:
@@ -146,8 +146,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     f"{self._result_key}_reason": reason,
                     f"{self._result_key}_result": binary_result,
                     f"{self._result_key}_threshold": self._threshold,
-                    "input_token_count": input_token_count,
-                    "output_token_count": output_token_count,
+                    f"{self._result_key}_prompt_tokens": input_token_count,
+                    f"{self._result_key}_completion_tokens": output_token_count,
+                    f"{self._result_key}_total_tokens": total_token_count,
                 }
             match = re.search(r"\d", llm_output)
             if match:
@@ -158,8 +159,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 f"gpt_{self._result_key}": float(score),
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
-                "input_token_count": input_token_count,
-                "output_token_count": output_token_count,
+                f"{self._result_key}_prompt_tokens": input_token_count,
+                f"{self._result_key}_completion_tokens": output_token_count,
+                f"{self._result_key}_total_tokens": total_token_count,
             }
 
         binary_result = self._get_binary_result(score)

@@ -25,6 +25,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from opentelemetry import _logs
+from opentelemetry.context import Context
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler, LogRecord
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
@@ -291,6 +292,44 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     return results
 
 
+def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
+    """Identify token count columns from known SDK metrics that should be excluded from aggregation.
+    
+    Token counts from custom evaluators are not excluded, only those from EvaluationMetrics
+    and _InternalEvaluationMetrics.
+    
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: List of column names to exclude from aggregation.
+    :rtype: List[str]
+    """
+    # Get all metric values from EvaluationMetrics class
+    evaluation_metrics_values = [
+        getattr(EvaluationMetrics, attr) 
+        for attr in dir(EvaluationMetrics) 
+        if not attr.startswith('_') and isinstance(getattr(EvaluationMetrics, attr), str)
+    ]
+    
+    # Get all metric values from _InternalEvaluationMetrics class
+    internal_metrics_values = [
+        getattr(_InternalEvaluationMetrics, attr)
+        for attr in dir(_InternalEvaluationMetrics)
+        if not attr.startswith('_') and isinstance(getattr(_InternalEvaluationMetrics, attr), str)
+    ]
+    
+    # Combine all known metrics
+    all_known_metrics = evaluation_metrics_values + internal_metrics_values
+    
+    # Find token count columns that belong to known metrics
+    token_count_cols = [
+        col for col in df.columns 
+        if (col.endswith('input_token_count') or col.endswith('output_token_count') or col.endswith('total_token_count'))
+        and any(col.startswith(f"{metric}.") for metric in all_known_metrics)
+    ]
+    
+    return token_count_cols
+
+
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
@@ -322,6 +361,10 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     label_cols, label_defect_rates = _aggregate_label_defect_metrics(df)
     handled_columns.extend(label_cols)
     defect_rates.update(label_defect_rates)
+
+    # Exclude token count columns from aggregation for known SDK metrics
+    token_count_cols = _get_token_count_columns_to_exclude(df)
+    handled_columns.extend(token_count_cols)
 
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
@@ -998,9 +1041,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     eval_id: Optional[str] = kwargs.get("_eval_id")
     eval_run_id: Optional[str] = kwargs.get("_eval_run_id")
     eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("_eval_meta_data")
-    _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data)
-    if app_insights_configuration := kwargs.get("app_insights_configuration"):
-        emit_eval_result_events_to_app_insights(app_insights_configuration, result["evaluation_results_list"])
+    if kwargs.get("_convert_to_aoai_evaluation_result", False):
+        _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data)
+        if app_insights_configuration := kwargs.get("_app_insights_configuration"):
+            emit_eval_result_events_to_app_insights(app_insights_configuration, result["_evaluation_results_list"])
 
     if output_path:
         _write_output(output_path, result)
@@ -1059,13 +1103,11 @@ def _log_events_to_app_insights(
                     log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
                 
                 # Handle error from sample if present
-                if "sample" in event_data and len(event_data["sample"]) > 0:
-                    sample_item = event_data["sample"][0]
-                    if "error" in sample_item:
-                        error_dict = sample_item["error"]
-                        if "message" in error_dict:
-                            log_attributes["error.type"] = str(error_dict["message"])
-                
+                # Put the error message in error.type to follow OTel semantic conventions
+                error = event_data.get("sample", {}).get("error", {}).get("message", None)
+                if error:
+                    log_attributes["error.type"] = error
+
                 # Handle redteam attack properties if present
                 if "properties" in event_data:
                     properties = event_data["properties"]
@@ -1112,10 +1154,7 @@ def _log_events_to_app_insights(
                 log_record = LogRecord(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
-                    severity_text=None,
-                    severity_number=None,
                     body=EVALUATION_EVENT_NAME,
-                    resource=None,
                     attributes=log_attributes
                 )
                 
@@ -1134,7 +1173,7 @@ def _log_events_to_app_insights(
 def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConfig, results: List[Dict]) -> None:
     """
     Emit evaluation result events to App Insights using OpenTelemetry logging.
-    Each result is logged as an independent log record without any trace context.
+    Each result is logged as an independent log record, potentially including trace context.
     
     :param app_insights_config: App Insights configuration containing connection string
     :type app_insights_config: AppInsightsConfig
@@ -1900,11 +1939,11 @@ def _convert_results_to_aoai_evaluation_results(
         converted_rows.append(run_output_item)
 
     # Create converted results maintaining the same structure
-    results["evaluation_results_list"] = converted_rows
+    results["_evaluation_results_list"] = converted_rows
     logger.info(f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
     # Calculate summary statistics
     evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
-    results["evaluation_summary"] = evaluation_summary
+    results["_evaluation_summary"] = evaluation_summary
     logger.info(f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
 
 def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metric_list: List[str]) -> str:

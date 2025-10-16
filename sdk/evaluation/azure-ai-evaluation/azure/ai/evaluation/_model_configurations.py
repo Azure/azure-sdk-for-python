@@ -121,8 +121,8 @@ class EvaluationResult(TypedDict):
     metrics: Dict
     studio_url: NotRequired[str]
     rows: List[Dict]
-    evaluation_results_list: List[Dict]
-    evaluation_summary: Dict
+    _evaluation_results_list: List[Dict]
+    _evaluation_summary: Dict
 
 
 class AppInsightsConfig(TypedDict):
@@ -132,7 +132,5 @@ class AppInsightsConfig(TypedDict):
     agent_version: NotRequired[str]
     project_id: NotRequired[str]
     run_type: NotRequired[str]
-    response_id: NotRequired[str]
     schedule_type: NotRequired[str]
     run_id: NotRequired[str]
-    response_id: NotRequired[str]

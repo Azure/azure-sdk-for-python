@@ -466,7 +466,7 @@ async def format_llm_response(
     is_first_choice: bool,
     response_format: Optional[Mapping[str, Any]] = None,
     outputs: Optional[Mapping[str, Any]] = None,
-) -> Tuple[Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]], int, int]:
+) -> Tuple[Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]], int, int, int]:
     """
     Format LLM response
 
@@ -525,20 +525,23 @@ async def format_llm_response(
                     return
                 yield chunk.choices[0].delta.content
 
-    if not is_first_choice:
-        return response
-
     input_token_count = 0
     output_token_count = 0
+    total_token_count = 0
+
+    if not is_first_choice:
+        return response, input_token_count, output_token_count, total_token_count  # we don't actually use this code path since streaming is not used, so set token counts to 0
+
     is_json_format = isinstance(response_format, dict) and response_format.get("type") == "json_object"
     if isinstance(response, AsyncStream):
         if not is_json_format:
-            return format_stream(llm_response=response), input_token_count, output_token_count  # we don't actually use this code path since streaming is not used, so set token counts to 0
+            return format_stream(llm_response=response), input_token_count, output_token_count, total_token_count  # we don't actually use this code path since streaming is not used, so set token counts to 0
         content = "".join([item async for item in format_stream(llm_response=response)])
-        return format_choice(content), input_token_count, output_token_count  # we don't actually use this code path since streaming is not used, so set token counts to 0
+        return format_choice(content), input_token_count, output_token_count, total_token_count  # we don't actually use this code path since streaming is not used, so set token counts to 0
     else:
         input_token_count = response.usage.prompt_tokens if response.usage and response.usage.prompt_tokens else 0
         output_token_count = response.usage.completion_tokens if response.usage and response.usage.completion_tokens else 0
+        total_token_count = response.usage.total_tokens if response.usage and response.usage.total_tokens else 0
 
     # When calling function/tool, function_call/tool_call response will be returned as a field in message,
     # so we need return message directly. Otherwise, we only return content.
@@ -548,7 +551,7 @@ async def format_llm_response(
     else:
         response_content = getattr(response.choices[0].message, "content", "")
     result = format_choice(response_content)
-    return result, input_token_count, output_token_count
+    return result, input_token_count, output_token_count, total_token_count
 
 
 def openai_error_retryable(
