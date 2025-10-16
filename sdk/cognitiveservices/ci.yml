@@ -29,8 +29,6 @@ extends:
     ServiceDirectory: cognitiveservices
     TestTimeoutInMinutes: 150
     Artifacts:
-    - name: azure-ai-speech-transcription
-      safeName: azureaispeechtranscription
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
     - name: azure-mgmt-cognitiveservices

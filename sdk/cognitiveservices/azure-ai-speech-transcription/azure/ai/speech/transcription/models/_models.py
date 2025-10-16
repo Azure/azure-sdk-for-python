@@ -287,8 +287,8 @@ class TranscribeRequestContent(_Model):
 
 
 class TranscriptionDiarizationOptions(_Model):
-    """The Speaker Identification settings. Diarization settings must be specified to enable speaker
-    identification.
+    """The Speaker Diarization settings. Diarization settings must be specified to enable speaker
+    diarization.
 
     :ivar enabled: Gets or sets a value indicating whether speaker diarization is enabled.
     :vartype enabled: bool
