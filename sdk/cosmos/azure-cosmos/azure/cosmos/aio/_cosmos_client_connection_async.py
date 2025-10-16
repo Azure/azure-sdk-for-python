@@ -79,7 +79,7 @@ from ..partition_key import (
     _Empty,
     _build_partition_key_from_properties, _PartitionKeyType
 )
-from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
+from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy, _get_credential_lock
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
@@ -208,11 +208,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         suffix = kwargs.pop('user_agent_suffix', None)
         self._user_agent = _utils.get_user_agent_async(suffix)
 
-        credentials_policy = None
+        self.credentials_policy = None
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
-            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(
+            self.credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(
                 self.aad_credentials,
                 account_scope,
                 scope_override
@@ -224,7 +224,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
-            credentials_policy,
+            self.credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
@@ -308,6 +308,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self) -> None:
+        if self.credentials_policy:
+            await self.credentials_policy.setup()
+
         if 'database_account' not in self._setup_kwargs:
             database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs
