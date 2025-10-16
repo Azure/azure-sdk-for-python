@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import logging
 import re
 
@@ -749,8 +750,11 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         elif isinstance(val, (str, int, float, bool)):
             return str(val)
         else:
-            # Lists / dicts / other -> string for now
-            return str(val)
+            try:  # Attempt to JSON serialize lists/dicts
+                return json.dumps(val, ensure_ascii=False)
+            except (TypeError, ValueError):
+                # Fallback for unserializable objects
+                return str(val)
 
     LOGGER.info(
         f"AOAI: Building data source from {len(input_data_df)} rows with {len(column_mapping)} column mappings..."
