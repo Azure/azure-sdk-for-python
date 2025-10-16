@@ -65,6 +65,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         environment_variables: Optional[Dict[str, str]] = None,
         app_insights_enabled: Optional[bool] = None,
         allowed_instance_type: Optional[str] = None,
+        allowed_instance_types: Optional[str] = None,  # Handle plural form
+        default_instance_type: Optional[str] = None,  # Handle default instance type
         scoring_port: Optional[int] = None,
         scoring_path: Optional[str] = None,
         model_mount_path: Optional[str] = None,
@@ -73,10 +75,16 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         stage: Optional[str] = None,
         **kwargs
     ):
-        super().__init__(name=name, **kwargs)
+        # Extract kwargs that should be passed to parent
+        parent_kwargs = {}
+        for key in ['description', 'tags', 'properties', 'print_as_yaml', 'id', 'source_path', 'creation_context']:
+            if key in kwargs:
+                parent_kwargs[key] = kwargs.pop(key)
+        
+        super().__init__(name=name, **parent_kwargs)
         
         self.version = version
-        self.description = description
+        self.description = description  
         self.environment = environment
         self.request_settings = request_settings
         self.liveness_probe = liveness_probe
@@ -87,7 +95,14 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         self.code_configuration = code_configuration
         self.environment_variables = environment_variables
         self.app_insights_enabled = app_insights_enabled
-        self.allowed_instance_type = allowed_instance_type
+        
+        # Handle both singular and plural forms of allowed_instance_type
+        if allowed_instance_types and not allowed_instance_type:
+            self.allowed_instance_type = allowed_instance_types
+        else:
+            self.allowed_instance_type = allowed_instance_type
+        
+        self.default_instance_type = default_instance_type
         self.scoring_port = scoring_port
         self.scoring_path = scoring_path
         self.model_mount_path = model_mount_path
