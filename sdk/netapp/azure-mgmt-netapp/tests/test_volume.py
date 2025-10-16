@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import time
 import pytest
 from azure.mgmt.resource import ResourceManagementClient
@@ -81,9 +82,7 @@ def create_dp_volume(
         create_pool(client, rg, account_name, pool_name, location, False)
     print("Creating DP volume {0} in NetApp Account {1}".format(volume_name, account_name))
     # data protection and replication object
-    replication = ReplicationObject(
-        remote_volume_resource_id=source_volume.id, replication_schedule="_10minutely"
-    )
+    replication = ReplicationObject(remote_volume_resource_id=source_volume.id, replication_schedule="_10minutely")
 
     data_protection = VolumePropertiesDataProtection(replication=replication)
 
