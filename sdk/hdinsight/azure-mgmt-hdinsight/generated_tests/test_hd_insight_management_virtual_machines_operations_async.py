@@ -21,11 +21,11 @@ class TestHDInsightManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_hosts(self, resource_group):
+    async def test_virtual_machines_list_hosts(self, resource_group):
         response = await self.client.virtual_machines.list_hosts(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestHDInsightManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restart_hosts(self, resource_group):
+    async def test_virtual_machines_begin_restart_hosts(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_restart_hosts(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 hosts=["str"],
-                api_version="2024-08-01-preview",
+                api_version="2025-01-15-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -48,12 +48,12 @@ class TestHDInsightManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_async_operation_status(self, resource_group):
+    async def test_virtual_machines_get_async_operation_status(self, resource_group):
         response = await self.client.virtual_machines.get_async_operation_status(
             resource_group_name=resource_group.name,
             cluster_name="str",
             operation_id="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself

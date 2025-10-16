@@ -1,6 +1,7 @@
 ## Release History
 
-### 4.14.0b5 (Unreleased)
+### 4.14.0 (2025-10-13)
+This version and all future versions will require Python 3.9+.
 
 #### Features Added
 * Added ability to return a tuple of a DatabaseProxy/ContainerProxy with the associated database/container properties when creating or reading databases/containers through `return_properties` parameter. See [PR 41742](https://github.com/Azure/azure-sdk-for-python/pull/41742)
@@ -10,7 +11,8 @@
 * Changed `retry_write` from `bool` to `int` to match other retryable options. See [PR 43341](https://github.com/Azure/azure-sdk-for-python/pull/43341).
 
 #### Bugs Fixed
-
+* Fixed bug where exclusion list was not honored before falling back to global endpoint for multi-write region accounts. See[PR 43297](https://github.com/Azure/azure-sdk-for-python/pull/43297)
+ 
 #### Other Changes
 * Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
 * Reverted typehints to fix the mismatch issue. See [PR 43124](https://github.com/Azure/azure-sdk-for-python/pull/43124)
