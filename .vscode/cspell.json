@@ -1173,7 +1173,12 @@
         "nbconvert",
         "rollupby",
         "milli",
-        "resourceid"
+        "resourceid",
+        "Exceps",
+        "processiorate",
+        "processiobytessec",
+        "iowait",
+        "softirq"
       ]
     },
     {
@@ -1193,7 +1198,8 @@
         "psutil",
         "psycopg",
         "uninstrument",
-        "uninstrumented"
+        "uninstrumented",
+        "scputimes"
       ]
     },
     {
@@ -1203,6 +1209,8 @@
         "ikey",
         "msecs",
         "mycontainer",
+        "pclp",
+        "pcsp",
         "semconv",
         "updown",
         "uvicorn"

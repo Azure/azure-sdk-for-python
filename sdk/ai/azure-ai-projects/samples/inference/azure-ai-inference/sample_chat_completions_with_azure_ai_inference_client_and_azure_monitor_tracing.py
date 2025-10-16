@@ -64,7 +64,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         ) as client:
 
             response = client.complete(
-                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]  # type: ignore[arg-type]
             )
 
             print(response.choices[0].message.content)

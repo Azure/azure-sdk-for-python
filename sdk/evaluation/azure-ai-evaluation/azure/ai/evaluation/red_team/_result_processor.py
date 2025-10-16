@@ -19,7 +19,14 @@ from typing import Any, Dict, List, Optional, Union, cast
 import pandas as pd
 
 # Local imports
-from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult
+from ._red_team_result import (
+    RedTeamResult,
+    RedTeamingScorecard,
+    RedTeamingParameters,
+    ScanResult,
+    RedTeamRun,
+    OutputItemsList,
+)
 from ._attack_objective_generator import RiskCategory
 from ._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
 from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_attack_success
@@ -35,6 +42,7 @@ class ResultProcessor:
         application_scenario,
         risk_categories,
         ai_studio_url=None,
+        mlflow_integration=None,
     ):
         """Initialize the result processor.
 
@@ -43,18 +51,38 @@ class ResultProcessor:
         :param application_scenario: Application scenario description
         :param risk_categories: List of risk categories being evaluated
         :param ai_studio_url: URL to the AI Studio run
+        :param mlflow_integration: MLflow integration instance for reusing payload building logic
         """
         self.logger = logger
         self.attack_success_thresholds = attack_success_thresholds
         self.application_scenario = application_scenario
         self.risk_categories = risk_categories
         self.ai_studio_url = ai_studio_url
+        self.mlflow_integration = mlflow_integration
 
-    def to_red_team_result(self, red_team_info: Dict) -> RedTeamResult:
+    def to_red_team_result(
+        self,
+        red_team_info: Dict,
+        eval_run: Optional[Any] = None,
+        scan_name: Optional[str] = None,
+        run_id_override: Optional[str] = None,
+        eval_id_override: Optional[str] = None,
+        created_at_override: Optional[int] = None,
+    ) -> RedTeamResult:
         """Convert tracking data from red_team_info to the RedTeamResult format.
 
         :param red_team_info: Dictionary containing red team tracking information
         :type red_team_info: Dict
+        :param eval_run: The MLFlow run object (optional)
+        :type eval_run: Optional[Any]
+        :param scan_name: Name of the scan (optional)
+        :type scan_name: Optional[str]
+        :param run_id_override: Override for run ID (optional)
+        :type run_id_override: Optional[str]
+        :param eval_id_override: Override for eval ID (optional)
+        :type eval_id_override: Optional[str]
+        :param created_at_override: Override for created timestamp (optional)
+        :type created_at_override: Optional[int]
         :return: Structured red team agent results
         :rtype: RedTeamResult
         """
@@ -328,13 +356,42 @@ class ResultProcessor:
         self.logger.info("RedTeamResult creation completed")
 
         # Create the final result
-        red_team_result = ScanResult(
+        scan_result = ScanResult(
             scorecard=cast(RedTeamingScorecard, scorecard),
             parameters=cast(RedTeamingParameters, redteaming_parameters),
             attack_details=conversations,
-            output_items=ordered_output_items,
             studio_url=self.ai_studio_url or None,
         )
+
+        # Build AOAI-compatible summary and row results
+        # Create a temporary RedTeamResult to pass to _build_results_payload
+        red_team_result = RedTeamResult(
+            scan_result=scan_result,
+            attack_details=conversations,
+        )
+
+        results_payload = self._build_results_payload(
+            redteam_result=red_team_result,
+            output_items=ordered_output_items,
+            eval_run=eval_run,
+            red_team_info=red_team_info,
+            scan_name=scan_name,
+            run_id_override=run_id_override,
+            eval_id_override=eval_id_override,
+            created_at_override=created_at_override,
+        )
+
+        # Populate AOAI-compatible fields
+        red_team_result.scan_result["AOAI_Compatible_Summary"] = results_payload
+
+        # Extract all results from all output items
+        all_row_results = []
+        for output_item in ordered_output_items:
+            item_results = output_item.get("results", [])
+            if item_results:
+                all_row_results.extend(item_results)
+
+        red_team_result.scan_result["AOAI_Compatible_Row_Results"] = all_row_results if all_row_results else None
 
         return red_team_result
 
@@ -355,7 +412,7 @@ class ResultProcessor:
         results = self._build_output_result(
             conversation,
             eval_row,
-            sample_payload=sample_payload,
+            sample_payload=None,
         )
         output_item_id = self._resolve_output_item_id(
             eval_row, datasource_item_id, conversation_key, conversation_index
@@ -373,6 +430,7 @@ class ResultProcessor:
             "id": output_item_id,
             "created_time": created_time,
             "status": status,
+            "sample": sample_payload,
             "results": results,
         }
 
@@ -526,6 +584,7 @@ class ResultProcessor:
                 "name": risk_value,
                 "metric": risk_value,
                 "passed": passed,
+                "label": "pass" if passed is True else ("fail" if passed is False else None),
                 "score": score,
                 "threshold": threshold,
                 "reason": reason,
@@ -533,9 +592,6 @@ class ResultProcessor:
 
             if properties:
                 result_entry["properties"] = properties
-
-            if sample_payload:
-                result_entry["sample"] = sample_payload
 
             results.append(result_entry)
 
@@ -566,6 +622,7 @@ class ResultProcessor:
                 "name": risk_value,
                 "metric": risk_value,
                 "passed": None,
+                "label": None,
                 "score": None,
                 "threshold": attack_threshold,
                 "reason": fallback_reason,
@@ -573,9 +630,6 @@ class ResultProcessor:
 
             if properties:
                 fallback_result["properties"] = properties
-
-            if sample_payload:
-                fallback_result["sample"] = sample_payload
 
             results.append(fallback_result)
 
@@ -1001,3 +1055,264 @@ class ResultProcessor:
                     formatted_thresholds[risk_cat_value] = 3
 
         return formatted_thresholds
+
+    @staticmethod
+    def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
+        """Aggregate run-level pass/fail counts from individual output items."""
+
+        total = len(output_items)
+        passed = failed = errored = 0
+
+        for item in output_items:
+            item_status: Optional[bool] = None
+            for result in item.get("results", []):
+                result_properties = result.get("properties", {}) if isinstance(result, dict) else {}
+                attack_success = result_properties.get("attack_success")
+                if attack_success is True:
+                    item_status = False
+                    break
+                if attack_success is False:
+                    item_status = True
+                elif item_status is None and result.get("passed") is not None:
+                    item_status = bool(result.get("passed"))
+
+            if item_status is True:
+                passed += 1
+            elif item_status is False:
+                failed += 1
+            else:
+                errored += 1
+
+        return {
+            "total": total,
+            "passed": passed,
+            "failed": failed,
+            "errored": errored,
+        }
+
+    @staticmethod
+    def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Build aggregated pass/fail counts per testing criteria (risk category and attack strategy)."""
+
+        # Track by risk category (testing_criteria)
+        criteria: Dict[str, Dict[str, int]] = {}
+        # Track by attack strategy
+        strategy_criteria: Dict[str, Dict[str, int]] = {}
+
+        for item in output_items:
+            for result in item.get("results", []):
+                if not isinstance(result, dict):
+                    continue
+                name = result.get("name")
+                if not name:
+                    continue
+                passed_value = result.get("passed")
+                if passed_value is None:
+                    continue
+
+                # Track by risk category
+                bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0})
+                if passed_value:
+                    bucket["passed"] += 1
+                else:
+                    bucket["failed"] += 1
+
+                # Track by attack strategy from properties
+                properties = result.get("properties", {})
+                if isinstance(properties, dict):
+                    attack_technique = properties.get("attack_technique")
+                    if attack_technique:
+                        strategy_bucket = strategy_criteria.setdefault(
+                            str(attack_technique), {"passed": 0, "failed": 0}
+                        )
+                        if passed_value:
+                            strategy_bucket["passed"] += 1
+                        else:
+                            strategy_bucket["failed"] += 1
+
+        # Build results list with risk categories
+        results = [
+            {
+                "testing_criteria": criteria_name,
+                "passed": counts["passed"],
+                "failed": counts["failed"],
+            }
+            for criteria_name, counts in sorted(criteria.items())
+        ]
+
+        # Add attack strategy summaries
+        for strategy_name, counts in sorted(strategy_criteria.items()):
+            results.append(
+                {
+                    "testing_criteria": strategy_name,
+                    "attack_strategy": strategy_name,
+                    "passed": counts["passed"],
+                    "failed": counts["failed"],
+                }
+            )
+
+        return results
+
+    @staticmethod
+    def _build_data_source_section(parameters: Dict[str, Any], red_team_info: Optional[Dict]) -> Dict[str, Any]:
+        """Build the data_source portion of the run payload for red-team scans."""
+
+        attack_strategies: List[str] = []
+        if isinstance(red_team_info, dict):
+            attack_strategies = sorted(str(strategy) for strategy in red_team_info.keys())
+
+        item_generation_params: Dict[str, Any] = {"type": "red_team"}
+        if attack_strategies:
+            item_generation_params["attack_strategies"] = attack_strategies
+
+        # Attempt to infer turns from parameters if available
+        num_turns = parameters.get("max_turns") if isinstance(parameters, dict) else None
+        if isinstance(num_turns, int) and num_turns > 0:
+            item_generation_params["num_turns"] = num_turns
+
+        data_source: Dict[str, Any] = {"type": "azure_ai_red_team", "target": {}}
+        if item_generation_params:
+            data_source["item_generation_params"] = item_generation_params
+
+        return data_source
+
+    def _determine_run_status(
+        self,
+        scan_result: Dict[str, Any],
+        red_team_info: Optional[Dict],
+        output_items: List[Dict[str, Any]],
+    ) -> str:
+        """Determine the run-level status based on red team info status values."""
+
+        # Check if any tasks are still incomplete/failed
+        if isinstance(red_team_info, dict):
+            for risk_data in red_team_info.values():
+                if not isinstance(risk_data, dict):
+                    continue
+                for details in risk_data.values():
+                    if not isinstance(details, dict):
+                        continue
+                    status = details.get("status", "").lower()
+                    if status in ("incomplete", "failed", "timeout"):
+                        return "failed"
+                    elif status in ("running", "pending"):
+                        return "in_progress"
+
+        return "completed"
+
+    def _build_results_payload(
+        self,
+        redteam_result: RedTeamResult,
+        output_items: List[Dict[str, Any]],
+        eval_run: Optional[Any] = None,
+        red_team_info: Optional[Dict] = None,
+        scan_name: Optional[str] = None,
+        run_id_override: Optional[str] = None,
+        eval_id_override: Optional[str] = None,
+        created_at_override: Optional[int] = None,
+    ) -> RedTeamRun:
+        """Assemble the new structure for results.json with eval.run format.
+
+        :param redteam_result: The red team result containing scan data
+        :param output_items: List of output items containing results for each conversation
+        :param eval_run: The MLFlow run object (optional)
+        :param red_team_info: Red team tracking information (optional)
+        :param scan_name: Name of the scan (optional)
+        :param run_id_override: Override for run ID (optional)
+        :param eval_id_override: Override for eval ID (optional)
+        :param created_at_override: Override for created timestamp (optional)
+        :return: RedTeamRun payload
+        """
+
+        scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
+        scorecard = cast(Dict[str, Any], scan_result.get("scorecard") or {})
+        parameters = cast(Dict[str, Any], scan_result.get("parameters") or {})
+
+        run_id = run_id_override
+        eval_id = eval_id_override
+        run_name: Optional[str] = None
+        created_at = created_at_override
+
+        if eval_run is not None:
+            run_info = getattr(eval_run, "info", None)
+
+            if run_id is None:
+                candidate_run_id = (
+                    getattr(run_info, "run_id", None)
+                    or getattr(eval_run, "run_id", None)
+                    or getattr(eval_run, "id", None)
+                )
+                if candidate_run_id is not None:
+                    run_id = str(candidate_run_id)
+
+            if eval_id is None:
+                candidate_eval_id = (
+                    getattr(run_info, "experiment_id", None)
+                    or getattr(eval_run, "experiment_id", None)
+                    or getattr(eval_run, "eval_id", None)
+                )
+                if candidate_eval_id is not None:
+                    eval_id = str(candidate_eval_id)
+
+            if run_name is None:
+                candidate_run_name = (
+                    getattr(run_info, "run_name", None)
+                    or getattr(eval_run, "run_name", None)
+                    or getattr(eval_run, "display_name", None)
+                    or getattr(eval_run, "name", None)
+                )
+                if candidate_run_name is not None:
+                    run_name = str(candidate_run_name)
+
+            if created_at is None:
+                raw_created = (
+                    getattr(run_info, "created_time", None)
+                    or getattr(eval_run, "created_at", None)
+                    or getattr(eval_run, "created_time", None)
+                )
+                if isinstance(raw_created, datetime):
+                    created_at = int(raw_created.timestamp())
+                elif isinstance(raw_created, (int, float)):
+                    created_at = int(raw_created)
+                elif isinstance(raw_created, str):
+                    try:
+                        created_at = int(float(raw_created))
+                    except ValueError:
+                        created_at = None
+
+        if run_id is None:
+            run_id = str(uuid.uuid4())
+        if eval_id is None:
+            eval_id = str(uuid.uuid4())
+        if created_at is None:
+            created_at = int(datetime.now().timestamp())
+        if run_name is None:
+            run_name = scan_name or f"redteam-run-{run_id[:8]}"
+
+        result_count = self._compute_result_count(output_items)
+        per_testing_results = self._compute_per_testing_criteria(output_items)
+        data_source = self._build_data_source_section(parameters, red_team_info)
+        status = self._determine_run_status(scan_result, red_team_info, output_items)
+
+        list_wrapper: OutputItemsList = {
+            "object": "list",
+            "data": output_items,
+        }
+
+        run_payload: RedTeamRun = {
+            "object": "eval.run",
+            "id": run_id,
+            "eval_id": eval_id,
+            "created_at": created_at,
+            "status": status,
+            "name": run_name,
+            "report_url": scan_result.get("studio_url") or self.ai_studio_url,
+            "data_source": data_source,
+            "metadata": {},
+            "result_count": result_count,
+            "per_model_usage": [],
+            "per_testing_criteria_results": per_testing_results,
+            "output_items": list_wrapper,
+        }
+
+        return run_payload

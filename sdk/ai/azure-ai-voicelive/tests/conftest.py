@@ -5,13 +5,11 @@ Pytest configuration for Azure AI Voice Live SDK tests.
 import pytest
 import os
 import base64
-from devtools_testutils import (
-    test_proxy,
-    is_live
-)
+from devtools_testutils import test_proxy, is_live
 
 from devtools_testutils.helpers import locate_assets
 from pathlib import Path
+
 
 def pytest_runtest_setup(item):
     is_live_only_test_marked = bool([mark for mark in item.iter_markers(name="live_test_only")])
@@ -24,11 +22,13 @@ def pytest_runtest_setup(item):
         if is_live():
             pytest.skip("playback test only")
 
+
 @pytest.fixture
 def test_data_dir() -> Path:
     base = Path(locate_assets(current_test_file=Path(__file__)))  # ensure Path
     full = base / "python" / "sdk" / "ai" / "azure-ai-voicelive" / "tests" / "data"
     return full
+
 
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
