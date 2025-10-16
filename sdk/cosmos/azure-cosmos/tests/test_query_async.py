@@ -731,7 +731,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.created_db.delete_container(created_collection.id)
 
     async def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
-
         if args:
             if args[1].operation_type == 'SqlQuery':
                 ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.NOT_FOUND,

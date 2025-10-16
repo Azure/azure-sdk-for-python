@@ -184,7 +184,6 @@ def replace_item(container, doc_id):
     print('Replaced Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
 
 
-
 def replace_item_using_etags(container, doc_id):
     print('\n1.7 Replace an Item using Etags and IfMatch\n')
     # The use of etags and if-match/if-none-match options allows users to run conditional replace operations

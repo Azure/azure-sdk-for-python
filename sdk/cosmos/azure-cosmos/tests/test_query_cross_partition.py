@@ -619,8 +619,8 @@ class TestCrossPartitionQuery(unittest.TestCase):
         self.created_db.delete_container(created_collection.id)
 
     def _MockNextFunction(self):
-
         if self.count < len(self.payloads):
+            item, result = self.get_mock_result(self.payloads, self.count)
             item, result = self.get_mock_result(self.payloads, self.count)
             self.count += 1
             if item is not None:
