@@ -36,7 +36,7 @@
   - Added model `UserAssignedIdentity`
   - Added model `UserProperties`
   - Added enum `UserRole`
-  - Added model `UsersOperations`
+  - Added operation group `UsersOperations`
 
 ## 1.1.0b3 (2025-10-09)
 
