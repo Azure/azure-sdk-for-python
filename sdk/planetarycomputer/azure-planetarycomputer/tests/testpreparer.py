@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from azure.planetarycomputer import PlanetaryComputerClient
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 import functools
 
 
@@ -22,5 +22,9 @@ class PlanetaryComputerClientTestBase(AzureRecordedTestCase):
 
 
 PlanetaryComputerPreparer = functools.partial(
-    PowerShellPreparer, "planetarycomputer", planetarycomputer_endpoint="https://fake_planetarycomputer_endpoint.com"
+    EnvironmentVariableLoader,
+    "planetarycomputer",
+    planetarycomputer_endpoint="https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com",
+    planetarycomputer_collection_id="atl",
+    planetarycomputer_item_id="ga_m_3308420_se_16_060_20190912_20200102",
 )

@@ -1,0 +1,188 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Length": "2108",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 22:47:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "traceparent": "00-68c6e2f570aaadc266ed3534f162e9b7-c5395668d06b05cd-01",
+        "Vary": "Accept-Encoding",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "61b54e2c061744ae9313eb91f0b1e948"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "type": "Collection",
+        "links": [
+          {
+            "rel": "items",
+            "type": "application/geo+json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items"
+          },
+          {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "self",
+            "type": "application/json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+          }
+        ],
+        "title": "Collection atl",
+        "assets": {
+          "thumbnail": {
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/collection-assets/thumbnail/thumbnail.png",
+            "type": "image/png",
+            "roles": [
+              "thumbnail"
+            ],
+            "title": "Sentinel-2 preview"
+          }
+        },
+        "extent": {
+          "spatial": {
+            "bbox": [
+              [
+                -180,
+                -90,
+                180,
+                90
+              ]
+            ]
+          },
+          "temporal": {
+            "interval": [
+              [
+                "2015-06-27T10:25:31Z",
+                null
+              ]
+            ]
+          }
+        },
+        "license": "CC-BY-4.0",
+        "description": "Python SDK Sentinel-2 Collection - Updated for testing",
+        "item_assets": {
+          "red_20m": {
+            "gsd": 20,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data",
+              "reflectance"
+            ],
+            "title": "Red (band 4) - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "red",
+                "description": "Red (band 4)",
+                "center_wavelength": 0.665,
+                "full_width_half_max": 0.038
+              }
+            ]
+          },
+          "blue_20m": {
+            "gsd": 20,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data",
+              "reflectance"
+            ],
+            "title": "Blue (band 2) - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "blue",
+                "description": "Blue (band 2)",
+                "center_wavelength": 0.49,
+                "full_width_half_max": 0.098
+              }
+            ]
+          },
+          "green_20m": {
+            "gsd": 20,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data",
+              "reflectance"
+            ],
+            "title": "Green (band 3) - 20m",
+            "eo:bands": [
+              {
+                "name": "Sanitized",
+                "common_name": "green",
+                "description": "Green (band 3)",
+                "center_wavelength": 0.56,
+                "full_width_half_max": 0.045
+              }
+            ]
+          }
+        },
+        "stac_version": "1.0.0",
+        "msft:_created": "2025-10-15T21:13:49.6626675Z",
+        "msft:_updated": "2025-10-15T22:13:03.410106Z"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/sas/sign?api-version=2025-04-30-preview&href=https%3A%2F%2FSANITIZED_STORAGE.blob.core.windows.net%2Fatl-f616ab54%2Fcollection-assets%2Fthumbnail%2Fthumbnail.png",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Connection": "keep-alive",
+        "Content-Length": "379",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 22:47:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "ae05a1af57a14efeadbf82f4a26fbab8"
+      },
+      "ResponseBody": {
+        "msft:expiry": "2025-10-17T22:47:17Z",
+        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-16T22%3A40%3A02Z&ske=2025-10-23T22%3A39%3A02Z&sks=b&skv=2025-01-05&sig=Sanitized"
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -167,7 +167,7 @@ def manage_operations(client: PlanetaryComputerClient):
 def main():
     # Get configuration from environment
     endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip")
+    collection_id = os.environ.get("AZURE_COLLECTION_ID", "atl")
 
     # Get ingestion-specific configuration
     container_uri_1 = os.environ.get("AZURE_INGESTION_CONTAINER_URI_1")

@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
+import time
 import pytest
 from dotenv import load_dotenv
 from devtools_testutils import (
@@ -13,6 +14,13 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    is_live,
+)
+from azure.planetarycomputer.models import (
+    StacCollection,
+    StacExtensionSpatialExtent,
+    StacCollectionTemporalExtent,
+    StacExtensionExtent,
 )
 
 load_dotenv()
@@ -37,3 +45,273 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    
+    # Add URI sanitizer to sanitize the actual endpoint hostname
+    # The recordings will have hostnames sanitized with descriptive placeholders
+    # This allows playback mode to work regardless of the actual endpoint
+    from devtools_testutils import add_uri_regex_sanitizer
+    # Sanitize any geocatalog endpoint to a descriptive placeholder
+    # This regex matches: SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com
+    #                 or: endpoint.geocatalog.azure.com
+    #                 or: any similar geocatalog hostname
+    add_uri_regex_sanitizer(
+        regex=r"[a-zA-Z0-9\-\.]+\.geocatalog\.[a-zA-Z0-9\-\.]+\.azure\.com", 
+        value="SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com"
+    )
+    add_uri_regex_sanitizer(
+        regex=r"[a-zA-Z0-9\-\.]+\.geocatalog\.azure\.com", 
+        value="SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com"
+    )
+    
+    # Sanitize storage account URLs in request URIs
+    # This regex matches: vojrtgdatasa.blob.core.windows.net or any other storage account
+    add_uri_regex_sanitizer(
+        regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net", 
+        value="SANITIZED_STORAGE.blob.core.windows.net"
+    )
+    
+    # Sanitize storage account URLs in response bodies
+    # Use body regex sanitizer to replace storage account URLs in JSON response bodies
+    from devtools_testutils import add_body_regex_sanitizer
+    add_body_regex_sanitizer(
+        regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
+        value="SANITIZED_STORAGE.blob.core.windows.net"
+    )
+    
+    # Prevent double-sanitization of already-sanitized storage URLs in query parameters
+    # When playback mode re-applies sanitizers, this ensures SANITIZED_STORAGE stays as-is
+    add_uri_regex_sanitizer(
+        regex=r"SANITIZED_[A-Z_]*STORAGE\.blob\.core\.windows\.net",
+        value="SANITIZED_STORAGE.blob.core.windows.net"
+    )
+
+
+@pytest.fixture(scope="session")
+def planetarycomputer_endpoint():
+    """
+    Fixture providing the Planetary Computer endpoint.
+    In both live and playback modes, this returns the actual endpoint
+    because the recordings use the actual endpoint (with hostname sanitized).
+    """
+    return os.environ.get("PLANETARYCOMPUTER_ENDPOINT", "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com")
+
+
+@pytest.fixture(scope="session")
+def collection_id():
+    """Fixture providing the test collection ID."""
+    return os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "python-sdk-sentinel-2")
+
+
+@pytest.fixture(scope="session")
+def item_id():
+    """Fixture providing the test item ID."""
+    return os.environ.get("PLANETARYCOMPUTER_ITEM_ID", "S2A_MSIL2A_20230816T105631_N0509_R094_T30TUK_20230816T171602")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def test_collection(planetarycomputer_endpoint, collection_id):
+    """
+    Session-level fixture that ensures a test collection exists.
+    Creates the collection if it doesn't exist, reuses it if it does.
+    Does not delete the collection to optimize test performance.
+    In playback mode, this fixture does nothing (collection creation is in recordings).
+    """
+    # Skip fixture logic in playback mode
+    if not is_live():
+        return None
+    
+    from testpreparer import PlanetaryComputerClientTestBase
+    
+    test_base = PlanetaryComputerClientTestBase()
+    client = test_base.create_client(endpoint=planetarycomputer_endpoint)
+    
+    # Check if collection already exists
+    try:
+        existing_collection = client.stac.get_collection(collection_id=collection_id)
+        print(f"Collection '{collection_id}' already exists, reusing it.")
+        return existing_collection
+    except Exception as e:
+        print(f"Collection '{collection_id}' not found, creating it... Error: {e}")
+    
+    # Define collection spatial and temporal extents
+    spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-180, -90, 180, 90]])
+    temporal_extent = StacCollectionTemporalExtent(interval=[["2015-06-27T10:25:31Z", None]])
+    extent = StacExtensionExtent(spatial=spatial_extent, temporal=temporal_extent)
+    
+    # Create StacCollection object
+    collection_payload = StacCollection(
+        id=collection_id,
+        description="Python SDK Test Collection",
+        extent=extent,
+        license="CC-BY-4.0",
+        links=[],
+        stac_version="1.0.0",
+        title=f"Test Collection {collection_id}",
+        type="Collection",
+    )
+    
+    # Add item_assets as additional data
+    collection_data = collection_payload.as_dict()
+    collection_data["item_assets"] = {
+        "red_20m": {
+            "gsd": 20,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": ["data", "reflectance"],
+            "title": "Red (band 4) - 20m",
+        },
+        "green_20m": {
+            "gsd": 20,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": ["data", "reflectance"],
+            "title": "Green (band 3) - 20m",
+        },
+        "blue_20m": {
+            "gsd": 20,
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": ["data", "reflectance"],
+            "title": "Blue (band 2) - 20m",
+        },
+    }
+    
+    # Create the collection
+    try:
+        collection_create_operation = client.stac.begin_create_collection(body=collection_data, polling=True)
+        collection = collection_create_operation.result()
+        print(f"Successfully created collection '{collection_id}'.")
+        
+        # Wait for collection to be available
+        time.sleep(30)
+        
+        return client.stac.get_collection(collection_id=collection_id)
+    except Exception as create_error:
+        # If creation fails (e.g., already exists), try to get it
+        print(f"Failed to create collection: {create_error}. Attempting to get existing collection...")
+        try:
+            existing_collection = client.stac.get_collection(collection_id=collection_id)
+            print(f"Retrieved existing collection '{collection_id}'.")
+            return existing_collection
+        except Exception as get_error:
+            print(f"Failed to retrieve collection: {get_error}")
+            raise
+
+
+@pytest.fixture(scope="session")
+def ingestion_source(planetarycomputer_endpoint, collection_id, test_collection):
+    """
+    Session-level fixture that ensures an ingestion source exists.
+    Ingestion sources are required for running ingestion jobs.
+    In playback mode, this fixture does nothing.
+    """
+    # Skip fixture logic in playback mode
+    if not is_live():
+        return None
+    
+    from testpreparer import PlanetaryComputerClientTestBase
+    
+    test_base = PlanetaryComputerClientTestBase()
+    client = test_base.create_client(endpoint=planetarycomputer_endpoint)
+    
+    # Check if ingestion source exists
+    try:
+        sources = client.ingestion.list_ingestion_sources(collection_id=collection_id)
+        if sources and len(list(sources)) > 0:
+            source = list(sources)[0]
+            print(f"Ingestion source '{source.id}' already exists, reusing it.")
+            return source
+    except Exception:
+        pass
+    
+    # Create ingestion source if needed
+    # This is a placeholder - actual implementation depends on ingestion API
+    print("Ingestion source fixture not yet implemented")
+    return None
+
+
+@pytest.fixture(scope="session")
+def completed_ingestion_run(planetarycomputer_endpoint, collection_id, test_collection, ingestion_source):
+    """
+    Session-level fixture that ensures at least 5 items exist in the collection.
+    If items exist, skips ingestion. Otherwise, runs ingestion and waits for completion.
+    This fixture is used by tests that require existing data (samples 02-06).
+    In playback mode, this fixture does nothing.
+    """
+    # Skip fixture logic in playback mode
+    if not is_live():
+        return None
+    
+    from testpreparer import PlanetaryComputerClientTestBase
+    
+    test_base = PlanetaryComputerClientTestBase()
+    client = test_base.create_client(endpoint=planetarycomputer_endpoint)
+    
+    # Check if collection already has enough items
+    try:
+        items = client.stac.list_items(collection_id=collection_id)
+        if items.features and len(items.features) >= 5:
+            print(f"Collection '{collection_id}' already has {len(items.features)} items, skipping ingestion.")
+            return True
+    except Exception:
+        pass
+    
+    # Run ingestion if needed
+    # This is a placeholder - actual implementation depends on ingestion API
+    print("Ingestion run fixture not yet implemented - tests may need existing data")
+    return False
+
+
+@pytest.fixture(scope="session")
+def collection_with_thumbnail(planetarycomputer_endpoint, collection_id, test_collection):
+    """
+    Session-level fixture that ensures the test collection has a thumbnail asset.
+    Required for SAS tests that sign asset HREFs.
+    In playback mode, this fixture does nothing.
+    """
+    # Skip fixture logic in playback mode
+    if not is_live():
+        return None
+    
+    from testpreparer import PlanetaryComputerClientTestBase
+    from io import BytesIO
+    import httpx
+    
+    test_base = PlanetaryComputerClientTestBase()
+    client = test_base.create_client(endpoint=planetarycomputer_endpoint)
+    
+    # Check if thumbnail already exists
+    try:
+        collection = client.stac.get_collection(collection_id=collection_id)
+        if collection.assets and "thumbnail" in collection.assets:
+            print(f"Collection '{collection_id}' already has thumbnail asset.")
+            return collection
+    except Exception:
+        pass
+    
+    # Create thumbnail asset
+    thumbnail_url = "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-2.png"
+    data = {
+        "key": "thumbnail",
+        "href": thumbnail_url,
+        "type": "image/png",
+        "roles": ["thumbnail"],
+        "title": "Sentinel-2 preview",
+    }
+    
+    try:
+        # Download thumbnail
+        thumbnail_response = httpx.get(thumbnail_url)
+        thumbnail_bytes = BytesIO(thumbnail_response.content)
+        thumbnail_tuple = ("thumbnail.png", thumbnail_bytes)
+        
+        # Create or replace collection asset
+        client.stac.create_or_replace_collection_asset(
+            collection_id=collection_id,
+            asset_id="thumbnail",
+            body={"data": data, "file": thumbnail_tuple}
+        )
+        
+        print(f"Created thumbnail asset for collection '{collection_id}'.")
+    except Exception as e:
+        print(f"Failed to create thumbnail asset: {e}")
+    
+    return client.stac.get_collection(collection_id=collection_id)
+
