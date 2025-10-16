@@ -140,8 +140,6 @@ class TestBuildSchemaTreeFromPaths:
         schema = _build_schema_tree_from_paths(paths, force_leaf_type="object")
 
         assert schema["type"] == "object"
-        assert schema["properties"] == {}
-        assert schema["required"] == []
 
     def test_mixed_depth_paths(self):
         """Test building schema with paths of different depths."""

@@ -595,13 +595,6 @@ def _build_schema_tree_from_paths(
             return {"type": force_leaf_type}
         props = {}
         required = []
-        if not children:
-            # Leaf node
-            return {
-                "type": "object",
-                "properties": props,
-                "required": required,
-            }
         for name, child in children.items():
             props[name] = to_schema(child)
             required.append(name)
