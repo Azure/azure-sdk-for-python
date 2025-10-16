@@ -408,10 +408,11 @@
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
-# ServiceOwners: @MikeyMCZ
+# ServiceOwners: @MikeyMCZ @Han-msft
 # ServiceLabel: %Cognitive - Translator
 
 # PRLabel: %Cognitive - Translator
+/sdk/translation/azure-ai-translation-document/                      @Han-msft
 /sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
