@@ -383,14 +383,3 @@ class GetManifestResult:
         self.manifest = cast(Mapping[str, Any], kwargs.get("manifest"))
         self.media_type = str(kwargs.get("media_type"))
         self.digest = str(kwargs.get("digest"))
-
-
-class DigestValidationError(ValueError):
-    """Thrown when a manifest digest validation fails."""
-
-    message: str
-    """Message for caller describing the reason for the failure."""
-
-    def __init__(self, message: str) -> None:
-        self.message = message
-        super().__init__(self.message)
