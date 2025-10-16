@@ -15,15 +15,15 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeLogAnalyticsOperationGroupOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_log_analytics_operation_group_begin_export_request_rate_by_interval(self, resource_group):
+    async def test_log_analytics_begin_export_request_rate_by_interval(self, resource_group):
         response = await (
-            await self.client.log_analytics_operation_group.begin_export_request_rate_by_interval(
+            await self.client.log_analytics.begin_export_request_rate_by_interval(
                 location="str",
                 parameters={
                     "blobContainerSasUri": "str",
@@ -44,9 +44,9 @@ class TestComputeLogAnalyticsOperationGroupOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_log_analytics_operation_group_begin_export_throttled_requests(self, resource_group):
+    async def test_log_analytics_begin_export_throttled_requests(self, resource_group):
         response = await (
-            await self.client.log_analytics_operation_group.begin_export_throttled_requests(
+            await self.client.log_analytics.begin_export_throttled_requests(
                 location="str",
                 parameters={
                     "blobContainerSasUri": "str",

@@ -15,17 +15,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeRollingUpgradeStatusInfosOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeUsageOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_rolling_upgrade_status_infos_get_latest(self, resource_group):
-        response = await self.client.rolling_upgrade_status_infos.get_latest(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
+    async def test_usage_list(self, resource_group):
+        response = self.client.usage.list(
+            location="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

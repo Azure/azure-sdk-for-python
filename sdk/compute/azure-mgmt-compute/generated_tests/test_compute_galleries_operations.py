@@ -156,28 +156,3 @@ class TestComputeGalleriesOperations(AzureMgmtRecordedTestCase):
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_galleries_list_by_artifact_name(self, resource_group):
-        response = self.client.galleries.list_by_artifact_name(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            artifact_type="str",
-            artifact_name="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_galleries_begin_gallery_sharing_profile_update(self, resource_group):
-        response = self.client.galleries.begin_gallery_sharing_profile_update(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            sharing_update={"operationType": "str", "groups": [{"ids": ["str"], "type": "str"}]},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...

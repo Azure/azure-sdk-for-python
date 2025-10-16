@@ -135,3 +135,72 @@ class TestComputeDiskAccessesOperations(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_disk_accesses_get_a_private_endpoint_connection(self, resource_group):
+        response = self.client.disk_accesses.get_a_private_endpoint_connection(
+            resource_group_name=resource_group.name,
+            disk_access_name="str",
+            private_endpoint_connection_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_disk_accesses_begin_update_a_private_endpoint_connection(self, resource_group):
+        response = self.client.disk_accesses.begin_update_a_private_endpoint_connection(
+            resource_group_name=resource_group.name,
+            disk_access_name="str",
+            private_endpoint_connection_name="str",
+            private_endpoint_connection={
+                "id": "str",
+                "name": "str",
+                "properties": {
+                    "privateLinkServiceConnectionState": {
+                        "actionsRequired": "str",
+                        "description": "str",
+                        "status": "str",
+                    },
+                    "privateEndpoint": {"id": "str"},
+                    "provisioningState": "str",
+                },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_disk_accesses_begin_delete_a_private_endpoint_connection(self, resource_group):
+        response = self.client.disk_accesses.begin_delete_a_private_endpoint_connection(
+            resource_group_name=resource_group.name,
+            disk_access_name="str",
+            private_endpoint_connection_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_disk_accesses_list_private_endpoint_connections(self, resource_group):
+        response = self.client.disk_accesses.list_private_endpoint_connections(
+            resource_group_name=resource_group.name,
+            disk_access_name="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...

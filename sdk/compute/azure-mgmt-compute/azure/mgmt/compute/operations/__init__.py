@@ -14,9 +14,7 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import VirtualMachineScaleSetsOperations  # type: ignore
-from ._operations import RollingUpgradeStatusInfosOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetExtensionsOperations  # type: ignore
-from ._operations import VirtualMachineScaleSetVMSOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetVMExtensionsOperations  # type: ignore
 from ._operations import VirtualMachinesOperations  # type: ignore
 from ._operations import VirtualMachineExtensionsOperations  # type: ignore
@@ -25,7 +23,6 @@ from ._operations import AvailabilitySetsOperations  # type: ignore
 from ._operations import ProximityPlacementGroupsOperations  # type: ignore
 from ._operations import DedicatedHostGroupsOperations  # type: ignore
 from ._operations import DedicatedHostsOperations  # type: ignore
-from ._operations import SshPublicKeyResourcesOperations  # type: ignore
 from ._operations import ImagesOperations  # type: ignore
 from ._operations import RestorePointCollectionsOperations  # type: ignore
 from ._operations import RestorePointsOperations  # type: ignore
@@ -33,17 +30,8 @@ from ._operations import CapacityReservationGroupsOperations  # type: ignore
 from ._operations import CapacityReservationsOperations  # type: ignore
 from ._operations import VirtualMachineRunCommandsOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetVMRunCommandsOperations  # type: ignore
-from ._operations import UsageOperationGroupOperations  # type: ignore
-from ._operations import VirtualMachineSizesOperationGroupOperations  # type: ignore
-from ._operations import VirtualMachineScaleSetsOperationGroupOperations  # type: ignore
-from ._operations import VirtualMachinesOperationGroupOperations  # type: ignore
-from ._operations import VirtualMachineImagesEdgeZoneOperationGroupOperations  # type: ignore
-from ._operations import VirtualMachineImagesOperationGroupOperations  # type: ignore
-from ._operations import LogAnalyticsOperationGroupOperations  # type: ignore
-from ._operations import VirtualMachineRunCommandsOperationGroupOperations  # type: ignore
 from ._operations import DisksOperations  # type: ignore
 from ._operations import DiskAccessesOperations  # type: ignore
-from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import DiskEncryptionSetsOperations  # type: ignore
 from ._operations import SnapshotsOperations  # type: ignore
 from ._operations import GalleriesOperations  # type: ignore
@@ -60,7 +48,17 @@ from ._operations import CommunityGalleriesOperations  # type: ignore
 from ._operations import CommunityGalleryImagesOperations  # type: ignore
 from ._operations import CommunityGalleryImageVersionsOperations  # type: ignore
 from ._operations import ResourceSkusOperations  # type: ignore
+from ._operations import VirtualMachineScaleSetRollingUpgradesOperations  # type: ignore
+from ._operations import VirtualMachineScaleSetVMsOperations  # type: ignore
+from ._operations import SshPublicKeysOperations  # type: ignore
+from ._operations import UsageOperations  # type: ignore
+from ._operations import VirtualMachineSizesOperations  # type: ignore
+from ._operations import VirtualMachineImagesEdgeZoneOperations  # type: ignore
+from ._operations import VirtualMachineImagesOperations  # type: ignore
+from ._operations import LogAnalyticsOperations  # type: ignore
 from ._operations import DiskRestorePointOperations  # type: ignore
+from ._operations import SoftDeletedResourceOperations  # type: ignore
+from ._operations import GallerySharingProfileOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -69,9 +67,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "VirtualMachineScaleSetsOperations",
-    "RollingUpgradeStatusInfosOperations",
     "VirtualMachineScaleSetExtensionsOperations",
-    "VirtualMachineScaleSetVMSOperations",
     "VirtualMachineScaleSetVMExtensionsOperations",
     "VirtualMachinesOperations",
     "VirtualMachineExtensionsOperations",
@@ -80,7 +76,6 @@ __all__ = [
     "ProximityPlacementGroupsOperations",
     "DedicatedHostGroupsOperations",
     "DedicatedHostsOperations",
-    "SshPublicKeyResourcesOperations",
     "ImagesOperations",
     "RestorePointCollectionsOperations",
     "RestorePointsOperations",
@@ -88,17 +83,8 @@ __all__ = [
     "CapacityReservationsOperations",
     "VirtualMachineRunCommandsOperations",
     "VirtualMachineScaleSetVMRunCommandsOperations",
-    "UsageOperationGroupOperations",
-    "VirtualMachineSizesOperationGroupOperations",
-    "VirtualMachineScaleSetsOperationGroupOperations",
-    "VirtualMachinesOperationGroupOperations",
-    "VirtualMachineImagesEdgeZoneOperationGroupOperations",
-    "VirtualMachineImagesOperationGroupOperations",
-    "LogAnalyticsOperationGroupOperations",
-    "VirtualMachineRunCommandsOperationGroupOperations",
     "DisksOperations",
     "DiskAccessesOperations",
-    "PrivateEndpointConnectionsOperations",
     "DiskEncryptionSetsOperations",
     "SnapshotsOperations",
     "GalleriesOperations",
@@ -115,7 +101,17 @@ __all__ = [
     "CommunityGalleryImagesOperations",
     "CommunityGalleryImageVersionsOperations",
     "ResourceSkusOperations",
+    "VirtualMachineScaleSetRollingUpgradesOperations",
+    "VirtualMachineScaleSetVMsOperations",
+    "SshPublicKeysOperations",
+    "UsageOperations",
+    "VirtualMachineSizesOperations",
+    "VirtualMachineImagesEdgeZoneOperations",
+    "VirtualMachineImagesOperations",
+    "LogAnalyticsOperations",
     "DiskRestorePointOperations",
+    "SoftDeletedResourceOperations",
+    "GallerySharingProfileOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

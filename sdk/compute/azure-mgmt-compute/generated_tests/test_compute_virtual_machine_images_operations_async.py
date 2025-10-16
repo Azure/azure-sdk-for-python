@@ -15,14 +15,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeVirtualMachineImagesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_operation_group_list_publishers(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone_operation_group.list_publishers(
+    async def test_virtual_machine_images_list_by_edge_zone(self, resource_group):
+        response = await self.client.virtual_machine_images.list_by_edge_zone(
             location="str",
             edge_zone="str",
         )
@@ -32,10 +32,19 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_operation_group_list_offers(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone_operation_group.list_offers(
+    async def test_virtual_machine_images_list_publishers(self, resource_group):
+        response = await self.client.virtual_machine_images.list_publishers(
             location="str",
-            edge_zone="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_images_list_offers(self, resource_group):
+        response = await self.client.virtual_machine_images.list_offers(
+            location="str",
             publisher_name="str",
         )
 
@@ -44,10 +53,9 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_operation_group_list_skus(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone_operation_group.list_skus(
+    async def test_virtual_machine_images_list_skus(self, resource_group):
+        response = await self.client.virtual_machine_images.list_skus(
             location="str",
-            edge_zone="str",
             publisher_name="str",
             offer="str",
         )
@@ -57,10 +65,9 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_operation_group_list(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone_operation_group.list(
+    async def test_virtual_machine_images_list(self, resource_group):
+        response = await self.client.virtual_machine_images.list(
             location="str",
-            edge_zone="str",
             publisher_name="str",
             offer="str",
             skus="str",
@@ -71,10 +78,23 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_operation_group_get(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone_operation_group.get(
+    async def test_virtual_machine_images_list_with_properties(self, resource_group):
+        response = await self.client.virtual_machine_images.list_with_properties(
             location="str",
-            edge_zone="str",
+            publisher_name="str",
+            offer="str",
+            skus="str",
+            expand="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_images_get(self, resource_group):
+        response = await self.client.virtual_machine_images.get(
+            location="str",
             publisher_name="str",
             offer="str",
             skus="str",

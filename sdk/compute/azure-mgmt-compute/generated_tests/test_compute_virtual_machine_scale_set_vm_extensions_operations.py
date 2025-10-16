@@ -138,6 +138,6 @@ class TestComputeVirtualMachineScaleSetVMExtensionsOperations(AzureMgmtRecordedT
             vm_scale_set_name="str",
             instance_id="str",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...

@@ -15,15 +15,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeVirtualMachineSizesOperationGroupOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeSoftDeletedResourceOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_sizes_operation_group_list(self, resource_group):
-        response = self.client.virtual_machine_sizes_operation_group.list(
-            location="str",
+    async def test_soft_deleted_resource_list_by_artifact_name(self, resource_group):
+        response = self.client.soft_deleted_resource.list_by_artifact_name(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            artifact_type="str",
+            artifact_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -14,17 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeRollingUpgradeStatusInfosOperations(AzureMgmtRecordedTestCase):
+class TestComputeVirtualMachineSizesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_rolling_upgrade_status_infos_get_latest(self, resource_group):
-        response = self.client.rolling_upgrade_status_infos.get_latest(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
+    def test_virtual_machine_sizes_list(self, resource_group):
+        response = self.client.virtual_machine_sizes.list(
+            location="str",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

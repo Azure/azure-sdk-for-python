@@ -143,10 +143,10 @@ class TestComputeVirtualMachineExtensionsOperationsAsync(AzureMgmtRecordedTestCa
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_virtual_machine_extensions_list(self, resource_group):
-        response = self.client.virtual_machine_extensions.list(
+        response = await self.client.virtual_machine_extensions.list(
             resource_group_name=resource_group.name,
             vm_name="str",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

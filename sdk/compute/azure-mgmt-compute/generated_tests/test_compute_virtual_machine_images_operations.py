@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeVirtualMachineImagesOperationGroupOperations(AzureMgmtRecordedTestCase):
+class TestComputeVirtualMachineImagesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_operation_group_list_by_edge_zone(self, resource_group):
-        response = self.client.virtual_machine_images_operation_group.list_by_edge_zone(
+    def test_virtual_machine_images_list_by_edge_zone(self, resource_group):
+        response = self.client.virtual_machine_images.list_by_edge_zone(
             location="str",
             edge_zone="str",
         )
@@ -31,8 +31,8 @@ class TestComputeVirtualMachineImagesOperationGroupOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_operation_group_list_publishers(self, resource_group):
-        response = self.client.virtual_machine_images_operation_group.list_publishers(
+    def test_virtual_machine_images_list_publishers(self, resource_group):
+        response = self.client.virtual_machine_images.list_publishers(
             location="str",
         )
 
@@ -41,8 +41,8 @@ class TestComputeVirtualMachineImagesOperationGroupOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_operation_group_list_offers(self, resource_group):
-        response = self.client.virtual_machine_images_operation_group.list_offers(
+    def test_virtual_machine_images_list_offers(self, resource_group):
+        response = self.client.virtual_machine_images.list_offers(
             location="str",
             publisher_name="str",
         )
@@ -52,8 +52,8 @@ class TestComputeVirtualMachineImagesOperationGroupOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_operation_group_list_skus(self, resource_group):
-        response = self.client.virtual_machine_images_operation_group.list_skus(
+    def test_virtual_machine_images_list_skus(self, resource_group):
+        response = self.client.virtual_machine_images.list_skus(
             location="str",
             publisher_name="str",
             offer="str",
@@ -64,8 +64,8 @@ class TestComputeVirtualMachineImagesOperationGroupOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_operation_group_list(self, resource_group):
-        response = self.client.virtual_machine_images_operation_group.list(
+    def test_virtual_machine_images_list(self, resource_group):
+        response = self.client.virtual_machine_images.list(
             location="str",
             publisher_name="str",
             offer="str",
@@ -77,8 +77,8 @@ class TestComputeVirtualMachineImagesOperationGroupOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_operation_group_list_with_properties(self, resource_group):
-        response = self.client.virtual_machine_images_operation_group.list_with_properties(
+    def test_virtual_machine_images_list_with_properties(self, resource_group):
+        response = self.client.virtual_machine_images.list_with_properties(
             location="str",
             publisher_name="str",
             offer="str",
@@ -91,8 +91,8 @@ class TestComputeVirtualMachineImagesOperationGroupOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_operation_group_get(self, resource_group):
-        response = self.client.virtual_machine_images_operation_group.get(
+    def test_virtual_machine_images_get(self, resource_group):
+        response = self.client.virtual_machine_images.get(
             location="str",
             publisher_name="str",
             offer="str",

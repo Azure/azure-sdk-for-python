@@ -140,6 +140,6 @@ class TestComputeVirtualMachineExtensionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_name="str",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...

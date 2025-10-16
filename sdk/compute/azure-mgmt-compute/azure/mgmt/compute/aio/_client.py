@@ -39,35 +39,33 @@ from .operations import (
     GalleryImagesOperations,
     GalleryInVMAccessControlProfileVersionsOperations,
     GalleryInVMAccessControlProfilesOperations,
+    GallerySharingProfileOperations,
     ImagesOperations,
-    LogAnalyticsOperationGroupOperations,
+    LogAnalyticsOperations,
     Operations,
-    PrivateEndpointConnectionsOperations,
     ProximityPlacementGroupsOperations,
     ResourceSkusOperations,
     RestorePointCollectionsOperations,
     RestorePointsOperations,
-    RollingUpgradeStatusInfosOperations,
     SharedGalleriesOperations,
     SharedGalleryImageVersionsOperations,
     SharedGalleryImagesOperations,
     SnapshotsOperations,
-    SshPublicKeyResourcesOperations,
-    UsageOperationGroupOperations,
+    SoftDeletedResourceOperations,
+    SshPublicKeysOperations,
+    UsageOperations,
     VirtualMachineExtensionImagesOperations,
     VirtualMachineExtensionsOperations,
-    VirtualMachineImagesEdgeZoneOperationGroupOperations,
-    VirtualMachineImagesOperationGroupOperations,
-    VirtualMachineRunCommandsOperationGroupOperations,
+    VirtualMachineImagesEdgeZoneOperations,
+    VirtualMachineImagesOperations,
     VirtualMachineRunCommandsOperations,
     VirtualMachineScaleSetExtensionsOperations,
+    VirtualMachineScaleSetRollingUpgradesOperations,
     VirtualMachineScaleSetVMExtensionsOperations,
     VirtualMachineScaleSetVMRunCommandsOperations,
-    VirtualMachineScaleSetVMSOperations,
-    VirtualMachineScaleSetsOperationGroupOperations,
+    VirtualMachineScaleSetVMsOperations,
     VirtualMachineScaleSetsOperations,
-    VirtualMachineSizesOperationGroupOperations,
-    VirtualMachinesOperationGroupOperations,
+    VirtualMachineSizesOperations,
     VirtualMachinesOperations,
 )
 
@@ -84,16 +82,10 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSetsOperations operations
     :vartype virtual_machine_scale_sets:
      azure.mgmt.compute.aio.operations.VirtualMachineScaleSetsOperations
-    :ivar rolling_upgrade_status_infos: RollingUpgradeStatusInfosOperations operations
-    :vartype rolling_upgrade_status_infos:
-     azure.mgmt.compute.aio.operations.RollingUpgradeStatusInfosOperations
     :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensionsOperations
      operations
     :vartype virtual_machine_scale_set_extensions:
      azure.mgmt.compute.aio.operations.VirtualMachineScaleSetExtensionsOperations
-    :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMSOperations operations
-    :vartype virtual_machine_scale_set_vms:
-     azure.mgmt.compute.aio.operations.VirtualMachineScaleSetVMSOperations
     :ivar virtual_machine_scale_set_vm_extensions: VirtualMachineScaleSetVMExtensionsOperations
      operations
     :vartype virtual_machine_scale_set_vm_extensions:
@@ -115,9 +107,6 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
     :vartype dedicated_host_groups: azure.mgmt.compute.aio.operations.DedicatedHostGroupsOperations
     :ivar dedicated_hosts: DedicatedHostsOperations operations
     :vartype dedicated_hosts: azure.mgmt.compute.aio.operations.DedicatedHostsOperations
-    :ivar ssh_public_key_resources: SshPublicKeyResourcesOperations operations
-    :vartype ssh_public_key_resources:
-     azure.mgmt.compute.aio.operations.SshPublicKeyResourcesOperations
     :ivar images: ImagesOperations operations
     :vartype images: azure.mgmt.compute.aio.operations.ImagesOperations
     :ivar restore_point_collections: RestorePointCollectionsOperations operations
@@ -138,41 +127,10 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
      operations
     :vartype virtual_machine_scale_set_vm_run_commands:
      azure.mgmt.compute.aio.operations.VirtualMachineScaleSetVMRunCommandsOperations
-    :ivar usage_operation_group: UsageOperationGroupOperations operations
-    :vartype usage_operation_group: azure.mgmt.compute.aio.operations.UsageOperationGroupOperations
-    :ivar virtual_machine_sizes_operation_group: VirtualMachineSizesOperationGroupOperations
-     operations
-    :vartype virtual_machine_sizes_operation_group:
-     azure.mgmt.compute.aio.operations.VirtualMachineSizesOperationGroupOperations
-    :ivar virtual_machine_scale_sets_operation_group:
-     VirtualMachineScaleSetsOperationGroupOperations operations
-    :vartype virtual_machine_scale_sets_operation_group:
-     azure.mgmt.compute.aio.operations.VirtualMachineScaleSetsOperationGroupOperations
-    :ivar virtual_machines_operation_group: VirtualMachinesOperationGroupOperations operations
-    :vartype virtual_machines_operation_group:
-     azure.mgmt.compute.aio.operations.VirtualMachinesOperationGroupOperations
-    :ivar virtual_machine_images_edge_zone_operation_group:
-     VirtualMachineImagesEdgeZoneOperationGroupOperations operations
-    :vartype virtual_machine_images_edge_zone_operation_group:
-     azure.mgmt.compute.aio.operations.VirtualMachineImagesEdgeZoneOperationGroupOperations
-    :ivar virtual_machine_images_operation_group: VirtualMachineImagesOperationGroupOperations
-     operations
-    :vartype virtual_machine_images_operation_group:
-     azure.mgmt.compute.aio.operations.VirtualMachineImagesOperationGroupOperations
-    :ivar log_analytics_operation_group: LogAnalyticsOperationGroupOperations operations
-    :vartype log_analytics_operation_group:
-     azure.mgmt.compute.aio.operations.LogAnalyticsOperationGroupOperations
-    :ivar virtual_machine_run_commands_operation_group:
-     VirtualMachineRunCommandsOperationGroupOperations operations
-    :vartype virtual_machine_run_commands_operation_group:
-     azure.mgmt.compute.aio.operations.VirtualMachineRunCommandsOperationGroupOperations
     :ivar disks: DisksOperations operations
     :vartype disks: azure.mgmt.compute.aio.operations.DisksOperations
     :ivar disk_accesses: DiskAccessesOperations operations
     :vartype disk_accesses: azure.mgmt.compute.aio.operations.DiskAccessesOperations
-    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections:
-     azure.mgmt.compute.aio.operations.PrivateEndpointConnectionsOperations
     :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
     :vartype disk_encryption_sets: azure.mgmt.compute.aio.operations.DiskEncryptionSetsOperations
     :ivar snapshots: SnapshotsOperations operations
@@ -214,8 +172,34 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.compute.aio.operations.CommunityGalleryImageVersionsOperations
     :ivar resource_skus: ResourceSkusOperations operations
     :vartype resource_skus: azure.mgmt.compute.aio.operations.ResourceSkusOperations
+    :ivar virtual_machine_scale_set_rolling_upgrades:
+     VirtualMachineScaleSetRollingUpgradesOperations operations
+    :vartype virtual_machine_scale_set_rolling_upgrades:
+     azure.mgmt.compute.aio.operations.VirtualMachineScaleSetRollingUpgradesOperations
+    :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMsOperations operations
+    :vartype virtual_machine_scale_set_vms:
+     azure.mgmt.compute.aio.operations.VirtualMachineScaleSetVMsOperations
+    :ivar ssh_public_keys: SshPublicKeysOperations operations
+    :vartype ssh_public_keys: azure.mgmt.compute.aio.operations.SshPublicKeysOperations
+    :ivar usage: UsageOperations operations
+    :vartype usage: azure.mgmt.compute.aio.operations.UsageOperations
+    :ivar virtual_machine_sizes: VirtualMachineSizesOperations operations
+    :vartype virtual_machine_sizes: azure.mgmt.compute.aio.operations.VirtualMachineSizesOperations
+    :ivar virtual_machine_images_edge_zone: VirtualMachineImagesEdgeZoneOperations operations
+    :vartype virtual_machine_images_edge_zone:
+     azure.mgmt.compute.aio.operations.VirtualMachineImagesEdgeZoneOperations
+    :ivar virtual_machine_images: VirtualMachineImagesOperations operations
+    :vartype virtual_machine_images:
+     azure.mgmt.compute.aio.operations.VirtualMachineImagesOperations
+    :ivar log_analytics: LogAnalyticsOperations operations
+    :vartype log_analytics: azure.mgmt.compute.aio.operations.LogAnalyticsOperations
     :ivar disk_restore_point: DiskRestorePointOperations operations
     :vartype disk_restore_point: azure.mgmt.compute.aio.operations.DiskRestorePointOperations
+    :ivar soft_deleted_resource: SoftDeletedResourceOperations operations
+    :vartype soft_deleted_resource: azure.mgmt.compute.aio.operations.SoftDeletedResourceOperations
+    :ivar gallery_sharing_profile: GallerySharingProfileOperations operations
+    :vartype gallery_sharing_profile:
+     azure.mgmt.compute.aio.operations.GallerySharingProfileOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -285,13 +269,7 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.rolling_upgrade_status_infos = RollingUpgradeStatusInfosOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMSOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(
@@ -316,9 +294,6 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.dedicated_hosts = DedicatedHostsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.ssh_public_key_resources = SshPublicKeyResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.restore_point_collections = RestorePointCollectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -336,35 +311,8 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
         self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.usage_operation_group = UsageOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machine_sizes_operation_group = VirtualMachineSizesOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machine_scale_sets_operation_group = VirtualMachineScaleSetsOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machines_operation_group = VirtualMachinesOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machine_images_edge_zone_operation_group = VirtualMachineImagesEdgeZoneOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machine_images_operation_group = VirtualMachineImagesOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.log_analytics_operation_group = LogAnalyticsOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.virtual_machine_run_commands_operation_group = VirtualMachineRunCommandsOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_accesses = DiskAccessesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.disk_encryption_sets = DiskEncryptionSetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -405,7 +353,31 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ssh_public_keys = SshPublicKeysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machine_sizes = VirtualMachineSizesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_images_edge_zone = VirtualMachineImagesEdgeZoneOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_images = VirtualMachineImagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.log_analytics = LogAnalyticsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_restore_point = DiskRestorePointOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.soft_deleted_resource = SoftDeletedResourceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_sharing_profile = GallerySharingProfileOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

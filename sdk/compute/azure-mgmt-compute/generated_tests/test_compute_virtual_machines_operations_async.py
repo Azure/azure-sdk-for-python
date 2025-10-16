@@ -333,7 +333,7 @@ class TestComputeVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                                     {
                                         "componentName": "Microsoft-Windows-Shell-Setup",
                                         "content": "str",
-                                        "passName": "str",
+                                        "passName": "OobeSystem",
                                         "settingName": "str",
                                     }
                                 ],
@@ -822,7 +822,7 @@ class TestComputeVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCase):
                                     {
                                         "componentName": "Microsoft-Windows-Shell-Setup",
                                         "content": "str",
-                                        "passName": "str",
+                                        "passName": "OobeSystem",
                                         "settingName": "str",
                                     }
                                 ],
@@ -1265,5 +1265,15 @@ class TestComputeVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCase):
             )
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_list_by_location(self, resource_group):
+        response = self.client.virtual_machines.list_by_location(
+            location="str",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

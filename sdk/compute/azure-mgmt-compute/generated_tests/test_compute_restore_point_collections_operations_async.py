@@ -120,7 +120,7 @@ class TestComputeRestorePointCollectionsOperationsAsync(AzureMgmtRecordedTestCas
                                                 {
                                                     "componentName": "Microsoft-Windows-Shell-Setup",
                                                     "content": "str",
-                                                    "passName": "str",
+                                                    "passName": "OobeSystem",
                                                     "settingName": "str",
                                                 }
                                             ],
@@ -328,7 +328,7 @@ class TestComputeRestorePointCollectionsOperationsAsync(AzureMgmtRecordedTestCas
                                                 {
                                                     "componentName": "Microsoft-Windows-Shell-Setup",
                                                     "content": "str",
-                                                    "passName": "str",
+                                                    "passName": "OobeSystem",
                                                     "settingName": "str",
                                                 }
                                             ],

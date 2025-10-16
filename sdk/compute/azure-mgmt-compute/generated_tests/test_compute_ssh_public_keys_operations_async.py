@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute import ComputeClient
+from azure.mgmt.compute.aio import ComputeClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeSshPublicKeyResourcesOperations(AzureMgmtRecordedTestCase):
+class TestComputeSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ComputeClient)
+        self.client = self.create_mgmt_client(ComputeClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_key_resources_get(self, resource_group):
-        response = self.client.ssh_public_key_resources.get(
+    @recorded_by_proxy_async
+    async def test_ssh_public_keys_get(self, resource_group):
+        response = await self.client.ssh_public_keys.get(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
         )
@@ -30,9 +31,9 @@ class TestComputeSshPublicKeyResourcesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_key_resources_create(self, resource_group):
-        response = self.client.ssh_public_key_resources.create(
+    @recorded_by_proxy_async
+    async def test_ssh_public_keys_create(self, resource_group):
+        response = await self.client.ssh_public_keys.create(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
             parameters={
@@ -57,9 +58,9 @@ class TestComputeSshPublicKeyResourcesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_key_resources_update(self, resource_group):
-        response = self.client.ssh_public_key_resources.update(
+    @recorded_by_proxy_async
+    async def test_ssh_public_keys_update(self, resource_group):
+        response = await self.client.ssh_public_keys.update(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
             parameters={"properties": {"publicKey": "str"}, "tags": {"str": "str"}},
@@ -69,9 +70,9 @@ class TestComputeSshPublicKeyResourcesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_key_resources_delete(self, resource_group):
-        response = self.client.ssh_public_key_resources.delete(
+    @recorded_by_proxy_async
+    async def test_ssh_public_keys_delete(self, resource_group):
+        response = await self.client.ssh_public_keys.delete(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
         )
@@ -80,27 +81,27 @@ class TestComputeSshPublicKeyResourcesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_key_resources_list_by_resource_group(self, resource_group):
-        response = self.client.ssh_public_key_resources.list_by_resource_group(
+    @recorded_by_proxy_async
+    async def test_ssh_public_keys_list_by_resource_group(self, resource_group):
+        response = self.client.ssh_public_keys.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_key_resources_list_by_subscription(self, resource_group):
-        response = self.client.ssh_public_key_resources.list_by_subscription()
-        result = [r for r in response]
+    @recorded_by_proxy_async
+    async def test_ssh_public_keys_list_by_subscription(self, resource_group):
+        response = self.client.ssh_public_keys.list_by_subscription()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_key_resources_generate_key_pair(self, resource_group):
-        response = self.client.ssh_public_key_resources.generate_key_pair(
+    @recorded_by_proxy_async
+    async def test_ssh_public_keys_generate_key_pair(self, resource_group):
+        response = await self.client.ssh_public_keys.generate_key_pair(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
         )

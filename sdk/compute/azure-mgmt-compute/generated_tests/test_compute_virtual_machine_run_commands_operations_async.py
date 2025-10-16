@@ -181,3 +181,24 @@ class TestComputeVirtualMachineRunCommandsOperationsAsync(AzureMgmtRecordedTestC
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_run_commands_list(self, resource_group):
+        response = self.client.virtual_machine_run_commands.list(
+            location="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_run_commands_get(self, resource_group):
+        response = await self.client.virtual_machine_run_commands.get(
+            location="str",
+            command_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

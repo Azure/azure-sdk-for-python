@@ -1,6 +1,6 @@
 # Release History
 
-## 38.0.0 (2025-10-11)
+## 38.0.0 (2025-10-16)
 
 ### Features Added
 
@@ -44,8 +44,6 @@
   - Added model `EncryptionSetProperties`
   - Added model `GenerateKeyPairParameterBody`
   - Added model `MigrateToVmScaleSetParameterBody`
-  - Added model `OkResponse`
-  - Added enum `PassNames`
   - Added model `PerformMaintenanceParameterBody`
   - Added model `PowerOffParameterBody`
   - Added model `RedeployParameterBody`
@@ -56,37 +54,20 @@
   - Added model `RestartParameterBody`
   - Added model `SharedGalleryIdentifier`
   - Added model `StartParameterBody`
-  - Model `GalleriesOperations` added method `begin_gallery_sharing_profile_update`
-  - Model `GalleriesOperations` added method `list_by_artifact_name`
+  - Model `VirtualMachineScaleSetVMsOperations` added parameter `etag` in method `begin_update`
+  - Model `VirtualMachineScaleSetVMsOperations` added parameter `match_condition` in method `begin_update`
   - Model `VirtualMachineScaleSetsOperations` added parameter `etag` in method `begin_create_or_update`
   - Model `VirtualMachineScaleSetsOperations` added parameter `match_condition` in method `begin_create_or_update`
   - Model `VirtualMachineScaleSetsOperations` added parameter `etag` in method `begin_update`
   - Model `VirtualMachineScaleSetsOperations` added parameter `match_condition` in method `begin_update`
-  - Model `VirtualMachineScaleSetsOperations` added method `begin_cancel`
-  - Model `VirtualMachineScaleSetsOperations` added method `begin_start_extension_upgrade`
-  - Model `VirtualMachineScaleSetsOperations` added method `begin_start_os_upgrade`
   - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_create_or_update`
   - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_create_or_update`
   - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_update`
   - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_update`
-  - Added model `LogAnalyticsOperationGroupOperations`
-  - Added model `PrivateEndpointConnectionsOperations`
-  - Added model `RollingUpgradeStatusInfosOperations`
-  - Added model `SshPublicKeyResourcesOperations`
-  - Added model `UsageOperationGroupOperations`
-  - Added model `VirtualMachineImagesEdgeZoneOperationGroupOperations`
-  - Added model `VirtualMachineImagesOperationGroupOperations`
-  - Added model `VirtualMachineRunCommandsOperationGroupOperations`
-  - Added model `VirtualMachineScaleSetVMSOperations`
-  - Added model `VirtualMachineScaleSetsOperationGroupOperations`
-  - Added model `VirtualMachineSizesOperationGroupOperations`
-  - Added model `VirtualMachinesOperationGroupOperations`
 
 ### Breaking Changes
 
   - Deleted or renamed client `ComputeManagementClient`
-  - Method `VirtualMachineExtensionsOperations.list` changed from `asynchronous` to `synchronous`
-  - Method `VirtualMachineScaleSetVMExtensionsOperations.list` changed from `asynchronous` to `synchronous`
   - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `platform_update_domain_count`
   - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `platform_fault_domain_count`
   - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `virtual_machines`
@@ -318,8 +299,6 @@
   - Deleted or renamed model `LoadBalancerConfigurationProperties`
   - Deleted or renamed model `LoadBalancerFrontendIpConfiguration`
   - Deleted or renamed model `LoadBalancerFrontendIpConfigurationProperties`
-  - Deleted or renamed model `LogAnalyticsOperationResult`
-  - Deleted or renamed model `LogAnalyticsOutput`
   - Deleted or renamed model `OSFamily`
   - Deleted or renamed model `OSFamilyProperties`
   - Deleted or renamed model `OSVersion`
@@ -351,10 +330,6 @@
   - Method `CapacityReservationsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DedicatedHostGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `DedicatedHostsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `DiskAccessesOperations.begin_delete_a_private_endpoint_connection`
-  - Deleted or renamed method `DiskAccessesOperations.begin_update_a_private_endpoint_connection`
-  - Deleted or renamed method `DiskAccessesOperations.get_a_private_endpoint_connection`
-  - Deleted or renamed method `DiskAccessesOperations.list_private_endpoint_connections`
   - Method `GalleriesOperations.get` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
   - Method `GalleriesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `GalleryApplicationVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
@@ -370,15 +345,27 @@
   - Method `VirtualMachineExtensionImagesOperations.list_versions` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesEdgeZoneOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesEdgeZoneOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesOperations.list_with_properties` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineImagesOperations.list_with_properties` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineRunCommandsOperations.get_by_virtual_machine` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineRunCommandsOperations.list_by_virtual_machine` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `VirtualMachineRunCommandsOperations.get`
-  - Deleted or renamed method `VirtualMachineRunCommandsOperations.list`
   - Method `VirtualMachineScaleSetExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineScaleSetVMExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineScaleSetVMExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineScaleSetVMRunCommandsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineScaleSetVMRunCommandsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_delete` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_power_off` changed its parameter `skip_shutdown` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetVMsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.list` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMsOperations.retrieve_boot_diagnostics_data` changed its parameter `sas_uri_expiration_time_in_minutes` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
   - Method `VirtualMachineScaleSetsOperations.begin_deallocate` changed its parameter `hibernate` from `positional_or_keyword` to `keyword_only`
@@ -391,7 +378,6 @@
   - Method `VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk` changed its parameter `zone` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk` changed its parameter `placement_group_id` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachineScaleSetsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `VirtualMachineScaleSetsOperations.list_by_location`
   - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
   - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
   - Method `VirtualMachinesOperations.begin_deallocate` changed its parameter `hibernate` from `positional_or_keyword` to `keyword_only`
@@ -404,28 +390,18 @@
   - Method `VirtualMachinesOperations.list_all` changed its parameter `status_only` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachinesOperations.list_all` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `VirtualMachinesOperations.retrieve_boot_diagnostics_data` changed its parameter `sas_uri_expiration_time_in_minutes` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed method `VirtualMachinesOperations.list_by_location`
   - Deleted or renamed model `CloudServiceOperatingSystemsOperations`
   - Deleted or renamed model `CloudServiceRoleInstancesOperations`
   - Deleted or renamed model `CloudServiceRolesOperations`
   - Deleted or renamed model `CloudServicesOperations`
   - Deleted or renamed model `CloudServicesUpdateDomainOperations`
-  - Deleted or renamed model `GallerySharingProfileOperations`
-  - Deleted or renamed model `LogAnalyticsOperations`
-  - Deleted or renamed model `SoftDeletedResourceOperations`
-  - Deleted or renamed model `SshPublicKeysOperations`
-  - Deleted or renamed model `UsageOperations`
-  - Deleted or renamed model `VirtualMachineImagesEdgeZoneOperations`
-  - Deleted or renamed model `VirtualMachineImagesOperations`
-  - Deleted or renamed model `VirtualMachineScaleSetRollingUpgradesOperations`
-  - Deleted or renamed model `VirtualMachineScaleSetVMsOperations`
-  - Deleted or renamed model `VirtualMachineSizesOperations`
-  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'hibernate', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'hibernate', 'kwargs']`
-  - Method `VirtualMachineScaleSetsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
-  - Method `VirtualMachineScaleSetsOperations.begin_power_off` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'skip_shutdown', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'skip_shutdown', 'kwargs']`
-  - Method `VirtualMachinesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
   - Method `VirtualMachinesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetVMsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'hibernate', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'hibernate', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_power_off` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'skip_shutdown', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'skip_shutdown', 'kwargs']`
 
 ## 37.0.1 (2025-10-09)
 

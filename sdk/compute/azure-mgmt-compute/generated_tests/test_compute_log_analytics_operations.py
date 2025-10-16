@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeLogAnalyticsOperationGroupOperations(AzureMgmtRecordedTestCase):
+class TestComputeLogAnalyticsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_log_analytics_operation_group_begin_export_request_rate_by_interval(self, resource_group):
-        response = self.client.log_analytics_operation_group.begin_export_request_rate_by_interval(
+    def test_log_analytics_begin_export_request_rate_by_interval(self, resource_group):
+        response = self.client.log_analytics.begin_export_request_rate_by_interval(
             location="str",
             parameters={
                 "blobContainerSasUri": "str",
@@ -41,8 +41,8 @@ class TestComputeLogAnalyticsOperationGroupOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_log_analytics_operation_group_begin_export_throttled_requests(self, resource_group):
-        response = self.client.log_analytics_operation_group.begin_export_throttled_requests(
+    def test_log_analytics_begin_export_throttled_requests(self, resource_group):
+        response = self.client.log_analytics.begin_export_throttled_requests(
             location="str",
             parameters={
                 "blobContainerSasUri": "str",

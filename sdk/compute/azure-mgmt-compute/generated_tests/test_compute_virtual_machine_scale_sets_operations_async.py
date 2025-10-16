@@ -240,7 +240,7 @@ class TestComputeVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecordedTestCas
                                         {
                                             "componentName": "Microsoft-Windows-Shell-Setup",
                                             "content": "str",
-                                            "passName": "str",
+                                            "passName": "OobeSystem",
                                             "settingName": "str",
                                         }
                                     ],
@@ -530,7 +530,7 @@ class TestComputeVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecordedTestCas
                                         {
                                             "componentName": "Microsoft-Windows-Shell-Setup",
                                             "content": "str",
-                                            "passName": "str",
+                                            "passName": "OobeSystem",
                                             "settingName": "str",
                                         }
                                     ],
@@ -904,45 +904,6 @@ class TestComputeVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_start_extension_upgrade(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_start_extension_upgrade(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_start_os_upgrade(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_start_os_upgrade(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_begin_cancel(self, resource_group):
-        response = await (
-            await self.client.virtual_machine_scale_sets.begin_cancel(
-                resource_group_name=resource_group.name,
-                vm_scale_set_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_virtual_machine_scale_sets_begin_scale_out(self, resource_group):
         response = await (
             await self.client.virtual_machine_scale_sets.begin_scale_out(
@@ -952,5 +913,15 @@ class TestComputeVirtualMachineScaleSetsOperationsAsync(AzureMgmtRecordedTestCas
             )
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_sets_list_by_location(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list_by_location(
+            location="str",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

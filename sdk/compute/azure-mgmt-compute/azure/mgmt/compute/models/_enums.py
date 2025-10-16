@@ -825,12 +825,6 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class PassNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of PassNames."""
-
-    OOBE_SYSTEM = "OobeSystem"
-
-
 class PatchAssessmentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the availability of a given patch."""
 

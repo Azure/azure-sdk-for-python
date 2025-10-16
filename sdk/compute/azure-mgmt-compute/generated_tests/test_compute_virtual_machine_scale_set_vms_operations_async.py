@@ -15,7 +15,7 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeVirtualMachineScaleSetVMSOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient, is_async=True)
 
@@ -320,7 +320,7 @@ class TestComputeVirtualMachineScaleSetVMSOperationsAsync(AzureMgmtRecordedTestC
                                     {
                                         "componentName": "Microsoft-Windows-Shell-Setup",
                                         "content": "str",
-                                        "passName": "str",
+                                        "passName": "OobeSystem",
                                         "settingName": "str",
                                     }
                                 ],

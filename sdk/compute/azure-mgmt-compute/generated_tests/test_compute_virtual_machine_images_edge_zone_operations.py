@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperations(AzureMgmtRecordedTestCase):
+class TestComputeVirtualMachineImagesEdgeZoneOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_edge_zone_operation_group_list_publishers(self, resource_group):
-        response = self.client.virtual_machine_images_edge_zone_operation_group.list_publishers(
+    def test_virtual_machine_images_edge_zone_list_publishers(self, resource_group):
+        response = self.client.virtual_machine_images_edge_zone.list_publishers(
             location="str",
             edge_zone="str",
         )
@@ -31,8 +31,8 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_edge_zone_operation_group_list_offers(self, resource_group):
-        response = self.client.virtual_machine_images_edge_zone_operation_group.list_offers(
+    def test_virtual_machine_images_edge_zone_list_offers(self, resource_group):
+        response = self.client.virtual_machine_images_edge_zone.list_offers(
             location="str",
             edge_zone="str",
             publisher_name="str",
@@ -43,8 +43,8 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_edge_zone_operation_group_list_skus(self, resource_group):
-        response = self.client.virtual_machine_images_edge_zone_operation_group.list_skus(
+    def test_virtual_machine_images_edge_zone_list_skus(self, resource_group):
+        response = self.client.virtual_machine_images_edge_zone.list_skus(
             location="str",
             edge_zone="str",
             publisher_name="str",
@@ -56,8 +56,8 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_edge_zone_operation_group_list(self, resource_group):
-        response = self.client.virtual_machine_images_edge_zone_operation_group.list(
+    def test_virtual_machine_images_edge_zone_list(self, resource_group):
+        response = self.client.virtual_machine_images_edge_zone.list(
             location="str",
             edge_zone="str",
             publisher_name="str",
@@ -70,8 +70,8 @@ class TestComputeVirtualMachineImagesEdgeZoneOperationGroupOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_images_edge_zone_operation_group_get(self, resource_group):
-        response = self.client.virtual_machine_images_edge_zone_operation_group.get(
+    def test_virtual_machine_images_edge_zone_get(self, resource_group):
+        response = self.client.virtual_machine_images_edge_zone.get(
             location="str",
             edge_zone="str",
             publisher_name="str",

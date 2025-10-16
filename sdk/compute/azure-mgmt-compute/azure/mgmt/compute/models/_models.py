@@ -334,8 +334,9 @@ class AdditionalUnattendContent(_Model):
     which is used by Windows Setup. Contents are defined by setting name, component name, and the
     pass in which the content is applied.
 
-    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. "OobeSystem"
-    :vartype pass_name: str or ~azure.mgmt.compute.models.PassNames
+    :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
+     value is "OobeSystem".
+    :vartype pass_name: str
     :ivar component_name: The component name. Currently, the only allowable value is
      Microsoft-Windows-Shell-Setup. Default value is "Microsoft-Windows-Shell-Setup".
     :vartype component_name: str
@@ -349,10 +350,11 @@ class AdditionalUnattendContent(_Model):
     :vartype content: str
     """
 
-    pass_name: Optional[Union[str, "_models.PassNames"]] = rest_field(
+    pass_name: Optional[Literal["OobeSystem"]] = rest_field(
         name="passName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The pass name. Currently, the only allowable value is OobeSystem. \"OobeSystem\""""
+    """The pass name. Currently, the only allowable value is OobeSystem. Default value is
+     \"OobeSystem\"."""
     component_name: Optional[Literal["Microsoft-Windows-Shell-Setup"]] = rest_field(
         name="componentName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -372,7 +374,7 @@ class AdditionalUnattendContent(_Model):
     def __init__(
         self,
         *,
-        pass_name: Optional[Union[str, "_models.PassNames"]] = None,
+        pass_name: Optional[Literal["OobeSystem"]] = None,
         component_name: Optional[Literal["Microsoft-Windows-Shell-Setup"]] = None,
         setting_name: Optional[Union[str, "_models.SettingNames"]] = None,
         content: Optional[str] = None,
@@ -10922,6 +10924,28 @@ class LogAnalyticsInputBase(_Model):
         super().__init__(*args, **kwargs)
 
 
+class LogAnalyticsOperationResult(_Model):
+    """LogAnalytics operation status response.
+
+    :ivar properties: LogAnalyticsOutput.
+    :vartype properties: ~azure.mgmt.compute.models.LogAnalyticsOutput
+    """
+
+    properties: Optional["_models.LogAnalyticsOutput"] = rest_field(visibility=["read"])
+    """LogAnalyticsOutput."""
+
+
+class LogAnalyticsOutput(_Model):
+    """LogAnalytics output properties.
+
+    :ivar output: Output file Uri path to blob container.
+    :vartype output: str
+    """
+
+    output: Optional[str] = rest_field(visibility=["read"])
+    """Output file Uri path to blob container."""
+
+
 class MaintenanceRedeployStatus(_Model):
     """Maintenance Operation Status.
 
@@ -11343,10 +11367,6 @@ class NetworkProfile(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class OkResponse(_Model):
-    """The request has succeeded."""
 
 
 class Operation(_Model):
@@ -13403,21 +13423,20 @@ class ReimageParameterBody(_Model):
 class ReimageParameterBody1(_Model):
     """ReimageParameterBody1.
 
-    :ivar vm_scale_set_vm_reimage_input: Parameters for the Reimaging Virtual machine in ScaleSet.
-    :vartype vm_scale_set_vm_reimage_input:
-     ~azure.mgmt.compute.models.VirtualMachineScaleSetVMReimageParameters
+    :ivar parameters: Parameters supplied to the Reimage Virtual Machine operation.
+    :vartype parameters: ~azure.mgmt.compute.models.VirtualMachineReimageParameters
     """
 
-    vm_scale_set_vm_reimage_input: Optional["_models.VirtualMachineScaleSetVMReimageParameters"] = rest_field(
-        name="vmScaleSetVMReimageInput", visibility=["read", "create", "update", "delete", "query"]
+    parameters: Optional["_models.VirtualMachineReimageParameters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Parameters for the Reimaging Virtual machine in ScaleSet."""
+    """Parameters supplied to the Reimage Virtual Machine operation."""
 
     @overload
     def __init__(
         self,
         *,
-        vm_scale_set_vm_reimage_input: Optional["_models.VirtualMachineScaleSetVMReimageParameters"] = None,
+        parameters: Optional["_models.VirtualMachineReimageParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -13434,20 +13453,21 @@ class ReimageParameterBody1(_Model):
 class ReimageParameterBody2(_Model):
     """ReimageParameterBody2.
 
-    :ivar parameters: Parameters supplied to the Reimage Virtual Machine operation.
-    :vartype parameters: ~azure.mgmt.compute.models.VirtualMachineReimageParameters
+    :ivar vm_scale_set_vm_reimage_input: Parameters for the Reimaging Virtual machine in ScaleSet.
+    :vartype vm_scale_set_vm_reimage_input:
+     ~azure.mgmt.compute.models.VirtualMachineScaleSetVMReimageParameters
     """
 
-    parameters: Optional["_models.VirtualMachineReimageParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    vm_scale_set_vm_reimage_input: Optional["_models.VirtualMachineScaleSetVMReimageParameters"] = rest_field(
+        name="vmScaleSetVMReimageInput", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Parameters supplied to the Reimage Virtual Machine operation."""
+    """Parameters for the Reimaging Virtual machine in ScaleSet."""
 
     @overload
     def __init__(
         self,
         *,
-        parameters: Optional["_models.VirtualMachineReimageParameters"] = None,
+        vm_scale_set_vm_reimage_input: Optional["_models.VirtualMachineScaleSetVMReimageParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -19441,6 +19461,36 @@ class VirtualMachineExtensionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class VirtualMachineExtensionsListResult(_Model):
+    """The List Extension operation response.
+
+    :ivar value: The list of extensions.
+    :vartype value: list[~azure.mgmt.compute.models.VirtualMachineExtension]
+    """
+
+    value: Optional[list["_models.VirtualMachineExtension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of extensions."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.VirtualMachineExtension"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VirtualMachineExtensionUpdate(UpdateResource):
     """Describes a Virtual Machine Extension.
 
@@ -25141,6 +25191,36 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class VirtualMachineScaleSetVMExtensionsListResult(_Model):  # pylint: disable=name-too-long
+    """The List VMSS VM Extension operation response.
+
+    :ivar value: The list of VMSS VM extensions.
+    :vartype value: list[~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtension]
+    """
+
+    value: Optional[list["_models.VirtualMachineScaleSetVMExtension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of VMSS VM extensions."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.VirtualMachineScaleSetVMExtension"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VirtualMachineScaleSetVMExtensionsSummary(_Model):  # pylint: disable=name-too-long

@@ -140,11 +140,11 @@ class TestComputeVirtualMachineScaleSetVMExtensionsOperationsAsync(AzureMgmtReco
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_virtual_machine_scale_set_vm_extensions_list(self, resource_group):
-        response = self.client.virtual_machine_scale_set_vm_extensions.list(
+        response = await self.client.virtual_machine_scale_set_vm_extensions.list(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

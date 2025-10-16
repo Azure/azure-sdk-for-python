@@ -6,25 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.aio import ComputeClient
+from azure.mgmt.compute import ComputeClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeVirtualMachineScaleSetsOperationGroupOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeGallerySharingProfileOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ComputeClient, is_async=True)
+        self.client = self.create_mgmt_client(ComputeClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_scale_sets_operation_group_list_by_location(self, resource_group):
-        response = self.client.virtual_machine_scale_sets_operation_group.list_by_location(
-            location="str",
-        )
-        result = [r async for r in response]
+    @recorded_by_proxy
+    def test_gallery_sharing_profile_begin_update(self, resource_group):
+        response = self.client.gallery_sharing_profile.begin_update(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            sharing_update={"operationType": "str", "groups": [{"ids": ["str"], "type": "str"}]},
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
