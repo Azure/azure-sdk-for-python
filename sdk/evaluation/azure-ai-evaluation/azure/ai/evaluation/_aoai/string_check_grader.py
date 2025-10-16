@@ -15,18 +15,14 @@ from .aoai_grader import AzureOpenAIGrader
 
 @experimental
 class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
-    """
-    Wrapper class for OpenAI's string check graders.
+    """Wrapper class for OpenAI's string check graders.
 
     Supplying a StringCheckGrader to the `evaluate` method will cause an asynchronous request to evaluate
     the grader via the OpenAI API. The results of the evaluation will then be merged into the standard
     evaluation results.
 
     :param model_config: The model configuration to use for the grader.
-    :type model_config: Union[
-        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evaluation.OpenAIModelConfiguration
-    ]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,~azure.ai.evaluation.OpenAIModelConfiguration]
     :param input: The input text. This may include template strings.
     :type input: str
     :param name: The name of the grader.
@@ -39,8 +35,6 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
-
-
     """
 
     id = "azureai://built-in/evaluators/azure-openai/string_check_grader"

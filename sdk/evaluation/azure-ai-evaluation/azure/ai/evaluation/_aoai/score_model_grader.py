@@ -14,8 +14,7 @@ from .aoai_grader import AzureOpenAIGrader
 
 @experimental
 class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
-    """
-    Wrapper class for OpenAI's score model graders.
+    """Wrapper class for OpenAI's score model graders.
 
     Enables continuous scoring evaluation with custom prompts and flexible
     conversation-style inputs. Supports configurable score ranges and
@@ -27,10 +26,8 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     evaluation results.
 
     :param model_config: The model configuration to use for the grader.
-    :type model_config: Union[
-        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evaluation.OpenAIModelConfiguration
-    ]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param input: The input messages for the grader. List of conversation
         messages with role and content.
     :type input: List[Dict[str, str]]

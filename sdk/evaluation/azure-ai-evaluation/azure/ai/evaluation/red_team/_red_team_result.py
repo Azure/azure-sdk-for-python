@@ -517,21 +517,23 @@ class RedTeamResult:
         return self.scan_result.get("scorecard", None) if self.scan_result else None
 
     def to_eval_qr_json_lines(self) -> str:
-        """
-        Converts conversations in messages format to query-response format suitable for evaluation.
+        """Converts conversations in messages format to query-response format suitable for evaluation.
 
         The output format follows the JSONL pattern with each line containing:
-        {
-            "query": "user message content",
-            "response": "assistant message content",
-            "risk_category": "risk category",
-            "attack_strategy": "strategy name",
-            "attack_complexity": "complexity level",
-            "attack_success": "true|false", (if available from evaluation)
-            "category": "risk category", (if available from evaluation)
-            "severity_level": "low|medium|high", (if available from evaluation)
-            "threshold": "threshold value" (if available from evaluation)
-        }
+
+        .. code-block:: javascript
+
+            {
+                "query": "user message content",
+                "response": "assistant message content",
+                "risk_category": "risk category",
+                "attack_strategy": "strategy name",
+                "attack_complexity": "complexity level",
+                "attack_success": "true|false", // (if available from evaluation)
+                "category": "risk category", // (if available from evaluation)
+                "severity_level": "low|medium|high", // (if available from evaluation)
+                "threshold": "threshold value" // (if available from evaluation)
+            }
 
         :returns: A list of strings containing query-response pairs in JSONL format.
         :rtype: List[str]

@@ -246,8 +246,8 @@ async def submit_request(
 
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token, evaluator_name)
-    #print("Submitting payload to RAI service, url: %s" % url)
-    #print(payload)
+    # print("Submitting payload to RAI service, url: %s" % url)
+    # print(payload)
 
     async with get_async_http_client_with_timeout() as client:
         http_response = await client.post(url, json=payload, headers=headers)
@@ -293,13 +293,13 @@ async def submit_request_onedp(
     headers = get_common_headers(token, evaluator_name)
     if scan_session_id:
         headers["x-ms-client-request-id"] = scan_session_id
-    #print("Submitting annotation payload to RAI service")
+    # print("Submitting annotation payload to RAI service")
     response = client.evaluations.submit_annotation(payload, headers=headers)
-    #print(f"Submitting annotation payload to RAI service response: {response}")
+    # print(f"Submitting annotation payload to RAI service response: {response}")
     result = json.loads(response)
-    #print(f"json.loads successfully: {result}")
+    # print(f"json.loads successfully: {result}")
     operation_id = result["location"].split("/")[-1]
-    #print(f"Get operation_id successfully: {operation_id}")
+    # print(f"Get operation_id successfully: {operation_id}")
     return operation_id
 
 
@@ -417,12 +417,24 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 result[pm_metric_name + "_reason"] = (
                     parsed_response["reasoning"] if "reasoning" in parsed_response else ""
                 )
-                result[pm_metric_name + "_total_tokens"] = parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
-                result[pm_metric_name + "_prompt_tokens"] = parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
-                result[pm_metric_name + "_completion_tokens"] = parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
-                result[pm_metric_name + "_finish_reason"] = parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
-                result[pm_metric_name + "_sample_input"] = parsed_response["sample_input"] if "sample_input" in parsed_response else ""
-                result[pm_metric_name + "_sample_output"] = parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+                result[pm_metric_name + "_total_tokens"] = (
+                    parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_prompt_tokens"] = (
+                    parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_completion_tokens"] = (
+                    parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_finish_reason"] = (
+                    parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+                )
+                result[pm_metric_name + "_sample_input"] = (
+                    parsed_response["sample_input"] if "sample_input" in parsed_response else ""
+                )
+                result[pm_metric_name + "_sample_output"] = (
+                    parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+                )
                 result[pm_metric_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
             return result
         if metric_name not in batch_response[0]:
@@ -455,17 +467,38 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():
-                if key not in {"label", "reasoning", "version", 
-                               "totalTokenCount", "inputTokenCount", "outputTokenCount", "finish_reason", 
-                               "sample_input", "sample_output", "model"}:
+                if key not in {
+                    "label",
+                    "reasoning",
+                    "version",
+                    "totalTokenCount",
+                    "inputTokenCount",
+                    "outputTokenCount",
+                    "finish_reason",
+                    "sample_input",
+                    "sample_output",
+                    "model",
+                }:
                     details[key.replace("-", "_")] = value
             result[metric_display_name + "_details"] = details
-        result[metric_display_name + "_total_tokens"] = parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
-        result[metric_display_name + "_prompt_tokens"] = parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
-        result[metric_display_name + "_completion_tokens"] = parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
-        result[metric_display_name + "_finish_reason"] = parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
-        result[metric_display_name + "_sample_input"] = parsed_response["sample_input"] if "sample_input" in parsed_response else ""
-        result[metric_display_name + "_sample_output"] = parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+        result[metric_display_name + "_total_tokens"] = (
+            parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_prompt_tokens"] = (
+            parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_completion_tokens"] = (
+            parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_finish_reason"] = (
+            parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+        )
+        result[metric_display_name + "_sample_input"] = (
+            parsed_response["sample_input"] if "sample_input" in parsed_response else ""
+        )
+        result[metric_display_name + "_sample_output"] = (
+            parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+        )
         result[metric_display_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
         return result
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
@@ -533,7 +566,7 @@ def _parse_content_harm_response(
             reason = harm_response["reason"]
         else:
             reason = ""
-        
+
         # get token_usage
         if "totalTokenCount" in harm_response:
             total_tokens = harm_response["totalTokenCount"]
@@ -546,14 +579,14 @@ def _parse_content_harm_response(
         if "outputTokenCount" in harm_response:
             completion_tokens = harm_response["outputTokenCount"]
         else:
-            completion_tokens = 0        
+            completion_tokens = 0
 
         # get finish_reason
         if "finish_reason" in harm_response:
             finish_reason = harm_response["finish_reason"]
         else:
             finish_reason = ""
-        
+
         # get sample_input
         if "sample_input" in harm_response:
             sample_input = harm_response["sample_input"]
@@ -564,7 +597,7 @@ def _parse_content_harm_response(
         if "sample_output" in harm_response:
             sample_output = harm_response["sample_output"]
         else:
-            sample_output = ""        
+            sample_output = ""
 
         # get model
         if "model" in harm_response:
@@ -826,8 +859,8 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     ## calling rai service for annotation
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
-    #print("Submitting payload to RAI service, url: %s" % url)
-    #print(payload)
+    # print("Submitting payload to RAI service, url: %s" % url)
+    # print(payload)
     async with get_async_http_client() as client:
         response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
             url, json=payload, headers=headers

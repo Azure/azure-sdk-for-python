@@ -170,7 +170,9 @@ class TestPrompty:
     async def test_first_match_text_json_streaming(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
-        result, _, _, _ = await prompty(question="What is the capital of France?", firstName="Barbra", lastName="Streisand")
+        result, _, _, _ = await prompty(
+            question="What is the capital of France?", firstName="Barbra", lastName="Streisand"
+        )
         assert isinstance(result, Mapping)
         assert result["firstName"] == "Barbra"
         assert result["lastName"] == "Streisand"

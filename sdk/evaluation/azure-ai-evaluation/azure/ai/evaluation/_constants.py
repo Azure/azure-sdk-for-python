@@ -89,17 +89,26 @@ class TokenScope(str, enum.Enum):
     COGNITIVE_SERVICES_MANAGEMENT = "https://ai.azure.com/.default"
     AZURE_ML = "https://ml.azure.com/.default"
 
+
 class _EvaluatorMetricMapping:
     """
     Static mapping of evaluator names to their metric names, based on assets.json.
     The 'builtin.' prefix is removed from the evaluator name keys.
     """
+
     EVALUATOR_NAME_METRICS_MAPPINGS = {
         "bleu_score": ["bleu"],
         "coherence": ["coherence"],
         "document_retrieval": [
-            "ndcg@3", "xdcg@3", "fidelity", "top1_relevance", "top3_max_relevance",
-            "holes", "holes_ratio", "total_retrieved_documents", "total_ground_truth_documents"
+            "ndcg@3",
+            "xdcg@3",
+            "fidelity",
+            "top1_relevance",
+            "top3_max_relevance",
+            "holes",
+            "holes_ratio",
+            "total_retrieved_documents",
+            "total_ground_truth_documents",
         ],
         "f1_score": ["f1_score"],
         "fluency": ["fluency"],
@@ -119,9 +128,7 @@ class _EvaluatorMetricMapping:
         "eci": ["eci"],
         "protected_material": ["protected_material"],
         "ungrounded_attributes": ["ungrounded_attributes"],
-        "indirect_attack": [
-            "xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"
-        ],
+        "indirect_attack": ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"],
         "label_grader": ["label_model"],
         "string_check_grader": ["string_check"],
         "text_similarity_grader": ["similarity"],
@@ -164,6 +171,7 @@ class _EvaluatorMetricMapping:
         "ViolenceEvaluator": "violence",
     }
 
+
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
 
 CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT = 4
@@ -192,4 +200,4 @@ DEFAULT_OAI_EVAL_RUN_NAME = "AI_SDK_EVAL_RUN"
 DEFAULT_AOAI_API_VERSION = "2025-04-01-preview"  # Unfortunately relying on preview version for now.
 
 # OpenTelemetry event names
-EVALUATION_EVENT_NAME = "event.gen_ai.evaluation.result"
+EVALUATION_EVENT_NAME = "gen_ai.evaluation.result"

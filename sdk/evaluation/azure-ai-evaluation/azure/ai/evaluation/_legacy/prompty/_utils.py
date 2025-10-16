@@ -535,19 +535,41 @@ async def format_llm_response(
     model_id = ""
 
     if not is_first_choice:
-        return response, input_token_count, output_token_count, total_token_count  # we don't actually use this code path since streaming is not used, so set token counts to 0
+        return (
+            response,
+            input_token_count,
+            output_token_count,
+            total_token_count,
+        )  # we don't actually use this code path since streaming is not used, so set token counts to 0
 
     is_json_format = isinstance(response_format, dict) and response_format.get("type") == "json_object"
     if isinstance(response, AsyncStream):
         if not is_json_format:
-            return format_stream(llm_response=response), input_token_count, output_token_count, total_token_count  # we don't actually use this code path since streaming is not used, so set token counts to 0
+            return (
+                format_stream(llm_response=response),
+                input_token_count,
+                output_token_count,
+                total_token_count,
+            )  # we don't actually use this code path since streaming is not used, so set token counts to 0
         content = "".join([item async for item in format_stream(llm_response=response)])
-        return format_choice(content), input_token_count, output_token_count, total_token_count, finish_reason, model_id, sample_input, sample_output  # we don't actually use this code path since streaming is not used, so set token counts to 0
+        return (
+            format_choice(content),
+            input_token_count,
+            output_token_count,
+            total_token_count,
+            finish_reason,
+            model_id,
+            sample_input,
+            sample_output
+        )  # we don't actually use this code path since streaming is not used, so set token counts to 0
     else:
         input_token_count = response.usage.prompt_tokens if response.usage and response.usage.prompt_tokens else 0
-        output_token_count = response.usage.completion_tokens if response.usage and response.usage.completion_tokens else 0
+        output_token_count = (
+            response.usage.completion_tokens if response.usage and response.usage.completion_tokens else 0
+        )
         total_token_count = response.usage.total_tokens if response.usage and response.usage.total_tokens else 0
         finish_reason = response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
+        print(f"model_id: {response.model}")
         model_id = response.model if response.model else ""
         sample_output_list = [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}] if (response.choices and response.choices[0].message.content
                                                                                                                               and response.choices[0].message.role) else []

@@ -132,7 +132,10 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
-        llm_output, input_token_count, output_token_count, total_token_count, finish_reason, model_id, sample_input, sample_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        # Call the prompty flow to get the evaluation result.
+        llm_output, input_token_count, output_token_count, total_token_count, finish_reason, model_id, sample_input, sample_output = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
 
         score = math.nan
         if llm_output:
@@ -150,7 +153,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     f"{self._result_key}_completion_tokens": output_token_count,
                     f"{self._result_key}_total_tokens": total_token_count,
                     f"{self._result_key}_finish_reason": finish_reason,
-                    f"{self._result_key}_model_id": model_id,
+                    f"{self._result_key}_model": model_id,
                     f"{self._result_key}_sample_input": sample_input,
                     f"{self._result_key}_sample_output": sample_output,
                 }
@@ -167,7 +170,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 f"{self._result_key}_completion_tokens": output_token_count,
                 f"{self._result_key}_total_tokens": total_token_count,
                 f"{self._result_key}_finish_reason": finish_reason,
-                f"{self._result_key}_model_id": model_id,
+                f"{self._result_key}_model": model_id,
                 f"{self._result_key}_sample_input": sample_input,
                 f"{self._result_key}_sample_output": sample_output,
             }

@@ -143,13 +143,13 @@ class RunSubmitter:
             logger.warning(f"Run {run.name} failed when executing in executor with exception {e}.")
             if not batch_result:
                 batch_result = BatchResult(
-                    status=BatchStatus.Failed, 
-                    total_lines=0, 
-                    failed_lines=0, 
-                    start_time=datetime.now(timezone.utc), 
-                    end_time=datetime.now(timezone.utc), 
-                    tokens=None, 
-                    details=[]
+                    status=BatchStatus.Failed,
+                    total_lines=0,
+                    failed_lines=0,
+                    start_time=datetime.now(timezone.utc),
+                    end_time=datetime.now(timezone.utc),
+                    tokens=None,
+                    details=[],
                 )
                 batch_result.error = e
             elif not batch_result.error:
