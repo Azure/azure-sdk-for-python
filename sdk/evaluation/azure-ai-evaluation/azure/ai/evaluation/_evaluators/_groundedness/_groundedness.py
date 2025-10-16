@@ -238,7 +238,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
-        if "query" not in eval_input:
+        if eval_input.get("query", None) is None:
             return await super()._do_eval(eval_input)
 
         contains_context = self._has_context(eval_input)
