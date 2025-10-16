@@ -59,6 +59,7 @@ class Check(abc.ABC):
 
     def create_venv(self, isolate: bool, venv_location: str) -> str:
         """Abstraction for creating a virtual environment."""
+
         if isolate:
             venv_cmd = get_venv_call(sys.executable)
             venv_python = get_venv_python(venv_location)
@@ -198,7 +199,7 @@ class Check(abc.ABC):
             if command[0] == "uv":
                 command += ["freeze", "--python", executable]
             else:
-                command += ["-m", "pip", "freeze"]
+                command += ["freeze"]
 
             result = subprocess.run(command, cwd=os.getcwd(), check=True, capture_output=True, text=True)
             logger.info("Installed packages:")
