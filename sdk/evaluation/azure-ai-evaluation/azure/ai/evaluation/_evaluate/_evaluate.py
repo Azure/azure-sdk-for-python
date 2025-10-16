@@ -1729,7 +1729,7 @@ def _convert_results_to_aoai_evaluation_results(
                     else:
                         result_per_metric[metric]["label"] = metric_value
                         result_per_metric[metric]["passed"] = passed
-                elif metric_key.endswith("_reason") or metric_key == "reason":
+                elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
                         result_per_metric[metric] = { "reason": metric_value }
@@ -1747,7 +1747,82 @@ def _convert_results_to_aoai_evaluation_results(
                         result_per_metric[metric] = { "sample": metric_value }
                     else:
                         result_per_metric[metric]["sample"] = metric_value
-                elif not any(metric_key.endswith(suffix) for suffix in ["_result", "_reason", "_threshold"]):
+                elif metric_key.endswith("_finish_reason"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = { "sample": { "finish_reason": metric_value } }
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = { "finish_reason": metric_value }
+                    elif metric in result_per_metric and "sample" in result_per_metric[metric] and "finish_reason" not in result_per_metric[metric]["sample"]:
+                        result_per_metric[metric]["sample"]["finish_reason"] = metric_value
+                elif metric_key.endswith("_model"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = { "sample": { "model": metric_value } }
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = { "model": metric_value }
+                    elif metric in result_per_metric and "sample" in result_per_metric[metric] and "model" not in result_per_metric[metric]["sample"]:
+                        result_per_metric[metric]["sample"]["model"] = metric_value
+                elif metric_key.endswith("_sample_input"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    input_metric_val_json: Optional[List[Dict[str, Any]]] = []
+                    try:
+                        input_metric_val_json = json.loads(metric_value)
+                    except Exception as e:
+                        logger.warning(f"Failed to parse _sample_input value as JSON: {e}")
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = { "sample": { "input": input_metric_val_json } }
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = { "input": input_metric_val_json }
+                    elif metric in result_per_metric and "sample" in result_per_metric[metric] and "input" not in result_per_metric[metric]["sample"]:
+                        result_per_metric[metric]["sample"]["input"] = input_metric_val_json
+                elif metric_key.endswith("_sample_output"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    output_metric_val_json: Optional[List[Dict[str, Any]]] = []
+                    try:
+                        output_metric_val_json = json.loads(metric_value)
+                    except Exception as e:
+                        logger.warning(f"Failed to parse _sample_output value as JSON: {e}")
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = { "sample": { "output": output_metric_val_json } }
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = { "output": output_metric_val_json }
+                    elif metric in result_per_metric and "sample" in result_per_metric[metric] and "output" not in result_per_metric[metric]["sample"]:
+                        result_per_metric[metric]["sample"]["output"] = output_metric_val_json
+                elif metric_key.endswith("_total_tokens"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = { "sample": { "usage":{ "total_tokens": metric_value } } }
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = { "usage":{ "total_tokens": metric_value } }
+                    elif metric in result_per_metric and "sample" in result_per_metric[metric] and "usage" not in result_per_metric[metric]["sample"]:
+                        result_per_metric[metric]["sample"]["usage"] = { "total_tokens": metric_value }
+                    else:
+                        result_per_metric[metric]["sample"]["usage"]["total_tokens"] = metric_value
+                elif metric_key.endswith("_prompt_tokens"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = { "sample": { "usage":{ "prompt_tokens": metric_value } } }
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = { "usage":{ "prompt_tokens": metric_value } }
+                    elif metric in result_per_metric and "sample" in result_per_metric[metric] and "usage" not in result_per_metric[metric]["sample"]:
+                        result_per_metric[metric]["sample"]["usage"] = { "prompt_tokens": metric_value }
+                    else:
+                        result_per_metric[metric]["sample"]["usage"]["prompt_tokens"] = metric_value
+                elif metric_key.endswith("_completion_tokens"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = { "sample": { "usage":{ "completion_tokens": metric_value } } }
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = { "usage":{ "completion_tokens": metric_value } }
+                    elif metric in result_per_metric and "sample" in result_per_metric[metric] and "usage" not in result_per_metric[metric]["sample"]:
+                        result_per_metric[metric]["sample"]["usage"] = { "completion_tokens": metric_value }
+                    else:
+                        result_per_metric[metric]["sample"]["usage"]["completion_tokens"] = metric_value
+                elif not any(metric_key.endswith(suffix) for suffix in ["_result", "_reason", "_threshold", 
+                                                                        "_label", "_score", "_model", "_finish_reason", 
+                                                                        "_sample_input", "_sample_output", "_total_tokens", 
+                                                                        "_prompt_tokens", "_completion_tokens"]):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     # If no score found yet and this doesn't match other patterns, use as score
                     if metric_key==metric and metric not in result_per_metric:
@@ -1900,7 +1975,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                             result_counts_stats[testing_criteria]["failed"] += 1
                     # Check if the result indicates an error status
                     elif (('status' in result_item and result_item['status'] in ['error', 'errored']) 
-                          or (result_item['sample'] and isinstance(result_item['sample'], dict) and result_item['sample'].get('error', None) is not None)):
+                          or ('sample' in result_item and isinstance(result_item['sample'], dict) and result_item['sample'].get('error', None) is not None)):
                         result_counts["errored"] += 1
         elif hasattr(aoai_result, 'status') and aoai_result.status == 'error':
             result_counts["errored"] += 1
