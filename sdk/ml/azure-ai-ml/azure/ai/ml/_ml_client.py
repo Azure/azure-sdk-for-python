@@ -1093,6 +1093,7 @@ class MLClient:
         return self._batch_deployments
 
     @property
+    @experimental
     def deployment_templates(self) -> DeploymentTemplateOperations:
         """A collection of deployment template related operations.
 

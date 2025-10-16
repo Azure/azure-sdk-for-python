@@ -477,6 +477,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         if hasattr(self, 'deployment_template_type') and self.deployment_template_type:
             result["deploymentTemplateType"] = self.deployment_template_type  # Use camelCase for API
             
+        # Add tags if present
+        if self.tags:
+            result["tags"] = dict(self.tags)
+            
         # Add environment information
         if hasattr(self, 'environment_id') and self.environment_id:
             result["environmentId"] = self.environment_id
@@ -561,6 +565,11 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
             result["stage"] = self.stage
         if self.deployment_template_type:
             result["deploymentTemplateType"] = self.deployment_template_type
+            
+        # Add tags if present
+        if self.tags:
+            result["tags"] = dict(self.tags)
+            
         if hasattr(self, 'environment_id') and self.environment_id:
             result["environmentId"] = self.environment_id
         elif self.environment:
