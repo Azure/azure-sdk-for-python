@@ -11,6 +11,17 @@ APIs, which specifies the full path to start listing paths from.
 - Added support for the keyword `user_delegation_oid` to `generate_blob_sas` and `generate_container_sas`, which
 specifies the Entra ID of the user that is authorized to use the generated SAS URL.
 
+## 12.27.0 (2025-10-15)
+
+### Features Added
+- Stable release of features from 12.27.0b1
+
+### Other Changes
+- Migrated any previously documented `kwarg` arguments to be named keywords. 
+Some public types may have been adjusted if they were previously erroneous or incomplete.
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
+
 ## 12.26.0 (2025-07-16)
 
 ### Features Added

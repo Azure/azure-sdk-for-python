@@ -108,7 +108,7 @@
 
 # ServiceLabel: %Communication - Phone Numbers
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @Arazan @whisper6284 @danielortega-msft @sofiar-msft
+/sdk/communication/azure-communication-phonenumbers/                 @gfeitosa-msft @phermanov-msft @ilyapaliakou-msft @besh2014 @ihuseynov-msft @kirill-linnik
 
 # ServiceLabel: %Communication - Rooms
 # PRLabel: %Communication - Rooms
@@ -856,7 +856,7 @@
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @pvaneck
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 /eng/pipelines/docindex.yml                                          @danieljurek @scbedd @weshaggard @benbp
 

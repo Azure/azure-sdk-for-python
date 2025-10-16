@@ -1,16 +1,34 @@
 # Release History
 
-## 1.12.0 (Unreleased)
+## 1.13.0 (Unreleased)
 
 ### Features Added
 
-- AOAI Graders now accept a "credential" parameter that can be used for authentication with an AzureOpenAIModelConfiguration
-
-### Breaking Changes
+-
 
 ### Bugs Fixed
 
-### Other Changes
+-
+
+## 1.12.0 (2025-10-02)
+
+### Features Added
+- AOAI Graders now accept a "credential" parameter that can be used for authentication with an AzureOpenAIModelConfiguration
+- Added `is_reasoning_model` parameter support to `CoherenceEvaluator`, `FluencyEvaluator`, `SimilarityEvaluator`, `GroundednessEvaluator`, `RetrievalEvaluator`, and `RelevanceEvaluator` to enable reasoning model configuration for o1/o3 models.
+
+### Bugs Fixed
+- Support for multi-level nesting in OpenAI grader (experimental)
+
+## 1.11.2 (2025-10-09)
+
+### Bugs Fixed
+
+- **kwargs in an evaluator signature receives input columns that are not otherwise named in the evaluator's signature
+
+## 1.11.1 (2025-09-19)
+
+### Bugs Fixed
+- Pinning duckdb version to 1.3.2 for redteam extra to fix error `TypeError: unhashable type: '_duckdb.typing.DuckDBPyType'`
 
 ## 1.11.0 (2025-09-03)
 

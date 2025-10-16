@@ -4,12 +4,17 @@
 
 ### Features Added
 
+- Performance Counters
+  ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 - Fix detector version
   ([#43044](https://github.com/Azure/azure-sdk-for-python/pull/43044))
+- Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
+  ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
 
 ### Other Changes
 

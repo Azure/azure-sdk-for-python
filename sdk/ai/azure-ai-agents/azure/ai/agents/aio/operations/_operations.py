@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -86,7 +85,8 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ThreadsOperations:
@@ -113,7 +113,7 @@ class ThreadsOperations:
         content_type: str = "application/json",
         messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AgentThread:
         """Creates a new thread. Threads contain messages and can be run by agents.
@@ -177,7 +177,7 @@ class ThreadsOperations:
         *,
         messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AgentThread:
         """Creates a new thread. Threads contain messages and can be run by agents.
@@ -414,7 +414,7 @@ class ThreadsOperations:
         *,
         content_type: str = "application/json",
         tool_resources: Optional[_models.ToolResources] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AgentThread:
         """Modifies an existing thread.
@@ -483,7 +483,7 @@ class ThreadsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_resources: Optional[_models.ToolResources] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AgentThread:
         """Modifies an existing thread.
@@ -661,7 +661,7 @@ class MessagesOperations:
         content: "_types.MessageInputContent",
         content_type: str = "application/json",
         attachments: Optional[List[_models.MessageAttachment]] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
@@ -740,7 +740,7 @@ class MessagesOperations:
         role: Union[str, _models.MessageRole] = _Unset,
         content: "_types.MessageInputContent" = _Unset,
         attachments: Optional[List[_models.MessageAttachment]] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
@@ -999,7 +999,7 @@ class MessagesOperations:
         message_id: str,
         *,
         content_type: str = "application/json",
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
@@ -1068,7 +1068,7 @@ class MessagesOperations:
         message_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
@@ -1265,7 +1265,7 @@ class RunsOperations:
         tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
@@ -1440,7 +1440,7 @@ class RunsOperations:
         tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
@@ -1773,7 +1773,7 @@ class RunsOperations:
         run_id: str,
         *,
         content_type: str = "application/json",
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
@@ -1842,7 +1842,7 @@ class RunsOperations:
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
@@ -1934,7 +1934,7 @@ class RunsOperations:
         run_id: str,
         *,
         content_type: str = "application/json",
-        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
         stream_parameter: Optional[bool] = None,
         **kwargs: Any
@@ -1950,7 +1950,7 @@ class RunsOperations:
         :paramtype content_type: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -2009,7 +2009,7 @@ class RunsOperations:
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
         stream_parameter: Optional[bool] = None,
         **kwargs: Any
@@ -2024,7 +2024,7 @@ class RunsOperations:
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -2472,8 +2472,8 @@ class FilesOperations:
         cls: ClsType[_models.FileInfo] = kwargs.pop("cls", None)
 
         _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: List[str] = ["file"]
-        _data_fields: List[str] = ["purpose", "filename"]
+        _file_fields: list[str] = ["file"]
+        _data_fields: list[str] = ["purpose", "filename"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_files_upload_file_request(
@@ -2806,7 +2806,7 @@ class VectorStoresOperations:
         store_configuration: Optional[_models.VectorStoreConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store.
@@ -2877,7 +2877,7 @@ class VectorStoresOperations:
         store_configuration: Optional[_models.VectorStoreConfiguration] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store.
@@ -3045,7 +3045,7 @@ class VectorStoresOperations:
         content_type: str = "application/json",
         name: Optional[str] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.VectorStore:
         """Modifies an existing vector store.
@@ -3113,7 +3113,7 @@ class VectorStoresOperations:
         *,
         name: Optional[str] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.VectorStore:
         """Modifies an existing vector store.
@@ -4083,7 +4083,7 @@ class _AgentsClientOperationsMixin(
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
         """Creates a new agent.
@@ -4177,7 +4177,7 @@ class _AgentsClientOperationsMixin(
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
         """Creates a new agent.
@@ -4458,7 +4458,7 @@ class _AgentsClientOperationsMixin(
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
@@ -4563,7 +4563,7 @@ class _AgentsClientOperationsMixin(
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
@@ -4773,7 +4773,7 @@ class _AgentsClientOperationsMixin(
         tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new agent thread and immediately starts a run using that new thread.
@@ -4908,7 +4908,7 @@ class _AgentsClientOperationsMixin(
         tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new agent thread and immediately starts a run using that new thread.
