@@ -21,14 +21,7 @@ from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
-
-from opentelemetry import _logs
-from opentelemetry.context import Context
-from opentelemetry.sdk._logs import LoggerProvider, Logger, LogRecord
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
@@ -1074,6 +1067,8 @@ def _log_events_to_app_insights(
     :type attributes: Optional[Dict[str, Any]]
     """
 
+    from opentelemetry.sdk._logs import LogRecord
+
     try:
         # Get the trace_id
         trace_id = None
@@ -1193,6 +1188,11 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
     :param results: List of evaluation results to log
     :type results: List[Dict]
     """
+
+    from opentelemetry import _logs
+    from opentelemetry.sdk._logs import LoggerProvider
+    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
     if not results:
         LOGGER.debug("No results to log to App Insights")
