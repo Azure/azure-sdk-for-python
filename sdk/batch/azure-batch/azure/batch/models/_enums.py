@@ -10,13 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AccessScope enums."""
-
-    JOB = "job"
-    """Grants access to perform all operations on the Job containing the Task."""
-
-
 class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AllocationState enums."""
 
@@ -39,6 +32,22 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POOL = "pool"
     """Specifies that the Task runs as the common auto user Account which is created on every Compute
     Node in a Pool."""
+
+
+class BatchAccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchAccessScope enums."""
+
+    JOB = "job"
+    """Grants access to perform all operations on the Job containing the Task."""
+
+
+class BatchAllTasksCompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
+
+    NO_ACTION = "noaction"
+    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
+    TERMINATE_JOB = "terminatejob"
+    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
 class BatchCertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -90,7 +99,16 @@ class BatchCertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Compute Node."""
 
 
-class BatchJobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class BatchErrorSourceCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchErrorSourceCategory enums."""
+
+    USER_ERROR = "usererror"
+    """The error is due to a user issue, such as misconfiguration."""
+    SERVER_ERROR = "servererror"
+    """The error is due to an internal server issue."""
+
+
+class BatchJobActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchJobAction enums."""
 
     NONE = "none"
@@ -198,9 +216,10 @@ class BatchNodeDeallocateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Deallocate the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Deallocate the Compute Node when all Task
-    retention periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Deallocate the Compute
+    Node when all Task retention periods have expired."""
 
 
 class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -216,9 +235,10 @@ class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Remove Compute
     Nodes when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Remove Compute Nodes when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Remove Compute Nodes
+    when all Task retention periods have expired."""
 
 
 class BatchNodeDisableSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -256,8 +276,8 @@ class BatchNodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     balancing."""
 
 
-class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeRebootOption enums."""
+class BatchNodeRebootKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeRebootKind enums."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
@@ -270,9 +290,10 @@ class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Restart the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Restart the Compute Node when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Restart the Compute Node
+    when all Task retention periods have expired."""
 
 
 class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -289,9 +310,10 @@ class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Reimage the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Reimage the Compute Node when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Reimage the Compute Node
+    when all Task retention periods have expired."""
 
 
 class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -419,6 +441,15 @@ class BatchTaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILURE = "failure"
     """There was an error during processing of the Task. The failure may have occurred before the Task
     process was launched, while the Task process was executing, or after the Task process exited."""
+
+
+class BatchTaskFailureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TaskFailure enums."""
+
+    NO_ACTION = "noaction"
+    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
+    PERFORM_EXIT_OPTIONS_JOB_ACTION = "performexitoptionsjobaction"
+    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
 class BatchTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -558,15 +589,6 @@ class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The user is a user with elevated access and operates with full Administrator permissions."""
 
 
-class ErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ErrorCategory enums."""
-
-    USER_ERROR = "usererror"
-    """The error is due to a user issue, such as misconfiguration."""
-    SERVER_ERROR = "servererror"
-    """The error is due to an internal server issue."""
-
-
 class ImageVerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ImageVerificationType enums."""
 
@@ -620,24 +642,6 @@ class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Allow access."""
     DENY = "deny"
     """Deny access."""
-
-
-class OnAllBatchTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
-
-    NO_ACTION = "noaction"
-    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
-    TERMINATE_JOB = "terminatejob"
-    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
-
-
-class OnBatchTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OnTaskFailure enums."""
-
-    NO_ACTION = "noaction"
-    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
-    PERFORM_EXIT_OPTIONS_JOB_ACTION = "performexitoptionsjobaction"
-    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

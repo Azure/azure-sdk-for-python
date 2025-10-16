@@ -141,7 +141,7 @@ class TypeHandlerRegistry:
 
         return decorator
 
-    def get_serializer(self, obj: Any) -> Optional[Callable]:
+    def get_serializer(self, obj: Any) -> Optional[Callable[[Any], Dict[str, Any]]]:
         """Gets the appropriate serializer for an object.
 
         It first checks the type dictionary for a direct type match.
@@ -152,7 +152,7 @@ class TypeHandlerRegistry:
         :param obj: The object to serialize.
         :type obj: any
         :return: The serializer function if found, otherwise None.
-        :rtype: Optional[Callable]
+        :rtype: Optional[Callable[[Any], Dict[str, Any]]]
         """
         obj_type = type(obj)
         if obj_type in self._serializer_cache:
@@ -168,7 +168,7 @@ class TypeHandlerRegistry:
         self._serializer_cache[obj_type] = handler
         return handler
 
-    def get_deserializer(self, cls: Type) -> Optional[Callable]:
+    def get_deserializer(self, cls: Type) -> Optional[Callable[[Dict[str, Any]], Any]]:
         """Gets the appropriate deserializer for a class.
 
         It first checks the type dictionary for a direct type match.
@@ -178,8 +178,9 @@ class TypeHandlerRegistry:
 
         :param cls: The class to deserialize.
         :type cls: type
-        :return: The deserializer function wrapped with the class if found, otherwise None.
-        :rtype: Optional[Callable]
+        :return: A deserializer function bound to the specified class that takes a dictionary and returns
+            an instance of that class, or None if no deserializer is found.
+        :rtype: Optional[Callable[[Dict[str, Any]], Any]]
         """
         if cls in self._deserializer_cache:
             return self._deserializer_cache[cls]

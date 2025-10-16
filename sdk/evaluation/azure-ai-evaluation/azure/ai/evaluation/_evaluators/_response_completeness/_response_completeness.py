@@ -17,35 +17,31 @@ from azure.ai.evaluation._common._experimental import experimental
 
 @experimental
 class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """
-    Evaluates the extent to which a given response contains all necessary and relevant information with respect to the
-     provided ground truth.
+    """Evaluates the extent to which a given response contains all necessary and relevant information with respect to the
+    provided ground truth.
+
     The completeness measure assesses how thoroughly an AI model's generated response aligns with the key information,
     claims, and statements established in the ground truth. This evaluation considers the presence, accuracy,
     and relevance of the content provided.
+
     The assessment spans multiple levels, ranging from fully incomplete to fully complete, ensuring a comprehensive
     evaluation of the response's content quality.
+
     Use this metric when you need to evaluate an AI model's ability to deliver comprehensive and accurate information,
     particularly in text generation tasks where conveying all essential details is crucial for clarity,
     context, and correctness.
+
     Completeness scores range from 1 to 5:
+
     1: Fully incomplete — Contains none of the necessary information.
     2: Barely complete — Contains only a small portion of the required information.
     3: Moderately complete — Covers about half of the required content.
     4: Mostly complete — Includes most of the necessary details with minimal omissions.
     5: Fully complete — Contains all key information without any omissions.
+
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START completeness_evaluator]
-            :end-before: [END completeness_evaluator]
-            :language: python
-            :dedent: 8
-            :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
 
     .. admonition:: Example using Azure AI Project URL:
 

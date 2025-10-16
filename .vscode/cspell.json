@@ -1211,6 +1211,8 @@
         "ikey",
         "msecs",
         "mycontainer",
+        "pclp",
+        "pcsp",
         "semconv",
         "updown",
         "uvicorn"
