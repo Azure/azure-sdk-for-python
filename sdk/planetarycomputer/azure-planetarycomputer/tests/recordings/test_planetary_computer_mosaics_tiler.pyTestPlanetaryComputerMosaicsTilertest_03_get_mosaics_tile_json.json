@@ -1,0 +1,221 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/register?api-version=2025-04-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "177",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "filter": {
+          "args": [
+            {
+              "args": [
+                {
+                  "property": "collection"
+                },
+                "atl"
+              ],
+              "op": "="
+            }
+          ],
+          "op": "and"
+        },
+        "filter-lang": "cql2-json",
+        "sortby": [
+          {
+            "direction": "desc",
+            "field": "datetime"
+          }
+        ]
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Connection": "keep-alive",
+        "Content-Length": "744",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 23:29:09 GMT",
+        "Server-Timing": "total;dur=98.57",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "3629ed574885451586d9554d8b90138e"
+      },
+      "ResponseBody": {
+        "searchid": "aeb6a26faad0c8f1400ace6da244ea08",
+        "links": [
+          {
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/info",
+            "rel": "metadata",
+            "type": "application/json",
+            "title": "Mosaic metadata"
+          },
+          {
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/tilejson.json",
+            "rel": "tilejson",
+            "type": "application/json",
+            "title": "Link for TileJSON"
+          },
+          {
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/WMTSCapabilities.xml",
+            "rel": "wmts",
+            "type": "application/json",
+            "title": "Link for WMTS"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/info?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Cache-Control": "public, max-age=3600",
+        "Connection": "keep-alive",
+        "Content-Length": "1068",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 23:29:09 GMT",
+        "Server-Timing": "total;dur=31.11",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "d464713a9885476582834093bda80305"
+      },
+      "ResponseBody": {
+        "search": {
+          "hash": "aeb6a26faad0c8f1400ace6da244ea08",
+          "search": {
+            "filter": {
+              "op": "and",
+              "args": [
+                {
+                  "op": "=",
+                  "args": [
+                    {
+                      "property": "collection"
+                    },
+                    "atl"
+                  ]
+                }
+              ]
+            },
+            "sortby": [
+              {
+                "field": "datetime",
+                "direction": "desc"
+              }
+            ],
+            "filter-lang": "cql2-json"
+          },
+          "_where": "(collection = 'atl')",
+          "orderby": "datetime DESC, id DESC",
+          "lastused": "2025-10-16T23:29:09.912252Z",
+          "usecount": 4,
+          "metadata": {
+            "type": "mosaic"
+          }
+        },
+        "links": [
+          {
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/info",
+            "rel": "self",
+            "type": "application/json",
+            "title": "Mosaic metadata"
+          },
+          {
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/tilejson.json",
+            "rel": "tilejson",
+            "type": "application/json",
+            "title": "Link for TileJSON"
+          },
+          {
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/WMTSCapabilities.xml",
+            "rel": "wmts",
+            "type": "application/json",
+            "title": "Link for WMTS"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/WebMercatorQuad/tilejson.json?api-version=2025-04-30-preview&assets=red_20m&assets=green_20m&assets=blue_20m&nodata=0.0&minzoom=9&tile_format=png&tile_scale=2&color_formula=Gamma%20RGB%203.2%20Saturation%200.8%20Sigmoidal%20RGB%2025%200.35&collection=atl",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Cache-Control": "public, max-age=3600",
+        "Connection": "keep-alive",
+        "Content-Length": "561",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 23:29:10 GMT",
+        "Server-Timing": "total;dur=66.68",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "889e079d4efd48de9742e0d7dcac2c1a"
+      },
+      "ResponseBody": {
+        "tilejson": "2.2.0",
+        "name": "Sanitized",
+        "version": "1.0.0",
+        "scheme": "xyz",
+        "tiles": [
+          "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/tiles/WebMercatorQuad/{z}/{x}/{y}?api-version=2025-04-30-preview&assets=red_20m&assets=green_20m&assets=blue_20m&nodata=0.0&color_formula=Gamma+RGB+3.2+Saturation+0.8+Sigmoidal+RGB+25+0.35&collection=atl"
+        ],
+        "minzoom": 9,
+        "maxzoom": 24,
+        "bounds": [
+          -180.0,
+          -85.0511287798066,
+          180.00000000000009,
+          85.0511287798066
+        ],
+        "center": [
+          4.263256414560601E-14,
+          0.0,
+          9
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
