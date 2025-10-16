@@ -4,15 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 import logging
-import weakref
 import threading
 from typing import TypeVar, Any, MutableMapping, cast, Optional
+from weakref import WeakKeyDictionary
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
-from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials import AccessToken, TokenProvider
 from azure.core.exceptions import HttpResponseError
 
 from .http_constants import HttpHeaders
@@ -20,9 +20,9 @@ from ._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 logger = logging.getLogger("azure.cosmos.CosmosBearerTokenCredentialPolicy")
-_credential_locks: "weakref.WeakKeyDictionary[TokenCredential, threading.RLock]" = weakref.WeakKeyDictionary()
+_credential_locks: "WeakKeyDictionary[TokenProvider, threading.RLock]" = WeakKeyDictionary()
 
-def _get_credential_lock(credential: TokenCredential) -> threading.RLock:
+def _get_credential_lock(credential: TokenProvider) -> threading.RLock:
     lock = _credential_locks.get(credential)
     if lock is None:
         lock = threading.RLock()
@@ -36,18 +36,20 @@ def _get_credential_lock(credential: TokenCredential) -> threading.RLock:
 class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     AadDefaultScope = Constants.AAD_DEFAULT_SCOPE
 
-    def __init__(self, credential: TokenCredential, account_scope: str, override_scope: Optional[str] = None) -> None:
+    def __init__(self, credential: TokenProvider, account_scope: str, override_scope: Optional[str] = None) -> None:
         self._account_scope = account_scope
         self._override_scope = override_scope
         self._current_scope = override_scope or account_scope
         self._credential_lock = _get_credential_lock(credential)
+        super().__init__(credential, self._current_scope)
         # initialize the cache by requesting a token for the current scope (thread-safe)
         with self._credential_lock:
             try:
-                credential.get_token(self._current_scope)
-            except Exception:
-                logger.warning("Failed to acquire initial token for scope '%s'. Cache was not populated.", self._current_scope)
-        super().__init__(credential, self._current_scope)
+                self._get_token(self._current_scope)
+            # don't fail on filling up the cache
+            except Exception: #pylint: disable=broad-exception-caught
+                logger.warning("Failed to acquire initial token for scope '%s'. Cache was not populated.",
+                               self._current_scope, exc_info=True)
 
     @staticmethod
     def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
