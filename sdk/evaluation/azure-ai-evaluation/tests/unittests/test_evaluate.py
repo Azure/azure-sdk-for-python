@@ -23,7 +23,7 @@ from azure.ai.evaluation import (
     SexualEvaluator,
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
-    AzureOpenAIModelConfiguration
+    AzureOpenAIModelConfiguration,
 )
 from azure.ai.evaluation._aoai.label_grader import AzureOpenAILabelGrader
 from azure.ai.evaluation._constants import (
@@ -35,7 +35,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
     _apply_target_to_data,
     _rename_columns_conditionally,
-    _convert_results_to_aoai_evaluation_results
+    _convert_results_to_aoai_evaluation_results,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -1087,7 +1087,7 @@ class TestEvaluate:
     def test_convert_results_to_aoai_evaluation_results(self):
         """Test _convert_results_to_aoai_evaluation_results function with test data"""
         import logging
-        
+
         # Load test data from the JSON file
         parent = pathlib.Path(__file__).parent.resolve()
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
@@ -1113,36 +1113,31 @@ class TestEvaluate:
                 name="labelgrader",
             ),
             "violence": ViolenceEvaluator(None, fake_project),
-            "self_harm": SelfHarmEvaluator(None, fake_project)
+            "self_harm": SelfHarmEvaluator(None, fake_project),
         }
-        
+
         # Create logger
         logger = logging.getLogger("test_logger")
         # Read and parse the JSONL file (contains multiple JSON objects)
         test_rows = []
-        with open(test_data_path, 'r') as f:
+        with open(test_data_path, "r") as f:
             for line in f:
                 line = line.strip()
                 if line:
                     logger.info(line)
                     test_rows.append(json.loads(line))
         test_eval_input_metadata = {}
-        with open(test_input_eval_metadata_path, 'r') as f:
+        with open(test_input_eval_metadata_path, "r") as f:
             test_eval_input_metadata = json.load(f)
         test_eval_error_summary = {}
-        with open(test_input_eval_error_summary_path, 'r') as f:
+        with open(test_input_eval_error_summary_path, "r") as f:
             test_eval_error_summary = json.load(f)
-        
+
         eval_id = "test_eval_group_123"
         eval_run_id = "test_run_456"
         # Create EvaluationResult structure
-        test_results = {
-            "metrics": {"overall_score": 0.75},
-            "rows": test_rows,
-            "studio_url": "https://test-studio.com"
-        }
-        
-        
+        test_results = {"metrics": {"overall_score": 0.75}, "rows": test_rows, "studio_url": "https://test-studio.com"}
+
         # Test the conversion function
         def run_test():
             _convert_results_to_aoai_evaluation_results(
@@ -1152,9 +1147,9 @@ class TestEvaluate:
                 eval_id=eval_id,
                 evaluators=evaluators,
                 eval_run_summary=test_eval_error_summary,
-                eval_meta_data=test_eval_input_metadata
+                eval_meta_data=test_eval_input_metadata,
             )
-        
+
         # Run the async function
         run_test()
         converted_results = test_results
@@ -1165,13 +1160,13 @@ class TestEvaluate:
         assert "studio_url" in converted_results
         assert "evaluation_results_list" in converted_results
         assert "evaluation_summary" in converted_results
-        
+
         # Verify metrics preserved
         assert converted_results["metrics"]["overall_score"] == 0.75
-        
+
         # Verify studio URL preserved
         assert converted_results["studio_url"] == "https://test-studio.com"
-        
+
         # Verify evaluation_results_list is same as rows (converted format)
         assert len(converted_results["evaluation_results_list"]) == len(test_rows)
         assert len(converted_results["evaluation_results_list"]) == len(converted_results["rows"])
@@ -1264,17 +1259,14 @@ class TestEvaluate:
         # Test with empty results
         empty_results = {"metrics": {}, "rows": [], "studio_url": None}
         _convert_results_to_aoai_evaluation_results(
-            results=empty_results,
-            logger=logger,
-            eval_run_id=eval_run_id,
-            eval_id=eval_id,
-            evaluators=evaluators
+            results=empty_results, logger=logger, eval_run_id=eval_run_id, eval_id=eval_id, evaluators=evaluators
         )
         empty_converted = empty_results
 
         assert len(empty_converted["rows"]) == 0
         assert len(empty_converted["evaluation_results_list"]) == 0
         assert empty_converted["evaluation_summary"]["result_counts"]["total"] == 0
+
 
 @pytest.mark.unittest
 class TestTagsInLoggingFunctions:
@@ -1589,4 +1581,3 @@ class TestTagsInLoggingFunctions:
         assert (
             not hasattr(call_args, "tags") or call_args.tags is None
         ), "Tags should not be redundantly set in update_evaluation_run"
-    

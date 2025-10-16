@@ -132,7 +132,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
-        llm_output, input_token_count, output_token_count, total_token_count = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output, input_token_count, output_token_count, total_token_count = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
 
         score = math.nan
         if llm_output:
