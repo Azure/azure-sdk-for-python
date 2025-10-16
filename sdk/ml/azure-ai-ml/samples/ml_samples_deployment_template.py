@@ -41,3 +41,15 @@ for temp in templates:
 template = ml_client.deployment_templates.get(name="DT03", version="1")
 print(template)
 
+# Update a Deployment Template
+# only Description and tags can be updated
+template.description = "Updated Description"
+template.tags = {"key":"value"}
+ml_client.deployment_templates.create_or_update(template)
+
+# Archive a deployment template
+ml_client.deployment_templates.archive(name="DT10", version="1")
+
+# Restore a deployment template
+ml_client.deployment_templates.restore(name="DT10", version="1")
+
