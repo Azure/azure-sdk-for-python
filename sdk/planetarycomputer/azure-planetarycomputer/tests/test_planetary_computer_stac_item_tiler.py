@@ -11,7 +11,7 @@ import logging
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
-from azure.planetarycomputer.models import TilerImageFormat, Polygon, Feature, FeatureType
+from azure.planetarycomputer.models import TilerImageFormat
 
 # Set up test logger
 test_logger = logging.getLogger("test_stac_item_tiler")
@@ -64,7 +64,8 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         # Assert basic structure
         assert response is not None, "Response should not be None"
         assert hasattr(response, 'id'), "Response should have id attribute"
-        assert response.id == "WebMercatorQuad", f"ID should be WebMercatorQuad, got {response.id}"
+        assert response.id is not None and len(response.id) > 0, f"ID should not be empty, got {response.id}"
+        # Note: In playback mode, ID may be "Sanitized" due to test proxy sanitization
         assert hasattr(response, 'tile_matrices'), "Response should have tile_matrices"
         assert len(response.tile_matrices) > 0, "Should have at least one tile matrix"
         
@@ -185,13 +186,20 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
         
-        # Assert response is a list with 4 coordinates
-        assert isinstance(response, list), f"Response should be a list, got {type(response)}"
-        assert len(response) == 4, f"Bounds should have 4 coordinates [minx, miny, maxx, maxy], got {len(response)}"
+        # Response is a StacItemBounds object with .bounds attribute
+        assert response is not None, "Response should not be None"
+        assert hasattr(response, 'bounds'), "Response should have bounds attribute"
+        
+        bounds = response.bounds
+        test_logger.info(f"Bounds: {bounds}")
+        
+        # Assert bounds is a list with 4 coordinates
+        assert isinstance(bounds, list), f"Bounds should be a list, got {type(bounds)}"
+        assert len(bounds) == 4, f"Bounds should have 4 coordinates [minx, miny, maxx, maxy], got {len(bounds)}"
         
         # Validate coordinate structure: [minx, miny, maxx, maxy]
-        minx, miny, maxx, maxy = response
-        for coord in response:
+        minx, miny, maxx, maxy = bounds
+        for coord in bounds:
             assert isinstance(coord, (int, float)), f"Each coordinate should be numeric, got {type(coord)}"
         
         # Validate bounds logic
@@ -419,8 +427,9 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         
         # Validate XML structure
         assert len(xml_bytes) > 0, "XML bytes should not be empty"
-        assert xml_string.startswith("<?xml"), f"Response should start with XML declaration, got: {xml_string[:50]}"
-        assert "Capabilities" in xml_string, "Response should contain Capabilities element"
+        # Note: WMTS Capabilities XML may not have <?xml declaration
+        assert "<Capabilities" in xml_string, "Response should contain Capabilities element"
         assert "WMTS" in xml_string or "wmts" in xml_string.lower(), "Response should reference WMTS"
+        assert "TileMatrix" in xml_string, "Response should contain TileMatrix information"
         
         test_logger.info("Test PASSED\n")

@@ -1,0 +1,202 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/assets?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Cache-Control": "public, max-age=3600",
+        "Connection": "keep-alive",
+        "Content-Length": "381",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 23:19:46 GMT",
+        "Server-Timing": "total;dur=108.67",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "65697c24ef4344b1a5632ba084da2d52"
+      },
+      "ResponseBody": "[\"aot\",\"nir\",\"red\",\"scl\",\"wvp\",\"blue\",\"green\",\"nir08\",\"nir09\",\"swir16\",\"swir22\",\"visual\",\"aot_10m\",\"aot_60m\",\"coastal\",\"preview\",\"red_20m\",\"red_60m\",\"scl_60m\",\"wvp_10m\",\"wvp_60m\",\"blue_20m\",\"blue_60m\",\"rededge1\",\"rededge2\",\"rededge3\",\"green_20m\",\"green_60m\",\"nir08_60m\",\"swir16_60m\",\"swir22_60m\",\"visual_20m\",\"visual_60m\",\"coastal_20m\",\"rededge1_60m\",\"rededge2_60m\",\"rededge3_60m\"]"
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/statistics?api-version=2025-04-30-preview&assets=aot&assets=nir&assets=red",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Cache-Control": "public, max-age=3600",
+        "Connection": "keep-alive",
+        "Content-Length": "1269",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 23:19:47 GMT",
+        "Server-Timing": "total;dur=1193.19",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "ef13050c5c2b47bf9803a048d1f5a176"
+      },
+      "ResponseBody": {
+        "aot_b1": {
+          "min": 0.0,
+          "max": 260.0,
+          "mean": 76.57991409301758,
+          "count": 1048576.0,
+          "sum": 80299860.0,
+          "std": 101.98661108366511,
+          "median": 0.0,
+          "majority": 0.0,
+          "minority": 9.0,
+          "unique": 186.0,
+          "histogram": [
+            [
+              669959,
+              116,
+              64,
+              37,
+              5,
+              57,
+              3099,
+              53073,
+              321783,
+              383
+            ],
+            [
+              0.0,
+              26.0,
+              52.0,
+              78.0,
+              104.0,
+              130.0,
+              156.0,
+              182.0,
+              208.0,
+              234.0,
+              260.0
+            ]
+          ],
+          "valid_percent": 100.0,
+          "masked_pixels": 0.0,
+          "valid_pixels": 1048576.0,
+          "percentile_2": 0.0,
+          "percentile_98": 219.0
+        },
+        "nir_b1": {
+          "min": 0.0,
+          "max": 10090.0,
+          "mean": 1396.993498802185,
+          "count": 1048576.0,
+          "sum": 1464853855.0,
+          "std": 1900.9585124702232,
+          "median": 0.0,
+          "majority": 0.0,
+          "minority": 5.0,
+          "unique": 5890.0,
+          "histogram": [
+            [
+              671063,
+              753,
+              22203,
+              213870,
+              123693,
+              15655,
+              1117,
+              193,
+              26,
+              3
+            ],
+            [
+              0.0,
+              1009.0,
+              2018.0,
+              3027.0,
+              4036.0,
+              5045.0,
+              6054.0,
+              7063.0,
+              8072.0,
+              9081.0,
+              10090.0
+            ]
+          ],
+          "valid_percent": 100.0,
+          "masked_pixels": 0.0,
+          "valid_pixels": 1048576.0,
+          "percentile_2": 0.0,
+          "percentile_98": 4963.0
+        },
+        "red_b1": {
+          "min": 0.0,
+          "max": 10590.0,
+          "mean": 989.044397354126,
+          "count": 1048576.0,
+          "sum": 1037088218.0,
+          "std": 1387.767067884557,
+          "median": 0.0,
+          "majority": 0.0,
+          "minority": 6.0,
+          "unique": 5165.0,
+          "histogram": [
+            [
+              671945,
+              84273,
+              179808,
+              105303,
+              6868,
+              324,
+              39,
+              12,
+              3,
+              1
+            ],
+            [
+              0.0,
+              1059.0,
+              2118.0,
+              3177.0,
+              4236.0,
+              5295.0,
+              6354.0,
+              7413.0,
+              8472.0,
+              9531.0,
+              10590.0
+            ]
+          ],
+          "valid_percent": 100.0,
+          "masked_pixels": 0.0,
+          "valid_pixels": 1048576.0,
+          "percentile_2": 0.0,
+          "percentile_98": 3860.0
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

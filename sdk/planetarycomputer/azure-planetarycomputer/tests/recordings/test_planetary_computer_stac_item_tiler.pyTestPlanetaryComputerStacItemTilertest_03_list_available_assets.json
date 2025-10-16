@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/tile-matrix-sets?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/assets?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,16 +21,16 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "261",
+        "Content-Length": "381",
         "Content-Type": "application/json",
-        "Date": "Thu, 16 Oct 2025 23:19:30 GMT",
-        "Server-Timing": "total;dur=24.33",
+        "Date": "Thu, 16 Oct 2025 23:19:33 GMT",
+        "Server-Timing": "total;dur=224.12",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "62bb3a3d5b524830a3c09cbc11823fa5"
+        "X-Request-ID": "bc4274d5d7e64385acb56fac0ad1dd73"
       },
-      "ResponseBody": "[\"CDB1GlobalGrid\",\"CanadianNAD83_LCC\",\"EuropeanETRS89_LAEAQuad\",\"GNOSISGlobalGrid\",\"LINZAntarticaMapTilegrid\",\"NZTM2000Quad\",\"UPSAntarcticWGS84Quad\",\"UPSArcticWGS84Quad\",\"UTM31WGS84Quad\",\"WGS1984Quad\",\"WebMercatorQuad\",\"WorldCRS84Quad\",\"WorldMercatorWGS84Quad\"]"
+      "ResponseBody": "[\"aot\",\"nir\",\"red\",\"scl\",\"wvp\",\"blue\",\"green\",\"nir08\",\"nir09\",\"swir16\",\"swir22\",\"visual\",\"aot_10m\",\"aot_60m\",\"coastal\",\"preview\",\"red_20m\",\"red_60m\",\"scl_60m\",\"wvp_10m\",\"wvp_60m\",\"blue_20m\",\"blue_60m\",\"rededge1\",\"rededge2\",\"rededge3\",\"green_20m\",\"green_60m\",\"nir08_60m\",\"swir16_60m\",\"swir22_60m\",\"visual_20m\",\"visual_60m\",\"coastal_20m\",\"rededge1_60m\",\"rededge2_60m\",\"rededge3_60m\"]"
     }
   ],
   "Variables": {}
