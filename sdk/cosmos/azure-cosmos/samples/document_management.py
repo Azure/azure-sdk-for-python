@@ -109,6 +109,71 @@ def query_items_with_continuation_token(container):
     print('The single items in the second page are {}.'.format(second_page_items_with_continuation[0].get("id")))
 
 
+def query_items_with_pagination(container):
+    print('\n1.5a Querying with Pagination - Demonstrating max_item_count and Counting Results\n')
+    
+    # max_item_count controls how many items are returned per page, not the total number of results
+    # This is useful for controlling memory usage and processing items in batches
+    max_items_per_page = 5
+    
+    query_iterable = container.query_items(
+        query="SELECT * FROM c",
+        enable_cross_partition_query=True,
+        max_item_count=max_items_per_page
+    )
+    
+    # Iterate through pages and count both pages and total items
+    total_item_count = 0
+    page_count = 0
+    
+    item_pages = query_iterable.by_page()
+    for page in item_pages:
+        page_count += 1
+        items_in_page = list(page)
+        items_in_current_page = len(items_in_page)
+        total_item_count += items_in_current_page
+        
+        print(f'Page {page_count}: Retrieved {items_in_current_page} items (max per page: {max_items_per_page})')
+        
+        # Process items in this page
+        for item in items_in_page:
+            # Do something with each item
+            pass
+    
+    print(f'\nTotal pages processed: {page_count}')
+    print(f'Total items retrieved: {total_item_count}')
+    print(f'Note: max_item_count limits items PER PAGE, not total results\n')
+
+
+def query_items_cross_partition_with_pagination(container):
+    print('\n1.5b Cross-Partition Query with Pagination\n')
+    
+    # When querying across partitions, max_item_count still controls page size
+    # but the results are gathered from multiple partitions
+    max_items_per_page = 3
+    
+    query_iterable = container.query_items(
+        query="SELECT * FROM c ORDER BY c._ts",  # Order by timestamp across all partitions
+        enable_cross_partition_query=True,
+        max_item_count=max_items_per_page
+    )
+    
+    total_item_count = 0
+    page_count = 0
+    
+    item_pages = query_iterable.by_page()
+    for page in item_pages:
+        page_count += 1
+        items_in_page = list(page)
+        total_item_count += len(items_in_page)
+        
+        print(f'Page {page_count}: {len(items_in_page)} items from across partitions')
+    
+    print(f'\nCross-partition query completed:')
+    print(f'  - Pages: {page_count}')
+    print(f'  - Total items: {total_item_count}')
+
+
 def replace_item(container, doc_id):
     print('\n1.6 Replace an Item\n')
 
@@ -117,6 +182,7 @@ def replace_item(container, doc_id):
     response = container.replace_item(item=read_item, body=read_item)
 
     print('Replaced Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
+
 
 
 def replace_item_using_etags(container, doc_id):
@@ -525,6 +591,8 @@ def run_sample():
         read_items(container)
         query_items(container, 'SalesOrder1')
         query_items_with_continuation_token(container)
+        query_items_with_pagination(container)
+        query_items_cross_partition_with_pagination(container)
         replace_item(container, 'SalesOrder1')
         replace_item_using_etags(container, 'SalesOrder1')
         upsert_item(container, 'SalesOrder1')
