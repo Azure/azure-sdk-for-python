@@ -12,7 +12,7 @@ extends:
           Selection: sparse
           GenerateVMJobs: true
       EnvVars:
-        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TEST_RUN_LIVE: 'false'
         AZURE_TEST_USE_CLI_AUTH: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'true'
         VOICELIVE_OPENAI_ENDPOINT: $(VoiceLiveOpenAIEndpoint)

@@ -178,7 +178,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         assert voicelive_openai_endpoint
         assert voicelive_openai_api_key
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1", "phi4-mm-realtime", "phi4-mini"])
@@ -228,7 +228,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert audio_delta_evt.type in {ServerEventType.RESPONSE_AUDIO_DELTA}
             assert audio_delta_evt.delta is not None and len(audio_delta_evt.delta) > 0
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
@@ -253,7 +253,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             audio_segments, _ = await _collect_event(conn, event_type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED)
             assert audio_segments == 5
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
@@ -296,7 +296,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert audio_delta_evt.type in {ServerEventType.RESPONSE_AUDIO_DELTA}
             assert audio_delta_evt.delta is not None and len(audio_delta_evt.delta) > 0
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
@@ -333,7 +333,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert audio_segments == 5
             assert audio_bytes > 0
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
@@ -360,7 +360,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             audio_segments, _ = await _collect_event(conn, event_type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED)
             assert audio_segments == 1
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
@@ -395,7 +395,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             audio_segments, _ = await _collect_event(conn, event_type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED)
             assert audio_segments == 1
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4o"])
@@ -445,7 +445,7 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             assert len(function_call_results) > 0
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview-2025-06-03", "gpt-4o", "gpt-5-chat"])
@@ -533,7 +533,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert function_done.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
             assert function_done.name == "get_time"
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "gpt-5", "phi4-mm-realtime"])
@@ -613,7 +613,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert "晴" in transcript or "sunny" in transcript
             assert "25" in transcript
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
@@ -679,7 +679,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert audio_bytes > 50 * 1000
             assert transcripts == 1
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
@@ -731,7 +731,7 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             assert len(message_types) == 2
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
@@ -764,7 +764,7 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             assert input_audio_transcription_completed_evt.transcript.strip() == "What's the largest lake in the world?"
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
@@ -814,7 +814,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert events > 0
             assert audio_bytes > 0
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
@@ -862,7 +862,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert len(response_audio_word_timestamps) > 0
             assert len(response_blendshape_visemes) > 0
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4o", "phi4-mm-realtime", "phi4-mini"])
@@ -889,7 +889,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert audio_events > 0
             assert trans_events > 0
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "phi4-mm-realtime"])
@@ -915,7 +915,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             )
             assert content_part_added_events == 1
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
@@ -954,7 +954,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                 conversation_retrieved_event.item.content[0], ContentPart
             ), f"Retrieved item content should be audio: {conversation_retrieved_event.item.content[0]}."
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
@@ -983,7 +983,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                 conversation_retrieved_event, ServerEventConversationItemTruncated
             ), f"Retrieved item should be an ServerEventConversationItemTruncated: {conversation_retrieved_event}."
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
@@ -1094,7 +1094,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             _, audio_bytes = await _collect_event(conn, event_type=None)
             assert audio_bytes > 50 * 1000, f"Output audio too short for {audio_format} format: {audio_bytes} bytes"
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
@@ -1152,7 +1152,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             _, audio_bytes = await _collect_event(conn, event_type=ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA)
             assert audio_bytes > 50 * 1000, f"Output audio too short for {audio_file}: {audio_bytes} bytes"
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4.1", "phi4-mini"])
@@ -1195,7 +1195,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert events == 1
             assert audio_bytes > 10 * 1024
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
@@ -1232,7 +1232,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert events == 1
             assert audio_bytes > 10 * 1024
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
@@ -1258,7 +1258,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             assert segments > 1, "Expected more than 1 speech segment"
             assert audio_bytes > 0, "Audio bytes should be greater than 0"
 
-    @pytest.mark.live_test_only
+    @pytest.mark.e2e
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4.1", "phi4-mm-realtime", "phi4-mini"])
