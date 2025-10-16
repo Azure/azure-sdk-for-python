@@ -36,9 +36,9 @@ def get_test_item(num):
 
 class CosmosEmulatorCredential(object):
     def __init__(self):
+        self.token = None
         # used to verify that get_token was called only once with concurrent clients
-        self.tokens = []
-        self.first_request = True
+        self.counter = 0
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
@@ -53,9 +53,8 @@ class CosmosEmulatorCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
         """
-        if self.first_request:
-            self.first_request = False
-            self.tokens.append("another token")
+        if self.token:
+            return self.token
 
         aad_header_cosmos_emulator = "{\"typ\":\"JWT\",\"alg\":\"RS256\",\"x5t\":\"" \
                                      "CosmosEmulatorPrimaryMaster\",\"kid\":\"CosmosEmulatorPrimaryMaster\"}"
@@ -92,7 +91,10 @@ class CosmosEmulatorCredential(object):
         emulator_key_encoded_padded = str(emulator_key_encoded_bytes, "utf-8")
         emulator_key_encoded = _remove_padding(emulator_key_encoded_padded)
 
-        return AccessToken(first_encoded + "." + second_encoded + "." + emulator_key_encoded, int(time.time() + 7200))
+        self.counter += 1
+        # cache token
+        self.token = AccessToken(first_encoded + "." + second_encoded + "." + emulator_key_encoded, int(time.time() + 7200))
+        return self.token
 
 
 @pytest.mark.cosmosEmulator
@@ -208,7 +210,7 @@ class TestAAD(unittest.TestCase):
                 except Exception:
                     pass
 
-        assert len(credential.tokens) == 1, f"Expected only one token request, got {credential.tokens}"
+        assert credential.counter == 1, f"Expected only one token request, got {credential.counter}"
         del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
 
     def test_account_scope_only(self):
