@@ -741,6 +741,7 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     :return: A dictionary that can be used as the data source input for an OAI evaluation run.
     :rtype: Dict[str, Any]
     """
+
     def _convert_value_to_string(val: Any) -> str:
         """Convert a value to string representation for AOAI evaluation."""
         if val is None:
