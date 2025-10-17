@@ -184,9 +184,7 @@ class TestPrompty:
     async def test_first_match_text_json_streaming(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
-        result = await prompty(
-            question="What is the capital of France?", firstName="Barbra", lastName="Streisand"
-        )
+        result = await prompty(question="What is the capital of France?", firstName="Barbra", lastName="Streisand")
         assert isinstance(result, dict)
         llm_output = result["llm_output"]
         assert isinstance(llm_output, Mapping)
@@ -198,9 +196,7 @@ class TestPrompty:
     async def test_full_text(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["response"] = "full"
         prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
-        result = await prompty(
-            question="What is the capital of France?", firstName="Barbra", lastName="Streisand"
-        )
+        result = await prompty(question="What is the capital of France?", firstName="Barbra", lastName="Streisand")
         assert isinstance(result, dict)
         llm_output = result["llm_output"]
         assert isinstance(llm_output, ChatCompletion)

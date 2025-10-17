@@ -133,9 +133,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 target=ErrorTarget.CONVERSATION,
             )
         # Call the prompty flow to get the evaluation result.
-        prompty_output_dict = await self._flow(
-            timeout=self._LLM_CALL_TIMEOUT, **eval_input
-        )
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
         if prompty_output_dict:
