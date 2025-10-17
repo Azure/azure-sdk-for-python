@@ -21,11 +21,11 @@ class AuthenticationTokenSettings(_Model):
     """The settings for an authentication token that the Task can use to perform Batch
     service operations.
 
-    :ivar access: The Batch resources to which the token grants access. The authentication token
-     grants access to a limited set of Batch service operations. Currently the only supported value
-     for the access property is 'job', which grants access to all operations related to the Job
-     which contains the Task.
-    :vartype access: list[str or ~azure.batch.models.BatchAccessScope]
+        :ivar access: The Batch resources to which the token grants access. The authentication token
+         grants access to a limited set of Batch service operations. Currently the only supported value
+         for the access property is 'job', which grants access to all operations related to the Job
+         which contains the Task.
+        :vartype access: list[str or ~azure.batch.models.BatchAccessScope]
     """
 
     access: Optional[list[Union[str, "_models.BatchAccessScope"]]] = rest_field(
@@ -398,12 +398,12 @@ class BatchAffinityInfo(_Model):
     """A locality hint that can be used by the Batch service to select a Compute Node
     on which to start a Task.
 
-    :ivar affinity_id: An opaque string representing the location of a Compute Node or a Task that
-     has run previously. You can pass the affinityId of a Node to indicate that this Task needs to
-     run on that Compute Node. Note that this is just a soft affinity. If the target Compute Node is
-     busy or unavailable at the time the Task is scheduled, then the Task will be scheduled
-     elsewhere. Required.
-    :vartype affinity_id: str
+        :ivar affinity_id: An opaque string representing the location of a Compute Node or a Task that
+         has run previously. You can pass the affinityId of a Node to indicate that this Task needs to
+         run on that Compute Node. Note that this is just a soft affinity. If the target Compute Node is
+         busy or unavailable at the time the Task is scheduled, then the Task will be scheduled
+         elsewhere. Required.
+        :vartype affinity_id: str
     """
 
     affinity_id: str = rest_field(name="affinityId", visibility=["read", "create", "update", "delete", "query"])
@@ -519,22 +519,22 @@ class BatchAutoPoolSpecification(_Model):
     """Specifies characteristics for a temporary 'auto pool'. The Batch service will
     create this auto Pool when the Job is submitted.
 
-    :ivar auto_pool_id_prefix: A prefix to be added to the unique identifier when a Pool is
-     automatically created. The Batch service assigns each auto Pool a unique identifier on
-     creation. To distinguish between Pools created for different purposes, you can specify this
-     element to add a prefix to the ID that is assigned. The prefix can be up to 20 characters long.
-    :vartype auto_pool_id_prefix: str
-    :ivar pool_lifetime_option: The minimum lifetime of created auto Pools, and how multiple Jobs
-     on a schedule are assigned to Pools. Required. Known values are: "jobschedule" and "job".
-    :vartype pool_lifetime_option: str or ~azure.batch.models.BatchPoolLifetimeOption
-    :ivar keep_alive: Whether to keep an auto Pool alive after its lifetime expires. If false, the
-     Batch service deletes the Pool once its lifetime (as determined by the poolLifetimeOption
-     setting) expires; that is, when the Job or Job Schedule completes. If true, the Batch service
-     does not delete the Pool automatically. It is up to the user to delete auto Pools created with
-     this option.
-    :vartype keep_alive: bool
-    :ivar pool: The Pool specification for the auto Pool.
-    :vartype pool: ~azure.batch.models.BatchPoolSpecification
+        :ivar auto_pool_id_prefix: A prefix to be added to the unique identifier when a Pool is
+         automatically created. The Batch service assigns each auto Pool a unique identifier on
+         creation. To distinguish between Pools created for different purposes, you can specify this
+         element to add a prefix to the ID that is assigned. The prefix can be up to 20 characters long.
+        :vartype auto_pool_id_prefix: str
+        :ivar pool_lifetime_option: The minimum lifetime of created auto Pools, and how multiple Jobs
+         on a schedule are assigned to Pools. Required. Known values are: "jobschedule" and "job".
+        :vartype pool_lifetime_option: str or ~azure.batch.models.BatchPoolLifetimeOption
+        :ivar keep_alive: Whether to keep an auto Pool alive after its lifetime expires. If false, the
+         Batch service deletes the Pool once its lifetime (as determined by the poolLifetimeOption
+         setting) expires; that is, when the Job or Job Schedule completes. If true, the Batch service
+         does not delete the Pool automatically. It is up to the user to delete auto Pools created with
+         this option.
+        :vartype keep_alive: bool
+        :ivar pool: The Pool specification for the auto Pool.
+        :vartype pool: ~azure.batch.models.BatchPoolSpecification
     """
 
     auto_pool_id_prefix: Optional[str] = rest_field(
@@ -586,39 +586,39 @@ class BatchCertificate(_Model):
     """A Certificate that can be installed on Compute Nodes and can be used to
     authenticate operations on the machine.
 
-    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits (it may include spaces but these are removed). Required.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. This must be sha1.
-     Required.
-    :vartype thumbprint_algorithm: str
-    :ivar url: The URL of the Certificate.
-    :vartype url: str
-    :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype state: str or ~azure.batch.models.BatchCertificateState
-    :ivar state_transition_time: The time at which the Certificate entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: The previous state of the Certificate. This property is not set if the
-     Certificate is in its initial active state. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype previous_state: str or ~azure.batch.models.BatchCertificateState
-    :ivar previous_state_transition_time: The time at which the Certificate entered its previous
-     state. This property is not set if the Certificate is in its initial Active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
-    :vartype public_data: str
-    :ivar delete_certificate_error: The error that occurred on the last attempt to delete this
-     Certificate. This property is set only if the Certificate is in the DeleteFailed state.
-    :vartype delete_certificate_error: ~azure.batch.models.BatchCertificateDeleteError
-    :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB. Required.
-    :vartype data: bytes
-    :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
-     "cer".
-    :vartype certificate_format: str or ~azure.batch.models.BatchCertificateFormat
-    :ivar password: The password to access the Certificate's private key. This must be omitted if
-     the Certificate format is cer.
-    :vartype password: str
+        :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
+         digits (it may include spaces but these are removed). Required.
+        :vartype thumbprint: str
+        :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. This must be sha1.
+         Required.
+        :vartype thumbprint_algorithm: str
+        :ivar url: The URL of the Certificate.
+        :vartype url: str
+        :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
+         "deletefailed".
+        :vartype state: str or ~azure.batch.models.BatchCertificateState
+        :ivar state_transition_time: The time at which the Certificate entered its current state.
+        :vartype state_transition_time: ~datetime.datetime
+        :ivar previous_state: The previous state of the Certificate. This property is not set if the
+         Certificate is in its initial active state. Known values are: "active", "deleting", and
+         "deletefailed".
+        :vartype previous_state: str or ~azure.batch.models.BatchCertificateState
+        :ivar previous_state_transition_time: The time at which the Certificate entered its previous
+         state. This property is not set if the Certificate is in its initial Active state.
+        :vartype previous_state_transition_time: ~datetime.datetime
+        :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
+        :vartype public_data: str
+        :ivar delete_certificate_error: The error that occurred on the last attempt to delete this
+         Certificate. This property is set only if the Certificate is in the DeleteFailed state.
+        :vartype delete_certificate_error: ~azure.batch.models.BatchCertificateDeleteError
+        :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB. Required.
+        :vartype data: bytes
+        :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
+         "cer".
+        :vartype certificate_format: str or ~azure.batch.models.BatchCertificateFormat
+        :ivar password: The password to access the Certificate's private key. This must be omitted if
+         the Certificate format is cer.
+        :vartype password: str
     """
 
     thumbprint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -909,17 +909,17 @@ class BatchDiffDiskSettings(_Model):
     """Specifies the ephemeral Disk Settings for the operating system disk used by the
     compute node (VM).
 
-    :ivar placement: Specifies the ephemeral disk placement for operating system disk for all VMs
-     in the pool. This property can be used by user in the request to choose the location e.g.,
-     cache disk space for Ephemeral OS disk provisioning. For more information on Ephemeral OS disk
-     size requirements, please refer to Ephemeral OS disk size requirements for Windows VMs at
-     `https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
-     <https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements>`_
-     and Linux VMs at
-     `https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
-     <https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements>`_.
-     "cachedisk"
-    :vartype placement: str or ~azure.batch.models.DiffDiskPlacement
+        :ivar placement: Specifies the ephemeral disk placement for operating system disk for all VMs
+         in the pool. This property can be used by user in the request to choose the location e.g.,
+         cache disk space for Ephemeral OS disk provisioning. For more information on Ephemeral OS disk
+         size requirements, please refer to Ephemeral OS disk size requirements for Windows VMs at
+         `https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+         <https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements>`_
+         and Linux VMs at
+         `https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements
+         <https://learn.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements>`_.
+         "cachedisk"
+        :vartype placement: str or ~azure.batch.models.DiffDiskPlacement
     """
 
     placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = rest_field(
@@ -1070,38 +1070,38 @@ class BatchInboundNatPool(_Model):
     """A inbound NAT Pool that can be used to address specific ports on Compute Nodes
     in a Batch Pool externally.
 
-    :ivar name: The name of the endpoint. The name must be unique within a Batch Pool, can contain
-     letters, numbers, underscores, periods, and hyphens. Names must start with a letter or number,
-     must end with a letter, number, or underscore, and cannot exceed 77 characters.  If any invalid
-     values are provided the request fails with HTTP status code 400. Required.
-    :vartype name: str
-    :ivar protocol: The protocol of the endpoint. Required. Known values are: "tcp" and "udp".
-    :vartype protocol: str or ~azure.batch.models.InboundEndpointProtocol
-    :ivar backend_port: The port number on the Compute Node. This must be unique within a Batch
-     Pool. Acceptable values are between 1 and 65535 except for 29876 and 29877 as these are
-     reserved. If any reserved values are provided the request fails with HTTP status code 400.
-     Required.
-    :vartype backend_port: int
-    :ivar frontend_port_range_start: The first port number in the range of external ports that will
-     be used to provide inbound access to the backendPort on individual Compute Nodes. Acceptable
-     values range between 1 and 65534 except ports from 50000 to 55000 which are reserved. All
-     ranges within a Pool must be distinct and cannot overlap. Each range must contain at least 40
-     ports. If any reserved or overlapping values are provided the request fails with HTTP status
-     code 400. Required.
-    :vartype frontend_port_range_start: int
-    :ivar frontend_port_range_end: The last port number in the range of external ports that will be
-     used to provide inbound access to the backendPort on individual Compute Nodes. Acceptable
-     values range between 1 and 65534 except ports from 50000 to 55000 which are reserved by the
-     Batch service. All ranges within a Pool must be distinct and cannot overlap. Each range must
-     contain at least 40 ports. If any reserved or overlapping values are provided the request fails
-     with HTTP status code 400. Required.
-    :vartype frontend_port_range_end: int
-    :ivar network_security_group_rules: A list of network security group rules that will be applied
-     to the endpoint. The maximum number of rules that can be specified across all the endpoints on
-     a Batch Pool is 25. If no network security group rules are specified, a default rule will be
-     created to allow inbound access to the specified backendPort. If the maximum number of network
-     security group rules is exceeded the request fails with HTTP status code 400.
-    :vartype network_security_group_rules: list[~azure.batch.models.NetworkSecurityGroupRule]
+        :ivar name: The name of the endpoint. The name must be unique within a Batch Pool, can contain
+         letters, numbers, underscores, periods, and hyphens. Names must start with a letter or number,
+         must end with a letter, number, or underscore, and cannot exceed 77 characters.  If any invalid
+         values are provided the request fails with HTTP status code 400. Required.
+        :vartype name: str
+        :ivar protocol: The protocol of the endpoint. Required. Known values are: "tcp" and "udp".
+        :vartype protocol: str or ~azure.batch.models.InboundEndpointProtocol
+        :ivar backend_port: The port number on the Compute Node. This must be unique within a Batch
+         Pool. Acceptable values are between 1 and 65535 except for 29876 and 29877 as these are
+         reserved. If any reserved values are provided the request fails with HTTP status code 400.
+         Required.
+        :vartype backend_port: int
+        :ivar frontend_port_range_start: The first port number in the range of external ports that will
+         be used to provide inbound access to the backendPort on individual Compute Nodes. Acceptable
+         values range between 1 and 65534 except ports from 50000 to 55000 which are reserved. All
+         ranges within a Pool must be distinct and cannot overlap. Each range must contain at least 40
+         ports. If any reserved or overlapping values are provided the request fails with HTTP status
+         code 400. Required.
+        :vartype frontend_port_range_start: int
+        :ivar frontend_port_range_end: The last port number in the range of external ports that will be
+         used to provide inbound access to the backendPort on individual Compute Nodes. Acceptable
+         values range between 1 and 65534 except ports from 50000 to 55000 which are reserved by the
+         Batch service. All ranges within a Pool must be distinct and cannot overlap. Each range must
+         contain at least 40 ports. If any reserved or overlapping values are provided the request fails
+         with HTTP status code 400. Required.
+        :vartype frontend_port_range_end: int
+        :ivar network_security_group_rules: A list of network security group rules that will be applied
+         to the endpoint. The maximum number of rules that can be specified across all the endpoints on
+         a Batch Pool is 25. If no network security group rules are specified, a default rule will be
+         created to allow inbound access to the specified backendPort. If the maximum number of network
+         security group rules is exceeded the request fails with HTTP status code 400.
+        :vartype network_security_group_rules: list[~azure.batch.models.NetworkSecurityGroupRule]
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1805,76 +1805,76 @@ class BatchJobManagerTask(_Model):
     duplicate data. The best practice for long running Tasks is to use some form of
     checkpointing.
 
-    :ivar id: A string that uniquely identifies the Job Manager Task within the Job. The ID can
-     contain any combination of alphanumeric characters including hyphens and underscores and cannot
-     contain more than 64 characters. Required.
-    :vartype id: str
-    :ivar display_name: The display name of the Job Manager Task. It need not be unique and can
-     contain any Unicode characters up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar command_line: The command line of the Job Manager Task. The command line does not run
-     under a shell, and therefore cannot take advantage of shell features such as environment
-     variable expansion. If you want to take advantage of such features, you should invoke the shell
-     in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand"
-     in Linux. If the command line refers to file paths, it should use a relative path (relative to
-     the Task working directory), or use the Batch provided environment variable
-     (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
-     <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
-     Required.
-    :vartype command_line: str
-    :ivar container_settings: The settings for the container under which the Job Manager Task runs.
-     If the Pool that will run this Task has containerConfiguration set, this must be set as well.
-     If the Pool that will run this Task doesn't have containerConfiguration set, this must not be
-     set. When this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the
-     root of Azure Batch directories on the node) are mapped into the container, all Task
-     environment variables are mapped into the container, and the Task command line is executed in
-     the container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
-     reflected to the host disk, meaning that Batch file APIs will not be able to access those
-     files.
-    :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
-    :ivar resource_files: A list of files that the Batch service will download to the Compute Node
-     before running the command line. Files listed under this element are located in the Task's
-     working directory. There is a maximum size for the list of resource files.  When the max size
-     is exceeded, the request will fail and the response error code will be RequestEntityTooLarge.
-     If this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
-     using .zip files, Application Packages, or Docker Containers.
-    :vartype resource_files: list[~azure.batch.models.ResourceFile]
-    :ivar output_files: A list of files that the Batch service will upload from the Compute Node
-     after running the command line. For multi-instance Tasks, the files will only be uploaded from
-     the Compute Node on which the primary Task is executed.
-    :vartype output_files: list[~azure.batch.models.OutputFile]
-    :ivar environment_settings: A list of environment variable settings for the Job Manager Task.
-    :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :ivar constraints: Constraints that apply to the Job Manager Task.
-    :vartype constraints: ~azure.batch.models.BatchTaskConstraints
-    :ivar required_slots: The number of scheduling slots that the Task requires to run. The default
-     is 1. A Task can only be scheduled to run on a compute node if the node has enough free
-     scheduling slots available. For multi-instance Tasks, this property is not supported and must
-     not be specified.
-    :vartype required_slots: int
-    :ivar kill_job_on_completion: Whether completion of the Job Manager Task signifies completion
-     of the entire Job. If true, when the Job Manager Task completes, the Batch service marks the
-     Job as complete. If any Tasks are still running at this time (other than Job Release), those
-     Tasks are terminated. If false, the completion of the Job Manager Task does not affect the Job
-     status. In this case, you should either use the onAllTasksComplete attribute to terminate the
-     Job, or have a client or user terminate the Job explicitly. An example of this is if the Job
-     Manager creates a set of Tasks but then takes no further role in their execution. The default
-     value is true. If you are using the onAllTasksComplete and onTaskFailure attributes to control
-     Job lifetime, and using the Job Manager Task only to create the Tasks for the Job (not to
-     monitor progress), then it is important to set killJobOnCompletion to false.
-    :vartype kill_job_on_completion: bool
-    :ivar user_identity: The user identity under which the Job Manager Task runs. If omitted, the
-     Task runs as a non-administrative user unique to the Task.
-    :vartype user_identity: ~azure.batch.models.UserIdentity
-    :ivar run_exclusive: Whether the Job Manager Task requires exclusive use of the Compute Node
-     where it runs. If true, no other Tasks will run on the same Node for as long as the Job Manager
-     is running. If false, other Tasks can run simultaneously with the Job Manager on a Compute
-     Node. The Job Manager Task counts normally against the Compute Node's concurrent Task limit, so
-     this is only relevant if the Compute Node allows multiple concurrent Tasks. The default value
-     is true.
-    :vartype run_exclusive: bool
-    :ivar application_package_references: A list of Application Packages that the Batch service
-     will deploy to the
+        :ivar id: A string that uniquely identifies the Job Manager Task within the Job. The ID can
+         contain any combination of alphanumeric characters including hyphens and underscores and cannot
+         contain more than 64 characters. Required.
+        :vartype id: str
+        :ivar display_name: The display name of the Job Manager Task. It need not be unique and can
+         contain any Unicode characters up to a maximum length of 1024.
+        :vartype display_name: str
+        :ivar command_line: The command line of the Job Manager Task. The command line does not run
+         under a shell, and therefore cannot take advantage of shell features such as environment
+         variable expansion. If you want to take advantage of such features, you should invoke the shell
+         in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand"
+         in Linux. If the command line refers to file paths, it should use a relative path (relative to
+         the Task working directory), or use the Batch provided environment variable
+         (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
+         <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
+         Required.
+        :vartype command_line: str
+        :ivar container_settings: The settings for the container under which the Job Manager Task runs.
+         If the Pool that will run this Task has containerConfiguration set, this must be set as well.
+         If the Pool that will run this Task doesn't have containerConfiguration set, this must not be
+         set. When this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the
+         root of Azure Batch directories on the node) are mapped into the container, all Task
+         environment variables are mapped into the container, and the Task command line is executed in
+         the container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
+         reflected to the host disk, meaning that Batch file APIs will not be able to access those
+         files.
+        :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
+        :ivar resource_files: A list of files that the Batch service will download to the Compute Node
+         before running the command line. Files listed under this element are located in the Task's
+         working directory. There is a maximum size for the list of resource files.  When the max size
+         is exceeded, the request will fail and the response error code will be RequestEntityTooLarge.
+         If this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
+         using .zip files, Application Packages, or Docker Containers.
+        :vartype resource_files: list[~azure.batch.models.ResourceFile]
+        :ivar output_files: A list of files that the Batch service will upload from the Compute Node
+         after running the command line. For multi-instance Tasks, the files will only be uploaded from
+         the Compute Node on which the primary Task is executed.
+        :vartype output_files: list[~azure.batch.models.OutputFile]
+        :ivar environment_settings: A list of environment variable settings for the Job Manager Task.
+        :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
+        :ivar constraints: Constraints that apply to the Job Manager Task.
+        :vartype constraints: ~azure.batch.models.BatchTaskConstraints
+        :ivar required_slots: The number of scheduling slots that the Task requires to run. The default
+         is 1. A Task can only be scheduled to run on a compute node if the node has enough free
+         scheduling slots available. For multi-instance Tasks, this property is not supported and must
+         not be specified.
+        :vartype required_slots: int
+        :ivar kill_job_on_completion: Whether completion of the Job Manager Task signifies completion
+         of the entire Job. If true, when the Job Manager Task completes, the Batch service marks the
+         Job as complete. If any Tasks are still running at this time (other than Job Release), those
+         Tasks are terminated. If false, the completion of the Job Manager Task does not affect the Job
+         status. In this case, you should either use the onAllTasksComplete attribute to terminate the
+         Job, or have a client or user terminate the Job explicitly. An example of this is if the Job
+         Manager creates a set of Tasks but then takes no further role in their execution. The default
+         value is true. If you are using the onAllTasksComplete and onTaskFailure attributes to control
+         Job lifetime, and using the Job Manager Task only to create the Tasks for the Job (not to
+         monitor progress), then it is important to set killJobOnCompletion to false.
+        :vartype kill_job_on_completion: bool
+        :ivar user_identity: The user identity under which the Job Manager Task runs. If omitted, the
+         Task runs as a non-administrative user unique to the Task.
+        :vartype user_identity: ~azure.batch.models.UserIdentity
+        :ivar run_exclusive: Whether the Job Manager Task requires exclusive use of the Compute Node
+         where it runs. If true, no other Tasks will run on the same Node for as long as the Job Manager
+         is running. If false, other Tasks can run simultaneously with the Job Manager on a Compute
+         Node. The Job Manager Task counts normally against the Compute Node's concurrent Task limit, so
+         this is only relevant if the Compute Node allows multiple concurrent Tasks. The default value
+         is true.
+        :vartype run_exclusive: bool
+        :ivar application_package_references: A list of Application Packages that the Batch service
+         will deploy to the
      Compute Node before running the command line.Application Packages are
      downloaded and deployed to a shared directory, not the Task working
      directory. Therefore, if a referenced Application Package is already
@@ -1882,20 +1882,20 @@ class BatchJobManagerTask(_Model):
      the existing copy on the Compute Node is used. If a referenced Application
      Package cannot be installed, for example because the package has been deleted
      or because download failed, the Task fails.
-    :vartype application_package_references:
-     list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar authentication_token_settings: The settings for an authentication token that the Task can
-     use to perform Batch service operations. If this property is set, the Batch service provides
-     the Task with an authentication token which can be used to authenticate Batch service
-     operations without requiring an Account access key. The token is provided via the
-     AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
-     using the token depend on the settings. For example, a Task can request Job permissions in
-     order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
-     Job.
-    :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
-    :ivar allow_low_priority_node: Whether the Job Manager Task may run on a Spot/Low-priority
-     Compute Node. The default value is true.
-    :vartype allow_low_priority_node: bool
+        :vartype application_package_references:
+         list[~azure.batch.models.BatchApplicationPackageReference]
+        :ivar authentication_token_settings: The settings for an authentication token that the Task can
+         use to perform Batch service operations. If this property is set, the Batch service provides
+         the Task with an authentication token which can be used to authenticate Batch service
+         operations without requiring an Account access key. The token is provided via the
+         AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
+         using the token depend on the settings. For example, a Task can request Job permissions in
+         order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
+         Job.
+        :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
+        :ivar allow_low_priority_node: Whether the Job Manager Task may run on a Spot/Low-priority
+         Compute Node. The default value is true.
+        :vartype allow_low_priority_node: bool
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1987,13 +1987,13 @@ class BatchJobManagerTask(_Model):
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Application Packages that the Batch service will deploy to the
-     Compute Node before running the command line.Application Packages are
-     downloaded and deployed to a shared directory, not the Task working
-     directory. Therefore, if a referenced Application Package is already
-     on the Compute Node, and is up to date, then it is not re-downloaded;
-     the existing copy on the Compute Node is used. If a referenced Application
-     Package cannot be installed, for example because the package has been deleted
-     or because download failed, the Task fails."""
+ Compute Node before running the command line.Application Packages are
+ downloaded and deployed to a shared directory, not the Task working
+ directory. Therefore, if a referenced Application Package is already
+ on the Compute Node, and is up to date, then it is not re-downloaded;
+ the existing copy on the Compute Node is used. If a referenced Application
+ Package cannot be installed, for example because the package has been deleted
+ or because download failed, the Task fails."""
     authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
         name="authenticationTokenSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2204,67 +2204,67 @@ class BatchJobPreparationTask(_Model):
     without causing any corruption or duplicate data. The best practice for long
     running Tasks is to use some form of checkpointing.
 
-    :ivar id: A string that uniquely identifies the Job Preparation Task within the Job. The ID can
-     contain any combination of alphanumeric characters including hyphens and underscores and cannot
-     contain more than 64 characters. If you do not specify this property, the Batch service assigns
-     a default value of 'jobpreparation'. No other Task in the Job can have the same ID as the Job
-     Preparation Task. If you try to submit a Task with the same id, the Batch service rejects the
-     request with error code TaskIdSameAsJobPreparationTask; if you are calling the REST API
-     directly, the HTTP status code is 409 (Conflict).
-    :vartype id: str
-    :ivar command_line: The command line of the Job Preparation Task. The command line does not run
-     under a shell, and therefore cannot take advantage of shell features such as environment
-     variable expansion. If you want to take advantage of such features, you should invoke the shell
-     in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand"
-     in Linux. If the command line refers to file paths, it should use a relative path (relative to
-     the Task working directory), or use the Batch provided environment variable
-     (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
-     <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
-     Required.
-    :vartype command_line: str
-    :ivar container_settings: The settings for the container under which the Job Preparation Task
-     runs. When this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the
-     root of Azure Batch directories on the node) are mapped into the container, all Task
-     environment variables are mapped into the container, and the Task command line is executed in
-     the container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
-     reflected to the host disk, meaning that Batch file APIs will not be able to access those
-     files.
-    :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
-    :ivar resource_files: A list of files that the Batch service will download to the Compute Node
-     before running the command line. Files listed under this element are located in the Task's
-     working directory.  There is a maximum size for the list of resource files.  When the max size
-     is exceeded, the request will fail and the response error code will be RequestEntityTooLarge.
-     If this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
-     using .zip files, Application Packages, or Docker Containers.
-    :vartype resource_files: list[~azure.batch.models.ResourceFile]
-    :ivar environment_settings: A list of environment variable settings for the Job Preparation
-     Task.
-    :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :ivar constraints: Constraints that apply to the Job Preparation Task.
-    :vartype constraints: ~azure.batch.models.BatchTaskConstraints
-    :ivar wait_for_success: Whether the Batch service should wait for the Job Preparation Task to
-     complete successfully before scheduling any other Tasks of the Job on the Compute Node. A Job
-     Preparation Task has completed successfully if it exits with exit code 0. If true and the Job
-     Preparation Task fails on a Node, the Batch service retries the Job Preparation Task up to its
-     maximum retry count (as specified in the constraints element). If the Task has still not
-     completed successfully after all retries, then the Batch service will not schedule Tasks of the
-     Job to the Node. The Node remains active and eligible to run Tasks of other Jobs. If false, the
-     Batch service will not wait for the Job Preparation Task to complete. In this case, other Tasks
-     of the Job can start executing on the Compute Node while the Job Preparation Task is still
-     running; and even if the Job Preparation Task fails, new Tasks will continue to be scheduled on
-     the Compute Node. The default value is true.
-    :vartype wait_for_success: bool
-    :ivar user_identity: The user identity under which the Job Preparation Task runs. If omitted,
-     the Task runs as a non-administrative user unique to the Task on Windows Compute Nodes, or a
-     non-administrative user unique to the Pool on Linux Compute Nodes.
-    :vartype user_identity: ~azure.batch.models.UserIdentity
-    :ivar rerun_on_node_reboot_after_success: Whether the Batch service should rerun the Job
-     Preparation Task after a Compute Node reboots. The Job Preparation Task is always rerun if a
-     Compute Node is reimaged, or if the Job Preparation Task did not complete (e.g. because the
-     reboot occurred while the Task was running). Therefore, you should always write a Job
-     Preparation Task to be idempotent and to behave correctly if run multiple times. The default
-     value is true.
-    :vartype rerun_on_node_reboot_after_success: bool
+        :ivar id: A string that uniquely identifies the Job Preparation Task within the Job. The ID can
+         contain any combination of alphanumeric characters including hyphens and underscores and cannot
+         contain more than 64 characters. If you do not specify this property, the Batch service assigns
+         a default value of 'jobpreparation'. No other Task in the Job can have the same ID as the Job
+         Preparation Task. If you try to submit a Task with the same id, the Batch service rejects the
+         request with error code TaskIdSameAsJobPreparationTask; if you are calling the REST API
+         directly, the HTTP status code is 409 (Conflict).
+        :vartype id: str
+        :ivar command_line: The command line of the Job Preparation Task. The command line does not run
+         under a shell, and therefore cannot take advantage of shell features such as environment
+         variable expansion. If you want to take advantage of such features, you should invoke the shell
+         in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand"
+         in Linux. If the command line refers to file paths, it should use a relative path (relative to
+         the Task working directory), or use the Batch provided environment variable
+         (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
+         <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
+         Required.
+        :vartype command_line: str
+        :ivar container_settings: The settings for the container under which the Job Preparation Task
+         runs. When this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the
+         root of Azure Batch directories on the node) are mapped into the container, all Task
+         environment variables are mapped into the container, and the Task command line is executed in
+         the container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
+         reflected to the host disk, meaning that Batch file APIs will not be able to access those
+         files.
+        :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
+        :ivar resource_files: A list of files that the Batch service will download to the Compute Node
+         before running the command line. Files listed under this element are located in the Task's
+         working directory.  There is a maximum size for the list of resource files.  When the max size
+         is exceeded, the request will fail and the response error code will be RequestEntityTooLarge.
+         If this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
+         using .zip files, Application Packages, or Docker Containers.
+        :vartype resource_files: list[~azure.batch.models.ResourceFile]
+        :ivar environment_settings: A list of environment variable settings for the Job Preparation
+         Task.
+        :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
+        :ivar constraints: Constraints that apply to the Job Preparation Task.
+        :vartype constraints: ~azure.batch.models.BatchTaskConstraints
+        :ivar wait_for_success: Whether the Batch service should wait for the Job Preparation Task to
+         complete successfully before scheduling any other Tasks of the Job on the Compute Node. A Job
+         Preparation Task has completed successfully if it exits with exit code 0. If true and the Job
+         Preparation Task fails on a Node, the Batch service retries the Job Preparation Task up to its
+         maximum retry count (as specified in the constraints element). If the Task has still not
+         completed successfully after all retries, then the Batch service will not schedule Tasks of the
+         Job to the Node. The Node remains active and eligible to run Tasks of other Jobs. If false, the
+         Batch service will not wait for the Job Preparation Task to complete. In this case, other Tasks
+         of the Job can start executing on the Compute Node while the Job Preparation Task is still
+         running; and even if the Job Preparation Task fails, new Tasks will continue to be scheduled on
+         the Compute Node. The default value is true.
+        :vartype wait_for_success: bool
+        :ivar user_identity: The user identity under which the Job Preparation Task runs. If omitted,
+         the Task runs as a non-administrative user unique to the Task on Windows Compute Nodes, or a
+         non-administrative user unique to the Pool on Linux Compute Nodes.
+        :vartype user_identity: ~azure.batch.models.UserIdentity
+        :ivar rerun_on_node_reboot_after_success: Whether the Batch service should rerun the Job
+         Preparation Task after a Compute Node reboots. The Job Preparation Task is always rerun if a
+         Compute Node is reimaged, or if the Job Preparation Task did not complete (e.g. because the
+         reboot occurred while the Task was running). Therefore, you should always write a Job
+         Preparation Task to be idempotent and to behave correctly if run multiple times. The default
+         value is true.
+        :vartype rerun_on_node_reboot_after_success: bool
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2370,52 +2370,52 @@ class BatchJobPreparationTaskExecutionInfo(_Model):
     """Contains information about the execution of a Job Preparation Task on a Compute
     Node.
 
-    :ivar start_time: The time at which the Task started running. If the Task has been restarted or
-     retried, this is the most recent time at which the Task started running. Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The time at which the Job Preparation Task completed. This property is set only
-     if the Task is in the Completed state.
-    :vartype end_time: ~datetime.datetime
-    :ivar state: The current state of the Job Preparation Task on the Compute Node. Required. Known
-     values are: "running" and "completed".
-    :vartype state: str or ~azure.batch.models.BatchJobPreparationTaskState
-    :ivar task_root_directory: The root directory of the Job Preparation Task on the Compute Node.
-     You can use this path to retrieve files created by the Task, such as log files.
-    :vartype task_root_directory: str
-    :ivar task_root_directory_url: The URL to the root directory of the Job Preparation Task on the
-     Compute Node.
-    :vartype task_root_directory_url: str
-    :ivar exit_code: The exit code of the program specified on the Task command line. This
-     parameter is returned only if the Task is in the completed state. The exit code for a process
-     reflects the specific convention implemented by the application developer for that process. If
-     you use the exit code value to make decisions in your code, be sure that you know the exit code
-     convention used by the application process. Note that the exit code may also be generated by
-     the Compute Node operating system, such as when a process is forcibly terminated.
-    :vartype exit_code: int
-    :ivar container_info: Information about the container under which the Task is executing. This
-     property is set only if the Task runs in a container context.
-    :vartype container_info: ~azure.batch.models.BatchTaskContainerExecutionInfo
-    :ivar failure_info: Information describing the Task failure, if any. This property is set only
-     if the Task is in the completed state and encountered a failure.
-    :vartype failure_info: ~azure.batch.models.BatchTaskFailureInfo
-    :ivar retry_count: The number of times the Task has been retried by the Batch service. Task
-     application failures (non-zero exit code) are retried, pre-processing errors (the Task could
-     not be run) and file upload errors are not retried. The Batch service will retry the Task up to
-     the limit specified by the constraints. Task application failures (non-zero exit code) are
-     retried, pre-processing errors (the Task could not be run) and file upload errors are not
-     retried. The Batch service will retry the Task up to the limit specified by the constraints.
-     Required.
-    :vartype retry_count: int
-    :ivar last_retry_time: The most recent time at which a retry of the Job Preparation Task
-     started running. This property is set only if the Task was retried (i.e. retryCount is
-     nonzero). If present, this is typically the same as startTime, but may be different if the Task
-     has been restarted for reasons other than retry; for example, if the Compute Node was rebooted
-     during a retry, then the startTime is updated but the lastRetryTime is not.
-    :vartype last_retry_time: ~datetime.datetime
-    :ivar result: The result of the Task execution. If the value is 'failed', then the details of
-     the failure can be found in the failureInfo property. Known values are: "success" and
-     "failure".
-    :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
+        :ivar start_time: The time at which the Task started running. If the Task has been restarted or
+         retried, this is the most recent time at which the Task started running. Required.
+        :vartype start_time: ~datetime.datetime
+        :ivar end_time: The time at which the Job Preparation Task completed. This property is set only
+         if the Task is in the Completed state.
+        :vartype end_time: ~datetime.datetime
+        :ivar state: The current state of the Job Preparation Task on the Compute Node. Required. Known
+         values are: "running" and "completed".
+        :vartype state: str or ~azure.batch.models.BatchJobPreparationTaskState
+        :ivar task_root_directory: The root directory of the Job Preparation Task on the Compute Node.
+         You can use this path to retrieve files created by the Task, such as log files.
+        :vartype task_root_directory: str
+        :ivar task_root_directory_url: The URL to the root directory of the Job Preparation Task on the
+         Compute Node.
+        :vartype task_root_directory_url: str
+        :ivar exit_code: The exit code of the program specified on the Task command line. This
+         parameter is returned only if the Task is in the completed state. The exit code for a process
+         reflects the specific convention implemented by the application developer for that process. If
+         you use the exit code value to make decisions in your code, be sure that you know the exit code
+         convention used by the application process. Note that the exit code may also be generated by
+         the Compute Node operating system, such as when a process is forcibly terminated.
+        :vartype exit_code: int
+        :ivar container_info: Information about the container under which the Task is executing. This
+         property is set only if the Task runs in a container context.
+        :vartype container_info: ~azure.batch.models.BatchTaskContainerExecutionInfo
+        :ivar failure_info: Information describing the Task failure, if any. This property is set only
+         if the Task is in the completed state and encountered a failure.
+        :vartype failure_info: ~azure.batch.models.BatchTaskFailureInfo
+        :ivar retry_count: The number of times the Task has been retried by the Batch service. Task
+         application failures (non-zero exit code) are retried, pre-processing errors (the Task could
+         not be run) and file upload errors are not retried. The Batch service will retry the Task up to
+         the limit specified by the constraints. Task application failures (non-zero exit code) are
+         retried, pre-processing errors (the Task could not be run) and file upload errors are not
+         retried. The Batch service will retry the Task up to the limit specified by the constraints.
+         Required.
+        :vartype retry_count: int
+        :ivar last_retry_time: The most recent time at which a retry of the Job Preparation Task
+         started running. This property is set only if the Task was retried (i.e. retryCount is
+         nonzero). If present, this is typically the same as startTime, but may be different if the Task
+         has been restarted for reasons other than retry; for example, if the Compute Node was rebooted
+         during a retry, then the startTime is updated but the lastRetryTime is not.
+        :vartype last_retry_time: ~datetime.datetime
+        :ivar result: The result of the Task execution. If the value is 'failed', then the details of
+         the failure can be found in the failureInfo property. Known values are: "success" and
+         "failure".
+        :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
     """
 
     start_time: datetime.datetime = rest_field(
@@ -2526,55 +2526,55 @@ class BatchJobReleaseTask(_Model):
     scheduling slot; that is, it does not count towards the taskSlotsPerNode limit
     specified on the Pool.
 
-    :ivar id: A string that uniquely identifies the Job Release Task within the Job. The ID can
-     contain any combination of alphanumeric characters including hyphens and underscores and cannot
-     contain more than 64 characters. If you do not specify this property, the Batch service assigns
-     a default value of 'jobrelease'. No other Task in the Job can have the same ID as the Job
-     Release Task. If you try to submit a Task with the same id, the Batch service rejects the
-     request with error code TaskIdSameAsJobReleaseTask; if you are calling the REST API directly,
-     the HTTP status code is 409 (Conflict).
-    :vartype id: str
-    :ivar command_line: The command line of the Job Release Task. The command line does not run
-     under a shell, and therefore cannot take advantage of shell features such as environment
-     variable expansion. If you want to take advantage of such features, you should invoke the shell
-     in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand"
-     in Linux. If the command line refers to file paths, it should use a relative path (relative to
-     the Task working directory), or use the Batch provided environment variable
-     (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
-     <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
-     Required.
-    :vartype command_line: str
-    :ivar container_settings: The settings for the container under which the Job Release Task runs.
-     When this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root
-     of Azure Batch directories on the node) are mapped into the container, all Task environment
-     variables are mapped into the container, and the Task command line is executed in the
-     container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
-     reflected to the host disk, meaning that Batch file APIs will not be able to access those
-     files.
-    :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
-    :ivar resource_files: A list of files that the Batch service will download to the Compute Node
-     before running the command line.  There is a maximum size for the list of resource files.  When
-     the max size is exceeded, the request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be reduced in size.
-     This can be achieved using .zip files, Application Packages, or Docker Containers. Files listed
-     under this element are located in the Task's working directory.
-    :vartype resource_files: list[~azure.batch.models.ResourceFile]
-    :ivar environment_settings: A list of environment variable settings for the Job Release Task.
-    :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :ivar max_wall_clock_time: The maximum elapsed time that the Job Release Task may run on a
-     given Compute Node, measured from the time the Task starts. If the Task does not complete
-     within the time limit, the Batch service terminates it. The default value is 15 minutes. You
-     may not specify a timeout longer than 15 minutes. If you do, the Batch service rejects it with
-     an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad Request).
-    :vartype max_wall_clock_time: ~datetime.timedelta
-    :ivar retention_time: The minimum time to retain the Task directory for the Job Release Task on
-     the Compute Node. After this time, the Batch service may delete the Task directory and all its
-     contents. The default is 7 days, i.e. the Task directory will be retained for 7 days unless the
-     Compute Node is removed or the Job is deleted.
-    :vartype retention_time: ~datetime.timedelta
-    :ivar user_identity: The user identity under which the Job Release Task runs. If omitted, the
-     Task runs as a non-administrative user unique to the Task.
-    :vartype user_identity: ~azure.batch.models.UserIdentity
+        :ivar id: A string that uniquely identifies the Job Release Task within the Job. The ID can
+         contain any combination of alphanumeric characters including hyphens and underscores and cannot
+         contain more than 64 characters. If you do not specify this property, the Batch service assigns
+         a default value of 'jobrelease'. No other Task in the Job can have the same ID as the Job
+         Release Task. If you try to submit a Task with the same id, the Batch service rejects the
+         request with error code TaskIdSameAsJobReleaseTask; if you are calling the REST API directly,
+         the HTTP status code is 409 (Conflict).
+        :vartype id: str
+        :ivar command_line: The command line of the Job Release Task. The command line does not run
+         under a shell, and therefore cannot take advantage of shell features such as environment
+         variable expansion. If you want to take advantage of such features, you should invoke the shell
+         in the command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand"
+         in Linux. If the command line refers to file paths, it should use a relative path (relative to
+         the Task working directory), or use the Batch provided environment variable
+         (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
+         <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
+         Required.
+        :vartype command_line: str
+        :ivar container_settings: The settings for the container under which the Job Release Task runs.
+         When this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root
+         of Azure Batch directories on the node) are mapped into the container, all Task environment
+         variables are mapped into the container, and the Task command line is executed in the
+         container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
+         reflected to the host disk, meaning that Batch file APIs will not be able to access those
+         files.
+        :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
+        :ivar resource_files: A list of files that the Batch service will download to the Compute Node
+         before running the command line.  There is a maximum size for the list of resource files.  When
+         the max size is exceeded, the request will fail and the response error code will be
+         RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be reduced in size.
+         This can be achieved using .zip files, Application Packages, or Docker Containers. Files listed
+         under this element are located in the Task's working directory.
+        :vartype resource_files: list[~azure.batch.models.ResourceFile]
+        :ivar environment_settings: A list of environment variable settings for the Job Release Task.
+        :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
+        :ivar max_wall_clock_time: The maximum elapsed time that the Job Release Task may run on a
+         given Compute Node, measured from the time the Task starts. If the Task does not complete
+         within the time limit, the Batch service terminates it. The default value is 15 minutes. You
+         may not specify a timeout longer than 15 minutes. If you do, the Batch service rejects it with
+         an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad Request).
+        :vartype max_wall_clock_time: ~datetime.timedelta
+        :ivar retention_time: The minimum time to retain the Task directory for the Job Release Task on
+         the Compute Node. After this time, the Batch service may delete the Task directory and all its
+         contents. The default is 7 days, i.e. the Task directory will be retained for 7 days unless the
+         Compute Node is removed or the Job is deleted.
+        :vartype retention_time: ~datetime.timedelta
+        :ivar user_identity: The user identity under which the Job Release Task runs. If omitted, the
+         Task runs as a non-administrative user unique to the Task.
+        :vartype user_identity: ~azure.batch.models.UserIdentity
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2667,38 +2667,38 @@ class BatchJobReleaseTaskExecutionInfo(_Model):
     """Contains information about the execution of a Job Release Task on a Compute
     Node.
 
-    :ivar start_time: The time at which the Task started running. If the Task has been restarted or
-     retried, this is the most recent time at which the Task started running. Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The time at which the Job Release Task completed. This property is set only if
-     the Task is in the Completed state.
-    :vartype end_time: ~datetime.datetime
-    :ivar state: The current state of the Job Release Task on the Compute Node. Required. Known
-     values are: "running" and "completed".
-    :vartype state: str or ~azure.batch.models.BatchJobReleaseTaskState
-    :ivar task_root_directory: The root directory of the Job Release Task on the Compute Node. You
-     can use this path to retrieve files created by the Task, such as log files.
-    :vartype task_root_directory: str
-    :ivar task_root_directory_url: The URL to the root directory of the Job Release Task on the
-     Compute Node.
-    :vartype task_root_directory_url: str
-    :ivar exit_code: The exit code of the program specified on the Task command line. This
-     parameter is returned only if the Task is in the completed state. The exit code for a process
-     reflects the specific convention implemented by the application developer for that process. If
-     you use the exit code value to make decisions in your code, be sure that you know the exit code
-     convention used by the application process. Note that the exit code may also be generated by
-     the Compute Node operating system, such as when a process is forcibly terminated.
-    :vartype exit_code: int
-    :ivar container_info: Information about the container under which the Task is executing. This
-     property is set only if the Task runs in a container context.
-    :vartype container_info: ~azure.batch.models.BatchTaskContainerExecutionInfo
-    :ivar failure_info: Information describing the Task failure, if any. This property is set only
-     if the Task is in the completed state and encountered a failure.
-    :vartype failure_info: ~azure.batch.models.BatchTaskFailureInfo
-    :ivar result: The result of the Task execution. If the value is 'failed', then the details of
-     the failure can be found in the failureInfo property. Known values are: "success" and
-     "failure".
-    :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
+        :ivar start_time: The time at which the Task started running. If the Task has been restarted or
+         retried, this is the most recent time at which the Task started running. Required.
+        :vartype start_time: ~datetime.datetime
+        :ivar end_time: The time at which the Job Release Task completed. This property is set only if
+         the Task is in the Completed state.
+        :vartype end_time: ~datetime.datetime
+        :ivar state: The current state of the Job Release Task on the Compute Node. Required. Known
+         values are: "running" and "completed".
+        :vartype state: str or ~azure.batch.models.BatchJobReleaseTaskState
+        :ivar task_root_directory: The root directory of the Job Release Task on the Compute Node. You
+         can use this path to retrieve files created by the Task, such as log files.
+        :vartype task_root_directory: str
+        :ivar task_root_directory_url: The URL to the root directory of the Job Release Task on the
+         Compute Node.
+        :vartype task_root_directory_url: str
+        :ivar exit_code: The exit code of the program specified on the Task command line. This
+         parameter is returned only if the Task is in the completed state. The exit code for a process
+         reflects the specific convention implemented by the application developer for that process. If
+         you use the exit code value to make decisions in your code, be sure that you know the exit code
+         convention used by the application process. Note that the exit code may also be generated by
+         the Compute Node operating system, such as when a process is forcibly terminated.
+        :vartype exit_code: int
+        :ivar container_info: Information about the container under which the Task is executing. This
+         property is set only if the Task runs in a container context.
+        :vartype container_info: ~azure.batch.models.BatchTaskContainerExecutionInfo
+        :ivar failure_info: Information describing the Task failure, if any. This property is set only
+         if the Task is in the completed state and encountered a failure.
+        :vartype failure_info: ~azure.batch.models.BatchTaskFailureInfo
+        :ivar result: The result of the Task execution. If the value is 'failed', then the details of
+         the failure can be found in the failureInfo property. Known values are: "success" and
+         "failure".
+        :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
     """
 
     start_time: datetime.datetime = rest_field(
@@ -2778,50 +2778,50 @@ class BatchJobSchedule(_Model):
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
     specification used to create each Job.
 
-    :ivar id: A string that uniquely identifies the schedule within the Account.
-    :vartype id: str
-    :ivar display_name: The display name for the schedule.
-    :vartype display_name: str
-    :ivar url: The URL of the Job Schedule.
-    :vartype url: str
-    :ivar e_tag: The ETag of the Job Schedule. This is an opaque string. You can use it to detect
-     whether the Job Schedule has changed between requests. In particular, you can be pass the ETag
-     with an Update Job Schedule request to specify that your changes should take effect only if
-     nobody else has modified the schedule in the meantime.
-    :vartype e_tag: str
-    :ivar last_modified: The last modified time of the Job Schedule. This is the last time at which
-     the schedule level data, such as the Job specification or recurrence information, changed. It
-     does not factor in job-level changes such as new Jobs being created or Jobs changing state.
-    :vartype last_modified: ~datetime.datetime
-    :ivar creation_time: The creation time of the Job Schedule.
-    :vartype creation_time: ~datetime.datetime
-    :ivar state: The current state of the Job Schedule. Known values are: "active", "completed",
-     "disabled", "terminating", and "deleting".
-    :vartype state: str or ~azure.batch.models.BatchJobScheduleState
-    :ivar state_transition_time: The time at which the Job Schedule entered the current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: The previous state of the Job Schedule. This property is not present if
-     the Job Schedule is in its initial active state. Known values are: "active", "completed",
-     "disabled", "terminating", and "deleting".
-    :vartype previous_state: str or ~azure.batch.models.BatchJobScheduleState
-    :ivar previous_state_transition_time: The time at which the Job Schedule entered its previous
-     state. This property is not present if the Job Schedule is in its initial active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar schedule: The schedule according to which Jobs will be created. All times are fixed
-     respective to UTC and are not impacted by daylight saving time.
-    :vartype schedule: ~azure.batch.models.BatchJobScheduleConfiguration
-    :ivar job_specification: The details of the Jobs to be created on this schedule. Required.
-    :vartype job_specification: ~azure.batch.models.BatchJobSpecification
-    :ivar execution_info: Information about Jobs that have been and will be run under this
-     schedule.
-    :vartype execution_info: ~azure.batch.models.BatchJobScheduleExecutionInfo
-    :ivar metadata: A list of name-value pairs associated with the schedule as metadata. The Batch
-     service does not assign any meaning to metadata; it is solely for the use of user code.
-    :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar job_schedule_statistics: The lifetime resource usage statistics for the Job Schedule. The
-     statistics may not be immediately available. The Batch service performs periodic roll-up of
-     statistics. The typical delay is about 30 minutes.
-    :vartype job_schedule_statistics: ~azure.batch.models.BatchJobScheduleStatistics
+        :ivar id: A string that uniquely identifies the schedule within the Account.
+        :vartype id: str
+        :ivar display_name: The display name for the schedule.
+        :vartype display_name: str
+        :ivar url: The URL of the Job Schedule.
+        :vartype url: str
+        :ivar e_tag: The ETag of the Job Schedule. This is an opaque string. You can use it to detect
+         whether the Job Schedule has changed between requests. In particular, you can be pass the ETag
+         with an Update Job Schedule request to specify that your changes should take effect only if
+         nobody else has modified the schedule in the meantime.
+        :vartype e_tag: str
+        :ivar last_modified: The last modified time of the Job Schedule. This is the last time at which
+         the schedule level data, such as the Job specification or recurrence information, changed. It
+         does not factor in job-level changes such as new Jobs being created or Jobs changing state.
+        :vartype last_modified: ~datetime.datetime
+        :ivar creation_time: The creation time of the Job Schedule.
+        :vartype creation_time: ~datetime.datetime
+        :ivar state: The current state of the Job Schedule. Known values are: "active", "completed",
+         "disabled", "terminating", and "deleting".
+        :vartype state: str or ~azure.batch.models.BatchJobScheduleState
+        :ivar state_transition_time: The time at which the Job Schedule entered the current state.
+        :vartype state_transition_time: ~datetime.datetime
+        :ivar previous_state: The previous state of the Job Schedule. This property is not present if
+         the Job Schedule is in its initial active state. Known values are: "active", "completed",
+         "disabled", "terminating", and "deleting".
+        :vartype previous_state: str or ~azure.batch.models.BatchJobScheduleState
+        :ivar previous_state_transition_time: The time at which the Job Schedule entered its previous
+         state. This property is not present if the Job Schedule is in its initial active state.
+        :vartype previous_state_transition_time: ~datetime.datetime
+        :ivar schedule: The schedule according to which Jobs will be created. All times are fixed
+         respective to UTC and are not impacted by daylight saving time.
+        :vartype schedule: ~azure.batch.models.BatchJobScheduleConfiguration
+        :ivar job_specification: The details of the Jobs to be created on this schedule. Required.
+        :vartype job_specification: ~azure.batch.models.BatchJobSpecification
+        :ivar execution_info: Information about Jobs that have been and will be run under this
+         schedule.
+        :vartype execution_info: ~azure.batch.models.BatchJobScheduleExecutionInfo
+        :ivar metadata: A list of name-value pairs associated with the schedule as metadata. The Batch
+         service does not assign any meaning to metadata; it is solely for the use of user code.
+        :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
+        :ivar job_schedule_statistics: The lifetime resource usage statistics for the Job Schedule. The
+         statistics may not be immediately available. The Batch service performs periodic roll-up of
+         statistics. The typical delay is about 30 minutes.
+        :vartype job_schedule_statistics: ~azure.batch.models.BatchJobScheduleStatistics
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -2908,41 +2908,41 @@ class BatchJobScheduleConfiguration(_Model):
     """The schedule according to which Jobs will be created. All times are fixed
     respective to UTC and are not impacted by daylight saving time.
 
-    :ivar do_not_run_until: The earliest time at which any Job may be created under this Job
-     Schedule. If you do not specify a doNotRunUntil time, the schedule becomes ready to create Jobs
-     immediately.
-    :vartype do_not_run_until: ~datetime.datetime
-    :ivar do_not_run_after: A time after which no Job will be created under this Job Schedule. The
-     schedule will move to the completed state as soon as this deadline is past and there is no
-     active Job under this Job Schedule. If you do not specify a doNotRunAfter time, and you are
-     creating a recurring Job Schedule, the Job Schedule will remain active until you explicitly
-     terminate it.
-    :vartype do_not_run_after: ~datetime.datetime
-    :ivar start_window: The time interval, starting from the time at which the schedule indicates a
-     Job should be created, within which a Job must be created. If a Job is not created within the
-     startWindow interval, then the 'opportunity' is lost; no Job will be created until the next
-     recurrence of the schedule. If the schedule is recurring, and the startWindow is longer than
-     the recurrence interval, then this is equivalent to an infinite startWindow, because the Job
-     that is 'due' in one recurrenceInterval is not carried forward into the next recurrence
-     interval. The default is infinite. The minimum value is 1 minute. If you specify a lower value,
-     the Batch service rejects the schedule with an error; if you are calling the REST API directly,
-     the HTTP status code is 400 (Bad Request).
-    :vartype start_window: ~datetime.timedelta
-    :ivar recurrence_interval: The time interval between the start times of two successive Jobs
-     under the Job Schedule. A Job Schedule can have at most one active Job under it at any given
-     time. Because a Job Schedule can have at most one active Job under it at any given time, if it
-     is time to create a new Job under a Job Schedule, but the previous Job is still running, the
-     Batch service will not create the new Job until the previous Job finishes. If the previous Job
-     does not finish within the startWindow period of the new recurrenceInterval, then no new Job
-     will be scheduled for that interval. For recurring Jobs, you should normally specify a
-     jobManagerTask in the jobSpecification. If you do not use jobManagerTask, you will need an
-     external process to monitor when Jobs are created, add Tasks to the Jobs and terminate the Jobs
-     ready for the next recurrence. The default is that the schedule does not recur: one Job is
-     created, within the startWindow after the doNotRunUntil time, and the schedule is complete as
-     soon as that Job finishes. The minimum value is 1 minute. If you specify a lower value, the
-     Batch service rejects the schedule with an error; if you are calling the REST API directly, the
-     HTTP status code is 400 (Bad Request).
-    :vartype recurrence_interval: ~datetime.timedelta
+        :ivar do_not_run_until: The earliest time at which any Job may be created under this Job
+         Schedule. If you do not specify a doNotRunUntil time, the schedule becomes ready to create Jobs
+         immediately.
+        :vartype do_not_run_until: ~datetime.datetime
+        :ivar do_not_run_after: A time after which no Job will be created under this Job Schedule. The
+         schedule will move to the completed state as soon as this deadline is past and there is no
+         active Job under this Job Schedule. If you do not specify a doNotRunAfter time, and you are
+         creating a recurring Job Schedule, the Job Schedule will remain active until you explicitly
+         terminate it.
+        :vartype do_not_run_after: ~datetime.datetime
+        :ivar start_window: The time interval, starting from the time at which the schedule indicates a
+         Job should be created, within which a Job must be created. If a Job is not created within the
+         startWindow interval, then the 'opportunity' is lost; no Job will be created until the next
+         recurrence of the schedule. If the schedule is recurring, and the startWindow is longer than
+         the recurrence interval, then this is equivalent to an infinite startWindow, because the Job
+         that is 'due' in one recurrenceInterval is not carried forward into the next recurrence
+         interval. The default is infinite. The minimum value is 1 minute. If you specify a lower value,
+         the Batch service rejects the schedule with an error; if you are calling the REST API directly,
+         the HTTP status code is 400 (Bad Request).
+        :vartype start_window: ~datetime.timedelta
+        :ivar recurrence_interval: The time interval between the start times of two successive Jobs
+         under the Job Schedule. A Job Schedule can have at most one active Job under it at any given
+         time. Because a Job Schedule can have at most one active Job under it at any given time, if it
+         is time to create a new Job under a Job Schedule, but the previous Job is still running, the
+         Batch service will not create the new Job until the previous Job finishes. If the previous Job
+         does not finish within the startWindow period of the new recurrenceInterval, then no new Job
+         will be scheduled for that interval. For recurring Jobs, you should normally specify a
+         jobManagerTask in the jobSpecification. If you do not use jobManagerTask, you will need an
+         external process to monitor when Jobs are created, add Tasks to the Jobs and terminate the Jobs
+         ready for the next recurrence. The default is that the schedule does not recur: one Job is
+         created, within the startWindow after the doNotRunUntil time, and the schedule is complete as
+         soon as that Job finishes. The minimum value is 1 minute. If you specify a lower value, the
+         Batch service rejects the schedule with an error; if you are calling the REST API directly, the
+         HTTP status code is 400 (Bad Request).
+        :vartype recurrence_interval: ~datetime.timedelta
     """
 
     do_not_run_until: Optional[datetime.datetime] = rest_field(
@@ -3080,17 +3080,17 @@ class BatchJobScheduleExecutionInfo(_Model):
     """Contains information about Jobs that have been and will be run under a Job
     Schedule.
 
-    :ivar next_run_time: The next time at which a Job will be created under this schedule. This
-     property is meaningful only if the schedule is in the active state when the time comes around.
-     For example, if the schedule is disabled, no Job will be created at nextRunTime unless the Job
-     is enabled before then.
-    :vartype next_run_time: ~datetime.datetime
-    :ivar recent_job: Information about the most recent Job under the Job Schedule. This property
-     is present only if the at least one Job has run under the schedule.
-    :vartype recent_job: ~azure.batch.models.RecentBatchJob
-    :ivar end_time: The time at which the schedule ended. This property is set only if the Job
-     Schedule is in the completed state.
-    :vartype end_time: ~datetime.datetime
+        :ivar next_run_time: The next time at which a Job will be created under this schedule. This
+         property is meaningful only if the schedule is in the active state when the time comes around.
+         For example, if the schedule is disabled, no Job will be created at nextRunTime unless the Job
+         is enabled before then.
+        :vartype next_run_time: ~datetime.datetime
+        :ivar recent_job: Information about the most recent Job under the Job Schedule. This property
+         is present only if the at least one Job has run under the schedule.
+        :vartype recent_job: ~azure.batch.models.RecentBatchJob
+        :ivar end_time: The time at which the schedule ended. This property is set only if the Job
+         Schedule is in the completed state.
+        :vartype end_time: ~datetime.datetime
     """
 
     next_run_time: Optional[datetime.datetime] = rest_field(
@@ -3895,10 +3895,10 @@ class BatchMetadataItem(_Model):
     """The Batch service does not assign any meaning to this metadata; it is solely
     for the use of user code.
 
-    :ivar name: The name of the metadata item. Required.
-    :vartype name: str
-    :ivar value: The value of the metadata item. Required.
-    :vartype value: str
+        :ivar name: The name of the metadata item. Required.
+        :vartype name: str
+        :ivar value: The value of the metadata item. Required.
+        :vartype value: str
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3928,93 +3928,93 @@ class BatchMetadataItem(_Model):
 class BatchNode(_Model):
     """A Compute Node in the Batch service.
 
-    :ivar id: The ID of the Compute Node. Every Compute Node that is added to a Pool is assigned a
-     unique ID. Whenever a Compute Node is removed from a Pool, all of its local files are deleted,
-     and the ID is reclaimed and could be reused for new Compute Nodes.
-    :vartype id: str
-    :ivar url: The URL of the Compute Node.
-    :vartype url: str
-    :ivar state: The current state of the Compute Node. The Spot/Low-priority Compute Node has been
-     preempted. Tasks which were running on the Compute Node when it was preempted will be
-     rescheduled when another Compute Node becomes available. Known values are: "idle", "rebooting",
-     "reimaging", "running", "unusable", "creating", "starting", "waitingforstarttask",
-     "starttaskfailed", "unknown", "leavingpool", "offline", "preempted", "upgradingos",
-     "deallocated", and "deallocating".
-    :vartype state: str or ~azure.batch.models.BatchNodeState
-    :ivar scheduling_state: Whether the Compute Node is available for Task scheduling. Known values
-     are: "enabled" and "disabled".
-    :vartype scheduling_state: str or ~azure.batch.models.SchedulingState
-    :ivar state_transition_time: The time at which the Compute Node entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar last_boot_time: The last time at which the Compute Node was started. This property may
-     not be present if the Compute Node state is unusable.
-    :vartype last_boot_time: ~datetime.datetime
-    :ivar allocation_time: The time at which this Compute Node was allocated to the Pool. This is
-     the time when the Compute Node was initially allocated and doesn't change once set. It is not
-     updated when the Compute Node is service healed or preempted.
-    :vartype allocation_time: ~datetime.datetime
-    :ivar ip_address: The IP address that other Nodes can use to communicate with this Compute
-     Node. Every Compute Node that is added to a Pool is assigned a unique IP address. Whenever a
-     Compute Node is removed from a Pool, all of its local files are deleted, and the IP address is
-     reclaimed and could be reused for new Compute Nodes.
-    :vartype ip_address: str
-    :ivar affinity_id: An identifier which can be passed when adding a Task to request that the
-     Task be scheduled on this Compute Node. Note that this is just a soft affinity. If the target
-     Compute Node is busy or unavailable at the time the Task is scheduled, then the Task will be
-     scheduled elsewhere.
-    :vartype affinity_id: str
-    :ivar vm_size: The size of the virtual machine hosting the Compute Node. For information about
-     available sizes of virtual machines in Pools, see Choose a VM size for Compute Nodes in an
-     Azure Batch Pool (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
-     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_).
-    :vartype vm_size: str
-    :ivar total_tasks_run: The total number of Job Tasks completed on the Compute Node. This
-     includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
-     Tasks.
-    :vartype total_tasks_run: int
-    :ivar running_tasks_count: The total number of currently running Job Tasks on the Compute Node.
-     This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
-     Tasks.
-    :vartype running_tasks_count: int
-    :ivar running_task_slots_count: The total number of scheduling slots used by currently running
-     Job Tasks on the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
-     Preparation, Job Release or Start Tasks.
-    :vartype running_task_slots_count: int
-    :ivar total_tasks_succeeded: The total number of Job Tasks which completed successfully (with
-     exitCode 0) on the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
-     Preparation, Job Release or Start Tasks.
-    :vartype total_tasks_succeeded: int
-    :ivar recent_tasks: A list of Tasks whose state has recently changed. This property is present
-     only if at least one Task has run on this Compute Node since it was assigned to the Pool.
-    :vartype recent_tasks: list[~azure.batch.models.BatchTaskInfo]
-    :ivar start_task: The Task specified to run on the Compute Node as it joins the Pool.
-    :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar start_task_info: Runtime information about the execution of the StartTask on the Compute
-     Node.
-    :vartype start_task_info: ~azure.batch.models.BatchStartTaskInfo
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
-    :ivar errors: The list of errors that are currently being encountered by the Compute Node.
-    :vartype errors: list[~azure.batch.models.BatchNodeError]
-    :ivar is_dedicated: Whether this Compute Node is a dedicated Compute Node. If false, the
-     Compute Node is a Spot/Low-priority Compute Node.
-    :vartype is_dedicated: bool
-    :ivar endpoint_configuration: The endpoint configuration for the Compute Node.
-    :vartype endpoint_configuration: ~azure.batch.models.BatchNodeEndpointConfiguration
-    :ivar node_agent_info: Information about the Compute Node agent version and the time the
-     Compute Node upgraded to a new version.
-    :vartype node_agent_info: ~azure.batch.models.BatchNodeAgentInfo
-    :ivar virtual_machine_info: Info about the current state of the virtual machine.
-    :vartype virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
+       :ivar id: The ID of the Compute Node. Every Compute Node that is added to a Pool is assigned a
+        unique ID. Whenever a Compute Node is removed from a Pool, all of its local files are deleted,
+        and the ID is reclaimed and could be reused for new Compute Nodes.
+       :vartype id: str
+       :ivar url: The URL of the Compute Node.
+       :vartype url: str
+       :ivar state: The current state of the Compute Node. The Spot/Low-priority Compute Node has been
+        preempted. Tasks which were running on the Compute Node when it was preempted will be
+        rescheduled when another Compute Node becomes available. Known values are: "idle", "rebooting",
+        "reimaging", "running", "unusable", "creating", "starting", "waitingforstarttask",
+        "starttaskfailed", "unknown", "leavingpool", "offline", "preempted", "upgradingos",
+        "deallocated", and "deallocating".
+       :vartype state: str or ~azure.batch.models.BatchNodeState
+       :ivar scheduling_state: Whether the Compute Node is available for Task scheduling. Known values
+        are: "enabled" and "disabled".
+       :vartype scheduling_state: str or ~azure.batch.models.SchedulingState
+       :ivar state_transition_time: The time at which the Compute Node entered its current state.
+       :vartype state_transition_time: ~datetime.datetime
+       :ivar last_boot_time: The last time at which the Compute Node was started. This property may
+        not be present if the Compute Node state is unusable.
+       :vartype last_boot_time: ~datetime.datetime
+       :ivar allocation_time: The time at which this Compute Node was allocated to the Pool. This is
+        the time when the Compute Node was initially allocated and doesn't change once set. It is not
+        updated when the Compute Node is service healed or preempted.
+       :vartype allocation_time: ~datetime.datetime
+       :ivar ip_address: The IP address that other Nodes can use to communicate with this Compute
+        Node. Every Compute Node that is added to a Pool is assigned a unique IP address. Whenever a
+        Compute Node is removed from a Pool, all of its local files are deleted, and the IP address is
+        reclaimed and could be reused for new Compute Nodes.
+       :vartype ip_address: str
+       :ivar affinity_id: An identifier which can be passed when adding a Task to request that the
+        Task be scheduled on this Compute Node. Note that this is just a soft affinity. If the target
+        Compute Node is busy or unavailable at the time the Task is scheduled, then the Task will be
+        scheduled elsewhere.
+       :vartype affinity_id: str
+       :ivar vm_size: The size of the virtual machine hosting the Compute Node. For information about
+        available sizes of virtual machines in Pools, see Choose a VM size for Compute Nodes in an
+        Azure Batch Pool (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
+        <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_).
+       :vartype vm_size: str
+       :ivar total_tasks_run: The total number of Job Tasks completed on the Compute Node. This
+        includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
+        Tasks.
+       :vartype total_tasks_run: int
+       :ivar running_tasks_count: The total number of currently running Job Tasks on the Compute Node.
+        This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
+        Tasks.
+       :vartype running_tasks_count: int
+       :ivar running_task_slots_count: The total number of scheduling slots used by currently running
+        Job Tasks on the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
+        Preparation, Job Release or Start Tasks.
+       :vartype running_task_slots_count: int
+       :ivar total_tasks_succeeded: The total number of Job Tasks which completed successfully (with
+        exitCode 0) on the Compute Node. This includes Job Manager Tasks and normal Tasks, but not Job
+        Preparation, Job Release or Start Tasks.
+       :vartype total_tasks_succeeded: int
+       :ivar recent_tasks: A list of Tasks whose state has recently changed. This property is present
+        only if at least one Task has run on this Compute Node since it was assigned to the Pool.
+       :vartype recent_tasks: list[~azure.batch.models.BatchTaskInfo]
+       :ivar start_task: The Task specified to run on the Compute Node as it joins the Pool.
+       :vartype start_task: ~azure.batch.models.BatchStartTask
+       :ivar start_task_info: Runtime information about the execution of the StartTask on the Compute
+        Node.
+       :vartype start_task_info: ~azure.batch.models.BatchStartTaskInfo
+       :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
+        the specified Certificate store and location.
+    For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+        directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+        query for this location.
+    For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+        home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+    Warning: This property is deprecated and will be removed after February, 2024. Please use the
+        `Azure KeyVault Extension
+        <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+       :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
+       :ivar errors: The list of errors that are currently being encountered by the Compute Node.
+       :vartype errors: list[~azure.batch.models.BatchNodeError]
+       :ivar is_dedicated: Whether this Compute Node is a dedicated Compute Node. If false, the
+        Compute Node is a Spot/Low-priority Compute Node.
+       :vartype is_dedicated: bool
+       :ivar endpoint_configuration: The endpoint configuration for the Compute Node.
+       :vartype endpoint_configuration: ~azure.batch.models.BatchNodeEndpointConfiguration
+       :ivar node_agent_info: Information about the Compute Node agent version and the time the
+        Compute Node upgraded to a new version.
+       :vartype node_agent_info: ~azure.batch.models.BatchNodeAgentInfo
+       :ivar virtual_machine_info: Info about the current state of the virtual machine.
+       :vartype virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4108,12 +4108,12 @@ class BatchNode(_Model):
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
      store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+ For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
      directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
      query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+ For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+ Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     errors: Optional[list["_models.BatchNodeError"]] = rest_field(
@@ -4183,15 +4183,15 @@ class BatchNodeAgentInfo(_Model):
     """The Batch Compute Node agent is a program that runs on each Compute Node in the
     Pool and provides Batch capability on the Compute Node.
 
-    :ivar version: The version of the Batch Compute Node agent running on the Compute Node. This
-     version number can be checked against the Compute Node agent release notes located at
-     `https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md
-     <https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md>`_. Required.
-    :vartype version: str
-    :ivar last_update_time: The time when the Compute Node agent was updated on the Compute Node.
-     This is the most recent time that the Compute Node agent was updated to a new version.
-     Required.
-    :vartype last_update_time: ~datetime.datetime
+        :ivar version: The version of the Batch Compute Node agent running on the Compute Node. This
+         version number can be checked against the Compute Node agent release notes located at
+         `https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md
+         <https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md>`_. Required.
+        :vartype version: str
+        :ivar last_update_time: The time when the Compute Node agent was updated on the Compute Node.
+         This is the most recent time that the Compute Node agent was updated to a new version.
+         Required.
+        :vartype last_update_time: ~datetime.datetime
     """
 
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4531,8 +4531,8 @@ class BatchNodeIdentityReference(_Model):
     """The reference to a user assigned identity associated with the Batch pool which
     a compute node will use.
 
-    :ivar resource_id: The ARM resource id of the user assigned identity.
-    :vartype resource_id: str
+        :ivar resource_id: The ARM resource id of the user assigned identity.
+        :vartype resource_id: str
     """
 
     resource_id: Optional[str] = rest_field(
@@ -4624,10 +4624,10 @@ class BatchNodePlacementConfiguration(_Model):
     For zonal placement, nodes in the pool will be spread across different zones
     with best effort balancing.
 
-    :ivar policy: Node placement Policy type on Batch Pools. Allocation policy used by Batch
-     Service to provision the nodes. If not specified, Batch will use the regional policy. Known
-     values are: "regional" and "zonal".
-    :vartype policy: str or ~azure.batch.models.BatchNodePlacementPolicyType
+        :ivar policy: Node placement Policy type on Batch Pools. Allocation policy used by Batch
+         Service to provision the nodes. If not specified, Batch will use the regional policy. Known
+         values are: "regional" and "zonal".
+        :vartype policy: str or ~azure.batch.models.BatchNodePlacementPolicyType
     """
 
     policy: Optional[Union[str, "_models.BatchNodePlacementPolicyType"]] = rest_field(
@@ -5050,146 +5050,146 @@ class BatchOsDisk(_Model):
 class BatchPool(_Model):
     """A Pool in the Azure Batch service.
 
-    :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
-     combination of alphanumeric characters including hyphens and underscores, and cannot contain
-     more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
-     have two IDs within an Account that differ only by case).
-    :vartype id: str
-    :ivar display_name: The display name for the Pool. The display name need not be unique and can
-     contain any Unicode characters up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar url: The URL of the Pool.
-    :vartype url: str
-    :ivar e_tag: The ETag of the Pool. This is an opaque string. You can use it to detect whether
-     the Pool has changed between requests. In particular, you can be pass the ETag when updating a
-     Pool to specify that your changes should take effect only if nobody else has modified the Pool
-     in the meantime.
-    :vartype e_tag: str
-    :ivar last_modified: The last modified time of the Pool. This is the last time at which the
-     Pool level data, such as the targetDedicatedNodes or enableAutoscale settings, changed. It does
-     not factor in node-level changes such as a Compute Node changing state.
-    :vartype last_modified: ~datetime.datetime
-    :ivar creation_time: The creation time of the Pool.
-    :vartype creation_time: ~datetime.datetime
-    :ivar state: The current state of the Pool. Known values are: "active" and "deleting".
-    :vartype state: str or ~azure.batch.models.BatchPoolState
-    :ivar state_transition_time: The time at which the Pool entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar allocation_state: Whether the Pool is resizing. Known values are: "steady", "resizing",
-     and "stopping".
-    :vartype allocation_state: str or ~azure.batch.models.AllocationState
-    :ivar allocation_state_transition_time: The time at which the Pool entered its current
-     allocation state.
-    :vartype allocation_state_transition_time: ~datetime.datetime
-    :ivar vm_size: The size of virtual machines in the Pool. All virtual machines in a Pool are the
-     same size. For information about available VM sizes, see Sizes for Virtual Machines in Azure
-     (`https://learn.microsoft.com/azure/virtual-machines/sizes/overview
-     <https://learn.microsoft.com/azure/virtual-machines/sizes/overview>`_). Batch supports all
-     Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
-     STANDARD_DSV2 series).
-    :vartype vm_size: str
-    :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
-     property must be specified.
-    :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
-    :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This is the
-     timeout for the most recent resize operation. (The initial sizing when the Pool is created
-     counts as a resize.) The default value is 15 minutes.
-    :vartype resize_timeout: ~datetime.timedelta
-    :ivar resize_errors: A list of errors encountered while performing the last resize on the Pool.
-     This property is set only if one or more errors occurred during the last Pool resize, and only
-     when the Pool allocationState is Steady.
-    :vartype resize_errors: list[~azure.batch.models.ResizeError]
-    :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
-    :vartype resource_tags: dict[str, str]
-    :ivar current_dedicated_nodes: The number of dedicated Compute Nodes currently in the Pool.
-    :vartype current_dedicated_nodes: int
-    :ivar current_low_priority_nodes: The number of Spot/Low-priority Compute Nodes currently in
-     the Pool. Spot/Low-priority Compute Nodes which have been preempted are included in this count.
-    :vartype current_low_priority_nodes: int
-    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
-    :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
-     Pool.
-    :vartype target_low_priority_nodes: int
-    :ivar enable_auto_scale: Whether the Pool size should automatically adjust over time. If false,
-     at least one of targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
-     autoScaleFormula property is required and the Pool automatically resizes according to the
-     formula. The default value is false.
-    :vartype enable_auto_scale: bool
-    :ivar auto_scale_formula: A formula for the desired number of Compute Nodes in the Pool. This
-     property is set only if the Pool automatically scales, i.e. enableAutoScale is true.
-    :vartype auto_scale_formula: str
-    :ivar auto_scale_evaluation_interval: The time interval at which to automatically adjust the
-     Pool size according to the autoscale formula. This property is set only if the Pool
-     automatically scales, i.e. enableAutoScale is true.
-    :vartype auto_scale_evaluation_interval: ~datetime.timedelta
-    :ivar auto_scale_run: The results and errors from the last execution of the autoscale formula.
-     This property is set only if the Pool automatically scales, i.e. enableAutoScale is true.
-    :vartype auto_scale_run: ~azure.batch.models.AutoScaleRun
-    :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
-     Compute Nodes. This imposes restrictions on which Compute Nodes can be assigned to the Pool.
-     Specifying this value can reduce the chance of the requested number of Compute Nodes to be
-     allocated in the Pool.
-    :vartype enable_inter_node_communication: bool
-    :ivar network_configuration: The network configuration for the Pool.
-    :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
-    :ivar start_task: A Task specified to run on each Compute Node as it joins the Pool.
-    :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
-    :ivar application_package_references: The list of Packages to be installed on each Compute Node
-     in the Pool. Changes to Package references affect all new Nodes joining the Pool, but do not
-     affect Compute Nodes that are already in the Pool until they are rebooted or reimaged. There is
-     a maximum of 10 Package references on any given Pool.
-    :vartype application_package_references:
-     list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
-     a single compute node in the pool. The default value is 1. The maximum value is the smaller of
-     4 times the number of cores of the vmSize of the pool or 256.
-    :vartype task_slots_per_node: int
-    :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
-     specified, the default is spread.
-    :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
-    :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
-    :vartype user_accounts: list[~azure.batch.models.UserAccount]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata.
-    :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar pool_statistics: Utilization and resource usage statistics for the entire lifetime of the
-     Pool. This property is populated only if the BatchPool was retrieved with an expand clause
-     including the 'stats' attribute; otherwise it is null. The statistics may not be immediately
-     available. The Batch service performs periodic roll-up of statistics. The typical delay is
-     about 30 minutes.
-    :vartype pool_statistics: ~azure.batch.models.BatchPoolStatistics
-    :ivar mount_configuration: A list of file systems to mount on each node in the pool. This
-     supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
-    :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
-    :ivar identity: The identity of the Batch pool, if configured. The list of user identities
-     associated with the Batch pool. The user identity dictionary key references will be ARM
-     resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype identity: ~azure.batch.models.BatchPoolIdentity
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If
-     omitted, the default value is Default. Known values are: "default", "classic", and
-     "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
-    :ivar current_node_communication_mode: The current state of the pool communication mode. Known
-     values are: "default", "classic", and "simplified".
-    :vartype current_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
-    :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
-     manual, or rolling.
-    :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
+       :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
+        combination of alphanumeric characters including hyphens and underscores, and cannot contain
+        more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
+        have two IDs within an Account that differ only by case).
+       :vartype id: str
+       :ivar display_name: The display name for the Pool. The display name need not be unique and can
+        contain any Unicode characters up to a maximum length of 1024.
+       :vartype display_name: str
+       :ivar url: The URL of the Pool.
+       :vartype url: str
+       :ivar e_tag: The ETag of the Pool. This is an opaque string. You can use it to detect whether
+        the Pool has changed between requests. In particular, you can be pass the ETag when updating a
+        Pool to specify that your changes should take effect only if nobody else has modified the Pool
+        in the meantime.
+       :vartype e_tag: str
+       :ivar last_modified: The last modified time of the Pool. This is the last time at which the
+        Pool level data, such as the targetDedicatedNodes or enableAutoscale settings, changed. It does
+        not factor in node-level changes such as a Compute Node changing state.
+       :vartype last_modified: ~datetime.datetime
+       :ivar creation_time: The creation time of the Pool.
+       :vartype creation_time: ~datetime.datetime
+       :ivar state: The current state of the Pool. Known values are: "active" and "deleting".
+       :vartype state: str or ~azure.batch.models.BatchPoolState
+       :ivar state_transition_time: The time at which the Pool entered its current state.
+       :vartype state_transition_time: ~datetime.datetime
+       :ivar allocation_state: Whether the Pool is resizing. Known values are: "steady", "resizing",
+        and "stopping".
+       :vartype allocation_state: str or ~azure.batch.models.AllocationState
+       :ivar allocation_state_transition_time: The time at which the Pool entered its current
+        allocation state.
+       :vartype allocation_state_transition_time: ~datetime.datetime
+       :ivar vm_size: The size of virtual machines in the Pool. All virtual machines in a Pool are the
+        same size. For information about available VM sizes, see Sizes for Virtual Machines in Azure
+        (`https://learn.microsoft.com/azure/virtual-machines/sizes/overview
+        <https://learn.microsoft.com/azure/virtual-machines/sizes/overview>`_). Batch supports all
+        Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
+        STANDARD_DSV2 series).
+       :vartype vm_size: str
+       :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
+        property must be specified.
+       :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
+       :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This is the
+        timeout for the most recent resize operation. (The initial sizing when the Pool is created
+        counts as a resize.) The default value is 15 minutes.
+       :vartype resize_timeout: ~datetime.timedelta
+       :ivar resize_errors: A list of errors encountered while performing the last resize on the Pool.
+        This property is set only if one or more errors occurred during the last Pool resize, and only
+        when the Pool allocationState is Steady.
+       :vartype resize_errors: list[~azure.batch.models.ResizeError]
+       :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
+        be associated with the Azure Batch Pool. When specified, these tags are propagated to the
+        backing Azure resources associated with the pool. This property can only be specified when the
+        Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
+       :vartype resource_tags: dict[str, str]
+       :ivar current_dedicated_nodes: The number of dedicated Compute Nodes currently in the Pool.
+       :vartype current_dedicated_nodes: int
+       :ivar current_low_priority_nodes: The number of Spot/Low-priority Compute Nodes currently in
+        the Pool. Spot/Low-priority Compute Nodes which have been preempted are included in this count.
+       :vartype current_low_priority_nodes: int
+       :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
+       :vartype target_dedicated_nodes: int
+       :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
+        Pool.
+       :vartype target_low_priority_nodes: int
+       :ivar enable_auto_scale: Whether the Pool size should automatically adjust over time. If false,
+        at least one of targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
+        autoScaleFormula property is required and the Pool automatically resizes according to the
+        formula. The default value is false.
+       :vartype enable_auto_scale: bool
+       :ivar auto_scale_formula: A formula for the desired number of Compute Nodes in the Pool. This
+        property is set only if the Pool automatically scales, i.e. enableAutoScale is true.
+       :vartype auto_scale_formula: str
+       :ivar auto_scale_evaluation_interval: The time interval at which to automatically adjust the
+        Pool size according to the autoscale formula. This property is set only if the Pool
+        automatically scales, i.e. enableAutoScale is true.
+       :vartype auto_scale_evaluation_interval: ~datetime.timedelta
+       :ivar auto_scale_run: The results and errors from the last execution of the autoscale formula.
+        This property is set only if the Pool automatically scales, i.e. enableAutoScale is true.
+       :vartype auto_scale_run: ~azure.batch.models.AutoScaleRun
+       :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
+        Compute Nodes. This imposes restrictions on which Compute Nodes can be assigned to the Pool.
+        Specifying this value can reduce the chance of the requested number of Compute Nodes to be
+        allocated in the Pool.
+       :vartype enable_inter_node_communication: bool
+       :ivar network_configuration: The network configuration for the Pool.
+       :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
+       :ivar start_task: A Task specified to run on each Compute Node as it joins the Pool.
+       :vartype start_task: ~azure.batch.models.BatchStartTask
+       :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
+        the specified Certificate store and location.
+    For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+        directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+        query for this location.
+    For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+        home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+    Warning: This property is deprecated and will be removed after February, 2024. Please use the
+        `Azure KeyVault Extension
+        <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+       :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
+       :ivar application_package_references: The list of Packages to be installed on each Compute Node
+        in the Pool. Changes to Package references affect all new Nodes joining the Pool, but do not
+        affect Compute Nodes that are already in the Pool until they are rebooted or reimaged. There is
+        a maximum of 10 Package references on any given Pool.
+       :vartype application_package_references:
+        list[~azure.batch.models.BatchApplicationPackageReference]
+       :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
+        a single compute node in the pool. The default value is 1. The maximum value is the smaller of
+        4 times the number of cores of the vmSize of the pool or 256.
+       :vartype task_slots_per_node: int
+       :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
+        specified, the default is spread.
+       :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
+       :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
+       :vartype user_accounts: list[~azure.batch.models.UserAccount]
+       :ivar metadata: A list of name-value pairs associated with the Pool as metadata.
+       :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
+       :ivar pool_statistics: Utilization and resource usage statistics for the entire lifetime of the
+        Pool. This property is populated only if the BatchPool was retrieved with an expand clause
+        including the 'stats' attribute; otherwise it is null. The statistics may not be immediately
+        available. The Batch service performs periodic roll-up of statistics. The typical delay is
+        about 30 minutes.
+       :vartype pool_statistics: ~azure.batch.models.BatchPoolStatistics
+       :ivar mount_configuration: A list of file systems to mount on each node in the pool. This
+        supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+       :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
+       :ivar identity: The identity of the Batch pool, if configured. The list of user identities
+        associated with the Batch pool. The user identity dictionary key references will be ARM
+        resource ids in the form:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+       :vartype identity: ~azure.batch.models.BatchPoolIdentity
+       :ivar target_node_communication_mode: The desired node communication mode for the pool. If
+        omitted, the default value is Default. Known values are: "default", "classic", and
+        "simplified".
+       :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
+       :ivar current_node_communication_mode: The current state of the pool communication mode. Known
+        values are: "default", "classic", and "simplified".
+       :vartype current_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
+       :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
+        manual, or rolling.
+       :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -5296,12 +5296,12 @@ class BatchPool(_Model):
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
      store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+ For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
      directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
      query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+ For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+ Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
@@ -5376,116 +5376,116 @@ class BatchPool(_Model):
 class BatchPoolCreateOptions(_Model):
     """Parameters for creating an Azure Batch Pool.
 
-    :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
-     combination of alphanumeric characters including hyphens and underscores, and cannot contain
-     more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
-     have two Pool IDs within an Account that differ only by case). Required.
-    :vartype id: str
-    :ivar display_name: The display name for the Pool. The display name need not be unique and can
-     contain any Unicode characters up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar vm_size: The size of virtual machines in the Pool. All virtual machines in a Pool are the
-     same size. For information about available VM sizes for Pools using Images from the Virtual
-     Machines Marketplace (pools created with virtualMachineConfiguration), see Sizes for Virtual
-     Machines in Azure (`https://learn.microsoft.com/azure/virtual-machines/sizes/overview
-     <https://learn.microsoft.com/azure/virtual-machines/sizes/overview>`_). Batch supports all
-     Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
-     STANDARD_DSV2 series). Required.
-    :vartype vm_size: str
-    :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
-     property must be specified.
-    :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
-    :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This timeout
-     applies only to manual scaling; it has no effect when enableAutoScale is set to true. The
-     default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
-     minutes, the Batch service returns an error; if you are calling the REST API directly, the HTTP
-     status code is 400 (Bad Request).
-    :vartype resize_timeout: ~datetime.timedelta
-    :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
-    :vartype resource_tags: dict[str, str]
-    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
-     property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
-     false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
-    :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
-     Pool. This property must not be specified if enableAutoScale is set to true. If enableAutoScale
-     is set to false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or
-     both.
-    :vartype target_low_priority_nodes: int
-    :ivar enable_auto_scale: Whether the Pool size should automatically adjust over time. If false,
-     at least one of targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
-     autoScaleFormula property is required and the Pool automatically resizes according to the
-     formula. The default value is false.
-    :vartype enable_auto_scale: bool
-    :ivar auto_scale_formula: A formula for the desired number of Compute Nodes in the Pool. This
-     property must not be specified if enableAutoScale is set to false. It is required if
-     enableAutoScale is set to true. The formula is checked for validity before the Pool is created.
-     If the formula is not valid, the Batch service rejects the request with detailed error
-     information. For more information about specifying this formula, see 'Automatically scale
-     Compute Nodes in an Azure Batch Pool'
-     (`https://learn.microsoft.com/azure/batch/batch-automatic-scaling
-     <https://learn.microsoft.com/azure/batch/batch-automatic-scaling>`_).
-    :vartype auto_scale_formula: str
-    :ivar auto_scale_evaluation_interval: The time interval at which to automatically adjust the
-     Pool size according to the autoscale formula. The default value is 15 minutes. The minimum and
-     maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
-     minutes or greater than 168 hours, the Batch service returns an error; if you are calling the
-     REST API directly, the HTTP status code is 400 (Bad Request).
-    :vartype auto_scale_evaluation_interval: ~datetime.timedelta
-    :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
-     Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
-     deployment restrictions on the Compute Nodes of the Pool. This may result in the Pool not
-     reaching its desired size. The default value is false.
-    :vartype enable_inter_node_communication: bool
-    :ivar network_configuration: The network configuration for the Pool.
-    :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
-    :ivar start_task: A Task specified to run on each Compute Node as it joins the Pool. The Task
-     runs when the Compute Node is added to the Pool or when the Compute Node is restarted.
-    :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
-    :ivar application_package_references: The list of Packages to be installed on each Compute Node
-     in the Pool. When creating a pool, the package's application ID must be fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
-     Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
-     Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
-     10 Package references on any given Pool.
-    :vartype application_package_references:
-     list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
-     a single compute node in the pool. The default value is 1. The maximum value is the smaller of
-     4 times the number of cores of the vmSize of the pool or 256.
-    :vartype task_slots_per_node: int
-    :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
-     specified, the default is spread.
-    :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
-    :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
-    :vartype user_accounts: list[~azure.batch.models.UserAccount]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. The Batch
-     service does not assign any meaning to metadata; it is solely for the use of user code.
-    :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar mount_configuration: Mount storage using specified file system for the entire lifetime of
-     the pool. Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse based file system.
-    :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If
-     omitted, the default value is Default. Known values are: "default", "classic", and
-     "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
-    :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
-     manual, or rolling.
-    :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
+       :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
+        combination of alphanumeric characters including hyphens and underscores, and cannot contain
+        more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
+        have two Pool IDs within an Account that differ only by case). Required.
+       :vartype id: str
+       :ivar display_name: The display name for the Pool. The display name need not be unique and can
+        contain any Unicode characters up to a maximum length of 1024.
+       :vartype display_name: str
+       :ivar vm_size: The size of virtual machines in the Pool. All virtual machines in a Pool are the
+        same size. For information about available VM sizes for Pools using Images from the Virtual
+        Machines Marketplace (pools created with virtualMachineConfiguration), see Sizes for Virtual
+        Machines in Azure (`https://learn.microsoft.com/azure/virtual-machines/sizes/overview
+        <https://learn.microsoft.com/azure/virtual-machines/sizes/overview>`_). Batch supports all
+        Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
+        STANDARD_DSV2 series). Required.
+       :vartype vm_size: str
+       :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
+        property must be specified.
+       :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
+       :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This timeout
+        applies only to manual scaling; it has no effect when enableAutoScale is set to true. The
+        default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
+        minutes, the Batch service returns an error; if you are calling the REST API directly, the HTTP
+        status code is 400 (Bad Request).
+       :vartype resize_timeout: ~datetime.timedelta
+       :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
+        be associated with the Azure Batch Pool. When specified, these tags are propagated to the
+        backing Azure resources associated with the pool. This property can only be specified when the
+        Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
+       :vartype resource_tags: dict[str, str]
+       :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
+        property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
+        false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
+       :vartype target_dedicated_nodes: int
+       :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
+        Pool. This property must not be specified if enableAutoScale is set to true. If enableAutoScale
+        is set to false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or
+        both.
+       :vartype target_low_priority_nodes: int
+       :ivar enable_auto_scale: Whether the Pool size should automatically adjust over time. If false,
+        at least one of targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
+        autoScaleFormula property is required and the Pool automatically resizes according to the
+        formula. The default value is false.
+       :vartype enable_auto_scale: bool
+       :ivar auto_scale_formula: A formula for the desired number of Compute Nodes in the Pool. This
+        property must not be specified if enableAutoScale is set to false. It is required if
+        enableAutoScale is set to true. The formula is checked for validity before the Pool is created.
+        If the formula is not valid, the Batch service rejects the request with detailed error
+        information. For more information about specifying this formula, see 'Automatically scale
+        Compute Nodes in an Azure Batch Pool'
+        (`https://learn.microsoft.com/azure/batch/batch-automatic-scaling
+        <https://learn.microsoft.com/azure/batch/batch-automatic-scaling>`_).
+       :vartype auto_scale_formula: str
+       :ivar auto_scale_evaluation_interval: The time interval at which to automatically adjust the
+        Pool size according to the autoscale formula. The default value is 15 minutes. The minimum and
+        maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
+        minutes or greater than 168 hours, the Batch service returns an error; if you are calling the
+        REST API directly, the HTTP status code is 400 (Bad Request).
+       :vartype auto_scale_evaluation_interval: ~datetime.timedelta
+       :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
+        Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
+        deployment restrictions on the Compute Nodes of the Pool. This may result in the Pool not
+        reaching its desired size. The default value is false.
+       :vartype enable_inter_node_communication: bool
+       :ivar network_configuration: The network configuration for the Pool.
+       :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
+       :ivar start_task: A Task specified to run on each Compute Node as it joins the Pool. The Task
+        runs when the Compute Node is added to the Pool or when the Compute Node is restarted.
+       :vartype start_task: ~azure.batch.models.BatchStartTask
+       :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
+        the specified Certificate store and location.
+    For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+        directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+        query for this location.
+    For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+        home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+    Warning: This property is deprecated and will be removed after February, 2024. Please use the
+        `Azure KeyVault Extension
+        <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+       :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
+       :ivar application_package_references: The list of Packages to be installed on each Compute Node
+        in the Pool. When creating a pool, the package's application ID must be fully qualified
+        (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
+        Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
+        Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
+        10 Package references on any given Pool.
+       :vartype application_package_references:
+        list[~azure.batch.models.BatchApplicationPackageReference]
+       :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
+        a single compute node in the pool. The default value is 1. The maximum value is the smaller of
+        4 times the number of cores of the vmSize of the pool or 256.
+       :vartype task_slots_per_node: int
+       :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
+        specified, the default is spread.
+       :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
+       :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
+       :vartype user_accounts: list[~azure.batch.models.UserAccount]
+       :ivar metadata: A list of name-value pairs associated with the Pool as metadata. The Batch
+        service does not assign any meaning to metadata; it is solely for the use of user code.
+       :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
+       :ivar mount_configuration: Mount storage using specified file system for the entire lifetime of
+        the pool. Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse based file system.
+       :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
+       :ivar target_node_communication_mode: The desired node communication mode for the pool. If
+        omitted, the default value is Default. Known values are: "default", "classic", and
+        "simplified".
+       :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
+       :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
+        manual, or rolling.
+       :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5583,12 +5583,12 @@ class BatchPoolCreateOptions(_Model):
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
      store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+ For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
      directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
      query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+ For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+ Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
@@ -5964,45 +5964,45 @@ class BatchPoolNodeCounts(_Model):
 class BatchPoolReplaceOptions(_Model):
     """Parameters for replacing properties on an Azure Batch Pool.
 
-    :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
-     the Compute Node is added to the Pool or when the Compute Node is restarted. If this element is
-     present, it overwrites any existing StartTask. If omitted, any existing StartTask is removed
-     from the Pool.
-    :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: This list replaces any existing Certificate references configured
-     on the Pool.
-     If you specify an empty collection, any existing Certificate references are removed from the
-     Pool.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-     Required.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
-    :ivar application_package_references: The list of Application Packages to be installed on each
-     Compute Node in the Pool. The list replaces any existing Application Package references on the
-     Pool. Changes to Application Package references affect all new Compute Nodes joining the Pool,
-     but do not affect Compute Nodes that are already in the Pool until they are rebooted or
-     reimaged. There is a maximum of 10 Application Package references on any given Pool. If
-     omitted, or if you specify an empty collection, any existing Application Packages references
-     are removed from the Pool. A maximum of 10 references may be specified on a given Pool.
-     Required.
-    :vartype application_package_references:
-     list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. This list
-     replaces any existing metadata configured on the Pool. If omitted, or if you specify an empty
-     collection, any existing metadata is removed from the Pool. Required.
-    :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. This
-     setting replaces any existing targetNodeCommunication setting on the Pool. If omitted, the
-     existing setting is default. Known values are: "default", "classic", and "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
+       :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
+        the Compute Node is added to the Pool or when the Compute Node is restarted. If this element is
+        present, it overwrites any existing StartTask. If omitted, any existing StartTask is removed
+        from the Pool.
+       :vartype start_task: ~azure.batch.models.BatchStartTask
+       :ivar certificate_references: This list replaces any existing Certificate references configured
+        on the Pool.
+    If you specify an empty collection, any existing Certificate references are removed from the
+        Pool.
+    For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+        store and location.
+    For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+        directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+        query for this location.
+    For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+        home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+    Warning: This property is deprecated and will be removed after February, 2024. Please use the
+        `Azure KeyVault Extension
+        <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+        Required.
+       :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
+       :ivar application_package_references: The list of Application Packages to be installed on each
+        Compute Node in the Pool. The list replaces any existing Application Package references on the
+        Pool. Changes to Application Package references affect all new Compute Nodes joining the Pool,
+        but do not affect Compute Nodes that are already in the Pool until they are rebooted or
+        reimaged. There is a maximum of 10 Application Package references on any given Pool. If
+        omitted, or if you specify an empty collection, any existing Application Packages references
+        are removed from the Pool. A maximum of 10 references may be specified on a given Pool.
+        Required.
+       :vartype application_package_references:
+        list[~azure.batch.models.BatchApplicationPackageReference]
+       :ivar metadata: A list of name-value pairs associated with the Pool as metadata. This list
+        replaces any existing metadata configured on the Pool. If omitted, or if you specify an empty
+        collection, any existing metadata is removed from the Pool. Required.
+       :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
+       :ivar target_node_communication_mode: The desired node communication mode for the pool. This
+        setting replaces any existing targetNodeCommunication setting on the Pool. If omitted, the
+        existing setting is default. Known values are: "default", "classic", and "simplified".
+       :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
     """
 
     start_task: Optional["_models.BatchStartTask"] = rest_field(
@@ -6015,16 +6015,16 @@ class BatchPoolReplaceOptions(_Model):
         name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """This list replaces any existing Certificate references configured on the Pool.
-     If you specify an empty collection, any existing Certificate references are removed from the
+ If you specify an empty collection, any existing Certificate references are removed from the
      Pool.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+ For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
      store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+ For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
      directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
      query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+ For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+ Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
      Required."""
@@ -6255,106 +6255,106 @@ class BatchPoolResourceStatistics(_Model):
 class BatchPoolSpecification(_Model):
     """Specification for creating a new Pool.
 
-    :ivar display_name: The display name for the Pool. The display name need not be unique and can
-     contain any Unicode characters up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar vm_size: The size of the virtual machines in the Pool. All virtual machines in a Pool are
-     the same size. For information about available sizes of virtual machines in Pools, see Choose a
-     VM size for Compute Nodes in an Azure Batch Pool
-     (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
-     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required.
-    :vartype vm_size: str
-    :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
-     property must be specified.
-    :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
-    :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
-     a single compute node in the pool. The default value is 1. The maximum value is the smaller of
-     4 times the number of cores of the vmSize of the pool or 256.
-    :vartype task_slots_per_node: int
-    :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
-     specified, the default is spread.
-    :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
-    :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This timeout
-     applies only to manual scaling; it has no effect when enableAutoScale is set to true. The
-     default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
-     minutes, the Batch service rejects the request with an error; if you are calling the REST API
-     directly, the HTTP status code is 400 (Bad Request).
-    :vartype resize_timeout: ~datetime.timedelta
-    :ivar resource_tags: The user-specified tags associated with the pool.The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
-    :vartype resource_tags: str
-    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
-     property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
-     false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
-    :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
-     Pool. This property must not be specified if enableAutoScale is set to true. If enableAutoScale
-     is set to false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or
-     both.
-    :vartype target_low_priority_nodes: int
-    :ivar enable_auto_scale: Whether the Pool size should automatically adjust over time. If false,
-     at least one of targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
-     autoScaleFormula element is required. The Pool automatically resizes according to the formula.
-     The default value is false.
-    :vartype enable_auto_scale: bool
-    :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. This
-     property must not be specified if enableAutoScale is set to false. It is required if
-     enableAutoScale is set to true. The formula is checked for validity before the Pool is created.
-     If the formula is not valid, the Batch service rejects the request with detailed error
-     information.
-    :vartype auto_scale_formula: str
-    :ivar auto_scale_evaluation_interval: The time interval at which to automatically adjust the
-     Pool size according to the autoscale formula. The default value is 15 minutes. The minimum and
-     maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
-     minutes or greater than 168 hours, the Batch service rejects the request with an invalid
-     property value error; if you are calling the REST API directly, the HTTP status code is 400
-     (Bad Request).
-    :vartype auto_scale_evaluation_interval: ~datetime.timedelta
-    :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
-     Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
-     deployment restrictions on the Compute Nodes of the Pool. This may result in the Pool not
-     reaching its desired size. The default value is false.
-    :vartype enable_inter_node_communication: bool
-    :ivar network_configuration: The network configuration for the Pool.
-    :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
-    :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
-     the Compute Node is added to the Pool or when the Compute Node is restarted.
-    :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment variable
-     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
-     with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
-     (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024.
-     Please use the `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
-    :ivar application_package_references: The list of Packages to be installed on each Compute Node
-     in the Pool. When creating a pool, the package's application ID must be fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
-     Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
-     Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
-     10 Package references on any given Pool.
-    :vartype application_package_references:
-     list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
-    :vartype user_accounts: list[~azure.batch.models.UserAccount]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. The Batch
-     service does not assign any meaning to metadata; it is solely for the use of user code.
-    :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar mount_configuration: A list of file systems to mount on each node in the pool. This
-     supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
-    :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If
-     omitted, the default value is Default. Known values are: "default", "classic", and
-     "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
-    :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
-     manual, or rolling.
-    :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
+       :ivar display_name: The display name for the Pool. The display name need not be unique and can
+        contain any Unicode characters up to a maximum length of 1024.
+       :vartype display_name: str
+       :ivar vm_size: The size of the virtual machines in the Pool. All virtual machines in a Pool are
+        the same size. For information about available sizes of virtual machines in Pools, see Choose a
+        VM size for Compute Nodes in an Azure Batch Pool
+        (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
+        <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required.
+       :vartype vm_size: str
+       :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
+        property must be specified.
+       :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
+       :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
+        a single compute node in the pool. The default value is 1. The maximum value is the smaller of
+        4 times the number of cores of the vmSize of the pool or 256.
+       :vartype task_slots_per_node: int
+       :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
+        specified, the default is spread.
+       :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
+       :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This timeout
+        applies only to manual scaling; it has no effect when enableAutoScale is set to true. The
+        default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
+        minutes, the Batch service rejects the request with an error; if you are calling the REST API
+        directly, the HTTP status code is 400 (Bad Request).
+       :vartype resize_timeout: ~datetime.timedelta
+       :ivar resource_tags: The user-specified tags associated with the pool.The user-defined tags to
+        be associated with the Azure Batch Pool. When specified, these tags are propagated to the
+        backing Azure resources associated with the pool. This property can only be specified when the
+        Batch account was created with the poolAllocationMode property set to 'UserSubscription'.
+       :vartype resource_tags: str
+       :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
+        property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
+        false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
+       :vartype target_dedicated_nodes: int
+       :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
+        Pool. This property must not be specified if enableAutoScale is set to true. If enableAutoScale
+        is set to false, then you must set either targetDedicatedNodes, targetLowPriorityNodes, or
+        both.
+       :vartype target_low_priority_nodes: int
+       :ivar enable_auto_scale: Whether the Pool size should automatically adjust over time. If false,
+        at least one of targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
+        autoScaleFormula element is required. The Pool automatically resizes according to the formula.
+        The default value is false.
+       :vartype enable_auto_scale: bool
+       :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. This
+        property must not be specified if enableAutoScale is set to false. It is required if
+        enableAutoScale is set to true. The formula is checked for validity before the Pool is created.
+        If the formula is not valid, the Batch service rejects the request with detailed error
+        information.
+       :vartype auto_scale_formula: str
+       :ivar auto_scale_evaluation_interval: The time interval at which to automatically adjust the
+        Pool size according to the autoscale formula. The default value is 15 minutes. The minimum and
+        maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
+        minutes or greater than 168 hours, the Batch service rejects the request with an invalid
+        property value error; if you are calling the REST API directly, the HTTP status code is 400
+        (Bad Request).
+       :vartype auto_scale_evaluation_interval: ~datetime.timedelta
+       :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
+        Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
+        deployment restrictions on the Compute Nodes of the Pool. This may result in the Pool not
+        reaching its desired size. The default value is false.
+       :vartype enable_inter_node_communication: bool
+       :ivar network_configuration: The network configuration for the Pool.
+       :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
+       :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
+        the Compute Node is added to the Pool or when the Compute Node is restarted.
+       :vartype start_task: ~azure.batch.models.BatchStartTask
+       :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
+        the specified Certificate store and location. For Linux Compute Nodes, the Certificates are
+        stored in a directory inside the Task working directory and an environment variable
+        AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
+        with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
+        (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+    Warning: This property is deprecated and will be removed after February, 2024.
+    Please use the `Azure KeyVault Extension
+        <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+       :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
+       :ivar application_package_references: The list of Packages to be installed on each Compute Node
+        in the Pool. When creating a pool, the package's application ID must be fully qualified
+        (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
+        Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
+        Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
+        10 Package references on any given Pool.
+       :vartype application_package_references:
+        list[~azure.batch.models.BatchApplicationPackageReference]
+       :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
+       :vartype user_accounts: list[~azure.batch.models.UserAccount]
+       :ivar metadata: A list of name-value pairs associated with the Pool as metadata. The Batch
+        service does not assign any meaning to metadata; it is solely for the use of user code.
+       :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
+       :ivar mount_configuration: A list of file systems to mount on each node in the pool. This
+        supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+       :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
+       :ivar target_node_communication_mode: The desired node communication mode for the pool. If
+        omitted, the default value is Default. Known values are: "default", "classic", and
+        "simplified".
+       :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
+       :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
+        manual, or rolling.
+       :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
     display_name: Optional[str] = rest_field(
@@ -6457,8 +6457,8 @@ class BatchPoolSpecification(_Model):
      the Task to query for this location. For Certificates with visibility of 'remoteUser', a
      'certs' directory is created in the user's home directory (e.g., /home/{user-name}/certs) and
      Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024.
-     Please use the `Azure KeyVault Extension
+ Warning: This property is deprecated and will be removed after February, 2024.
+ Please use the `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
@@ -6594,90 +6594,90 @@ class BatchPoolStatistics(_Model):
 class BatchPoolUpdateOptions(_Model):
     """Parameters for updating an Azure Batch Pool.
 
-    :ivar display_name: The display name for the Pool. The display name need not be unique and can
-     contain any Unicode characters up to a maximum length of 1024. This field can be updated only
-     when the pool is empty.
-    :vartype display_name: str
-    :ivar vm_size: The size of virtual machines in the Pool. For information about available sizes
-     of virtual machines in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
-     (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
-     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_).<br /><br />This field can be
-     updated only when the pool is empty.
-    :vartype vm_size: str
-    :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
-     Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
-     deployment restrictions on the Compute Nodes of the Pool. This may result in the Pool not
-     reaching its desired size. The default value is false.<br /><br />This field can be updated
-     only when the pool is empty.
-    :vartype enable_inter_node_communication: bool
-    :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
-     the Compute Node is added to the Pool or when the Compute Node is restarted. If this element is
-     present, it overwrites any existing StartTask. If omitted, any existing StartTask is left
-     unchanged.
-    :vartype start_task: ~azure.batch.models.BatchStartTask
-    :ivar certificate_references: If this element is present, it replaces any existing Certificate
-     references configured on the Pool.
-     If omitted, any existing Certificate references are left unchanged.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
-     store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
-     directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
-     query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
-     `Azure KeyVault Extension
-     <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
-    :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
-    :ivar application_package_references: A list of Packages to be installed on each Compute Node
-     in the Pool. Changes to Package references affect all new Nodes joining the Pool, but do not
-     affect Compute Nodes that are already in the Pool until they are rebooted or reimaged. If this
-     element is present, it replaces any existing Package references. If you specify an empty
-     collection, then all Package references are removed from the Pool. If omitted, any existing
-     Package references are left unchanged.
-    :vartype application_package_references:
-     list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar metadata: A list of name-value pairs associated with the Pool as metadata. If this
-     element is present, it replaces any existing metadata configured on the Pool. If you specify an
-     empty collection, any metadata is removed from the Pool. If omitted, any existing metadata is
-     left unchanged.
-    :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
-    :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
-     property must be specified.<br /><br />This field can be updated only when the pool is empty.
-    :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
-    :ivar target_node_communication_mode: The desired node communication mode for the pool. If this
-     element is present, it replaces the existing targetNodeCommunicationMode configured on the
-     Pool. If omitted, any existing metadata is left unchanged. Known values are: "default",
-     "classic", and "simplified".
-    :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
-    :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
-     a single compute node in the pool. The default value is 1. The maximum value is the smaller of
-     4 times the number of cores of the vmSize of the pool or 256.<br /><br />This field can be
-     updated only when the pool is empty.
-    :vartype task_slots_per_node: int
-    :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
-     specified, the default is spread.<br /><br />This field can be updated only when the pool is
-     empty.
-    :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
-    :ivar network_configuration: The network configuration for the Pool. This field can be updated
-     only when the pool is empty.
-    :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
-    :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
-     be associated with the Azure Batch Pool. When specified, these tags are propagated to the
-     backing Azure resources associated with the pool. This property can only be specified when the
-     Batch account was created with the poolAllocationMode property set to 'UserSubscription'.<br
-     /><br />This field can be updated only when the pool is empty.
-    :vartype resource_tags: dict[str, str]
-    :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
-     This field can be updated only when the pool is empty.
-    :vartype user_accounts: list[~azure.batch.models.UserAccount]
-    :ivar mount_configuration: Mount storage using specified file system for the entire lifetime of
-     the pool. Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse based file system.<br
-     /><br />This field can be updated only when the pool is empty.
-    :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
-    :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
-     manual, or rolling.<br /><br />This field can be updated only when the pool is empty.
-    :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
+       :ivar display_name: The display name for the Pool. The display name need not be unique and can
+        contain any Unicode characters up to a maximum length of 1024. This field can be updated only
+        when the pool is empty.
+       :vartype display_name: str
+       :ivar vm_size: The size of virtual machines in the Pool. For information about available sizes
+        of virtual machines in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
+        (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
+        <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_).<br /><br />This field can be
+        updated only when the pool is empty.
+       :vartype vm_size: str
+       :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
+        Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
+        deployment restrictions on the Compute Nodes of the Pool. This may result in the Pool not
+        reaching its desired size. The default value is false.<br /><br />This field can be updated
+        only when the pool is empty.
+       :vartype enable_inter_node_communication: bool
+       :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
+        the Compute Node is added to the Pool or when the Compute Node is restarted. If this element is
+        present, it overwrites any existing StartTask. If omitted, any existing StartTask is left
+        unchanged.
+       :vartype start_task: ~azure.batch.models.BatchStartTask
+       :ivar certificate_references: If this element is present, it replaces any existing Certificate
+        references configured on the Pool.
+    If omitted, any existing Certificate references are left unchanged.
+    For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+        store and location.
+    For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+        directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
+        query for this location.
+    For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+        home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+    Warning: This property is deprecated and will be removed after February, 2024. Please use the
+        `Azure KeyVault Extension
+        <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
+       :vartype certificate_references: list[~azure.batch.models.BatchCertificateReference]
+       :ivar application_package_references: A list of Packages to be installed on each Compute Node
+        in the Pool. Changes to Package references affect all new Nodes joining the Pool, but do not
+        affect Compute Nodes that are already in the Pool until they are rebooted or reimaged. If this
+        element is present, it replaces any existing Package references. If you specify an empty
+        collection, then all Package references are removed from the Pool. If omitted, any existing
+        Package references are left unchanged.
+       :vartype application_package_references:
+        list[~azure.batch.models.BatchApplicationPackageReference]
+       :ivar metadata: A list of name-value pairs associated with the Pool as metadata. If this
+        element is present, it replaces any existing metadata configured on the Pool. If you specify an
+        empty collection, any metadata is removed from the Pool. If omitted, any existing metadata is
+        left unchanged.
+       :vartype metadata: list[~azure.batch.models.BatchMetadataItem]
+       :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
+        property must be specified.<br /><br />This field can be updated only when the pool is empty.
+       :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
+       :ivar target_node_communication_mode: The desired node communication mode for the pool. If this
+        element is present, it replaces the existing targetNodeCommunicationMode configured on the
+        Pool. If omitted, any existing metadata is left unchanged. Known values are: "default",
+        "classic", and "simplified".
+       :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
+       :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
+        a single compute node in the pool. The default value is 1. The maximum value is the smaller of
+        4 times the number of cores of the vmSize of the pool or 256.<br /><br />This field can be
+        updated only when the pool is empty.
+       :vartype task_slots_per_node: int
+       :ivar task_scheduling_policy: How Tasks are distributed across Compute Nodes in a Pool. If not
+        specified, the default is spread.<br /><br />This field can be updated only when the pool is
+        empty.
+       :vartype task_scheduling_policy: ~azure.batch.models.BatchTaskSchedulingPolicy
+       :ivar network_configuration: The network configuration for the Pool. This field can be updated
+        only when the pool is empty.
+       :vartype network_configuration: ~azure.batch.models.NetworkConfiguration
+       :ivar resource_tags: The user-specified tags associated with the pool. The user-defined tags to
+        be associated with the Azure Batch Pool. When specified, these tags are propagated to the
+        backing Azure resources associated with the pool. This property can only be specified when the
+        Batch account was created with the poolAllocationMode property set to 'UserSubscription'.<br
+        /><br />This field can be updated only when the pool is empty.
+       :vartype resource_tags: dict[str, str]
+       :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
+        This field can be updated only when the pool is empty.
+       :vartype user_accounts: list[~azure.batch.models.UserAccount]
+       :ivar mount_configuration: Mount storage using specified file system for the entire lifetime of
+        the pool. Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse based file system.<br
+        /><br />This field can be updated only when the pool is empty.
+       :vartype mount_configuration: list[~azure.batch.models.MountConfiguration]
+       :ivar upgrade_policy: The upgrade policy for the Pool. Describes an upgrade policy - automatic,
+        manual, or rolling.<br /><br />This field can be updated only when the pool is empty.
+       :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
     display_name: Optional[str] = rest_field(
@@ -6710,15 +6710,15 @@ class BatchPoolUpdateOptions(_Model):
     )
     """If this element is present, it replaces any existing Certificate references configured on the
      Pool.
-     If omitted, any existing Certificate references are left unchanged.
-     For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
+ If omitted, any existing Certificate references are left unchanged.
+ For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
      store and location.
-     For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
+ For Linux Compute Nodes, the Certificates are stored in a directory inside the Task working
      directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to
      query for this location.
-     For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
+ For Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-     Warning: This property is deprecated and will be removed after February, 2024. Please use the
+ Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
@@ -6996,56 +6996,56 @@ class BatchStartTask(_Model):
     install/launch services from the StartTask working directory, as this will
     block Batch from being able to re-run the StartTask.
 
-    :ivar command_line: The command line of the StartTask. The command line does not run under a
-     shell, and therefore cannot take advantage of shell features such as environment variable
-     expansion. If you want to take advantage of such features, you should invoke the shell in the
-     command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in
-     Linux. If the command line refers to file paths, it should use a relative path (relative to the
-     Task working directory), or use the Batch provided environment variable
-     (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
-     <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
-     Required.
-    :vartype command_line: str
-    :ivar container_settings: The settings for the container under which the StartTask runs. When
-     this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of
-     Azure Batch directories on the node) are mapped into the container, all Task environment
-     variables are mapped into the container, and the Task command line is executed in the
-     container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
-     reflected to the host disk, meaning that Batch file APIs will not be able to access those
-     files.
-    :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
-    :ivar resource_files: A list of files that the Batch service will download to the Compute Node
-     before running the command line.  There is a maximum size for the list of resource files. When
-     the max size is exceeded, the request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be reduced in size.
-     This can be achieved using .zip files, Application Packages, or Docker Containers. Files listed
-     under this element are located in the Task's working directory.
-    :vartype resource_files: list[~azure.batch.models.ResourceFile]
-    :ivar environment_settings: A list of environment variable settings for the StartTask.
-    :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :ivar user_identity: The user identity under which the StartTask runs. If omitted, the Task
-     runs as a non-administrative user unique to the Task.
-    :vartype user_identity: ~azure.batch.models.UserIdentity
-    :ivar max_task_retry_count: The maximum number of times the Task may be retried. The Batch
-     service retries a Task if its exit code is nonzero. Note that this value specifically controls
-     the number of retries. The Batch service will try the Task once, and may then retry up to this
-     limit. For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one
-     initial try and 3 retries). If the maximum retry count is 0, the Batch service does not retry
-     the Task. If the maximum retry count is -1, the Batch service retries the Task without limit,
-     however this is not recommended for a start task or any task. The default value is 0 (no
-     retries).
-    :vartype max_task_retry_count: int
-    :ivar wait_for_success: Whether the Batch service should wait for the StartTask to complete
-     successfully (that is, to exit with exit code 0) before scheduling any Tasks on the Compute
-     Node. If true and the StartTask fails on a Node, the Batch service retries the StartTask up to
-     its maximum retry count (maxTaskRetryCount). If the Task has still not completed successfully
-     after all retries, then the Batch service marks the Node unusable, and will not schedule Tasks
-     to it. This condition can be detected via the Compute Node state and failure info details. If
-     false, the Batch service will not wait for the StartTask to complete. In this case, other Tasks
-     can start executing on the Compute Node while the StartTask is still running; and even if the
-     StartTask fails, new Tasks will continue to be scheduled on the Compute Node. The default is
-     true.
-    :vartype wait_for_success: bool
+        :ivar command_line: The command line of the StartTask. The command line does not run under a
+         shell, and therefore cannot take advantage of shell features such as environment variable
+         expansion. If you want to take advantage of such features, you should invoke the shell in the
+         command line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in
+         Linux. If the command line refers to file paths, it should use a relative path (relative to the
+         Task working directory), or use the Batch provided environment variable
+         (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
+         <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
+         Required.
+        :vartype command_line: str
+        :ivar container_settings: The settings for the container under which the StartTask runs. When
+         this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of
+         Azure Batch directories on the node) are mapped into the container, all Task environment
+         variables are mapped into the container, and the Task command line is executed in the
+         container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
+         reflected to the host disk, meaning that Batch file APIs will not be able to access those
+         files.
+        :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
+        :ivar resource_files: A list of files that the Batch service will download to the Compute Node
+         before running the command line.  There is a maximum size for the list of resource files. When
+         the max size is exceeded, the request will fail and the response error code will be
+         RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be reduced in size.
+         This can be achieved using .zip files, Application Packages, or Docker Containers. Files listed
+         under this element are located in the Task's working directory.
+        :vartype resource_files: list[~azure.batch.models.ResourceFile]
+        :ivar environment_settings: A list of environment variable settings for the StartTask.
+        :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
+        :ivar user_identity: The user identity under which the StartTask runs. If omitted, the Task
+         runs as a non-administrative user unique to the Task.
+        :vartype user_identity: ~azure.batch.models.UserIdentity
+        :ivar max_task_retry_count: The maximum number of times the Task may be retried. The Batch
+         service retries a Task if its exit code is nonzero. Note that this value specifically controls
+         the number of retries. The Batch service will try the Task once, and may then retry up to this
+         limit. For example, if the maximum retry count is 3, Batch tries the Task up to 4 times (one
+         initial try and 3 retries). If the maximum retry count is 0, the Batch service does not retry
+         the Task. If the maximum retry count is -1, the Batch service retries the Task without limit,
+         however this is not recommended for a start task or any task. The default value is 0 (no
+         retries).
+        :vartype max_task_retry_count: int
+        :ivar wait_for_success: Whether the Batch service should wait for the StartTask to complete
+         successfully (that is, to exit with exit code 0) before scheduling any Tasks on the Compute
+         Node. If true and the StartTask fails on a Node, the Batch service retries the StartTask up to
+         its maximum retry count (maxTaskRetryCount). If the Task has still not completed successfully
+         after all retries, then the Batch service marks the Node unusable, and will not schedule Tasks
+         to it. This condition can be detected via the Compute Node state and failure info details. If
+         false, the Batch service will not wait for the StartTask to complete. In this case, other Tasks
+         can start executing on the Compute Node while the StartTask is still running; and even if the
+         StartTask fails, new Tasks will continue to be scheduled on the Compute Node. The default is
+         true.
+        :vartype wait_for_success: bool
     """
 
     command_line: str = rest_field(name="commandLine", visibility=["read", "create", "update", "delete", "query"])
@@ -7393,26 +7393,26 @@ class BatchSupportedImage(_Model):
     """A reference to the Azure Virtual Machines Marketplace Image and additional
     information about the Image.
 
-    :ivar node_agent_sku_id: The ID of the Compute Node agent SKU which the Image supports.
-     Required.
-    :vartype node_agent_sku_id: str
-    :ivar image_reference: The reference to the Azure Virtual Machine's Marketplace Image.
-     Required.
-    :vartype image_reference: ~azure.batch.models.BatchVmImageReference
-    :ivar os_type: The type of operating system (e.g. Windows or Linux) of the Image. Required.
-     Known values are: "linux" and "windows".
-    :vartype os_type: str or ~azure.batch.models.OSType
-    :ivar capabilities: The capabilities or features which the Image supports. Not every capability
-     of the Image is listed. Capabilities in this list are considered of special interest and are
-     generally related to integration with other features in the Azure Batch service.
-    :vartype capabilities: list[str]
-    :ivar batch_support_end_of_life: The time when the Azure Batch service will stop accepting
-     create Pool requests for the Image.
-    :vartype batch_support_end_of_life: ~datetime.datetime
-    :ivar verification_type: Whether the Azure Batch service actively verifies that the Image is
-     compatible with the associated Compute Node agent SKU. Required. Known values are: "verified"
-     and "unverified".
-    :vartype verification_type: str or ~azure.batch.models.ImageVerificationType
+        :ivar node_agent_sku_id: The ID of the Compute Node agent SKU which the Image supports.
+         Required.
+        :vartype node_agent_sku_id: str
+        :ivar image_reference: The reference to the Azure Virtual Machine's Marketplace Image.
+         Required.
+        :vartype image_reference: ~azure.batch.models.BatchVmImageReference
+        :ivar os_type: The type of operating system (e.g. Windows or Linux) of the Image. Required.
+         Known values are: "linux" and "windows".
+        :vartype os_type: str or ~azure.batch.models.OSType
+        :ivar capabilities: The capabilities or features which the Image supports. Not every capability
+         of the Image is listed. Capabilities in this list are considered of special interest and are
+         generally related to integration with other features in the Azure Batch service.
+        :vartype capabilities: list[str]
+        :ivar batch_support_end_of_life: The time when the Azure Batch service will stop accepting
+         create Pool requests for the Image.
+        :vartype batch_support_end_of_life: ~datetime.datetime
+        :ivar verification_type: Whether the Azure Batch service actively verifies that the Image is
+         compatible with the associated Compute Node agent SKU. Required. Known values are: "verified"
+         and "unverified".
+        :vartype verification_type: str or ~azure.batch.models.ImageVerificationType
     """
 
     node_agent_sku_id: str = rest_field(
@@ -7476,115 +7476,115 @@ class BatchTask(_Model):
     restarted without causing any corruption or duplicate data. The best practice
     for long running Tasks is to use some form of checkpointing.
 
-    :ivar id: A string that uniquely identifies the Task within the Job. The ID can contain any
-     combination of alphanumeric characters including hyphens and underscores, and cannot contain
-     more than 64 characters.
-    :vartype id: str
-    :ivar display_name: A display name for the Task. The display name need not be unique and can
-     contain any Unicode characters up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar url: The URL of the Task.
-    :vartype url: str
-    :ivar e_tag: The ETag of the Task. This is an opaque string. You can use it to detect whether
-     the Task has changed between requests. In particular, you can be pass the ETag when updating a
-     Task to specify that your changes should take effect only if nobody else has modified the Task
-     in the meantime.
-    :vartype e_tag: str
-    :ivar last_modified: The last modified time of the Task.
-    :vartype last_modified: ~datetime.datetime
-    :ivar creation_time: The creation time of the Task.
-    :vartype creation_time: ~datetime.datetime
-    :ivar exit_conditions: How the Batch service should respond when the Task completes.
-    :vartype exit_conditions: ~azure.batch.models.ExitConditions
-    :ivar state: The current state of the Task. Known values are: "active", "preparing", "running",
-     and "completed".
-    :vartype state: str or ~azure.batch.models.BatchTaskState
-    :ivar state_transition_time: The time at which the Task entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: The previous state of the Task. This property is not set if the Task is
-     in its initial Active state. Known values are: "active", "preparing", "running", and
-     "completed".
-    :vartype previous_state: str or ~azure.batch.models.BatchTaskState
-    :ivar previous_state_transition_time: The time at which the Task entered its previous state.
-     This property is not set if the Task is in its initial Active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar command_line: The command line of the Task. For multi-instance Tasks, the command line is
-     executed as the primary Task, after the primary Task and all subtasks have finished executing
-     the coordination command line. The command line does not run under a shell, and therefore
-     cannot take advantage of shell features such as environment variable expansion. If you want to
-     take advantage of such features, you should invoke the shell in the command line, for example
-     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
-     refers to file paths, it should use a relative path (relative to the Task working directory),
-     or use the Batch provided environment variable
-     (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
-     <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
-    :vartype command_line: str
-    :ivar container_settings: The settings for the container under which the Task runs. If the Pool
-     that will run this Task has containerConfiguration set, this must be set as well. If the Pool
-     that will run this Task doesn't have containerConfiguration set, this must not be set. When
-     this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of
-     Azure Batch directories on the node) are mapped into the container, all Task environment
-     variables are mapped into the container, and the Task command line is executed in the
-     container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
-     reflected to the host disk, meaning that Batch file APIs will not be able to access those
-     files.
-    :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
-    :ivar resource_files: A list of files that the Batch service will download to the Compute Node
-     before running the command line. For multi-instance Tasks, the resource files will only be
-     downloaded to the Compute Node on which the primary Task is executed. There is a maximum size
-     for the list of resource files.  When the max size is exceeded, the request will fail and the
-     response error code will be RequestEntityTooLarge. If this occurs, the collection of
-     ResourceFiles must be reduced in size. This can be achieved using .zip files, Application
-     Packages, or Docker Containers.
-    :vartype resource_files: list[~azure.batch.models.ResourceFile]
-    :ivar output_files: A list of files that the Batch service will upload from the Compute Node
-     after running the command line. For multi-instance Tasks, the files will only be uploaded from
-     the Compute Node on which the primary Task is executed.
-    :vartype output_files: list[~azure.batch.models.OutputFile]
-    :ivar environment_settings: A list of environment variable settings for the Task.
-    :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :ivar affinity_info: A locality hint that can be used by the Batch service to select a Compute
-     Node on which to start the new Task.
-    :vartype affinity_info: ~azure.batch.models.BatchAffinityInfo
-    :ivar constraints: The execution constraints that apply to this Task.
-    :vartype constraints: ~azure.batch.models.BatchTaskConstraints
-    :ivar required_slots: The number of scheduling slots that the Task requires to run. The default
-     is 1. A Task can only be scheduled to run on a compute node if the node has enough free
-     scheduling slots available. For multi-instance Tasks, this must be 1.
-    :vartype required_slots: int
-    :ivar user_identity: The user identity under which the Task runs. If omitted, the Task runs as
-     a non-administrative user unique to the Task.
-    :vartype user_identity: ~azure.batch.models.UserIdentity
-    :ivar execution_info: Information about the execution of the Task.
-    :vartype execution_info: ~azure.batch.models.BatchTaskExecutionInfo
-    :ivar node_info: Information about the Compute Node on which the Task ran.
-    :vartype node_info: ~azure.batch.models.BatchNodeInfo
-    :ivar multi_instance_settings: An object that indicates that the Task is a multi-instance Task,
-     and contains information about how to run the multi-instance Task.
-    :vartype multi_instance_settings: ~azure.batch.models.MultiInstanceSettings
-    :ivar task_statistics: Resource usage statistics for the Task.
-    :vartype task_statistics: ~azure.batch.models.BatchTaskStatistics
-    :ivar depends_on: The Tasks that this Task depends on. This Task will not be scheduled until
-     all Tasks that it depends on have completed successfully. If any of those Tasks fail and
-     exhaust their retry counts, this Task will never be scheduled.
-    :vartype depends_on: ~azure.batch.models.BatchTaskDependencies
-    :ivar application_package_references: A list of Packages that the Batch service will deploy to
-     the Compute Node before running the command line. Application packages are downloaded and
-     deployed to a shared directory, not the Task working directory. Therefore, if a referenced
-     package is already on the Node, and is up to date, then it is not re-downloaded; the existing
-     copy on the Compute Node is used. If a referenced Package cannot be installed, for example
-     because the package has been deleted or because download failed, the Task fails.
-    :vartype application_package_references:
-     list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar authentication_token_settings: The settings for an authentication token that the Task can
-     use to perform Batch service operations. If this property is set, the Batch service provides
-     the Task with an authentication token which can be used to authenticate Batch service
-     operations without requiring an Account access key. The token is provided via the
-     AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
-     using the token depend on the settings. For example, a Task can request Job permissions in
-     order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
-     Job.
-    :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
+        :ivar id: A string that uniquely identifies the Task within the Job. The ID can contain any
+         combination of alphanumeric characters including hyphens and underscores, and cannot contain
+         more than 64 characters.
+        :vartype id: str
+        :ivar display_name: A display name for the Task. The display name need not be unique and can
+         contain any Unicode characters up to a maximum length of 1024.
+        :vartype display_name: str
+        :ivar url: The URL of the Task.
+        :vartype url: str
+        :ivar e_tag: The ETag of the Task. This is an opaque string. You can use it to detect whether
+         the Task has changed between requests. In particular, you can be pass the ETag when updating a
+         Task to specify that your changes should take effect only if nobody else has modified the Task
+         in the meantime.
+        :vartype e_tag: str
+        :ivar last_modified: The last modified time of the Task.
+        :vartype last_modified: ~datetime.datetime
+        :ivar creation_time: The creation time of the Task.
+        :vartype creation_time: ~datetime.datetime
+        :ivar exit_conditions: How the Batch service should respond when the Task completes.
+        :vartype exit_conditions: ~azure.batch.models.ExitConditions
+        :ivar state: The current state of the Task. Known values are: "active", "preparing", "running",
+         and "completed".
+        :vartype state: str or ~azure.batch.models.BatchTaskState
+        :ivar state_transition_time: The time at which the Task entered its current state.
+        :vartype state_transition_time: ~datetime.datetime
+        :ivar previous_state: The previous state of the Task. This property is not set if the Task is
+         in its initial Active state. Known values are: "active", "preparing", "running", and
+         "completed".
+        :vartype previous_state: str or ~azure.batch.models.BatchTaskState
+        :ivar previous_state_transition_time: The time at which the Task entered its previous state.
+         This property is not set if the Task is in its initial Active state.
+        :vartype previous_state_transition_time: ~datetime.datetime
+        :ivar command_line: The command line of the Task. For multi-instance Tasks, the command line is
+         executed as the primary Task, after the primary Task and all subtasks have finished executing
+         the coordination command line. The command line does not run under a shell, and therefore
+         cannot take advantage of shell features such as environment variable expansion. If you want to
+         take advantage of such features, you should invoke the shell in the command line, for example
+         using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
+         refers to file paths, it should use a relative path (relative to the Task working directory),
+         or use the Batch provided environment variable
+         (`https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables
+         <https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables>`_).
+        :vartype command_line: str
+        :ivar container_settings: The settings for the container under which the Task runs. If the Pool
+         that will run this Task has containerConfiguration set, this must be set as well. If the Pool
+         that will run this Task doesn't have containerConfiguration set, this must not be set. When
+         this is specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of
+         Azure Batch directories on the node) are mapped into the container, all Task environment
+         variables are mapped into the container, and the Task command line is executed in the
+         container. Files produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be
+         reflected to the host disk, meaning that Batch file APIs will not be able to access those
+         files.
+        :vartype container_settings: ~azure.batch.models.BatchTaskContainerSettings
+        :ivar resource_files: A list of files that the Batch service will download to the Compute Node
+         before running the command line. For multi-instance Tasks, the resource files will only be
+         downloaded to the Compute Node on which the primary Task is executed. There is a maximum size
+         for the list of resource files.  When the max size is exceeded, the request will fail and the
+         response error code will be RequestEntityTooLarge. If this occurs, the collection of
+         ResourceFiles must be reduced in size. This can be achieved using .zip files, Application
+         Packages, or Docker Containers.
+        :vartype resource_files: list[~azure.batch.models.ResourceFile]
+        :ivar output_files: A list of files that the Batch service will upload from the Compute Node
+         after running the command line. For multi-instance Tasks, the files will only be uploaded from
+         the Compute Node on which the primary Task is executed.
+        :vartype output_files: list[~azure.batch.models.OutputFile]
+        :ivar environment_settings: A list of environment variable settings for the Task.
+        :vartype environment_settings: list[~azure.batch.models.EnvironmentSetting]
+        :ivar affinity_info: A locality hint that can be used by the Batch service to select a Compute
+         Node on which to start the new Task.
+        :vartype affinity_info: ~azure.batch.models.BatchAffinityInfo
+        :ivar constraints: The execution constraints that apply to this Task.
+        :vartype constraints: ~azure.batch.models.BatchTaskConstraints
+        :ivar required_slots: The number of scheduling slots that the Task requires to run. The default
+         is 1. A Task can only be scheduled to run on a compute node if the node has enough free
+         scheduling slots available. For multi-instance Tasks, this must be 1.
+        :vartype required_slots: int
+        :ivar user_identity: The user identity under which the Task runs. If omitted, the Task runs as
+         a non-administrative user unique to the Task.
+        :vartype user_identity: ~azure.batch.models.UserIdentity
+        :ivar execution_info: Information about the execution of the Task.
+        :vartype execution_info: ~azure.batch.models.BatchTaskExecutionInfo
+        :ivar node_info: Information about the Compute Node on which the Task ran.
+        :vartype node_info: ~azure.batch.models.BatchNodeInfo
+        :ivar multi_instance_settings: An object that indicates that the Task is a multi-instance Task,
+         and contains information about how to run the multi-instance Task.
+        :vartype multi_instance_settings: ~azure.batch.models.MultiInstanceSettings
+        :ivar task_statistics: Resource usage statistics for the Task.
+        :vartype task_statistics: ~azure.batch.models.BatchTaskStatistics
+        :ivar depends_on: The Tasks that this Task depends on. This Task will not be scheduled until
+         all Tasks that it depends on have completed successfully. If any of those Tasks fail and
+         exhaust their retry counts, this Task will never be scheduled.
+        :vartype depends_on: ~azure.batch.models.BatchTaskDependencies
+        :ivar application_package_references: A list of Packages that the Batch service will deploy to
+         the Compute Node before running the command line. Application packages are downloaded and
+         deployed to a shared directory, not the Task working directory. Therefore, if a referenced
+         package is already on the Node, and is up to date, then it is not re-downloaded; the existing
+         copy on the Compute Node is used. If a referenced Package cannot be installed, for example
+         because the package has been deleted or because download failed, the Task fails.
+        :vartype application_package_references:
+         list[~azure.batch.models.BatchApplicationPackageReference]
+        :ivar authentication_token_settings: The settings for an authentication token that the Task can
+         use to perform Batch service operations. If this property is set, the Batch service provides
+         the Task with an authentication token which can be used to authenticate Batch service
+         operations without requiring an Account access key. The token is provided via the
+         AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
+         using the token depend on the settings. For example, a Task can request Job permissions in
+         order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
+         Job.
+        :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -8312,15 +8312,15 @@ class BatchTaskDependencies(_Model):
     within a dependency range must complete before the dependant Task will be
     scheduled.
 
-    :ivar task_ids: The list of Task IDs that this Task depends on. All Tasks in this list must
-     complete successfully before the dependent Task can be scheduled. The taskIds collection is
-     limited to 64000 characters total (i.e. the combined length of all Task IDs). If the taskIds
-     collection exceeds the maximum length, the Add Task request fails with error code
-     TaskDependencyListTooLong. In this case consider using Task ID ranges instead.
-    :vartype task_ids: list[str]
-    :ivar task_id_ranges: The list of Task ID ranges that this Task depends on. All Tasks in all
-     ranges must complete successfully before the dependent Task can be scheduled.
-    :vartype task_id_ranges: list[~azure.batch.models.BatchTaskIdRange]
+        :ivar task_ids: The list of Task IDs that this Task depends on. All Tasks in this list must
+         complete successfully before the dependent Task can be scheduled. The taskIds collection is
+         limited to 64000 characters total (i.e. the combined length of all Task IDs). If the taskIds
+         collection exceeds the maximum length, the Add Task request fails with error code
+         TaskDependencyListTooLong. In this case consider using Task ID ranges instead.
+        :vartype task_ids: list[str]
+        :ivar task_id_ranges: The list of Task ID ranges that this Task depends on. All Tasks in all
+         ranges must complete successfully before the dependent Task can be scheduled.
+        :vartype task_id_ranges: list[~azure.batch.models.BatchTaskIdRange]
     """
 
     task_ids: Optional[list[str]] = rest_field(
@@ -8587,10 +8587,10 @@ class BatchTaskIdRange(_Model):
     """The start and end of the range are inclusive. For example, if a range has start
     9 and end 12, then it represents Tasks '9', '10', '11' and '12'.
 
-    :ivar start: The first Task ID in the range. Required.
-    :vartype start: int
-    :ivar end: The last Task ID in the range. Required.
-    :vartype end: int
+        :ivar start: The first Task ID in the range. Required.
+        :vartype start: int
+        :ivar end: The last Task ID in the range. Required.
+        :vartype end: int
     """
 
     start: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8985,42 +8985,42 @@ class BatchVmImageReference(_Model):
     To get the list of all Azure Marketplace Image references verified by Azure Batch, see the
     ' List Supported Images ' operation.
 
-    :ivar publisher: The publisher of the Azure Virtual Machines Marketplace Image. For example,
-     Canonical or MicrosoftWindowsServer.
-    :vartype publisher: str
-    :ivar offer: The offer type of the Azure Virtual Machines Marketplace Image. For example,
-     UbuntuServer or WindowsServer.
-    :vartype offer: str
-    :ivar sku: The SKU of the Azure Virtual Machines Marketplace Image. For example, 18.04-LTS or
-     2019-Datacenter.
-    :vartype sku: str
-    :ivar version: The version of the Azure Virtual Machines Marketplace Image. A value of 'latest'
-     can be specified to select the latest version of an Image. If omitted, the default is 'latest'.
-    :vartype version: str
-    :ivar virtual_machine_image_id: The ARM resource identifier of the Azure Compute Gallery Image.
-     Compute Nodes in the Pool will be created using this Image Id. This is of the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}
-     or
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}
-     for always defaulting to the latest image version. This property is mutually exclusive with
-     other ImageReference properties. The Azure Compute Gallery Image must have replicas in the same
-     region and must be in the same subscription as the Azure Batch account. If the image version is
-     not specified in the imageId, the latest version will be used. For information about the
-     firewall settings for the Batch Compute Node agent to communicate with the Batch service see
-     `https://learn.microsoft.com/azure/batch/nodes-and-pools#virtual-network-vnet-and-firewall-configuration
-     <https://learn.microsoft.com/azure/batch/nodes-and-pools#virtual-network-vnet-and-firewall-configuration>`_.
-    :vartype virtual_machine_image_id: str
-    :ivar exact_version: The specific version of the platform image or marketplace image used to
-     create the node. This read-only field differs from 'version' only if the value specified for
-     'version' when the pool was created was 'latest'.
-    :vartype exact_version: str
-    :ivar shared_gallery_image_id: The shared gallery image unique identifier. This property is
-     mutually exclusive with other properties and can be fetched from shared gallery image GET call.
-    :vartype shared_gallery_image_id: str
-    :ivar community_gallery_image_id: The community gallery image unique identifier. This property
-     is mutually exclusive with other properties and can be fetched from community gallery image GET
-     call.
-    :vartype community_gallery_image_id: str
+        :ivar publisher: The publisher of the Azure Virtual Machines Marketplace Image. For example,
+         Canonical or MicrosoftWindowsServer.
+        :vartype publisher: str
+        :ivar offer: The offer type of the Azure Virtual Machines Marketplace Image. For example,
+         UbuntuServer or WindowsServer.
+        :vartype offer: str
+        :ivar sku: The SKU of the Azure Virtual Machines Marketplace Image. For example, 18.04-LTS or
+         2019-Datacenter.
+        :vartype sku: str
+        :ivar version: The version of the Azure Virtual Machines Marketplace Image. A value of 'latest'
+         can be specified to select the latest version of an Image. If omitted, the default is 'latest'.
+        :vartype version: str
+        :ivar virtual_machine_image_id: The ARM resource identifier of the Azure Compute Gallery Image.
+         Compute Nodes in the Pool will be created using this Image Id. This is of the form
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}
+         or
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}
+         for always defaulting to the latest image version. This property is mutually exclusive with
+         other ImageReference properties. The Azure Compute Gallery Image must have replicas in the same
+         region and must be in the same subscription as the Azure Batch account. If the image version is
+         not specified in the imageId, the latest version will be used. For information about the
+         firewall settings for the Batch Compute Node agent to communicate with the Batch service see
+         `https://learn.microsoft.com/azure/batch/nodes-and-pools#virtual-network-vnet-and-firewall-configuration
+         <https://learn.microsoft.com/azure/batch/nodes-and-pools#virtual-network-vnet-and-firewall-configuration>`_.
+        :vartype virtual_machine_image_id: str
+        :ivar exact_version: The specific version of the platform image or marketplace image used to
+         create the node. This read-only field differs from 'version' only if the value specified for
+         'version' when the pool was created was 'latest'.
+        :vartype exact_version: str
+        :ivar shared_gallery_image_id: The shared gallery image unique identifier. This property is
+         mutually exclusive with other properties and can be fetched from shared gallery image GET call.
+        :vartype shared_gallery_image_id: str
+        :ivar community_gallery_image_id: The community gallery image unique identifier. This property
+         is mutually exclusive with other properties and can be fetched from community gallery image GET
+         call.
+        :vartype community_gallery_image_id: str
     """
 
     publisher: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -9247,22 +9247,22 @@ class DataDisk(_Model):
     the Pool. When using attached data disks, you need to mount and format the
     disks from within a VM to use them.
 
-    :ivar logical_unit_number: The logical unit number. The logicalUnitNumber is used to uniquely
-     identify each data disk. If attaching multiple disks, each should have a distinct
-     logicalUnitNumber. The value must be between 0 and 63, inclusive. Required.
-    :vartype logical_unit_number: int
-    :ivar caching: The type of caching to be enabled for the data disks. The default value for
-     caching is readwrite. For information about the caching options see:
-     `https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/
-     <https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/>`_.
-     Known values are: "none", "readonly", and "readwrite".
-    :vartype caching: str or ~azure.batch.models.CachingType
-    :ivar disk_size_gb: The initial disk size in gigabytes. Required.
-    :vartype disk_size_gb: int
-    :ivar storage_account_type: The storage Account type to be used for the data disk. If omitted,
-     the default is "standard_lrs". Known values are: "standard_lrs", "premium_lrs", and
-     "standardssd_lrs".
-    :vartype storage_account_type: str or ~azure.batch.models.StorageAccountType
+        :ivar logical_unit_number: The logical unit number. The logicalUnitNumber is used to uniquely
+         identify each data disk. If attaching multiple disks, each should have a distinct
+         logicalUnitNumber. The value must be between 0 and 63, inclusive. Required.
+        :vartype logical_unit_number: int
+        :ivar caching: The type of caching to be enabled for the data disks. The default value for
+         caching is readwrite. For information about the caching options see:
+         `https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/
+         <https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/>`_.
+         Known values are: "none", "readonly", and "readwrite".
+        :vartype caching: str or ~azure.batch.models.CachingType
+        :ivar disk_size_gb: The initial disk size in gigabytes. Required.
+        :vartype disk_size_gb: int
+        :ivar storage_account_type: The storage Account type to be used for the data disk. If omitted,
+         the default is "standard_lrs". Known values are: "standard_lrs", "premium_lrs", and
+         "standardssd_lrs".
+        :vartype storage_account_type: str or ~azure.batch.models.StorageAccountType
     """
 
     logical_unit_number: int = rest_field(name="lun", visibility=["read", "create", "update", "delete", "query"])
@@ -9311,9 +9311,9 @@ class DiskEncryptionConfiguration(_Model):
     Disk encryption configuration is not supported on Linux pool created with
     Azure Compute Gallery Image.
 
-    :ivar targets: The list of disk targets Batch Service will encrypt on the compute node. The
-     list of disk targets Batch Service will encrypt on the compute node.
-    :vartype targets: list[str or ~azure.batch.models.DiskEncryptionTarget]
+        :ivar targets: The list of disk targets Batch Service will encrypt on the compute node. The
+         list of disk targets Batch Service will encrypt on the compute node.
+        :vartype targets: list[str or ~azure.batch.models.DiskEncryptionTarget]
     """
 
     targets: Optional[list[Union[str, "_models.DiskEncryptionTarget"]]] = rest_field(
@@ -9377,11 +9377,11 @@ class ExitCodeMapping(_Model):
     """How the Batch service should respond if a Task exits with a particular exit
     code.
 
-    :ivar code: A process exit code. Required.
-    :vartype code: int
-    :ivar exit_options: How the Batch service should respond if the Task exits with this exit code.
-     Required.
-    :vartype exit_options: ~azure.batch.models.ExitOptions
+        :ivar code: A process exit code. Required.
+        :vartype code: int
+        :ivar exit_options: How the Batch service should respond if the Task exits with this exit code.
+         Required.
+        :vartype exit_options: ~azure.batch.models.ExitOptions
     """
 
     code: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -9414,13 +9414,13 @@ class ExitCodeRangeMapping(_Model):
     """A range of exit codes and how the Batch service should respond to exit codes
     within that range.
 
-    :ivar start: The first exit code in the range. Required.
-    :vartype start: int
-    :ivar end: The last exit code in the range. Required.
-    :vartype end: int
-    :ivar exit_options: How the Batch service should respond if the Task exits with an exit code in
-     the range start to end (inclusive). Required.
-    :vartype exit_options: ~azure.batch.models.ExitOptions
+        :ivar start: The first exit code in the range. Required.
+        :vartype start: int
+        :ivar end: The last exit code in the range. Required.
+        :vartype end: int
+        :ivar exit_options: How the Batch service should respond if the Task exits with an exit code in
+         the range start to end (inclusive). Required.
+        :vartype exit_options: ~azure.batch.models.ExitOptions
     """
 
     start: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -9910,25 +9910,25 @@ class MultiInstanceSettings(_Model):
     code) the entire multi-instance Task fails. The multi-instance Task is then
     terminated and retried, up to its retry limit.
 
-    :ivar number_of_instances: The number of Compute Nodes required by the Task. If omitted, the
-     default is 1.
-    :vartype number_of_instances: int
-    :ivar coordination_command_line: The command line to run on all the Compute Nodes to enable
-     them to coordinate when the primary runs the main Task command. A typical coordination command
-     line launches a background service and verifies that the service is ready to process inter-node
-     messages. Required.
-    :vartype coordination_command_line: str
-    :ivar common_resource_files: A list of files that the Batch service will download before
-     running the coordination command line. The difference between common resource files and Task
-     resource files is that common resource files are downloaded for all subtasks including the
-     primary, whereas Task resource files are downloaded only for the primary. Also note that these
-     resource files are not downloaded to the Task working directory, but instead are downloaded to
-     the Task root directory (one directory above the working directory).  There is a maximum size
-     for the list of resource files.  When the max size is exceeded, the request will fail and the
-     response error code will be RequestEntityTooLarge. If this occurs, the collection of
-     ResourceFiles must be reduced in size. This can be achieved using .zip files, Application
-     Packages, or Docker Containers.
-    :vartype common_resource_files: list[~azure.batch.models.ResourceFile]
+        :ivar number_of_instances: The number of Compute Nodes required by the Task. If omitted, the
+         default is 1.
+        :vartype number_of_instances: int
+        :ivar coordination_command_line: The command line to run on all the Compute Nodes to enable
+         them to coordinate when the primary runs the main Task command. A typical coordination command
+         line launches a background service and verifies that the service is ready to process inter-node
+         messages. Required.
+        :vartype coordination_command_line: str
+        :ivar common_resource_files: A list of files that the Batch service will download before
+         running the coordination command line. The difference between common resource files and Task
+         resource files is that common resource files are downloaded for all subtasks including the
+         primary, whereas Task resource files are downloaded only for the primary. Also note that these
+         resource files are not downloaded to the Task working directory, but instead are downloaded to
+         the Task root directory (one directory above the working directory).  There is a maximum size
+         for the list of resource files.  When the max size is exceeded, the request will fail and the
+         response error code will be RequestEntityTooLarge. If this occurs, the collection of
+         ResourceFiles must be reduced in size. This can be achieved using .zip files, Application
+         Packages, or Docker Containers.
+        :vartype common_resource_files: list[~azure.batch.models.ResourceFile]
     """
 
     number_of_instances: Optional[int] = rest_field(
@@ -10238,14 +10238,14 @@ class OutputFile(_Model):
     :ivar file_pattern: A pattern indicating which file(s) to upload. Both relative and absolute
      paths are supported. Relative paths are relative to the Task working directory. The following
      wildcards are supported: * matches 0 or more characters (for example pattern abc* would match
-     abc or abcdef), \\*\\* matches any directory, ? matches any single character, [abc] matches one
+     abc or abcdef), ** matches any directory, ? matches any single character, [abc] matches one
      character in the brackets, and [a-c] matches one character in the range. Brackets can include a
      negation to match any character not specified (for example [!abc] matches any character but a,
      b, or c). If a file name starts with "." it is ignored by default but may be matched by
      specifying it explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple
-     example: \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
+     example: **\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
      working directory or any subdirectory. If the filename contains a wildcard character it can be
-     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\\\
+     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\
      and / are treated as directory separators on Windows, but only / is on Linux. Environment
      variables (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied.
      Required.
@@ -10261,14 +10261,14 @@ class OutputFile(_Model):
     """A pattern indicating which file(s) to upload. Both relative and absolute paths are supported.
      Relative paths are relative to the Task working directory. The following wildcards are
      supported: * matches 0 or more characters (for example pattern abc* would match abc or abcdef),
-     \\*\\* matches any directory, ? matches any single character, [abc] matches one character in the
+     ** matches any directory, ? matches any single character, [abc] matches one character in the
      brackets, and [a-c] matches one character in the range. Brackets can include a negation to
      match any character not specified (for example [!abc] matches any character but a, b, or c). If
      a file name starts with \".\" it is ignored by default but may be matched by specifying it
      explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple example:
-     \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
+     **\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
      directory or any subdirectory. If the filename contains a wildcard character it can be escaped
-     using brackets (for example abc[*] would match a file named abc*). Note that both \\\\ and / are
+     using brackets (for example abc[*] would match a file named abc*). Note that both \ and / are
      treated as directory separators on Windows, but only / is on Linux. Environment variables
      (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied. Required."""
     destination: "_models.OutputFileDestination" = rest_field(
@@ -10407,10 +10407,10 @@ class OutputFileUploadConfig(_Model):
     """Options for an output file upload operation, including under what conditions
     to perform the upload.
 
-    :ivar upload_condition: The conditions under which the Task output file or set of files should
-     be uploaded. The default is taskcompletion. Required. Known values are: "tasksuccess",
-     "taskfailure", and "taskcompletion".
-    :vartype upload_condition: str or ~azure.batch.models.OutputFileUploadCondition
+        :ivar upload_condition: The conditions under which the Task output file or set of files should
+         be uploaded. The default is taskcompletion. Required. Known values are: "tasksuccess",
+         "taskfailure", and "taskcompletion".
+        :vartype upload_condition: str or ~azure.batch.models.OutputFileUploadCondition
     """
 
     upload_condition: Union[str, "_models.OutputFileUploadCondition"] = rest_field(
@@ -10844,11 +10844,11 @@ class ServiceArtifactReference(_Model):
     """Specifies the service artifact reference id used to set same image version
     for all virtual machines in the scale set when using 'latest' image version.
 
-    :ivar id: The service artifact reference id of ServiceArtifactReference. The service artifact
-     reference id in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
-     Required.
-    :vartype id: str
+        :ivar id: The service artifact reference id of ServiceArtifactReference. The service artifact
+         reference id in the form of
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+         Required.
+        :vartype id: str
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -11050,22 +11050,22 @@ class UserAccount(_Model):
     """Properties used to create a user used to execute Tasks on an Azure Batch
     Compute Node.
 
-    :ivar name: The name of the user Account. Names can contain any Unicode characters up to a
-     maximum length of 20. Required.
-    :vartype name: str
-    :ivar password: The password for the user Account. Required.
-    :vartype password: str
-    :ivar elevation_level: The elevation level of the user Account. The default value is nonAdmin.
-     Known values are: "nonadmin" and "admin".
-    :vartype elevation_level: str or ~azure.batch.models.ElevationLevel
-    :ivar linux_user_configuration: The Linux-specific user configuration for the user Account.
-     This property is ignored if specified on a Windows Pool. If not specified, the user is created
-     with the default options.
-    :vartype linux_user_configuration: ~azure.batch.models.LinuxUserConfiguration
-    :ivar windows_user_configuration: The Windows-specific user configuration for the user Account.
-     This property can only be specified if the user is on a Windows Pool. If not specified and on a
-     Windows Pool, the user is created with the default options.
-    :vartype windows_user_configuration: ~azure.batch.models.WindowsUserConfiguration
+        :ivar name: The name of the user Account. Names can contain any Unicode characters up to a
+         maximum length of 20. Required.
+        :vartype name: str
+        :ivar password: The password for the user Account. Required.
+        :vartype password: str
+        :ivar elevation_level: The elevation level of the user Account. The default value is nonAdmin.
+         Known values are: "nonadmin" and "admin".
+        :vartype elevation_level: str or ~azure.batch.models.ElevationLevel
+        :ivar linux_user_configuration: The Linux-specific user configuration for the user Account.
+         This property is ignored if specified on a Windows Pool. If not specified, the user is created
+         with the default options.
+        :vartype linux_user_configuration: ~azure.batch.models.LinuxUserConfiguration
+        :ivar windows_user_configuration: The Windows-specific user configuration for the user Account.
+         This property can only be specified if the user is on a Windows Pool. If not specified and on a
+         Windows Pool, the user is created with the default options.
+        :vartype windows_user_configuration: ~azure.batch.models.WindowsUserConfiguration
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -11156,66 +11156,66 @@ class VirtualMachineConfiguration(_Model):
     """The configuration for Compute Nodes in a Pool based on the Azure Virtual
     Machines infrastructure.
 
-    :ivar image_reference: A reference to the Azure Virtual Machines Marketplace Image or the
-     custom Virtual Machine Image to use. Required.
-    :vartype image_reference: ~azure.batch.models.BatchVmImageReference
-    :ivar node_agent_sku_id: The SKU of the Batch Compute Node agent to be provisioned on Compute
-     Nodes in the Pool. The Batch Compute Node agent is a program that runs on each Compute Node in
-     the Pool, and provides the command-and-control interface between the Compute Node and the Batch
-     service. There are different implementations of the Compute Node agent, known as SKUs, for
-     different operating systems. You must specify a Compute Node agent SKU which matches the
-     selected Image reference. To get the list of supported Compute Node agent SKUs along with their
-     list of verified Image references, see the 'List supported Compute Node agent SKUs' operation.
-     Required.
-    :vartype node_agent_sku_id: str
-    :ivar windows_configuration: Windows operating system settings on the virtual machine. This
-     property must not be specified if the imageReference property specifies a Linux OS Image.
-    :vartype windows_configuration: ~azure.batch.models.WindowsConfiguration
-    :ivar data_disks: The configuration for data disks attached to the Compute Nodes in the Pool.
-     This property must be specified if the Compute Nodes in the Pool need to have empty data disks
-     attached to them. This cannot be updated. Each Compute Node gets its own disk (the disk is not
-     a file share). Existing disks cannot be attached, each attached disk is empty. When the Compute
-     Node is removed from the Pool, the disk and all data associated with it is also deleted. The
-     disk is not formatted after being attached, it must be formatted before use - for more
-     information see
-     `https://learn.microsoft.com/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
-     <https://learn.microsoft.com/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux>`_
-     and
-     `https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine
-     <https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine>`_.
-    :vartype data_disks: list[~azure.batch.models.DataDisk]
-    :ivar license_type: This only applies to Images that contain the Windows operating system, and
+        :ivar image_reference: A reference to the Azure Virtual Machines Marketplace Image or the
+         custom Virtual Machine Image to use. Required.
+        :vartype image_reference: ~azure.batch.models.BatchVmImageReference
+        :ivar node_agent_sku_id: The SKU of the Batch Compute Node agent to be provisioned on Compute
+         Nodes in the Pool. The Batch Compute Node agent is a program that runs on each Compute Node in
+         the Pool, and provides the command-and-control interface between the Compute Node and the Batch
+         service. There are different implementations of the Compute Node agent, known as SKUs, for
+         different operating systems. You must specify a Compute Node agent SKU which matches the
+         selected Image reference. To get the list of supported Compute Node agent SKUs along with their
+         list of verified Image references, see the 'List supported Compute Node agent SKUs' operation.
+         Required.
+        :vartype node_agent_sku_id: str
+        :ivar windows_configuration: Windows operating system settings on the virtual machine. This
+         property must not be specified if the imageReference property specifies a Linux OS Image.
+        :vartype windows_configuration: ~azure.batch.models.WindowsConfiguration
+        :ivar data_disks: The configuration for data disks attached to the Compute Nodes in the Pool.
+         This property must be specified if the Compute Nodes in the Pool need to have empty data disks
+         attached to them. This cannot be updated. Each Compute Node gets its own disk (the disk is not
+         a file share). Existing disks cannot be attached, each attached disk is empty. When the Compute
+         Node is removed from the Pool, the disk and all data associated with it is also deleted. The
+         disk is not formatted after being attached, it must be formatted before use - for more
+         information see
+         `https://learn.microsoft.com/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
+         <https://learn.microsoft.com/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux>`_
+         and
+         `https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine
+         <https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine>`_.
+        :vartype data_disks: list[~azure.batch.models.DataDisk]
+        :ivar license_type: This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
      applied. Values are:
-     
-     Windows_Server - The on-premises license is for Windows Server.
-     Windows_Client - The on-premises license is for Windows Client.
-    :vartype license_type: str
-    :ivar container_configuration: The container configuration for the Pool. If specified, setup is
-     performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
-     Tasks and Job manager Tasks run on this Pool must specify the containerSettings property, and
-     all other Tasks may specify it.
-    :vartype container_configuration: ~azure.batch.models.BatchContainerConfiguration
-    :ivar disk_encryption_configuration: The disk encryption configuration for the pool. If
-     specified, encryption is performed on each node in the pool during node provisioning.
-    :vartype disk_encryption_configuration: ~azure.batch.models.DiskEncryptionConfiguration
-    :ivar node_placement_configuration: The node placement configuration for the pool. This
-     configuration will specify rules on how nodes in the pool will be physically allocated.
-    :vartype node_placement_configuration: ~azure.batch.models.BatchNodePlacementConfiguration
-    :ivar extensions: The virtual machine extension for the pool. If specified, the extensions
-     mentioned in this configuration will be installed on each node.
-    :vartype extensions: list[~azure.batch.models.VMExtension]
-    :ivar os_disk: Settings for the operating system disk of the Virtual Machine.
-    :vartype os_disk: ~azure.batch.models.BatchOsDisk
-    :ivar security_profile: Specifies the security profile settings for the virtual machine or
-     virtual machine scale set.
-    :vartype security_profile: ~azure.batch.models.SecurityProfile
-    :ivar service_artifact_reference: Specifies the service artifact reference id used to set same
-     image version for all virtual machines in the scale set when using 'latest' image version. The
-     service artifact reference id in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
-    :vartype service_artifact_reference: ~azure.batch.models.ServiceArtifactReference
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client.
+        :vartype license_type: str
+        :ivar container_configuration: The container configuration for the Pool. If specified, setup is
+         performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
+         Tasks and Job manager Tasks run on this Pool must specify the containerSettings property, and
+         all other Tasks may specify it.
+        :vartype container_configuration: ~azure.batch.models.BatchContainerConfiguration
+        :ivar disk_encryption_configuration: The disk encryption configuration for the pool. If
+         specified, encryption is performed on each node in the pool during node provisioning.
+        :vartype disk_encryption_configuration: ~azure.batch.models.DiskEncryptionConfiguration
+        :ivar node_placement_configuration: The node placement configuration for the pool. This
+         configuration will specify rules on how nodes in the pool will be physically allocated.
+        :vartype node_placement_configuration: ~azure.batch.models.BatchNodePlacementConfiguration
+        :ivar extensions: The virtual machine extension for the pool. If specified, the extensions
+         mentioned in this configuration will be installed on each node.
+        :vartype extensions: list[~azure.batch.models.VMExtension]
+        :ivar os_disk: Settings for the operating system disk of the Virtual Machine.
+        :vartype os_disk: ~azure.batch.models.BatchOsDisk
+        :ivar security_profile: Specifies the security profile settings for the virtual machine or
+         virtual machine scale set.
+        :vartype security_profile: ~azure.batch.models.SecurityProfile
+        :ivar service_artifact_reference: Specifies the service artifact reference id used to set same
+         image version for all virtual machines in the scale set when using 'latest' image version. The
+         service artifact reference id in the form of
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+        :vartype service_artifact_reference: ~azure.batch.models.ServiceArtifactReference
     """
 
     image_reference: "_models.BatchVmImageReference" = rest_field(
@@ -11256,12 +11256,12 @@ class VirtualMachineConfiguration(_Model):
         name="licenseType", visibility=["read", "create", "update", "delete", "query"]
     )
     """This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute
-     Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are:
-     
-     Windows_Server - The on-premises license is for Windows Server.
-     Windows_Client - The on-premises license is for Windows Client."""
+ should only be used when you hold valid on-premises licenses for the Compute
+ Nodes which will be deployed. If omitted, no on-premises licensing discount is
+ applied. Values are:
+  Windows_Server - The on-premises license is for Windows
+ Server.
+  Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )

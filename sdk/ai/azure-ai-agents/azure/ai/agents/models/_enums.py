@@ -59,21 +59,15 @@ class AgentsToolChoiceOptionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Each event in a server-sent events stream has an ``event`` and ``data`` property:
-
-
-
     .. code-block::
-
        event: thread.created
        data: {"id": "thread_123", "object": "thread", ...}
-
     We emit events whenever a new object is created, transitions to a new state, or is being
     streamed in parts (deltas). For example, we emit ``thread.run.created`` when a new run
     is created, ``thread.run.completed`` when a run completes, and so on. When an Agent chooses
     to create a message during a run, we emit a ``thread.message.created event``, a
     ``thread.message.in_progress`` event, many ``thread.message.delta`` events, and finally a
     ``thread.message.completed`` event.
-
     We may add additional events over time, so we recommend handling unknown events gracefully
     in your code.
     """
@@ -196,7 +190,7 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPLOADED = "uploaded"
     """The file has been uploaded but it's not yet processed. This state is not returned by Azure
     OpenAI and exposed only for
-    compatibility. It can be categorized as an inactive state."""
+compatibility. It can be categorized as an inactive state."""
     PENDING = "pending"
     """The operation was created and is not queued to be processed in the future. It can be
     categorized as an inactive state."""
@@ -211,11 +205,11 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "deleting"
     """The entity is in the process to be deleted. This state is not returned by Azure OpenAI and
     exposed only for compatibility.
-    It can be categorized as an active state."""
+It can be categorized as an active state."""
     DELETED = "deleted"
     """The entity has been deleted but may still be referenced by other entities predating the
     deletion. It can be categorized as a
-    terminal state."""
+terminal state."""
 
 
 class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -331,7 +325,6 @@ class MouseButton(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
-
     * Anonymous (no authentication required)
     * Connection (requires connection_id to endpoint, as setup in AI Foundry)
     * Managed_Identity (requires audience for identity based auth).
@@ -496,7 +489,7 @@ class VectorStoreChunkingStrategyResponseType(str, Enum, metaclass=CaseInsensiti
 
 class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of vector storage asset. Asset type may be a uri_asset, in this case it should contain
-    asset URI ID,
+        asset URI ID,
     in the case of id_asset it should contain the data ID.
     """
 
