@@ -62,8 +62,7 @@ class ErrorDetail(_Model):
 
 
 class ErrorResponse(_Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.arizeaiobservabilityeval.models.ErrorDetail
@@ -242,7 +241,7 @@ class OfferDetails(_Model):
 
 
 class Operation(_Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -387,7 +386,7 @@ class OrganizationProperties(_Model):
 
 
 class Resource(_Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -415,8 +414,7 @@ class Resource(_Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -708,16 +706,16 @@ class SystemData(_Model):
 class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
     """
 
-    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
-    """The client ID of the assigned identity."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
     """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
 
 
 class UserDetails(_Model):
