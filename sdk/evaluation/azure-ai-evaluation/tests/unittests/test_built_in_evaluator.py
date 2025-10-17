@@ -27,7 +27,7 @@ async def quality_response_async_mock(*args, **kwargs):
 
 
 async def quality_no_response_async_mock():
-    return "1"
+    return {"llm_output": "1"}
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -73,9 +73,21 @@ class TestBuiltInEvaluators:
         )
         assert result["similarity"] == result["gpt_similarity"] == 1
         # Updated assertion to expect 4 keys instead of 2
-        assert len(result) == 4
+        assert len(result) == 11
         # Verify all expected keys are present
-        assert set(result.keys()) == {"similarity", "gpt_similarity", "similarity_result", "similarity_threshold"}
+        assert set(result.keys()) == {
+            "similarity",
+            "gpt_similarity",
+            "similarity_result",
+            "similarity_threshold",
+            "similarity_prompt_tokens",
+            "similarity_completion_tokens",
+            "similarity_total_tokens",
+            "similarity_finish_reason",
+            "similarity_model",
+            "similarity_sample_input",
+            "similarity_sample_output", 
+        }
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
