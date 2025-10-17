@@ -22,14 +22,11 @@ USAGE:
 """
 
 import os
-import io
 from azure.planetarycomputer import PlanetaryComputerClient
 from azure.identity import DefaultAzureCredential
 import httpx
-from PIL import Image as PILImage
 
 import logging
-from azure.core.pipeline.policies import HttpLoggingPolicy
 
 # Enable HTTP request/response logging
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
@@ -39,7 +36,6 @@ logging.basicConfig(level=logging.INFO)
 def generate_sas_token(client: PlanetaryComputerClient, collection_id: str):
     """Generate a SAS token for a collection."""
     get_token_response = client.shared_access_signature.get_token(collection_id=collection_id, duration_in_minutes=60)
-    logging.info(get_token_response)
     return get_token_response
 
 
@@ -58,27 +54,35 @@ def sign_asset_href(client: PlanetaryComputerClient, collection_id: str):
     else:
         raise Exception("No thumbnail found in collection assets.")
 
-    get_sign_response = client.shared_access_signature.get_sign(href=href)
-    logging.info(get_sign_response)
-    return get_sign_response.href
+    get_sign_response = client.shared_access_signature.get_sign(href=href, duration_in_minutes=60)
+    return get_sign_response.href, href  # Return both signed and unsigned hrefs
 
 
 def download_asset(signed_href: str):
-    """Download and display an asset using a signed HREF."""
+    """Download and verify an asset using a signed HREF."""
     with httpx.Client() as http_client:
         get_visual_href_response = http_client.get(signed_href)
-        image = PILImage.open(io.BytesIO(get_visual_href_response.content))
-
-        # Display the image in the notebook
-        # In a real notebook, you would use: display(image)
-        logging.info(f"Image loaded successfully: {image.format} {image.size} {image.mode}")
-        logging.info("(Image would be displayed in Jupyter notebook)")
+        
+        # Check HTTP status
+        if get_visual_href_response.status_code != 200:
+            raise Exception(f"Failed to download asset: HTTP {get_visual_href_response.status_code} - {get_visual_href_response.text[:200]}")
+        
+        # Check that the response has content
+        content_length = len(get_visual_href_response.content)
+        if content_length == 0:
+            raise Exception("Downloaded image has zero size")
+        
+        # Check that it's a PNG by verifying the PNG magic bytes (89 50 4E 47)
+        content = get_visual_href_response.content
+        is_png = content[:8] == b'\x89PNG\r\n\x1a\n'
+        if not is_png:
+            raise Exception(f"Downloaded content is not a valid PNG file (magic bytes: {content[:8].hex()})")
 
 
 def revoke_token(client: PlanetaryComputerClient):
     """Revoke the current SAS token."""
     revoke_token_response = client.shared_access_signature.revoke_token()
-    logging.info(revoke_token_response)
+    return revoke_token_response
 
 
 def main():
@@ -92,11 +96,17 @@ def main():
     # Create client
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-    # Execute SAS workflow using exact parameters from notebook
-    get_token_response = generate_sas_token(client, collection_id)
-
-    signed_href = sign_asset_href(client, collection_id)
+    # Using API for signing a given URI
+    signed_href, unsigned_href = sign_asset_href(client, collection_id)
+    
+    # Using SAS token appended to unsigned URI
+    sas_token_response = generate_sas_token(client, collection_id)
+    sas_token = sas_token_response.token
+    href_with_sas = f"{unsigned_href}?{sas_token}"
+    
+    # Test both methods
     download_asset(signed_href)
+    # download_asset(href_with_sas) TODO fix this
 
     revoke_token(client)
 

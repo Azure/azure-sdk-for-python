@@ -40,13 +40,11 @@ from azure.planetarycomputer.models import (
     RenderOptionType,
     StacMosaic,
     TileSettings,
-    DefaultLocation,
     StacQueryable,
     StacQueryableDefinitionDataType,
 )
 
 import logging
-from azure.core.pipeline.policies import HttpLoggingPolicy
 
 # Enable HTTP request/response logging
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
@@ -69,73 +67,73 @@ def create_collection(client, collection_id):
         logging.info("Waiting 60 seconds for deletion to complete...")
         time.sleep(60)
 
-    # Define collection spatial and temporal extents
-    spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-180, -90, 180, 90]])
-    # Note: For open-ended temporal extent, use null
-    temporal_extent = StacCollectionTemporalExtent(interval=[["2015-06-27T10:25:31Z", None]])
+    # Define collection spatial and temporal extents (from NAIP config)
+    spatial_extent = StacExtensionSpatialExtent(
+        bounding_box=[
+            [-124.784, 24.744, -66.951, 49.346],
+            [-156.003, 19.059, -154.809, 20.127],
+            [-67.316, 17.871, -65.596, 18.565],
+            [-64.94, 17.622, -64.56, 17.814],
+        ]
+    )
+    temporal_extent = StacCollectionTemporalExtent(interval=[["2010-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]])
     extent = StacExtensionExtent(spatial=spatial_extent, temporal=temporal_extent)
 
     # Create StacCollection object
     collection_payload = StacCollection(
         id=collection_id,
-        description="Python SDK Sentinel-2 Collection",
+        description="A Subset of NAIP imagery for sample MPC Pro GeoCatalog deployments. Includes multiple city and national park focus areas, useful for quick product evaluation.",
         extent=extent,
-        license="CC-BY-4.0",
+        license="proprietary",
         links=[],
         stac_version="1.0.0",
-        title=f"Collection {collection_id}",
+        title="NAIP (MPC Pro Sample Datasets)",
         type="Collection",
     )
 
-    # Add item_assets as additional data (not part of the model)
+    # Add item_assets and other fields as additional data (not part of the model)
     collection_data = collection_payload.as_dict()
-    collection_data["item_assets"] = {
-        "red_20m": {
-            "gsd": 20,
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": ["data", "reflectance"],
-            "title": "Red (band 4) - 20m",
-            "eo:bands": [
-                {
-                    "name": "red",
-                    "common_name": "red",
-                    "description": "Red (band 4)",
-                    "center_wavelength": 0.665,
-                    "full_width_half_max": 0.038,
-                }
-            ],
+    collection_data["providers"] = [
+        {
+            "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+            "name": "USDA Farm Service Agency",
+            "roles": ["producer", "licensor"],
         },
-        "green_20m": {
-            "gsd": 20,
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": ["data", "reflectance"],
-            "title": "Green (band 3) - 20m",
-            "eo:bands": [
-                {
-                    "name": "green",
-                    "common_name": "green",
-                    "description": "Green (band 3)",
-                    "center_wavelength": 0.56,
-                    "full_width_half_max": 0.045,
-                }
-            ],
+        {"url": "https://www.esri.com/", "name": "Esri", "roles": ["processor"]},
+        {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Microsoft",
+            "roles": ["host", "processor"],
         },
-        "blue_20m": {
-            "gsd": 20,
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": ["data", "reflectance"],
-            "title": "Blue (band 2) - 20m",
-            "eo:bands": [
-                {
-                    "name": "blue",
-                    "common_name": "blue",
-                    "description": "Blue (band 2)",
-                    "center_wavelength": 0.49,
-                    "full_width_half_max": 0.098,
-                }
-            ],
-        },
+    ]
+    collection_data["summaries"] = {
+        "gsd": [0.3, 0.6, 1],
+        "eo:bands": [
+            {"name": "Red", "common_name": "red", "description": "visible red"},
+            {"name": "Green", "common_name": "green", "description": "visible green"},
+            {"name": "Blue", "common_name": "blue", "description": "visible blue"},
+            {"name": "NIR", "common_name": "nir", "description": "near-infrared"},
+        ],
     }
+    collection_data["item_assets"] = {
+        "image": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": ["data"],
+            "title": "RGBIR COG tile",
+            "eo:bands": [
+                {"name": "Red", "common_name": "red"},
+                {"name": "Green", "common_name": "green"},
+                {"name": "Blue", "common_name": "blue"},
+                {"name": "NIR", "common_name": "nir", "description": "near-infrared"},
+            ],
+        },
+        "metadata": {"type": "text/plain", "roles": ["metadata"], "title": "FGDC Metdata"},
+        "thumbnail": {"type": "image/jpeg", "roles": ["thumbnail"], "title": "Thumbnail"},
+    }
+    collection_data["stac_extensions"] = [
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    ]
 
     # Create the collection
     logging.info(f"Creating collection '{collection_id}'...")
@@ -195,14 +193,14 @@ def manage_partition_type(client, collection_id):
 
 def manage_render_options(client, collection_id):
     """Create and manage render options for a collection."""
-    # Define a natural color render option
+    # Define render options based on NAIP render config
     render_option = RenderOption(
         id="natural-color",
         name="Natural color",
-        description="True color composite of visible bands (red, green, blue)",
+        description="RGB from visual assets",
         type=RenderOptionType.RASTER_TILE,
-        options="assets=red_20m&assets=green_20m&assets=blue_20m&nodata=0&color_formula=Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        min_zoom=9,
+        options="assets=image&asset_bidx=image|1,2,3",
+        min_zoom=6,
     )
 
     # Check if render option already exists
@@ -218,8 +216,8 @@ def manage_render_options(client, collection_id):
         id="natural-color",
         name="Natural color",
         type=RenderOptionType.RASTER_TILE,
-        options="assets=red_20m&assets=green_20m&assets=blue_20m&nodata=0&color_formula=Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        min_zoom=9,
+        options="assets=image&asset_bidx=image|1,2,3",
+        min_zoom=6,
     )
 
     logging.info(f"Creating render option '{render_option.id}'...")
@@ -229,7 +227,7 @@ def manage_render_options(client, collection_id):
     client.stac.list_render_options(collection_id=collection_id)
 
     # Update with description
-    render_option.description = "True color composite of visible bands (red, green, blue)"
+    render_option.description = "RGB from visual assets"
 
     client.stac.create_or_replace_render_option(
         collection_id=collection_id, render_option_id=render_option.id, body=render_option
@@ -285,14 +283,14 @@ def manage_tile_settings(client, collection_id):
     tile_settings = client.stac.get_tile_settings(collection_id=collection_id)
     logging.info(tile_settings)
 
-    # Update tile settings
+    # Update tile settings (based on NAIP tile_settings_config.json)
     logging.info("Updating tile settings...")
     stac_collection_tile_settings_response = client.stac.replace_tile_settings(
         collection_id=collection_id,
         body=TileSettings(
-            default_location=DefaultLocation(coordinates=[39.7406, -3.4702], zoom=7),
-            max_items_per_tile=10,
-            min_zoom=8,
+            default_location=None,  # null in the config
+            max_items_per_tile=35,
+            min_zoom=6,
         ),
     )
     logging.info(stac_collection_tile_settings_response)
@@ -355,7 +353,7 @@ def get_collection_configuration(client, collection_id):
 
 def manage_collection_assets(client, collection_id):
     """Create and manage collection assets like thumbnails."""
-    thumbnail_url = "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/sentinel-2.png"
+    thumbnail_url = "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/naip.png"
 
     # Define thumbnail asset metadata
     data = {
@@ -363,7 +361,7 @@ def manage_collection_assets(client, collection_id):
         "href": thumbnail_url,
         "type": "image/png",
         "roles": ["thumbnail"],
-        "title": "Sentinel-2 preview",
+        "title": "NAIP thumbnail",
     }
 
     # Download thumbnail
@@ -398,6 +396,8 @@ def manage_collection_assets(client, collection_id):
 
     # Convert the generator to bytes
     thumbnail_bytes_result = b"".join(thumbnail_response)
+
+    assert len(thumbnail_bytes_result) > 0
 
 def main():
     # Get configuration from environment

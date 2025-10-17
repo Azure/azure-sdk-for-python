@@ -9,20 +9,26 @@ FILE: planetarycomputer_ingestion_management.py
 
 DESCRIPTION:
     This sample demonstrates comprehensive ingestion management operations including:
-    - Creating and managing ingestion sources (managed identity-based)
+    - Creating and managing ingestion sources (managed identity-based) - DEMONSTRATION ONLY
     - Creating and updating ingestion definitions
-    - Running ingestion jobs and monitoring their status
-    - Managing ingestion operations (cancel, list, etc.)
+    - Running ingestion jobs from public catalogs (NAIP)
+    - Monitoring ingestion status
+    - Managing ingestion operations
 
 USAGE:
     python planetarycomputer_ingestion_management.py
 
     Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
     Set the environment variable AZURE_COLLECTION_ID with your collection ID.
-    Set the environment variable AZURE_INGESTION_CONTAINER_URI_1 with your first container URI.
-    Set the environment variable AZURE_INGESTION_CONTAINER_URI_2 with your second container URI (optional).
+    
+    Optional (for managed identity examples):
+    Set the environment variable AZURE_INGESTION_CONTAINER_URI with your container URI.
     Set the environment variable AZURE_INGESTION_CATALOG_URL with your source catalog URL.
     Set the environment variable AZURE_MANAGED_IDENTITY_OBJECT_ID with your managed identity object ID.
+    
+    Optional (for SAS token examples):
+    Set the environment variable AZURE_INGESTION_SAS_CONTAINER_URI with your SAS container URI.
+    Set the environment variable AZURE_INGESTION_SAS_TOKEN with your SAS token.
 """
 
 import os
@@ -33,74 +39,111 @@ from azure.core.exceptions import HttpResponseError
 from azure.planetarycomputer.models import (
     ManagedIdentityConnection,
     ManagedIdentityIngestionSource,
+    SharedAccessSignatureTokenConnection,
+    SharedAccessSignatureTokenIngestionSource,
     Ingestion,
     IngestionType,
     OperationStatus,
 )
+import uuid
 
 import logging
-from azure.core.pipeline.policies import HttpLoggingPolicy
 
 # Enable HTTP request/response logging
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
-def create_ingestion_sources(client: PlanetaryComputerClient, container_uris: list, managed_identity_object_id: str):
-    """Create managed identity-based ingestion sources."""
+def create_managed_identity_ingestion_sources(client: PlanetaryComputerClient, container_uri: str, managed_identity_object_id: str):
+    """Create managed identity-based ingestion source."""
 
     # Clean up existing sources
     existing_sources = list(client.ingestion_management.list_sources())
     for source in existing_sources:
-        client.ingestion_management.delete_source(id=source["id"])
+        client.ingestion_management.delete_source(id=source.id)
+        logging.info(f"Deleted existing source: {source.id}")
 
-    # Create new ingestion sources
-    for container_uri in container_uris:
-        # Create connection info with managed identity
-        connection_info = ManagedIdentityConnection(container_uri=container_uri, object_id=managed_identity_object_id)
+    # Create connection info with managed identity
+    connection_info = ManagedIdentityConnection(container_uri=container_uri, object_id=managed_identity_object_id)
 
-        # Create ingestion source
-        ingestion_source = ManagedIdentityIngestionSource(connection_info=connection_info)
-        ingestion_source = client.ingestion_management.create_source(ingestion_source=ingestion_source)
-        logging.info(f"Created ingestion source: {ingestion_source.id}")
+    # Create ingestion source with unique ID
+    source_id = str(uuid.uuid4())
+    ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
+    created_source = client.ingestion_management.create_source(ingestion_source=ingestion_source)
+    logging.info(f"Created managed identity ingestion source: {created_source.id}")
 
     # List managed identities
+    logging.info("Listing available managed identities:")
     managed_identities = client.ingestion_management.list_managed_identities()
     for identity in managed_identities:
-        logging.info(f"  - {identity.object_id} | {identity.resource_id}")
+        logging.info(f"  - Object ID: {identity.object_id}")
+        logging.info(f"    Resource ID: {identity.resource_id}")
 
 
-def create_and_update_ingestion(client: PlanetaryComputerClient, collection_id: str, source_catalog_url: str):
-    """Create and update an ingestion with various configurations."""
-
+def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id: str, source_catalog_url: str):
+    """Create, update, and run ingestion from NAIP public catalog on GitHub."""
+    
+    # Delete all existing ingestions
+    logging.info("Deleting all existing ingestions...")
+    existing_ingestions = list(client.ingestion_management.lists(collection_id=collection_id))
+    for ingestion in existing_ingestions:
+        client.ingestion_management.begin_delete(collection_id=collection_id, ingestion_id=ingestion.id, polling=True)
+        logging.info(f"Deleted existing ingestion: {ingestion.id}")
+    
     # Create ingestion definition
     ingestion_definition = Ingestion(
         import_type=IngestionType.STATIC_CATALOG,
-        display_name="Sentinel-2 Ingestion",
+        display_name="NAIP Ingestion",
         source_catalog_url=source_catalog_url,
-        keep_original_assets=False,
-        skip_existing_items=False,
+        keep_original_assets=True,
+        skip_existing_items=True,  # Skip items that already exist
     )
 
     # Create the ingestion
+    logging.info("Creating ingestion for NAIP catalog...")
     ingestion_response = client.ingestion_management.create(
         collection_id=collection_id, definition=ingestion_definition
     )
-    ingestion_id = ingestion_response["id"]
+    ingestion_id = ingestion_response.id
+    logging.info(f"Created ingestion: {ingestion_id}")
 
-    # Update the ingestion
+    # Update the ingestion display name
     updated_definition = Ingestion(
         import_type=IngestionType.STATIC_CATALOG,
-        display_name="Sentinel-2 Ingestion - Updated",
+        display_name="NAIP Sample Dataset Ingestion",
     )
 
     ingestion = client.ingestion_management.update(
         collection_id=collection_id, ingestion_id=ingestion_id, definition=updated_definition
     )
-
-    logging.info(f"Updated ingestion: {ingestion.id}")
+    logging.info(f"Updated ingestion display name to: {updated_definition.display_name}")
 
     return ingestion_id
+
+
+def create_sas_token_ingestion_source(client: PlanetaryComputerClient, sas_container_uri: str, sas_token: str):
+    """Create a SAS token ingestion source with example values."""
+    logging.info("Creating SAS token ingestion source...")
+    
+    # Create connection info with SAS token (using fake/example values)
+    sas_connection_info = SharedAccessSignatureTokenConnection(
+        container_uri=sas_container_uri,
+        shared_access_signature_token=sas_token
+    )
+    
+    # Create SAS token ingestion source
+    sas_source_id = str(uuid.uuid4())
+    sas_ingestion_source = SharedAccessSignatureTokenIngestionSource(
+        id=sas_source_id,
+        connection_info=sas_connection_info
+    )
+    
+    # Register the SAS token source
+    created_sas_source = client.ingestion_management.create_source(
+        ingestion_source=sas_ingestion_source
+    )
+    logging.info(f"Created SAS token ingestion source: {created_sas_source.id}")
+    return created_sas_source.id
 
 
 def run_and_monitor_ingestion(client: PlanetaryComputerClient, collection_id: str, ingestion_id: str):
@@ -167,30 +210,20 @@ def manage_operations(client: PlanetaryComputerClient):
 def main():
     # Get configuration from environment
     endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "atl")
+    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip-sample-datasets")
 
-    # Get ingestion-specific configuration
-    container_uri_1 = os.environ.get("AZURE_INGESTION_CONTAINER_URI_1")
-    container_uri_2 = os.environ.get("AZURE_INGESTION_CONTAINER_URI_2")
-    source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL")
-    managed_identity_object_id = os.environ.get("AZURE_MANAGED_IDENTITY_OBJECT_ID")
+    # Get optional ingestion-specific configuration (for examples)
+    container_uri = os.environ.get("AZURE_INGESTION_CONTAINER_URI", "")
+    source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
+    managed_identity_object_id = os.environ.get("AZURE_MANAGED_IDENTITY_OBJECT_ID", "")
+    sas_container_uri = os.environ.get("AZURE_INGESTION_SAS_CONTAINER_URI", "")
+    sas_token = os.environ.get("AZURE_INGESTION_SAS_TOKEN", "")
 
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
 
-    if not container_uri_1:
-        raise ValueError("AZURE_INGESTION_CONTAINER_URI_1 environment variable must be set")
-
-    if not source_catalog_url:
-        raise ValueError("AZURE_INGESTION_CATALOG_URL environment variable must be set")
-
-    if not managed_identity_object_id:
-        raise ValueError("AZURE_MANAGED_IDENTITY_OBJECT_ID environment variable must be set")
-
-    # Build container URI list
-    container_uris = [container_uri_1]
-    if container_uri_2:
-        container_uris.append(container_uri_2)
+    logging.info(f"Connected to: {endpoint}")
+    logging.info(f"Collection ID: {collection_id}\n")
 
     # Create client
     credential = DefaultAzureCredential()
@@ -201,9 +234,17 @@ def main():
     )
 
     # Execute ingestion management workflow
-    create_ingestion_sources(client, container_uris, managed_identity_object_id)
-    ingestion_id = create_and_update_ingestion(client, collection_id, source_catalog_url)
-    run_and_monitor_ingestion(client, collection_id, ingestion_id)
+    # 1. Create managed identity and SAS token ingestion sources
+    create_managed_identity_ingestion_sources(client, container_uri, managed_identity_object_id)
+    create_sas_token_ingestion_source(client, sas_container_uri, sas_token)
+
+    # 2. Run actual NAIP ingestion hosted on GitHub
+    naip_ingestion_id = create_github_naip_ingestion(client, collection_id, source_catalog_url)
+    
+    # 3. Monitor the NAIP ingestion
+    run_and_monitor_ingestion(client, collection_id, naip_ingestion_id)
+    
+    # 4. Manage operations
     manage_operations(client)
 
 
