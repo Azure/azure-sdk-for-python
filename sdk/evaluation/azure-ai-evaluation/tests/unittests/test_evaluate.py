@@ -1091,8 +1091,6 @@ class TestEvaluate:
         # Load test data from the JSON file
         parent = pathlib.Path(__file__).parent.resolve()
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
-
-        test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
         test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_util_convert_eval_meta_data.json")
         test_input_eval_error_summary_path = os.path.join(parent, "data", "evaluation_util_convert_error_summary.json")
 
