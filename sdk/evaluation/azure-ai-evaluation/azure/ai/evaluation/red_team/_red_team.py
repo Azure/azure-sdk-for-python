@@ -18,6 +18,8 @@ from tqdm import tqdm
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
+# from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights #TODO: uncomment when app insights checked in
+# from azure.ai.evaluation._model_configurations import EvaluationResult, AppInsightsConfig
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
@@ -1174,6 +1176,9 @@ class RedTeam:
         eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
         created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
         taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories")  # key is risk category value is taxonomy
+        #TODO: uncomment when app insights logging checked in
+        # app_insights_connection_string = kwargs.get("app_insights_connection_string")
+        # self.app_insights_connection_string = app_insights_connection_string
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         with UserAgentSingleton().add_useragent_product(user_agent):
@@ -1534,7 +1539,9 @@ class RedTeam:
 
         # Extract AOAI summary for passing to MLflow logging
         aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
-
+        #TODO: uncomment when app insights checked in
+        # if self.app_insights_connection_string:
+        #     emit_eval_result_events_to_app_insights(AppInsightsConfig(connection_string=self.app_insights_connection_string), aoai_summary["output_items"]["data"])
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
