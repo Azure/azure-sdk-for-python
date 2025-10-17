@@ -318,7 +318,7 @@ class LocalFileStorage:
                 os.makedirs(parent_dir, mode=0o755, exist_ok=True)
                 # Fix permissions if directory already existed with wrong permissions
                 os.chmod(parent_dir, 0o755)
-            except Exception as ex:
+            except Exception:
                 pass
 
         # Create the storage directory itself and set to user-only access
