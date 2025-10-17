@@ -270,16 +270,18 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         class FallbackCredential(CosmosEmulatorCredential):
             def __init__(self):
                 self.call_count = 0
+                super().__init__()
 
             async def get_token(self, *scopes, **kwargs):
                 self.call_count += 1
-                if self.call_count == 1:
+                if self.call_count <= 2:
                     raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
                 return await super().get_token(*scopes, **kwargs)
 
         async def action(scopes_captured):
             credential = FallbackCredential()
             client = CosmosClient(self.host, credential)
+            await client.__aenter__()
             try:
                 db = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
