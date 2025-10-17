@@ -36,55 +36,35 @@ async def sample_transcribe_with_profanity_filter_async():
     api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
     # Create the transcription client
-    async with TranscriptionClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(api_key)
-    ) as client:
+    async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
         # Path to your audio file
         import pathlib
+
         audio_file_path = pathlib.Path(__file__).parent.parent / "assets" / "audio.wav"
 
         # Example 1: Mask profanity with asterisks
         with open(audio_file_path, "rb") as audio_file:
-            options = TranscriptionOptions(
-                locales=["en-US"],
-                profanity_filter_mode="Masked"
-            )
+            options = TranscriptionOptions(locales=["en-US"], profanity_filter_mode="Masked")
 
-            request_content = TranscribeRequestContent(
-                options=options,
-                audio=audio_file
-            )
+            request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
             result = await client.transcribe(request_content)
             print(f"Transcription (with profanity masked): {result.combined_phrases[0].text}")
 
         # Example 2: Remove profanity completely
         with open(audio_file_path, "rb") as audio_file:
-            options = TranscriptionOptions(
-                locales=["en-US"],
-                profanity_filter_mode="Removed"
-            )
+            options = TranscriptionOptions(locales=["en-US"], profanity_filter_mode="Removed")
 
-            request_content = TranscribeRequestContent(
-                options=options,
-                audio=audio_file
-            )
+            request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
             result = await client.transcribe(request_content)
             print(f"\nTranscription (with profanity removed): {result.combined_phrases[0].text}")
 
         # Example 3: Tag profanity with XML tags
         with open(audio_file_path, "rb") as audio_file:
-            options = TranscriptionOptions(
-                locales=["en-US"],
-                profanity_filter_mode="Tags"
-            )
+            options = TranscriptionOptions(locales=["en-US"], profanity_filter_mode="Tags")
 
-            request_content = TranscribeRequestContent(
-                options=options,
-                audio=audio_file
-            )
+            request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
             result = await client.transcribe(request_content)
             print(f"\nTranscription (with profanity tagged): {result.combined_phrases[0].text}")

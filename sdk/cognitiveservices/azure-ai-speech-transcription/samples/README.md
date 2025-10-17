@@ -42,6 +42,8 @@ These code samples demonstrate how to use the Azure AI Speech Transcription clie
    $env:AZURE_SPEECH_API_KEY="<your-api-key>"
    ```
 
+   **Note:** For Azure AD authentication (recommended for production), install `azure-identity` and configure authentication as described in the [main README](../README.md#authenticate-the-client).
+
 ## Running the Samples
 
 Each sample is a standalone Python script that can be run directly:

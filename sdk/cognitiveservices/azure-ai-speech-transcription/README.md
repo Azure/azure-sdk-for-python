@@ -48,7 +48,10 @@ az cognitiveservices account create \
 
 ### Authenticate the client
 
-In order to interact with the Azure AI Speech Transcription service, you'll need to create an instance of the [TranscriptionClient][transcription_client] class. To authenticate, you can use an `AzureKeyCredential` with your Speech resource's API key.
+In order to interact with the Azure AI Speech Transcription service, you'll need to create an instance of the [TranscriptionClient][transcription_client] class. The client supports two authentication methods:
+
+1. **API Key Authentication** - Using `AzureKeyCredential` with your Speech resource's API key
+2. **Azure Active Directory (Azure AD) Authentication** - Using `DefaultAzureCredential` or other token credentials from `azure-identity`
 
 #### Get credentials
 
@@ -62,9 +65,9 @@ az cognitiveservices account keys list \
 
 The endpoint can be found in the "Keys and Endpoint" section of your Speech resource in the Azure Portal.
 
-#### Create the client
+#### Create the client with API Key
 
-Once you have the endpoint and API key, you can create the `TranscriptionClient`:
+Using an API key is the simplest authentication method:
 
 ```python
 import os
@@ -77,6 +80,31 @@ api_key = os.environ.get("SPEECH_API_KEY")
 credential = AzureKeyCredential(api_key)
 client = TranscriptionClient(endpoint=endpoint, credential=credential)
 ```
+
+#### Create the client with Azure AD (Recommended for Production)
+
+Azure AD authentication provides better security and is recommended for production scenarios. First, install the `azure-identity` package:
+
+```bash
+pip install azure-identity
+```
+
+Then create the client using `DefaultAzureCredential`:
+
+```python
+import os
+from azure.identity import DefaultAzureCredential
+from azure.ai.speech.transcription import TranscriptionClient
+
+endpoint = os.environ.get("SPEECH_ENDPOINT")
+
+# DefaultAzureCredential will try multiple authentication methods
+# including environment variables, managed identity, Azure CLI, etc.
+credential = DefaultAzureCredential()
+client = TranscriptionClient(endpoint=endpoint, credential=credential)
+```
+
+**Note:** When using Azure AD authentication, ensure your Azure identity has the appropriate role assigned (e.g., `Cognitive Services User` or `Cognitive Services Speech User`) on the Speech resource.
 
 ## Key concepts
 

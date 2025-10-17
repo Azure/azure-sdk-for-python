@@ -35,28 +35,21 @@ def sample_transcribe_multiple_languages():
     api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
     # Create the transcription client
-    client = TranscriptionClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(api_key)
-    )
+    client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 
     # Path to your audio file with multiple languages
     import pathlib
+
     audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
 
     # Open and read the audio file
     with open(audio_file_path, "rb") as audio_file:
         # Create transcription options with multiple language candidates
         # The service will detect which language is being spoken
-        options = TranscriptionOptions(
-            locales=["en-US", "es-ES", "fr-FR", "de-DE"]  # Multiple language candidates
-        )
+        options = TranscriptionOptions(locales=["en-US", "es-ES", "fr-FR", "de-DE"])  # Multiple language candidates
 
         # Create the request content
-        request_content = TranscribeRequestContent(
-            options=options,
-            audio=audio_file
-        )
+        request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)
@@ -65,7 +58,7 @@ def sample_transcribe_multiple_languages():
         print("Transcription with language detection:\n")
         if result.phrases:
             for phrase in result.phrases:
-                locale = phrase.locale if hasattr(phrase, 'locale') and phrase.locale else "detected"
+                locale = phrase.locale if hasattr(phrase, "locale") and phrase.locale else "detected"
                 print(f"[{locale}] {phrase.text}")
         else:
             print(f"Full transcription: {result.combined_phrases[0].text}")

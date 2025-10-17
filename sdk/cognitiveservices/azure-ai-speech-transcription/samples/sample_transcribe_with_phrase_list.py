@@ -31,7 +31,7 @@ def sample_transcribe_with_phrase_list():
     from azure.ai.speech.transcription.models import (
         TranscribeRequestContent,
         TranscriptionOptions,
-        PhraseListProperties
+        PhraseListProperties,
     )
 
     # Get configuration from environment variables
@@ -39,13 +39,11 @@ def sample_transcribe_with_phrase_list():
     api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
     # Create the transcription client
-    client = TranscriptionClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(api_key)
-    )
+    client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 
     # Path to your audio file with domain-specific terminology
     import pathlib
+
     audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
 
     # Open and read the audio file
@@ -53,28 +51,15 @@ def sample_transcribe_with_phrase_list():
         # Create a phrase list with custom terminology
         # This helps improve recognition accuracy for specific words
         phrase_list = PhraseListProperties(
-            phrases=[
-                "Azure",
-                "Cognitive Services",
-                "Speech SDK",
-                "TranscriptionClient",
-                "Kubernetes",
-                "microservices"
-            ],
-            biasing_weight=5.0  # Weight between 1.0 and 20.0 (higher = more bias)
+            phrases=["Azure", "Cognitive Services", "Speech SDK", "TranscriptionClient", "Kubernetes", "microservices"],
+            biasing_weight=5.0,  # Weight between 1.0 and 20.0 (higher = more bias)
         )
 
         # Create transcription options with phrase list
-        options = TranscriptionOptions(
-            locales=["en-US"],
-            phrase_list=phrase_list
-        )
+        options = TranscriptionOptions(locales=["en-US"], phrase_list=phrase_list)
 
         # Create the request content
-        request_content = TranscribeRequestContent(
-            options=options,
-            audio=audio_file
-        )
+        request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

@@ -35,26 +35,19 @@ async def sample_transcribe_audio_file_async():
     api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
     # Create the transcription client
-    async with TranscriptionClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(api_key)
-    ) as client:
+    async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
         # Path to your audio file
         import pathlib
+
         audio_file_path = pathlib.Path(__file__).parent.parent / "assets" / "audio.wav"
 
         # Open and read the audio file
         with open(audio_file_path, "rb") as audio_file:
             # Create transcription options
-            options = TranscriptionOptions(
-                locales=["en-US"]  # Specify the language
-            )
+            options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
             # Create the request content
-            request_content = TranscribeRequestContent(
-                options=options,
-                audio=audio_file
-            )
+            request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
             # Transcribe the audio
             result = await client.transcribe(request_content)
@@ -66,9 +59,11 @@ async def sample_transcribe_audio_file_async():
             if result.phrases:
                 print("\nDetailed phrases:")
                 for phrase in result.phrases:
-                    print(f"  [{phrase.offset_milliseconds}ms - "
-                          f"{phrase.offset_milliseconds + phrase.duration_milliseconds}ms]: "
-                          f"{phrase.text}")
+                    print(
+                        f"  [{phrase.offset_milliseconds}ms - "
+                        f"{phrase.offset_milliseconds + phrase.duration_milliseconds}ms]: "
+                        f"{phrase.text}"
+                    )
     # [END transcribe_audio_file_async]
 
 

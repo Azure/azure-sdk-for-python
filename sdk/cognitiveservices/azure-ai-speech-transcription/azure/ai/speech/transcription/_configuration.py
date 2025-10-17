@@ -6,12 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 class TranscriptionClientConfiguration:  # pylint: disable=too-many-instance-attributes
@@ -24,14 +27,16 @@ class TranscriptionClientConfiguration:  # pylint: disable=too-many-instance-att
      `https://westus.api.cognitive.microsoft.com <https://westus.api.cognitive.microsoft.com>`_.
      Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2025-10-15".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2025-10-15")
 
         if endpoint is None:
@@ -42,9 +47,17 @@ class TranscriptionClientConfiguration:  # pylint: disable=too-many-instance-att
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-speech-transcription/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
+
+    def _infer_policy(self, **kwargs):
+        if isinstance(self.credential, AzureKeyCredential):
+            return policies.AzureKeyCredentialPolicy(self.credential, "Ocp-Apim-Subscription-Key", **kwargs)
+        if hasattr(self.credential, "get_token"):
+            return policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+        raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
@@ -57,6 +70,4 @@ class TranscriptionClientConfiguration:  # pylint: disable=too-many-instance-att
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(
-                self.credential, "Ocp-Apim-Subscription-Key", **kwargs
-            )
+            self.authentication_policy = self._infer_policy(**kwargs)

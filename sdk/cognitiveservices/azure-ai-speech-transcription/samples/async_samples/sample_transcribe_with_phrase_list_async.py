@@ -32,7 +32,7 @@ async def sample_transcribe_with_phrase_list_async():
     from azure.ai.speech.transcription.models import (
         TranscribeRequestContent,
         TranscriptionOptions,
-        PhraseListProperties
+        PhraseListProperties,
     )
 
     # Get configuration from environment variables
@@ -40,12 +40,10 @@ async def sample_transcribe_with_phrase_list_async():
     api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
     # Create the transcription client
-    async with TranscriptionClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(api_key)
-    ) as client:
+    async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
         # Path to your audio file with domain-specific terminology
         import pathlib
+
         audio_file_path = pathlib.Path(__file__).parent.parent / "assets" / "audio.wav"
 
         # Open and read the audio file
@@ -59,22 +57,16 @@ async def sample_transcribe_with_phrase_list_async():
                     "Speech SDK",
                     "TranscriptionClient",
                     "Kubernetes",
-                    "microservices"
+                    "microservices",
                 ],
-                biasing_weight=5.0  # Weight between 1.0 and 20.0 (higher = more bias)
+                biasing_weight=5.0,  # Weight between 1.0 and 20.0 (higher = more bias)
             )
 
             # Create transcription options with phrase list
-            options = TranscriptionOptions(
-                locales=["en-US"],
-                phrase_list=phrase_list
-            )
+            options = TranscriptionOptions(locales=["en-US"], phrase_list=phrase_list)
 
             # Create the request content
-            request_content = TranscribeRequestContent(
-                options=options,
-                audio=audio_file
-            )
+            request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
             # Transcribe the audio
             result = await client.transcribe(request_content)

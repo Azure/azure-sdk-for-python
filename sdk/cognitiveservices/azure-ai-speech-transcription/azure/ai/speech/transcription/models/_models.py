@@ -341,12 +341,13 @@ class TranscriptionOptions(_Model):
      "Tags", and "Masked".
     :vartype profanity_filter_mode: str or
      ~azure.ai.speech.transcription.models.ProfanityFilterMode
-    :ivar diarization: Mode of diarization.
-    :vartype diarization: ~azure.ai.speech.transcription.models.TranscriptionDiarizationOptions
-    :ivar channels: The 0-based indices of the channels to be transcribed separately. If not
+    :ivar diarization_options: Mode of diarization.
+    :vartype diarization_options:
+     ~azure.ai.speech.transcription.models.TranscriptionDiarizationOptions
+    :ivar active_channels: The 0-based indices of the channels to be transcribed separately. If not
      specified, multiple channels are merged and transcribed jointly. Only up to two channels are
      supported.
-    :vartype channels: list[int]
+    :vartype active_channels: list[int]
     :ivar enhanced_mode: Enhanced mode properties.
     :vartype enhanced_mode: ~azure.ai.speech.transcription.models.EnhancedModeProperties
     :ivar phrase_list: Phrase list properties.
@@ -367,11 +368,13 @@ class TranscriptionOptions(_Model):
         name="profanityFilterMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """Mode of profanity filtering. Known values are: \"None\", \"Removed\", \"Tags\", and \"Masked\"."""
-    diarization: Optional["_models.TranscriptionDiarizationOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    diarization_options: Optional["_models.TranscriptionDiarizationOptions"] = rest_field(
+        name="diarization", visibility=["read", "create", "update", "delete", "query"]
     )
     """Mode of diarization."""
-    channels: Optional[list[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    active_channels: Optional[list[int]] = rest_field(
+        name="channels", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The 0-based indices of the channels to be transcribed separately. If not specified, multiple
      channels are merged and transcribed jointly. Only up to two channels are supported."""
     enhanced_mode: Optional["_models.EnhancedModeProperties"] = rest_field(
@@ -391,8 +394,8 @@ class TranscriptionOptions(_Model):
         locales: Optional[list[str]] = None,
         models: Optional[dict[str, str]] = None,
         profanity_filter_mode: Optional[Union[str, "_models.ProfanityFilterMode"]] = None,
-        diarization: Optional["_models.TranscriptionDiarizationOptions"] = None,
-        channels: Optional[list[int]] = None,
+        diarization_options: Optional["_models.TranscriptionDiarizationOptions"] = None,
+        active_channels: Optional[list[int]] = None,
         enhanced_mode: Optional["_models.EnhancedModeProperties"] = None,
         phrase_list: Optional["_models.PhraseListProperties"] = None,
     ) -> None: ...

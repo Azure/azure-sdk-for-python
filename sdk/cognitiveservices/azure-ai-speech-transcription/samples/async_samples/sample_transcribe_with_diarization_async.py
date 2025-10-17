@@ -32,7 +32,7 @@ async def sample_transcribe_with_diarization_async():
     from azure.ai.speech.transcription.models import (
         TranscribeRequestContent,
         TranscriptionOptions,
-        TranscriptionDiarizationOptions
+        TranscriptionDiarizationOptions,
     )
 
     # Get configuration from environment variables
@@ -40,33 +40,24 @@ async def sample_transcribe_with_diarization_async():
     api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
     # Create the transcription client
-    async with TranscriptionClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(api_key)
-    ) as client:
+    async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
         # Path to your audio file with multiple speakers
         import pathlib
+
         audio_file_path = pathlib.Path(__file__).parent.parent / "assets" / "audio.wav"
 
         # Open and read the audio file
         with open(audio_file_path, "rb") as audio_file:
             # Create diarization options
             diarization_options = TranscriptionDiarizationOptions(
-                enabled=True,
-                max_speakers=5  # Hint for maximum number of speakers (2-35)
+                enabled=True, max_speakers=5  # Hint for maximum number of speakers (2-35)
             )
 
             # Create transcription options with diarization
-            options = TranscriptionOptions(
-                locales=["en-US"],
-                diarization=diarization_options
-            )
+            options = TranscriptionOptions(locales=["en-US"], diarization=diarization_options)
 
             # Create the request content
-            request_content = TranscribeRequestContent(
-                options=options,
-                audio=audio_file
-            )
+            request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
             # Transcribe the audio
             result = await client.transcribe(request_content)
