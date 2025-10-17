@@ -8,12 +8,12 @@ import logging
 from typing import Any, MutableMapping, TypeVar, cast, Optional, Union
 from weakref import WeakKeyDictionary
 
-from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
-from azure.core.credentials import AccessToken, SupportsTokenInfo
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 
 from ..http_constants import HttpHeaders
@@ -21,9 +21,9 @@ from .._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 logger = logging.getLogger("azure.cosmos.AsyncCosmosBearerTokenCredentialPolicy")
-_credential_locks: "WeakKeyDictionary[AsyncTokenCredential | SupportsTokenInfo, asyncio.Lock]" = WeakKeyDictionary()
+_credential_locks: "WeakKeyDictionary[Union[AsyncTokenCredential, AsyncSupportsTokenInfo], asyncio.Lock]" = WeakKeyDictionary()
 
-def _get_credential_lock(credential: AsyncTokenCredential | SupportsTokenInfo) -> asyncio.Lock:
+def _get_credential_lock(credential: Union[AsyncTokenCredential, AsyncSupportsTokenInfo]) -> asyncio.Lock:
     lock = _credential_locks.get(credential)
     if lock is None:
         lock = asyncio.Lock()
