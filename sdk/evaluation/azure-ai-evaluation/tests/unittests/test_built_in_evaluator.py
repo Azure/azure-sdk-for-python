@@ -13,7 +13,7 @@ from azure.ai.evaluation import (
 
 
 async def quality_response_async_mock(*args, **kwargs):
-    return (
+    llm_output = (
         "<S0>Let's think step by step: The response 'Honolulu' is a single word. "
         "It does not form a complete sentence, lacks grammatical structure, and does not "
         "convey any clear idea or message. It is not possible to assess vocabulary range, "
@@ -23,6 +23,7 @@ async def quality_response_async_mock(*args, **kwargs):
         " fluency. It is largely incomprehensible and does not meet the criteria for higher fluency "
         "levels.</S1><S2>1</S2>"
     )
+    return {"llm_output": llm_output}
 
 
 async def quality_no_response_async_mock():
