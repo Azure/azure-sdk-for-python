@@ -314,13 +314,10 @@ class LocalFileStorage:
         parent_dir = os.path.dirname(self._path)
         if parent_dir and parent_dir != '/':
             try:
-                # Create parent directories with world-traversable permissions
                 os.makedirs(parent_dir, mode=0o755, exist_ok=True)
-                # Fix permissions if directory already existed with wrong permissions
                 os.chmod(parent_dir, 0o755)
             except Exception:
                 pass
 
-        # Create the storage directory itself and set to user-only access
         os.makedirs(self._path, mode=0o700, exist_ok=True)
         os.chmod(self._path, 0o700)
