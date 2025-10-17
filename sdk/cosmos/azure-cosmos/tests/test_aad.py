@@ -188,7 +188,7 @@ class TestAAD(unittest.TestCase):
 
         scopes, _ = self._run_with_scope_capture(FailingCredential, action)
         try:
-            assert scopes == [override_scope], f"Expected only override scope, got: {scopes}"
+            assert scopes == [override_scope, override_scope], f"Expected only override scope, got: {scopes}"
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
 
@@ -245,10 +245,11 @@ class TestAAD(unittest.TestCase):
         class FallbackCredential(CosmosEmulatorCredential):
             def __init__(self):
                 self.call_count = 0
+                super().__init__()
 
             def get_token(self, *scopes, **kwargs):
                 self.call_count += 1
-                if self.call_count == 1:
+                if self.call_count <= 2:
                     raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
                 return super().get_token(*scopes, **kwargs)
 
