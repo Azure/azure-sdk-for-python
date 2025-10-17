@@ -43,6 +43,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
     """
 
     id = "azureai://built-in/evaluators/azure-openai/text_similarity_grader"
+    _type = "text_similarity"
 
     def __init__(
         self,
@@ -74,6 +75,6 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             pass_threshold=pass_threshold,
             name=name,
             reference=reference,
-            type="text_similarity",
+            type=AzureOpenAITextSimilarityGrader._type,
         )
         super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

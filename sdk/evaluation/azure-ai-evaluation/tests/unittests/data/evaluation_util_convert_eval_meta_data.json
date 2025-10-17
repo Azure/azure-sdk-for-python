@@ -1,0 +1,15 @@
+{
+    "eval_id": "test_eval_group_123",
+    "eval_run_id": "test_run_456",
+    "testing_criteria": [
+        {
+            "type": "label_model",
+            "name": "labelgrader"
+        },
+        {
+            "type": "azure_ai_evaluator",
+            "name": "violence",
+            "evaluator_name": "violence"
+        }
+    ]
+}
