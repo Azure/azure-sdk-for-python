@@ -27,11 +27,8 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import _constants
 
 
-class DatabaseAccountRetryPolicy(object):
-    """Implements retry logic for database account reads in Azure Cosmos DB."""
-
-    # List of HTTP status codes considered transient errors for retry logic.
-    transient_status_codes = [502, 503, 504]
+class HealthCheckRetryPolicy(object):
+    """Implements retry logic for health checks in Azure Cosmos DB."""
 
     # Tuple of exception types considered transient errors for retry logic.
     transient_exceptions = (ServiceRequestError, ServiceResponseError)
@@ -58,18 +55,7 @@ class DatabaseAccountRetryPolicy(object):
         :rtype: bool
         """
 
-        is_transient = False
-
-        # Check for transient HTTP status codes
-        status_code = getattr(exception, "status_code", None)
-        if status_code in self.transient_status_codes:
-            is_transient = True
-
-        # Check for transient exception types
-        if isinstance(exception, self.transient_exceptions):
-            is_transient = True
-
-        if is_transient and self.retry_count < self.max_retry_attempt_count:
+        if isinstance(exception, self.transient_exceptions) and self.retry_count < self.max_retry_attempt_count:
             self.retry_count += 1
             return True
 

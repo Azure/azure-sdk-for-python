@@ -16,7 +16,7 @@ from typing import Any, Dict, Optional
 import pytest
 import requests
 from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError
 from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
 
 import azure.cosmos._base as base
@@ -1760,8 +1760,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
             # client does a getDatabaseAccount on initialization, which will not time out because
             # there is a forced timeout for those calls
-            async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
-                with self.assertRaises(Exception):
+            with self.assertRaises(ServiceRequestError):
+                async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
                     databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                     container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                     item = {'id': str(uuid.uuid4()), 'name': 'sample'}
@@ -1773,12 +1773,12 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.RequestTimeout = 0.000000000001
-        async with CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host,
-                                TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.masterKey,
-                                connection_policy=connection_policy,
-                                retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
-                                retry_on_status_codes=[500, 502, 504]) as client:
-            with self.assertRaises(AzureError):
+        with self.assertRaises(ServiceRequestError):
+            async with CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host,
+                                    TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.masterKey,
+                                    connection_policy=connection_policy,
+                                    retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
+                                    retry_on_status_codes=[500, 502, 504]) as client:
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 item = {'id': str(uuid.uuid4()), 'name': 'sample'}

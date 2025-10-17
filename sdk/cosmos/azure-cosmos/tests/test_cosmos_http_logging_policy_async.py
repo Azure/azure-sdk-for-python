@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Tests for the CosmosHttpLoggingPolicy."""
+import asyncio
 import unittest
 import uuid
 import logging
@@ -103,6 +104,9 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         self.client_diagnostic = cosmos_client.CosmosClient(self.host, self.masterKey,
                                                             consistency_level="Session", logger=self.logger,
                                                             enable_diagnostics_logging=True)
+        await self.client_diagnostic.__aenter__()
+        # give time to background health check to run
+        await asyncio.sleep(1)
         # Test if we can log into from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
         await self.client_diagnostic.create_database(id=database_id)
@@ -117,12 +121,12 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         assert "Read" == messages_request.operation_type
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
-        # Verify we only have a total of 6 logged messages: 4 from databaseaccount read and 2 from create database
-        assert len(self.mock_handler_diagnostic.messages) == 6
+        # Verify we only have a total of 6 logged messages: 4 from databaseaccount read, 2 from health check, and 2 from create database
+        assert len(self.mock_handler_diagnostic.messages) == 8
         # Test if we can log into from creating a database
         # The request to create database should follow the databaseaccount read request immediately
-        messages_request = self.mock_handler_diagnostic.messages[4]
-        messages_response = self.mock_handler_diagnostic.messages[5]
+        messages_request = self.mock_handler_diagnostic.messages[6]
+        messages_response = self.mock_handler_diagnostic.messages[7]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.verb == "POST"

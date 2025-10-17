@@ -369,24 +369,6 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: int = 0
 
-    def _override_dba_timeouts(
-            self,
-            connection_timeout: Optional[int] = None,
-            read_timeout: Optional[int] = None
-    ) -> None:
-        """Override the timeouts for database account operations.
-
-        :param int connection_timeout:
-            Connection timeout in seconds.
-        :param int read_timeout:
-            Read timeout in seconds.
-        """
-        if connection_timeout is not None:
-            self.DBAConnectionTimeout = connection_timeout
-        if read_timeout is not None:
-            self.DBAReadTimeout = read_timeout
-
-
 class _OperationType:
     """Represents the type of the operation"""
     Create: Literal["Create"] = "Create"

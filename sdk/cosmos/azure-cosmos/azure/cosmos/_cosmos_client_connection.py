@@ -248,7 +248,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
@@ -2691,23 +2691,27 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return database_account
 
-    def _GetDatabaseAccountCheck(
+    def health_check(
             self,
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Gets database account info.
+        """ Send a request to check that can connect to the endpoint.
 
-        :param str url_connection: the endpoint used to get the database account
-        :return: The Database Account.
-        :rtype: documents.DatabaseAccount
+        :param str url_connection: the endpoint that will be probed
         """
         if url_connection is None:
             url_connection = self.url_connection
+        # Append probe path without creating double slashes; if URL already ends with '/', just add 'probe'.
+        if url_connection.endswith('/'):
+            url_connection = url_connection + 'probe'
+        else:
+            url_connection = url_connection + '/probe'
 
-        headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{}, client_id=self.client_id)
-        request_params = RequestObject(http_constants.ResourceType.DatabaseAccount,
+        headers = base.GetHeaders(self, self.default_headers, "get", "", "",
+                                  http_constants.ResourceType.Probe, documents._OperationType.Read, {},
+                                  client_id=self.client_id)
+        request_params = RequestObject(http_constants.ResourceType.Probe,
                                        documents._OperationType.Read,
                                        headers,
                                        endpoint_override=url_connection)
