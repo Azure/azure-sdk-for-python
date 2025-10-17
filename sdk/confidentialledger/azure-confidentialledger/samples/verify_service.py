@@ -40,8 +40,7 @@ def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -71,7 +70,7 @@ def main():
             credential=DefaultAzureCredential(),
             ledger_certificate_path=ledger_cert_file,
         )
-        
+
         print("Retrieving information that can be used to validate a Confidential Ledger.")
 
         print(
@@ -81,10 +80,7 @@ def main():
         )
         consortium = ledger_client.list_consortium_members()
         for member in consortium:
-            print(
-                f'\tMember {member["id"]} has certificate (truncated) '
-                f'{member["certificate"][:24]}...'
-            )
+            print(f'\tMember {member["id"]} has certificate (truncated) ' f'{member["certificate"][:24]}...')
 
         print(
             "The constitution is a collection of JavaScript code that defines actions available to "
@@ -92,10 +88,7 @@ def main():
         )
 
         constitution = ledger_client.get_constitution()
-        assert (
-            constitution["digest"].lower() ==
-            hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
-        )
+        assert constitution["digest"].lower() == hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
         print(f'\tConstitution (truncated): {constitution["script"][:24]}...')
         print(f'\tConstitution digest: {constitution["digest"]}')
 
@@ -105,9 +98,7 @@ def main():
         )
         ledger_enclaves = ledger_client.get_enclave_quotes()
         for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
-            print(
-                f"\tMRENCLAVE for node {node_id}: {quote['mrenclave']}"
-            )
+            print(f"\tMRENCLAVE for node {node_id}: {quote['mrenclave']}")
 
 
 if __name__ == "__main__":

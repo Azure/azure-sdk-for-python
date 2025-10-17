@@ -83,3 +83,4 @@ prompty
 Jinja2
 azure-ai-language-conversations
 azure-ai-textanalytics
+azure-confidentialledger-certificate

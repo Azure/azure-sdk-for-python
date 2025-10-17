@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -39,8 +40,7 @@ def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -74,26 +74,18 @@ def main():
         post_poller = ledger_client.begin_create_ledger_entry({"contents": "First message"})  # type: ignore[attr-defined]
         first_transaction_id = post_poller.result()["transactionId"]
 
-        print(
-            "Wrote 'First message' to the ledger. It is recorded at transaction id "
-            f"{first_transaction_id}."
-        )
+        print("Wrote 'First message' to the ledger. It is recorded at transaction id " f"{first_transaction_id}.")
 
         for i in range(10):
             entry_contents = f"Message {i}"
-            print(
-                f"Writing '{entry_contents}' to the ledger."
-            )
+            print(f"Writing '{entry_contents}' to the ledger.")
 
             ledger_client.create_ledger_entry({"contents": entry_contents})
 
         post_poller = ledger_client.begin_create_ledger_entry({"contents": "Last message"})  # type: ignore[attr-defined]
         last_transaction_id = post_poller.result()["transactionId"]
 
-        print(
-            "Wrote 'Last message' to the ledger. It is recorded at transaction id "
-            f"{last_transaction_id}."
-        )
+        print("Wrote 'Last message' to the ledger. It is recorded at transaction id " f"{last_transaction_id}.")
 
         ranged_result = ledger_client.list_ledger_entries(
             from_transaction_id=first_transaction_id,
