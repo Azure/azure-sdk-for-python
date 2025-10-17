@@ -4354,7 +4354,7 @@ class RedTeamsOperations:
                 "risk_category",
                 "lang",
                 "strategy",
-                "target",
+                "target_type",
                 "accept",
             ]
         },
@@ -4367,7 +4367,7 @@ class RedTeamsOperations:
         risk_types: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
-        target: Optional[str] = None,
+        target_type: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
@@ -4381,8 +4381,8 @@ class RedTeamsOperations:
         :paramtype lang: str
         :keyword strategy: The strategy. Default value is None.
         :paramtype strategy: str
-        :keyword target: The target, model/agent. Default value is None.
-        :paramtype target: str
+        :keyword target_type: The target, model/agent. Default value is None.
+        :paramtype target_type: str
         :return: list of AttackObjective
         :rtype: list[~azure.ai.projects.models.AttackObjective]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4405,7 +4405,7 @@ class RedTeamsOperations:
             risk_types=risk_types,
             lang=lang,
             strategy=strategy,
-            target=target,
+            target_type=target_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

@@ -1258,7 +1258,7 @@ class TestTagsInLoggingFunctions:
         metrics = {"accuracy": 0.8, "f1_score": 0.7}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
         tags = {"experiment": "test-exp", "version": "1.0", "model": "gpt-4"}
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function
         result = _log_metrics_and_instance_results_onedp(
@@ -1299,7 +1299,7 @@ class TestTagsInLoggingFunctions:
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function with None tags
         result = _log_metrics_and_instance_results_onedp(
@@ -1337,7 +1337,7 @@ class TestTagsInLoggingFunctions:
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
         empty_tags = {}
 
         # Call the function with empty tags
@@ -1377,7 +1377,7 @@ class TestTagsInLoggingFunctions:
         _log_metrics_and_instance_results_onedp(
             metrics=metrics,
             instance_results=instance_results,
-            project_url="https://test-project.cognitiveservices.azure.com/",
+            project_url="https://test-project.cognitiveservices.azure.com/api/projects/test-project",
             evaluation_name="test-evaluation",
             name_map={},
             tags=tags,

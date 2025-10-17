@@ -141,7 +141,7 @@ class GeneratedRAIClient:
                 risk_category=risk_category,
                 lang=language,
                 strategy=strategy,
-                target=target,
+                target_type=target,
                 headers={"x-ms-client-request-id": scan_session_id},
             )
             return response

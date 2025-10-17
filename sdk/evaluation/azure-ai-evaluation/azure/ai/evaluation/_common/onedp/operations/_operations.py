@@ -1170,7 +1170,7 @@ def build_red_teams_get_attack_objectives_request(  # pylint: disable=name-too-l
     risk_types: Optional[List[str]] = None,
     lang: Optional[str] = None,
     strategy: Optional[str] = None,
-    target: Optional[str] = None,
+    target_type: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1191,8 +1191,8 @@ def build_red_teams_get_attack_objectives_request(  # pylint: disable=name-too-l
         _params["lang"] = _SERIALIZER.query("lang", lang, "str")
     if strategy is not None:
         _params["strategy"] = _SERIALIZER.query("strategy", strategy, "str")
-    if target is not None:
-        _params["target"] = _SERIALIZER.query("target", target, "str")
+    if target_type is not None:
+        _params["targetType"] = _SERIALIZER.query("target_type", target_type, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -6160,7 +6160,7 @@ class RedTeamsOperations:
                 "risk_category",
                 "lang",
                 "strategy",
-                "target",
+                "target_type",
                 "accept",
             ]
         },
@@ -6173,7 +6173,7 @@ class RedTeamsOperations:
         risk_types: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
-        target: Optional[str] = None,
+        target_type: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
@@ -6187,8 +6187,8 @@ class RedTeamsOperations:
         :paramtype lang: str
         :keyword strategy: The strategy. Default value is None.
         :paramtype strategy: str
-        :keyword target: The target, model/agent. Default value is None.
-        :paramtype target: str
+        :keyword target_type: The target, model/agent. Default value is None.
+        :paramtype target_type: str
         :return: list of AttackObjective
         :rtype: list[~azure.ai.projects.models.AttackObjective]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6211,7 +6211,7 @@ class RedTeamsOperations:
             risk_types=risk_types,
             lang=lang,
             strategy=strategy,
-            target=target,
+            target_type=target_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
