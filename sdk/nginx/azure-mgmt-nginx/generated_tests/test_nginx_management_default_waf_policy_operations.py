@@ -14,14 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNginxManagementOperations(AzureMgmtRecordedTestCase):
+class TestNginxManagementDefaultWafPolicyOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(NginxManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
-        result = [r for r in response]
+    def test_default_waf_policy_list(self, resource_group):
+        response = self.client.default_waf_policy.list(
+            resource_group_name=resource_group.name,
+            deployment_name="str",
+        )
+
         # please add some check logic here by yourself
         # ...
