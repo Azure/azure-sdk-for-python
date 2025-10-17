@@ -16,13 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import BatchClientConfiguration
-from ._operations import BatchClientOperationsMixin
+from ._operations import _BatchClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class BatchClient(BatchClientOperationsMixin):
+class BatchClient(_BatchClientOperationsMixin):
     """BatchClient.
 
     :param endpoint: Batch account endpoint (for example:

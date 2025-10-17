@@ -120,7 +120,10 @@ class _ConfidentialLedgerCertificateClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response)
+            error = _failsafe_deserialize(
+                _models.ConfidentialLedgerError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:

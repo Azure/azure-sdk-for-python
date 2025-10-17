@@ -14,7 +14,7 @@ name = "azure-ai-projects"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Corporation Azure AI Projects Client Library for Python"
+description = "Microsoft Corporation Azure Ai Projects Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -38,8 +38,7 @@ dependencies = [
     "azure-ai-agents>=1.2.0b3",
 ]
 dynamic = [
-    "version",
-    "readme"
+"version", "readme"
 ]
 
 [project.urls]
