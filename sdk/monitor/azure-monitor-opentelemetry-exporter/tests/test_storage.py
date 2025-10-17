@@ -909,7 +909,6 @@ class TestLocalFileStorage(unittest.TestCase):
         self.assertTrue(final_state)
 
     def test_check_and_set_folder_permissions_unix_multiuser_scenario(self):
-        test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             set_local_storage_setup_state_exception,
