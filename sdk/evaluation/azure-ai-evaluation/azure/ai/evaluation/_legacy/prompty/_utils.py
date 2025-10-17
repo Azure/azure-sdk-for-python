@@ -569,7 +569,6 @@ async def format_llm_response(
         )
         total_token_count = response.usage.total_tokens if response.usage and response.usage.total_tokens else 0
         finish_reason = response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
-        print(f"model_id: {response.model}")
         model_id = response.model if response.model else ""
         sample_output_list = [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}] if (response.choices and response.choices[0].message.content
                                                                                                                               and response.choices[0].message.role) else []
