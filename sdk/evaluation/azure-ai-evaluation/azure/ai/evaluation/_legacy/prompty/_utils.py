@@ -467,7 +467,7 @@ async def format_llm_response(
     response_format: Optional[Mapping[str, Any]] = None,
     outputs: Optional[Mapping[str, Any]] = None,
     inputs: Optional[Mapping[str, Any]] = None,
-) -> Tuple[Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]], int, int, int, str, str, str, str]:
+) -> dict:
     """
     Format LLM response
 
@@ -526,42 +526,29 @@ async def format_llm_response(
                     return
                 yield chunk.choices[0].delta.content
 
-    input_token_count = 0
-    output_token_count = 0
-    total_token_count = 0
-    finish_reason = ""
-    sample_input = ""
-    sample_output = ""
-    model_id = ""
+    to_ret = {
+        "llm_output": None,
+        "input_token_count": 0,
+        "output_token_count": 0,
+        "total_token_count": 0,
+        "finish_reason": "",
+        "model_id": "",
+        "sample_input": "",
+        "sample_output": ""
+    }
 
     if not is_first_choice:
-        return (
-            response,
-            input_token_count,
-            output_token_count,
-            total_token_count,
-        )  # we don't actually use this code path since streaming is not used, so set token counts to 0
+        to_ret["llm_output"] = response
+        return to_ret # we don't actually use this code path since streaming is not used, so set token counts to 0
 
     is_json_format = isinstance(response_format, dict) and response_format.get("type") == "json_object"
     if isinstance(response, AsyncStream):
         if not is_json_format:
-            return (
-                format_stream(llm_response=response),
-                input_token_count,
-                output_token_count,
-                total_token_count,
-            )  # we don't actually use this code path since streaming is not used, so set token counts to 0
+            to_ret["llm_output"] = format_stream(llm_response=response)
+            return to_ret
         content = "".join([item async for item in format_stream(llm_response=response)])
-        return (
-            format_choice(content),
-            input_token_count,
-            output_token_count,
-            total_token_count,
-            finish_reason,
-            model_id,
-            sample_input,
-            sample_output
-        )  # we don't actually use this code path since streaming is not used, so set token counts to 0
+        to_ret["llm_output"] = format_choice(content)
+        return to_ret  # we don't actually use this code path since streaming is not used, so set token counts to 0
     else:
         input_token_count = response.usage.prompt_tokens if response.usage and response.usage.prompt_tokens else 0
         output_token_count = (
@@ -592,8 +579,15 @@ async def format_llm_response(
     else:
         response_content = getattr(response.choices[0].message, "content", "")
     result = format_choice(response_content)
-    return result, input_token_count, output_token_count, total_token_count, finish_reason, model_id, sample_input, sample_output
-
+    to_ret["llm_output"] = result
+    to_ret["input_token_count"] = input_token_count
+    to_ret["output_token_count"] = output_token_count
+    to_ret["total_token_count"] = total_token_count
+    to_ret["finish_reason"] = finish_reason
+    to_ret["model_id"] = model_id
+    to_ret["sample_input"] = sample_input
+    to_ret["sample_output"] = sample_output
+    return to_ret
 
 def openai_error_retryable(
     error: OpenAIError, retry: int, entity_retry: List[int], max_entity_retries: int
