@@ -69,7 +69,7 @@ AVAILABLE_TEST_PROXY_BINARIES = {
             "file_name": "test-proxy-standalone-linux-arm64.tar.gz",
             "executable": "Azure.Sdk.Tools.TestProxy",
         },
-        "AARCH64": {
+        "AARCH64": {  # AARCH64 and ARM64 are synonyms; use the ARM binary
             "system": "Linux",
             "machine": "AARCH64",
             "file_name": "test-proxy-standalone-linux-arm64.tar.gz",
