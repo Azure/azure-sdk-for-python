@@ -7,7 +7,7 @@ from ast import literal_eval
 from typing_extensions import NotRequired
 
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.ai.evaluation.simulator._adversarial_scenario import AdversarialScenario
 
 from ._rai_client import RAIClient

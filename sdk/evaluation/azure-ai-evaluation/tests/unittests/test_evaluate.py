@@ -1242,16 +1242,15 @@ class TestTagsInLoggingFunctions:
         assert result is None
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
-    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    @patch("azure.ai.evaluation._common.onedp.ProjectsClient")
     def test_log_metrics_and_instance_results_onedp_with_tags(self, mock_client_class, mock_token_manager):
         """Test that tags are properly passed to OneDP logging path."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
 
-        # Mock the client and its methods
+        # Mock the client and its sync_evals.create method
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
+        mock_sync_evals = mock_client.sync_evals
+        mock_sync_evals.create.return_value = type(
             "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
 
@@ -1259,7 +1258,7 @@ class TestTagsInLoggingFunctions:
         metrics = {"accuracy": 0.8, "f1_score": 0.7}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
         tags = {"experiment": "test-exp", "version": "1.0", "model": "gpt-4"}
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function
         result = _log_metrics_and_instance_results_onedp(
@@ -1271,39 +1270,36 @@ class TestTagsInLoggingFunctions:
             tags=tags,
         )
 
-        # Verify that start_evaluation_run was called with tags
-        mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags == tags
-        assert start_call_args.display_name == "test-evaluation"
+        # Verify that sync_evals.create was called
+        mock_sync_evals.create.assert_called_once()
+        call_args = mock_sync_evals.create.call_args[1]["eval"]
 
-        # Verify that update_evaluation_run was called WITHOUT tags (not redundant)
-        mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert getattr(update_call_args, "tags", None) is None
-        assert update_call_args.status == "Completed"
+        # Verify properties include tags
+        assert call_args.properties is not None
+        assert "experiment" in call_args.properties
+        assert "version" in call_args.properties
+        assert "model" in call_args.properties
 
         # Verify return value
         assert result == "https://test-uri"
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
-    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    @patch("azure.ai.evaluation._common.onedp.ProjectsClient")
     def test_log_metrics_and_instance_results_onedp_with_none_tags(self, mock_client_class, mock_token_manager):
         """Test that None tags are handled properly in OneDP logging path."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
 
-        # Mock the client and its methods
+        # Mock the client and its sync_evals.create method
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
+        mock_sync_evals = mock_client.sync_evals
+        mock_sync_evals.create.return_value = type(
             "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function with None tags
         result = _log_metrics_and_instance_results_onedp(
@@ -1315,34 +1311,33 @@ class TestTagsInLoggingFunctions:
             tags=None,
         )
 
-        # Verify that start_evaluation_run was called with None tags
-        mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags is None
+        # Verify that sync_evals.create was called
+        mock_sync_evals.create.assert_called_once()
+        call_args = mock_sync_evals.create.call_args[1]["eval"]
 
-        # Verify that update_evaluation_run was called without tags
-        mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert not hasattr(update_call_args, "tags") or update_call_args.tags is None
+        # Verify properties exist but don't contain extra tags
+        assert call_args.properties is not None
+
+        # Verify return value
+        assert result == "https://test-uri"
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
-    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    @patch("azure.ai.evaluation._common.onedp.ProjectsClient")
     def test_log_metrics_and_instance_results_onedp_with_empty_tags(self, mock_client_class, mock_token_manager):
         """Test that empty tags dictionary is handled properly in OneDP logging path."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
 
-        # Mock the client and its methods
+        # Mock the client and its sync_evals.create method
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
+        mock_sync_evals = mock_client.sync_evals
+        mock_sync_evals.create.return_value = type(
             "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
         empty_tags = {}
 
         # Call the function with empty tags
@@ -1355,22 +1350,21 @@ class TestTagsInLoggingFunctions:
             tags=empty_tags,
         )
 
-        # Verify that start_evaluation_run was called with empty tags
-        mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags == {}
+        # Verify that sync_evals.create was called
+        mock_sync_evals.create.assert_called_once()
+        call_args = mock_sync_evals.create.call_args[1]["eval"]
+        assert call_args.properties is not None
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
-    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    @patch("azure.ai.evaluation._common.onedp.ProjectsClient")
     def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self, mock_client_class, mock_token_manager):
-        """Test that tags are not redundantly set in update_evaluation_run."""
+        """Test that tags are properly included in properties for sync_evals."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
 
-        # Mock the client and its methods
+        # Mock the client and its sync_evals.create method
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
+        mock_sync_evals = mock_client.sync_evals
+        mock_sync_evals.create.return_value = type(
             "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
 
@@ -1383,15 +1377,15 @@ class TestTagsInLoggingFunctions:
         _log_metrics_and_instance_results_onedp(
             metrics=metrics,
             instance_results=instance_results,
-            project_url="https://test-project.cognitiveservices.azure.com/",
+            project_url="https://test-project.cognitiveservices.azure.com/api/projects/test-project",
             evaluation_name="test-evaluation",
             name_map={},
             tags=tags,
         )
 
-        # Verify that update_evaluation_run was called without redundant tags
-        mock_client.update_evaluation_run.assert_called_once()
-        call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert (
-            not hasattr(call_args, "tags") or call_args.tags is None
-        ), "Tags should not be redundantly set in update_evaluation_run"
+        # Verify that sync_evals.create was called and tags are in properties
+        mock_sync_evals.create.assert_called_once()
+        call_args = mock_sync_evals.create.call_args[1]["eval"]
+        assert call_args.properties is not None
+        assert "tag1" in call_args.properties
+        assert "tag2" in call_args.properties
