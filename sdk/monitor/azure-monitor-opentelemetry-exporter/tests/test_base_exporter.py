@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
 import os
 import shutil
+import stat
 import unittest
 from unittest import mock
 from datetime import datetime
@@ -244,6 +244,14 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
         mock_get_temp_dir.assert_not_called()
+
+    def test_constructor_makes_world_writable_tempdirs_for_storage(self):
+        # NB: This test will give a false positive if the directory already exists with correct permissions
+        base = BaseExporter()
+        (parent, tail) = os.path.split(base._storage_directory)
+        while tail and parent != os.path.dirname(parent):
+            assert bool(stat.S_IWOTH & os.stat(parent).st_mode), f"{parent} is not world writable"
+            (parent, tail) = os.path.split(parent)
 
     # ========================================================================
     # STORAGE TESTS
