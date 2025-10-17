@@ -246,8 +246,6 @@ async def submit_request(
 
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token, evaluator_name)
-    # print("Submitting payload to RAI service, url: %s" % url)
-    # print(payload)
 
     async with get_async_http_client_with_timeout() as client:
         http_response = await client.post(url, json=payload, headers=headers)
@@ -293,13 +291,9 @@ async def submit_request_onedp(
     headers = get_common_headers(token, evaluator_name)
     if scan_session_id:
         headers["x-ms-client-request-id"] = scan_session_id
-    # print("Submitting annotation payload to RAI service")
     response = client.evaluations.submit_annotation(payload, headers=headers)
-    # print(f"Submitting annotation payload to RAI service response: {response}")
     result = json.loads(response)
-    # print(f"json.loads successfully: {result}")
     operation_id = result["location"].split("/")[-1]
-    # print(f"Get operation_id successfully: {operation_id}")
     return operation_id
 
 
@@ -859,8 +853,6 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     ## calling rai service for annotation
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
-    # print("Submitting payload to RAI service, url: %s" % url)
-    # print(payload)
     async with get_async_http_client() as client:
         response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
             url, json=payload, headers=headers
