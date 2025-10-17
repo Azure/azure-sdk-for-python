@@ -155,27 +155,20 @@ endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
 api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
 # Create the transcription client
-client = TranscriptionClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(api_key)
-)
+client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 
 # Path to your audio file
 import pathlib
+
 audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
 
 # Open and read the audio file
 with open(audio_file_path, "rb") as audio_file:
     # Create transcription options
-    options = TranscriptionOptions(
-        locales=["en-US"]  # Specify the language
-    )
+    options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
     # Create the request content
-    request_content = TranscribeRequestContent(
-        options=options,
-        audio=audio_file
-    )
+    request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
     # Transcribe the audio
     result = client.transcribe(request_content)
@@ -187,9 +180,11 @@ with open(audio_file_path, "rb") as audio_file:
     if result.phrases:
         print("\nDetailed phrases:")
         for phrase in result.phrases:
-            print(f"  [{phrase.offset_milliseconds}ms - "
-                  f"{phrase.offset_milliseconds + phrase.duration_milliseconds}ms]: "
-                  f"{phrase.text}")
+            print(
+                f"  [{phrase.offset_milliseconds}ms - "
+                f"{phrase.offset_milliseconds + phrase.duration_milliseconds}ms]: "
+                f"{phrase.text}"
+            )
 ```
 
 <!-- END SNIPPET -->
@@ -208,24 +203,16 @@ endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
 api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
 # Create the transcription client
-client = TranscriptionClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(api_key)
-)
+client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
 
 # URL to your audio file (must be publicly accessible)
 audio_url = "https://example.com/path/to/audio.wav"
 
 # Create transcription options with audio URL
-options = TranscriptionOptions(
-    audio_url=audio_url,
-    locales=["en-US"]  # Specify the language
-)
+options = TranscriptionOptions(audio_url=audio_url, locales=["en-US"])  # Specify the language
 
 # Create the request content (no audio file needed when using audio_url)
-request_content = TranscribeRequestContent(
-    options=options
-)
+request_content = TranscribeRequestContent(options=options)
 
 # Transcribe the audio
 result = client.transcribe(request_content)
@@ -256,26 +243,19 @@ endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
 api_key = os.environ["AZURE_SPEECH_API_KEY"]
 
 # Create the transcription client
-async with TranscriptionClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(api_key)
-) as client:
+async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
     # Path to your audio file
     import pathlib
+
     audio_file_path = pathlib.Path(__file__).parent.parent / "assets" / "audio.wav"
 
     # Open and read the audio file
     with open(audio_file_path, "rb") as audio_file:
         # Create transcription options
-        options = TranscriptionOptions(
-            locales=["en-US"]  # Specify the language
-        )
+        options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
         # Create the request content
-        request_content = TranscribeRequestContent(
-            options=options,
-            audio=audio_file
-        )
+        request_content = TranscribeRequestContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = await client.transcribe(request_content)
@@ -287,9 +267,11 @@ async with TranscriptionClient(
         if result.phrases:
             print("\nDetailed phrases:")
             for phrase in result.phrases:
-                print(f"  [{phrase.offset_milliseconds}ms - "
-                      f"{phrase.offset_milliseconds + phrase.duration_milliseconds}ms]: "
-                      f"{phrase.text}")
+                print(
+                    f"  [{phrase.offset_milliseconds}ms - "
+                    f"{phrase.offset_milliseconds + phrase.duration_milliseconds}ms]: "
+                    f"{phrase.text}"
+                )
 ```
 
 <!-- END SNIPPET -->

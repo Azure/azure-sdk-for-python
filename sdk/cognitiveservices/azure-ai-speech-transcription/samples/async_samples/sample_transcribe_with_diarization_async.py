@@ -54,7 +54,7 @@ async def sample_transcribe_with_diarization_async():
             )
 
             # Create transcription options with diarization
-            options = TranscriptionOptions(locales=["en-US"], diarization=diarization_options)
+            options = TranscriptionOptions(locales=["en-US"], diarization_options=diarization_options)
 
             # Create the request content
             request_content = TranscribeRequestContent(options=options, audio=audio_file)

@@ -38,9 +38,9 @@ def patch_sdk():
         path_format_arguments = {
             "endpoint": self._config.endpoint.rstrip("/"),  # pylint: disable=protected-access
         }
-        request_copy.url = self._client.format_url(
+        request_copy.url = self._client.format_url(  # pylint: disable=protected-access
             request_copy.url, **path_format_arguments
-        )  # pylint: disable=protected-access
+        )
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore[no-any-return] # pylint: disable=protected-access
 
     # Only patch once even if patch_sdk is invoked multiple times
