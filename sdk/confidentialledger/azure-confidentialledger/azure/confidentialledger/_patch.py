@@ -14,7 +14,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
 from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
-from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
+from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient  # pylint: disable=import-error,no-name-in-module
 
 __all__: List[str] = [
     "ConfidentialLedgerCertificateCredential",
