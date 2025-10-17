@@ -28,9 +28,6 @@ class SecretProvider(_SecretProviderBase):
         if keyvault_identifier.source_id in self._secret_cache:
             _, _, value = self._secret_cache[keyvault_identifier.source_id]
             return value
-        if keyvault_identifier.source_id in self._secret_version_cache:
-            _, _, value = self._secret_version_cache[keyvault_identifier.source_id]
-            return value
 
         return await self.__get_secret_value(config.key, keyvault_identifier, vault_url)
 

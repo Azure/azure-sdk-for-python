@@ -110,7 +110,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
         key_vault_identifier, _ = secret_provider.resolve_keyvault_reference_base(config)
 
         # Add to cache
-        secret_provider._secret_version_cache[key_vault_identifier.source_id] = (
+        secret_provider._secret_cache[key_vault_identifier.source_id] = (
             key_vault_identifier,
             "test-key",
             "cached-secret-value",
@@ -162,7 +162,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
                 self.assertEqual(result, "secret-value")
                 mock_client.get_secret.assert_called_once_with(mock_id_instance.name, version=mock_id_instance.version)
                 # Verify the secret was cached
-                _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                _, _, value = secret_provider._secret_cache[TEST_SECRET_ID_VERSION]
                 self.assertEqual(value, "secret-value")
 
     async def test_resolve_keyvault_reference_with_new_client(self):
@@ -210,7 +210,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
                     # Verify the client was cached
                     self.assertEqual(secret_provider._secret_clients[vault_url], mock_client)
                     # Verify the secret was cached
-                    _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                    _, _, value = secret_provider._secret_cache[TEST_SECRET_ID_VERSION]
                     self.assertEqual(value, "new-secret-value")
 
     async def test_resolve_keyvault_reference_with_secret_resolver(self):
@@ -245,7 +245,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
                 self.assertEqual(result, "resolved-secret-value")
                 mock_resolver.assert_called_once_with(TEST_SECRET_ID_VERSION)
                 # Verify the secret was cached
-                _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                _, _, value = secret_provider._secret_cache[TEST_SECRET_ID_VERSION]
                 self.assertEqual(value, "resolved-secret-value")
 
     async def test_resolve_keyvault_reference_with_async_secret_resolver(self):
@@ -280,7 +280,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
                 # Verify the result
                 self.assertEqual(result, "async-resolved-secret-value")
                 # Verify the secret was cached
-                _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                _, _, value = secret_provider._secret_cache[TEST_SECRET_ID_VERSION]
                 self.assertEqual(value, "async-resolved-secret-value")
 
     async def test_resolve_keyvault_reference_with_client_and_resolver_fallback(self):
@@ -326,7 +326,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
                 mock_client.get_secret.assert_called_once_with(mock_id_instance.name, version=mock_id_instance.version)
                 mock_resolver.assert_called_once_with(TEST_SECRET_ID_VERSION)
                 # Verify the secret was cached
-                _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                _, _, value = secret_provider._secret_cache[TEST_SECRET_ID_VERSION]
                 self.assertEqual(value, "fallback-secret-value")
 
     async def test_resolve_keyvault_reference_no_client_no_resolver(self):
