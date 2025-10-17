@@ -149,9 +149,10 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     print_string += f"Routing duration: {route_duration} ms | "
     print_string += f"Request/response duration: {duration} ms | "
     print_string += f"Activity Id: {request.headers.get('x-ms-activity-id', 'N/A')} |"
-    print_string += f"Partition Id: {request.headers.get('x-ms-cosmos-internal-partition-id', 'N/A')} |"
-    print_string += f"Physical Id: {request.headers.get('x-ms-cosmos-physical-partition-id', 'N/A')} |"
+    print_string += f"Partition Id: {response.http_response.headers.get('x-ms-cosmos-internal-partition-id', 'N/A')} |"
+    print_string += f"Physical Id: {response.http_response.headers.get('x-ms-cosmos-physical-partition-id', 'N/A')} |"
     logger.info(print_string)
+    print(print_string)
 
     response = response.http_response
     headers = copy.copy(response.headers)
