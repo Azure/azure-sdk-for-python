@@ -621,7 +621,6 @@ class TestCrossPartitionQuery(unittest.TestCase):
     def _MockNextFunction(self):
         if self.count < len(self.payloads):
             item, result = self.get_mock_result(self.payloads, self.count)
-            item, result = self.get_mock_result(self.payloads, self.count)
             self.count += 1
             if item is not None:
                 return {'orderByItems': [{'item': item}], '_rid': 'fake_rid', 'payload': result}

@@ -126,15 +126,19 @@ async def query_items_with_continuation_token(container):
     print('The single items in the second page are {}'.format(second_page_items_with_continuation[0].get("id")))
 
 
-async def query_items_with_pagination(container):
+async def query_items_single_partition_with_pagination(container):
     print('\n1.5a Querying with Pagination - Demonstrating max_item_count and Counting Results\n')
     
     # max_item_count controls how many items are returned per page, not the total number of results
     # This is useful for controlling memory usage and processing items in batches
     max_items_per_page = 5
+
+    # Specify a partition key to query within a single partition
+    partition_key_value = "SalesOrder1"  # Or any partition key value you want
     
     query_iterable = container.query_items(
         query="SELECT * FROM c",
+        partition_key=partition_key_value,  # Query single partition
         max_item_count=max_items_per_page
     )
     
@@ -609,7 +613,7 @@ async def run_sample():
             await read_items(container)
             await query_items(container, 'SalesOrder1')
             await query_items_with_continuation_token(container)
-            await query_items_with_pagination(container)
+            await query_items_single_partition_with_pagination(container)
             await query_items_cross_partition_with_pagination(container)
             await replace_item(container, 'SalesOrder1')
             await replace_item_using_etags(container, 'SalesOrder1')

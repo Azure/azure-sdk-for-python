@@ -674,5 +674,4 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         await self.created_db.delete_container(created_collection.id)
 
 if __name__ == '__main__':
-
     unittest.main()
