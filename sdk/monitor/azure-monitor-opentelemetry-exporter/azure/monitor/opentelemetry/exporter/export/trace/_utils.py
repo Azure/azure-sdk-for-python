@@ -21,9 +21,6 @@ from opentelemetry.sdk.trace.sampling import (
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
 
-# pylint:disable=no-name-in-module
-from fixedint import Int32
-
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -342,12 +339,17 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
 
 def _get_DJB2_sample_score(trace_id_hex: str) -> float:
     # This algorithm uses 32bit integers
-    hash_value = Int32(_SAMPLING_HASH)
+    hash_value = _SAMPLING_HASH
     for char in trace_id_hex:
         hash_value = ((hash_value << 5) + hash_value) + ord(char)
+        # Manually handle 32-bit integer overflow
+        if hash_value > _INT32_MAX:
+            hash_value = ((hash_value - _INT32_MIN) % (_INT32_MAX - _INT32_MIN + 1)) + _INT32_MIN
+        elif hash_value < _INT32_MIN:
+            hash_value = _INT32_MAX - ((_INT32_MIN - hash_value - 1) % (_INT32_MAX - _INT32_MIN + 1))
 
     if hash_value == _INT32_MIN:
-        hash_value = int(_INT32_MAX)
+        hash_value = _INT32_MAX
     else:
         hash_value = abs(hash_value)
 

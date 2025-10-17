@@ -9,8 +9,6 @@ from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
-# pylint:disable=no-name-in-module
-from fixedint import Int32
 from azure.core import CaseInsensitiveEnumMeta
 
 
