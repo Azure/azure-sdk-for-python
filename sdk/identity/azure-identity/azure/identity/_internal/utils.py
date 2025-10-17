@@ -8,10 +8,12 @@ import platform
 import logging
 from contextvars import ContextVar
 from string import ascii_letters, digits
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+from dataclasses import dataclass, field
 
 from urllib.parse import urlparse
 
+import msal
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
 
@@ -19,10 +21,53 @@ within_credential_chain = ContextVar("within_credential_chain", default=False)
 within_dac = ContextVar("within_dac", default=False)
 
 _LOGGER = logging.getLogger(__name__)
+_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
 
 VALID_TENANT_ID_CHARACTERS = frozenset(ascii_letters + digits + "-.")
 VALID_SCOPE_CHARACTERS = frozenset(ascii_letters + digits + "_-.:/")
 VALID_SUBSCRIPTION_CHARACTERS = frozenset(ascii_letters + digits + "_-. ")
+
+
+@dataclass
+class CacheLogContext:  # pylint: disable=too-many-instance-attributes
+
+    credential_id: int = 0
+    class_name: str = ""
+    method_name: str = ""
+    method_start: int = 0
+    method_end: int = 0
+    scopes: List[str] = field(default_factory=list)
+    options: Dict[str, Any] = field(default_factory=dict)
+    cache_action: str = ""  # "hit", "miss", "refresh", "new_request"
+    token_source: str = ""  # "cache", "refresh", "new_token"
+    cache_details: Dict[str, Any] = field(default_factory=dict)
+    errors: List[str] = field(default_factory=list)
+
+    def add_detail(self, key: str, value: Any) -> None:
+        self.cache_details[key] = value
+
+    def add_error(self, error: str) -> None:
+        self.errors.append(error)
+
+    def log_final_state(self) -> None:
+        details_str = " | ".join(f"{k}: {v}" for k, v in self.cache_details.items()) if self.cache_details else ""
+        errors_str = f" | Errors: {' | '.join(self.errors)}" if self.errors else ""
+
+        _CACHE_LOGGER.info(
+            "[PID %s] %s.%s | INSTANCE_ID: %s | METHOD_START_MS: %s | METHOD_END_MS: %s | SUMMARY - Scopes: %s | Options: %s | Action: %s | Source: %s | %s%s",  # pylint: disable=line-too-long
+            os.getpid(),
+            self.class_name,
+            self.method_name,
+            self.credential_id,
+            self.method_start,
+            self.method_end,
+            self.scopes,
+            self.options,
+            self.cache_action,
+            self.token_source,
+            details_str,
+            errors_str,
+        )
 
 
 def normalize_authority(authority: str) -> str:
@@ -229,3 +274,32 @@ def is_wsl() -> bool:
 def encode_base64(s: str) -> str:
     encoded = base64.b64encode(s.encode("utf-8"))
     return encoded.decode("utf-8")
+
+
+def sanitize_dict(dictionary, sensitive_fields):
+    return {k: "********" if k in sensitive_fields else v for k, v in dictionary.items()}
+
+
+def log_cache_modify(func):
+    def wrapper(*args, **kwargs):
+        try:
+            if args[1] == msal.TokenCache.CredentialType.ACCESS_TOKEN:
+                # Log the key that will be generated for the token being cached
+                key = args[0].key_makers[msal.TokenCache.CredentialType.ACCESS_TOKEN](**args[2])
+                _CACHE_LOGGER.info(
+                    "[PID %s] MSAL adding to Cache ID: %s, Access Token Cache Key: %s, Cache entry: %s",
+                    os.getpid(),
+                    id(args[0]),
+                    key,
+                    sanitize_dict(args[2], sensitive_fields=["secret"]),
+                )
+        except Exception as ex:  # pylint: disable=broad-except
+            _CACHE_LOGGER.info("[PID %s] Error logging MSAL cache modify: %s", os.getpid(), ex)
+
+        # Call the original function and return its result
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+msal.TokenCache.modify = log_cache_modify(msal.TokenCache.modify)
