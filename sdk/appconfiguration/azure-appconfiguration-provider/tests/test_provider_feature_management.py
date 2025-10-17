@@ -31,7 +31,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @app_config_decorator
     def test_select_feature_flags(self, appconfiguration_connection_string):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        setup_configs(client, None)
+        setup_configs(client, None, None)
 
         client = load(
             connection_string=appconfiguration_connection_string,
