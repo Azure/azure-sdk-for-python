@@ -534,12 +534,12 @@ async def format_llm_response(
         "finish_reason": "",
         "model_id": "",
         "sample_input": "",
-        "sample_output": ""
+        "sample_output": "",
     }
 
     if not is_first_choice:
         to_ret["llm_output"] = response
-        return to_ret # we don't actually use this code path since streaming is not used, so set token counts to 0
+        return to_ret  # we don't actually use this code path since streaming is not used, so set token counts to 0
 
     is_json_format = isinstance(response_format, dict) and response_format.get("type") == "json_object"
     if isinstance(response, AsyncStream):
@@ -555,21 +555,25 @@ async def format_llm_response(
             response.usage.completion_tokens if response.usage and response.usage.completion_tokens else 0
         )
         total_token_count = response.usage.total_tokens if response.usage and response.usage.total_tokens else 0
-        finish_reason = response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
+        finish_reason = (
+            response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
+        )
         model_id = response.model if response.model else ""
-        sample_output_list = [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}] if (response.choices and response.choices[0].message.content
-                                                                                                                              and response.choices[0].message.role) else []
+        sample_output_list = (
+            [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}]
+            if (response.choices and response.choices[0].message.content and response.choices[0].message.role)
+            else []
+        )
         sample_output = json.dumps(sample_output_list)
         input_str = f"{json.dumps(inputs)}" if inputs else ""
         if inputs and len(inputs) > 0:
-            sample_input_json = []         
+            sample_input_json = []
             msg = ChatCompletionUserMessageParam(
                 role="user",
                 content=input_str,
             )
             sample_input_json.append(msg)
             sample_input = json.dumps(sample_input_json)
-
 
     # When calling function/tool, function_call/tool_call response will be returned as a field in message,
     # so we need return message directly. Otherwise, we only return content.
@@ -588,6 +592,7 @@ async def format_llm_response(
     to_ret["sample_input"] = sample_input
     to_ret["sample_output"] = sample_output
     return to_ret
+
 
 def openai_error_retryable(
     error: OpenAIError, retry: int, entity_retry: List[int], max_entity_retries: int
