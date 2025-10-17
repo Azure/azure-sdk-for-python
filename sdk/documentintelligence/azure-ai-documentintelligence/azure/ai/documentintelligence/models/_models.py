@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,15 +11,14 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import OperationKind
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AddressValue(_model_base.Model):
+class AddressValue(_Model):
     """Address field value.
 
     :ivar house_number: House or building number.
@@ -55,34 +54,46 @@ class AddressValue(_model_base.Model):
     :vartype level: str
     """
 
-    house_number: Optional[str] = rest_field(name="houseNumber")
+    house_number: Optional[str] = rest_field(
+        name="houseNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """House or building number."""
-    po_box: Optional[str] = rest_field(name="poBox")
+    po_box: Optional[str] = rest_field(name="poBox", visibility=["read", "create", "update", "delete", "query"])
     """Post office box number."""
-    road: Optional[str] = rest_field()
+    road: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Street name."""
-    city: Optional[str] = rest_field()
+    city: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of city, town, village, etc."""
-    state: Optional[str] = rest_field()
+    state: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """First-level administrative division."""
-    postal_code: Optional[str] = rest_field(name="postalCode")
+    postal_code: Optional[str] = rest_field(
+        name="postalCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Postal code used for mail sorting."""
-    country_region: Optional[str] = rest_field(name="countryRegion")
+    country_region: Optional[str] = rest_field(
+        name="countryRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Country/region."""
-    street_address: Optional[str] = rest_field(name="streetAddress")
+    street_address: Optional[str] = rest_field(
+        name="streetAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Street-level address, excluding city, state, countryRegion, and postalCode."""
-    unit: Optional[str] = rest_field()
+    unit: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Apartment or office number."""
-    city_district: Optional[str] = rest_field(name="cityDistrict")
+    city_district: Optional[str] = rest_field(
+        name="cityDistrict", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Districts or boroughs within a city, such as Brooklyn in New York City or City
      of Westminster in London."""
-    state_district: Optional[str] = rest_field(name="stateDistrict")
+    state_district: Optional[str] = rest_field(
+        name="stateDistrict", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Second-level administrative division used in certain locales."""
-    suburb: Optional[str] = rest_field()
+    suburb: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unofficial neighborhood name, like Chinatown."""
-    house: Optional[str] = rest_field()
+    house: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Build name, such as World Trade Center."""
-    level: Optional[str] = rest_field()
+    level: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Floor number, such as 3F."""
 
     @overload
@@ -116,10 +127,8 @@ class AddressValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeBatchDocumentsRequest(_model_base.Model):
+class AnalyzeBatchDocumentsRequest(_Model):
     """Batch document analysis parameters.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar azure_blob_source: Azure Blob Storage location containing the batch documents.  Either
      azureBlobSource or azureBlobFileListSource must be specified.
@@ -138,19 +147,27 @@ class AnalyzeBatchDocumentsRequest(_model_base.Model):
     :vartype overwrite_existing: bool
     """
 
-    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(name="azureBlobSource")
+    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(
+        name="azureBlobSource", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure Blob Storage location containing the batch documents.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
     azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = rest_field(
-        name="azureBlobFileListSource"
+        name="azureBlobFileListSource", visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure Blob Storage file list specifying the batch documents.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
-    result_container_url: str = rest_field(name="resultContainerUrl")
+    result_container_url: str = rest_field(
+        name="resultContainerUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure Blob Storage container URL where analyze result files will be stored. Required."""
-    result_prefix: Optional[str] = rest_field(name="resultPrefix")
+    result_prefix: Optional[str] = rest_field(
+        name="resultPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Blob name prefix of result files."""
-    overwrite_existing: Optional[bool] = rest_field(name="overwriteExisting")
+    overwrite_existing: Optional[bool] = rest_field(
+        name="overwriteExisting", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Overwrite existing analyze result files?."""
 
     @overload
@@ -175,9 +192,8 @@ class AnalyzeBatchDocumentsRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeBatchOperation(_model_base.Model):
+class AnalyzeBatchOperation(_Model):
     """Status and result of the analyze batch operation.
-
 
     :ivar result_id: Analyze batch operation result ID.
     :vartype result_id: str
@@ -197,20 +213,32 @@ class AnalyzeBatchOperation(_model_base.Model):
     :vartype result: ~azure.ai.documentintelligence.models.AnalyzeBatchResult
     """
 
-    result_id: Optional[str] = rest_field(name="resultId")
+    result_id: Optional[str] = rest_field(name="resultId", visibility=["read", "create", "update", "delete", "query"])
     """Analyze batch operation result ID."""
-    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
+    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation status.  notStarted, running, succeeded, or failed. Required. Known values are:
      \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    created_date_time: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date and time (UTC) when the operation was submitted. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    last_updated_date_time: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date and time (UTC) when the status was last updated. Required."""
-    percent_completed: Optional[int] = rest_field(name="percentCompleted")
+    percent_completed: Optional[int] = rest_field(
+        name="percentCompleted", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation progress (0-100)."""
-    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
+    error: Optional["_models.DocumentIntelligenceError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encountered error during batch document analysis."""
-    result: Optional["_models.AnalyzeBatchResult"] = rest_field()
+    result: Optional["_models.AnalyzeBatchResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Batch document analysis result."""
 
     @overload
@@ -237,9 +265,8 @@ class AnalyzeBatchOperation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeBatchOperationDetail(_model_base.Model):
+class AnalyzeBatchOperationDetail(_Model):
     """Operation detail for a document in a batch analysis.
-
 
     :ivar status: Analyze status.  succeeded, failed, or skipped. Required. Known values are:
      "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
@@ -253,14 +280,18 @@ class AnalyzeBatchOperationDetail(_model_base.Model):
     :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     """
 
-    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
+    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Analyze status.  succeeded, failed, or skipped. Required. Known values are: \"notStarted\",
      \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
-    source_url: str = rest_field(name="sourceUrl")
+    source_url: str = rest_field(name="sourceUrl", visibility=["read", "create", "update", "delete", "query"])
     """URL of the source document. Required."""
-    result_url: Optional[str] = rest_field(name="resultUrl")
+    result_url: Optional[str] = rest_field(name="resultUrl", visibility=["read", "create", "update", "delete", "query"])
     """URL of the analyze result JSON."""
-    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
+    error: Optional["_models.DocumentIntelligenceError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encountered error."""
 
     @overload
@@ -284,9 +315,8 @@ class AnalyzeBatchOperationDetail(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeBatchResult(_model_base.Model):
+class AnalyzeBatchResult(_Model):
     """Batch document analysis result.
-
 
     :ivar succeeded_count: Number of documents that completed with status succeeded. Required.
     :vartype succeeded_count: int
@@ -298,13 +328,15 @@ class AnalyzeBatchResult(_model_base.Model):
     :vartype details: list[~azure.ai.documentintelligence.models.AnalyzeBatchOperationDetail]
     """
 
-    succeeded_count: int = rest_field(name="succeededCount")
+    succeeded_count: int = rest_field(name="succeededCount", visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that completed with status succeeded. Required."""
-    failed_count: int = rest_field(name="failedCount")
+    failed_count: int = rest_field(name="failedCount", visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that completed with status failed. Required."""
-    skipped_count: int = rest_field(name="skippedCount")
+    skipped_count: int = rest_field(name="skippedCount", visibility=["read", "create", "update", "delete", "query"])
     """Number of documents that completed with status skipped. Required."""
-    details: Optional[List["_models.AnalyzeBatchOperationDetail"]] = rest_field()
+    details: Optional[List["_models.AnalyzeBatchOperationDetail"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation detail for each document in the batch."""
 
     @overload
@@ -328,9 +360,8 @@ class AnalyzeBatchResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzedDocument(_model_base.Model):
+class AnalyzedDocument(_Model):
     """An object describing the location and semantic content of a document.
-
 
     :ivar doc_type: Document type. Required.
     :vartype doc_type: str
@@ -344,15 +375,19 @@ class AnalyzedDocument(_model_base.Model):
     :vartype confidence: float
     """
 
-    doc_type: str = rest_field(name="docType")
+    doc_type: str = rest_field(name="docType", visibility=["read", "create", "update", "delete", "query"])
     """Document type. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the document."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the document in the reading order concatenated content. Required."""
-    fields: Optional[Dict[str, "_models.DocumentField"]] = rest_field()
+    fields: Optional[Dict[str, "_models.DocumentField"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Dictionary of named field values."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly extracting the document. Required."""
 
     @overload
@@ -377,7 +412,7 @@ class AnalyzedDocument(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeDocumentRequest(_model_base.Model):
+class AnalyzeDocumentRequest(_Model):
     """Document analysis parameters.
 
     :ivar url_source: Document URL to analyze.  Either urlSource or base64Source must be specified.
@@ -388,9 +423,11 @@ class AnalyzeDocumentRequest(_model_base.Model):
     :vartype bytes_source: bytes
     """
 
-    url_source: Optional[str] = rest_field(name="urlSource")
+    url_source: Optional[str] = rest_field(name="urlSource", visibility=["read", "create", "update", "delete", "query"])
     """Document URL to analyze.  Either urlSource or base64Source must be specified."""
-    bytes_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
+    bytes_source: Optional[bytes] = rest_field(
+        name="base64Source", visibility=["read", "create", "update", "delete", "query"], format="base64"
+    )
     """Base64 encoding of the document to analyze.  Either urlSource or base64Source
      must be specified."""
 
@@ -413,9 +450,8 @@ class AnalyzeDocumentRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeResult(_model_base.Model):
+class AnalyzeResult(_Model):
     """Document analysis result.
-
 
     :ivar api_version: API version used to produce this result. Required.
     :vartype api_version: str
@@ -452,37 +488,59 @@ class AnalyzeResult(_model_base.Model):
     :vartype warnings: list[~azure.ai.documentintelligence.models.DocumentIntelligenceWarning]
     """
 
-    api_version: str = rest_field(name="apiVersion")
+    api_version: str = rest_field(name="apiVersion", visibility=["read", "create", "update", "delete", "query"])
     """API version used to produce this result. Required."""
-    model_id: str = rest_field(name="modelId")
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
     """Document model ID used to produce this result. Required."""
-    string_index_type: Union[str, "_models.StringIndexType"] = rest_field(name="stringIndexType")
+    string_index_type: Union[str, "_models.StringIndexType"] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Method used to compute string offset and length. Required. Known values are: \"textElements\",
      \"unicodeCodePoint\", and \"utf16CodeUnit\"."""
-    content_format: Optional[Union[str, "_models.DocumentContentFormat"]] = rest_field(name="contentFormat")
+    content_format: Optional[Union[str, "_models.DocumentContentFormat"]] = rest_field(
+        name="contentFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Format of the analyze result top-level content. Known values are: \"text\" and \"markdown\"."""
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Concatenate string representation of all textual and visual elements in reading
      order. Required."""
-    pages: List["_models.DocumentPage"] = rest_field()
+    pages: List["_models.DocumentPage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Analyzed pages. Required."""
-    paragraphs: Optional[List["_models.DocumentParagraph"]] = rest_field()
+    paragraphs: Optional[List["_models.DocumentParagraph"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted paragraphs."""
-    tables: Optional[List["_models.DocumentTable"]] = rest_field()
+    tables: Optional[List["_models.DocumentTable"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted tables."""
-    figures: Optional[List["_models.DocumentFigure"]] = rest_field()
+    figures: Optional[List["_models.DocumentFigure"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted figures."""
-    sections: Optional[List["_models.DocumentSection"]] = rest_field()
+    sections: Optional[List["_models.DocumentSection"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted sections."""
-    key_value_pairs: Optional[List["_models.DocumentKeyValuePair"]] = rest_field(name="keyValuePairs")
+    key_value_pairs: Optional[List["_models.DocumentKeyValuePair"]] = rest_field(
+        name="keyValuePairs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted key-value pairs."""
-    styles: Optional[List["_models.DocumentStyle"]] = rest_field()
+    styles: Optional[List["_models.DocumentStyle"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted font styles."""
-    languages: Optional[List["_models.DocumentLanguage"]] = rest_field()
+    languages: Optional[List["_models.DocumentLanguage"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Detected languages."""
-    documents: Optional[List["_models.AnalyzedDocument"]] = rest_field()
+    documents: Optional[List["_models.AnalyzedDocument"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted documents."""
-    warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = rest_field()
+    warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of warnings encountered."""
 
     @overload
@@ -517,10 +575,8 @@ class AnalyzeResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizeClassifierCopyRequest(_model_base.Model):
+class AuthorizeClassifierCopyRequest(_Model):
     """Request body to authorize document classifier copy.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar classifier_id: Unique document classifier name. Required.
     :vartype classifier_id: str
@@ -530,11 +586,11 @@ class AuthorizeClassifierCopyRequest(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    classifier_id: str = rest_field(name="classifierId")
+    classifier_id: str = rest_field(name="classifierId", visibility=["read", "create", "update", "delete", "query"])
     """Unique document classifier name. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document classifier description."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of key-value tag attributes associated with the document classifier."""
 
     @overload
@@ -557,10 +613,8 @@ class AuthorizeClassifierCopyRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizeCopyRequest(_model_base.Model):
+class AuthorizeCopyRequest(_Model):
     """Request body to authorize document model copy.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -570,11 +624,11 @@ class AuthorizeCopyRequest(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    model_id: str = rest_field(name="modelId")
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
     """Unique document model name. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document model description."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of key-value tag attributes associated with the document model."""
 
     @overload
@@ -597,9 +651,8 @@ class AuthorizeCopyRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobContentSource(_model_base.Model):
+class AzureBlobContentSource(_Model):
     """Azure Blob Storage content.
-
 
     :ivar container_url: Azure Blob Storage container URL. Required.
     :vartype container_url: str
@@ -607,9 +660,9 @@ class AzureBlobContentSource(_model_base.Model):
     :vartype prefix: str
     """
 
-    container_url: str = rest_field(name="containerUrl")
+    container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
     """Azure Blob Storage container URL. Required."""
-    prefix: Optional[str] = rest_field()
+    prefix: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Blob name prefix."""
 
     @overload
@@ -631,9 +684,8 @@ class AzureBlobContentSource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobFileListContentSource(_model_base.Model):
+class AzureBlobFileListContentSource(_Model):
     """File list in Azure Blob Storage.
-
 
     :ivar container_url: Azure Blob Storage container URL. Required.
     :vartype container_url: str
@@ -642,9 +694,9 @@ class AzureBlobFileListContentSource(_model_base.Model):
     :vartype file_list: str
     """
 
-    container_url: str = rest_field(name="containerUrl")
+    container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
     """Azure Blob Storage container URL. Required."""
-    file_list: str = rest_field(name="fileList")
+    file_list: str = rest_field(name="fileList", visibility=["read", "create", "update", "delete", "query"])
     """Path to a JSONL file within the container specifying a subset of documents. Required."""
 
     @overload
@@ -666,9 +718,8 @@ class AzureBlobFileListContentSource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BoundingRegion(_model_base.Model):
+class BoundingRegion(_Model):
     """Bounding polygon on a specific page of the input.
-
 
     :ivar page_number: 1-based page number of page containing the bounding region. Required.
     :vartype page_number: int
@@ -679,9 +730,9 @@ class BoundingRegion(_model_base.Model):
     :vartype polygon: list[float]
     """
 
-    page_number: int = rest_field(name="pageNumber")
+    page_number: int = rest_field(name="pageNumber", visibility=["read", "create", "update", "delete", "query"])
     """1-based page number of page containing the bounding region. Required."""
-    polygon: List[float] = rest_field()
+    polygon: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounding polygon on the page, or the entire page if not specified.
      Coordinates specified relative to the top-left of the page. The numbers
      represent the x, y values of the polygon vertices, clockwise from the left
@@ -706,10 +757,8 @@ class BoundingRegion(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BuildDocumentClassifierRequest(_model_base.Model):
+class BuildDocumentClassifierRequest(_Model):
     """Request body to build a new custom document classifier.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar classifier_id: Unique document classifier name. Required.
     :vartype classifier_id: str
@@ -724,15 +773,21 @@ class BuildDocumentClassifierRequest(_model_base.Model):
     :vartype allow_overwrite: bool
     """
 
-    classifier_id: str = rest_field(name="classifierId")
+    classifier_id: str = rest_field(name="classifierId", visibility=["read", "create", "update", "delete", "query"])
     """Unique document classifier name. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document classifier description."""
-    base_classifier_id: Optional[str] = rest_field(name="baseClassifierId")
+    base_classifier_id: Optional[str] = rest_field(
+        name="baseClassifierId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Base classifierId on top of which to train the classifier."""
-    doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"] = rest_field(name="docTypes")
+    doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"] = rest_field(
+        name="docTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of document types to classify against. Required."""
-    allow_overwrite: Optional[bool] = rest_field(name="allowOverwrite")
+    allow_overwrite: Optional[bool] = rest_field(
+        name="allowOverwrite", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Allow overwriting an existing classifier with the same name."""
 
     @overload
@@ -757,10 +812,8 @@ class BuildDocumentClassifierRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BuildDocumentModelRequest(_model_base.Model):
+class BuildDocumentModelRequest(_Model):
     """Request body to build a new custom document model.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -786,25 +839,33 @@ class BuildDocumentModelRequest(_model_base.Model):
     :vartype allow_overwrite: bool
     """
 
-    model_id: str = rest_field(name="modelId")
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
     """Unique document model name. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document model description."""
-    build_mode: Union[str, "_models.DocumentBuildMode"] = rest_field(name="buildMode")
+    build_mode: Union[str, "_models.DocumentBuildMode"] = rest_field(
+        name="buildMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Custom document model build mode. Required. Known values are: \"template\" and \"neural\"."""
-    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(name="azureBlobSource")
+    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(
+        name="azureBlobSource", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure Blob Storage location containing the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
     azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = rest_field(
-        name="azureBlobFileListSource"
+        name="azureBlobFileListSource", visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure Blob Storage file list specifying the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of key-value tag attributes associated with the document model."""
-    max_training_hours: Optional[float] = rest_field(name="maxTrainingHours")
+    max_training_hours: Optional[float] = rest_field(
+        name="maxTrainingHours", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Max number of V100-equivalent GPU hours to use for model training.  Default=0.5."""
-    allow_overwrite: Optional[bool] = rest_field(name="allowOverwrite")
+    allow_overwrite: Optional[bool] = rest_field(
+        name="allowOverwrite", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Allow overwriting an existing model with the same name."""
 
     @overload
@@ -832,10 +893,9 @@ class BuildDocumentModelRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassifierCopyAuthorization(_model_base.Model):
+class ClassifierCopyAuthorization(_Model):
     """Authorization to copy a document classifier to the specified target resource and
     classifierId.
-
 
     :ivar target_resource_id: ID of the target Azure resource where the document classifier should
      be copied to. Required.
@@ -855,18 +915,28 @@ class ClassifierCopyAuthorization(_model_base.Model):
     :vartype expiration_date_time: ~datetime.datetime
     """
 
-    target_resource_id: str = rest_field(name="targetResourceId")
+    target_resource_id: str = rest_field(
+        name="targetResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ID of the target Azure resource where the document classifier should be copied to. Required."""
-    target_resource_region: str = rest_field(name="targetResourceRegion")
+    target_resource_region: str = rest_field(
+        name="targetResourceRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Location of the target Azure resource where the document classifier should be copied
      to. Required."""
-    target_classifier_id: str = rest_field(name="targetClassifierId")
+    target_classifier_id: str = rest_field(
+        name="targetClassifierId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identifier of the target document classifier. Required."""
-    target_classifier_location: str = rest_field(name="targetClassifierLocation")
+    target_classifier_location: str = rest_field(
+        name="targetClassifierLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
     """URL of the copied document classifier in the target account. Required."""
-    access_token: str = rest_field(name="accessToken")
+    access_token: str = rest_field(name="accessToken", visibility=["read", "create", "update", "delete", "query"])
     """Token used to authorize the request. Required."""
-    expiration_date_time: datetime.datetime = rest_field(name="expirationDateTime", format="rfc3339")
+    expiration_date_time: datetime.datetime = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date/time when the access token expires. Required."""
 
     @overload
@@ -892,7 +962,7 @@ class ClassifierCopyAuthorization(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassifierDocumentTypeDetails(_model_base.Model):
+class ClassifierDocumentTypeDetails(_Model):
     """Classifier document type info.
 
     :ivar source_kind: Type of training data source. Known values are: "url", "base64",
@@ -911,15 +981,19 @@ class ClassifierDocumentTypeDetails(_model_base.Model):
      ~azure.ai.documentintelligence.models.AzureBlobFileListContentSource
     """
 
-    source_kind: Optional[Union[str, "_models.ContentSourceKind"]] = rest_field(name="sourceKind")
+    source_kind: Optional[Union[str, "_models.ContentSourceKind"]] = rest_field(
+        name="sourceKind", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Type of training data source. Known values are: \"url\", \"base64\", \"azureBlob\", and
      \"azureBlobFileList\"."""
-    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(name="azureBlobSource")
+    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(
+        name="azureBlobSource", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Azure Blob Storage location containing the training data for a classifier
      document type.  Either azureBlobSource or azureBlobFileListSource must be
      specified."""
     azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = rest_field(
-        name="azureBlobFileListSource"
+        name="azureBlobFileListSource", visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure Blob Storage file list specifying the training data for a classifier
      document type.  Either azureBlobSource or azureBlobFileListSource must be
@@ -945,7 +1019,7 @@ class ClassifierDocumentTypeDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassifyDocumentRequest(_model_base.Model):
+class ClassifyDocumentRequest(_Model):
     """Document classification parameters.
 
     :ivar url_source: Document URL to classify.  Either urlSource or base64Source must be
@@ -957,9 +1031,11 @@ class ClassifyDocumentRequest(_model_base.Model):
     :vartype bytes_source: bytes
     """
 
-    url_source: Optional[str] = rest_field(name="urlSource")
+    url_source: Optional[str] = rest_field(name="urlSource", visibility=["read", "create", "update", "delete", "query"])
     """Document URL to classify.  Either urlSource or base64Source must be specified."""
-    bytes_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
+    bytes_source: Optional[bytes] = rest_field(
+        name="base64Source", visibility=["read", "create", "update", "delete", "query"], format="base64"
+    )
     """Base64 encoding of the document to classify.  Either urlSource or base64Source
      must be specified."""
 
@@ -982,10 +1058,8 @@ class ClassifyDocumentRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ComposeDocumentModelRequest(_model_base.Model):
+class ComposeDocumentModelRequest(_Model):
     """Request body to create a composed document model from component document models.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -1002,17 +1076,21 @@ class ComposeDocumentModelRequest(_model_base.Model):
     :vartype tags: dict[str, str]
     """
 
-    model_id: str = rest_field(name="modelId")
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
     """Unique document model name. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document model description."""
-    classifier_id: str = rest_field(name="classifierId")
+    classifier_id: str = rest_field(name="classifierId", visibility=["read", "create", "update", "delete", "query"])
     """Custom classifier to split and classify the input file. Required."""
-    split: Optional[Union[str, "_models.SplitMode"]] = rest_field()
+    split: Optional[Union[str, "_models.SplitMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """File splitting behavior. Known values are: \"auto\", \"none\", and \"perPage\"."""
-    doc_types: Dict[str, "_models.DocumentTypeDetails"] = rest_field(name="docTypes")
+    doc_types: Dict[str, "_models.DocumentTypeDetails"] = rest_field(
+        name="docTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Dictionary mapping supported docTypes to the corresponding document models. Required."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of key-value tag attributes associated with the document model."""
 
     @overload
@@ -1038,9 +1116,8 @@ class ComposeDocumentModelRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CurrencyValue(_model_base.Model):
+class CurrencyValue(_Model):
     """Currency field value.
-
 
     :ivar amount: Currency amount. Required.
     :vartype amount: float
@@ -1050,11 +1127,15 @@ class CurrencyValue(_model_base.Model):
     :vartype currency_code: str
     """
 
-    amount: float = rest_field()
+    amount: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Currency amount. Required."""
-    currency_symbol: Optional[str] = rest_field(name="currencySymbol")
+    currency_symbol: Optional[str] = rest_field(
+        name="currencySymbol", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Currency symbol label, if any."""
-    currency_code: Optional[str] = rest_field(name="currencyCode")
+    currency_code: Optional[str] = rest_field(
+        name="currencyCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Resolved currency code (ISO 4217), if any."""
 
     @overload
@@ -1077,9 +1158,8 @@ class CurrencyValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDocumentModelsDetails(_model_base.Model):
+class CustomDocumentModelsDetails(_Model):
     """Details regarding custom document models.
-
 
     :ivar count: Number of custom document models in the current resource. Required.
     :vartype count: int
@@ -1088,9 +1168,9 @@ class CustomDocumentModelsDetails(_model_base.Model):
     :vartype limit: int
     """
 
-    count: int = rest_field()
+    count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of custom document models in the current resource. Required."""
-    limit: int = rest_field()
+    limit: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of custom document models supported in the current resource. Required."""
 
     @overload
@@ -1112,9 +1192,8 @@ class CustomDocumentModelsDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentBarcode(_model_base.Model):
+class DocumentBarcode(_Model):
     """A barcode object.
-
 
     :ivar kind: Barcode kind. Required. Known values are: "QRCode", "PDF417", "UPCA", "UPCE",
      "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
@@ -1133,20 +1212,22 @@ class DocumentBarcode(_model_base.Model):
     :vartype confidence: float
     """
 
-    kind: Union[str, "_models.DocumentBarcodeKind"] = rest_field()
+    kind: Union[str, "_models.DocumentBarcodeKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Barcode kind. Required. Known values are: \"QRCode\", \"PDF417\", \"UPCA\", \"UPCE\",
      \"Code39\", \"Code128\", \"EAN8\", \"EAN13\", \"DataBar\", \"Code93\", \"Codabar\",
      \"DataBarExpanded\", \"ITF\", \"MicroQRCode\", \"Aztec\", \"DataMatrix\", and \"MaxiCode\"."""
-    value: str = rest_field()
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Barcode value. Required."""
-    polygon: Optional[List[float]] = rest_field()
+    polygon: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounding polygon of the barcode, with coordinates specified relative to the
      top-left of the page. The numbers represent the x, y values of the polygon
      vertices, clockwise from the left (-180 degrees inclusive) relative to the
      element orientation."""
-    span: "_models.DocumentSpan" = rest_field()
+    span: "_models.DocumentSpan" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the barcode in the reading order concatenated content. Required."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly extracting the barcode. Required."""
 
     @overload
@@ -1171,9 +1252,8 @@ class DocumentBarcode(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentCaption(_model_base.Model):
+class DocumentCaption(_Model):
     """A caption object describing a table or figure.
-
 
     :ivar content: Content of the caption. Required.
     :vartype content: str
@@ -1185,13 +1265,15 @@ class DocumentCaption(_model_base.Model):
     :vartype elements: list[str]
     """
 
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Content of the caption. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the caption."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the caption in the reading order concatenated content. Required."""
-    elements: Optional[List[str]] = rest_field()
+    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the caption."""
 
     @overload
@@ -1215,14 +1297,13 @@ class DocumentCaption(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentIntelligenceOperationDetails(_model_base.Model):
+class DocumentIntelligenceOperationDetails(_Model):
     """Operation info.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     DocumentClassifierBuildOperationDetails, DocumentClassifierCopyToOperationDetails,
     DocumentModelBuildOperationDetails, DocumentModelComposeOperationDetails,
     DocumentModelCopyToOperationDetails
-
 
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
@@ -1250,29 +1331,43 @@ class DocumentIntelligenceOperationDetails(_model_base.Model):
     :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     operation_id: str = rest_field(name="operationId", visibility=["read", "create"])
     """Operation ID. Required."""
-    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
+    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation status.  notStarted, running, completed, or failed. Required. Known values are:
      \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
-    percent_completed: Optional[int] = rest_field(name="percentCompleted")
+    percent_completed: Optional[int] = rest_field(
+        name="percentCompleted", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation progress (0-100)."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    created_date_time: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date and time (UTC) when the operation was created. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    last_updated_date_time: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date and time (UTC) when the status was last updated. Required."""
-    kind: str = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of operation. Required. Known values are: \"documentModelBuild\",
      \"documentModelCompose\", \"documentModelCopyTo\", \"documentClassifierCopyTo\", and
      \"documentClassifierBuild\"."""
-    resource_location: str = rest_field(name="resourceLocation")
+    resource_location: str = rest_field(
+        name="resourceLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
     """URL of the resource targeted by this operation. Required."""
-    api_version: Optional[str] = rest_field(name="apiVersion")
+    api_version: Optional[str] = rest_field(
+        name="apiVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """API version used to create this operation."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of key-value tag attributes associated with the document model."""
-    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
+    error: Optional["_models.DocumentIntelligenceError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encountered error."""
 
     @overload
@@ -1307,7 +1402,6 @@ class DocumentClassifierBuildOperationDetails(
 ):
     """Get Operation response object.
 
-
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
@@ -1334,9 +1428,11 @@ class DocumentClassifierBuildOperationDetails(
     :vartype kind: str or ~azure.ai.documentintelligence.models.DOCUMENT_CLASSIFIER_BUILD
     """
 
-    result: Optional["_models.DocumentClassifierDetails"] = rest_field()
+    result: Optional["_models.DocumentClassifierDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation result upon success."""
-    kind: Literal[OperationKind.DOCUMENT_CLASSIFIER_BUILD] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[OperationKind.DOCUMENT_CLASSIFIER_BUILD] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of operation. Required. Build a new custom classifier model."""
 
     @overload
@@ -1371,7 +1467,6 @@ class DocumentClassifierCopyToOperationDetails(
 ):
     """Get Operation response object.
 
-
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
@@ -1400,9 +1495,11 @@ class DocumentClassifierCopyToOperationDetails(
     :vartype kind: str or ~azure.ai.documentintelligence.models.DOCUMENT_CLASSIFIER_COPY_TO
     """
 
-    result: Optional["_models.DocumentClassifierDetails"] = rest_field()
+    result: Optional["_models.DocumentClassifierDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation result upon success."""
-    kind: Literal[OperationKind.DOCUMENT_CLASSIFIER_COPY_TO] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[OperationKind.DOCUMENT_CLASSIFIER_COPY_TO] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of operation. Required. Copy an existing document classifier to potentially a different
      resource, region, or
      subscription."""
@@ -1434,11 +1531,8 @@ class DocumentClassifierCopyToOperationDetails(
         super().__init__(*args, kind=OperationKind.DOCUMENT_CLASSIFIER_COPY_TO, **kwargs)
 
 
-class DocumentClassifierDetails(_model_base.Model):
+class DocumentClassifierDetails(_Model):
     """Document classifier info.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar classifier_id: Unique document classifier name. Required.
     :vartype classifier_id: str
@@ -1464,23 +1558,33 @@ class DocumentClassifierDetails(_model_base.Model):
 
     classifier_id: str = rest_field(name="classifierId", visibility=["read", "create"])
     """Unique document classifier name. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document classifier description."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    created_date_time: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date and time (UTC) when the document classifier was created. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    expiration_date_time: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date and time (UTC) when the document classifier will expire."""
     modified_date_time: Optional[datetime.datetime] = rest_field(
         name="modifiedDateTime", visibility=["read"], format="rfc3339"
     )
     """Date and time (UTC) when the document model was last modified."""
-    api_version: str = rest_field(name="apiVersion")
+    api_version: str = rest_field(name="apiVersion", visibility=["read", "create", "update", "delete", "query"])
     """API version used to create this document classifier. Required."""
-    base_classifier_id: Optional[str] = rest_field(name="baseClassifierId")
+    base_classifier_id: Optional[str] = rest_field(
+        name="baseClassifierId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Base classifierId on top of which the classifier was trained."""
-    doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"] = rest_field(name="docTypes")
+    doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"] = rest_field(
+        name="docTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of document types to classify against. Required."""
-    warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = rest_field()
+    warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of warnings encountered while building the classifier."""
 
     @overload
@@ -1508,9 +1612,8 @@ class DocumentClassifierDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentField(_model_base.Model):
+class DocumentField(_Model):
     """An object representing the content and location of a field value.
-
 
     :ivar type: Data type of the field value. Required. Known values are: "string", "date", "time",
      "phoneNumber", "number", "integer", "selectionMark", "countryRegion", "signature", "array",
@@ -1558,49 +1661,83 @@ class DocumentField(_model_base.Model):
     :vartype confidence: float
     """
 
-    type: Union[str, "_models.DocumentFieldType"] = rest_field()
+    type: Union[str, "_models.DocumentFieldType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Data type of the field value. Required. Known values are: \"string\", \"date\", \"time\",
      \"phoneNumber\", \"number\", \"integer\", \"selectionMark\", \"countryRegion\", \"signature\",
      \"array\", \"object\", \"currency\", \"address\", \"boolean\", and \"selectionGroup\"."""
-    value_string: Optional[str] = rest_field(name="valueString")
+    value_string: Optional[str] = rest_field(
+        name="valueString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """String value."""
-    value_date: Optional[datetime.date] = rest_field(name="valueDate")
+    value_date: Optional[datetime.date] = rest_field(
+        name="valueDate", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Date value in YYYY-MM-DD format (ISO 8601)."""
-    value_time: Optional[datetime.time] = rest_field(name="valueTime")
+    value_time: Optional[datetime.time] = rest_field(
+        name="valueTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Time value in hh:mm:ss format (ISO 8601)."""
-    value_phone_number: Optional[str] = rest_field(name="valuePhoneNumber")
+    value_phone_number: Optional[str] = rest_field(
+        name="valuePhoneNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Phone number value in E.164 format (ex. +19876543210)."""
-    value_number: Optional[float] = rest_field(name="valueNumber")
+    value_number: Optional[float] = rest_field(
+        name="valueNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Floating point value."""
-    value_integer: Optional[int] = rest_field(name="valueInteger")
+    value_integer: Optional[int] = rest_field(
+        name="valueInteger", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Integer value."""
     value_selection_mark: Optional[Union[str, "_models.DocumentSelectionMarkState"]] = rest_field(
-        name="valueSelectionMark"
+        name="valueSelectionMark", visibility=["read", "create", "update", "delete", "query"]
     )
     """Selection mark value. Known values are: \"selected\" and \"unselected\"."""
-    value_signature: Optional[Union[str, "_models.DocumentSignatureType"]] = rest_field(name="valueSignature")
+    value_signature: Optional[Union[str, "_models.DocumentSignatureType"]] = rest_field(
+        name="valueSignature", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Presence of signature. Known values are: \"signed\" and \"unsigned\"."""
-    value_country_region: Optional[str] = rest_field(name="valueCountryRegion")
+    value_country_region: Optional[str] = rest_field(
+        name="valueCountryRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """3-letter country code value (ISO 3166-1 alpha-3)."""
-    value_array: Optional[List["_models.DocumentField"]] = rest_field(name="valueArray")
+    value_array: Optional[List["_models.DocumentField"]] = rest_field(
+        name="valueArray", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of field values."""
-    value_object: Optional[Dict[str, "_models.DocumentField"]] = rest_field(name="valueObject")
+    value_object: Optional[Dict[str, "_models.DocumentField"]] = rest_field(
+        name="valueObject", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Dictionary of named field values."""
-    value_currency: Optional["_models.CurrencyValue"] = rest_field(name="valueCurrency")
+    value_currency: Optional["_models.CurrencyValue"] = rest_field(
+        name="valueCurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Currency value."""
-    value_address: Optional["_models.AddressValue"] = rest_field(name="valueAddress")
+    value_address: Optional["_models.AddressValue"] = rest_field(
+        name="valueAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Address value."""
-    value_boolean: Optional[bool] = rest_field(name="valueBoolean")
+    value_boolean: Optional[bool] = rest_field(
+        name="valueBoolean", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Boolean value."""
-    value_selection_group: Optional[List[str]] = rest_field(name="valueSelectionGroup")
+    value_selection_group: Optional[List[str]] = rest_field(
+        name="valueSelectionGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Selection group value."""
-    content: Optional[str] = rest_field()
+    content: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Field content."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the field."""
-    spans: Optional[List["_models.DocumentSpan"]] = rest_field()
+    spans: Optional[List["_models.DocumentSpan"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Location of the field in the reading order concatenated content."""
-    confidence: Optional[float] = rest_field()
+    confidence: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly extracting the field."""
 
     @overload
@@ -1640,9 +1777,8 @@ class DocumentField(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentFieldSchema(_model_base.Model):
+class DocumentFieldSchema(_Model):
     """Description of the field semantic schema using a JSON Schema style syntax.
-
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion",
@@ -1658,18 +1794,24 @@ class DocumentFieldSchema(_model_base.Model):
     :vartype properties: dict[str, ~azure.ai.documentintelligence.models.DocumentFieldSchema]
     """
 
-    type: Union[str, "_models.DocumentFieldType"] = rest_field()
+    type: Union[str, "_models.DocumentFieldType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"phoneNumber\", \"number\", \"integer\", \"selectionMark\", \"countryRegion\",
      \"signature\", \"array\", \"object\", \"currency\", \"address\", \"boolean\", and
      \"selectionGroup\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Field description."""
-    example: Optional[str] = rest_field()
+    example: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Example field content."""
-    items_schema: Optional["_models.DocumentFieldSchema"] = rest_field(name="items")
+    items_schema: Optional["_models.DocumentFieldSchema"] = rest_field(
+        name="items", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Field type schema of each array element."""
-    properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = rest_field()
+    properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Named sub-fields of the object field."""
 
     @overload
@@ -1694,9 +1836,8 @@ class DocumentFieldSchema(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentFigure(_model_base.Model):
+class DocumentFigure(_Model):
     """An object representing a figure in the document.
-
 
     :ivar bounding_regions: Bounding regions covering the figure.
     :vartype bounding_regions: list[~azure.ai.documentintelligence.models.BoundingRegion]
@@ -1712,17 +1853,23 @@ class DocumentFigure(_model_base.Model):
     :vartype id: str
     """
 
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the figure."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the figure in the reading order concatenated content. Required."""
-    elements: Optional[List[str]] = rest_field()
+    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the figure, excluding any caption or footnotes."""
-    caption: Optional["_models.DocumentCaption"] = rest_field()
+    caption: Optional["_models.DocumentCaption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Caption associated with the figure."""
-    footnotes: Optional[List["_models.DocumentFootnote"]] = rest_field()
+    footnotes: Optional[List["_models.DocumentFootnote"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of footnotes associated with the figure."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Figure ID."""
 
     @overload
@@ -1748,9 +1895,8 @@ class DocumentFigure(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentFootnote(_model_base.Model):
+class DocumentFootnote(_Model):
     """A footnote object describing a table or figure.
-
 
     :ivar content: Content of the footnote. Required.
     :vartype content: str
@@ -1762,13 +1908,15 @@ class DocumentFootnote(_model_base.Model):
     :vartype elements: list[str]
     """
 
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Content of the footnote. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the footnote."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the footnote in the reading order concatenated content. Required."""
-    elements: Optional[List[str]] = rest_field()
+    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the footnote."""
 
     @overload
@@ -1792,9 +1940,8 @@ class DocumentFootnote(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentFormula(_model_base.Model):
+class DocumentFormula(_Model):
     """A formula object.
-
 
     :ivar kind: Formula kind. Required. Known values are: "inline" and "display".
     :vartype kind: str or ~azure.ai.documentintelligence.models.DocumentFormulaKind
@@ -1811,18 +1958,20 @@ class DocumentFormula(_model_base.Model):
     :vartype confidence: float
     """
 
-    kind: Union[str, "_models.DocumentFormulaKind"] = rest_field()
+    kind: Union[str, "_models.DocumentFormulaKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Formula kind. Required. Known values are: \"inline\" and \"display\"."""
-    value: str = rest_field()
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """LaTex expression describing the formula. Required."""
-    polygon: Optional[List[float]] = rest_field()
+    polygon: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounding polygon of the formula, with coordinates specified relative to the
      top-left of the page. The numbers represent the x, y values of the polygon
      vertices, clockwise from the left (-180 degrees inclusive) relative to the
      element orientation."""
-    span: "_models.DocumentSpan" = rest_field()
+    span: "_models.DocumentSpan" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the formula in the reading order concatenated content. Required."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly extracting the formula. Required."""
 
     @overload
@@ -1847,9 +1996,8 @@ class DocumentFormula(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentIntelligenceError(_model_base.Model):
+class DocumentIntelligenceError(_Model):
     """The error object.
-
 
     :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
@@ -1864,15 +2012,19 @@ class DocumentIntelligenceError(_model_base.Model):
     :vartype innererror: ~azure.ai.documentintelligence.models.DocumentIntelligenceInnerError
     """
 
-    code: str = rest_field()
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The target of the error."""
-    details: Optional[List["_models.DocumentIntelligenceError"]] = rest_field()
+    details: Optional[List["_models.DocumentIntelligenceError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.DocumentIntelligenceInnerError"] = rest_field()
+    innererror: Optional["_models.DocumentIntelligenceInnerError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An object containing more specific information than the current object about the error."""
 
     @overload
@@ -1897,16 +2049,14 @@ class DocumentIntelligenceError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentIntelligenceErrorResponse(_model_base.Model):
+class DocumentIntelligenceErrorResponse(_Model):
     """Error response object.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar error: Error info. Required.
     :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     """
 
-    error: "_models.DocumentIntelligenceError" = rest_field()
+    error: "_models.DocumentIntelligenceError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error info. Required."""
 
     @overload
@@ -1927,7 +2077,7 @@ class DocumentIntelligenceErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentIntelligenceInnerError(_model_base.Model):
+class DocumentIntelligenceInnerError(_Model):
     """An object containing more specific information about the error.
 
     :ivar code: One of a server-defined set of error codes.
@@ -1938,11 +2088,13 @@ class DocumentIntelligenceInnerError(_model_base.Model):
     :vartype innererror: ~azure.ai.documentintelligence.models.DocumentIntelligenceInnerError
     """
 
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """One of a server-defined set of error codes."""
-    message: Optional[str] = rest_field()
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A human-readable representation of the error."""
-    innererror: Optional["_models.DocumentIntelligenceInnerError"] = rest_field()
+    innererror: Optional["_models.DocumentIntelligenceInnerError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Inner error."""
 
     @overload
@@ -1965,16 +2117,17 @@ class DocumentIntelligenceInnerError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentIntelligenceResourceDetails(_model_base.Model):
+class DocumentIntelligenceResourceDetails(_Model):
     """General information regarding the current resource.
-
 
     :ivar custom_document_models: Details regarding custom document models. Required.
     :vartype custom_document_models:
      ~azure.ai.documentintelligence.models.CustomDocumentModelsDetails
     """
 
-    custom_document_models: "_models.CustomDocumentModelsDetails" = rest_field(name="customDocumentModels")
+    custom_document_models: "_models.CustomDocumentModelsDetails" = rest_field(
+        name="customDocumentModels", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details regarding custom document models. Required."""
 
     @overload
@@ -1995,9 +2148,8 @@ class DocumentIntelligenceResourceDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentIntelligenceWarning(_model_base.Model):
+class DocumentIntelligenceWarning(_Model):
     """The error object.
-
 
     :ivar code: One of a server-defined set of warning codes. Required.
     :vartype code: str
@@ -2007,11 +2159,11 @@ class DocumentIntelligenceWarning(_model_base.Model):
     :vartype target: str
     """
 
-    code: str = rest_field()
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """One of a server-defined set of warning codes. Required."""
-    message: str = rest_field()
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A human-readable representation of the warning. Required."""
-    target: Optional[str] = rest_field()
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The target of the error."""
 
     @overload
@@ -2034,9 +2186,8 @@ class DocumentIntelligenceWarning(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentKeyValueElement(_model_base.Model):
+class DocumentKeyValueElement(_Model):
     """An object representing the field key or value in a key-value pair.
-
 
     :ivar content: Concatenated content of the key-value element in reading order. Required.
     :vartype content: str
@@ -2047,11 +2198,13 @@ class DocumentKeyValueElement(_model_base.Model):
     :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
     """
 
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Concatenated content of the key-value element in reading order. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the key-value element."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the key-value element in the reading order concatenated content. Required."""
 
     @overload
@@ -2074,10 +2227,9 @@ class DocumentKeyValueElement(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentKeyValuePair(_model_base.Model):
+class DocumentKeyValuePair(_Model):
     """An object representing a form field with distinct field label (key) and field
     value (may be empty).
-
 
     :ivar key: Field label of the key-value pair. Required.
     :vartype key: ~azure.ai.documentintelligence.models.DocumentKeyValueElement
@@ -2087,11 +2239,13 @@ class DocumentKeyValuePair(_model_base.Model):
     :vartype confidence: float
     """
 
-    key: "_models.DocumentKeyValueElement" = rest_field()
+    key: "_models.DocumentKeyValueElement" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Field label of the key-value pair. Required."""
-    value: Optional["_models.DocumentKeyValueElement"] = rest_field()
+    value: Optional["_models.DocumentKeyValueElement"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Field value of the key-value pair."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly extracting the key-value pair. Required."""
 
     @overload
@@ -2114,9 +2268,8 @@ class DocumentKeyValuePair(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentLanguage(_model_base.Model):
+class DocumentLanguage(_Model):
     """An object representing the detected language for a given text span.
-
 
     :ivar locale: Detected language.  Value may an ISO 639-1 language code (ex. "en", "fr")
      or BCP 47 language tag (ex. "zh-Hans"). Required.
@@ -2128,13 +2281,13 @@ class DocumentLanguage(_model_base.Model):
     :vartype confidence: float
     """
 
-    locale: str = rest_field()
+    locale: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Detected language.  Value may an ISO 639-1 language code (ex. \"en\", \"fr\")
      or BCP 47 language tag (ex. \"zh-Hans\"). Required."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the text elements in the concatenated content the language applies
      to. Required."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly identifying the language. Required."""
 
     @overload
@@ -2157,10 +2310,9 @@ class DocumentLanguage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentLine(_model_base.Model):
+class DocumentLine(_Model):
     """A content line object consisting of an adjacent sequence of content elements,
     such as words and selection marks.
-
 
     :ivar content: Concatenated content of the contained elements in reading order. Required.
     :vartype content: str
@@ -2173,14 +2325,14 @@ class DocumentLine(_model_base.Model):
     :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
     """
 
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Concatenated content of the contained elements in reading order. Required."""
-    polygon: Optional[List[float]] = rest_field()
+    polygon: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounding polygon of the line, with coordinates specified relative to the
      top-left of the page. The numbers represent the x, y values of the polygon
      vertices, clockwise from the left (-180 degrees inclusive) relative to the
      element orientation."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the line in the reading order concatenated content. Required."""
 
     @overload
@@ -2205,7 +2357,6 @@ class DocumentLine(_model_base.Model):
 
 class DocumentModelBuildOperationDetails(DocumentIntelligenceOperationDetails, discriminator="documentModelBuild"):
     """Get Operation response object.
-
 
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
@@ -2233,9 +2384,11 @@ class DocumentModelBuildOperationDetails(DocumentIntelligenceOperationDetails, d
     :vartype kind: str or ~azure.ai.documentintelligence.models.DOCUMENT_MODEL_BUILD
     """
 
-    result: Optional["_models.DocumentModelDetails"] = rest_field()
+    result: Optional["_models.DocumentModelDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation result upon success."""
-    kind: Literal[OperationKind.DOCUMENT_MODEL_BUILD] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[OperationKind.DOCUMENT_MODEL_BUILD] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of operation. Required. Build a new custom document model."""
 
     @overload
@@ -2268,7 +2421,6 @@ class DocumentModelBuildOperationDetails(DocumentIntelligenceOperationDetails, d
 class DocumentModelComposeOperationDetails(DocumentIntelligenceOperationDetails, discriminator="documentModelCompose"):
     """Get Operation response object.
 
-
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
@@ -2296,9 +2448,11 @@ class DocumentModelComposeOperationDetails(DocumentIntelligenceOperationDetails,
     :vartype kind: str or ~azure.ai.documentintelligence.models.DOCUMENT_MODEL_COMPOSE
     """
 
-    result: Optional["_models.DocumentModelDetails"] = rest_field()
+    result: Optional["_models.DocumentModelDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation result upon success."""
-    kind: Literal[OperationKind.DOCUMENT_MODEL_COMPOSE] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[OperationKind.DOCUMENT_MODEL_COMPOSE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of operation. Required. Compose a new custom document model from existing models."""
 
     @overload
@@ -2331,7 +2485,6 @@ class DocumentModelComposeOperationDetails(DocumentIntelligenceOperationDetails,
 class DocumentModelCopyToOperationDetails(DocumentIntelligenceOperationDetails, discriminator="documentModelCopyTo"):
     """Get Operation response object.
 
-
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
@@ -2360,9 +2513,11 @@ class DocumentModelCopyToOperationDetails(DocumentIntelligenceOperationDetails, 
     :vartype kind: str or ~azure.ai.documentintelligence.models.DOCUMENT_MODEL_COPY_TO
     """
 
-    result: Optional["_models.DocumentModelDetails"] = rest_field()
+    result: Optional["_models.DocumentModelDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Operation result upon success."""
-    kind: Literal[OperationKind.DOCUMENT_MODEL_COPY_TO] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[OperationKind.DOCUMENT_MODEL_COPY_TO] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of operation. Required. Copy an existing document model to potentially a different
      resource, region, or
      subscription."""
@@ -2394,11 +2549,8 @@ class DocumentModelCopyToOperationDetails(DocumentIntelligenceOperationDetails, 
         super().__init__(*args, kind=OperationKind.DOCUMENT_MODEL_COPY_TO, **kwargs)
 
 
-class DocumentModelDetails(_model_base.Model):
+class DocumentModelDetails(_Model):
     """Document model info.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -2440,7 +2592,7 @@ class DocumentModelDetails(_model_base.Model):
 
     model_id: str = rest_field(name="modelId", visibility=["read", "create"])
     """Unique document model name. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document model description."""
     created_date_time: datetime.datetime = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """Date and time (UTC) when the document model was created. Required."""
@@ -2454,7 +2606,7 @@ class DocumentModelDetails(_model_base.Model):
     """Date and time (UTC) when the document model was last modified."""
     api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
     """API version used to create this document model."""
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of key-value tag attributes associated with the document model."""
     build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = rest_field(name="buildMode", visibility=["read"])
     """Custom document model build mode. Known values are: \"template\" and \"neural\"."""
@@ -2468,9 +2620,13 @@ class DocumentModelDetails(_model_base.Model):
     )
     """Azure Blob Storage file list specifying the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
-    classifier_id: Optional[str] = rest_field(name="classifierId")
+    classifier_id: Optional[str] = rest_field(
+        name="classifierId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """For composed models, the custom classifier to split and classify the input file."""
-    split: Optional[Union[str, "_models.SplitMode"]] = rest_field()
+    split: Optional[Union[str, "_models.SplitMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """For composed models, the file splitting behavior. Known values are: \"auto\", \"none\", and
      \"perPage\"."""
     doc_types: Optional[Dict[str, "_models.DocumentTypeDetails"]] = rest_field(name="docTypes", visibility=["read"])
@@ -2502,9 +2658,8 @@ class DocumentModelDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentPage(_model_base.Model):
+class DocumentPage(_Model):
     """Content and layout elements extracted from a page from the input.
-
 
     :ivar page_number: 1-based page number in the input document. Required.
     :vartype page_number: int
@@ -2533,30 +2688,42 @@ class DocumentPage(_model_base.Model):
     :vartype formulas: list[~azure.ai.documentintelligence.models.DocumentFormula]
     """
 
-    page_number: int = rest_field(name="pageNumber")
+    page_number: int = rest_field(name="pageNumber", visibility=["read", "create", "update", "delete", "query"])
     """1-based page number in the input document. Required."""
-    angle: Optional[float] = rest_field()
+    angle: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The general orientation of the content in clockwise direction, measured in
      degrees between (-180, 180]."""
-    width: Optional[float] = rest_field()
+    width: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The width of the image/PDF in pixels/inches, respectively."""
-    height: Optional[float] = rest_field()
+    height: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The height of the image/PDF in pixels/inches, respectively."""
-    unit: Optional[Union[str, "_models.LengthUnit"]] = rest_field()
+    unit: Optional[Union[str, "_models.LengthUnit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unit used by the width, height, and polygon properties. For images, the
      unit is \"pixel\". For PDF, the unit is \"inch\". Known values are: \"pixel\" and \"inch\"."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the page in the reading order concatenated content. Required."""
-    words: Optional[List["_models.DocumentWord"]] = rest_field()
+    words: Optional[List["_models.DocumentWord"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted words from the page."""
-    selection_marks: Optional[List["_models.DocumentSelectionMark"]] = rest_field(name="selectionMarks")
+    selection_marks: Optional[List["_models.DocumentSelectionMark"]] = rest_field(
+        name="selectionMarks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted selection marks from the page."""
-    lines: Optional[List["_models.DocumentLine"]] = rest_field()
+    lines: Optional[List["_models.DocumentLine"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted lines from the page, potentially containing both textual and visual
      elements."""
-    barcodes: Optional[List["_models.DocumentBarcode"]] = rest_field()
+    barcodes: Optional[List["_models.DocumentBarcode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted barcodes from the page."""
-    formulas: Optional[List["_models.DocumentFormula"]] = rest_field()
+    formulas: Optional[List["_models.DocumentFormula"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Extracted formulas from the page."""
 
     @overload
@@ -2587,10 +2754,9 @@ class DocumentPage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentParagraph(_model_base.Model):
+class DocumentParagraph(_Model):
     """A paragraph object consisting with contiguous lines generally with common
     alignment and spacing.
-
 
     :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
      "pageNumber", "title", "sectionHeading", "footnote", and "formulaBlock".
@@ -2603,14 +2769,18 @@ class DocumentParagraph(_model_base.Model):
     :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
     """
 
-    role: Optional[Union[str, "_models.ParagraphRole"]] = rest_field()
+    role: Optional[Union[str, "_models.ParagraphRole"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic role of the paragraph. Known values are: \"pageHeader\", \"pageFooter\",
      \"pageNumber\", \"title\", \"sectionHeading\", \"footnote\", and \"formulaBlock\"."""
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Concatenated content of the paragraph in reading order. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the paragraph."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the paragraph in the reading order concatenated content. Required."""
 
     @overload
@@ -2634,9 +2804,8 @@ class DocumentParagraph(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentSection(_model_base.Model):
+class DocumentSection(_Model):
     """An object representing a section in the document.
-
 
     :ivar spans: Location of the section in the reading order concatenated content. Required.
     :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
@@ -2644,9 +2813,9 @@ class DocumentSection(_model_base.Model):
     :vartype elements: list[str]
     """
 
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the section in the reading order concatenated content. Required."""
-    elements: Optional[List[str]] = rest_field()
+    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the section."""
 
     @overload
@@ -2668,10 +2837,9 @@ class DocumentSection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentSelectionMark(_model_base.Model):
+class DocumentSelectionMark(_Model):
     """A selection mark object representing check boxes, radio buttons, and other
     elements indicating a selection.
-
 
     :ivar state: State of the selection mark. Required. Known values are: "selected" and
      "unselected".
@@ -2687,16 +2855,18 @@ class DocumentSelectionMark(_model_base.Model):
     :vartype confidence: float
     """
 
-    state: Union[str, "_models.DocumentSelectionMarkState"] = rest_field()
+    state: Union[str, "_models.DocumentSelectionMarkState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """State of the selection mark. Required. Known values are: \"selected\" and \"unselected\"."""
-    polygon: Optional[List[float]] = rest_field()
+    polygon: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounding polygon of the selection mark, with coordinates specified relative
      to the top-left of the page. The numbers represent the x, y values of the
      polygon vertices, clockwise from the left (-180 degrees inclusive) relative
      to the element orientation."""
-    span: "_models.DocumentSpan" = rest_field()
+    span: "_models.DocumentSpan" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the selection mark in the reading order concatenated content. Required."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly extracting the selection mark. Required."""
 
     @overload
@@ -2720,10 +2890,9 @@ class DocumentSelectionMark(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentSpan(_model_base.Model):
+class DocumentSpan(_Model):
     """Contiguous region of the concatenated content property, specified as an offset
     and length.
-
 
     :ivar offset: Zero-based index of the content represented by the span. Required.
     :vartype offset: int
@@ -2731,9 +2900,9 @@ class DocumentSpan(_model_base.Model):
     :vartype length: int
     """
 
-    offset: int = rest_field()
+    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Zero-based index of the content represented by the span. Required."""
-    length: int = rest_field()
+    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of characters in the content represented by the span. Required."""
 
     @overload
@@ -2755,9 +2924,8 @@ class DocumentSpan(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentStyle(_model_base.Model):
+class DocumentStyle(_Model):
     """An object representing observed text styles.
-
 
     :ivar is_handwritten: Is content handwritten?.
     :vartype is_handwritten: bool
@@ -2780,22 +2948,32 @@ class DocumentStyle(_model_base.Model):
     :vartype confidence: float
     """
 
-    is_handwritten: Optional[bool] = rest_field(name="isHandwritten")
+    is_handwritten: Optional[bool] = rest_field(
+        name="isHandwritten", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Is content handwritten?."""
-    similar_font_family: Optional[str] = rest_field(name="similarFontFamily")
+    similar_font_family: Optional[str] = rest_field(
+        name="similarFontFamily", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Visually most similar font from among the set of supported font families, with
      fallback fonts following CSS convention (ex. 'Arial, sans-serif')."""
-    font_style: Optional[Union[str, "_models.DocumentFontStyle"]] = rest_field(name="fontStyle")
+    font_style: Optional[Union[str, "_models.DocumentFontStyle"]] = rest_field(
+        name="fontStyle", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Font style. Known values are: \"normal\" and \"italic\"."""
-    font_weight: Optional[Union[str, "_models.DocumentFontWeight"]] = rest_field(name="fontWeight")
+    font_weight: Optional[Union[str, "_models.DocumentFontWeight"]] = rest_field(
+        name="fontWeight", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Font weight. Known values are: \"normal\" and \"bold\"."""
-    color: Optional[str] = rest_field()
+    color: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Foreground color in #rrggbb hexadecimal format."""
-    background_color: Optional[str] = rest_field(name="backgroundColor")
+    background_color: Optional[str] = rest_field(
+        name="backgroundColor", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Background color in #rrggbb hexadecimal format.."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the text elements in the concatenated content the style applies to. Required."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly identifying the style. Required."""
 
     @overload
@@ -2823,9 +3001,8 @@ class DocumentStyle(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentTable(_model_base.Model):
+class DocumentTable(_Model):
     """A table object consisting table cells arranged in a rectangular layout.
-
 
     :ivar row_count: Number of rows in the table. Required.
     :vartype row_count: int
@@ -2843,19 +3020,25 @@ class DocumentTable(_model_base.Model):
     :vartype footnotes: list[~azure.ai.documentintelligence.models.DocumentFootnote]
     """
 
-    row_count: int = rest_field(name="rowCount")
+    row_count: int = rest_field(name="rowCount", visibility=["read", "create", "update", "delete", "query"])
     """Number of rows in the table. Required."""
-    column_count: int = rest_field(name="columnCount")
+    column_count: int = rest_field(name="columnCount", visibility=["read", "create", "update", "delete", "query"])
     """Number of columns in the table. Required."""
-    cells: List["_models.DocumentTableCell"] = rest_field()
+    cells: List["_models.DocumentTableCell"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cells contained within the table. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the table."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the table in the reading order concatenated content. Required."""
-    caption: Optional["_models.DocumentCaption"] = rest_field()
+    caption: Optional["_models.DocumentCaption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Caption associated with the table."""
-    footnotes: Optional[List["_models.DocumentFootnote"]] = rest_field()
+    footnotes: Optional[List["_models.DocumentFootnote"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of footnotes associated with the table."""
 
     @overload
@@ -2882,9 +3065,8 @@ class DocumentTable(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentTableCell(_model_base.Model):
+class DocumentTableCell(_Model):
     """An object representing the location and content of a table cell.
-
 
     :ivar kind: Table cell kind. Known values are: "content", "rowHeader", "columnHeader",
      "stubHead", and "description".
@@ -2907,24 +3089,30 @@ class DocumentTableCell(_model_base.Model):
     :vartype elements: list[str]
     """
 
-    kind: Optional[Union[str, "_models.DocumentTableCellKind"]] = rest_field()
+    kind: Optional[Union[str, "_models.DocumentTableCellKind"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Table cell kind. Known values are: \"content\", \"rowHeader\", \"columnHeader\", \"stubHead\",
      and \"description\"."""
-    row_index: int = rest_field(name="rowIndex")
+    row_index: int = rest_field(name="rowIndex", visibility=["read", "create", "update", "delete", "query"])
     """Row index of the cell. Required."""
-    column_index: int = rest_field(name="columnIndex")
+    column_index: int = rest_field(name="columnIndex", visibility=["read", "create", "update", "delete", "query"])
     """Column index of the cell. Required."""
-    row_span: Optional[int] = rest_field(name="rowSpan")
+    row_span: Optional[int] = rest_field(name="rowSpan", visibility=["read", "create", "update", "delete", "query"])
     """Number of rows spanned by this cell."""
-    column_span: Optional[int] = rest_field(name="columnSpan")
+    column_span: Optional[int] = rest_field(
+        name="columnSpan", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of columns spanned by this cell."""
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Concatenated content of the table cell in reading order. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(
+        name="boundingRegions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding regions covering the table cell."""
-    spans: List["_models.DocumentSpan"] = rest_field()
+    spans: List["_models.DocumentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the table cell in the reading order concatenated content. Required."""
-    elements: Optional[List[str]] = rest_field()
+    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the table cell."""
 
     @overload
@@ -2953,7 +3141,7 @@ class DocumentTableCell(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentTypeDetails(_model_base.Model):
+class DocumentTypeDetails(_Model):
     """Document type info.
 
     :ivar description: Document model description.
@@ -2978,23 +3166,37 @@ class DocumentTypeDetails(_model_base.Model):
     :vartype max_documents_to_analyze: int
     """
 
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Document model description."""
-    build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = rest_field(name="buildMode")
+    build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = rest_field(
+        name="buildMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Custom document model build mode. Known values are: \"template\" and \"neural\"."""
-    field_schema: Optional[Dict[str, "_models.DocumentFieldSchema"]] = rest_field(name="fieldSchema")
+    field_schema: Optional[Dict[str, "_models.DocumentFieldSchema"]] = rest_field(
+        name="fieldSchema", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the document semantic schema using a JSON Schema style syntax."""
-    field_confidence: Optional[Dict[str, float]] = rest_field(name="fieldConfidence")
+    field_confidence: Optional[Dict[str, float]] = rest_field(
+        name="fieldConfidence", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Estimated confidence for each field."""
-    model_id: Optional[str] = rest_field(name="modelId")
+    model_id: Optional[str] = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
     """Document model to use for analyzing documents with specified type."""
-    confidence_threshold: Optional[float] = rest_field(name="confidenceThreshold")
+    confidence_threshold: Optional[float] = rest_field(
+        name="confidenceThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Only perform analysis if docType confidence is above threshold."""
-    features: Optional[List[Union[str, "_models.DocumentAnalysisFeature"]]] = rest_field()
+    features: Optional[List[Union[str, "_models.DocumentAnalysisFeature"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of optional analysis features."""
-    query_fields: Optional[List[str]] = rest_field(name="queryFields")
+    query_fields: Optional[List[str]] = rest_field(
+        name="queryFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of additional fields to extract.  Ex. \"NumberOfGuests,StoreNumber\"."""
-    max_documents_to_analyze: Optional[int] = rest_field(name="maxDocumentsToAnalyze")
+    max_documents_to_analyze: Optional[int] = rest_field(
+        name="maxDocumentsToAnalyze", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Maximum number of documents of specified type to analyze.  Default=all."""
 
     @overload
@@ -3023,11 +3225,10 @@ class DocumentTypeDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentWord(_model_base.Model):
+class DocumentWord(_Model):
     """A word object consisting of a contiguous sequence of characters.  For non-space
     delimited languages, such as Chinese, Japanese, and Korean, each character is
     represented as its own word.
-
 
     :ivar content: Text content of the word. Required.
     :vartype content: str
@@ -3042,16 +3243,16 @@ class DocumentWord(_model_base.Model):
     :vartype confidence: float
     """
 
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text content of the word. Required."""
-    polygon: Optional[List[float]] = rest_field()
+    polygon: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounding polygon of the word, with coordinates specified relative to the
      top-left of the page. The numbers represent the x, y values of the polygon
      vertices, clockwise from the left (-180 degrees inclusive) relative to the
      element orientation."""
-    span: "_models.DocumentSpan" = rest_field()
+    span: "_models.DocumentSpan" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Location of the word in the reading order concatenated content. Required."""
-    confidence: float = rest_field()
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence of correctly extracting the word. Required."""
 
     @overload
@@ -3075,10 +3276,9 @@ class DocumentWord(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelCopyAuthorization(_model_base.Model):
+class ModelCopyAuthorization(_Model):
     """Authorization to copy a document model to the specified target resource and
     modelId.
-
 
     :ivar target_resource_id: ID of the target Azure resource where the document model should be
      copied to. Required.
@@ -3097,18 +3297,26 @@ class ModelCopyAuthorization(_model_base.Model):
     :vartype expiration_date_time: ~datetime.datetime
     """
 
-    target_resource_id: str = rest_field(name="targetResourceId")
+    target_resource_id: str = rest_field(
+        name="targetResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ID of the target Azure resource where the document model should be copied to. Required."""
-    target_resource_region: str = rest_field(name="targetResourceRegion")
+    target_resource_region: str = rest_field(
+        name="targetResourceRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Location of the target Azure resource where the document model should be copied
      to. Required."""
-    target_model_id: str = rest_field(name="targetModelId")
+    target_model_id: str = rest_field(name="targetModelId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier of the target document model. Required."""
-    target_model_location: str = rest_field(name="targetModelLocation")
+    target_model_location: str = rest_field(
+        name="targetModelLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
     """URL of the copied document model in the target account. Required."""
-    access_token: str = rest_field(name="accessToken")
+    access_token: str = rest_field(name="accessToken", visibility=["read", "create", "update", "delete", "query"])
     """Token used to authorize the request. Required."""
-    expiration_date_time: datetime.datetime = rest_field(name="expirationDateTime", format="rfc3339")
+    expiration_date_time: datetime.datetime = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date/time when the access token expires. Required."""
 
     @overload
