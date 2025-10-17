@@ -218,6 +218,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
             excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
         else:
             excluded_locations = self.location_cache.connection_policy.ExcludedLocations
+        if excluded_locations is None:
+            excluded_locations = []
         preferred_locations = self.location_cache.effective_preferred_locations
         available_regions = [item for item in preferred_locations if item not in excluded_locations]
         available_regional_endpoints = {}

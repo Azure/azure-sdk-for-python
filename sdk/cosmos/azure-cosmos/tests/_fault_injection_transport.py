@@ -26,7 +26,7 @@ import json
 import logging
 import sys
 from time import sleep
-from typing import Callable, Optional, Any, MutableMapping
+from typing import Callable, Optional, Any, MutableMapping, Mapping, Tuple, Sequence
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.transport._requests_basic import RequestsTransport, RequestsTransportResponse
@@ -355,7 +355,7 @@ class FaultInjectionTransport(RequestsTransport):
             self.files: Optional[Any] = files
             self.data: Optional[Any] = data
             self.multipart_mixed_info: Optional[
-                Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]] = None
+                Tuple[Sequence[Any], Sequence[Any], Optional[str], dict[str, Any]]] = None
 
     class MockHttpResponse(RequestsTransportResponse):
         def __init__(self, request: HttpRequest, status_code: int, content: Optional[Any] = None):

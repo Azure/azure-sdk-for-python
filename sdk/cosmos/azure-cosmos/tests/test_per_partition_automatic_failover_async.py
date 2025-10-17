@@ -16,7 +16,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos._request_object import RequestObject
 from _fault_injection_transport import FaultInjectionTransport
 from _fault_injection_transport_async import FaultInjectionTransportAsync
-from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors, session_retry_hook
+from test_per_partition_automatic_failover import create_failover_errors, create_threshold_errors, session_retry_hook, ppaf_user_agent_hook
 from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_and_errors, write_operations_and_boolean
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
@@ -258,6 +258,13 @@ class TestPerPartitionAutomaticFailoverAsync:
         # We verify that the read request was going to the correct region by using the raw_response_hook
         fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
 
+    async def test_ppaf_user_agent_feature_flag_async(self):
+        # Simple test to verify the user agent suffix is being updated with the relevant feature flags
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info()
+        fault_injection_container = custom_setup['col']
+        # Create a document to check the response headers
+        await fault_injection_container.upsert_item(body={'id': doc_success_id, 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                                    raw_response_hook=ppaf_user_agent_hook)
 
 if __name__ == '__main__':
     unittest.main()

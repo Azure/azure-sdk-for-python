@@ -498,6 +498,14 @@ class TestPerPartitionCircuitBreakerMM:
         # there shouldn't be region marked as unavailable
         assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
 
+    def test_circuit_breaker_user_agent_feature_flag_mm(self):
+        # Simple test to verify the user agent suffix is being updated with the relevant feature flags
+        custom_setup = self.setup_method_with_custom_transport(None)
+        container = custom_setup['col']
+        # Create a document to check the response headers
+        container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                              raw_response_hook=user_agent_hook)
+
     # test cosmos client timeout
 
 if __name__ == '__main__':
@@ -520,3 +528,8 @@ def validate_stats(global_endpoint_manager,
         assert health_info.write_failure_count == expected_write_failure_count
         assert health_info.read_success_count == expected_read_success_count
         assert health_info.write_success_count == expected_write_success_count
+
+def user_agent_hook(raw_response):
+    # Used to verify the user agent feature flags
+    user_agent = raw_response.http_request.headers.get('user-agent')
+    assert user_agent.endswith('| F2')

@@ -4,7 +4,7 @@ import asyncio
 import os
 import unittest
 import uuid
-from typing import Any
+from typing import Any, Union
 
 import pytest
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
@@ -18,7 +18,7 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_per_partition_circuit_breaker_mm import create_doc, read_operations_and_errors, \
     write_operations_and_errors, operations, REGION_1, REGION_2, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ, \
     CREATE, READ_ALL_ITEMS, DELETE_ALL_ITEMS_BY_PARTITION_KEY, QUERY, QUERY_PK, BATCH, UPSERT, REPLACE, PATCH, DELETE, \
-    PK_VALUE, validate_unhealthy_partitions, validate_response_uri
+    PK_VALUE, validate_unhealthy_partitions, validate_response_uri, user_agent_hook
 from test_per_partition_circuit_breaker_mm import validate_stats
 
 COLLECTION = "created_collection"
@@ -111,7 +111,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport: Union[AioHttpTransport, Any], default_endpoint=host, **kwargs):
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
@@ -480,6 +480,14 @@ class TestPerPartitionCircuitBreakerMMAsync:
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
             await cleanup_method([custom_setup, setup])
+
+    async def test_circuit_breaker_user_agent_feature_flag_mm_async(self):
+        # Simple test to verify the user agent suffix is being updated with the relevant feature flags
+        custom_setup = await self.setup_method_with_custom_transport(None)
+        container = custom_setup['col']
+        # Create a document to check the response headers
+        await container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                              raw_response_hook=user_agent_hook)
 
 if __name__ == '__main__':
     unittest.main()

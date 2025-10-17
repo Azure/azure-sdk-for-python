@@ -15,7 +15,7 @@ from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENT
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from test_per_partition_circuit_breaker_mm import create_doc, write_operations_and_errors, operations, REGION_1, \
-    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, CREATE, READ, validate_stats
+    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, CREATE, READ, validate_stats, user_agent_hook
 
 COLLECTION = "created_collection"
 
@@ -234,6 +234,14 @@ class TestPerPartitionCircuitBreakerSmMrr:
         validate_unhealthy_partitions(global_endpoint_manager, 0)
         # there shouldn't be region marked as unavailable
         assert len(global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) == 1
+
+    def test_circuit_breaker_user_agent_feature_flag_sm(self):
+        # Simple test to verify the user agent suffix is being updated with the relevant feature flags
+        custom_setup = self.setup_method_with_custom_transport(None)
+        container = custom_setup['col']
+        # Create a document to check the response headers
+        container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                              raw_response_hook=user_agent_hook)
 
     # test cosmos client timeout
 

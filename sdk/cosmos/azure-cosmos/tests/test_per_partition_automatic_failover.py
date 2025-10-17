@@ -264,11 +264,24 @@ class TestPerPartitionAutomaticFailover:
         # We verify that the read request was going to the correct region by using the raw_response_hook
         fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
 
+    def test_ppaf_user_agent_feature_flag(self):
+        # Simple test to verify the user agent suffix is being updated with the relevant feature flags
+        setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info()
+        fault_injection_container = custom_setup['col']
+        # Create a document to check the response headers
+        fault_injection_container.upsert_item(body={'id': doc_success_id, 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                              raw_response_hook=ppaf_user_agent_hook)
+
 def session_retry_hook(raw_response):
     if raw_response.http_request.headers.get('x-ms-thinclient-proxy-resource-type') != 'databaseaccount':
         # This hook is used to verify the request routing that happens after the session retry logic
         region_string = "-" + REGION_2.replace(' ', '').lower() + "."
         assert region_string in raw_response.http_request.url
+
+def ppaf_user_agent_hook(raw_response):
+    # Used to verify the user agent feature flags
+    user_agent = raw_response.http_request.headers.get('user-agent')
+    assert user_agent.endswith('| F3')
 
 if __name__ == '__main__':
     unittest.main()
