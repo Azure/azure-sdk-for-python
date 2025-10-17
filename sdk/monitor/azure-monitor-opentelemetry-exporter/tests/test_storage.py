@@ -995,7 +995,6 @@ class TestLocalFileStorage(unittest.TestCase):
         set_local_storage_setup_state_exception("")
 
     def test_check_and_set_folder_permissions_unix_multiuser_storage_permission_failure(self):
-        test_input = (1, 2, 3)
         test_error_message = "PermissionError: Operation not permitted on storage directory"
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
