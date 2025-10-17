@@ -33,6 +33,7 @@ _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOL
 )
 if _console_logging_enabled:
     import sys
+
     # Enable detailed console logs across Azure libraries
     azure_logger = logging.getLogger("azure")
     azure_logger.setLevel(logging.DEBUG)

@@ -108,6 +108,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
     """
 
 
@@ -171,6 +174,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
     """
 
 
@@ -284,6 +290,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
             "on_refresh_error", None
+        )
+        self._configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]] = kwargs.pop(
+            "configuration_mapper", None
         )
 
     async def _attempt_refresh(
@@ -498,6 +507,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         configuration_settings_processed = {}
         feature_flags_processed = []
         for settings in unique_settings.values():
+            if self._configuration_mapper:
+                await self._configuration_mapper(settings)
             if isinstance(settings, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
                 feature_flag_value = self._process_feature_flag(settings)
