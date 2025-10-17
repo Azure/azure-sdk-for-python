@@ -169,7 +169,7 @@ class TestPrompty:
             # Should have only first name, and answer
             assert "lastName" not in llm_output
         else:
-            assert "lastName" in result
+            assert "lastName" in llm_output
             assert llm_output["lastName"] == "Doh"
 
     @pytest.mark.asyncio
