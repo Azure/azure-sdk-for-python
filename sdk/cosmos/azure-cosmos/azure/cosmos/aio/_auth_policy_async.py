@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Any, MutableMapping, TypeVar, cast, Optional
+from typing import Any, MutableMapping, TypeVar, cast, Optional, Union
 from weakref import WeakKeyDictionary
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -21,7 +21,7 @@ from .._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 logger = logging.getLogger("azure.cosmos.AsyncCosmosBearerTokenCredentialPolicy")
-_credential_locks: "WeakKeyDictionary[AsyncTokenCredential, asyncio.Lock]" = WeakKeyDictionary()
+_credential_locks: "WeakKeyDictionary[AsyncTokenCredential | SupportsTokenInfo, asyncio.Lock]" = WeakKeyDictionary()
 
 def _get_credential_lock(credential: AsyncTokenCredential | SupportsTokenInfo) -> asyncio.Lock:
     lock = _credential_locks.get(credential)

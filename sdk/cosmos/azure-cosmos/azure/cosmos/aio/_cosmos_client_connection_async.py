@@ -79,7 +79,7 @@ from ..partition_key import (
     _Empty,
     _build_partition_key_from_properties, _PartitionKeyType
 )
-from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy, _get_credential_lock
+from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
@@ -208,7 +208,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         suffix = kwargs.pop('user_agent_suffix', None)
         self._user_agent = _utils.get_user_agent_async(suffix)
 
-        self.credentials_policy = None
+        self.credentials_policy: Optional[AsyncCosmosBearerTokenCredentialPolicy] = None
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
