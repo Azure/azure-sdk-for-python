@@ -9,6 +9,7 @@ FILE: planetary_computer_04_stac_item_tiler.py
 
 DESCRIPTION:
     This sample demonstrates STAC item tiling operations from the Azure Planetary Computer Pro SDK.
+    Uses NAIP sample datasets and saves tiles locally.
 
 USAGE:
     python planetary_computer_04_stac_item_tiler.py
@@ -17,26 +18,23 @@ USAGE:
 """
 
 import os
-import io
 from azure.planetarycomputer import PlanetaryComputerClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import TilerImageFormat, Polygon, Feature, FeatureType
-from PIL import Image as PILImage
 
 import logging
-from azure.core.pipeline.policies import HttpLoggingPolicy
 
 # Enable HTTP request/response logging
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
-def display_response(response):
-    """Display image response data."""
+def display_response(response, filename):
+    """Save image response data locally."""
     image_bytes = b"".join(response)
-    image = PILImage.open(io.BytesIO(image_bytes))
-    logging.info(f"Image loaded: {image.format} {image.size} {image.mode}")
-    return image
+    with open(filename, "wb") as f:
+        f.write(image_bytes)
+    logging.info(f"Image saved as: {filename} ({len(image_bytes)} bytes)")
 
 
 def get_tile_matrix_definitions(client):
@@ -76,12 +74,11 @@ def crop_geo_json(client, collection_id, item_id, geojson, assets):
         item_id=item_id,
         format=TilerImageFormat.PNG,
         assets=assets,
+        asset_band_indices=["image|1,2,3"],
         body=geojson,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
     )
-    logging.info(crop_geo_json_response)
-    display_response(crop_geo_json_response)
+    logging.info("Cropping with GeoJSON completed")
+    display_response(crop_geo_json_response, f"crop_geojson_{item_id}.png")
 
 
 def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson, assets):
@@ -93,11 +90,10 @@ def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson, asset
         width=512,
         height=512,
         assets=assets,
+        asset_band_indices=["image|1,2,3"],
         body=geojson,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
     )
-    display_response(crop_geo_json_with_dimensions_response)
+    display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
 
 
 def get_geo_json_statistics(client, collection_id, item_id, geojson, assets):
@@ -114,50 +110,52 @@ def get_info_geo_json(client, collection_id, item_id, assets):
     logging.info(result)
 
 
-def get_part(client, collection_id, item_id, assets):
+def get_part(client, collection_id, item_id, assets, bounds):
     """Get a part of an item with specific bounds."""
     get_part_response = client.tiler.get_part(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
-        minx=-4.35,
-        miny=39.647784,
-        maxx=-4.09,
-        maxy=40.645928,
-        width=120,
-        height=120,
+        minx=bounds[0],
+        miny=bounds[1],
+        maxx=bounds[2],
+        maxy=bounds[3],
+        width=512,
+        height=512,
         assets=assets,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
+        asset_band_indices=["image|1,2,3"],
     )
-    display_response(get_part_response)
+    display_response(get_part_response, f"part_{item_id}.png")
 
 
-def get_part_with_dimensions(client, collection_id, item_id, assets):
+def get_part_with_dimensions(client, collection_id, item_id, assets, bounds):
     """Get a part of an item with specific bounds and dimensions."""
     get_part_with_dimensions_response = client.tiler.get_part_with_dimensions(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
-        minx=-4.35,
-        miny=39.647784,
-        maxx=-4.09,
-        maxy=40.645928,
-        width=120,
-        height=120,
+        minx=bounds[0],
+        miny=bounds[1],
+        maxx=bounds[2],
+        maxy=bounds[3],
+        width=512,
+        height=512,
         assets=assets,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
+        asset_band_indices=["image|1,2,3"],
     )
-    display_response(get_part_with_dimensions_response)
+    display_response(get_part_with_dimensions_response, f"part_dims_{item_id}.png")
 
 
-def get_point(client, collection_id, item_id, assets):
+def get_point(client, collection_id, item_id, assets, point):
     """Get point value at a specific location."""
     result = client.tiler.get_point(
-        collection_id=collection_id, item_id=item_id, assets=assets, longitude=-4.09, latitude=39.91, no_data=0
+        collection_id=collection_id,
+        item_id=item_id,
+        assets=assets,
+        longitude=point[0],
+        latitude=point[1],
     )
-    logging.info(result)
+    logging.info(f"Point values at ({point[0]}, {point[1]}): {result}")
 
 
 def get_preview(client, collection_id, item_id, assets):
@@ -166,13 +164,12 @@ def get_preview(client, collection_id, item_id, assets):
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
-        width=120,
-        height=120,
+        width=512,
+        height=512,
         assets=assets,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
+        asset_band_indices=["image|1,2,3"],
     )
-    display_response(get_preview_response)
+    display_response(get_preview_response, f"preview_{item_id}.png")
 
 
 def get_preview_with_format(client, collection_id, item_id, assets):
@@ -181,13 +178,12 @@ def get_preview_with_format(client, collection_id, item_id, assets):
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
-        width=120,
-        height=120,
+        width=512,
+        height=512,
         assets=assets,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
+        asset_band_indices=["image|1,2,3"],
     )
-    display_response(get_preview_with_format_response)
+    display_response(get_preview_with_format_response, f"preview_format_{item_id}.png")
 
 
 def list_statistics(client, collection_id, item_id, assets):
@@ -205,34 +201,32 @@ def get_tile_json(client, collection_id, item_id):
         tile_format=TilerImageFormat.PNG,
         tile_scale=1,
         min_zoom=7,
-        max_zoom=9,
-        assets=["red_20m", "green_20m", "blue_20m"],
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
+        max_zoom=14,
+        assets=["image"],
+        asset_band_indices=["image|1,2,3"],
     )
     logging.info(result)
 
 
 def get_tile(client, collection_id, item_id):
-    """Get a specific tile."""
+    """Get a specific tile and save it locally."""
     get_tile_with_matrix_set_response = client.tiler.get_tile(
         collection_id=collection_id,
         item_id=item_id,
         tile_matrix_set_id="WebMercatorQuad",
-        z=13,
-        x=3998,
-        y=3095,
+        z=14,
+        x=4349,
+        y=6564,
         scale=1,
         format="png",
-        assets=["red_20m", "green_20m", "blue_20m"],
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0.0,
+        assets=["image"],
+        asset_band_indices=["image|1,2,3"],
     )
-    display_response(get_tile_with_matrix_set_response)
+    display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
 
 
 def get_wmts_capabilities(client, collection_id, item_id, assets):
-    """Get WMTS capabilities."""
+    """Get WMTS capabilities and save it locally."""
     get_wmts_capabilities_response = client.tiler.get_wmts_capabilities(
         collection_id=collection_id,
         item_id=item_id,
@@ -240,14 +234,17 @@ def get_wmts_capabilities(client, collection_id, item_id, assets):
         tile_format=TilerImageFormat.PNG,
         tile_scale=1,
         min_zoom=7,
-        max_zoom=9,
+        max_zoom=14,
         assets=assets,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
+        asset_band_indices=["image|1,2,3"],
     )
     xml_bytes = b"".join(get_wmts_capabilities_response)
     xml_string = xml_bytes.decode("utf-8")
-    logging.info(xml_string[:81])
+
+    filename = f"wmts_capabilities_{item_id}.xml"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(xml_string)
+    logging.info(f"WMTS capabilities saved as: {filename}")
 
 
 def main():
@@ -256,39 +253,43 @@ def main():
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
 
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "sentinel-2-l2a")
-    item_id = os.environ.get("AZURE_ITEM_ID", "S2A_MSIL2A_20230816T105631_N0509_R094_T30TUK_20230816T171602")
-    assets = ["red", "green", "blue"]
+    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip-sample-datasets")
+    item_id = os.environ.get("AZURE_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
+    assets = ["image"]
 
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-    # Define geometry for operations that need it
+    # Define geometry for operations - Georgia NAIP area
     geometry = Polygon(
         coordinates=[
             [
-                [-4.266, 40.231356],  # bottom-left
-                [-4.174, 40.231356],  # bottom-right
-                [-4.174, 40.323356],  # top-right
-                [-4.266, 40.323356],  # top-left
-                [-4.266, 40.231356],  # close the ring
+                [-84.43809697097522, 33.63093193547549],
+                [-84.41844018562179, 33.63093193547549],
+                [-84.41844018562179, 33.64850313084044],
+                [-84.43809697097522, 33.64850313084044],
+                [-84.43809697097522, 33.63093193547549],
             ]
         ]
     )
     geojson = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
+    # Calculate bounds and center point from polygon
+    bounds = [-84.43809697097522, 33.63093193547549, -84.41844018562179, 33.64850313084044]
+    point = [-84.428268578298505, 33.639717533157965]
+
     # Execute tiler operations
     get_tile_matrix_definitions(client)
     list_tile_matrices(client)
-    get_asset_statistics(client, collection_id, item_id)
+    # get_asset_statistics(client, collection_id, item_id)  # Not supported for NAIP
     list_available_assets(client, collection_id, item_id)
     list_bounds(client, collection_id, item_id)
     crop_geo_json(client, collection_id, item_id, geojson, assets)
     crop_geo_json_with_dimensions(client, collection_id, item_id, geojson, assets)
     get_geo_json_statistics(client, collection_id, item_id, geojson, assets)
     get_info_geo_json(client, collection_id, item_id, assets)
-    get_part(client, collection_id, item_id, assets)
-    get_part_with_dimensions(client, collection_id, item_id, assets)
-    get_point(client, collection_id, item_id, assets)
+    get_part(client, collection_id, item_id, assets, bounds)
+    get_part_with_dimensions(client, collection_id, item_id, assets, bounds)
+    get_point(client, collection_id, item_id, assets, point)
     get_preview(client, collection_id, item_id, assets)
     get_preview_with_format(client, collection_id, item_id, assets)
     list_statistics(client, collection_id, item_id, assets)

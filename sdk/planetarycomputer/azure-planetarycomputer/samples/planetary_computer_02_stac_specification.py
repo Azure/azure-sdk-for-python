@@ -20,7 +20,7 @@ USAGE:
     python planetarycomputer_stac_specification.py
 
     Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
-    Set the environment variable AZURE_COLLECTION_ID with your collection ID (default: sentinel-2-l2a).
+    Set the environment variable AZURE_COLLECTION_ID with your collection ID (default: naip).
 """
 
 import os
@@ -224,7 +224,7 @@ def create_stac_item(client, collection_id, item_id):
 def update_stac_item(client, collection_id, item_id):
     """Update a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
-    stac_item.properties["platform"] = "sentinel-2abcd"
+    stac_item.properties["platform"] = "NAIP Imagery"
 
     stac_item_create_or_update_response = client.stac.begin_update_item(
         collection_id=collection_id, item_id=stac_item.id, body=stac_item, polling=True
@@ -284,7 +284,7 @@ def get_queryables(client, collection_id):
 def main():
     # Get configuration from environment
     endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "sentinel-2-l2a")
+    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip")
     item_id = os.environ.get("AZURE_ITEM_ID", "S2A_MSIL2A_20230816T105631_N0509_R094_T30TUK_20230816T171602")
 
     if not endpoint:

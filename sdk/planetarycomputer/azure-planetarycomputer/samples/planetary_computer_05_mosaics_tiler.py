@@ -9,6 +9,7 @@ FILE: planetary_computer_05_mosaics_tiler.py
 
 DESCRIPTION:
     This sample demonstrates mosaic tiling operations from the Azure Planetary Computer Pro SDK.
+    Uses NAIP sample datasets and saves tiles locally.
 
 USAGE:
     python planetary_computer_05_mosaics_tiler.py
@@ -17,7 +18,6 @@ USAGE:
 """
 
 import os
-import io
 from azure.planetarycomputer import PlanetaryComputerClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import (
@@ -27,10 +27,7 @@ from azure.planetarycomputer.models import (
     StacSearchSortingDirection,
     TilerImageFormat,
 )
-from PIL import Image as PILImage
-
 import logging
-from azure.core.pipeline.policies import HttpLoggingPolicy
 
 # Enable HTTP request/response logging
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
@@ -38,9 +35,16 @@ logging.basicConfig(level=logging.INFO)
 
 
 def register_mosaics_search(client, collection_id):
-    """Register a search for mosaics."""
+    """Register a search for mosaics filtered to 2021-2022."""
     register_search_request = StacSearchParameters(
-        filter={"args": [{"args": [{"property": "collection"}, collection_id], "op": "="}], "op": "and"},
+        filter={
+            "op": "and",
+            "args": [
+                {"op": "=", "args": [{"property": "collection"}, collection_id]},
+                {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+            ]
+        },
         filter_lang=FilterLanguage.CQL2_JSON,
         sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
     )
@@ -56,15 +60,14 @@ def get_mosaics_search_info(client, search_id):
     return search
 
 
-def get_mosaics_tile_json(client, search_hash, collection_id):
+def get_mosaics_tile_json(client, search_id, collection_id):
     """Get mosaics tile JSON."""
     get_mosaics_tile_json_response = client.tiler.get_mosaics_tile_json(
-        search_id=search_hash,
+        search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
-        assets=["red_20m", "green_20m", "blue_20m"],
-        tile_scale=2,
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0.0,
+        assets=["image"],
+        asset_band_indices=["image|1,2,3"],
+        tile_scale=1,
         min_zoom=9,
         collection=collection_id,
         tile_format="png",
@@ -72,50 +75,58 @@ def get_mosaics_tile_json(client, search_hash, collection_id):
     logging.info(get_mosaics_tile_json_response.as_dict())
 
 
-def get_mosaics_tile(client, search_hash, collection_id):
-    """Get a mosaic tile."""
+def get_mosaics_tile(client, search_id, collection_id):
+    """Get a mosaic tile and save it locally."""
     mosaics_tile_matrix_sets_response = client.tiler.get_mosaics_tile(
-        search_id=search_hash,
+        search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
-        z=10,
-        x=504,
-        y=390,
+        z=13,
+        x=2174,
+        y=3282,
         scale=1,
         format="png",
-        assets=["red_20m", "green_20m", "blue_20m"],
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0.0,
+        assets=["image"],
+        asset_band_indices=["image|1,2,3"],
         collection=collection_id,
     )
     mosaics_tile_matrix_sets_bytes = b"".join(mosaics_tile_matrix_sets_response)
-    image = PILImage.open(io.BytesIO(mosaics_tile_matrix_sets_bytes))
-    logging.info(f"Image loaded: {image.format} {image.size} {image.mode}")
+    
+    # Save tile locally
+    filename = f"mosaic_tile_{search_id}_z13_x2174_y3282.png"
+    with open(filename, "wb") as f:
+        f.write(mosaics_tile_matrix_sets_bytes)
+    logging.info(f"Tile saved as: {filename} ({len(mosaics_tile_matrix_sets_bytes)} bytes)")
 
 
-def get_mosaics_wmts_capabilities(client, search_hash):
-    """Get WMTS capabilities for mosaics."""
+def get_mosaics_wmts_capabilities(client, search_id):
+    """Get WMTS capabilities for mosaics and save it locally."""
     get_capabilities_xml_response = client.tiler.get_mosaics_wmts_capabilities(
-        search_id=search_hash,
+        search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         tile_format=TilerImageFormat.PNG,
         tile_scale=1,
         min_zoom=7,
-        max_zoom=9,
-        assets=["red_20m", "green_20m", "blue_20m"],
-        color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-        no_data=0,
+        max_zoom=13,
+        assets=["image"],
+        asset_band_indices=["image|1,2,3"],
     )
     xml_bytes = b"".join(get_capabilities_xml_response)
     xml_string = xml_bytes.decode("utf-8")
-    logging.info(xml_string)
+    
+    # Save WMTS capabilities locally
+    filename = f"wmts_capabilities_{search_id}.xml"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(xml_string)
+    logging.info(f"WMTS capabilities saved as: {filename}")
 
 
-def get_mosaics_assets_for_point(client, search_hash):
-    """Get mosaic assets for a specific point."""
+def get_mosaics_assets_for_point(client, search_id):
+    """Get mosaic assets for a specific point (center of the bbox)."""
+    # Using center point from the coordinate bbox: -84.43202751899601, 33.639647639722273
     get_lon_lat_assets_response = client.tiler.get_mosaics_assets_for_point(
-        search_id=search_hash,
-        longitude=-3.0767,
-        latitude=39.1201,
+        search_id=search_id,
+        longitude=-84.43202751899601,
+        latitude=33.639647639722273,
         coordinate_reference_system="EPSG:4326",
         items_limit=100,
         exit_when_full=True,
@@ -123,20 +134,20 @@ def get_mosaics_assets_for_point(client, search_hash):
         skip_covered=True,
         time_limit=30,
     )
-    logging.info(get_lon_lat_assets_response[0]["id"])
+    logging.info(f"Assets for point: {get_lon_lat_assets_response[0]['id']}")
 
 
-def get_mosaics_assets_for_tile(client, search_hash, collection_id):
+def get_mosaics_assets_for_tile(client, search_id, collection_id):
     """Get mosaic assets for a specific tile."""
     result = client.tiler.get_mosaics_assets_for_tile(
-        search_id=search_hash,
+        search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
-        z=10,
-        x=504,
-        y=390,
+        z=13,
+        x=2174,
+        y=3282,
         collection_id=collection_id,
     )
-    logging.info(result)
+    logging.info(f"Assets for tile: {result}")
 
 
 def main():
@@ -145,20 +156,19 @@ def main():
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
 
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "sentinel-2-l2a")
+    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip-sample-datasets")
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Execute mosaic tiler operations
     register_search_response = register_mosaics_search(client, collection_id)
-    search_id = register_search_response["searchid"]
+    search_id = register_search_response.search_id
 
-    search = get_mosaics_search_info(client, search_id)
-
-    get_mosaics_tile_json(client, search.hash, collection_id)
-    get_mosaics_tile(client, search.hash, collection_id)
-    get_mosaics_wmts_capabilities(client, search.hash)
-    get_mosaics_assets_for_point(client, search.hash)
-    get_mosaics_assets_for_tile(client, search.hash, collection_id)
+    get_mosaics_search_info(client, search_id)
+    get_mosaics_tile_json(client, search_id, collection_id)
+    get_mosaics_tile(client, search_id, collection_id)
+    get_mosaics_wmts_capabilities(client, search_id)
+    get_mosaics_assets_for_point(client, search_id)
+    get_mosaics_assets_for_tile(client, search_id, collection_id)
 
 
 if __name__ == "__main__":

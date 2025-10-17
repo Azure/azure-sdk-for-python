@@ -57,7 +57,7 @@ def create_collection(client, collection_id):
     logging.info(f"Checking if collection '{collection_id}' exists...")
     get_all_collections_response = client.stac.list_collections()
 
-    if any(c["id"] == collection_id for c in get_all_collections_response["collections"]):
+    if any(c.id == collection_id for c in get_all_collections_response["collections"]):
         logging.info(f"Collection '{collection_id}' already exists, deleting it...")
         collection_delete_operation = client.stac.begin_delete_collection(collection_id, polling=True)
         collection_delete_operation.result()
@@ -250,7 +250,7 @@ def manage_mosaics(client, collection_id):
     # Check existing mosaics
     stac_collection_mosaics_get_all_response = client.stac.list_mosaics(collection_id=collection_id)
 
-    if any(m["id"] == mosaic.id for m in stac_collection_mosaics_get_all_response):
+    if any(m.id == mosaic.id for m in stac_collection_mosaics_get_all_response):
         logging.info(f"Mosaic {mosaic.id} already exists. Deleting it before creating a new one.")
         client.stac.delete_mosaic(collection_id=collection_id, mosaic_id=mosaic.id)
 

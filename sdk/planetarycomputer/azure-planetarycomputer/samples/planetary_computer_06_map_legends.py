@@ -17,14 +17,11 @@ USAGE:
 """
 
 import os
-import io
 from azure.planetarycomputer import PlanetaryComputerClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import ColorMapNames
-from PIL import Image as PILImage
 
 import logging
-from azure.core.pipeline.policies import HttpLoggingPolicy
 
 # Enable HTTP request/response logging
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
@@ -46,14 +43,16 @@ def get_interval_legend(client):
 
 
 def get_legend(client):
-    """Get a legend as a PNG image."""
+    """Get a legend as a PNG image and save it locally."""
     legend_response = client.tiler.get_legend(color_map_name="rdylgn")
 
-    # Convert the binary response to an image
+    # Save the legend to a file
     legend_bytes = b"".join(legend_response)
-    legend_image = PILImage.open(io.BytesIO(legend_bytes))
+    filename = "legend_rdylgn.png"
+    with open(filename, "wb") as f:
+        f.write(legend_bytes)
 
-    logging.info(f"Legend image loaded: {legend_image.format} {legend_image.size} {legend_image.mode}")
+    logging.info(f"Legend saved as: {filename} ({len(legend_bytes)} bytes)")
 
 
 def main():
