@@ -1,0 +1,2292 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "88",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Oct 2025 10:20:32 GMT",
+        "Server": "IMDS/150.870.65.1854"
+      },
+      "ResponseBody": {
+        "error": "invalid_request",
+        "error_description": "Required metadata header not specified"
+      }
+    },
+    {
+      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Metadata": "true",
+        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "68",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Oct 2025 10:20:32 GMT",
+        "Server": "IMDS/150.870.65.1854"
+      },
+      "ResponseBody": {
+        "error": "invalid_request",
+        "error_description": "Identity not found"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Oct 2025 10:20:35 GMT",
+        "mise-correlation-id": "618a5c90-eb32-47f9-ad3f-0f6566f5930b",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "e9c8587adb88e6582afab9d8c4c5865c"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T22:21:17.222285Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T22:21:18.020944Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T22:37:28.097832Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-15T22:21:17.222285Z",
+            "startTime": "2025-10-15T22:21:17.222285Z",
+            "finishTime": "2025-10-15T22:37:28.097832Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T22:05:31.262526Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T22:05:31.868939Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T22:06:01.675143Z"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-15T22:05:31.262526Z",
+            "startTime": "2025-10-15T22:05:31.262526Z",
+            "finishTime": "2025-10-15T22:06:01.675143Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T22:04:30.672189Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T22:04:31.086247Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T22:05:00.572628Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T22:04:30.672189Z",
+            "startTime": "2025-10-15T22:04:30.672189Z",
+            "finishTime": "2025-10-15T22:05:00.572628Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T22:03:44.972801Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T22:03:45.348032Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T22:03:46.28139Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-15T22:03:44.972801Z",
+            "startTime": "2025-10-15T22:03:44.972801Z",
+            "finishTime": "2025-10-15T22:03:46.28139Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:59:37.699736Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:59:38.084977Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T22:00:35.833801Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T21:59:37.699736Z",
+            "startTime": "2025-10-15T21:59:37.699736Z",
+            "finishTime": "2025-10-15T22:00:35.833801Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:58:51.506944Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:58:52.538879Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:58:53.829471Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-15T21:58:51.506944Z",
+            "startTime": "2025-10-15T21:58:51.506944Z",
+            "finishTime": "2025-10-15T21:58:53.829471Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:46:02.418537Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:46:02.824342Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-15T21:46:03.50365Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-15T21:46:02.418537Z",
+            "startTime": "2025-10-15T21:46:02.418537Z",
+            "finishTime": "2025-10-15T21:46:03.50365Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:45:30.178175Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:45:31.167185Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:46:00.563254Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T21:45:30.178175Z",
+            "startTime": "2025-10-15T21:45:30.178175Z",
+            "finishTime": "2025-10-15T21:46:00.563254Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:44:44.195161Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:44:44.89631Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:44:46.068703Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-15T21:44:44.195161Z",
+            "startTime": "2025-10-15T21:44:44.195161Z",
+            "finishTime": "2025-10-15T21:44:46.068703Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:41:04.464573Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:41:05.575522Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:42:14.710252Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T21:41:04.464573Z",
+            "startTime": "2025-10-15T21:41:04.464573Z",
+            "finishTime": "2025-10-15T21:42:14.710252Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:40:17.319361Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:40:17.986005Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:40:19.537743Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-15T21:40:17.319361Z",
+            "startTime": "2025-10-15T21:40:17.319361Z",
+            "finishTime": "2025-10-15T21:40:19.537743Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:24:22.5813999Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:24:31.6772347Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:24:32.6721353Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-15T21:24:22.5813977Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:14:26.79172Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:14:27.374799Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:36:10.435521Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-15T21:14:26.79172Z",
+            "startTime": "2025-10-15T21:14:26.79172Z",
+            "finishTime": "2025-10-15T21:36:10.435521Z",
+            "collectionId": "atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T21:13:33.2288221Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T21:13:49.5736018Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T21:13:49.8695069Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-15T21:13:33.2288198Z",
+            "collectionId": "atl"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T19:18:20.955092Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T19:18:21.670158Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T19:40:04.773895Z",
+                "errorCode": "ErrorsInBatchOperation",
+                "errorMessage": "There are errors processing some items, check logs content for further information"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-15T19:18:20.955092Z",
+            "startTime": "2025-10-15T19:18:20.955092Z",
+            "finishTime": "2025-10-15T19:40:04.773895Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "5",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T19:17:29.1471036Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T19:17:47.4381944Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T19:17:47.6855613Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-15T19:17:29.1470989Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T18:41:01.1550462Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T18:41:16.4520805Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T18:41:16.7291725Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-15T18:41:01.1550405Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T18:37:21.983379Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T18:37:23.35708Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-15T18:37:23.918634Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T18:37:21.983379Z",
+            "startTime": "2025-10-15T18:37:21.983379Z",
+            "finishTime": "2025-10-15T18:37:23.918634Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T18:33:50.732185Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T18:33:52.131983Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-15T18:33:52.74678Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T18:33:50.732185Z",
+            "startTime": "2025-10-15T18:33:50.732185Z",
+            "finishTime": "2025-10-15T18:33:52.74678Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T18:32:54.854249Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T18:32:55.847408Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-15T18:32:56.33146Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T18:32:54.854249Z",
+            "startTime": "2025-10-15T18:32:54.854249Z",
+            "finishTime": "2025-10-15T18:32:56.33146Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T18:30:47.948439Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T18:30:50.415773Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-15T18:30:51.113862Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-15T18:30:47.948439Z",
+            "startTime": "2025-10-15T18:30:47.948439Z",
+            "finishTime": "2025-10-15T18:30:51.113862Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308420_se_16_060_20190912_20200102' already exists in collection 'python-sdk-sentinel-2'"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T17:06:01.738629Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T17:06:02.258271Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T17:27:45.09691Z",
+                "errorCode": "ErrorsInBatchOperation",
+                "errorMessage": "There are errors processing some items, check logs content for further information"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-15T17:06:01.738629Z",
+            "startTime": "2025-10-15T17:06:01.738629Z",
+            "finishTime": "2025-10-15T17:27:45.09691Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "5",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T16:42:29.6843761Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T16:42:44.2167233Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T16:42:44.5057146Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-15T16:42:29.6843702Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T16:01:41.6432171Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T16:01:43.1492572Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T16:01:43.514315Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-15T16:01:41.6432125Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-15T10:58:09.548953Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-15T10:58:10.61361Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-15T11:13:50.220915Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-15T10:58:09.548953Z",
+            "startTime": "2025-10-15T10:58:09.548953Z",
+            "finishTime": "2025-10-15T11:13:50.220915Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-14T15:27:37.578908Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-14T15:27:38.848885Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-14T15:27:39.466234Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-14T15:27:37.578908Z",
+            "startTime": "2025-10-14T15:27:37.578908Z",
+            "finishTime": "2025-10-14T15:27:39.466234Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-14T15:27:36.827975Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-14T15:27:37.787433Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-14T15:27:38.823558Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-14T15:27:36.827975Z",
+            "startTime": "2025-10-14T15:27:36.827975Z",
+            "finishTime": "2025-10-14T15:27:38.823558Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-14T15:26:05.659015Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-14T15:26:07.273117Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-14T15:27:18.273649Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-14T15:26:05.659015Z",
+            "startTime": "2025-10-14T15:26:05.659015Z",
+            "finishTime": "2025-10-14T15:27:18.273649Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-14T15:25:31.0264722Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-14T15:25:47.8846547Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-14T15:25:48.4883485Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-14T15:25:31.026467Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-14T15:24:00.1234874Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-14T15:24:16.8565748Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-14T15:24:17.8097758Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-14T15:24:00.123285Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-13T22:45:56.04101Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-13T22:45:56.628155Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-13T23:02:06.788058Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-13T22:45:56.04101Z",
+            "startTime": "2025-10-13T22:45:56.04101Z",
+            "finishTime": "2025-10-13T23:02:06.788058Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-12T14:24:16.429968Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-12T14:24:17.216263Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-12T14:39:57.073118Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-12T14:24:16.429968Z",
+            "startTime": "2025-10-12T14:24:16.429968Z",
+            "finishTime": "2025-10-12T14:39:57.073118Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-12T14:09:44.089921Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-12T14:09:45.436561Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-12T14:16:51.239758Z",
+                "errorCode": "InternalIntermitentError",
+                "errorMessage": "Internal error"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-12T14:09:44.089921Z",
+            "startTime": "2025-10-12T14:09:44.089921Z",
+            "finishTime": "2025-10-12T14:16:51.239758Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "InternalIntermitentError",
+                "message": "Internal error"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-12T14:08:25.0020776Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-12T14:08:38.9270601Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-12T14:08:39.0666078Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-12T14:08:25.0020747Z",
+            "collectionId": "python-sdk-sentinel-2-3"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-12T14:07:54.8056064Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-12T14:08:08.4324144Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-12T14:08:08.8871485Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-12T14:07:54.8053087Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-12T14:05:58.007368Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-12T14:06:07.4085182Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-12T14:06:08.2701884Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-12T14:05:58.0070668Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T18:18:37.901492Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T18:18:39.120794Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-09T18:18:39.58799Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-09T18:18:37.901492Z",
+            "startTime": "2025-10-09T18:18:37.901492Z",
+            "finishTime": "2025-10-09T18:18:39.58799Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T18:18:37.262155Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T18:18:38.113742Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-09T18:18:38.831843Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-09T18:18:37.262155Z",
+            "startTime": "2025-10-09T18:18:37.262155Z",
+            "finishTime": "2025-10-09T18:18:38.831843Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T18:16:34.992472Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T18:16:35.48916Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-09T18:17:50.9857Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-09T18:16:34.992472Z",
+            "startTime": "2025-10-09T18:16:34.992472Z",
+            "finishTime": "2025-10-09T18:17:50.9857Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T18:16:03.2756987Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T18:16:10.4700024Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-09T18:16:10.7626335Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-09T18:16:03.2756944Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T18:14:31.3928631Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T18:14:39.7718464Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-09T18:14:40.3271039Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-09T18:14:31.3928606Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T17:59:06.276908Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T17:59:06.889542Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-09T17:59:07.946648Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-09T17:59:06.276908Z",
+            "startTime": "2025-10-09T17:59:06.276908Z",
+            "finishTime": "2025-10-09T17:59:07.946648Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T17:59:05.213235Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T17:59:06.25064Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-09T17:59:07.805248Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-09T17:59:05.213235Z",
+            "startTime": "2025-10-09T17:59:05.213235Z",
+            "finishTime": "2025-10-09T17:59:07.805248Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T17:57:03.455891Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T17:57:04.290723Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-09T17:58:14.203736Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-09T17:57:03.455891Z",
+            "startTime": "2025-10-09T17:57:03.455891Z",
+            "finishTime": "2025-10-09T17:58:14.203736Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T17:56:29.7388314Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T17:56:38.5976141Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-09T17:56:39.4069009Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-09T17:56:29.7386191Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-09T17:10:08.7811789Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-09T17:10:19.2124592Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-09T17:10:20.3130785Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-09T17:10:08.7807805Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-03T13:01:01.680478Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-03T13:01:02.221804Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-03T13:16:41.282628Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-03T13:01:01.680478Z",
+            "startTime": "2025-10-03T13:01:01.680478Z",
+            "finishTime": "2025-10-03T13:16:41.282628Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-03T12:33:27.834948Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-03T12:33:28.317803Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-03T12:33:28.989671Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-03T12:33:27.834948Z",
+            "startTime": "2025-10-03T12:33:27.834948Z",
+            "finishTime": "2025-10-03T12:33:28.989671Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_10m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-03T12:33:21.184735Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-03T12:33:23.821286Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-03T12:33:24.610426Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-03T12:33:21.184735Z",
+            "startTime": "2025-10-03T12:33:21.184735Z",
+            "finishTime": "2025-10-03T12:33:24.610426Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-03T12:29:01.753266Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-03T12:29:02.256895Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-03T12:32:14.236494Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-03T12:29:01.753266Z",
+            "startTime": "2025-10-03T12:29:01.753266Z",
+            "finishTime": "2025-10-03T12:32:14.236494Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-03T12:28:26.00896Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-03T12:28:26.362946Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-03T12:28:27.413111Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-03T12:28:26.00896Z",
+            "startTime": "2025-10-03T12:28:26.00896Z",
+            "finishTime": "2025-10-03T12:28:27.413111Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-03T12:06:48.639967Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-03T12:06:49.461548Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-03T12:22:59.72899Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-03T12:06:48.639967Z",
+            "startTime": "2025-10-03T12:06:48.639967Z",
+            "finishTime": "2025-10-03T12:22:59.72899Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T22:35:13.013182Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T22:35:13.737459Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T22:50:52.791064Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-02T22:35:13.013182Z",
+            "startTime": "2025-10-02T22:35:13.013182Z",
+            "finishTime": "2025-10-02T22:50:52.791064Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T22:29:56.8603783Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T22:30:18.8958463Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T22:30:19.13873Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-02T22:29:56.8603767Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T22:28:26.397215Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T22:28:48.4899778Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T22:28:48.8376477Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-02T22:28:26.3972128Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T22:24:19.9084945Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T22:24:48.0571928Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T22:24:48.3452936Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-02T22:24:19.908493Z",
+            "collectionId": "python-sdk-sentinel-2-3"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T22:22:49.5181573Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T22:23:18.7749325Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T22:23:19.6914859Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-02T22:22:49.518153Z",
+            "collectionId": "python-sdk-sentinel-2-3"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T21:20:43.0137767Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T21:20:47.0413622Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-02T21:20:47.0492744Z",
+                "errorCode": "ExecutionError",
+                "errorMessage": "Collection with ID: 'python-sdk-sentinel-2-3' already exists"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-02T21:20:43.0135436Z",
+            "collectionId": "python-sdk-sentinel-2-3",
+            "error": {
+              "error": {
+                "code": "ExecutionError",
+                "message": "Collection with ID: 'python-sdk-sentinel-2-3' already exists"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T21:20:26.6348166Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T21:20:46.7405825Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T21:20:47.0244333Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-02T21:20:26.6348129Z",
+            "collectionId": "python-sdk-sentinel-2-3"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T21:18:55.5862698Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T21:19:16.1428169Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T21:19:16.6876054Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-02T21:18:55.5862679Z",
+            "collectionId": "python-sdk-sentinel-2-3"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Canceling",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T17:39:34.288783Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T17:39:34.813669Z"
+              },
+              {
+                "status": "Canceling",
+                "timestamp": "2025-10-12T20:38:29.0752968Z"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-02T17:39:34.288783Z",
+            "startTime": "2025-10-02T17:39:34.288783Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T17:37:53.807813Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T17:37:54.68056Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-02T17:37:55.7321Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_60m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_60m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-02T17:37:53.807813Z",
+            "startTime": "2025-10-02T17:37:53.807813Z",
+            "finishTime": "2025-10-02T17:37:55.7321Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_60m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/aot_60m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T17:36:49.678187Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T17:36:50.639306Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-02T17:36:51.678089Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/blue_20m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/blue_20m.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-02T17:36:49.678187Z",
+            "startTime": "2025-10-02T17:36:49.678187Z",
+            "finishTime": "2025-10-02T17:36:51.678089Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/blue_20m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/ga_m_3308420_se_16_060_20190912_20200102/blue_20m.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T17:35:13.363877Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T17:35:14.453737Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T17:36:26.346139Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-02T17:35:13.363877Z",
+            "startTime": "2025-10-02T17:35:13.363877Z",
+            "finishTime": "2025-10-02T17:36:26.346139Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-02T17:27:59.591287Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-02T17:28:11.7957584Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-02T17:28:12.4841686Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-02T17:27:59.5909616Z",
+            "collectionId": "python-sdk-sentinel-2-3"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-01T11:50:10.7318533Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-01T11:50:31.888919Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-01T11:50:32.2092941Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-01T11:50:10.7318508Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-01T11:48:39.8090322Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-01T11:49:01.4597418Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-01T11:49:01.7827857Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-01T11:48:39.8090302Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-01T11:46:19.0068717Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-01T11:46:31.1239396Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-01T11:46:31.3722003Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-01T11:46:19.0068702Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-01T11:44:48.5891419Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-01T11:45:00.7216354Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-01T11:45:01.054021Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-01T11:44:48.5891381Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T20:17:24.732066Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T20:17:27.035147Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T20:18:37.889882Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-09-30T20:17:24.732066Z",
+            "startTime": "2025-09-30T20:17:24.732066Z",
+            "finishTime": "2025-09-30T20:18:37.889882Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T20:15:15.19899Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T20:15:16.987836Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T20:15:18.546361Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-09-30T20:15:15.19899Z",
+            "startTime": "2025-09-30T20:15:15.19899Z",
+            "finishTime": "2025-09-30T20:15:18.546361Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T19:24:26.7774365Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T19:24:41.7736156Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T19:24:41.9342256Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-09-30T19:24:26.7774349Z",
+            "collectionId": "example-collection900"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T19:24:06.3835139Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T19:24:11.1912125Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T19:24:11.7069612Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-09-30T19:24:06.3835103Z",
+            "collectionId": "example-collection900"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T15:37:51.006718Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T15:37:52.216409Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T15:47:58.675898Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-09-30T15:37:51.006718Z",
+            "startTime": "2025-09-30T15:37:51.006718Z",
+            "finishTime": "2025-09-30T15:47:58.675898Z",
+            "collectionId": "python-sdk-sentinel-2",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "5",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "5"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T15:23:11.7011673Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T15:23:14.1964914Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T15:23:15.1161845Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-09-30T15:23:11.701165Z",
+            "collectionId": "python-sdk-sentinel-2"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T15:21:53.9042236Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T15:22:06.6864749Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-09-30T15:22:06.6944201Z",
+                "errorCode": "ExecutionError",
+                "errorMessage": "Collection with id 'example-collection5' not exists in the geo-catalog"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-09-30T15:21:53.9042219Z",
+            "collectionId": "example-collection5",
+            "error": {
+              "error": {
+                "code": "ExecutionError",
+                "message": "Collection with id 'example-collection5' not exists in the geo-catalog"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T15:21:44.1386046Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T15:22:06.5729663Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T15:22:06.6664549Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-09-30T15:21:44.1384025Z",
+            "collectionId": "example-collection5"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T15:21:30.7076769Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T15:21:36.2743339Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T15:21:36.5411029Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-09-30T15:21:30.7076741Z",
+            "collectionId": "example-collection7"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-30T15:21:22.8646881Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-30T15:21:35.3846215Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-30T15:21:36.2242244Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-09-30T15:21:22.86444Z",
+            "collectionId": "nexos-iow-and-hants-rgb-10cm-5"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-26T11:25:34.3603869Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-26T11:25:39.2121195Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-26T11:25:39.9916524Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-09-26T11:25:34.3603813Z",
+            "collectionId": "nexos-iow-and-hants-rgb-10cm-5"
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-09-26T11:21:04.4339801Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-09-26T11:21:07.957481Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-09-26T11:21:09.045264Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-09-26T11:21:04.4337585Z",
+            "collectionId": "python-sdk-sentinel-2-take-2"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

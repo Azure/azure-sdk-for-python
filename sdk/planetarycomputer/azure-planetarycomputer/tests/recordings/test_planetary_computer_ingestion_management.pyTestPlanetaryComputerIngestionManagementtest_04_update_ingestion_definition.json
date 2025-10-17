@@ -1,0 +1,144 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "88",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Oct 2025 10:20:28 GMT",
+        "Server": "IMDS/150.870.65.1854"
+      },
+      "ResponseBody": {
+        "error": "invalid_request",
+        "error_description": "Required metadata header not specified"
+      }
+    },
+    {
+      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Metadata": "true",
+        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "68",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Oct 2025 10:20:28 GMT",
+        "Server": "IMDS/150.870.65.1854"
+      },
+      "ResponseBody": {
+        "error": "invalid_request",
+        "error_description": "Identity not found"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions?api-version=2025-04-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "186",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "importType": "StaticCatalog",
+        "displayName": "Original Ingestion",
+        "sourceCatalogUrl": "https://test.example.com/catalog.json",
+        "keepOriginalAssets": false,
+        "skipExistingItems": false
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Oct 2025 10:20:31 GMT",
+        "Location": "https://example.com",
+        "mise-correlation-id": "30bb26ef-648a-4b9f-9c11-8b8a3455f87b",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "5fe220961bdc9195639f750e9b0fda13"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "creationTime": "2025-10-17T10:20:31.9105164Z",
+        "importType": "StaticCatalog",
+        "displayName": "Original Ingestion",
+        "sourceCatalogUrl": "https://test.example.com/catalog.json",
+        "skipExistingItems": false,
+        "keepOriginalAssets": false,
+        "status": "Ready"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions/cfbe2ca8-bd64-4a7a-84e9-29b91d77d527?api-version=2025-04-30-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "72",
+        "Content-Type": "application/merge-patch+json",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "importType": "StaticCatalog",
+        "displayName": "Updated Ingestion Name"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Oct 2025 10:20:32 GMT",
+        "mise-correlation-id": "e0d8546c-f632-4f03-99ef-96076a2e621f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "841c2efa5c7e18bb2f627213d927bb28"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "creationTime": "2025-10-17T10:20:31.9105164Z",
+        "importType": "StaticCatalog",
+        "displayName": "Updated Ingestion Name",
+        "sourceCatalogUrl": "https://test.example.com/catalog.json",
+        "skipExistingItems": false,
+        "keepOriginalAssets": false,
+        "status": "Ready"
+      }
+    }
+  ],
+  "Variables": {}
+}
