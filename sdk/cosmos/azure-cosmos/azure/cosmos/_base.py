@@ -147,6 +147,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     headers = dict(default_headers)
     options = options or {}
 
+    # SDK supported capabilities header for partition merge support
+    headers[http_constants.HttpHeaders.SDKSupportedCapabilities] = \
+        http_constants.SDKSupportedCapabilities.PARTITION_MERGE
+
     # Generate a new activity ID for each request client side.
     headers[http_constants.HttpHeaders.ActivityId] = GenerateGuidId()
     if cosmos_client_connection.UseMultipleWriteLocations:
