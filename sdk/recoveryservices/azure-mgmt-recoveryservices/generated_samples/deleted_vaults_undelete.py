@@ -16,7 +16,7 @@ from azure.mgmt.recoveryservices import RecoveryServicesClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservices
 # USAGE
-    python patch_vault_with_cmk.py
+    python deleted_vaults_undelete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,33 +31,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.vaults.begin_update(
-        resource_group_name="HelloWorld",
-        vault_name="swaggerExample",
-        vault={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi": {}
-                },
-            },
+    client.deleted_vaults.begin_undelete(
+        location="westus",
+        deleted_vault_name="swaggerExample",
+        body={
             "properties": {
-                "encryption": {
-                    "infrastructureEncryption": "Enabled",
-                    "kekIdentity": {
-                        "userAssignedIdentity": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi"
-                    },
-                    "keyVaultProperties": {
-                        "keyUri": "https://cmk2xkv.vault.azure.net/keys/Key1/0767b348bb1a4c07baa6c4ec0055d2b3"
-                    },
-                }
-            },
-            "tags": {"PatchKey": "PatchKeyUpdated"},
+                "recoveryResourceGroupId": "/subscriptions/77777777-b0c6-47a2-b37c-d8e65a629c18/resourceGroups/Default-RecoveryServices-ResourceGroup"
+            }
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2025-08-01/PATCHVault_WithCMK.json
+# x-ms-original-file: 2025-08-01/DeletedVaults_Undelete.json
 if __name__ == "__main__":
     main()

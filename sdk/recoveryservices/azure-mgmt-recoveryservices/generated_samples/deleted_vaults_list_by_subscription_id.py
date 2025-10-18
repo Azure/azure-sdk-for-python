@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservices import RecoveryServicesClient
     pip install azure-identity
     pip install azure-mgmt-recoveryservices
 # USAGE
-    python check_name_availability_not_available.py
+    python deleted_vaults_list_by_subscription_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.recovery_services.check_name_availability(
-        resource_group_name="resGroupBar",
+    response = client.deleted_vaults.list_by_subscription_id(
         location="westus",
-        input={"name": "swaggerExample2", "type": "Microsoft.RecoveryServices/Vaults"},
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-08-01/CheckNameAvailability_NotAvailable.json
+# x-ms-original-file: 2025-08-01/DeletedVaults_ListBySubscriptionId.json
 if __name__ == "__main__":
     main()
