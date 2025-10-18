@@ -2751,3 +2751,58 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Act / Assert
         cc_info = container.get_account_information()
         assert cc_info is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_list_blobs_start_end(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+        container.get_blob_client('blob1').upload_blob(data)
+        container.get_blob_client('a/blob2').upload_blob(data)
+        container.get_blob_client('a/blob3').upload_blob(data)
+        container.get_blob_client('a/blob4').upload_blob(data)
+
+        # Act
+        blobs = list(container.list_blobs(name_starts_with="a/", start_from="a/blob2"))
+
+        # Assert
+        assert blobs is not None
+        assert len(blobs) == 3
+        assert blobs[0].name == "a/blob2"
+        assert blobs[1].name == "a/blob3"
+        assert blobs[2].name == "a/blob4"
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_walk_blobs_start_end(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+        container.get_blob_client('a/blob1').upload_blob(data)
+        container.get_blob_client('a/b/blob2').upload_blob(data)
+        container.get_blob_client('a/b/blob3').upload_blob(data)
+        container.get_blob_client('a/b/blob4').upload_blob(data)
+        container.get_blob_client('b/blob5').upload_blob(data)
+        container.get_blob_client('blob6').upload_blob(data)
+
+        blobs = []
+        def recursive_walk(prefix):
+            for b in prefix:
+                if b.get('prefix'):
+                    recursive_walk(b)
+                else:
+                    blobs.append(b.name)
+
+        # Act
+        recursive_walk(container.walk_blobs(name_starts_with="a/", start_from="a/b/", delimiter="/"))
+
+        # Assert
+        assert blobs is not None
+        assert blobs == ["a/b/blob2", "a/b/blob3", "a/b/blob4", "a/blob1"]
