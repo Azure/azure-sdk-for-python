@@ -210,14 +210,14 @@ def manage_operations(client: PlanetaryComputerClient):
 def main():
     # Get configuration from environment
     endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip-sample-datasets")
+    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-sample-datasets")
 
     # Get optional ingestion-specific configuration (for examples)
-    container_uri = os.environ.get("AZURE_INGESTION_CONTAINER_URI", "")
-    source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
+    container_uri = os.environ.get("PLANETARYCOMPUTER_INGESTION_CONTAINER_URI", "")
+    source_catalog_url = os.environ.get("PLANETARYCOMPUTER_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
     managed_identity_object_id = os.environ.get("AZURE_MANAGED_IDENTITY_OBJECT_ID", "")
-    sas_container_uri = os.environ.get("AZURE_INGESTION_SAS_CONTAINER_URI", "")
-    sas_token = os.environ.get("AZURE_INGESTION_SAS_TOKEN", "")
+    sas_container_uri = os.environ.get("PLANETARYCOMPUTER_INGESTION_SAS_CONTAINER_URI", "")
+    sas_token = os.environ.get("PLANETARYCOMPUTER_INGESTION_SAS_TOKEN", "")
 
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")

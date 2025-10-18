@@ -268,8 +268,8 @@ def main():
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
 
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip-sample-datasets")
-    item_id = os.environ.get("AZURE_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
+    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-sample-datasets")
+    item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
 
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 

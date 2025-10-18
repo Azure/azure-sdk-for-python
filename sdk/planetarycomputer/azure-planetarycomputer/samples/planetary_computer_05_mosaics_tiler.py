@@ -156,7 +156,7 @@ def main():
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
 
-    collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip-sample-datasets")
+    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-sample-datasets")
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Execute mosaic tiler operations
