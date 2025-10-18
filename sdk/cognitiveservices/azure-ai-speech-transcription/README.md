@@ -137,6 +137,7 @@ The following sections provide several code snippets covering common scenarios:
 
 - [Transcribe an audio file](#transcribe-an-audio-file)
 - [Transcribe from a URL](#transcribe-from-a-url)
+- [Transcribe with enhanced mode](#transcribe-with-enhanced-mode)
 - [Using async client](#using-async-client)
 
 For more extensive examples including speaker diarization, multi-language detection, profanity filtering, and custom phrase lists, see the [samples][samples_directory] directory.
@@ -223,6 +224,72 @@ print(f"Transcription: {result.combined_phrases[0].text}")
 # Print duration information
 if result.duration_milliseconds:
     print(f"Audio duration: {result.duration_milliseconds / 1000:.2f} seconds")
+```
+
+<!-- END SNIPPET -->
+
+### Transcribe with enhanced mode
+
+Enhanced mode provides advanced capabilities such as translation or summarization during transcription:
+
+<!-- SNIPPET:sample_transcribe_with_enhanced_mode.transcribe_with_enhanced_mode-->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.speech.transcription import TranscriptionClient
+from azure.ai.speech.transcription.models import (
+    TranscribeRequestContent,
+    TranscriptionOptions,
+    EnhancedModeProperties,
+)
+
+# Get configuration from environment variables
+endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
+api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+# Create the transcription client
+client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+
+# Path to your audio file
+import pathlib
+
+audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
+
+# Open and read the audio file
+with open(audio_file_path, "rb") as audio_file:
+    # Create enhanced mode properties
+    # Enable enhanced mode for advanced processing capabilities
+    enhanced_mode = EnhancedModeProperties(
+        enabled=True,
+        task="translation",  # Specify the task type (e.g., "translation", "summarization")
+        target_language="es-ES",  # Target language for translation
+        prompt=[
+            "Translate the following audio to Spanish",
+            "Focus on technical terminology"
+        ],  # Optional prompts to guide the enhanced mode
+    )
+
+    # Create transcription options with enhanced mode
+    options = TranscriptionOptions(
+        locales=["en-US"],
+        enhanced_mode=enhanced_mode
+    )
+
+    # Create the request content
+    request_content = TranscribeRequestContent(options=options, audio=audio_file)
+
+    # Transcribe the audio with enhanced mode
+    result = client.transcribe(request_content)
+
+    # Print the transcription result
+    print("Transcription with enhanced mode:")
+    print(f"{result.combined_phrases[0].text}")
+
+    # Print individual phrases if available
+    if result.phrases:
+        print("\nDetailed phrases:")
+        for phrase in result.phrases:
+            print(f"  [{phrase.offset_milliseconds}ms]: {phrase.text}")
 ```
 
 <!-- END SNIPPET -->

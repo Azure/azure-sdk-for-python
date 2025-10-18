@@ -81,6 +81,8 @@ python async_samples/sample_transcribe_audio_file_async.py
 | [sample_transcribe_with_profanity_filter_async.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples/async_samples/sample_transcribe_with_profanity_filter_async.py) | Transcribe with profanity filtering (async) |
 | [sample_transcribe_with_phrase_list.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples/sample_transcribe_with_phrase_list.py) | Transcribe with custom phrase list |
 | [sample_transcribe_with_phrase_list_async.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples/async_samples/sample_transcribe_with_phrase_list_async.py) | Transcribe with custom phrase list (async) |
+| [sample_transcribe_with_enhanced_mode.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples/sample_transcribe_with_enhanced_mode.py) | Transcribe with enhanced mode for advanced capabilities |
+| [sample_transcribe_with_enhanced_mode_async.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples/async_samples/sample_transcribe_with_enhanced_mode_async.py) | Transcribe with enhanced mode (async) |
 
 ## Additional Resources
 
