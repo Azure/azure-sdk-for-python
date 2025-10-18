@@ -1,0 +1,38 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/sentinel-2-l2a/items/S2A_MSIL2A_20230816T105631_N0509_R094_T30TUK_20230816T171602/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&assets=red&assets=green&assets=blue&nodata=0.0&tile_format=png&tile_scale=1&minzoom=7&maxzoom=9&color_formula=Gamma%20RGB%203.2%20Saturation%200.8%20Sigmoidal%20RGB%2025%200.35",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Cache-Control": "public, max-age=3600",
+        "Connection": "keep-alive",
+        "Content-Length": "120",
+        "Content-Type": "application/json",
+        "Date": "Thu, 16 Oct 2025 23:08:04 GMT",
+        "Server-Timing": "total;dur=65.73",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "64dc79e8d10b43b88cb83302046fe466"
+      },
+      "ResponseBody": {
+        "detail": "No item 'S2A_MSIL2A_20230816T105631_N0509_R094_T30TUK_20230816T171602' found in 'sentinel-2-l2a' collection"
+      }
+    }
+  ],
+  "Variables": {}
+}
