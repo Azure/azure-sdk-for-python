@@ -23,12 +23,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "775",
         "Content-Type": "application/schema+json",
-        "Date": "Sat, 18 Oct 2025 02:02:47 GMT",
+        "Date": "Sat, 18 Oct 2025 02:33:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "db44ecd1cda74e1a8e545ff4f0316e76"
+        "X-Request-ID": "f3ea530c73c14797a22a6c54a3dc1fc7"
       },
       "ResponseBody": {
         "$id": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/queryables?api-version=2025-04-30-preview",

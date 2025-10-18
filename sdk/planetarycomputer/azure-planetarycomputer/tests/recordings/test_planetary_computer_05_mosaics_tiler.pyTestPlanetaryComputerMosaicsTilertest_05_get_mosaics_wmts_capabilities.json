@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "325",
+        "Content-Length": "342",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -21,7 +21,7 @@
                 {
                   "property": "collection"
                 },
-                "atl"
+                "naip-sample-datasets"
               ]
             },
             {
@@ -64,12 +64,12 @@
         "Connection": "keep-alive",
         "Content-Length": "744",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:49 GMT",
-        "Server-Timing": "total;dur=20.53",
+        "Date": "Sat, 18 Oct 2025 02:36:35 GMT",
+        "Server-Timing": "total;dur=25.37",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "74d815ab191b45fd8477268efc0bd42e"
+        "X-Request-ID": "d698afda11594e9ea750e69e81b29ee2"
       },
       "ResponseBody": {
         "searchid": "46bb5e82458413399fbf668e40359753",
@@ -118,12 +118,12 @@
         "Connection": "keep-alive",
         "Content-Length": "7815",
         "Content-Type": "application/xml",
-        "Date": "Sat, 18 Oct 2025 02:05:49 GMT",
-        "Server-Timing": "total;dur=28.75",
+        "Date": "Sat, 18 Oct 2025 02:36:35 GMT",
+        "Server-Timing": "total;dur=29.64",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "276953f341084db3b45b21eb6202b340"
+        "X-Request-ID": "c34eb4211a0a4065a6e35ee62ac9d62e"
       },
       "ResponseBody": [
         "<Capabilities xmlns=\"http://www.opengis.net/wmts/1.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xsi:schemaLocation=\"http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd\" version=\"1.0.0\">\n",

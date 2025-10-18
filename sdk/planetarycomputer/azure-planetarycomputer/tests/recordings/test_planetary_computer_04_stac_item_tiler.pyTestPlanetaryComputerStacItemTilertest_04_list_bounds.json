@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/bounds?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/bounds?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,21 +21,21 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "54",
+        "Content-Length": "53",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:25 GMT",
-        "Server-Timing": "total;dur=52.24",
+        "Date": "Sat, 18 Oct 2025 02:36:10 GMT",
+        "Server-Timing": "total;dur=65.21",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "8d615d613ddc465789f67293d00b9063"
+        "X-Request-ID": "76073b9d83134f4099cb91718e2b31e4"
       },
       "ResponseBody": {
         "bounds": [
-          -84.441543,
-          33.559319,
-          -84.370855,
-          33.628174
+          -84.44157,
+          33.621853,
+          -84.370894,
+          33.690654
         ]
       }
     }

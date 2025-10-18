@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "325",
+        "Content-Length": "342",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -21,7 +21,7 @@
                 {
                   "property": "collection"
                 },
-                "atl"
+                "naip-sample-datasets"
               ]
             },
             {
@@ -64,12 +64,12 @@
         "Connection": "keep-alive",
         "Content-Length": "744",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:39 GMT",
-        "Server-Timing": "total;dur=37.91",
+        "Date": "Sat, 18 Oct 2025 02:36:25 GMT",
+        "Server-Timing": "total;dur=34.28",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "e0d84feec6454a4c943e482c43719c5c"
+        "X-Request-ID": "98ef39c5e9d44e2bb2d5bb3c151f798a"
       },
       "ResponseBody": {
         "searchid": "46bb5e82458413399fbf668e40359753",

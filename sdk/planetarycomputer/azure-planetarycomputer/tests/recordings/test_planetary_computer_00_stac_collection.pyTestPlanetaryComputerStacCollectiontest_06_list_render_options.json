@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/configurations/render-options?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/configurations/render-options?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,11 +22,11 @@
         "Connection": "keep-alive",
         "Content-Length": "159",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:02:36 GMT",
+        "Date": "Sat, 18 Oct 2025 02:33:18 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "8f16c514862042f5b3dda029a3ba883b"
+        "X-Request-ID": "c9eca50cbf344313b8b12db74cd93384"
       },
       "ResponseBody": "[{\"id\":\"Sanitized\",\"name\":\"Sanitized\",\"description\":\"RGB from visual assets\",\"type\":\"raster-tile\",\"options\":\"assets=image&asset_bidx=image|1,2,3\",\"minZoom\":6}]"
     }

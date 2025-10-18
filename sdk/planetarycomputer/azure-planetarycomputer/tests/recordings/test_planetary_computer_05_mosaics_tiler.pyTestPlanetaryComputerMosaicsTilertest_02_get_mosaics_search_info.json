@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "325",
+        "Content-Length": "342",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -21,7 +21,7 @@
                 {
                   "property": "collection"
                 },
-                "atl"
+                "naip-sample-datasets"
               ]
             },
             {
@@ -64,12 +64,12 @@
         "Connection": "keep-alive",
         "Content-Length": "744",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:41 GMT",
-        "Server-Timing": "total;dur=26.58",
+        "Date": "Sat, 18 Oct 2025 02:36:27 GMT",
+        "Server-Timing": "total;dur=38.5",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "85e6b7407489479caff6b562f4dc65e2"
+        "X-Request-ID": "823173f867474535b95a8bd3237ad439"
       },
       "ResponseBody": {
         "searchid": "46bb5e82458413399fbf668e40359753",
@@ -116,14 +116,14 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "1283",
+        "Content-Length": "1317",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:41 GMT",
-        "Server-Timing": "total;dur=25.24",
+        "Date": "Sat, 18 Oct 2025 02:36:27 GMT",
+        "Server-Timing": "total;dur=24.48",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "9d27eeddfb034d878dd3dc64a34f716c"
+        "X-Request-ID": "59f43033e9104f5cbfa1e42d70ae205a"
       },
       "ResponseBody": {
         "search": {
@@ -138,7 +138,7 @@
                     {
                       "property": "collection"
                     },
-                    "atl"
+                    "naip-sample-datasets"
                   ]
                 },
                 {
@@ -169,10 +169,10 @@
             ],
             "filter-lang": "cql2-json"
           },
-          "_where": "(collection = 'atl' AND datetime >= '2021-01-01T00:00:00Z' AND datetime <= '2022-12-31T23:59:59Z')",
+          "_where": "(collection = 'naip-sample-datasets' AND datetime >= '2021-01-01T00:00:00Z' AND datetime <= '2022-12-31T23:59:59Z')",
           "orderby": "datetime DESC, id DESC",
-          "lastused": "2025-10-18T02:05:41.918038Z",
-          "usecount": 27,
+          "lastused": "2025-10-18T02:36:27.916505Z",
+          "usecount": 34,
           "metadata": {
             "type": "mosaic"
           }

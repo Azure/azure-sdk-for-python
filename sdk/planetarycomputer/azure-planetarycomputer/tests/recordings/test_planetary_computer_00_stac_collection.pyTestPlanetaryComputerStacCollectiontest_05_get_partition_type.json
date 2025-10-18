@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/configurations/partition-type?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/configurations/partition-type?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,11 +22,11 @@
         "Connection": "keep-alive",
         "Content-Length": "17",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:02:34 GMT",
+        "Date": "Sat, 18 Oct 2025 02:33:15 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "56c6888b6f074e49a06bbe9db7f980c5"
+        "X-Request-ID": "195c67a589d84344b23d2fb739bb4aa5"
       },
       "ResponseBody": {
         "scheme": "year"

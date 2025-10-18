@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/queryables?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/queryables?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,17 +21,17 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "752",
+        "Content-Length": "769",
         "Content-Type": "application/schema+json",
-        "Date": "Sat, 18 Oct 2025 02:02:44 GMT",
+        "Date": "Sat, 18 Oct 2025 02:33:26 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "473363a1fc9941429270ca8de684ee74"
+        "X-Request-ID": "dc39503bd0d74d8c90e10f4ced08b534"
       },
       "ResponseBody": {
-        "$id": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/queryables?api-version=2025-04-30-preview",
+        "$id": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/queryables?api-version=2025-04-30-preview",
         "type": "object",
         "title": "STAC Queryables.",
         "$schema": "http://json-schema.org/draft-07/schema#",

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,15 +21,15 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2816",
+        "Content-Length": "2867",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:02:31 GMT",
+        "Date": "Sat, 18 Oct 2025 02:33:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-97bf5b0d1756c1d2ebbcafc177dd8154-f9193122be268572-01",
+        "traceparent": "00-49af2696d6a36f4288b855c753674789-6d00cb54b4402866-01",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "cc166a2929b044ed8b203c89b624e710"
+        "X-Request-ID": "4075b4a621774ad48f9e0c543326e148"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -38,7 +38,7 @@
           {
             "rel": "items",
             "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items"
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items"
           },
           {
             "rel": "parent",
@@ -53,13 +53,13 @@
           {
             "rel": "self",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
           }
         ],
         "title": "NAIP (MPC Pro Sample Datasets)",
         "assets": {
           "thumbnail": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "roles": [
               "thumbnail"

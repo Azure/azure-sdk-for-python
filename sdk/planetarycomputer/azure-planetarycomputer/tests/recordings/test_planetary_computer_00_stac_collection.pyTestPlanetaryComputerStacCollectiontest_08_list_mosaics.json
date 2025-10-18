@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/configurations/mosaics?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/configurations/mosaics?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,11 +22,11 @@
         "Connection": "keep-alive",
         "Content-Length": "177",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:02:41 GMT",
+        "Date": "Sat, 18 Oct 2025 02:33:23 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "74d9dbc13d7a4eb581a4f55a1a6b150f"
+        "X-Request-ID": "9b3915967f4a4e2aa500dfd8816f4607"
       },
       "ResponseBody": "[{\"id\":\"Sanitized\",\"name\":\"Sanitized\",\"description\":\"\",\"cql\":[]},{\"id\":\"Sanitized\",\"name\":\"Sanitized\",\"description\":\"Most recent available imagery in this collection\",\"cql\":[]}]"
     }

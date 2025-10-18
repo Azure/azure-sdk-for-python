@@ -23,12 +23,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "828",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:02:28 GMT",
+        "Date": "Sat, 18 Oct 2025 02:33:09 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "7db11cc7fe1247ca84903907ac96a771"
+        "X-Request-ID": "470cd955921d44babf58a8e8be2bfc9b"
       },
       "ResponseBody": {
         "conformsTo": [

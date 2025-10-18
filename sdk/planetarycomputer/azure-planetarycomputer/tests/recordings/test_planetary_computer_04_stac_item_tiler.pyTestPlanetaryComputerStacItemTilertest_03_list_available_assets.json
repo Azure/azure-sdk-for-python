@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/assets?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/assets?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -23,12 +23,12 @@
         "Connection": "keep-alive",
         "Content-Length": "20",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:22 GMT",
-        "Server-Timing": "total;dur=38.76",
+        "Date": "Sat, 18 Oct 2025 02:36:08 GMT",
+        "Server-Timing": "total;dur=48.52",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "5d1ac0db6678493c8ac0eecbeb3432c9"
+        "X-Request-ID": "2da6383429fa46f2b6757bff6c2d5362"
       },
       "ResponseBody": "[\"image\",\"tilejson\"]"
     }

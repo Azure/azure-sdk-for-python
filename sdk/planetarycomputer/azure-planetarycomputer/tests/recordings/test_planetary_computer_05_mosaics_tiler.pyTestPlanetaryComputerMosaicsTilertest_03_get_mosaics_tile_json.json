@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "325",
+        "Content-Length": "342",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -21,7 +21,7 @@
                 {
                   "property": "collection"
                 },
-                "atl"
+                "naip-sample-datasets"
               ]
             },
             {
@@ -64,12 +64,12 @@
         "Connection": "keep-alive",
         "Content-Length": "744",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:44 GMT",
-        "Server-Timing": "total;dur=34.61",
+        "Date": "Sat, 18 Oct 2025 02:36:30 GMT",
+        "Server-Timing": "total;dur=28.69",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "0d82ff4ac5f24846b067f26a305ffd17"
+        "X-Request-ID": "0e95bbe57e3e444d98e97528cc1b7cb2"
       },
       "ResponseBody": {
         "searchid": "46bb5e82458413399fbf668e40359753",
@@ -96,7 +96,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/46bb5e82458413399fbf668e40359753/WebMercatorQuad/tilejson.json?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3&minzoom=9&tile_format=png&tile_scale=1&collection=atl",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/46bb5e82458413399fbf668e40359753/WebMercatorQuad/tilejson.json?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3&minzoom=9&tile_format=png&tile_scale=1&collection=naip-sample-datasets",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -116,14 +116,14 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "479",
+        "Content-Length": "496",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:05:44 GMT",
-        "Server-Timing": "total;dur=21.12",
+        "Date": "Sat, 18 Oct 2025 02:36:30 GMT",
+        "Server-Timing": "total;dur=25.21",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "56bb17b5837343a18edd37a501568ce4"
+        "X-Request-ID": "96f0fab1542b4a5d8fe591912890fc78"
       },
       "ResponseBody": {
         "tilejson": "2.2.0",
@@ -131,7 +131,7 @@
         "version": "1.0.0",
         "scheme": "xyz",
         "tiles": [
-          "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/46bb5e82458413399fbf668e40359753/tiles/WebMercatorQuad/{z}/{x}/{y}?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3&collection=atl"
+          "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/46bb5e82458413399fbf668e40359753/tiles/WebMercatorQuad/{z}/{x}/{y}?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3&collection=naip-sample-datasets"
         ],
         "minzoom": 9,
         "maxzoom": 24,

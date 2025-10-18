@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:03:25 GMT",
+        "Date": "Sat, 18 Oct 2025 02:34:07 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:03:25 GMT",
+        "Date": "Sat, 18 Oct 2025 02:34:07 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -46,7 +46,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/naip-sample-datasets/ingestions?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -74,18 +74,18 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:03:28 GMT",
+        "Date": "Sat, 18 Oct 2025 02:34:10 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "26edc11b-135d-454b-98a8-1a2a568e5163",
+        "mise-correlation-id": "4a7598fc-1f3b-4606-b8bc-d528deb97638",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "1fa8c87dee021239821c9b079e031377"
+        "X-Request-ID": "490b92c19aedb0d487181a6de962b510"
       },
       "ResponseBody": {
         "id": "Sanitized",
-        "creationTime": "2025-10-18T02:03:28.9407867Z",
+        "creationTime": "2025-10-18T02:34:10.1906783Z",
         "importType": "StaticCatalog",
         "displayName": "NAIP Ingestion for Cancel Test",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -95,7 +95,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions/4feec4d1-6843-437a-bb2b-2902194735e3/runs?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/naip-sample-datasets/ingestions/65378b7d-c2a8-4076-b19b-42554cc73272/runs?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -116,18 +116,18 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:03:29 GMT",
+        "Date": "Sat, 18 Oct 2025 02:34:10 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "1031b364-ce0a-4fd2-a76e-b4df20ec21ae",
+        "mise-correlation-id": "11b24395-ea30-4eff-8032-8df3c910ce01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "9ba52b205658965919218d3a2c36f45f"
+        "X-Request-ID": "54d04bc8abd8491f1ee3dc65ac60bfb3"
       },
       "ResponseBody": {
         "id": "Sanitized",
-        "creationTime": "2025-10-18T02:03:29.0025091Z",
+        "creationTime": "2025-10-18T02:34:10.2461357Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -137,10 +137,10 @@
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-18T02:03:28.9939191Z"
+              "timestamp": "2025-10-18T02:34:10.2383236Z"
             }
           ],
-          "creationTime": "2025-10-18T02:03:28.9939166Z",
+          "creationTime": "2025-10-18T02:34:10.2383205Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,
@@ -149,7 +149,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/6dbeb313-495a-4f62-ba98-d8425b9875ef?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/9d6682a2-a2f0-48d8-846a-b457743ac4a6?api-version=2025-04-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -169,12 +169,12 @@
         "Access-Control-Max-Age": "1728000",
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
-        "Date": "Sat, 18 Oct 2025 02:03:29 GMT",
-        "mise-correlation-id": "eea06de7-3786-44a3-9458-59c7685ee7d0",
+        "Date": "Sat, 18 Oct 2025 02:34:10 GMT",
+        "mise-correlation-id": "1a83e3d6-c476-4901-8f5c-9a419bcbb540",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "f95b4db41a9c71d316032636f9bc65fe"
+        "X-Request-ID": "b7af40b3c5bdb104698d2225b013c02d"
       },
       "ResponseBody": null
     }
