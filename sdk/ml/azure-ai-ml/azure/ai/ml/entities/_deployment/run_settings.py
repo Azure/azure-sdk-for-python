@@ -46,5 +46,5 @@ class RunSettings:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = RunSettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = RunSettingsSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

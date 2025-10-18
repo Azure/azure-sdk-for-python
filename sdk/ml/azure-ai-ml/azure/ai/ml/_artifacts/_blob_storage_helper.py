@@ -36,7 +36,12 @@ from azure.ai.ml._utils._asset_utils import (
     upload_file,
 )
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    MlException,
+    ValidationException,
+)
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
@@ -47,16 +52,31 @@ module_logger = logging.getLogger(__name__)
 
 
 class BlobStorageClient:
-    def __init__(self, credential: str, account_url: str, container_name: Optional[str] = None):
+    def __init__(
+        self,
+        credential: str,
+        account_url: str,
+        container_name: Optional[str] = None,
+    ):
         self.account_name = account_url.split(".")[0].split("//")[1]
-        self.service_client = BlobServiceClient(account_url=account_url, credential=credential)
+        self.service_client = BlobServiceClient(
+            account_url=account_url, credential=credential
+        )
         self.upload_to_root_container = None
         if container_name:
-            self.container_client = self.service_client.get_container_client(container=container_name)
+            self.container_client = self.service_client.get_container_client(
+                container=container_name
+            )
         else:
-            self.container_client = ContainerClient.from_container_url(account_url)
+            self.container_client = ContainerClient.from_container_url(
+                account_url
+            )
             self.upload_to_root_container = True
-        self.container = container_name if container_name else self.container_client.container_name
+        self.container = (
+            container_name
+            if container_name
+            else self.container_client.container_name
+        )
         self.total_file_count = 1
         self.uploaded_file_count = 0
         self.overwrite = False
@@ -73,7 +93,9 @@ class BlobStorageClient:
         ignore_file: IgnoreFile = IgnoreFile(None),
         asset_hash: Optional[str] = None,
         show_progress: bool = True,
-    ) -> Dict[Literal["remote path", "name", "version", "indicator file"], str]:
+    ) -> Dict[
+        Literal["remote path", "name", "version", "indicator file"], str
+    ]:
         """Upload a file or directory to a path inside the container.
 
         :param source: The path to either a file or directory to upload
@@ -92,9 +114,15 @@ class BlobStorageClient:
         :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
         """
         if name and version is None:
-            version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
+            version = str(
+                uuid.uuid4()
+            )  # placeholder for auto-increment artifacts
 
-        asset_id = generate_asset_id(asset_hash, include_directory=True) if not self.upload_to_root_container else ""
+        asset_id = (
+            generate_asset_id(asset_hash, include_directory=True)
+            if not self.upload_to_root_container
+            else ""
+        )
         source_name = Path(source).name
         dest = str(PurePosixPath(asset_id, source_name))
 
@@ -112,10 +140,16 @@ class BlobStorageClient:
             file_size, _ = get_directory_size(source, ignore_file=ignore_file)
             file_size_in_mb = file_size / 10**6
             cloud = _get_cloud_details()
-            cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
+            cloud_endpoint = cloud[
+                "storage_endpoint"
+            ]  # make sure proper cloud endpoint is used
             full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{dest}"
             if file_size_in_mb > 100:
-                module_logger.warning(FILE_SIZE_WARNING.format(source=source, destination=full_storage_url))
+                module_logger.warning(
+                    FILE_SIZE_WARNING.format(
+                        source=source, destination=full_storage_url
+                    )
+                )
 
             # start upload
             if os.path.isdir(source):
@@ -167,17 +201,29 @@ class BlobStorageClient:
         """
 
         try:
-            legacy_indicator_file = self.indicator_file.replace(ARTIFACT_ORIGIN, LEGACY_ARTIFACT_DIRECTORY)
-            blob_client = self.container_client.get_blob_client(blob=self.indicator_file)
-            legacy_blob_client = self.container_client.get_blob_client(blob=legacy_indicator_file)
+            legacy_indicator_file = self.indicator_file.replace(
+                ARTIFACT_ORIGIN, LEGACY_ARTIFACT_DIRECTORY
+            )
+            blob_client = self.container_client.get_blob_client(
+                blob=self.indicator_file
+            )
+            legacy_blob_client = self.container_client.get_blob_client(
+                blob=legacy_indicator_file
+            )
 
             try:
                 properties = blob_client.get_blob_properties()
             except HttpResponseError as e:
-                if e.error_code == KEY_AUTHENTICATION_ERROR_CODE:  # pylint: disable=no-member
-                    formatted_msg = SAS_KEY_AUTHENTICATION_ERROR_MSG.format(e.error_code, e.exc_value)
+                if (
+                    e.error_code == KEY_AUTHENTICATION_ERROR_CODE
+                ):  # pylint: disable=no-member
+                    formatted_msg = SAS_KEY_AUTHENTICATION_ERROR_MSG.format(
+                        e.error_code, e.exc_value
+                    )
                     exception_with_documentation = Exception(formatted_msg)
-                    exception_with_documentation.__traceback__ = e.exc_traceback
+                    exception_with_documentation.__traceback__ = (
+                        e.exc_traceback
+                    )
                     raise exception_with_documentation from e
                 raise e
 
@@ -189,7 +235,8 @@ class BlobStorageClient:
                 legacy_metadata = legacy_properties.get("metadata")
 
                 if (
-                    legacy_metadata and UPLOAD_CONFIRMATION.items() <= legacy_metadata.items()
+                    legacy_metadata
+                    and UPLOAD_CONFIRMATION.items() <= legacy_metadata.items()
                 ):  # checks if metadata dictionary includes confirmation key and value
                     self.name = legacy_metadata.get("name")
                     self.version = legacy_metadata.get("version")
@@ -209,7 +256,10 @@ class BlobStorageClient:
             pass
         except Exception as e:
             # pylint: disable=no-member
-            if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
+            if (
+                hasattr(e, "error_code")
+                and e.error_code == STORAGE_AUTH_MISMATCH_ERROR
+            ):
                 msg = (
                     "You don't have permission to alter this storage account. "
                     "Ensure that you have been assigned both Storage Blob Data Reader "
@@ -224,7 +274,9 @@ class BlobStorageClient:
             raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
-        blob_client = self.container_client.get_blob_client(blob=self.indicator_file)
+        blob_client = self.container_client.get_blob_client(
+            blob=self.indicator_file
+        )
         metadata_dict = _build_metadata_dict(name, version)
         blob_client.set_blob_metadata(metadata_dict)
 
@@ -244,10 +296,17 @@ class BlobStorageClient:
         :type max_concurrency: int
         """
         try:
-            my_list = list(self.container_client.list_blobs(name_starts_with=starts_with, include="metadata"))
+            my_list = list(
+                self.container_client.list_blobs(
+                    name_starts_with=starts_with, include="metadata"
+                )
+            )
             download_size_in_mb = 0
             for item in my_list:
-                blob_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
+                blob_name = (
+                    item.name[len(starts_with) :].lstrip("/")
+                    or Path(starts_with).name
+                )
                 target_path = Path(destination, blob_name).resolve()
 
                 if _blob_is_hdi_folder(item):
@@ -263,7 +322,11 @@ class BlobStorageClient:
                 full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{starts_with}"
                 download_size_in_mb += blob_content.size / 10**6
                 if download_size_in_mb > 100:
-                    module_logger.warning(FILE_SIZE_WARNING.format(source=full_storage_url, destination=destination))
+                    module_logger.warning(
+                        FILE_SIZE_WARNING.format(
+                            source=full_storage_url, destination=destination
+                        )
+                    )
 
                 blob_content = blob_content.content_as_bytes(max_concurrency)
                 target_path.parent.mkdir(parents=True, exist_ok=True)
@@ -275,7 +338,9 @@ class BlobStorageClient:
             msg = "Saving blob with prefix {} was unsuccessful. exception={}"
             raise MlException(
                 message=msg.format(starts_with, e),
-                no_personal_data_message=msg.format("[starts_with]", "[exception]"),
+                no_personal_data_message=msg.format(
+                    "[starts_with]", "[exception]"
+                ),
                 target=ErrorTarget.ARTIFACT,
                 error_category=ErrorCategory.USER_ERROR,
                 error=e,
@@ -315,11 +380,16 @@ class BlobStorageClient:
         if self.container_client.get_blob_client(blobpath).exists():
             return True
 
-        ensure_delimeter = delimiter if not blobpath.endswith(delimiter) else ""
+        ensure_delimeter = (
+            delimiter if not blobpath.endswith(delimiter) else ""
+        )
 
         # Virtual directory only exists if there is atleast one blob with it
         result = next(
-            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimiter),
+            self.container_client.walk_blobs(
+                name_starts_with=blobpath + ensure_delimeter,
+                delimiter=delimiter,
+            ),
             None,
         )
         return result is not None
@@ -341,4 +411,7 @@ def _blob_is_hdi_folder(blob: "BlobProperties") -> bool:
     # requested from whatever function generates the blobproperties object
     #
     # e.g self.container_client.list_blobs(..., include='metadata')
-    return bool(blob.metadata and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None))
+    return bool(
+        blob.metadata
+        and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None)
+    )

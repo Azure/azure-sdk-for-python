@@ -94,7 +94,7 @@ class TestPipelineJobEntity:
 
         # same regression node won't load as AutoMLRegressionSchema since there's data binding
         with pytest.raises(ValidationError) as e:
-            AutoMLRegressionSchema(context={"base_path": "./"}).load(expected_dict)
+            AutoMLRegressionSchema().load(expected_dict, context={"base_path": "./"})
         assert "Value '${{parent.inputs.primary_metric}}' passed is not in set" in str(e.value)
 
     def test_automl_node_in_pipeline_classification(self, mock_machinelearning_client: MLClient, mocker: MockFixture):

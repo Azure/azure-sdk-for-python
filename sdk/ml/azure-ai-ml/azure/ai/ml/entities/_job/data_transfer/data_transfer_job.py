@@ -162,7 +162,7 @@ class DataTransferCopyJob(DataTransferJob):
         self.data_copy_mode = data_copy_mode
 
     def _to_dict(self) -> Dict:
-        res: dict = DataTransferCopyJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataTransferCopyJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod
@@ -235,7 +235,7 @@ class DataTransferImportJob(DataTransferJob):
         self.source = self._build_source_sink(source)
 
     def _to_dict(self) -> Dict:
-        res: dict = DataTransferImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataTransferImportJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod
@@ -301,7 +301,7 @@ class DataTransferExportJob(DataTransferJob):
         self.sink = self._build_source_sink(sink)
 
     def _to_dict(self) -> Dict:
-        res: dict = DataTransferExportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataTransferExportJobSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

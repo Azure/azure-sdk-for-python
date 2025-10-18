@@ -18,7 +18,11 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling import (
+    AsyncLROPoller,
+    AsyncNoPolling,
+    AsyncPollingMethod,
+)
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -36,7 +40,12 @@ from ...operations._batch_deployments_operations import (
 )
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[
+        [PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]],
+        Any,
+    ]
+]
 
 
 class BatchDeploymentsOperations:
@@ -71,7 +80,9 @@ class BatchDeploymentsOperations:
         top: Optional[int] = None,
         skip: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchDeploymentTrackedResourceArmPaginatedResult"]:
+    ) -> AsyncIterable[
+        "_models.BatchDeploymentTrackedResourceArmPaginatedResult"
+    ]:
         """Lists Batch inference deployments in the workspace.
 
         Lists Batch inference deployments in the workspace.
@@ -95,10 +106,18 @@ class BatchDeploymentsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.BatchDeploymentTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchDeploymentTrackedResourceArmPaginatedResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.BatchDeploymentTrackedResourceArmPaginatedResult"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
@@ -137,7 +156,10 @@ class BatchDeploymentsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("BatchDeploymentTrackedResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize(
+                "BatchDeploymentTrackedResourceArmPaginatedResult",
+                pipeline_response,
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -152,9 +174,17 @@ class BatchDeploymentsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
@@ -163,13 +193,24 @@ class BatchDeploymentsOperations:
     list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, endpoint_name: str, deployment_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        endpoint_name: str,
+        deployment_name: str,
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
@@ -189,16 +230,29 @@ class BatchDeploymentsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
-                "duration", response.headers.get("x-ms-async-operation-timeout")
+            response_headers["x-ms-async-operation-timeout"] = (
+                self._deserialize(
+                    "duration",
+                    response.headers.get("x-ms-async-operation-timeout"),
+                )
             )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "int", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -207,7 +261,12 @@ class BatchDeploymentsOperations:
 
     @distributed_trace_async
     async def begin_delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, endpoint_name: str, deployment_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        endpoint_name: str,
+        deployment_name: str,
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete Batch Inference deployment (asynchronous).
 
@@ -233,11 +292,19 @@ class BatchDeploymentsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
@@ -255,7 +322,11 @@ class BatchDeploymentsOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay,
+                lro_options={"final-state-via": "location"},
+                **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -267,13 +338,20 @@ class BatchDeploymentsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments/{deploymentName}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, workspace_name: str, endpoint_name: str, deployment_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        endpoint_name: str,
+        deployment_name: str,
+        **kwargs: Any
     ) -> "_models.BatchDeployment":
         """Gets a batch inference deployment by id.
 
@@ -292,11 +370,19 @@ class BatchDeploymentsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchDeployment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchDeployment"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.BatchDeployment"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_get_request(
             subscription_id=self._config.subscription_id,
@@ -316,9 +402,17 @@ class BatchDeploymentsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         deserialized = self._deserialize("BatchDeployment", pipeline_response)
 
@@ -338,14 +432,27 @@ class BatchDeploymentsOperations:
         body: "_models.PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties",
         **kwargs: Any
     ) -> Optional["_models.BatchDeployment"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["_models.BatchDeployment"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["_models.BatchDeployment"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
-        _json = self._serialize.body(body, "PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties")
+        _json = self._serialize.body(
+            body,
+            "PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties",
+        )
 
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -367,20 +474,35 @@ class BatchDeploymentsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("BatchDeployment", pipeline_response)
+            deserialized = self._deserialize(
+                "BatchDeployment", pipeline_response
+            )
 
         if response.status_code == 202:
-            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
-                "duration", response.headers.get("x-ms-async-operation-timeout")
+            response_headers["x-ms-async-operation-timeout"] = (
+                self._deserialize(
+                    "duration",
+                    response.headers.get("x-ms-async-operation-timeout"),
+                )
             )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "int", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -428,12 +550,24 @@ class BatchDeploymentsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.BatchDeployment]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchDeployment"]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.BatchDeployment"]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
@@ -450,7 +584,9 @@ class BatchDeploymentsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize("BatchDeployment", pipeline_response)
+            deserialized = self._deserialize(
+                "BatchDeployment", pipeline_response
+            )
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -468,7 +604,9 @@ class BatchDeploymentsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments/{deploymentName}"}  # type: ignore
 
@@ -481,12 +619,22 @@ class BatchDeploymentsOperations:
         body: "_models.BatchDeployment",
         **kwargs: Any
     ) -> "_models.BatchDeployment":
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchDeployment"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.BatchDeployment"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "BatchDeployment")
 
@@ -510,22 +658,35 @@ class BatchDeploymentsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("BatchDeployment", pipeline_response)
+            deserialized = self._deserialize(
+                "BatchDeployment", pipeline_response
+            )
 
         if response.status_code == 201:
-            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
-                "duration", response.headers.get("x-ms-async-operation-timeout")
+            response_headers["x-ms-async-operation-timeout"] = (
+                self._deserialize(
+                    "duration",
+                    response.headers.get("x-ms-async-operation-timeout"),
+                )
             )
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
 
-            deserialized = self._deserialize("BatchDeployment", pipeline_response)
+            deserialized = self._deserialize(
+                "BatchDeployment", pipeline_response
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -572,12 +733,24 @@ class BatchDeploymentsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.BatchDeployment]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchDeployment"]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.BatchDeployment"]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
@@ -594,13 +767,19 @@ class BatchDeploymentsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize("BatchDeployment", pipeline_response)
+            deserialized = self._deserialize(
+                "BatchDeployment", pipeline_response
+            )
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay,
+                lro_options={"final-state-via": "original-uri"},
+                **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -612,6 +791,8 @@ class BatchDeploymentsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments/{deploymentName}"}  # type: ignore

@@ -235,7 +235,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
             ).dump(self)
         else:
-            schema_dict = ImageClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageClassificationMultilabelSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return schema_dict
 

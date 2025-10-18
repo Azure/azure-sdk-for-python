@@ -495,9 +495,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
         # unlike other component, we should ignore unknown fields in flow to keep init_params clean and avoid
         # too much understanding of flow.dag.yaml & run.yaml
-        kwargs["unknown"] = EXCLUDE
+        # In marshmallow 4.x, use unknown parameter during schema.load() call
         try:
-            loaded_dict = schema.load(data, **kwargs)
+            loaded_dict = schema.load(data, unknown=EXCLUDE, **kwargs)
         except ValidationError as e:
             if raise_original_exception:
                 raise e
