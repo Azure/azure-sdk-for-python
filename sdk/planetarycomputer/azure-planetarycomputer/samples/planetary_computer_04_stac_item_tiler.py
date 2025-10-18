@@ -51,7 +51,11 @@ def list_tile_matrices(client):
 
 def get_asset_statistics(client, collection_id, item_id):
     """Get asset statistics for an item."""
-    result = client.tiler.get_asset_statistics(collection_id=collection_id, item_id=item_id)
+    result = client.tiler.get_asset_statistics(
+        collection_id=collection_id,
+        item_id=item_id,
+        assets=["image"]
+    )
     logging.info(result)
 
 
@@ -67,13 +71,13 @@ def list_bounds(client, collection_id, item_id):
     logging.info(result)
 
 
-def crop_geo_json(client, collection_id, item_id, geojson, assets):
+def crop_geo_json(client, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry."""
     crop_geo_json_response = client.tiler.crop_geo_json(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
-        assets=assets,
+        assets=["image"],
         asset_band_indices=["image|1,2,3"],
         body=geojson,
     )
@@ -81,7 +85,7 @@ def crop_geo_json(client, collection_id, item_id, geojson, assets):
     display_response(crop_geo_json_response, f"crop_geojson_{item_id}.png")
 
 
-def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson, assets):
+def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry with specific dimensions."""
     crop_geo_json_with_dimensions_response = client.tiler.crop_geo_json_with_dimensions(
         collection_id=collection_id,
@@ -89,28 +93,35 @@ def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson, asset
         format=TilerImageFormat.PNG,
         width=512,
         height=512,
-        assets=assets,
+        assets=["image"],
         asset_band_indices=["image|1,2,3"],
         body=geojson,
     )
     display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
 
 
-def get_geo_json_statistics(client, collection_id, item_id, geojson, assets):
+def get_geo_json_statistics(client, collection_id, item_id, geojson):
     """Get statistics for a GeoJSON area."""
     result = client.tiler.get_geo_json_statistics(
-        collection_id=collection_id, item_id=item_id, body=geojson, assets=assets
+        collection_id=collection_id,
+        item_id=item_id,
+        body=geojson,
+        assets=["image"]
     )
     logging.info(result)
 
 
-def get_info_geo_json(client, collection_id, item_id, assets):
+def get_info_geo_json(client, collection_id, item_id):
     """Get info for GeoJSON."""
-    result = client.tiler.get_info_geo_json(collection_id=collection_id, item_id=item_id, assets=assets)
+    result = client.tiler.get_info_geo_json(
+        collection_id=collection_id,
+        item_id=item_id,
+        assets=["image"]
+    )
     logging.info(result)
 
 
-def get_part(client, collection_id, item_id, assets, bounds):
+def get_part(client, collection_id, item_id, bounds):
     """Get a part of an item with specific bounds."""
     get_part_response = client.tiler.get_part(
         collection_id=collection_id,
@@ -122,13 +133,13 @@ def get_part(client, collection_id, item_id, assets, bounds):
         maxy=bounds[3],
         width=512,
         height=512,
-        assets=assets,
+        assets=["image"],
         asset_band_indices=["image|1,2,3"],
     )
     display_response(get_part_response, f"part_{item_id}.png")
 
 
-def get_part_with_dimensions(client, collection_id, item_id, assets, bounds):
+def get_part_with_dimensions(client, collection_id, item_id, bounds):
     """Get a part of an item with specific bounds and dimensions."""
     get_part_with_dimensions_response = client.tiler.get_part_with_dimensions(
         collection_id=collection_id,
@@ -140,25 +151,25 @@ def get_part_with_dimensions(client, collection_id, item_id, assets, bounds):
         maxy=bounds[3],
         width=512,
         height=512,
-        assets=assets,
+        assets=["image"],
         asset_band_indices=["image|1,2,3"],
     )
     display_response(get_part_with_dimensions_response, f"part_dims_{item_id}.png")
 
 
-def get_point(client, collection_id, item_id, assets, point):
+def get_point(client, collection_id, item_id, point):
     """Get point value at a specific location."""
     result = client.tiler.get_point(
         collection_id=collection_id,
         item_id=item_id,
-        assets=assets,
+        assets=["image"],
         longitude=point[0],
         latitude=point[1],
     )
     logging.info(f"Point values at ({point[0]}, {point[1]}): {result}")
 
 
-def get_preview(client, collection_id, item_id, assets):
+def get_preview(client, collection_id, item_id):
     """Get a preview of an item."""
     get_preview_response = client.tiler.get_preview(
         collection_id=collection_id,
@@ -166,13 +177,13 @@ def get_preview(client, collection_id, item_id, assets):
         format=TilerImageFormat.PNG,
         width=512,
         height=512,
-        assets=assets,
+        assets=["image"],
         asset_band_indices=["image|1,2,3"],
     )
     display_response(get_preview_response, f"preview_{item_id}.png")
 
 
-def get_preview_with_format(client, collection_id, item_id, assets):
+def get_preview_with_format(client, collection_id, item_id):
     """Get a preview of an item with specific format."""
     get_preview_with_format_response = client.tiler.get_preview_with_format(
         collection_id=collection_id,
@@ -180,15 +191,19 @@ def get_preview_with_format(client, collection_id, item_id, assets):
         format=TilerImageFormat.PNG,
         width=512,
         height=512,
-        assets=assets,
+        assets=["image"],
         asset_band_indices=["image|1,2,3"],
     )
     display_response(get_preview_with_format_response, f"preview_format_{item_id}.png")
 
 
-def list_statistics(client, collection_id, item_id, assets):
+def list_statistics(client, collection_id, item_id):
     """List statistics for an item."""
-    result = client.tiler.list_statistics(collection_id=collection_id, item_id=item_id, assets=assets)
+    result = client.tiler.list_statistics(
+        collection_id=collection_id,
+        item_id=item_id,
+        assets=["image"]
+    )
     logging.info(result)
 
 
@@ -225,7 +240,7 @@ def get_tile(client, collection_id, item_id):
     display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
 
 
-def get_wmts_capabilities(client, collection_id, item_id, assets):
+def get_wmts_capabilities(client, collection_id, item_id):
     """Get WMTS capabilities and save it locally."""
     get_wmts_capabilities_response = client.tiler.get_wmts_capabilities(
         collection_id=collection_id,
@@ -235,7 +250,7 @@ def get_wmts_capabilities(client, collection_id, item_id, assets):
         tile_scale=1,
         min_zoom=7,
         max_zoom=14,
-        assets=assets,
+        assets=["image"],
         asset_band_indices=["image|1,2,3"],
     )
     xml_bytes = b"".join(get_wmts_capabilities_response)
@@ -255,7 +270,6 @@ def main():
 
     collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip-sample-datasets")
     item_id = os.environ.get("AZURE_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
-    assets = ["image"]
 
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
@@ -280,22 +294,22 @@ def main():
     # Execute tiler operations
     get_tile_matrix_definitions(client)
     list_tile_matrices(client)
-    # get_asset_statistics(client, collection_id, item_id)  # Not supported for NAIP
+    get_asset_statistics(client, collection_id, item_id)  # Not supported for NAIP
     list_available_assets(client, collection_id, item_id)
     list_bounds(client, collection_id, item_id)
-    crop_geo_json(client, collection_id, item_id, geojson, assets)
-    crop_geo_json_with_dimensions(client, collection_id, item_id, geojson, assets)
-    get_geo_json_statistics(client, collection_id, item_id, geojson, assets)
-    get_info_geo_json(client, collection_id, item_id, assets)
-    get_part(client, collection_id, item_id, assets, bounds)
-    get_part_with_dimensions(client, collection_id, item_id, assets, bounds)
-    get_point(client, collection_id, item_id, assets, point)
-    get_preview(client, collection_id, item_id, assets)
-    get_preview_with_format(client, collection_id, item_id, assets)
-    list_statistics(client, collection_id, item_id, assets)
+    crop_geo_json(client, collection_id, item_id, geojson)
+    crop_geo_json_with_dimensions(client, collection_id, item_id, geojson)
+    get_geo_json_statistics(client, collection_id, item_id, geojson)
+    get_info_geo_json(client, collection_id, item_id)
+    get_part(client, collection_id, item_id, bounds)
+    get_part_with_dimensions(client, collection_id, item_id, bounds)
+    get_point(client, collection_id, item_id, point)
+    get_preview(client, collection_id, item_id)
+    get_preview_with_format(client, collection_id, item_id)
+    list_statistics(client, collection_id, item_id)
     get_tile_json(client, collection_id, item_id)
     get_tile(client, collection_id, item_id)
-    get_wmts_capabilities(client, collection_id, item_id, assets)
+    get_wmts_capabilities(client, collection_id, item_id)
 
 
 if __name__ == "__main__":

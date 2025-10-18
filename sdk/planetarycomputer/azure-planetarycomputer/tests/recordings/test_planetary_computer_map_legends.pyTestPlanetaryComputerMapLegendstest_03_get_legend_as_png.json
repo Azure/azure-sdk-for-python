@@ -1,6 +1,60 @@
 {
   "Entries": [
     {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/510a9eed-2a17-4ca6-817f-d1ec8323e715?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:44:48 GMT",
+        "mise-correlation-id": "1e019709-c3c0-465a-9dad-68fbcea13781",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "a232143df127e7bca3201dfefc35b992"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:44:18.9080918Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-18T01:44:28.9749451Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-18T01:44:29.0286107Z"
+          }
+        ],
+        "type": "DeleteIngestion",
+        "creationTime": "2025-10-18T01:44:18.9080906Z",
+        "collectionId": "atl",
+        "additionalInformation": {
+          "IngestionId": "970d3bcf-431d-4b94-ab68-c661bfb8e148"
+        }
+      }
+    },
+    {
       "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/legend/colormap/rdylgn?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
@@ -23,12 +77,12 @@
         "Connection": "keep-alive",
         "Content-Length": "550",
         "Content-Type": "image/jpg",
-        "Date": "Thu, 16 Oct 2025 23:02:53 GMT",
-        "Server-Timing": "total;dur=52.2",
+        "Date": "Sat, 18 Oct 2025 01:44:50 GMT",
+        "Server-Timing": "total;dur=100.55",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "7a23dd99094445cfbe16dbb48ede7539"
+        "X-Request-ID": "f6718090bfbc43189f95eacb00df64b3"
       },
       "ResponseBody": "iVBORw0KGgoAAAANSUhEUgAAAYMAAAALCAYAAACd8OETAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvlHJYcgAAAAlwSFlzAAAPYQAAD2EBqD+naQAAAZJJREFUeJztlUlywzAMBBuQ85W8PL9MxMmBG6zYWc6ZdrkED0EspFyIt3gVQARk9GfkEzsgc9j0tbXvN3b8zZ+MsadvjITIIJbdnSMAII7o6xlrL/Q9mQHH2Dt0Msgjh2+QWfVY+vKPIG9BZHYtY+lxmw1c9XJgGQR0+2XW3utaPiN/HLteis/KmwFZ/Xee+O7g52Uv/6tPrXcmAG7Hc5/gPj7Acev1xa4l+qXuOGTp+dg1U14+Ss5p98v+qsfFjuqfY73oFx8hmgQ0JCEEQFNDaoiG5kcXW/NXsa8+D/wBJNE4v8QYFdGkElM0UfJwt94QEkuffLRz6Or9lH7vdFX9GvOia3YAHw0kaKseaOM7a9n2c33GUNOyGWvn9F15pv1El1b8/dy6Rsx+B/Dedk8117bFWXrbth7EH3W1fUbvp1a9jP6kH2we6PPO2n5/AHSOuxkHKor9izzl326MMea/4mFgjDHGw8AYY4yHgTHGGDwMjDHG4GFgjDEGDwNjjDF4GBhjjMHDwBhjDB4GxhhjgE8T75zFpUrLTwAAAABJRU5ErkJggg=="
     }

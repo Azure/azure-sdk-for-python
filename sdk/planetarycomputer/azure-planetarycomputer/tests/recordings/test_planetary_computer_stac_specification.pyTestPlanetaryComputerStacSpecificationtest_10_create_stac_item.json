@@ -1,0 +1,1943 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Length": "29455",
+        "Content-Type": "application/geo+json",
+        "Date": "Sat, 18 Oct 2025 01:46:41 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "traceparent": "00-a80b7912df21ffc18d9e3180aa323008-697af6700be123b7-01",
+        "Vary": "Accept-Encoding",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "d0daa0c785f644e0ae67e14835c366ea"
+      },
+      "ResponseBody": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -77.129202,
+              38.87201,
+              -77.058351,
+              38.940463
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/va_m_3807708_sw_18_060_20231113_20240103"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/12f/va_m_3807708_sw_18_060_20231113_20240103/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/12f/va_m_3807708_sw_18_060_20231113_20240103/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/12f/va_m_3807708_sw_18_060_20231113_20240103/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/12f/va_m_3807708_sw_18_060_20231113_20240103/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:26:17.147400Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -77.058351,
+                    38.873244
+                  ],
+                  [
+                    -77.060293,
+                    38.940463
+                  ],
+                  [
+                    -77.129202,
+                    38.939226
+                  ],
+                  [
+                    -77.127195,
+                    38.87201
+                  ],
+                  [
+                    -77.058351,
+                    38.873244
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "ad7740dc-cba2-4e91-b5d6-651d0179bf93",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-11-13T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                315462.0,
+                4304724.0,
+                321438.0,
+                4312188.0
+              ],
+              "proj:epsg": 26918,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "va",
+              "proj:shape": [
+                12440,
+                9960
+              ],
+              "proj:centroid": {
+                "lat": 38.90624,
+                "lon": -77.09376
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                315462.0,
+                0.0,
+                -0.6,
+                4312188.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -77.066695,
+              38.87205,
+              -76.995901,
+              38.940415
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/va_m_3807708_se_18_060_20231113_20240103"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/0f1/va_m_3807708_se_18_060_20231113_20240103/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/0f1/va_m_3807708_se_18_060_20231113_20240103/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/0f1/va_m_3807708_se_18_060_20231113_20240103/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/0f1/va_m_3807708_se_18_060_20231113_20240103/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:26:06.090534Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -76.995901,
+                    38.873248
+                  ],
+                  [
+                    -76.997783,
+                    38.940415
+                  ],
+                  [
+                    -77.066695,
+                    38.939214
+                  ],
+                  [
+                    -77.064748,
+                    38.87205
+                  ],
+                  [
+                    -76.995901,
+                    38.873248
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "b7e46029-2aa2-4606-a28c-b0fc0ded8ca3",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-11-13T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                320880.0,
+                4304604.0,
+                326856.0,
+                4312062.0
+              ],
+              "proj:epsg": 26918,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "va",
+              "proj:shape": [
+                12430,
+                9960
+              ],
+              "proj:centroid": {
+                "lat": 38.90624,
+                "lon": -77.03128
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                320880.0,
+                0.0,
+                -0.6,
+                4312062.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -77.129274,
+              38.934504,
+              -77.058288,
+              39.002958
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/va_m_3807708_nw_18_060_20231113_20240103"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b32/va_m_3807708_nw_18_060_20231113_20240103/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b32/va_m_3807708_nw_18_060_20231113_20240103/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b32/va_m_3807708_nw_18_060_20231113_20240103/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b32/va_m_3807708_nw_18_060_20231113_20240103/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:26:23.600701Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -77.058288,
+                    38.935741
+                  ],
+                  [
+                    -77.060235,
+                    39.002958
+                  ],
+                  [
+                    -77.129274,
+                    39.001718
+                  ],
+                  [
+                    -77.127261,
+                    38.934504
+                  ],
+                  [
+                    -77.058288,
+                    38.935741
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "cdfa59b4-8140-48a7-9aa6-34d4c9bc2896",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-11-13T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                315618.0,
+                4311660.0,
+                321600.0,
+                4319124.0
+              ],
+              "proj:epsg": 26918,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "va",
+              "proj:shape": [
+                12440,
+                9970
+              ],
+              "proj:centroid": {
+                "lat": 38.96874,
+                "lon": -77.09376
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                315618.0,
+                0.0,
+                -0.6,
+                4319124.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -77.129203,
+              38.809515,
+              -77.058347,
+              38.877968
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/va_m_3807716_nw_18_060_20231104_20240103"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/bf0/va_m_3807716_nw_18_060_20231104_20240103/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/bf0/va_m_3807716_nw_18_060_20231104_20240103/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/bf0/va_m_3807716_nw_18_060_20231104_20240103/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/bf0/va_m_3807716_nw_18_060_20231104_20240103/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:26:25.767741Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -77.058347,
+                    38.810749
+                  ],
+                  [
+                    -77.060285,
+                    38.877968
+                  ],
+                  [
+                    -77.129203,
+                    38.876731
+                  ],
+                  [
+                    -77.1272,
+                    38.809515
+                  ],
+                  [
+                    -77.058347,
+                    38.810749
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "766d303e-9c37-402e-bca0-0dafe2c8f8d5",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-11-04T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                315300.0,
+                4297788.0,
+                321282.0,
+                4305252.0
+              ],
+              "proj:epsg": 26918,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "va",
+              "proj:shape": [
+                12440,
+                9970
+              ],
+              "proj:centroid": {
+                "lat": 38.84375,
+                "lon": -77.09376
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                315300.0,
+                0.0,
+                -0.6,
+                4305252.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -83.128948,
+              35.872081,
+              -83.058603,
+              35.94042
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/tn_m_3508308_sw_17_060_20231025_20240104"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b56/tn_m_3508308_sw_17_060_20231025_20240104/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b56/tn_m_3508308_sw_17_060_20231025_20240104/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b56/tn_m_3508308_sw_17_060_20231025_20240104/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/b56/tn_m_3508308_sw_17_060_20231025_20240104/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:25:10.481246Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -83.058603,
+                    35.873276
+                  ],
+                  [
+                    -83.060343,
+                    35.94042
+                  ],
+                  [
+                    -83.128948,
+                    35.939223
+                  ],
+                  [
+                    -83.12715,
+                    35.872081
+                  ],
+                  [
+                    -83.058603,
+                    35.873276
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "c0cad733-9e64-4ffc-8f25-541fd339ac88",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-10-25T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                307962.0,
+                3971850.0,
+                314154.0,
+                3979302.0
+              ],
+              "proj:epsg": 26917,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "tn",
+              "proj:shape": [
+                12420,
+                10320
+              ],
+              "proj:centroid": {
+                "lat": 35.90625,
+                "lon": -83.09376
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                307962.0,
+                0.0,
+                -0.6,
+                3979302.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -83.066365,
+              35.872091,
+              -82.996136,
+              35.940396
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/tn_m_3508308_se_17_060_20231025_20240104"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/f0e/tn_m_3508308_se_17_060_20231025_20240104/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/f0e/tn_m_3508308_se_17_060_20231025_20240104/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/f0e/tn_m_3508308_se_17_060_20231025_20240104/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/f0e/tn_m_3508308_se_17_060_20231025_20240104/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:26:08.918239Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -82.996136,
+                    35.873249
+                  ],
+                  [
+                    -82.997824,
+                    35.940396
+                  ],
+                  [
+                    -83.066365,
+                    35.939235
+                  ],
+                  [
+                    -83.064619,
+                    35.872091
+                  ],
+                  [
+                    -82.996136,
+                    35.873249
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "969ced72-4746-4799-80c5-f564493c4cbc",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-10-25T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                313608.0,
+                3971730.0,
+                319794.0,
+                3979182.0
+              ],
+              "proj:epsg": 26917,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "tn",
+              "proj:shape": [
+                12420,
+                10310
+              ],
+              "proj:centroid": {
+                "lat": 35.90625,
+                "lon": -83.03124
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                313608.0,
+                0.0,
+                -0.6,
+                3979182.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -83.128964,
+              35.934549,
+              -83.058626,
+              36.002942
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/tn_m_3508308_nw_17_060_20231025_20240104"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/e2b/tn_m_3508308_nw_17_060_20231025_20240104/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/e2b/tn_m_3508308_nw_17_060_20231025_20240104/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/e2b/tn_m_3508308_nw_17_060_20231025_20240104/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/e2b/tn_m_3508308_nw_17_060_20231025_20240104/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:24:24.982717Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -83.058626,
+                    35.935744
+                  ],
+                  [
+                    -83.060372,
+                    36.002942
+                  ],
+                  [
+                    -83.128964,
+                    36.001744
+                  ],
+                  [
+                    -83.12716,
+                    35.934549
+                  ],
+                  [
+                    -83.058626,
+                    35.935744
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "cafac874-c0d3-4657-a782-c4c22a723ffb",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-10-25T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                308112.0,
+                3978780.0,
+                314298.0,
+                3986238.0
+              ],
+              "proj:epsg": 26917,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "tn",
+              "proj:shape": [
+                12430,
+                10310
+              ],
+              "proj:centroid": {
+                "lat": 35.96875,
+                "lon": -83.09378
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                308112.0,
+                0.0,
+                -0.6,
+                3986238.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -83.066398,
+              35.934613,
+              -82.996178,
+              36.002918
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/tn_m_3508308_ne_17_060_20231025_20240104"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/31d/tn_m_3508308_ne_17_060_20231025_20240104/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/31d/tn_m_3508308_ne_17_060_20231025_20240104/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/31d/tn_m_3508308_ne_17_060_20231025_20240104/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/31d/tn_m_3508308_ne_17_060_20231025_20240104/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:25:10.380623Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -82.996178,
+                    35.935772
+                  ],
+                  [
+                    -82.99787,
+                    36.002918
+                  ],
+                  [
+                    -83.066398,
+                    36.001757
+                  ],
+                  [
+                    -83.064648,
+                    35.934613
+                  ],
+                  [
+                    -82.996178,
+                    35.935772
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "0f0e8d81-8a49-4177-8bea-1fab7f45c091",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-10-25T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                313752.0,
+                3978666.0,
+                319932.0,
+                3986118.0
+              ],
+              "proj:epsg": 26917,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "tn",
+              "proj:shape": [
+                12420,
+                10300
+              ],
+              "proj:centroid": {
+                "lat": 35.96877,
+                "lon": -83.03127
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                313752.0,
+                0.0,
+                -0.6,
+                3986118.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -83.003822,
+              35.747127,
+              -82.933693,
+              35.815398
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/tn_m_3508209_sw_17_060_20231025_20240104"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/2f3/tn_m_3508209_sw_17_060_20231025_20240104/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/2f3/tn_m_3508209_sw_17_060_20231025_20240104/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/2f3/tn_m_3508209_sw_17_060_20231025_20240104/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/2f3/tn_m_3508209_sw_17_060_20231025_20240104/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:26:18.066311Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -82.933693,
+                    35.748247
+                  ],
+                  [
+                    -82.93532,
+                    35.815398
+                  ],
+                  [
+                    -83.003822,
+                    35.814275
+                  ],
+                  [
+                    -83.002137,
+                    35.747127
+                  ],
+                  [
+                    -82.933693,
+                    35.748247
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "f36ff094-1119-4b9d-b8bb-179df5f70014",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-10-25T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                318966.0,
+                3957750.0,
+                325158.0,
+                3965202.0
+              ],
+              "proj:epsg": 26917,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "tn",
+              "proj:shape": [
+                12420,
+                10320
+              ],
+              "proj:centroid": {
+                "lat": 35.78127,
+                "lon": -82.96874
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                318966.0,
+                0.0,
+                -0.6,
+                3965202.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          },
+          {
+            "id": "Sanitized",
+            "bbox": [
+              -83.003867,
+              35.809651,
+              -82.933681,
+              35.877869
+            ],
+            "type": "Feature",
+            "links": [
+              {
+                "rel": "collection",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "parent",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+              },
+              {
+                "rel": "root",
+                "type": "application/json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+              },
+              {
+                "rel": "self",
+                "type": "application/geo+json",
+                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items/tn_m_3508209_nw_17_060_20231025_20240104"
+              }
+            ],
+            "assets": {
+              "image": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/377/tn_m_3508209_nw_17_060_20231025_20240104/image.tif",
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": [
+                  "data"
+                ],
+                "title": "RGBIR COG tile",
+                "eo:bands": [
+                  {
+                    "name": "Sanitized",
+                    "common_name": "red"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "green"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "blue"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "common_name": "nir",
+                    "description": "near-infrared"
+                  }
+                ]
+              },
+              "tilejson": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/377/tn_m_3508209_nw_17_060_20231025_20240104/tilejson.json",
+                "type": "application/json",
+                "roles": [
+                  "tiles"
+                ],
+                "title": "TileJSON with default rendering"
+              },
+              "thumbnail": {
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/377/tn_m_3508209_nw_17_060_20231025_20240104/thumbnail.jpg",
+                "type": "image/jpeg",
+                "roles": [
+                  "thumbnail"
+                ],
+                "title": "Thumbnail"
+              },
+              "rendered_preview": {
+                "rel": "preview",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/377/tn_m_3508209_nw_17_060_20231025_20240104/rendered_preview.png",
+                "type": "image/png",
+                "roles": [
+                  "overview"
+                ],
+                "title": "Rendered preview"
+              }
+            },
+            "_msft:ts": "2025-10-17T12:25:09.425854Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -82.933681,
+                    35.810772
+                  ],
+                  [
+                    -82.935311,
+                    35.877869
+                  ],
+                  [
+                    -83.003867,
+                    35.876744
+                  ],
+                  [
+                    -83.002179,
+                    35.809651
+                  ],
+                  [
+                    -82.933681,
+                    35.810772
+                  ]
+                ]
+              ]
+            },
+            "_msft:etag": "27c34a6d-30d4-4d2c-a9dd-03ea3bd73ee5",
+            "collection": "atl",
+            "properties": {
+              "gsd": 0.6,
+              "datetime": "2023-10-25T16:00:00Z",
+              "naip:year": "2023",
+              "proj:bbox": [
+                319104.0,
+                3964686.0,
+                325296.0,
+                3972132.0
+              ],
+              "proj:epsg": 26917,
+              "providers": [
+                {
+                  "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                  "name": "Sanitized",
+                  "roles": [
+                    "producer",
+                    "licensor"
+                  ]
+                }
+              ],
+              "naip:state": "tn",
+              "proj:shape": [
+                12410,
+                10320
+              ],
+              "proj:centroid": {
+                "lat": 35.84376,
+                "lon": -82.96876
+              },
+              "proj:transform": [
+                0.6,
+                0.0,
+                319104.0,
+                0.0,
+                -0.6,
+                3972132.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "stac_extensions": [
+              "https://stac-extensions.github.io/eo/v1.1.0/schema.json",
+              "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+            ],
+            "stac_version": "1.0.0"
+          }
+        ],
+        "links": [
+          {
+            "rel": "collection",
+            "type": "application/json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+          },
+          {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
+          },
+          {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "self",
+            "type": "application/geo+json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items"
+          },
+          {
+            "rel": "next",
+            "type": "application/geo+json",
+            "method": "GET",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items?api-version=2025-04-30-preview&token=Sanitized"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl/items?api-version=2025-04-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1028",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "stac_version": "1.0.0",
+        "type": "Feature",
+        "id": "Sanitized",
+        "collection": "atl",
+        "bbox": [
+          -84.441543,
+          33.559319,
+          -84.370855,
+          33.628174
+        ],
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -84.372901,
+                33.559319
+              ],
+              [
+                -84.370855,
+                33.626731
+              ],
+              [
+                -84.439551,
+                33.628174
+              ],
+              [
+                -84.441543,
+                33.560757
+              ],
+              [
+                -84.372901,
+                33.559319
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "gsd": 0.6,
+          "datetime": "2021-11-14T16:00:00Z",
+          "naip:year": "2021",
+          "proj:bbox": [
+            737508.0,
+            3716388.0,
+            743886.0,
+            3723870.0
+          ],
+          "proj:epsg": 26916,
+          "naip:state": "ga",
+          "proj:shape": [
+            12470,
+            10630
+          ],
+          "proj:transform": [
+            0.6,
+            0.0,
+            737508.0,
+            0.0,
+            -0.6,
+            3723870.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "links": [
+          {
+            "rel": "collection",
+            "type": "application/json",
+            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/atl"
+          }
+        ],
+        "assets": {
+          "image": {
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "RGBIR COG tile"
+          }
+        },
+        "stac_extensions": [
+          "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:46:42 GMT",
+        "Location": "https://example.com",
+        "mise-correlation-id": "ba90c1f8-2cff-4d93-b193-b6f1d86970b3",
+        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/3fb87d74-add8-446f-9d1e-a0ec50599483?api-version=2025-04-30-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "2f3863b217cc3204759ff44f7c69a6cd"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Pending",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:46:41.8770738Z"
+          }
+        ],
+        "type": "AddItem",
+        "creationTime": "2025-10-18T01:46:41.877071Z",
+        "collectionId": "atl"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/3fb87d74-add8-446f-9d1e-a0ec50599483?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:46:42 GMT",
+        "mise-correlation-id": "a6c645d6-8fae-486b-8663-ddd5e3353b7a",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "b42bcef01724e6bef97ac82e890ed23b"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Pending",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:46:41.8770738Z"
+          }
+        ],
+        "type": "AddItem",
+        "creationTime": "2025-10-18T01:46:41.877071Z",
+        "collectionId": "atl"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/3fb87d74-add8-446f-9d1e-a0ec50599483?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:47:12 GMT",
+        "mise-correlation-id": "f8195968-40b3-4640-b933-501edada4824",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "fef9788b5fb8b9bc708774bb3591907a"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Failed",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:46:41.877071Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-18T01:46:42.827146Z"
+          },
+          {
+            "status": "Failed",
+            "timestamp": "2025-10-18T01:46:43.209892Z",
+            "errorCode": "ItemAlreadyExistsInCollection",
+            "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'atl'"
+          }
+        ],
+        "type": "AddItem",
+        "creationTime": "2025-10-18T01:46:41.877071Z",
+        "startTime": "2025-10-18T01:46:41.877071Z",
+        "finishTime": "2025-10-18T01:46:43.209892Z",
+        "collectionId": "atl",
+        "additionalInformation": {
+          "TotalFailedItems": "1",
+          "TotalItems": "1",
+          "TotalPendingItems": "0",
+          "TotalSuccessfulItems": "0"
+        },
+        "error": {
+          "error": {
+            "code": "ItemAlreadyExistsInCollection",
+            "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'atl'"
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

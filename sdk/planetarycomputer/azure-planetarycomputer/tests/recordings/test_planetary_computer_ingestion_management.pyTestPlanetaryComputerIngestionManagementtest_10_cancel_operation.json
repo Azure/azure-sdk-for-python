@@ -1,0 +1,183 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "88",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:49:51 GMT",
+        "Server": "IMDS/150.870.65.1854"
+      },
+      "ResponseBody": {
+        "error": "invalid_request",
+        "error_description": "Required metadata header not specified"
+      }
+    },
+    {
+      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Metadata": "true",
+        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "68",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:49:51 GMT",
+        "Server": "IMDS/150.870.65.1854"
+      },
+      "ResponseBody": {
+        "error": "invalid_request",
+        "error_description": "Identity not found"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions?api-version=2025-04-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "275",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "importType": "StaticCatalog",
+        "displayName": "NAIP Ingestion for Cancel Test",
+        "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
+        "keepOriginalAssets": true,
+        "skipExistingItems": true
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:49:54 GMT",
+        "Location": "https://example.com",
+        "mise-correlation-id": "4a61faa0-f099-403d-9c30-76e77757a878",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "f5c5c85ef0faf30e80717dc3733114a8"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "creationTime": "2025-10-18T01:49:54.1149439Z",
+        "importType": "StaticCatalog",
+        "displayName": "NAIP Ingestion for Cancel Test",
+        "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
+        "skipExistingItems": true,
+        "keepOriginalAssets": true,
+        "status": "Ready"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions/0fccb803-5752-45f6-af7e-1fe9acfdba39/runs?api-version=2025-04-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:49:54 GMT",
+        "Location": "https://example.com",
+        "mise-correlation-id": "4a8587ba-b1b3-4753-ba82-3ac8ea91f088",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "995ff45e9a683adfbe682c6a546ff188"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "creationTime": "2025-10-18T01:49:54.1976227Z",
+        "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
+        "skipExistingItems": true,
+        "keepOriginalAssets": true,
+        "operation": {
+          "id": "Sanitized",
+          "status": "Pending",
+          "statusHistory": [
+            {
+              "status": "Pending",
+              "timestamp": "2025-10-18T01:49:54.1899757Z"
+            }
+          ],
+          "creationTime": "2025-10-18T01:49:54.1899737Z",
+          "totalItems": 0,
+          "totalPendingItems": 0,
+          "totalSuccessfulItems": 0,
+          "totalFailedItems": 0
+        }
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/557101b3-8851-4ae1-8001-d8e637e4f17b?api-version=2025-04-30-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Date": "Sat, 18 Oct 2025 01:49:55 GMT",
+        "mise-correlation-id": "cfd44383-4dcf-4b66-a87f-6108cd45d823",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "d6c1d0f6a88a7486b6f8da6d27706c8b"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

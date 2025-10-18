@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/assets?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/info.geojson?api-version=2025-04-30-preview&assets=image",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,46 +21,14 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "381",
-        "Content-Type": "application/json",
-        "Date": "Thu, 16 Oct 2025 23:19:42 GMT",
-        "Server-Timing": "total;dur=114.62",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "f20b3d6715d747dba1d9a69aaf76a515"
-      },
-      "ResponseBody": "[\"aot\",\"nir\",\"red\",\"scl\",\"wvp\",\"blue\",\"green\",\"nir08\",\"nir09\",\"swir16\",\"swir22\",\"visual\",\"aot_10m\",\"aot_60m\",\"coastal\",\"preview\",\"red_20m\",\"red_60m\",\"scl_60m\",\"wvp_10m\",\"wvp_60m\",\"blue_20m\",\"blue_60m\",\"rededge1\",\"rededge2\",\"rededge3\",\"green_20m\",\"green_60m\",\"nir08_60m\",\"swir16_60m\",\"swir22_60m\",\"visual_20m\",\"visual_60m\",\"coastal_20m\",\"rededge1_60m\",\"rededge2_60m\",\"rededge3_60m\"]"
-    },
-    {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/info.geojson?api-version=2025-04-30-preview&assets=aot&assets=nir&assets=red",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Accept-Ranges": "bytes",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "Cache-Control": "public, max-age=3600",
-        "Connection": "keep-alive",
-        "Content-Length": "1290",
+        "Content-Length": "677",
         "Content-Type": "application/geo+json",
-        "Date": "Thu, 16 Oct 2025 23:19:43 GMT",
-        "Server-Timing": "total;dur=766.7",
+        "Date": "Sat, 18 Oct 2025 01:46:12 GMT",
+        "Server-Timing": "total;dur=356.21",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "2bce7710e2ea4a718ef66ce734860180"
+        "X-Request-ID": "01ef59c429fa4d23a6e64bcd552f4265"
       },
       "ResponseBody": {
         "type": "Feature",
@@ -69,39 +37,51 @@
           "coordinates": [
             [
               [
-                -4.673798,
-                39.647784
+                -84.441543,
+                33.559319
               ],
               [
-                -4.051453,
-                39.647784
+                -84.370855,
+                33.559319
               ],
               [
-                -4.051453,
-                40.645928
+                -84.370855,
+                33.628174
               ],
               [
-                -4.673798,
-                40.645928
+                -84.441543,
+                33.628174
               ],
               [
-                -4.673798,
-                39.647784
+                -84.441543,
+                33.559319
               ]
             ]
           ]
         },
         "properties": {
-          "aot": {
+          "image": {
             "bounds": [
-              -5.36468078701844,
-              39.63821823439177,
-              -4.051449357546045,
-              40.6459284901449
+              -84.44154315329416,
+              33.55931851522889,
+              -84.37085518824348,
+              33.62817358872516
             ],
             "band_metadata": [
               [
                 "b1",
+                {}
+              ],
+              [
+                "b2",
+                {}
+              ],
+              [
+                "b3",
+                {}
+              ],
+              [
+                "b4",
                 {}
               ]
             ],
@@ -109,102 +89,43 @@
               [
                 "b1",
                 ""
-              ]
-            ],
-            "dtype": "uint16",
-            "nodata_type": "None",
-            "colorinterp": [
-              "gray"
-            ],
-            "minzoom": 9,
-            "maxzoom": 13,
-            "crs": "http://www.opengis.net/def/crs/EPSG/0/4326",
-            "driver": "GTiff",
-            "count": 1,
-            "width": 5490,
-            "height": 5490,
-            "overviews": [
-              2,
-              4,
-              8,
-              16
-            ]
-          },
-          "nir": {
-            "bounds": [
-              -5.36468078701844,
-              39.63821823439177,
-              -4.051449357546045,
-              40.6459284901449
-            ],
-            "band_metadata": [
+              ],
               [
-                "b1",
-                {}
-              ]
-            ],
-            "band_descriptions": [
+                "b2",
+                ""
+              ],
               [
-                "b1",
+                "b3",
+                ""
+              ],
+              [
+                "b4",
                 ""
               ]
             ],
-            "dtype": "uint16",
-            "nodata_type": "None",
+            "dtype": "uint8",
+            "nodata_type": "Nodata",
             "colorinterp": [
-              "gray"
+              "red",
+              "green",
+              "blue",
+              "undefined"
             ],
-            "minzoom": 9,
-            "maxzoom": 13,
+            "minzoom": 12,
+            "maxzoom": 18,
             "crs": "http://www.opengis.net/def/crs/EPSG/0/4326",
             "driver": "GTiff",
-            "count": 1,
-            "width": 10980,
-            "height": 10980,
+            "count": 4,
+            "width": 10630,
+            "height": 12470,
             "overviews": [
               2,
               4,
               8,
-              16
-            ]
-          },
-          "red": {
-            "bounds": [
-              -5.36468078701844,
-              39.63821823439177,
-              -4.051449357546045,
-              40.6459284901449
+              16,
+              32
             ],
-            "band_metadata": [
-              [
-                "b1",
-                {}
-              ]
-            ],
-            "band_descriptions": [
-              [
-                "b1",
-                ""
-              ]
-            ],
-            "dtype": "uint16",
-            "nodata_type": "None",
-            "colorinterp": [
-              "gray"
-            ],
-            "minzoom": 9,
-            "maxzoom": 13,
-            "crs": "http://www.opengis.net/def/crs/EPSG/0/4326",
-            "driver": "GTiff",
-            "count": 1,
-            "width": 10980,
-            "height": 10980,
-            "overviews": [
-              2,
-              4,
-              8,
-              16
-            ]
+            "nodata_value": 0.0
           }
         }
       }

@@ -225,30 +225,19 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
         test_logger.info(f"Input - item_id: {planetarycomputer_item_id}")
-        test_logger.info("Input - dimensions: 120x120")
+        test_logger.info("Input - dimensions: 512x512")
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        
-        # Get available assets first
-        assets = client.tiler.list_available_assets(
-            collection_id=planetarycomputer_collection_id,
-            item_id=planetarycomputer_item_id
-        )
-        test_logger.info(f"Available assets: {assets}")
-        
-        # Use first available asset or common ones
-        test_assets = assets[:3] if len(assets) >= 3 else assets[:1]
-        test_logger.info(f"Using assets: {test_assets}")
         
         test_logger.info("Calling: get_preview(...)")
         response = client.tiler.get_preview(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             format=TilerImageFormat.PNG,
-            width=120,
-            height=120,
-            assets=test_assets,
-            no_data=0,
+            width=512,
+            height=512,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
         )
         
         test_logger.info(f"Response type: {type(response)}")
@@ -302,19 +291,11 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Get available assets
-        assets = client.tiler.list_available_assets(
-            collection_id=planetarycomputer_collection_id,
-            item_id=planetarycomputer_item_id
-        )
-        test_assets = assets[:3] if len(assets) >= 3 else assets[:1]
-        test_logger.info(f"Using assets: {test_assets}")
-        
         test_logger.info("Calling: get_info_geo_json(...)")
         response = client.tiler.get_info_geo_json(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
-            assets=test_assets
+            assets=["image"]
         )
         
         test_logger.info(f"Response type: {type(response)}")
@@ -349,19 +330,11 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Get available assets
-        assets = client.tiler.list_available_assets(
-            collection_id=planetarycomputer_collection_id,
-            item_id=planetarycomputer_item_id
-        )
-        test_assets = assets[:3] if len(assets) >= 3 else assets[:1]
-        test_logger.info(f"Using assets: {test_assets}")
-        
         test_logger.info("Calling: list_statistics(...)")
         response = client.tiler.list_statistics(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
-            assets=test_assets
+            assets=["image"]
         )
         
         test_logger.info(f"Response type: {type(response)}")
@@ -394,14 +367,6 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Get available assets
-        assets = client.tiler.list_available_assets(
-            collection_id=planetarycomputer_collection_id,
-            item_id=planetarycomputer_item_id
-        )
-        test_assets = assets[:3] if len(assets) >= 3 else assets[:1]
-        test_logger.info(f"Using assets: {test_assets}")
-        
         test_logger.info("Calling: get_wmts_capabilities(...)")
         response = client.tiler.get_wmts_capabilities(
             collection_id=planetarycomputer_collection_id,
@@ -410,9 +375,9 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             tile_format=TilerImageFormat.PNG,
             tile_scale=1,
             min_zoom=7,
-            max_zoom=9,
-            assets=test_assets,
-            no_data=0,
+            max_zoom=14,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
         )
         
         test_logger.info(f"Response type: {type(response)}")

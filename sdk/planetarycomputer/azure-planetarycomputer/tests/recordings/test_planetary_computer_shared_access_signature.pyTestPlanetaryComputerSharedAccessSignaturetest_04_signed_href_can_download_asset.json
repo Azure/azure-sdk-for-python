@@ -21,15 +21,15 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2108",
+        "Content-Length": "2816",
         "Content-Type": "application/json",
-        "Date": "Thu, 16 Oct 2025 22:47:17 GMT",
+        "Date": "Sat, 18 Oct 2025 01:45:25 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-68c6e2f570aaadc266ed3534f162e9b7-c5395668d06b05cd-01",
+        "traceparent": "00-00e48939f7cc142282c57f24f051eeaa-c370a295883a8070-01",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "61b54e2c061744ae9313eb91f0b1e948"
+        "X-Request-ID": "f82f78a4a3c24e77b24175208eea9043"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -56,102 +56,164 @@
             "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/atl"
           }
         ],
-        "title": "Collection atl",
+        "title": "NAIP (MPC Pro Sample Datasets)",
         "assets": {
           "thumbnail": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "roles": [
               "thumbnail"
             ],
-            "title": "Sentinel-2 preview"
+            "title": "NAIP thumbnail"
           }
         },
         "extent": {
           "spatial": {
             "bbox": [
               [
-                -180,
-                -90,
-                180,
-                90
+                -124.784,
+                24.744,
+                -66.951,
+                49.346
+              ],
+              [
+                -156.003,
+                19.059,
+                -154.809,
+                20.127
+              ],
+              [
+                -67.316,
+                17.871,
+                -65.596,
+                18.565
+              ],
+              [
+                -64.94,
+                17.622,
+                -64.56,
+                17.814
               ]
             ]
           },
           "temporal": {
             "interval": [
               [
-                "2015-06-27T10:25:31Z",
-                null
+                "2010-01-01T00:00:00Z",
+                "2023-12-31T00:00:00Z"
               ]
             ]
           }
         },
-        "license": "CC-BY-4.0",
-        "description": "Python SDK Sentinel-2 Collection - Updated for testing",
+        "license": "proprietary",
+        "providers": [
+          {
+            "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+            "name": "Sanitized",
+            "roles": [
+              "producer",
+              "licensor"
+            ]
+          },
+          {
+            "url": "https://www.esri.com/",
+            "name": "Sanitized",
+            "roles": [
+              "processor"
+            ]
+          },
+          {
+            "url": "https://planetarycomputer.microsoft.com",
+            "name": "Sanitized",
+            "roles": [
+              "host",
+              "processor"
+            ]
+          }
+        ],
+        "summaries": {
+          "gsd": [
+            0.3,
+            0.6,
+            1
+          ],
+          "eo:bands": [
+            {
+              "name": "Sanitized",
+              "common_name": "red",
+              "description": "visible red"
+            },
+            {
+              "name": "Sanitized",
+              "common_name": "green",
+              "description": "visible green"
+            },
+            {
+              "name": "Sanitized",
+              "common_name": "blue",
+              "description": "visible blue"
+            },
+            {
+              "name": "Sanitized",
+              "common_name": "nir",
+              "description": "near-infrared"
+            }
+          ]
+        },
+        "description": "A Subset of NAIP imagery for sample MPC Pro GeoCatalog deployments. Includes multiple city and national park focus areas, useful for quick product evaluation. - Updated for testing",
         "item_assets": {
-          "red_20m": {
-            "gsd": 20,
+          "image": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
-              "data",
-              "reflectance"
+              "data"
             ],
-            "title": "Red (band 4) - 20m",
+            "title": "RGBIR COG tile",
             "eo:bands": [
               {
                 "name": "Sanitized",
-                "common_name": "red",
-                "description": "Red (band 4)",
-                "center_wavelength": 0.665,
-                "full_width_half_max": 0.038
+                "common_name": "red"
+              },
+              {
+                "name": "Sanitized",
+                "common_name": "green"
+              },
+              {
+                "name": "Sanitized",
+                "common_name": "blue"
+              },
+              {
+                "name": "Sanitized",
+                "common_name": "nir",
+                "description": "near-infrared"
               }
             ]
           },
-          "blue_20m": {
-            "gsd": 20,
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+          "metadata": {
+            "type": "text/plain",
             "roles": [
-              "data",
-              "reflectance"
+              "metadata"
             ],
-            "title": "Blue (band 2) - 20m",
-            "eo:bands": [
-              {
-                "name": "Sanitized",
-                "common_name": "blue",
-                "description": "Blue (band 2)",
-                "center_wavelength": 0.49,
-                "full_width_half_max": 0.098
-              }
-            ]
+            "title": "FGDC Metdata"
           },
-          "green_20m": {
-            "gsd": 20,
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+          "thumbnail": {
+            "type": "image/jpeg",
             "roles": [
-              "data",
-              "reflectance"
+              "thumbnail"
             ],
-            "title": "Green (band 3) - 20m",
-            "eo:bands": [
-              {
-                "name": "Sanitized",
-                "common_name": "green",
-                "description": "Green (band 3)",
-                "center_wavelength": 0.56,
-                "full_width_half_max": 0.045
-              }
-            ]
+            "title": "Thumbnail"
           }
         },
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-15T21:13:49.6626675Z",
-        "msft:_updated": "2025-10-15T22:13:03.410106Z"
+        "msft:_created": "2025-10-17T11:06:27.5343344Z",
+        "msft:_updated": "2025-10-17T11:06:58.032399Z",
+        "stac_extensions": [
+          "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+          "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+        ]
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/sas/sign?api-version=2025-04-30-preview&href=https%3A%2F%2FSANITIZED_STORAGE.blob.core.windows.net%2Fatl-f616ab54%2Fcollection-assets%2Fthumbnail%2Fthumbnail.png",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/sas/sign?api-version=2025-04-30-preview&href=https%3A%2F%SANITIZED_STORAGE.blob.core.windows.net%2Fatl-83498858%2Fcollection-assets%2Fthumbnail%2Fthumbnail.png",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -172,15 +234,15 @@
         "Connection": "keep-alive",
         "Content-Length": "379",
         "Content-Type": "application/json",
-        "Date": "Thu, 16 Oct 2025 22:47:17 GMT",
+        "Date": "Sat, 18 Oct 2025 01:45:25 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "ae05a1af57a14efeadbf82f4a26fbab8"
+        "X-Request-ID": "b8f0e9c49e554040a53f6bbe51bfddde"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-17T22:47:17Z",
-        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-f616ab54/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-16T22%3A40%3A02Z&ske=2025-10-23T22%3A39%3A02Z&sks=b&skv=2025-01-05&sig=Sanitized"
+        "msft:expiry": "2025-10-19T01:45:25Z",
+        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-18T01%3A45%3A18Z&ske=2025-10-25T01%3A44%3A18Z&sks=b&skv=2025-01-05&sig=Sanitized"
       }
     }
   ],

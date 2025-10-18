@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:19 GMT",
+        "Date": "Sat, 18 Oct 2025 01:49:15 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:19 GMT",
+        "Date": "Sat, 18 Oct 2025 01:49:15 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -66,13 +66,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:22 GMT",
-        "mise-correlation-id": "8eefa00f-c293-4d6b-b496-fe1534e14185",
+        "Date": "Sat, 18 Oct 2025 01:49:17 GMT",
+        "mise-correlation-id": "09443f5a-5da7-4791-a266-be01fa10f658",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "06a8ad20cad2661382f5bce302ab2054"
+        "X-Request-ID": "987ce9d84894550042efb7f0a235b198"
       },
       "ResponseBody": {
         "value": [

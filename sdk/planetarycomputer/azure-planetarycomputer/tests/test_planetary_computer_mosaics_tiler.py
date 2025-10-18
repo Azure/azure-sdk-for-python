@@ -57,9 +57,16 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Create search parameters
+        # Create search parameters - filter to 2021-2022 date range
         register_search_request = StacSearchParameters(
-            filter={"args": [{"args": [{"property": "collection"}, planetarycomputer_collection_id], "op": "="}], "op": "and"},
+            filter={
+                "op": "and",
+                "args": [
+                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+                ]
+            },
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
@@ -102,7 +109,14 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         
         # First register a search
         register_search_request = StacSearchParameters(
-            filter={"args": [{"args": [{"property": "collection"}, planetarycomputer_collection_id], "op": "="}], "op": "and"},
+            filter={
+                "op": "and",
+                "args": [
+                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+                ]
+            },
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
@@ -154,24 +168,28 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         
         # Register search and get hash
         register_search_request = StacSearchParameters(
-            filter={"args": [{"args": [{"property": "collection"}, planetarycomputer_collection_id], "op": "="}], "op": "and"},
+            filter={
+                "op": "and",
+                "args": [
+                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+                ]
+            },
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
         register_response = client.tiler.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
-        search_info = client.tiler.get_mosaics_search_info(search_id=search_id)
-        search_hash = search_info.search.hash
-        test_logger.info(f"Using search hash: {search_hash}")
+        test_logger.info(f"Using search ID: {search_id}")
         
         test_logger.info("Calling: get_mosaics_tile_json(...)")
         response = client.tiler.get_mosaics_tile_json(
-            search_id=search_hash,
+            search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
-            assets=["red_20m", "green_20m", "blue_20m"],
-            tile_scale=2,
-            color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-            no_data=0.0,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
+            tile_scale=1,
             min_zoom=9,
             collection=planetarycomputer_collection_id,
             tile_format="png",
@@ -213,34 +231,38 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
-        test_logger.info("Input - tile coordinates: z=10, x=504, y=390")
+        test_logger.info("Input - tile coordinates: z=13, x=2174, y=3282")
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Register search and get hash
+        # Register search
         register_search_request = StacSearchParameters(
-            filter={"args": [{"args": [{"property": "collection"}, planetarycomputer_collection_id], "op": "="}], "op": "and"},
+            filter={
+                "op": "and",
+                "args": [
+                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+                ]
+            },
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
         register_response = client.tiler.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
-        search_info = client.tiler.get_mosaics_search_info(search_id=search_id)
-        search_hash = search_info.search.hash
-        test_logger.info(f"Using search hash: {search_hash}")
+        test_logger.info(f"Using search ID: {search_id}")
         
         test_logger.info("Calling: get_mosaics_tile(...)")
         response = client.tiler.get_mosaics_tile(
-            search_id=search_hash,
+            search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
-            z=10,
-            x=504,
-            y=390,
+            z=13,
+            x=2174,
+            y=3282,
             scale=1,
             format="png",
-            assets=["red_20m", "green_20m", "blue_20m"],
-            color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-            no_data=0.0,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
             collection=planetarycomputer_collection_id,
         )
         
@@ -293,29 +315,33 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Register search and get hash
+        # Register search
         register_search_request = StacSearchParameters(
-            filter={"args": [{"args": [{"property": "collection"}, planetarycomputer_collection_id], "op": "="}], "op": "and"},
+            filter={
+                "op": "and",
+                "args": [
+                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+                ]
+            },
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
         register_response = client.tiler.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
-        search_info = client.tiler.get_mosaics_search_info(search_id=search_id)
-        search_hash = search_info.search.hash
-        test_logger.info(f"Using search hash: {search_hash}")
+        test_logger.info(f"Using search ID: {search_id}")
         
         test_logger.info("Calling: get_mosaics_wmts_capabilities(...)")
         response = client.tiler.get_mosaics_wmts_capabilities(
-            search_id=search_hash,
+            search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             tile_format=TilerImageFormat.PNG,
             tile_scale=1,
             min_zoom=7,
-            max_zoom=9,
-            assets=["red_20m", "green_20m", "blue_20m"],
-            color_formula="Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35",
-            no_data=0,
+            max_zoom=13,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
         )
         
         test_logger.info(f"Response type: {type(response)}")
@@ -352,27 +378,32 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
-        test_logger.info("Input - point: longitude=-3.0767, latitude=39.1201")
+        test_logger.info("Input - point: longitude=-84.43202751899601, latitude=33.639647639722273")
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Register search and get hash
+        # Register search
         register_search_request = StacSearchParameters(
-            filter={"args": [{"args": [{"property": "collection"}, planetarycomputer_collection_id], "op": "="}], "op": "and"},
+            filter={
+                "op": "and",
+                "args": [
+                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+                ]
+            },
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
         register_response = client.tiler.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
-        search_info = client.tiler.get_mosaics_search_info(search_id=search_id)
-        search_hash = search_info.search.hash
-        test_logger.info(f"Using search hash: {search_hash}")
+        test_logger.info(f"Using search ID: {search_id}")
         
         test_logger.info("Calling: get_mosaics_assets_for_point(...)")
         response = client.tiler.get_mosaics_assets_for_point(
-            search_id=search_hash,
-            longitude=-3.0767,
-            latitude=39.1201,
+            search_id=search_id,
+            longitude=-84.43202751899601,
+            latitude=33.639647639722273,
             coordinate_reference_system="EPSG:4326",
             items_limit=100,
             exit_when_full=True,
@@ -423,29 +454,34 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
-        test_logger.info("Input - tile coordinates: z=10, x=504, y=390")
+        test_logger.info("Input - tile coordinates: z=13, x=2174, y=3282")
         
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         
-        # Register search and get hash
+        # Register search
         register_search_request = StacSearchParameters(
-            filter={"args": [{"args": [{"property": "collection"}, planetarycomputer_collection_id], "op": "="}], "op": "and"},
+            filter={
+                "op": "and",
+                "args": [
+                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
+                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
+                ]
+            },
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
         register_response = client.tiler.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
-        search_info = client.tiler.get_mosaics_search_info(search_id=search_id)
-        search_hash = search_info.search.hash
-        test_logger.info(f"Using search hash: {search_hash}")
+        test_logger.info(f"Using search ID: {search_id}")
         
         test_logger.info("Calling: get_mosaics_assets_for_tile(...)")
         response = client.tiler.get_mosaics_assets_for_tile(
-            search_id=search_hash,
+            search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
-            z=10,
-            x=504,
-            y=390,
+            z=13,
+            x=2174,
+            y=3282,
             collection_id=planetarycomputer_collection_id,
         )
         

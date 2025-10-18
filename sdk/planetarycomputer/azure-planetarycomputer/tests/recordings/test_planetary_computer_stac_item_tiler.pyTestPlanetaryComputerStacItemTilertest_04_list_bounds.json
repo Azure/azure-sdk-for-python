@@ -21,21 +21,21 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "52",
+        "Content-Length": "54",
         "Content-Type": "application/json",
-        "Date": "Thu, 16 Oct 2025 23:19:36 GMT",
-        "Server-Timing": "total;dur=393.96",
+        "Date": "Sat, 18 Oct 2025 01:46:06 GMT",
+        "Server-Timing": "total;dur=57.26",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "66c3b95bae424e3382300b0a03a2928b"
+        "X-Request-ID": "b854eacd9c0e4d6fac64ad34f0cc67e3"
       },
       "ResponseBody": {
         "bounds": [
-          -4.673798,
-          39.647784,
-          -4.051453,
-          40.645928
+          -84.441543,
+          33.559319,
+          -84.370855,
+          33.628174
         ]
       }
     }

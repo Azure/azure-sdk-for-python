@@ -22,14 +22,14 @@
         "Connection": "keep-alive",
         "Content-Length": "58",
         "Content-Type": "application/json",
-        "Date": "Thu, 16 Oct 2025 22:47:12 GMT",
+        "Date": "Sat, 18 Oct 2025 01:45:19 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "d1bc9e8aa2c144fca9ab08dd4bd54e4f"
+        "X-Request-ID": "fac418378f5a401a8faa33dee87d0cc3"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-16T23:47:12Z",
+        "msft:expiry": "2025-10-18T02:45:19Z",
         "token": "Sanitized"
       }
     }

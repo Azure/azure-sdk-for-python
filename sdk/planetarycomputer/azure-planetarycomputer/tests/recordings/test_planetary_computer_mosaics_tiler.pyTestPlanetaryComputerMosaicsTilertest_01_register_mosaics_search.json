@@ -7,24 +7,42 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "177",
+        "Content-Length": "325",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "filter": {
+          "op": "and",
           "args": [
             {
+              "op": "=",
               "args": [
                 {
                   "property": "collection"
                 },
                 "atl"
-              ],
-              "op": "="
+              ]
+            },
+            {
+              "op": ">=",
+              "args": [
+                {
+                  "property": "datetime"
+                },
+                "2021-01-01T00:00:00Z"
+              ]
+            },
+            {
+              "op": "<=",
+              "args": [
+                {
+                  "property": "datetime"
+                },
+                "2022-12-31T23:59:59Z"
+              ]
             }
-          ],
-          "op": "and"
+          ]
         },
         "filter-lang": "cql2-json",
         "sortby": [
@@ -46,30 +64,30 @@
         "Connection": "keep-alive",
         "Content-Length": "744",
         "Content-Type": "application/json",
-        "Date": "Thu, 16 Oct 2025 23:29:04 GMT",
-        "Server-Timing": "total;dur=35.75",
+        "Date": "Sat, 18 Oct 2025 01:44:57 GMT",
+        "Server-Timing": "total;dur=35.4",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "af71918c21dd445b9f2ade118a7a90e0"
+        "X-Request-ID": "4c406615527a4c5fb914627bcb346793"
       },
       "ResponseBody": {
-        "searchid": "aeb6a26faad0c8f1400ace6da244ea08",
+        "searchid": "46bb5e82458413399fbf668e40359753",
         "links": [
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/info",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/46bb5e82458413399fbf668e40359753/info",
             "rel": "metadata",
             "type": "application/json",
             "title": "Mosaic metadata"
           },
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/tilejson.json",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/46bb5e82458413399fbf668e40359753/tilejson.json",
             "rel": "tilejson",
             "type": "application/json",
             "title": "Link for TileJSON"
           },
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/aeb6a26faad0c8f1400ace6da244ea08/WMTSCapabilities.xml",
+            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/46bb5e82458413399fbf668e40359753/WMTSCapabilities.xml",
             "rel": "wmts",
             "type": "application/json",
             "title": "Link for WMTS"

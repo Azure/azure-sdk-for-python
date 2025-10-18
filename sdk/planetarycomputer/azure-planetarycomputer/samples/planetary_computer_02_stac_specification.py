@@ -285,7 +285,7 @@ def main():
     # Get configuration from environment
     endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
     collection_id = os.environ.get("AZURE_COLLECTION_ID", "naip")
-    item_id = os.environ.get("AZURE_ITEM_ID", "S2A_MSIL2A_20230816T105631_N0509_R094_T30TUK_20230816T171602")
+    item_id = os.environ.get("AZURE_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
 
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")

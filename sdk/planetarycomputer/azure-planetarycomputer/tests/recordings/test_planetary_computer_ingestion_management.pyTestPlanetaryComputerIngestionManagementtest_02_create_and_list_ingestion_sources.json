@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:22 GMT",
+        "Date": "Sat, 18 Oct 2025 01:49:17 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:22 GMT",
+        "Date": "Sat, 18 Oct 2025 01:49:18 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -66,13 +66,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:25 GMT",
-        "mise-correlation-id": "f79d7f76-1d08-4502-a080-44747b52f8b8",
+        "Date": "Sat, 18 Oct 2025 01:49:23 GMT",
+        "mise-correlation-id": "c25f193c-4f52-4641-b5bf-b9bc39819f5d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "52bba1d6b7ed5fd5a4bdad0b27c0c2a9"
+        "X-Request-ID": "25d5f81c3f9ce8947122f107e739702d"
       },
       "ResponseBody": {
         "value": [
@@ -104,26 +104,26 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:26 GMT",
-        "mise-correlation-id": "c18bfc14-0348-4d21-8f46-127c16029ead",
+        "Date": "Sat, 18 Oct 2025 01:49:23 GMT",
+        "mise-correlation-id": "04f54d18-dc37-42e4-a1c2-45fa5b530c02",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "55316e7e78595792eb446e01e3be4f52"
+        "X-Request-ID": "148b46c12605b84ddd52436160249d5f"
       },
       "ResponseBody": {
         "value": [
           {
             "id": "Sanitized",
             "kind": "BlobManagedIdentity",
-            "created": "2025-10-17T10:19:13.3675203Z"
+            "created": "2025-10-18T01:44:12.8780268Z"
           }
         ]
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/ingestion-sources/b8426133-683e-4f73-8aba-ab04392c7b61?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/ingestion-sources/1090bfd4-7f82-45c1-81eb-09a2dae3a2f1?api-version=2025-04-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -143,12 +143,12 @@
         "Access-Control-Max-Age": "1728000",
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
-        "Date": "Fri, 17 Oct 2025 10:20:26 GMT",
-        "mise-correlation-id": "c0b122ca-209f-4cd6-8222-6aea69979d54",
+        "Date": "Sat, 18 Oct 2025 01:49:24 GMT",
+        "mise-correlation-id": "79c3a49b-6314-4a08-9f93-9ca7883e76bc",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "fea2bf32d2932b62dcf69768275d9ef5"
+        "X-Request-ID": "aed75f44e494dff7dc7767a8b6ce40f0"
       },
       "ResponseBody": null
     },
@@ -182,19 +182,19 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:26 GMT",
+        "Date": "Sat, 18 Oct 2025 01:49:24 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "ca25341e-8ab5-4052-963f-a5610d620674",
+        "mise-correlation-id": "1a7787f2-d2c0-4d9f-82bd-c844602dd74a",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "ff0d75c181e2ccadbccfd708422055df"
+        "X-Request-ID": "6a7ddbf9291c9d4d54a0585fd581fc1f"
       },
       "ResponseBody": {
         "id": "Sanitized",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-17T10:20:26.5622405Z",
+        "created": "2025-10-18T01:49:24.2873939Z",
         "connectionInfo": {
           "containerUrl": "Sanitized",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
@@ -222,20 +222,20 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Oct 2025 10:20:26 GMT",
-        "mise-correlation-id": "c1ec2728-adc4-4a4c-9d2d-3cdf4e05d6c1",
+        "Date": "Sat, 18 Oct 2025 01:49:24 GMT",
+        "mise-correlation-id": "a32cba66-24c3-4d82-a501-5826fd364e80",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "7a103cca5fba9c12eaf401ebc5093c14"
+        "X-Request-ID": "22122f0536472ee609cf4c9f95617d24"
       },
       "ResponseBody": {
         "value": [
           {
             "id": "Sanitized",
             "kind": "BlobManagedIdentity",
-            "created": "2025-10-17T10:20:26.5622405Z"
+            "created": "2025-10-18T01:49:24.2873939Z"
           }
         ]
       }

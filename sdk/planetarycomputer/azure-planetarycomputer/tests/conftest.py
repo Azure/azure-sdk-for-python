@@ -105,7 +105,7 @@ def collection_id():
 @pytest.fixture(scope="session")
 def item_id():
     """Fixture providing the test item ID."""
-    return os.environ.get("PLANETARYCOMPUTER_ITEM_ID", "S2A_MSIL2A_20230816T105631_N0509_R094_T30TUK_20230816T171602")
+    return os.environ.get("PLANETARYCOMPUTER_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
 
 
 @pytest.fixture(scope="session", autouse=True)
