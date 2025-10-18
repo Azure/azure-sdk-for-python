@@ -1,0 +1,135 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/atl/items/ga_m_3308420_se_16_060_20190912_20200102/info.geojson?api-version=2025-04-30-preview&assets=image",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Cache-Control": "public, max-age=3600",
+        "Connection": "keep-alive",
+        "Content-Length": "677",
+        "Content-Type": "application/geo+json",
+        "Date": "Sat, 18 Oct 2025 02:05:31 GMT",
+        "Server-Timing": "total;dur=341.18",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "878e27d7f9c74815b3230a3edeabe627"
+      },
+      "ResponseBody": {
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -84.441543,
+                33.559319
+              ],
+              [
+                -84.370855,
+                33.559319
+              ],
+              [
+                -84.370855,
+                33.628174
+              ],
+              [
+                -84.441543,
+                33.628174
+              ],
+              [
+                -84.441543,
+                33.559319
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "image": {
+            "bounds": [
+              -84.44154315329416,
+              33.55931851522889,
+              -84.37085518824348,
+              33.62817358872516
+            ],
+            "band_metadata": [
+              [
+                "b1",
+                {}
+              ],
+              [
+                "b2",
+                {}
+              ],
+              [
+                "b3",
+                {}
+              ],
+              [
+                "b4",
+                {}
+              ]
+            ],
+            "band_descriptions": [
+              [
+                "b1",
+                ""
+              ],
+              [
+                "b2",
+                ""
+              ],
+              [
+                "b3",
+                ""
+              ],
+              [
+                "b4",
+                ""
+              ]
+            ],
+            "dtype": "uint8",
+            "nodata_type": "Nodata",
+            "colorinterp": [
+              "red",
+              "green",
+              "blue",
+              "undefined"
+            ],
+            "minzoom": 12,
+            "maxzoom": 18,
+            "crs": "http://www.opengis.net/def/crs/EPSG/0/4326",
+            "driver": "GTiff",
+            "count": 4,
+            "width": 10630,
+            "height": 12470,
+            "overviews": [
+              2,
+              4,
+              8,
+              16,
+              32
+            ],
+            "nodata_value": 0.0
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
