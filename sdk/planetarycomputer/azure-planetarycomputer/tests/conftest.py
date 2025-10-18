@@ -97,15 +97,28 @@ def planetarycomputer_endpoint():
 
 
 @pytest.fixture(scope="session")
-def collection_id():
+def planetarycomputer_collection_id():
     """Fixture providing the test collection ID."""
-    return os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "python-sdk-sentinel-2")
+    return os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-sample-datasets")
 
 
 @pytest.fixture(scope="session")
-def item_id():
+def planetarycomputer_item_id():
     """Fixture providing the test item ID."""
     return os.environ.get("PLANETARYCOMPUTER_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
+
+
+# Legacy fixture names for backward compatibility
+@pytest.fixture(scope="session")
+def collection_id(planetarycomputer_collection_id):
+    """Legacy fixture name - redirects to planetarycomputer_collection_id."""
+    return planetarycomputer_collection_id
+
+
+@pytest.fixture(scope="session")
+def item_id(planetarycomputer_item_id):
+    """Legacy fixture name - redirects to planetarycomputer_item_id."""
+    return planetarycomputer_item_id
 
 
 @pytest.fixture(scope="session", autouse=True)

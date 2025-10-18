@@ -25,6 +25,6 @@ PlanetaryComputerPreparer = functools.partial(
     EnvironmentVariableLoader,
     "planetarycomputer",
     planetarycomputer_endpoint="https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com",
-    planetarycomputer_collection_id="atl",
-    planetarycomputer_item_id="ga_m_3308420_se_16_060_20190912_20200102",
+    planetarycomputer_collection_id="naip-sample-datasets",
+    planetarycomputer_item_id="ga_m_3308421_se_16_060_20211114",
 )
