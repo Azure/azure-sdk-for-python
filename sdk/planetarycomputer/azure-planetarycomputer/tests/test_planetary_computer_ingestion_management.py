@@ -169,7 +169,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Assertions
         assert created_sas_source is not None, "Created SAS source should not be None"
         assert hasattr(created_sas_source, 'id'), "Created SAS source should have an id"
-        assert created_sas_source.id == sas_source_id, "Source ID should match"
+        # Note: API generates its own ID server-side, so we don't assert it matches our generated ID
+        assert created_sas_source.id is not None, "Source ID should not be None"
+        assert len(created_sas_source.id) > 0, "Source ID should not be empty"
 
         # Clean up
         client.ingestion_management.delete_source(id=created_sas_source.id)
