@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:49:30 GMT",
+        "Date": "Sat, 18 Oct 2025 01:55:02 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:49:30 GMT",
+        "Date": "Sat, 18 Oct 2025 01:55:02 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -74,18 +74,18 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:49:34 GMT",
+        "Date": "Sat, 18 Oct 2025 01:55:06 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "0e831103-b1ff-4022-a8f4-a7b12b896fa2",
+        "mise-correlation-id": "042a4f8e-be3c-4934-9f4d-40788fc29d43",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "78e46b2a666b6c1d57c784aae7ecc850"
+        "X-Request-ID": "953045ddd124a56cd1f23a576b5ccd75"
       },
       "ResponseBody": {
         "id": "Sanitized",
-        "creationTime": "2025-10-18T01:49:34.1897969Z",
+        "creationTime": "2025-10-18T01:55:06.0996237Z",
         "importType": "StaticCatalog",
         "displayName": "NAIP Sample Dataset Ingestion",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -95,7 +95,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions/c231406f-70a9-48cc-964a-227f15dd2707?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/atl/ingestions/249441d9-dc88-4cdc-9dd8-1f409e6f9494?api-version=2025-04-30-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -120,17 +120,17 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:49:34 GMT",
-        "mise-correlation-id": "537614ce-6a44-41d5-b10d-554f68926b4a",
+        "Date": "Sat, 18 Oct 2025 01:55:06 GMT",
+        "mise-correlation-id": "abf7aeea-c308-4ad6-8f7c-b6aa3125d9a7",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "b7b2ea7d8781c94b36bfed5215747f89"
+        "X-Request-ID": "ecad2e2e36636144d2d60520631c83a4"
       },
       "ResponseBody": {
         "id": "Sanitized",
-        "creationTime": "2025-10-18T01:49:34.1897969Z",
+        "creationTime": "2025-10-18T01:55:06.0996237Z",
         "importType": "StaticCatalog",
         "displayName": "NAIP Updated Ingestion Name",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",

@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:50:52 GMT",
+        "Date": "Sat, 18 Oct 2025 01:54:55 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:50:52 GMT",
+        "Date": "Sat, 18 Oct 2025 01:54:55 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -75,24 +75,54 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:50:55 GMT",
+        "Date": "Sat, 18 Oct 2025 01:54:58 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "eb66515e-22d9-4696-a07f-61850cf4ed4c",
+        "mise-correlation-id": "fae772bf-ff51-4598-ae58-06c3449fa212",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "362c8208ba78c56089f1e897cded4720"
+        "X-Request-ID": "9da3ab725669f71e1fea44ba7d17688c"
       },
       "ResponseBody": {
         "id": "Sanitized",
         "kind": "SasToken",
-        "created": "2025-10-18T01:50:55.0691834Z",
+        "created": "2025-10-18T01:54:58.8153994Z",
         "connectionInfo": {
           "containerUrl": "Sanitized",
           "expiration": "2099-12-31T23:59:59.0000000Z"
         }
       }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/ingestion-sources/ff8de61c-0edc-4d4e-abf1-495d4c933c33?api-version=2025-04-30-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Date": "Sat, 18 Oct 2025 01:54:58 GMT",
+        "mise-correlation-id": "eb316fa0-3a35-48ce-b6dc-cbce3ea8f35c",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "f5eb41dbba62c4aa35fbf0d52e54f290"
+      },
+      "ResponseBody": null
     }
   ],
   "Variables": {}

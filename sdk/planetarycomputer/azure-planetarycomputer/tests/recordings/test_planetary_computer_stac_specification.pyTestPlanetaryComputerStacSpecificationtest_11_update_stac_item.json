@@ -23,13 +23,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1682",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 01:47:14 GMT",
+        "Date": "Sat, 18 Oct 2025 01:57:29 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-a5050f70071b174881fbab14d57bd9f5-51d35258427d77a8-01",
+        "traceparent": "00-7f7a98f190fbf0d152f81ddc7621a717-7957baf550179d5e-01",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00140f748d654602858c652115e450c1"
+        "X-Request-ID": "7fdfa38699a944b8bc2326e8dbd4ee0f"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -72,7 +72,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-18T01:30:39.623306Z",
+        "_msft:ts": "2025-10-18T01:46:43.542834Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -100,7 +100,7 @@
             ]
           ]
         },
-        "_msft:etag": "279c09e1-c7e2-44ab-9043-a4fc69641f2d",
+        "_msft:etag": "0002ef56-c70f-4bb8-9fa1-fc713d2f8e38",
         "collection": "atl",
         "properties": {
           "gsd": 0.6,
@@ -188,7 +188,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-18T01:30:39.623306Z",
+        "_msft:ts": "2025-10-18T01:46:43.542834Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -216,7 +216,7 @@
             ]
           ]
         },
-        "_msft:etag": "279c09e1-c7e2-44ab-9043-a4fc69641f2d",
+        "_msft:etag": "0002ef56-c70f-4bb8-9fa1-fc713d2f8e38",
         "collection": "atl",
         "properties": {
           "gsd": 0.6,
@@ -263,15 +263,15 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:47:15 GMT",
+        "Date": "Sat, 18 Oct 2025 01:57:29 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "1b0f5e35-61ff-43c1-9f0a-0602081750e0",
-        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/d3b173a9-6967-416d-862f-1f13c77d772d?api-version=2025-04-30-preview",
+        "mise-correlation-id": "7cdfe8a0-5e9b-4315-a042-02a59c24925d",
+        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/eab7403c-9e9f-4f29-a162-a34e70242d4e?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "39af28c6ecc496d4ebc7a926d80a3b3b"
+        "X-Request-ID": "764c68428157f235ac172aff491d432b"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -279,16 +279,16 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-18T01:47:14.7178907Z"
+            "timestamp": "2025-10-18T01:57:29.5585152Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-18T01:47:14.7178878Z",
+        "creationTime": "2025-10-18T01:57:29.5585111Z",
         "collectionId": "atl"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/d3b173a9-6967-416d-862f-1f13c77d772d?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/eab7403c-9e9f-4f29-a162-a34e70242d4e?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -308,13 +308,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:47:15 GMT",
-        "mise-correlation-id": "09bfdd04-1d98-4505-ac95-fb8860e75598",
+        "Date": "Sat, 18 Oct 2025 01:57:29 GMT",
+        "mise-correlation-id": "20b0ab29-6024-481d-90cc-0ae6440d056a",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "f9775f37f176d09dfbe75746ee01ea62"
+        "X-Request-ID": "a6b4e5c4e9955695c2739b71c2882c9e"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -322,16 +322,16 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-18T01:47:14.7178907Z"
+            "timestamp": "2025-10-18T01:57:29.5585152Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-18T01:47:14.7178878Z",
+        "creationTime": "2025-10-18T01:57:29.5585111Z",
         "collectionId": "atl"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/d3b173a9-6967-416d-862f-1f13c77d772d?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/eab7403c-9e9f-4f29-a162-a34e70242d4e?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -351,13 +351,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:47:45 GMT",
-        "mise-correlation-id": "b670ccf0-dcd7-4eda-95da-03b1adbd5b73",
+        "Date": "Sat, 18 Oct 2025 01:57:59 GMT",
+        "mise-correlation-id": "4b77c077-11a2-49be-afa0-b5e6b82a6587",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "da4b6fc975c14d8a36f71aab3bc3c5e0"
+        "X-Request-ID": "2f07406befbf5be4d7e0235859000ad2"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -365,23 +365,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-18T01:47:14.717887Z"
+            "timestamp": "2025-10-18T01:57:29.558511Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-18T01:47:15.920614Z"
+            "timestamp": "2025-10-18T01:57:29.938695Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-18T01:47:16.849118Z",
+            "timestamp": "2025-10-18T01:57:30.726474Z",
             "errorCode": "PublicAccessRestricted",
             "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/atl-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-18T01:47:14.717887Z",
-        "startTime": "2025-10-18T01:47:14.717887Z",
-        "finishTime": "2025-10-18T01:47:16.849118Z",
+        "creationTime": "2025-10-18T01:57:29.558511Z",
+        "startTime": "2025-10-18T01:57:29.558511Z",
+        "finishTime": "2025-10-18T01:57:30.726474Z",
         "collectionId": "atl",
         "additionalInformation": {
           "TotalFailedItems": "1",

@@ -22,14 +22,14 @@
         "Connection": "keep-alive",
         "Content-Length": "58",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 01:45:28 GMT",
+        "Date": "Sat, 18 Oct 2025 01:56:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "bd8e8b915be340b5b636b85816a66b6b"
+        "X-Request-ID": "f4d0f553996e432984bd31b8adfd5d8c"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-18T02:45:28Z",
+        "msft:expiry": "2025-10-18T02:56:12Z",
         "token": "Sanitized"
       }
     },
@@ -56,11 +56,11 @@
         "Connection": "keep-alive",
         "Content-Length": "4",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 01:45:28 GMT",
+        "Date": "Sat, 18 Oct 2025 01:56:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "ff52f74bfe5a462e98647ba3ac3f4d58"
+        "X-Request-ID": "fa3eca0a98d24e5881d15e8c25e15cb7"
       },
       "ResponseBody": "null"
     }

@@ -23,13 +23,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "32765",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 01:45:31 GMT",
+        "Date": "Sat, 18 Oct 2025 01:56:15 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-8f5efc791fef92647968daf7a46bd42f-560a3025d2688131-01",
+        "traceparent": "00-16f476c4e98b46e56bede6c84ebf6cc9-a66e7edabde2fcc3-01",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "c6967650a9d047a99a3d3fd1e69000be"
+        "X-Request-ID": "fe65f035fc6f4612ad06ba85e62dda5b"
       },
       "ResponseBody": {
         "collections": [

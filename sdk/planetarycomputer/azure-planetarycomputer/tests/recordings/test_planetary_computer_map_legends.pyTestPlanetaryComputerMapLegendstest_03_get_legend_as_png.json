@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/510a9eed-2a17-4ca6-817f-d1ec8323e715?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/431da9f3-50b3-43d5-8d63-73a87a5606a8?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -21,13 +21,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 01:44:48 GMT",
-        "mise-correlation-id": "1e019709-c3c0-465a-9dad-68fbcea13781",
+        "Date": "Sat, 18 Oct 2025 01:55:31 GMT",
+        "mise-correlation-id": "895a75a6-8d30-4f49-b692-dcc4e12504a8",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "a232143df127e7bca3201dfefc35b992"
+        "X-Request-ID": "2815a4ca2750b7fbdb4ef34cc2871fb3"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -35,22 +35,238 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-18T01:44:18.9080918Z"
+            "timestamp": "2025-10-18T01:55:01.8625545Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-18T01:44:28.9749451Z"
+            "timestamp": "2025-10-18T01:55:16.6619324Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-18T01:44:29.0286107Z"
+            "timestamp": "2025-10-18T01:55:16.682571Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-18T01:44:18.9080906Z",
+        "creationTime": "2025-10-18T01:55:01.8625492Z",
         "collectionId": "atl",
         "additionalInformation": {
-          "IngestionId": "970d3bcf-431d-4b94-ab68-c661bfb8e148"
+          "IngestionId": "45dd86a1-3f3e-4485-9417-eccea85c9470"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/022bd3c4-c5fb-4732-9b59-6de8f55db1ad?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:55:32 GMT",
+        "mise-correlation-id": "228b7cdd-bd85-4c06-9e12-773c17d0419f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "46e6dfbec53a9d90c6402085dc984323"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:55:02.7339065Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-18T01:55:16.6975958Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-18T01:55:16.7216567Z"
+          }
+        ],
+        "type": "DeleteIngestion",
+        "creationTime": "2025-10-18T01:55:02.7339031Z",
+        "collectionId": "atl",
+        "additionalInformation": {
+          "IngestionId": "f1b55769-b5c8-46c2-90a1-6ef8c93ceb77"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/289b308e-f709-45c6-9c02-ad307b084f1d?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:55:32 GMT",
+        "mise-correlation-id": "38ddea01-6345-48d6-9360-38f81945a6ee",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "963c3cab1131fb43321768b242a6f5be"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:55:02.8087345Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-18T01:55:16.7348654Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-18T01:55:16.759443Z"
+          }
+        ],
+        "type": "DeleteIngestion",
+        "creationTime": "2025-10-18T01:55:02.8087326Z",
+        "collectionId": "atl",
+        "additionalInformation": {
+          "IngestionId": "fe5f367c-6562-4ff7-bf12-157620b9ae82"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8fa112fc-284a-418c-b3e4-5eb7978f692a?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:55:32 GMT",
+        "mise-correlation-id": "829dfde4-917b-4b29-bcbf-e5852cc49e95",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "1d46d378fda46169d0ea0ee801b4ac78"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:55:02.8860578Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-18T01:55:16.774619Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-18T01:55:16.7990903Z"
+          }
+        ],
+        "type": "DeleteIngestion",
+        "creationTime": "2025-10-18T01:55:02.8860562Z",
+        "collectionId": "atl",
+        "additionalInformation": {
+          "IngestionId": "784a2d72-bff3-4efd-bbd0-01f8ae734646"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/b66b355f-90fb-4147-b185-ba78f41412d9?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:55:33 GMT",
+        "mise-correlation-id": "b0f07fdc-4920-4ae5-a5c5-507ec13cb2d5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "1db52b98d7ee463c10a463b1d9ab3946"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:55:02.9537065Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-18T01:55:16.8212129Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-18T01:55:16.8466967Z"
+          }
+        ],
+        "type": "DeleteIngestion",
+        "creationTime": "2025-10-18T01:55:02.9537049Z",
+        "collectionId": "atl",
+        "additionalInformation": {
+          "IngestionId": "b50e2e36-5ef1-43e8-9c96-b9162ea3ccfd"
         }
       }
     },
@@ -77,12 +293,12 @@
         "Connection": "keep-alive",
         "Content-Length": "550",
         "Content-Type": "image/jpg",
-        "Date": "Sat, 18 Oct 2025 01:44:50 GMT",
-        "Server-Timing": "total;dur=100.55",
+        "Date": "Sat, 18 Oct 2025 01:55:34 GMT",
+        "Server-Timing": "total;dur=98.98",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "f6718090bfbc43189f95eacb00df64b3"
+        "X-Request-ID": "47196615f3e94077a3c1d9579533daed"
       },
       "ResponseBody": "iVBORw0KGgoAAAANSUhEUgAAAYMAAAALCAYAAACd8OETAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvlHJYcgAAAAlwSFlzAAAPYQAAD2EBqD+naQAAAZJJREFUeJztlUlywzAMBBuQ85W8PL9MxMmBG6zYWc6ZdrkED0EspFyIt3gVQARk9GfkEzsgc9j0tbXvN3b8zZ+MsadvjITIIJbdnSMAII7o6xlrL/Q9mQHH2Dt0Msgjh2+QWfVY+vKPIG9BZHYtY+lxmw1c9XJgGQR0+2XW3utaPiN/HLteis/KmwFZ/Xee+O7g52Uv/6tPrXcmAG7Hc5/gPj7Acev1xa4l+qXuOGTp+dg1U14+Ss5p98v+qsfFjuqfY73oFx8hmgQ0JCEEQFNDaoiG5kcXW/NXsa8+D/wBJNE4v8QYFdGkElM0UfJwt94QEkuffLRz6Or9lH7vdFX9GvOia3YAHw0kaKseaOM7a9n2c33GUNOyGWvn9F15pv1El1b8/dy6Rsx+B/Dedk8117bFWXrbth7EH3W1fUbvp1a9jP6kH2we6PPO2n5/AHSOuxkHKor9izzl326MMea/4mFgjDHGw8AYY4yHgTHGGDwMjDHG4GFgjDEGDwNjjDF4GBhjjMHDwBhjDB4GxhhjgE8T75zFpUrLTwAAAABJRU5ErkJggg=="
     }

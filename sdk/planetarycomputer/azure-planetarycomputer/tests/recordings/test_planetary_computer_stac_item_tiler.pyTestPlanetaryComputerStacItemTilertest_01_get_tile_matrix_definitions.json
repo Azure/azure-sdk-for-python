@@ -23,12 +23,12 @@
         "Connection": "keep-alive",
         "Content-Length": "8257",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 01:45:59 GMT",
-        "Server-Timing": "total;dur=22.79",
+        "Date": "Sat, 18 Oct 2025 01:56:43 GMT",
+        "Server-Timing": "total;dur=30.05",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "3414f0b35db1477aac790471ad8f876d"
+        "X-Request-ID": "48461a6d250443f6b648b6266318f6d9"
       },
       "ResponseBody": {
         "title": "Google Maps Compatible for the World",

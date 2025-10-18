@@ -23,12 +23,12 @@
         "Connection": "keep-alive",
         "Content-Length": "8483",
         "Content-Type": "application/xml",
-        "Date": "Sat, 18 Oct 2025 01:46:18 GMT",
-        "Server-Timing": "total;dur=53.36",
+        "Date": "Sat, 18 Oct 2025 01:57:03 GMT",
+        "Server-Timing": "total;dur=50.62",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "e9a45273d2294a0e9762d0bb321330f3"
+        "X-Request-ID": "01850b698df24f48abdbc83793291c07"
       },
       "ResponseBody": [
         "<Capabilities xmlns=\"http://www.opengis.net/wmts/1.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xsi:schemaLocation=\"http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd\" version=\"1.0.0\">\n",

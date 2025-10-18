@@ -23,12 +23,12 @@
         "Connection": "keep-alive",
         "Content-Length": "20",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 01:46:04 GMT",
-        "Server-Timing": "total;dur=45.64",
+        "Date": "Sat, 18 Oct 2025 01:56:48 GMT",
+        "Server-Timing": "total;dur=44.92",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "7ef23c9f1d86445a824aaef681d9848b"
+        "X-Request-ID": "24f0a5ed9d594e6daadad1743d5d0b48"
       },
       "ResponseBody": "[\"image\",\"tilejson\"]"
     }

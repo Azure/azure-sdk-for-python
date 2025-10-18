@@ -36,12 +36,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "14953",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 01:46:39 GMT",
+        "Date": "Sat, 18 Oct 2025 01:57:23 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "9f70121d1f1b489f84cd0b1b1bdde336"
+        "X-Request-ID": "2a46f508133f4cdfa458dd84da19e2d2"
       },
       "ResponseBody": {
         "type": "FeatureCollection",
@@ -931,12 +931,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "13718",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 01:46:39 GMT",
+        "Date": "Sat, 18 Oct 2025 01:57:23 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "52ca44fe28fd40e48df39ed31c0b8e7b"
+        "X-Request-ID": "3543be34d7fc445b915f9e5bac68553e"
       },
       "ResponseBody": {
         "type": "FeatureCollection",
@@ -1473,7 +1473,7 @@
                 "title": "Rendered preview"
               }
             },
-            "_msft:ts": "2025-10-18T00:45:40.194930Z",
+            "_msft:ts": "2025-10-18T01:16:19.592450Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -1501,7 +1501,7 @@
                 ]
               ]
             },
-            "_msft:etag": "afe75d83-8cf1-4365-a567-62bf89b73d50",
+            "_msft:etag": "4dd8214f-c634-4496-9a6c-84b4bf064f0f",
             "collection": "atl",
             "properties": {
               "gsd": 1.0,
@@ -1622,7 +1622,7 @@
                 "title": "Rendered preview"
               }
             },
-            "_msft:ts": "2025-10-18T00:45:26.333213Z",
+            "_msft:ts": "2025-10-18T01:16:06.251833Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -1650,7 +1650,7 @@
                 ]
               ]
             },
-            "_msft:etag": "c1da0a15-13cb-45d9-9b11-e3635ebb8c4d",
+            "_msft:etag": "d740abb0-d504-4131-8ef7-2a58dde92e7b",
             "collection": "atl",
             "properties": {
               "gsd": 1.0,

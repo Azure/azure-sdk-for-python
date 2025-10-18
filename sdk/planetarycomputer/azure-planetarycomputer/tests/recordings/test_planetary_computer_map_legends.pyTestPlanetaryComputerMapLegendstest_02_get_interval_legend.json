@@ -1,6 +1,60 @@
 {
   "Entries": [
     {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/c70b0e0b-6f25-426e-8455-8459f896431d?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 01:55:31 GMT",
+        "mise-correlation-id": "6b6446f0-f710-497b-9f7e-fa3d82cbd141",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "c34480c01c9b043fd86b7ac346e517b3"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-18T01:55:01.7466801Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-18T01:55:16.6195502Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-18T01:55:16.6475167Z"
+          }
+        ],
+        "type": "DeleteIngestion",
+        "creationTime": "2025-10-18T01:55:01.7466763Z",
+        "collectionId": "atl",
+        "additionalInformation": {
+          "IngestionId": "c96cf5c9-acf3-47e4-b719-654b6a7d8cf8"
+        }
+      }
+    },
+    {
       "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/legend/interval/modis-64A1?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
@@ -23,12 +77,12 @@
         "Connection": "keep-alive",
         "Content-Length": "357",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 01:44:47 GMT",
-        "Server-Timing": "total;dur=110.22",
+        "Date": "Sat, 18 Oct 2025 01:55:31 GMT",
+        "Server-Timing": "total;dur=26.93",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "0e17790b82664229899d8ded9d2b3e3c"
+        "X-Request-ID": "9bbdb427a91a420d951071894ff0e666"
       },
       "ResponseBody": "[[[-2,0],[0,0,0,0]],[[1,32],[255,255,178,255]],[[32,60],[255,236,147,255]],[[60,91],[254,218,115,255]],[[91,121],[254,198,89,255]],[[121,152],[254,175,77,255]],[[152,182],[253,152,66,255]],[[182,213],[251,126,55,255]],[[213,244],[246,96,45,255]],[[244,274],[241,66,35,255]],[[274,305],[226,43,34,255]],[[305,335],[208,21,36,255]],[[335,366],[189,0,38,255]]]"
     }

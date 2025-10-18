@@ -73,12 +73,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "13172",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 01:46:28 GMT",
+        "Date": "Sat, 18 Oct 2025 01:57:13 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "6199a2984302417093d468311a89930a"
+        "X-Request-ID": "530be610b43f4d739a0d009ba064e160"
       },
       "ResponseBody": {
         "type": "FeatureCollection",
@@ -327,7 +327,7 @@
                 "title": "Rendered preview"
               }
             },
-            "_msft:ts": "2025-10-18T00:45:27.529986Z",
+            "_msft:ts": "2025-10-18T01:16:07.376042Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -355,7 +355,7 @@
                 ]
               ]
             },
-            "_msft:etag": "d005dfae-959c-4db9-af31-a03b1dfe74df",
+            "_msft:etag": "3e38136d-c0ba-458d-af7e-6ef563a5ab36",
             "collection": "atl",
             "properties": {
               "gsd": 0.6,
@@ -602,7 +602,7 @@
                 "title": "RGBIR COG tile"
               }
             },
-            "_msft:ts": "2025-10-18T01:25:45.340296Z",
+            "_msft:ts": "2025-10-18T01:30:39.623306Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -630,7 +630,7 @@
                 ]
               ]
             },
-            "_msft:etag": "b4001e6d-4d6b-481a-93ad-5ef1dd6fa257",
+            "_msft:etag": "279c09e1-c7e2-44ab-9043-a4fc69641f2d",
             "collection": "atl",
             "properties": {
               "gsd": 0.6,
