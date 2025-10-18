@@ -64,12 +64,12 @@
         "Connection": "keep-alive",
         "Content-Length": "744",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:36:38 GMT",
-        "Server-Timing": "total;dur=20.43",
+        "Date": "Sat, 18 Oct 2025 02:51:40 GMT",
+        "Server-Timing": "total;dur=30.06",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "b8cd9c5486954e0ab6838d5af499de63"
+        "X-Request-ID": "814e611e1dd94d4786bd2db60e5c8a72"
       },
       "ResponseBody": {
         "searchid": "46bb5e82458413399fbf668e40359753",
@@ -118,12 +118,12 @@
         "Connection": "keep-alive",
         "Content-Length": "1275",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:36:38 GMT",
-        "Server-Timing": "total;dur=37.17",
+        "Date": "Sat, 18 Oct 2025 02:51:40 GMT",
+        "Server-Timing": "total;dur=29.15",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "14817f3e2d6342e597a5f5047a43d3c2"
+        "X-Request-ID": "fcb96055fdc04cfdbc6159f7914c5010"
       },
       "ResponseBody": "[{\"id\":\"Sanitized\",\"bbox\":[-84.44157,33.621853,-84.370894,33.690654],\"assets\":{\"image\":{\"href\":\"https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/234/ga_m_3308421_se_16_060_20211114/image.tif\",\"type\":\"image/tiff; application=geotiff; profile=cloud-optimized\",\"roles\":[\"data\"],\"title\":\"RGBIR COG tile\",\"eo:bands\":[{\"name\":\"Sanitized\",\"common_name\":\"red\"},{\"name\":\"Sanitized\",\"common_name\":\"green\"},{\"name\":\"Sanitized\",\"common_name\":\"blue\"},{\"name\":\"Sanitized\",\"common_name\":\"nir\",\"description\":\"near-infrared\"}]},\"tilejson\":{\"href\":\"https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/234/ga_m_3308421_se_16_060_20211114/tilejson.json\",\"type\":\"application/json\",\"roles\":[\"tiles\"],\"title\":\"TileJSON with default rendering\"},\"thumbnail\":{\"href\":\"https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/234/ga_m_3308421_se_16_060_20211114/thumbnail.jpg\",\"type\":\"image/jpeg\",\"roles\":[\"thumbnail\"],\"title\":\"Thumbnail\"},\"rendered_preview\":{\"rel\":\"preview\",\"href\":\"https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/234/ga_m_3308421_se_16_060_20211114/rendered_preview.png\",\"type\":\"image/png\",\"roles\":[\"overview\"],\"title\":\"Rendered preview\"}},\"collection\":\"naip-sample-datasets\"}]"
     }

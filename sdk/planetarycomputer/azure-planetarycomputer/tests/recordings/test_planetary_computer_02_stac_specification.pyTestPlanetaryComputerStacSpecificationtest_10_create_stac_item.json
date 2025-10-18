@@ -23,13 +23,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "30883",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 02:34:37 GMT",
+        "Date": "Sat, 18 Oct 2025 02:49:38 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-e5c72a78e8e8f19362e7b0e7f71dc004-f21956df89fa45fe-01",
+        "traceparent": "00-612b7150e639e5e75839dfe4e6a10435-9a08d4d456ef59c9-01",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "44e63c1930e44aa78cf7ef2fddf2eb79"
+        "X-Request-ID": "308a13de2e5a4fac853eef16ad17ee90"
       },
       "ResponseBody": {
         "type": "FeatureCollection",
@@ -1804,15 +1804,15 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:38 GMT",
+        "Date": "Sat, 18 Oct 2025 02:49:40 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "24f2016c-988f-4756-9bd1-9e7ea15b639a",
-        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/a3e8a9e7-1ba4-4968-a2df-2b2361d756b6?api-version=2025-04-30-preview",
+        "mise-correlation-id": "f0351969-dbe2-457f-a5fe-cb0dd5bdadc5",
+        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/31b942e4-1620-42a8-bb9a-e22845295707?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "82fb0c751c7bd0b76c1685d3dc1f8a34"
+        "X-Request-ID": "ead51f9978d9d6bcf16b1238c0ef6273"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -1820,16 +1820,16 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-18T02:34:37.6804833Z"
+            "timestamp": "2025-10-18T02:49:38.5367576Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-18T02:34:37.6804816Z",
+        "creationTime": "2025-10-18T02:49:38.5367541Z",
         "collectionId": "naip-sample-datasets"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/a3e8a9e7-1ba4-4968-a2df-2b2361d756b6?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/31b942e4-1620-42a8-bb9a-e22845295707?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -1849,13 +1849,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:38 GMT",
-        "mise-correlation-id": "c62816dd-9672-4bf6-aae6-b9096bc84d9a",
+        "Date": "Sat, 18 Oct 2025 02:49:40 GMT",
+        "mise-correlation-id": "c8ee8291-35d2-42fe-8b1c-78783476c0f7",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "0ea45ffcfd30f1650f25406e08810698"
+        "X-Request-ID": "5b0068ade2865cd6bb33b1a66a4f2997"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -1863,16 +1863,16 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-18T02:34:37.6804833Z"
+            "timestamp": "2025-10-18T02:49:38.5367576Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-18T02:34:37.6804816Z",
+        "creationTime": "2025-10-18T02:49:38.5367541Z",
         "collectionId": "naip-sample-datasets"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/a3e8a9e7-1ba4-4968-a2df-2b2361d756b6?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/31b942e4-1620-42a8-bb9a-e22845295707?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -1892,13 +1892,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:35:08 GMT",
-        "mise-correlation-id": "54c0b000-d60f-4832-9c28-406f2e481fd2",
+        "Date": "Sat, 18 Oct 2025 02:50:10 GMT",
+        "mise-correlation-id": "5afad76e-07d2-455f-a4cc-9036da096b41",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "c40de9045f95fac1aaaa2d07ce8bbbd6"
+        "X-Request-ID": "da443459e3f58b767cae79eda8894887"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -1906,23 +1906,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-18T02:34:37.680481Z"
+            "timestamp": "2025-10-18T02:49:38.536754Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-18T02:34:39.236644Z"
+            "timestamp": "2025-10-18T02:49:40.969925Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-18T02:34:39.699554Z",
+            "timestamp": "2025-10-18T02:49:41.416925Z",
             "errorCode": "ItemAlreadyExistsInCollection",
             "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-sample-datasets'"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-18T02:34:37.680481Z",
-        "startTime": "2025-10-18T02:34:37.680481Z",
-        "finishTime": "2025-10-18T02:34:39.699554Z",
+        "creationTime": "2025-10-18T02:49:38.536754Z",
+        "startTime": "2025-10-18T02:49:38.536754Z",
+        "finishTime": "2025-10-18T02:49:41.416925Z",
         "collectionId": "naip-sample-datasets",
         "additionalInformation": {
           "TotalFailedItems": "1",

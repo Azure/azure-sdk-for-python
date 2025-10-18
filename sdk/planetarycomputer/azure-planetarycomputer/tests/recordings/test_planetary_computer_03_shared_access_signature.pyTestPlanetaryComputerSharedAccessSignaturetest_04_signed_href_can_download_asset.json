@@ -23,13 +23,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "2867",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:35:56 GMT",
+        "Date": "Sat, 18 Oct 2025 02:50:57 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-d11bcb44a9d467fee56b363771c01738-eae6a3eab9fcf3df-01",
+        "traceparent": "00-893bba32d6e34446fe1f8b0e0080b501-f6d1970ab4f6c7f5-01",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "b595a85bbd2e452c89710278556cba9a"
+        "X-Request-ID": "cd32d8a8232a4e7fadcb4c43a8051256"
       },
       "ResponseBody": {
         "id": "Sanitized",
@@ -234,15 +234,15 @@
         "Connection": "keep-alive",
         "Content-Length": "396",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:35:56 GMT",
+        "Date": "Sat, 18 Oct 2025 02:50:57 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "052b0fa09db14e5fa8268434c62ac29b"
+        "X-Request-ID": "40e4306889554ce694534d3a20250c93"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-19T02:35:56Z",
-        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-18T02%3A35%3A50Z&ske=2025-10-25T02%3A34%3A50Z&sks=b&skv=2025-01-05&sig=Sanitized"
+        "msft:expiry": "2025-10-19T02:50:57Z",
+        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-16T22%3A39%3A14Z&ske=2025-10-23T22%3A38%3A14Z&sks=b&skv=2025-01-05&sig=Sanitized"
       }
     }
   ],

@@ -23,12 +23,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "769",
         "Content-Type": "application/schema+json",
-        "Date": "Sat, 18 Oct 2025 02:33:26 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:21 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "dc39503bd0d74d8c90e10f4ced08b534"
+        "X-Request-ID": "46252277dc7d48838f7c392ad24085ab"
       },
       "ResponseBody": {
         "$id": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/queryables?api-version=2025-04-30-preview",

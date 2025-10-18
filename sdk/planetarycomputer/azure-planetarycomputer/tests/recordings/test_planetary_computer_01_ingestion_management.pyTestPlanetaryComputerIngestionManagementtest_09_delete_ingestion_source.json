@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:03 GMT",
+        "Date": "Sat, 18 Oct 2025 02:49:00 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:03 GMT",
+        "Date": "Sat, 18 Oct 2025 02:49:00 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -66,13 +66,13 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:07 GMT",
-        "mise-correlation-id": "879313ac-43a2-46f2-857a-88255f97a9f1",
+        "Date": "Sat, 18 Oct 2025 02:49:05 GMT",
+        "mise-correlation-id": "0389a221-dbe8-4396-a2fa-c217b824fe15",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "a32f552b00aae852aea5086cd0ca6d58"
+        "X-Request-ID": "8a983c26aa70b0fdf51cf237daf9d3fd"
       },
       "ResponseBody": {
         "value": [
@@ -113,19 +113,19 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:07 GMT",
+        "Date": "Sat, 18 Oct 2025 02:49:06 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "8a07a022-31db-47ab-b3da-b6d4e517877d",
+        "mise-correlation-id": "561789e7-c733-485f-beea-8ba848cdb228",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "c509d7b125dbee970dfec706c7807cc7"
+        "X-Request-ID": "424de9b207cd983db66e8358625f0f20"
       },
       "ResponseBody": {
         "id": "Sanitized",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-18T02:34:07.1675385Z",
+        "created": "2025-10-18T02:49:06.9095591Z",
         "connectionInfo": {
           "containerUrl": "Sanitized",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
@@ -133,7 +133,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/ingestion-sources/df5d210a-7f85-44fd-8c92-ed37f37cc115?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/ingestion-sources/3de532ce-cacb-405c-a53d-7d111a955828?api-version=2025-04-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -153,12 +153,12 @@
         "Access-Control-Max-Age": "1728000",
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
-        "Date": "Sat, 18 Oct 2025 02:34:07 GMT",
-        "mise-correlation-id": "15964369-3e56-4061-a9d8-c328928be12a",
+        "Date": "Sat, 18 Oct 2025 02:49:06 GMT",
+        "mise-correlation-id": "e601b165-0df4-458f-aaaf-07087bc06ae1",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "026081a8bf3d3189ddfc11988be1753d"
+        "X-Request-ID": "eaf4bc9c31db3fc3d00b157d982a8b17"
       },
       "ResponseBody": null
     },
@@ -183,20 +183,20 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:07 GMT",
-        "mise-correlation-id": "284f2530-73f8-4468-82f5-86b08fb7d401",
+        "Date": "Sat, 18 Oct 2025 02:49:06 GMT",
+        "mise-correlation-id": "d773065f-0b53-4f1a-942b-e2171330794e",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "892b8c65e76d640ab9a88c7c7ed96a9c"
+        "X-Request-ID": "0165079ecaa25c57f961cd2dddb223b7"
       },
       "ResponseBody": {
         "value": [
           {
             "id": "Sanitized",
             "kind": "BlobManagedIdentity",
-            "created": "2025-10-18T02:33:41.9132256Z"
+            "created": "2025-10-18T02:48:37.9055922Z"
           }
         ]
       }

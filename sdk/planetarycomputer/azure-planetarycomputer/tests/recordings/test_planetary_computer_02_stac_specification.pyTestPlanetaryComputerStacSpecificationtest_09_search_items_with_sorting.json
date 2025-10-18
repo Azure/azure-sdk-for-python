@@ -36,12 +36,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "15650",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 02:34:34 GMT",
+        "Date": "Sat, 18 Oct 2025 02:49:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "050b279adddc4ed39a71341b850b641b"
+        "X-Request-ID": "ce8311b6141640d8b4cdecc4f3d7ccf0"
       },
       "ResponseBody": {
         "type": "FeatureCollection",
@@ -931,12 +931,12 @@
         "Content-Encoding": "gzip",
         "Content-Length": "14415",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 02:34:34 GMT",
+        "Date": "Sat, 18 Oct 2025 02:49:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "4d8f78d305c1451ea582b4eab585f890"
+        "X-Request-ID": "4634a661113d4f8fbe3ceeb9214cdc98"
       },
       "ResponseBody": {
         "type": "FeatureCollection",
@@ -1473,7 +1473,7 @@
                 "title": "Rendered preview"
               }
             },
-            "_msft:ts": "2025-10-18T01:47:01.202657Z",
+            "_msft:ts": "2025-10-18T02:17:42.855665Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -1501,7 +1501,7 @@
                 ]
               ]
             },
-            "_msft:etag": "57b017e7-017c-420a-ae8e-cae0a0b09d18",
+            "_msft:etag": "763c1afa-5938-4c5e-b9dc-eadd52511b25",
             "collection": "naip-sample-datasets",
             "properties": {
               "gsd": 1.0,
@@ -1622,7 +1622,7 @@
                 "title": "Rendered preview"
               }
             },
-            "_msft:ts": "2025-10-18T01:46:47.238091Z",
+            "_msft:ts": "2025-10-18T02:17:30.549546Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -1650,7 +1650,7 @@
                 ]
               ]
             },
-            "_msft:etag": "5a700f8d-76b9-441f-aff3-cca39dc7c65a",
+            "_msft:etag": "a20aa222-2f74-4253-8a72-402d67aa340a",
             "collection": "naip-sample-datasets",
             "properties": {
               "gsd": 1.0,

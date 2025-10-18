@@ -23,12 +23,12 @@
         "Connection": "keep-alive",
         "Content-Length": "261",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:36:05 GMT",
-        "Server-Timing": "total;dur=28.54",
+        "Date": "Sat, 18 Oct 2025 02:51:06 GMT",
+        "Server-Timing": "total;dur=34.26",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "4033e80995b142f7b3ef2d9197d4cae2"
+        "X-Request-ID": "b3a833cf1c134e5eb1b4b81e19050d83"
       },
       "ResponseBody": "[\"CDB1GlobalGrid\",\"CanadianNAD83_LCC\",\"EuropeanETRS89_LAEAQuad\",\"GNOSISGlobalGrid\",\"LINZAntarticaMapTilegrid\",\"NZTM2000Quad\",\"UPSAntarcticWGS84Quad\",\"UPSArcticWGS84Quad\",\"UTM31WGS84Quad\",\"WGS1984Quad\",\"WebMercatorQuad\",\"WorldCRS84Quad\",\"WorldMercatorWGS84Quad\"]"
     }

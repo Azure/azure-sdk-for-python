@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:33:51 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:46 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:33:51 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:46 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -74,18 +74,18 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:33:54 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:50 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "a562c531-4093-47ef-b7f0-4ae076acd61e",
+        "mise-correlation-id": "97c0ac6a-763a-467f-b725-78ac350102da",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "3721ae768e114d160f3b16b61ab3ef75"
+        "X-Request-ID": "b9fc9f467019cb3edbecbce6c1e5715b"
       },
       "ResponseBody": {
         "id": "Sanitized",
-        "creationTime": "2025-10-18T02:33:54.4475985Z",
+        "creationTime": "2025-10-18T02:48:50.4606536Z",
         "importType": "StaticCatalog",
         "displayName": "NAIP Ingestion for Run",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -95,7 +95,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/naip-sample-datasets/ingestions/16b67c12-0990-4f31-bcd3-bc413bf0431a/runs?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/naip-sample-datasets/ingestions/92f5d1c9-d48a-494a-97b6-e34187b1fe46/runs?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -116,18 +116,18 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:33:54 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:50 GMT",
         "Location": "https://example.com",
-        "mise-correlation-id": "8fa5884a-b9f3-4e93-b6d7-6eee6028ce71",
+        "mise-correlation-id": "a9ffc66f-6328-484f-aed3-6bc88e36240f",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "3bbcf5baa871edaa7a19b25941c45bad"
+        "X-Request-ID": "aef0c3e0e7d842bda7ee3d6d4435b5d8"
       },
       "ResponseBody": {
         "id": "Sanitized",
-        "creationTime": "2025-10-18T02:33:54.5085502Z",
+        "creationTime": "2025-10-18T02:48:50.5082469Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -137,10 +137,10 @@
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-18T02:33:54.4998332Z"
+              "timestamp": "2025-10-18T02:48:50.5017705Z"
             }
           ],
-          "creationTime": "2025-10-18T02:33:54.4998303Z",
+          "creationTime": "2025-10-18T02:48:50.5015238Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,

@@ -22,11 +22,11 @@
         "Connection": "keep-alive",
         "Content-Length": "17",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:33:15 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:11 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "195c67a589d84344b23d2fb739bb4aa5"
+        "X-Request-ID": "d6dc2157e1c245feaa8967e80cb7d761"
       },
       "ResponseBody": {
         "scheme": "year"

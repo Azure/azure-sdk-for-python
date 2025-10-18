@@ -64,12 +64,12 @@
         "Connection": "keep-alive",
         "Content-Length": "744",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:36:27 GMT",
-        "Server-Timing": "total;dur=38.5",
+        "Date": "Sat, 18 Oct 2025 02:51:29 GMT",
+        "Server-Timing": "total;dur=35.01",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "823173f867474535b95a8bd3237ad439"
+        "X-Request-ID": "aa292b19301f4a38b9d8e4219e678582"
       },
       "ResponseBody": {
         "searchid": "46bb5e82458413399fbf668e40359753",
@@ -118,12 +118,12 @@
         "Connection": "keep-alive",
         "Content-Length": "1317",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:36:27 GMT",
-        "Server-Timing": "total;dur=24.48",
+        "Date": "Sat, 18 Oct 2025 02:51:29 GMT",
+        "Server-Timing": "total;dur=48.13",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "59f43033e9104f5cbfa1e42d70ae205a"
+        "X-Request-ID": "81cee5c6b2e942a28b50a91825af8273"
       },
       "ResponseBody": {
         "search": {
@@ -171,8 +171,8 @@
           },
           "_where": "(collection = 'naip-sample-datasets' AND datetime >= '2021-01-01T00:00:00Z' AND datetime <= '2022-12-31T23:59:59Z')",
           "orderby": "datetime DESC, id DESC",
-          "lastused": "2025-10-18T02:36:27.916505Z",
-          "usecount": 34,
+          "lastused": "2025-10-18T02:51:29.097011Z",
+          "usecount": 41,
           "metadata": {
             "type": "mosaic"
           }

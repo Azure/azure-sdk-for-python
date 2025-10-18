@@ -14,7 +14,7 @@
       "ResponseHeaders": {
         "Content-Length": "88",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:33:56 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:53 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -37,7 +37,7 @@
       "ResponseHeaders": {
         "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:33:56 GMT",
+        "Date": "Sat, 18 Oct 2025 02:48:53 GMT",
         "Server": "IMDS/150.870.65.1854"
       },
       "ResponseBody": {
@@ -66,41 +66,387 @@
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:00 GMT",
-        "mise-correlation-id": "6091545e-0151-478f-ae56-f6a8759f0d97",
+        "Date": "Sat, 18 Oct 2025 02:48:57 GMT",
+        "mise-correlation-id": "e73259a8-d745-41e7-a317-b1318f8c67c3",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "e9b2adacaa5fc6586986b7c748528e75"
+        "X-Request-ID": "471f9954583a7a3d3f4f352f5c2485c8"
       },
       "ResponseBody": {
         "value": [
           {
             "id": "Sanitized",
-            "status": "Pending",
+            "status": "Running",
             "statusHistory": [
               {
                 "status": "Pending",
-                "timestamp": "2025-10-18T02:33:57.339457Z"
+                "timestamp": "2025-10-18T02:48:53.195809Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:54.291749Z"
               }
             ],
             "type": "IngestionStaticCatalog",
-            "creationTime": "2025-10-18T02:33:57.3394538Z",
-            "collectionId": "naip-sample-datasets"
+            "creationTime": "2025-10-18T02:48:53.195809Z",
+            "startTime": "2025-10-18T02:48:53.195809Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
           },
           {
             "id": "Sanitized",
-            "status": "Pending",
+            "status": "Running",
             "statusHistory": [
               {
                 "status": "Pending",
-                "timestamp": "2025-10-18T02:33:54.4998332Z"
+                "timestamp": "2025-10-18T02:48:50.501523Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:51.106902Z"
               }
             ],
             "type": "IngestionStaticCatalog",
-            "creationTime": "2025-10-18T02:33:54.4998303Z",
-            "collectionId": "naip-sample-datasets"
+            "creationTime": "2025-10-18T02:48:50.501523Z",
+            "startTime": "2025-10-18T02:48:50.501523Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:48:44.8516409Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:49.7237155Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-18T02:48:49.7483468Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-18T02:48:44.8516384Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "IngestionId": "65378b7d-c2a8-4076-b19b-42554cc73272"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:48:44.7647971Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:49.6866315Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-18T02:48:49.7099507Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-18T02:48:44.7647945Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "IngestionId": "c7bd8f97-f753-4bbf-a557-0aa7ddbd5dad"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:48:44.0590685Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:49.6459451Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-18T02:48:49.6722432Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-18T02:48:44.0590676Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "IngestionId": "2348113e-d782-407e-b8e1-866e3eaa5425"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:48:43.9478944Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:49.6059231Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-18T02:48:49.6315135Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-18T02:48:43.9478939Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "IngestionId": "16b67c12-0990-4f31-bcd3-bc413bf0431a"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:48:43.8313715Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:49.5691554Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-18T02:48:49.5909944Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-18T02:48:43.8313689Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "IngestionId": "ba8ae618-7f89-492f-83ee-1745903ff54a"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:48:43.6998293Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:48:49.5266268Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-18T02:48:49.5531651Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-18T02:48:43.6998226Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "IngestionId": "bdadec99-7f97-4593-9452-9e9f4fc92177"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:35:13.223322Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:35:13.556695Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-18T02:35:14.318444Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-18T02:35:13.223322Z",
+            "startTime": "2025-10-18T02:35:13.223322Z",
+            "finishTime": "2025-10-18T02:35:14.318444Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:34:37.680481Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:34:39.236644Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-18T02:34:39.699554Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-sample-datasets'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-18T02:34:37.680481Z",
+            "startTime": "2025-10-18T02:34:37.680481Z",
+            "finishTime": "2025-10-18T02:34:39.699554Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-sample-datasets'"
+              }
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-18T02:34:29.193776Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '9d6682a2-a2f0-48d8-846a-b457743ac4a6' for collection 'naip-sample-datasets' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-18T02:34:10.23832Z",
+            "finishTime": "2025-10-18T02:34:29.193776Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-18T02:34:29.029155Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'b9c5a97a-631f-4a37-b9dd-7d0e78cc547b' for collection 'naip-sample-datasets' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-18T02:34:04.580507Z",
+            "finishTime": "2025-10-18T02:34:29.029155Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:33:57.339453Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:33:57.618708Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-18T02:34:14.391547Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'a8d56082-a5fb-47e3-87dd-9166fd3ac2dd' for collection 'naip-sample-datasets' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-18T02:33:57.339453Z",
+            "startTime": "2025-10-18T02:33:57.339453Z",
+            "finishTime": "2025-10-18T02:34:14.391547Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-18T02:33:54.49983Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-18T02:33:54.936041Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-18T02:34:14.005188Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '8731264e-8de7-494c-a40e-d8a4a306ea12' for collection 'naip-sample-datasets' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-18T02:33:54.49983Z",
+            "startTime": "2025-10-18T02:33:54.49983Z",
+            "finishTime": "2025-10-18T02:34:14.005188Z",
+            "collectionId": "naip-sample-datasets",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
           },
           {
             "id": "Sanitized",
@@ -2512,7 +2858,42 @@
               "TotalPendingItems": "0",
               "TotalSuccessfulItems": "1"
             }
-          },
+          }
+        ],
+        "nextLink": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 18 Oct 2025 02:48:57 GMT",
+        "mise-correlation-id": "5d2e8ea3-575f-4dd0-8992-12f664397980",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "f6da9b2398057d0d8167e612eaa49c8a"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "Sanitized",
             "status": "Succeeded",
@@ -2846,42 +3227,7 @@
             "type": "AddCollection",
             "creationTime": "2025-10-15T19:17:29.1470989Z",
             "collectionId": "python-sdk-sentinel-2"
-          }
-        ],
-        "nextLink": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 18 Oct 2025 02:34:00 GMT",
-        "mise-correlation-id": "301d8caf-69e5-4942-b1a9-68fba755b398",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "189cfc76e39afdf21f75bfc1dea853e5"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "Sanitized",
             "status": "Succeeded",
