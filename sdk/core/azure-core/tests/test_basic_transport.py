@@ -1352,7 +1352,7 @@ def test_requests_timeout_response(caplog, port, http_request):
         stream_request = http_request("GET", f"http://localhost:{port}/streams/basic")
         with pytest.raises(ServiceResponseTimeoutError) as err:
             transport.send(stream_request, stream=True, read_timeout=0.0001)
-    
+
     stream_resp = transport.send(stream_request, stream=True)
     with mock.patch.object(UrllibResponse, "_handle_chunk", side_effect=SocketTimeout) as mock_method:
         with pytest.raises(ServiceResponseTimeoutError) as err:
@@ -1363,13 +1363,14 @@ def test_requests_timeout_response(caplog, port, http_request):
                 # legacy HttpResponse
                 b"".join(stream_resp.stream_download(None))
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_requests_timeout_request(caplog, port, http_request):
     transport = RequestsTransport()
 
     request = http_request("GET", f"http://localhost:{port}/basic/string")
 
-    with mock.patch.object(urllib_connection, 'create_connection', side_effect=SocketTimeout) as mock_method:
+    with mock.patch.object(urllib_connection, "create_connection", side_effect=SocketTimeout) as mock_method:
         with pytest.raises(ServiceRequestTimeoutError) as err:
             transport.send(request, connection_timeout=0.0001)
 
