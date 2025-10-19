@@ -13,7 +13,6 @@ from devtools_testutils import recorded_by_proxy
 # You can find comprehensive Agent functionally tests here:
 # https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/tests
 
-
 class TestAgents(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -23,6 +22,8 @@ class TestAgents(TestBase):
     def test_agents(self, **kwargs):
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
+        print("\n=====> Endpoint:", endpoint)
+
         model_deployment_name = self.test_agents_params["model_deployment_name"]
         agent_name = self.test_agents_params["agent_name"]
 

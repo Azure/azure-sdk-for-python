@@ -9,6 +9,9 @@ from azure.ai.agents.models import ListSortOrder
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
+# NOTE: This is just a simple test to verify that the agent can be created and deleted using AIProjectClient.
+# You can find comprehensive Agent functionally tests here:
+# https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/tests
 
 class TestAgentsAsync(TestBase):
 
@@ -19,6 +22,8 @@ class TestAgentsAsync(TestBase):
     async def test_agents_async(self, **kwargs):
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
+        print("\n=====> Endpoint:", endpoint)
+
         model_deployment_name = self.test_agents_params["model_deployment_name"]
         agent_name = self.test_agents_params["agent_name"]
 
@@ -32,7 +37,7 @@ class TestAgentsAsync(TestBase):
                 name=agent_name,
                 instructions="You are helpful agent",
             )
-            print(f"[test_agents_async]Created agent, agent ID: {agent.id}")
+            print(f"[test_agents_async] Created agent, agent ID: {agent.id}")
             assert agent.id
             assert agent.model == model_deployment_name
             assert agent.name == agent_name
