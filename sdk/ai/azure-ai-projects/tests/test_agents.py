@@ -61,6 +61,7 @@ class TestAgents(TestBase):
 
             if run.status == "failed":
                 print(f"[test_agents] Run error: {run.last_error}")
+                assert False
 
             project_client.agents.delete_agent(agent.id)
             print("[test_agents] Deleted agent")

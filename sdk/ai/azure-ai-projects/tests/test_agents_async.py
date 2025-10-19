@@ -61,6 +61,7 @@ class TestAgentsAsync(TestBase):
 
             if run.status == "failed":
                 print(f"[test_agents_async] Run error: {run.last_error}")
+                assert False
 
             await project_client.agents.delete_agent(agent.id)
             print("[test_agents_async] Deleted agent")
