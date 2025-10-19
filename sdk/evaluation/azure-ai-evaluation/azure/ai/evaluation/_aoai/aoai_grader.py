@@ -111,11 +111,11 @@ class AzureOpenAIGrader:
 
             # TODO set default values?
             return AzureOpenAI(
-                azure_endpoint=model_config["azure_endpoint"],
+                azure_endpoint=model_config.get("azure_endpoint", ""),
                 api_key=api_key,  # Default-style access to appease linters.
                 api_version=DEFAULT_AOAI_API_VERSION,  # Force a known working version
                 azure_deployment=model_config.get("azure_deployment", ""),
-                azure_ad_token_provider=self._get_token_provider(self._credential) if not api_key else None,
+                azure_ad_token_provider=self._get_token_provider(self._credential) if self._credential and not api_key else None,
                 default_headers=default_headers,
             )
         from openai import OpenAI

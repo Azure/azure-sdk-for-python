@@ -181,7 +181,7 @@ def get_azure_ai_project():
     return None
 
 
-def demonstrate_score_model_grader():
+def demonstrate_score_model_grader(use_api_key: bool):
     """Demonstrate the AzureOpenAIScoreModelGrader usage with real credentials."""
 
     # Create sample data
@@ -190,13 +190,25 @@ def demonstrate_score_model_grader():
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
 
     try:
-        # 1. Configure Azure OpenAI model using environment variables
-        model_config = AzureOpenAIModelConfiguration(
-            azure_endpoint=os.environ.get("endpoint"),
-            api_key=os.environ.get("key"),
-            azure_deployment=os.environ.get("deployment_name"),
-            api_version="2024-12-01-preview",
-        )
+        # 1. Configure Azure OpenAI model and credentials using environment variables
+        if use_api_key:
+            print("🔑 Using API key for authentication")
+            credential = None
+            model_config = AzureOpenAIModelConfiguration(
+                azure_endpoint=os.environ.get("endpoint", ""),
+                api_key=os.environ.get("key", ""),
+                azure_deployment=os.environ.get("deployment_name", ""),
+                api_version="2024-12-01-preview",
+            )
+        else:
+            print("🔐 Using DefaultAzureCredential for authentication")
+            from azure.identity import DefaultAzureCredential
+            credential = DefaultAzureCredential() if not use_api_key else None
+            model_config = AzureOpenAIModelConfiguration(
+                azure_endpoint=os.environ.get("endpoint", ""),
+                azure_deployment=os.environ.get("deployment_name", ""),
+                api_version="2024-12-01-preview",
+            )
 
         print("✅ Model configuration loaded successfully")
 
@@ -211,6 +223,7 @@ def demonstrate_score_model_grader():
         # 3. Create conversation quality grader
         conversation_quality_grader = AzureOpenAIScoreModelGrader(
             model_config=model_config,
+            credential=credential,
             name="Conversation Quality Assessment",
             model="gpt-4o-mini",
             input=[
@@ -269,7 +282,8 @@ def demonstrate_score_model_grader():
         df = pd.DataFrame(result["rows"])
 
         for i, row in df.head(3).iterrows():
-            print(f"\nSample {i+1}:")
+            if isinstance(i, (int, float)): # fix linter error
+                print(f"\nSample {i+1}:")
             print(f"  Context: {row.get('context', 'N/A')}")
 
             # Show grader results
@@ -306,6 +320,7 @@ if __name__ == "__main__":
             print(f"   - {var}")
     else:
         print("✅ All environment variables found")
-        demonstrate_score_model_grader()
+        demonstrate_score_model_grader(use_api_key=True)
+        demonstrate_score_model_grader(use_api_key=False)
 
     print("\n🎉 Demo completed!")
