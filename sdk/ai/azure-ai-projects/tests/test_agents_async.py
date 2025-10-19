@@ -36,7 +36,9 @@ class TestAgentsAsync(TestBase):
             thread = await project_client.agents.threads.create()
             print(f"Created thread, thread ID: {thread.id}")
 
-            message = await project_client.agents.messages.create(thread_id=thread.id, role="user", content="how many feet are in a mile?")
+            message = await project_client.agents.messages.create(
+                thread_id=thread.id, role="user", content="how many feet are in a mile?"
+            )
             print(f"Created message, message ID: {message.id}")
 
             run = await project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)

@@ -36,7 +36,9 @@ class TestAgents(TestBase):
             thread = project_client.agents.threads.create()
             print(f"Created thread, thread ID: {thread.id}")
 
-            message = project_client.agents.messages.create(thread_id=thread.id, role="user", content="how many feet are in a mile?")
+            message = project_client.agents.messages.create(
+                thread_id=thread.id, role="user", content="how many feet are in a mile?"
+            )
             print(f"Created message, message ID: {message.id}")
 
             run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
@@ -55,7 +57,7 @@ class TestAgents(TestBase):
             print("Deleted agent")
 
             messages = project_client.agents.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            last_text:str = ""
+            last_text: str = ""
             for msg in messages:
                 if msg.text_messages:
                     last_text = msg.text_messages[-1].text.value
