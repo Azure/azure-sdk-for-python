@@ -40,7 +40,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
         # Get OpenAI client from project client
-        with project_client.get_openai_client(api_version="2024-10-21") as open_ai_client:
+        with project_client.get_openai_client(api_version="2025-04-01-preview") as open_ai_client:
 
             # [START finetuning_supervised_job_sample]
             # Upload training and validation file using OpenAI client
