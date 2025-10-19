@@ -5,9 +5,10 @@ import traceback
 import sys
 import shutil
 import tempfile
+import pathlib
 
 from typing import Sequence, Optional, List, Any, Tuple
-from subprocess import CalledProcessError, check_call
+import subprocess
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages, get_venv_call, install_into_venv, get_venv_python
@@ -61,7 +62,7 @@ class Check(abc.ABC):
             else:
                 shutil.rmtree(venv_location, ignore_errors=True)
 
-            check_call(venv_cmd + [venv_location])
+            subprocess.check_call(venv_cmd + [venv_location])
 
             # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
             # venv
@@ -83,6 +84,39 @@ class Check(abc.ABC):
         staging_directory = os.path.join(venv_location, ".staging")
         os.makedirs(staging_directory, exist_ok=True)
         return executable, staging_directory
+
+    def run_venv_command(
+        self, executable: str, command: Sequence[str], cwd: str, check: bool = False
+    ) -> subprocess.CompletedProcess[str]:
+        """Run a command in the given virtual environment.
+        - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
+        - Uses the provided Python executable to run the command.
+        - Collects the output.
+        - If check is True, raise CalledProcessError on failure."""
+
+        if command[0].endswith("python") or command[0].endswith("python.exe"):
+            raise ValueError(
+                "The command array should not include the python executable, it is provided by the 'executable' argument"
+            )
+
+        env = os.environ.copy()
+
+        python_exec = pathlib.Path(executable)
+        if python_exec.exists():
+            venv_bin = str(python_exec.parent)
+            venv_root = str(python_exec.parent.parent)
+            env["VIRTUAL_ENV"] = venv_root
+            env["PATH"] = venv_bin + os.pathsep + env.get("PATH", "")
+            env.pop("PYTHONPATH", None)
+            env.pop("PYTHONHOME", None)
+        else:
+            raise RuntimeError(f"Unable to find parent venv for executable {executable}")
+
+        result = subprocess.run(
+            [executable, *command], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=check
+        )
+
+        return result
 
     def get_targeted_directories(self, args: argparse.Namespace) -> List[ParsedSetup]:
         """
@@ -137,7 +171,7 @@ class Check(abc.ABC):
         try:
             logger.info(f"Installing dev requirements for {package_dir}")
             install_into_venv(executable, requirements, package_dir)
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             logger.error("Failed to install dev requirements:", e)
             raise e
         finally:

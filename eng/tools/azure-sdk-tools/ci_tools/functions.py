@@ -55,7 +55,7 @@ PATHS_EXCLUDED_FROM_DISCOVERY = [
     "sdk/textanalytics/azure-ai-textanalytics",
 ]
 
-TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
+TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
     "azure-storage-queue": "pypy",
