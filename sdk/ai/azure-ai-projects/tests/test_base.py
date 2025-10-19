@@ -30,7 +30,6 @@ servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_tests",
     azure_ai_projects_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_projects_tests_model_deployment_name="model-deployment-name",
 )
 
 

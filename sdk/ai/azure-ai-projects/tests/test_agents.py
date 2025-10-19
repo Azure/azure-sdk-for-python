@@ -9,6 +9,9 @@ from azure.ai.agents.models import ListSortOrder
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
+# NOTE: This is just a simple test to verify that the agent can be created and deleted using AIProjectClient.
+# You can find comprehensive Agent functionally tests here:
+# https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/tests
 
 class TestAgents(TestBase):
 
@@ -19,7 +22,8 @@ class TestAgents(TestBase):
     def test_agents(self, **kwargs):
 
         endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
-        model_deployment_name = kwargs.pop("azure_ai_projects_tests_model_deployment_name")
+        model_deployment_name = self.test_agents_params["model_deployment_name"]
+        agent_name = self.test_agents_params["agent_name"]
 
         with AIProjectClient(
             endpoint=endpoint,
@@ -28,18 +32,21 @@ class TestAgents(TestBase):
 
             agent = project_client.agents.create_agent(
                 model=model_deployment_name,
-                name="my-agent",
+                name=agent_name,
                 instructions="You are helpful agent",
             )
-            print(f"Created agent, agent ID: {agent.id}")
+            print(f"[test_agents] Created agent, agent ID: {agent.id}")
+            assert agent.id
+            assert agent.model == model_deployment_name
+            assert agent.name == agent_name
 
             thread = project_client.agents.threads.create()
-            print(f"Created thread, thread ID: {thread.id}")
+            print(f"[test_agents] Created thread, thread ID: {thread.id}")
 
             message = project_client.agents.messages.create(
                 thread_id=thread.id, role="user", content="how many feet are in a mile?"
             )
-            print(f"Created message, message ID: {message.id}")
+            print(f"[test_agents] Created message, message ID: {message.id}")
 
             run = project_client.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
 
@@ -48,19 +55,19 @@ class TestAgents(TestBase):
                 # Wait for a second
                 time.sleep(1)
                 run = project_client.agents.runs.get(thread_id=thread.id, run_id=run.id)
-                print(f"Run status: {run.status}")
+                print(f"[test_agents] Run status: {run.status}")
 
             if run.status == "failed":
-                print(f"Run error: {run.last_error}")
+                print(f"[test_agents] Run error: {run.last_error}")
 
             project_client.agents.delete_agent(agent.id)
-            print("Deleted agent")
+            print("[test_agents] Deleted agent")
 
             messages = project_client.agents.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
             last_text: str = ""
             for msg in messages:
                 if msg.text_messages:
                     last_text = msg.text_messages[-1].text.value
-                    print(f"{msg.role}: {last_text}")
+                    print(f"[test_agents] {msg.role}: {last_text}")
 
             assert "5280" in last_text or "5,280" in last_text
