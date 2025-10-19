@@ -211,8 +211,7 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
         :rtype: bytes
         """
         if not self._content:
-            self._stream_download_check()
-            self._content = await self._internal_response.read()
+            self._content = await super().read()
         await self._set_read_checks()
         return _aiohttp_body_helper(self)
 

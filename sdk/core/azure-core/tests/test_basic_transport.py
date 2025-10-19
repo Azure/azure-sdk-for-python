@@ -5,20 +5,17 @@
 # -------------------------------------------------------------------------
 from http.client import HTTPConnection
 from collections import OrderedDict
-import sys
 import logging
 import pytest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
+from socket import timeout as SocketTimeout
 
 from urllib3.util import connection as urllib_connection
 from urllib3.response import HTTPResponse as UrllibResponse
 from urllib3.connection import HTTPConnection as UrllibConnection
-from socket import timeout as SocketTimeout
 
+from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
+from azure.core.pipeline._tools import is_rest
 from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
@@ -37,8 +34,6 @@ from utils import (
     HTTP_CLIENT_TRANSPORT_RESPONSES,
     create_transport_response,
 )
-from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
-from azure.core.pipeline._tools import is_rest
 
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponse):
