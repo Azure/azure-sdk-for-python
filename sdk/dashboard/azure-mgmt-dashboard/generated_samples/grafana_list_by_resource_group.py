@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2024-11-01-preview/Grafana_ListByResourceGroup.json
+# x-ms-original-file: 2025-08-01/Grafana_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

@@ -16,12 +16,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-inference azure-identity opentelemetry.sdk
+    pip install azure-ai-inference azure-identity opentelemetry.sdk python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
 
 ALTERNATIVE USAGE:
     If you want to export telemetry to OTLP endpoint (such as Aspire dashboard
@@ -36,6 +36,7 @@ ALTERNATIVE USAGE:
 """
 
 import os
+from dotenv import load_dotenv
 from azure.core.settings import settings
 from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
@@ -45,6 +46,8 @@ from azure.ai.inference.models import UserMessage
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+
+load_dotenv()
 
 settings.tracing_implementation = "opentelemetry"
 
@@ -57,8 +60,8 @@ scenario = os.path.basename(__file__)
 
 AIInferenceInstrumentor().instrument()
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 with tracer.start_as_current_span(scenario):
 
@@ -76,7 +79,7 @@ with tracer.start_as_current_span(scenario):
         ) as client:
 
             response = client.complete(
-                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]  # type: ignore[arg-type]
             )
 
             print(response.choices[0].message.content)
