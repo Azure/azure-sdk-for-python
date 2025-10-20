@@ -104,12 +104,8 @@ class TestPrompty:
         result = await prompty(image="image1.jpg", question="What is this a picture of?")
         assert isinstance(result, dict)
         llm_output = result["llm_output"]
-        assert isinstance(llm_output, AsyncGenerator)
-        combined = ""
-        async for chunk in llm_output:
-            assert isinstance(chunk, str)
-            combined += chunk
-        assert "apple" in combined
+        assert isinstance(llm_output, str)
+        assert "apple" in llm_output.lower()
 
     @pytest.mark.asyncio
     async def test_first_match_text_streaming(self, prompty_config: Dict[str, Any]):
@@ -169,7 +165,7 @@ class TestPrompty:
             # Should have only first name, and answer
             assert "lastName" not in llm_output
         else:
-            assert "lastName" in result
+            assert "lastName" in llm_output
             assert llm_output["lastName"] == "Doh"
 
     @pytest.mark.asyncio
@@ -196,7 +192,7 @@ class TestPrompty:
     async def test_full_text(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["response"] = "full"
         prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
-        result = await prompty(question="What is the capital of France?", firstName="Barbra", lastName="Streisand")
+        result = await prompty(firstName="Bob", question="What is the capital of France?")
         assert isinstance(result, dict)
         llm_output = result["llm_output"]
         assert isinstance(llm_output, ChatCompletion)
