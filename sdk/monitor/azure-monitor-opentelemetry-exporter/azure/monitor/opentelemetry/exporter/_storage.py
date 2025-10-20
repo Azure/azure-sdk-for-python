@@ -260,7 +260,7 @@ class LocalFileStorage:
                     return True
             # Unix
             else:
-                self._set_unix_permissions()
+                os.chmod(self._path, 0o700)
                 return True
         except OSError as error:
             if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
@@ -309,15 +309,3 @@ class LocalFileStorage:
         else:
             user = os.getlogin()
         return user
-
-    def _set_unix_permissions(self) -> None:
-        parent_dir = os.path.dirname(self._path)
-        if parent_dir and parent_dir != '/':
-            try:
-                os.makedirs(parent_dir, mode=0o755, exist_ok=True)
-                os.chmod(parent_dir, 0o755)
-            except Exception:
-                pass
-
-        os.makedirs(self._path, mode=0o700, exist_ok=True)
-        os.chmod(self._path, 0o700)
