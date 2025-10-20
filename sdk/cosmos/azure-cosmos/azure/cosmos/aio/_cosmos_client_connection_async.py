@@ -2287,7 +2287,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise ValueError("Could not find partition key definition for collection.")
 
         # Extract and remove max_concurrency from kwargs
-        max_concurrency = kwargs.pop('max_concurrency', 10)
+        max_concurrency = kwargs.pop('max_concurrency', None)
         helper = ReadItemsHelperAsync(
             client=self,
             collection_link=collection_link,

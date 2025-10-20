@@ -226,7 +226,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=2)
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 2
