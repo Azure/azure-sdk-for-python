@@ -99,7 +99,7 @@
   - Model `DatabasesOperations` added method `begin_force_link_to_replication_group`
   - Model `DatabasesOperations` added method `begin_upgrade_db_redis_version`
   - Model `RedisEnterpriseOperations` added method `list_skus_for_scaling`
-  - Added model `AccessPolicyAssignmentOperations`
+  - Added operation group `AccessPolicyAssignmentOperations`
 
 ## 3.1.0b4 (2025-04-23)
 
