@@ -1205,15 +1205,17 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         # Configure OpenTelemetry logging with anonymized Resource attributes
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.semconv.resource import ResourceAttributes
-        
+
         # Create a resource with minimal attributes to prevent sensitive data collection
         # SERVICE_INSTANCE_ID maps to cloud_RoleInstance in Azure Monitor and prevents
         # Azure Monitor from auto-detecting the device hostname
-        anonymized_resource = Resource.create({
-            ResourceAttributes.SERVICE_NAME: "unknown",
-            ResourceAttributes.SERVICE_INSTANCE_ID: "unknown",
-        })
-        
+        anonymized_resource = Resource.create(
+            {
+                ResourceAttributes.SERVICE_NAME: "unknown",
+                ResourceAttributes.SERVICE_INSTANCE_ID: "unknown",
+            }
+        )
+
         logger_provider = LoggerProvider(resource=anonymized_resource)
         _logs.set_logger_provider(logger_provider)
 
@@ -1226,10 +1228,10 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         # Create a logger from OUR configured logger_provider (not the global one)
         # This ensures the logger uses our anonymized resource
         otel_logger = logger_provider.get_logger(__name__)
-        
+
         # Initialize base log attributes with extra_attributes if present, otherwise empty dict
         base_log_attributes = app_insights_config.get("extra_attributes", {})
-        
+
         # Add AppInsights config attributes with proper semantic convention mappings
         if "run_type" in app_insights_config:
             base_log_attributes["gen_ai.evaluation.azure_ai_type"] = str(app_insights_config["run_type"])
@@ -1243,7 +1245,7 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         for result in results:
             # Create a copy of base attributes for this result's events
             log_attributes = base_log_attributes.copy()
-            
+
             _log_events_to_app_insights(
                 otel_logger=otel_logger,
                 events=result["results"],
