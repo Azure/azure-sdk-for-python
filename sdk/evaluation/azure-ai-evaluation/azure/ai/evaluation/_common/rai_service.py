@@ -533,6 +533,13 @@ def _parse_content_harm_response(
     except Exception:  # pylint: disable=broad-exception-caught
         harm_response = response[metric_name]
 
+    total_tokens = 0
+    prompt_tokens = 0
+    completion_tokens = 0
+    finish_reason = ""
+    sample_input = ""
+    sample_output = ""
+    model = ""
     if harm_response != "" and isinstance(harm_response, dict):
         # check if "output" is one key in harm_response
         if "output" in harm_response:
