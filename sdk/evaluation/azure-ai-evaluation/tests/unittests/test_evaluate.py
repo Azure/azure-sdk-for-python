@@ -1263,7 +1263,7 @@ class TestEvaluate:
 
         assert len(empty_converted["rows"]) == 0
         assert len(empty_converted["_evaluation_results_list"]) == 0
-        assert empty_converted["evaluation_summary"]["result_counts"]["total"] == 0
+        assert empty_converted["_evaluation_summary"]["result_counts"]["total"] == 0
 
 
 @pytest.mark.unittest
