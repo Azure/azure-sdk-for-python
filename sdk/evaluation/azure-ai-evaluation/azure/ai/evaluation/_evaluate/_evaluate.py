@@ -1073,6 +1073,9 @@ def _log_events_to_app_insights(
     :type data_source_item: Optional[Dict[str, Any]]
     """
 
+    from opentelemetry import trace
+    from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
+
     try:
         # Get the trace_id and other context from data source item
         trace_id = None
@@ -1159,9 +1162,6 @@ def _log_events_to_app_insights(
                 # Create context with trace_id if present (for distributed tracing correlation)
                 ctx = None
                 if trace_id:
-                    from opentelemetry import trace
-                    from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
-                    
                     span_context = SpanContext(
                         trace_id=trace_id,
                         span_id=0,
@@ -1200,6 +1200,8 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
     from opentelemetry import _logs
     from opentelemetry.sdk._logs import LoggerProvider
     from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from opentelemetry.sdk.resources import Resource
+    from opentelemetry.semconv.resource import ResourceAttributes
     from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
     if not results:
@@ -1208,8 +1210,6 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
 
     try:
         # Configure OpenTelemetry logging with anonymized Resource attributes
-        from opentelemetry.sdk.resources import Resource
-        from opentelemetry.semconv.resource import ResourceAttributes
 
         # Create a resource with minimal attributes to prevent sensitive data collection
         # SERVICE_INSTANCE_ID maps to cloud_RoleInstance in Azure Monitor and prevents
