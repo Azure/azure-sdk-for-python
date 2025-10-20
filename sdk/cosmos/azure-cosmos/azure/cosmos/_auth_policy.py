@@ -5,14 +5,14 @@
 # -------------------------------------------------------------------------
 import logging
 import threading
-from typing import TypeVar, Any, MutableMapping, cast, Optional
+from typing import TypeVar, Any, MutableMapping, cast, Optional, Union
 from weakref import WeakKeyDictionary
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
-from azure.core.credentials import AccessToken, TokenProvider
+from azure.core.credentials import AccessToken, TokenCredential, SupportsTokenInfo
 from azure.core.exceptions import HttpResponseError
 
 from .http_constants import HttpHeaders
@@ -20,9 +20,9 @@ from ._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 logger = logging.getLogger("azure.cosmos.CosmosBearerTokenCredentialPolicy")
-_credential_locks: "WeakKeyDictionary[TokenProvider, threading.RLock]" = WeakKeyDictionary()
+_credential_locks: "WeakKeyDictionary[Union[TokenCredential, SupportsTokenInfo], threading.RLock]" = WeakKeyDictionary()
 
-def _get_credential_lock(credential: TokenProvider) -> threading.RLock:
+def _get_credential_lock(credential: Union[TokenCredential, SupportsTokenInfo]) -> threading.RLock:
     lock = _credential_locks.get(credential)
     if lock is None:
         lock = threading.RLock()
@@ -36,7 +36,12 @@ def _get_credential_lock(credential: TokenProvider) -> threading.RLock:
 class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     AadDefaultScope = Constants.AAD_DEFAULT_SCOPE
 
-    def __init__(self, credential: TokenProvider, account_scope: str, override_scope: Optional[str] = None) -> None:
+    def __init__(
+            self,
+            credential: Union[TokenCredential, SupportsTokenInfo],
+            account_scope: str,
+            override_scope: Optional[str] = None
+    ) -> None:
         self._account_scope = account_scope
         self._override_scope = override_scope
         self._current_scope = override_scope or account_scope
