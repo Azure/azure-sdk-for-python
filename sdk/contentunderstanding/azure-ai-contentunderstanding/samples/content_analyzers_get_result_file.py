@@ -16,6 +16,9 @@ from collections.abc import AsyncIterator
 from typing import Any
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.aio.operations import ContentUnderstandingAnalyzeAsyncLROPoller
+from azure.ai.contentunderstanding import models as _models
+from azure.ai.contentunderstanding.models import AnalyzeResult
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
@@ -29,8 +32,6 @@ from azure.ai.contentunderstanding.models import (
 )
 
 from sample_helper import (
-    extract_operation_id_from_poller,
-    PollerType,
     save_keyframe_image_to_file,
     save_json_to_file,
 )
@@ -96,10 +97,6 @@ async def main():
             resource=video_analyzer,
         )
 
-        # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
-        print(f"📋 Extracted creation operation ID: {operation_id}")
-
         # Wait for the analyzer to be created
         print(f"⏳ Waiting for analyzer creation to complete...")
         await poller.result()
@@ -111,7 +108,7 @@ async def main():
 
         # Begin video analysis operation
         print(f"🎬 Starting video analysis with analyzer '{analyzer_id}'...")
-        analysis_poller = await client.content_analyzers.begin_analyze(
+        analysis_poller = await client.content_analyzers.begin_analyze(  # type: ContentUnderstandingAnalyzeAsyncLROPoller[AnalyzeResult]
             analyzer_id=analyzer_id,
             url=video_file_url,
         )
@@ -121,8 +118,15 @@ async def main():
         analysis_result = await analysis_poller.result()
         print(f"✅ Video analysis completed successfully!")
 
-        # Extract operation ID for get_result_file
-        analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+        # Save the full analysis result to JSON for detailed inspection
+        save_json_to_file(
+            analysis_result.as_dict(),
+            filename_prefix="content_analyzers_get_result_file",
+        )
+        print("✅ Analysis result saved to JSON file for detailed inspection")
+
+        # Extract operation ID for get_result_file using the poller's details property
+        analysis_operation_id = analysis_poller.details["operation_id"]  # type: ignore[attr-defined]
         print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
 
         # Use the analysis result we already have from the poller to see what files are available
@@ -139,7 +143,6 @@ async def main():
             if isinstance(content, AudioVisualContent):
                 video_content: AudioVisualContent = content
                 print(f"KeyFrameTimesMs: {video_content.key_frame_times_ms}")
-                print(video_content)
                 keyframe_times_ms.extend(video_content.key_frame_times_ms or [])
                 print(f"📹 Found {len(keyframe_times_ms)} keyframes in video content")
                 break

@@ -19,10 +19,75 @@ from ...models import DetectFacesResult
 from ._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
 from ... import models as _models
 from ._operations import ContentClassifiersOperations as ContentClassifiersOperationsGenerated
+import re
 
 JSON = MutableMapping[str, Any]
 
-__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations"]
+__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations", "ContentUnderstandingAnalyzeAsyncLROPoller"]
+
+
+def _parse_operation_id(operation_location_header: str) -> str:
+    """Parse operation ID from Operation-Location header for analyze operations.
+
+    :param operation_location_header: The Operation-Location header value
+    :type operation_location_header: str
+    :return: The extracted operation ID
+    :rtype: str
+    :raises ValueError: If operation ID cannot be extracted
+    """
+    # Pattern: https://endpoint/.../analyzerResults/{operation_id}?api-version=...
+    regex = r".*/analyzerResults/([^?/]+)"
+
+    match = re.search(regex, operation_location_header)
+    if not match:
+        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
+
+    return match.group(1)
+
+
+class ContentUnderstandingAnalyzeAsyncLROPoller(AsyncLROPoller[_models.AnalyzeResult]):
+    """Custom AsyncLROPoller for Content Understanding analyze operations with details property."""
+
+    @property
+    def details(self) -> dict[str, Any]:
+        """Get operation details including operation ID.
+
+        :return: Dictionary containing operation details
+        :rtype: dict[str, Any]
+        :raises ValueError: If operation details cannot be extracted
+        """
+        try:
+            initial_response = self._polling_method._initial_response  # type: ignore[attr-defined]
+            operation_location = initial_response.http_response.headers.get("Operation-Location")
+            
+            if not operation_location:
+                raise ValueError("No Operation-Location header found in initial response")
+            
+            operation_id = _parse_operation_id(operation_location)
+            
+            return {
+                "operation_id": operation_id,
+            }
+        except Exception as e:
+            raise ValueError(f"Could not extract operation details: {e}") from e
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: Any, continuation_token: str, **kwargs: Any
+    ) -> "ContentUnderstandingAnalyzeAsyncLROPoller":
+        """Create a new poller from a continuation token.
+
+        :param polling_method: The polling method to use
+        :type polling_method: Any
+        :param continuation_token: The continuation token
+        :type continuation_token: str
+        :return: A new ContentUnderstandingAnalyzeAsyncLROPoller instance
+        :rtype: ContentUnderstandingAnalyzeAsyncLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
 
 
 def patch_sdk():
@@ -268,7 +333,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
     @distributed_trace_async
     async def begin_analyze(
         self, analyzer_id: str, *args: Any, **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
+    ) -> ContentUnderstandingAnalyzeAsyncLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
         """Extract content and fields from input with url/data mutual exclusivity.
 
         This method enforces that url and data cannot be provided simultaneously,
@@ -308,7 +373,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
             processing_location = kwargs.pop("processing_location", None)
             content_type = kwargs.pop("content_type", "application/octet-stream")
 
-            return await super().begin_analyze_binary(
+            poller = await super().begin_analyze_binary(
                 analyzer_id=analyzer_id,
                 binary_input=data_bytes,
                 string_encoding=string_encoding,
@@ -316,9 +381,21 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
                 content_type=content_type,
                 **kwargs
             )
+            return ContentUnderstandingAnalyzeAsyncLROPoller(
+                self._client,  # type: ignore
+                poller._polling_method._initial_response,  # type: ignore
+                poller._polling_method._deserialization_callback,  # type: ignore
+                poller._polling_method
+            )
 
-        # Call the original method for all other cases
-        return await super().begin_analyze(analyzer_id, *args, **kwargs)
+        # Call the original method for all other cases and wrap in custom poller
+        poller = await super().begin_analyze(analyzer_id, *args, **kwargs)
+        return ContentUnderstandingAnalyzeAsyncLROPoller(
+            self._client,  # type: ignore
+            poller._polling_method._initial_response,  # type: ignore
+            poller._polling_method._deserialization_callback,  # type: ignore
+            poller._polling_method
+        )
 
 
 class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):

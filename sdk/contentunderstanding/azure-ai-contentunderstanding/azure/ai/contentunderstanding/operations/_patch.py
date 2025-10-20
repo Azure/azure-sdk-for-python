@@ -10,10 +10,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Any, Union, overload, IO
+import re
+from typing import List, Optional, Any, Union, overload, IO, TypeVar, Callable, Mapping
 from collections.abc import MutableMapping
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
+from azure.core.polling import LROPoller, PollingMethod
 from ._operations import FacesOperations as FacesOperationsGenerated
 from ..models import DetectFacesResult
 from ._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
@@ -21,8 +22,78 @@ from .. import models as _models
 from ._operations import ContentClassifiersOperations as ContentClassifiersOperationsGenerated
 
 JSON = MutableMapping[str, Any]
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
-__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations"]
+__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations", "ContentUnderstandingAnalyzeLROPoller"]
+
+
+def _parse_operation_id(operation_location_header: str) -> str:
+    """Parse operation ID from Operation-Location header for analyze operations.
+    
+    :param operation_location_header: The Operation-Location header value
+    :type operation_location_header: str
+    :return: The extracted operation ID
+    :rtype: str
+    :raises ValueError: If operation ID cannot be extracted
+    """
+    # Pattern: https://endpoint/.../analyzerResults/{operation_id}?api-version=...
+    regex = r".*/analyzerResults/([^?/]+)"
+    
+    match = re.search(regex, operation_location_header)
+    if not match:
+        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
+    
+    return match.group(1)
+
+
+class ContentUnderstandingAnalyzeLROPoller(LROPoller[PollingReturnType_co]):
+    """Custom LROPoller for Content Understanding analyze operations.
+    
+    Provides access to operation details including the operation ID.
+    """
+    
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the long-running operation.
+
+        :return: Returns metadata associated with the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
+        try:
+            operation_location = self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore # pylint: disable=protected-access
+            operation_id = _parse_operation_id(operation_location)
+            return {
+                "operation_id": operation_id,
+                "operation_type": "analyze"
+            }
+        except (KeyError, ValueError) as e:
+            return {
+                "operation_id": None,
+                "operation_type": "analyze",
+                "error": f"Could not extract operation details: {str(e)}"
+            }
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
+    ) -> "ContentUnderstandingAnalyzeLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token
+        :type continuation_token: str
+        :return: An instance of ContentUnderstandingAnalyzeLROPoller
+        :rtype: ContentUnderstandingAnalyzeLROPoller
+        :raises ~azure.core.exceptions.HttpResponseError: If the continuation token is invalid.
+        """
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
+
+        return cls(client, initial_response, deserialization_callback, polling_method)
 
 
 def patch_sdk():
@@ -137,7 +208,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         content_type: str = "application/json",
         inputs: Optional[List[_models.AnalyzeInput]] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeLROPoller[_models.AnalyzeResult]:
         """Extract content and fields from input using URL.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -173,7 +244,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         content_type: str = "application/octet-stream",
         inputs: Optional[List[_models.AnalyzeInput]] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeLROPoller[_models.AnalyzeResult]:
         """Extract content and fields from input using binary data.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -207,7 +278,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeLROPoller[_models.AnalyzeResult]:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -239,7 +310,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeLROPoller[_models.AnalyzeResult]:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -264,7 +335,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
     @distributed_trace
     def begin_analyze(
         self, analyzer_id: str, *args: Any, **kwargs: Any
-    ) -> LROPoller[_models.AnalyzeResult]:  # type: ignore[override]
+    ) -> ContentUnderstandingAnalyzeLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
         """Extract content and fields from input with url/data mutual exclusivity.
 
         This method enforces that url and data cannot be provided simultaneously,
@@ -304,7 +375,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
             processing_location = kwargs.pop("processing_location", None)
             content_type = kwargs.pop("content_type", "application/octet-stream")
 
-            return super().begin_analyze_binary(
+            poller = super().begin_analyze_binary(
                 analyzer_id=analyzer_id,
                 binary_input=data_bytes,
                 string_encoding=string_encoding,
@@ -312,9 +383,21 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
                 content_type=content_type,
                 **kwargs
             )
+            return ContentUnderstandingAnalyzeLROPoller(
+                self._client,  # type: ignore
+                poller._polling_method._initial_response,  # type: ignore
+                poller._polling_method._deserialization_callback,  # type: ignore
+                poller._polling_method
+            )
 
-        # Call the original method for all other cases
-        return super().begin_analyze(analyzer_id, *args, **kwargs)
+        # Call the original method for all other cases and wrap in custom poller
+        poller = super().begin_analyze(analyzer_id, *args, **kwargs)
+        return ContentUnderstandingAnalyzeLROPoller(
+            self._client,  # type: ignore
+            poller._polling_method._initial_response,  # type: ignore
+            poller._polling_method._deserialization_callback,  # type: ignore
+            poller._polling_method
+        )
 
 
 class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
@@ -486,3 +569,5 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
 
         # Call the original method for all other cases
         return super().begin_classify(classifier_id, *args, **kwargs)
+
+
