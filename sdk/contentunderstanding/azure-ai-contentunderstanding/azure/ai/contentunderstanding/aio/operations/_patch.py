@@ -206,7 +206,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         content_type: str = "application/json",
         inputs: Optional[List[_models.AnalyzeInput]] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
         """Extract content and fields from input using URL.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -242,7 +242,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         content_type: str = "application/octet-stream",
         inputs: Optional[List[_models.AnalyzeInput]] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
         """Extract content and fields from input using binary data.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -276,7 +276,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -308,7 +308,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -333,7 +333,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
     @distributed_trace_async
     async def begin_analyze(
         self, analyzer_id: str, *args: Any, **kwargs: Any
-    ) -> ContentUnderstandingAnalyzeAsyncLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
+    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:  # type: ignore[override]
         """Extract content and fields from input with url/data mutual exclusivity.
 
         This method enforces that url and data cannot be provided simultaneously,

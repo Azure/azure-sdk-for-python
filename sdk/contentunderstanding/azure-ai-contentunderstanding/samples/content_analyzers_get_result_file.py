@@ -108,7 +108,7 @@ async def main():
 
         # Begin video analysis operation
         print(f"🎬 Starting video analysis with analyzer '{analyzer_id}'...")
-        analysis_poller = await client.content_analyzers.begin_analyze(  # type: ContentUnderstandingAnalyzeAsyncLROPoller[AnalyzeResult]
+        analysis_poller = await client.content_analyzers.begin_analyze(
             analyzer_id=analyzer_id,
             url=video_file_url,
         )
