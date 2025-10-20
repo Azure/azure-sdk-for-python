@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -36,17 +37,13 @@ from ._shared.claims_constants import (
         [get_test_valid_receipt_2_dict(), get_test_valid_service_certificate_2()],
     ],
 )
-def test_receipt_verification_with_valid_receipt_returns_successfully(
-    input_receipt, input_service_cert
-):
+def test_receipt_verification_with_valid_receipt_returns_successfully(input_receipt, input_service_cert):
     # Check that verify_receipt does not throw any exception
     # with a valid receipt and service certificate
     try:
         verify_receipt(input_receipt, input_service_cert)
     except Exception as e:
-        pytest.fail(
-            f"verify_receipt threw an exception with a valid receipt and service certificate {e}"
-        )
+        pytest.fail(f"verify_receipt threw an exception with a valid receipt and service certificate {e}")
 
 
 @pytest.mark.parametrize(
@@ -59,18 +56,14 @@ def test_receipt_verification_with_valid_receipt_returns_successfully(
             writeSetDigest="invalid_write_set_digest",
         ),
         LeafComponents(
-            claimsDigest=get_test_valid_receipt_1_dict()["leaf_components"][
-                "claims_digest"
-            ],
+            claimsDigest=get_test_valid_receipt_1_dict()["leaf_components"]["claims_digest"],
             commitEvidence="invalid_commit_evidence",
             writeSetDigest="invalid_write_set_digest",
         ),
         LeafComponents(
             claimsDigest="invalid_claims_digest",
             commitEvidence="invalid_commit_evidence",
-            writeSetDigest=get_test_valid_receipt_1_dict()["leaf_components"][
-                "write_set_digest"
-            ],
+            writeSetDigest=get_test_valid_receipt_1_dict()["leaf_components"]["write_set_digest"],
         ),
     ],
 )
@@ -126,9 +119,7 @@ def test_receipt_verification_with_missing_node_id_does_not_throw_exception():
     try:
         verify_receipt(receipt, get_test_valid_service_certificate_1())
     except Exception as e:
-        pytest.fail(
-            f"verify_receipt threw an exception with a valid receipt and service certificate {e}"
-        )
+        pytest.fail(f"verify_receipt threw an exception with a valid receipt and service certificate {e}")
 
 
 @pytest.mark.parametrize(
@@ -179,14 +170,10 @@ def test_receipt_verification_with_missing_service_endorsements_does_not_throw_e
     try:
         verify_receipt(receipt, get_test_valid_service_certificate_1())
     except Exception as e:
-        pytest.fail(
-            f"verify_receipt threw an exception with a valid receipt and service certificate {e}"
-        )
+        pytest.fail(f"verify_receipt threw an exception with a valid receipt and service certificate {e}")
 
 
-@pytest.mark.parametrize(
-    "input_signature", [None, get_test_valid_receipt_2_dict()["signature"]]
-)
+@pytest.mark.parametrize("input_signature", [None, get_test_valid_receipt_2_dict()["signature"]])
 def test_receipt_verification_with_invalid_signature_throws_exception(input_signature):
     # Create a receipt with an invalid signature
     receipt = get_test_valid_receipt_1_dict()
@@ -232,9 +219,7 @@ def test_receipt_verification_with_unknown_node_cert_throws_exception(input_node
         verify_receipt(receipt, get_test_valid_service_certificate_1())
 
 
-@pytest.mark.parametrize(
-    "input_endorsements_list", [[get_test_valid_service_certificate_2()]]
-)
+@pytest.mark.parametrize("input_endorsements_list", [[get_test_valid_service_certificate_2()]])
 def test_receipt_verification_with_unknown_service_endorsements_throws_exception(
     input_endorsements_list,
 ):
@@ -249,9 +234,7 @@ def test_receipt_verification_with_unknown_service_endorsements_throws_exception
         verify_receipt(receipt, get_test_valid_service_certificate_1())
 
 
-@pytest.mark.parametrize(
-    "input_leaf_components", [get_test_valid_receipt_2_dict()["leafComponents"]]
-)
+@pytest.mark.parametrize("input_leaf_components", [get_test_valid_receipt_2_dict()["leafComponents"]])
 def test_receipt_verification_with_unknown_leaf_components_throws_exception(
     input_leaf_components,
 ):
@@ -266,9 +249,7 @@ def test_receipt_verification_with_unknown_leaf_components_throws_exception(
         verify_receipt(receipt, get_test_valid_service_certificate_1())
 
 
-@pytest.mark.parametrize(
-    "input_proof_list", [[], get_test_valid_receipt_2_dict()["proof"]]
-)
+@pytest.mark.parametrize("input_proof_list", [[], get_test_valid_receipt_2_dict()["proof"]])
 def test_receipt_verification_with_unknown_proof_list_throws_exception(
     input_proof_list,
 ):
@@ -296,15 +277,9 @@ def test_receipt_verification_with_unknown_proof_list_throws_exception(
                 },
                 "nodeId": "0db9a22e9301d1167a2a81596fa234642ad24bc742451a415b8d653af056795c",
                 "proof": [
-                    {
-                        "left": "bcce25aa51854bd15257cfb0c81edc568a5a5fa3b81e7106c125649db93ff599"
-                    },
-                    {
-                        "left": "cc82daa27e76b7525a1f37ed7379bb80f6aab99f2b36e2e06c750dd9393cd51b"
-                    },
-                    {
-                        "left": "c53a15cbcc97e30ce748c0f44516ac3440e3e9cc19db0852f3aa3a3d5554dfae"
-                    },
+                    {"left": "bcce25aa51854bd15257cfb0c81edc568a5a5fa3b81e7106c125649db93ff599"},
+                    {"left": "cc82daa27e76b7525a1f37ed7379bb80f6aab99f2b36e2e06c750dd9393cd51b"},
+                    {"left": "c53a15cbcc97e30ce748c0f44516ac3440e3e9cc19db0852f3aa3a3d5554dfae"},
                 ],
                 "signature": "MGYCMQClZXVAFn+vflIIikwMz64YZGoH71DKnfMr3LXkQ0lhljSsvDrmtmi/oWwOsqy28PsCMQCMe4n9aXXK4R+vY0SIfRWSCCfaADD6teclFCkVNK4317ep+5ENM/5T/vDJf3V4IvI=",
             },
@@ -331,15 +306,9 @@ def test_receipt_verification_with_unknown_proof_list_throws_exception(
                 },
                 "nodeId": "0db9a22e9301d1167a2a81596fa234642ad24bc742451a415b8d653af056795c",
                 "proof": [
-                    {
-                        "left": "bcce25aa51854bd15257cfb0c81edc568a5a5fa3b81e7106c125649db93ff599"
-                    },
-                    {
-                        "left": "cc82daa27e76b7525a1f37ed7379bb80f6aab99f2b36e2e06c750dd9393cd51b"
-                    },
-                    {
-                        "left": "c53a15cbcc97e30ce748c0f44516ac3440e3e9cc19db0852f3aa3a3d5554dfae"
-                    },
+                    {"left": "bcce25aa51854bd15257cfb0c81edc568a5a5fa3b81e7106c125649db93ff599"},
+                    {"left": "cc82daa27e76b7525a1f37ed7379bb80f6aab99f2b36e2e06c750dd9393cd51b"},
+                    {"left": "c53a15cbcc97e30ce748c0f44516ac3440e3e9cc19db0852f3aa3a3d5554dfae"},
                 ],
                 "signature": "MGYCMQClZXVAFn+vflIIikwMz64YZGoH71DKnfMr3LXkQ0lhljSsvDrmtmi/oWwOsqy28PsCMQCMe4n9aXXK4R+vY0SIfRWSCCfaADD6teclFCkVNK4317ep+5ENM/5T/vDJf3V4IvI=",
             },
@@ -362,9 +331,7 @@ def test_receipt_verification_with_valid_application_claims_returns_successfully
     # Check that verify_receipt does not throw any exception
     # with a valid receipt, service certificate, and application claims
     try:
-        verify_receipt(
-            input_receipt, input_service_cert, application_claims=input_claims
-        )
+        verify_receipt(input_receipt, input_service_cert, application_claims=input_claims)
     except Exception as e:
         pytest.fail(
             f"verify_receipt threw an exception with a valid receipt, service certificate, and application claims {e}"
@@ -393,6 +360,4 @@ def test_receipt_verification_with_invalid_application_claims_throws_exception(
     with pytest.raises(
         ValueError,
     ):
-        verify_receipt(
-            input_receipt, input_service_cert, application_claims=input_claims
-        )
+        verify_receipt(input_receipt, input_service_cert, application_claims=input_claims)

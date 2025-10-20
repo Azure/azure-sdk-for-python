@@ -9,6 +9,13 @@ Simple smoke tests to verify the unit test suite functionality.
 Run this file directly to test the basic imports and functionality.
 """
 
+import pytest
+
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+)
+
 
 def test_basic_imports():
     """Test that key components can be imported."""
@@ -17,7 +24,7 @@ def test_basic_imports():
         from azure.ai.voicelive.models import (
             AzureVoiceType,
             MessageRole,
-            OAIVoice,
+            OpenAIVoiceName,
             InputAudioFormat,
             OutputAudioFormat,
             Modality,
@@ -55,12 +62,12 @@ def test_basic_imports():
 def test_enum_functionality():
     """Test basic enum functionality."""
     try:
-        from azure.ai.voicelive.models import AzureVoiceType, MessageRole, OAIVoice
+        from azure.ai.voicelive.models import AzureVoiceType, MessageRole, OpenAIVoiceName
 
         # Test enum values
         assert AzureVoiceType.AZURE_CUSTOM == "azure-custom"
         assert MessageRole.USER == "user"
-        assert OAIVoice.ALLOY == "alloy"
+        assert OpenAIVoiceName.ALLOY == "alloy"
 
         # Test enum comparison
         assert AzureVoiceType.AZURE_STANDARD.value == "azure-standard"
@@ -81,7 +88,7 @@ def test_model_creation():
             UserMessageItem,
             AzureStandardVoice,
             OpenAIVoice,
-            OAIVoice,
+            OpenAIVoiceName,
             RequestSession,
         )
 
@@ -96,9 +103,9 @@ def test_model_creation():
         assert len(message.content) == 1
 
         # Test voice creation
-        openai_voice = OpenAIVoice(name=OAIVoice.ALLOY)
+        openai_voice = OpenAIVoice(name=OpenAIVoiceName.ALLOY)
         assert openai_voice.type == "openai"
-        assert openai_voice.name == OAIVoice.ALLOY
+        assert openai_voice.name == OpenAIVoiceName.ALLOY
 
         azure_voice = AzureStandardVoice(name="en-US-JennyNeural")
         assert azure_voice.type == "azure-standard"

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -26,12 +26,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._private_link_resources_operations import build_list_by_cluster_request
 from .._configuration import RedisEnterpriseManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class PrivateLinkResourcesOperations:
@@ -58,7 +59,7 @@ class PrivateLinkResourcesOperations:
     @distributed_trace
     def list_by_cluster(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateLinkResource"]:
+    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
         """Gets the private link resources that need to be created for a Redis Enterprise cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

@@ -4,12 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
-from azure.appconfiguration.provider.aio import AzureAppConfigurationProvider
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase, has_feature_flag
+from testcase import has_feature_flag
+from asynctestcase import AppConfigTestCase
 from test_constants import FEATURE_MANAGEMENT_KEY
 from unittest.mock import MagicMock, patch
+from azure.appconfiguration.provider.aio._azureappconfigurationproviderasync import (
+    _buildprovider,
+)
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -126,7 +129,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             ]
 
             # Create the provider with the mocked client manager
-            provider = AzureAppConfigurationProvider(connection_string="mock_connection_string")
+            provider = await _buildprovider("=mock_connection_string;;", None, None)
             provider._replica_client_manager = mock_client_manager
 
             # Call the method to process key-value pairs
@@ -190,6 +193,64 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert FEATURE_MANAGEMENT_KEY in client
             assert has_feature_flag(client, "TaggedFeatureFlag")
             assert "message" not in client
+
+    # method: load
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_configuration_mapper(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        async def test_mapper(setting):
+            if setting.key == "message":
+                setting.value = "mapped"
+
+        async with await self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            configuration_mapper=test_mapper,
+        ) as client:
+            assert client["message"] == "mapped"
+            assert client["refresh_message"] == "original value"
+
+    # method: load
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_configuration_mapper_with_trimming(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
+        async def test_mapper(setting):
+            if setting.key == "message":
+                setting.value = "mapped"
+
+        async with await self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            configuration_mapper=test_mapper,
+            trim_prefixes=["refresh_"],
+        ) as client:
+            # Because our processing happens after mapping and refresh_message is alphabetically after message the override
+            # value isn't used, as the mapped value is overridden by the first value.
+            assert client["message"] == "original value"
+            assert "refresh_message" not in client
+
+    # method: load
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_configuration_mapper_with_feature_flags(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
+        async def test_mapper(setting):
+            if setting.key == ".appconfig.featureflag/Alpha":
+                setting.content_type = "application/json"
+
+        async with await self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
+            configuration_mapper=test_mapper,
+            trim_prefixes=[".appconfig.featureflag/"],
+        ) as client:
+            # Feature Flags aren't modified by configuration mappers
+            assert "Alpha" not in client
+            assert client["feature_management"]["feature_flags"][0]["id"] == "Alpha"
 
 
 async def secret_resolver(secret_id):

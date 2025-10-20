@@ -24,9 +24,8 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
 )
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import AzureError, HttpResponseError
-from azure.keyvault.secrets.aio import SecretClient
-from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
+from ._key_vault._async_secret_provider import SecretProvider
 from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
@@ -106,6 +105,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
     """
 
 
@@ -169,6 +171,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
     """
 
 
@@ -211,54 +216,6 @@ async def _buildprovider(
     return AzureAppConfigurationProvider(**kwargs)
 
 
-async def _resolve_keyvault_reference(
-    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider"
-) -> str:
-    # pylint:disable=protected-access
-    if not (provider._keyvault_credential or provider._keyvault_client_configs or provider._secret_resolver):
-        raise ValueError(
-            """
-            Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve Key
-             Vault references.
-            """
-        )
-
-    if config.secret_id is None:
-        raise ValueError("Key Vault reference must have a uri value.")
-
-    keyvault_identifier = KeyVaultSecretIdentifier(config.secret_id)
-
-    vault_url = keyvault_identifier.vault_url + "/"
-
-    # pylint:disable=protected-access
-    referenced_client = provider._secret_clients.get(vault_url, None)
-
-    vault_config = provider._keyvault_client_configs.get(vault_url, {})
-    credential = vault_config.pop("credential", provider._keyvault_credential)
-
-    if referenced_client is None and credential is not None:
-        referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
-        provider._secret_clients[vault_url] = referenced_client
-
-    if referenced_client:
-        secret_value = (
-            await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
-        ).value
-        if secret_value is not None:
-            return secret_value
-
-    if provider._secret_resolver:
-        resolved = provider._secret_resolver(config.secret_id)
-        try:
-            # Secret resolver was async
-            return await resolved
-        except TypeError:
-            # Secret resolver was sync
-            return resolved
-
-    raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
-
-
 class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -283,7 +240,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         self._replica_client_manager = ConfigurationClientManager(
             connection_string=kwargs.pop("connection_string", None),
-            endpoint=kwargs.pop("endpoint", None),
+            endpoint=kwargs.pop("endpoint"),
             credential=kwargs.pop("credential", None),
             user_agent=user_agent,
             retry_total=kwargs.pop("retry_total", 2),
@@ -294,10 +251,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             load_balancing_enabled=kwargs.pop("load_balancing_enabled", False),
             **kwargs,
         )
-        self._secret_clients: Dict[str, SecretClient] = {}
+        self._secret_provider = SecretProvider(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Union[Callable[[Exception], Awaitable[None]], None]] = kwargs.pop(
             "on_refresh_error", None
+        )
+        self._configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]] = kwargs.pop(
+            "configuration_mapper", None
         )
 
     async def _attempt_refresh(
@@ -308,6 +268,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             kwargs.pop("headers", {}),
             "Watch",
             replica_count,
+            self._secret_provider.uses_key_vault,
             is_failover_request,
         )
         configuration_settings: List[ConfigurationSetting] = []
@@ -384,6 +345,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         exception: Optional[Exception] = None
         is_failover_request = False
         try:
+            if (
+                self._secret_provider.secret_refresh_timer
+                and self._secret_provider.secret_refresh_timer.needs_refresh()
+            ):
+                self._dict.update(await self._secret_provider.refresh_secrets())
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
             replica_count = self._replica_client_manager.get_client_count() - 1
@@ -423,6 +389,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 kwargs.pop("headers", {}),
                 "Startup",
                 replica_count,
+                self._secret_provider.uses_key_vault,
                 is_failover_request,
             )
             try:
@@ -472,9 +439,15 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     async def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+        # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
+        # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
+        unique_settings = self._deduplicate_settings(configuration_settings)
+
         configuration_settings_processed = {}
         feature_flags_processed = []
-        for settings in configuration_settings:
+        for settings in unique_settings.values():
+            if self._configuration_mapper:
+                await self._configuration_mapper(settings)
             if isinstance(settings, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
                 feature_flag_value = self._process_feature_flag(settings)
@@ -490,7 +463,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     async def _process_key_value(self, config: ConfigurationSetting) -> Any:
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return await _resolve_keyvault_reference(config, self)
+            return await self._secret_provider.resolve_keyvault_reference(config)
         # Use the base class helper method for non-KeyVault processing
         return self._process_key_value_base(config)
 
@@ -507,17 +480,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         """
         Closes the connection to Azure App Configuration.
         """
-        for client in self._secret_clients.values():
-            await client.close()
+        await self._secret_provider.close()
         await self._replica_client_manager.close()
 
     async def __aenter__(self) -> "AzureAppConfigurationProvider":
         await self._replica_client_manager.__aenter__()
-        for client in self._secret_clients.values():
-            await client.__aenter__()
+        await self._secret_provider.__aenter__()
         return self
 
     async def __aexit__(self, *args) -> None:
         await self._replica_client_manager.__aexit__(*args)
-        for client in self._secret_clients.values():
-            await client.__aexit__()
+        await self._secret_provider.__aexit__(*args)

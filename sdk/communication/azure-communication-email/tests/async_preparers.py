@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import time
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import is_live
 
 

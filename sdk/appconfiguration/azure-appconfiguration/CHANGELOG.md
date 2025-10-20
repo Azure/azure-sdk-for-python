@@ -1,14 +1,9 @@
 # Release History
 
-## 1.7.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.7.2 (2025-10-20)
 
 ### Bugs Fixed
-
-### Other Changes
+- Fixed a bug where non-HTTPS endpoints would not function correctly.
 
 ## 1.7.1 (2024-08-22)
 
