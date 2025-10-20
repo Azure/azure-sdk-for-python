@@ -42,7 +42,7 @@ from ..exceptions import (
     IncompleteReadError,
     ServiceResponseError,
     ServiceResponseTimeoutError,
-    ServiceRequestError
+    ServiceRequestError,
 )
 
 
