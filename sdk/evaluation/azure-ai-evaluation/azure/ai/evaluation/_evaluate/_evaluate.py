@@ -1213,7 +1213,7 @@ def _log_events_to_app_insights(
                 if response_id:
                     standard_log_attributes["gen_ai.response.id"] = response_id
                 if conversation_id:
-                    log_attributes["gen_ai.conversation.id"] = conversation_id
+                    standard_log_attributes["gen_ai.conversation.id"] = conversation_id
                 if previous_response_id:
                     internal_log_attributes["gen_ai.previous.response.id"] = previous_response_id
                 if agent_id:
