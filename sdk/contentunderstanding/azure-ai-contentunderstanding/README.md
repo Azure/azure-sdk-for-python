@@ -1,7 +1,6 @@
 # Azure AI Content Understanding client library for Python
 
-## Key concepts
-Content Understanding is a solution that analyzes and comprehends various media content—such as documents, images, audio, and video—transforming it into structured, organized, and searchable data.
+Azure AI Content Understanding is a solution that analyzes and comprehends various media content—such as documents, images, audio, and video—transforming it into structured, organized, and searchable data.
 
 This table shows the relationship between SDK versions and supported API service versions:
 
@@ -11,9 +10,11 @@ This table shows the relationship between SDK versions and supported API service
 
 ## Getting started
 
-### Azure Content Understanding Resource
-- To get started, you need **an active Azure subscription**. If you don't have an Azure account, [create one for free](https://azure.microsoft.com/free/).
-- Once you have your Azure subscription, create an [Azure AI Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) in the Azure portal. Be sure to create it in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support).
+### Prerequisites
+
+- Python 3.9 or later is required to use this package.
+- You need an [Azure subscription][azure_sub] to use this package.
+- Once you have your Azure subscription, create an [Azure AI Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) in the Azure portal. Be sure to create it in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support).
 - For more information, see: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=document
 
 ### Install the package
@@ -22,104 +23,146 @@ This table shows the relationship between SDK versions and supported API service
 python -m pip install azure-ai-contentunderstanding
 ```
 
-#### Prerequisites
+## Key concepts
 
-- Python 3.10 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure AI Content Understanding resource.
+Content Understanding provides three main capabilities:
+
+### Content Analyzers
+Analyze documents and extract structured information using prebuilt or custom analyzers:
+- **Prebuilt analyzers**: Ready-to-use analyzers for multi-modal content processing including `prebuilt-documentAnalyzer`, `prebuilt-invoice`, `prebuilt-videoAnalyzer` (examples - see [full list of prebuilt analyzers](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/prebuilt-analyzers))
+- **Custom analyzers**: Create analyzers with specific field schemas for multi-modal content processing (documents, images, audio, video)
+- **Multiple input formats**: URLs, binary data, and various document types
+
+### Content Classifiers
+Detect and identify documents within your application using intelligent classification:
+- **Document classification**: Categorize documents into up to 50 defined categories without training data
+- **Multi-document processing**: Identify multiple document types or instances within a single file
+- **Flexible splitting modes**: Choose how to process content (entire file, per-page, or auto-detection)
+- **Analyzer integration**: Link classifier categories with analyzers for end-to-end document processing
+- **Business use cases**: Perfect for invoices, tax documents, contracts, and complex document workflows
+
+### Face Recognition & Person Management (Preview)
+Cloud-based face detection, enrollment, and recognition capabilities:
+- **Face detection**: Detect faces in images with bounding boxes
+- **Person directories**: Organize faces and identity profiles in structured repositories
+- **Face verification**: Compare faces for identity verification
+- **Face identification**: Match faces to enrolled persons
+- **Note**: This feature is in preview and will be removed in GA. See [Face solutions overview](https://learn.microsoft.com/azure/ai-services/content-understanding/face/overview) for details.
 
 ## Examples
 
-### Content Analyzers
-Analyze documents and extract structured information:
+### Extract Markdown Content from Documents
 
-- **`content_analyzers_analyze_binary_raw_json.py`** - Extract content from PDF using begin_analyze_binary and save raw JSON response
-- **`content_analyzers_analyze_binary.py`** - Extract content from PDF file, print markdown content and document information
-- **`content_analyzers_analyze_url.py`** - Extract content from public URL using prebuilt-documentAnalyzer
-- **`content_analyzers_analyze_url_prebuilt_invoice.py`** - Extract invoice fields from URL using prebuilt-invoice analyzer
-- **`content_analyzers_create_or_replace.py`** - Create custom analyzer with field schema for extracting company information
-- **`content_analyzers_get_analyzer.py`** - Retrieve analyzer configuration details
-- **`content_analyzers_list.py`** - List all available analyzers with detailed information and summary statistics
-- **`content_analyzers_update.py`** - Update analyzer description and tags
-- **`content_analyzers_delete_analyzer.py`** - Delete custom analyzer
-- **`content_analyzers_get_result_file.py`** - Download result files (keyframe images) from video analysis operations
+Use the `prebuilt-documentAnalyzer` to extract markdown content from documents:
 
-### Content Classifiers
-Classify content into categories:
+```python
+import asyncio
+import os
+from dotenv import load_dotenv
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent, DocumentContent, MediaContentKind
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
-- **`content_classifiers_classify.py`** - Classify documents from URL and binary data using custom classifier
-- **`content_classifiers_classify_binary.py`** - Classify binary PDF document with categories (Loan, Invoice, Bank Statement)
-- **`content_classifiers_create_or_replace.py`** - Create custom classifier with defined categories and wait for completion
-- **`content_classifiers_get_classifier.py`** - Retrieve classifier details including categories and configuration
-- **`content_classifiers_list.py`** - List all available classifiers with detailed information and summary statistics
-- **`content_classifiers_update.py`** - Update classifier description and tags
-- **`content_classifiers_delete_classifier.py`** - Delete custom classifier
+load_dotenv()
 
-### Face Recognition & Person Management
-Comprehensive face recognition capabilities:
+async def analyze_document():
+    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-#### **Directory Management**
-- **`person_directories_create.py`** - Create person directory with description and tags
-- **`person_directories_get.py`** - Retrieve directory details and display information
-- **`person_directories_list.py`** - List all person directories with detailed information
-- **`person_directories_update.py`** - Update directory with new description and tags
-- **`person_directories_delete.py`** - Delete person directory
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+        
+        # Analyze document using prebuilt-documentAnalyzer
+        poller = await client.content_analyzers.begin_analyze(
+            analyzer_id="prebuilt-documentAnalyzer", 
+            url=file_url
+        )
+        result: AnalyzeResult = await poller.result()
+        
+        # Extract markdown content
+        content: MediaContent = result.contents[0]
+        print("📄 Markdown Content:")
+        print(content.markdown)
+        
+        # Access document-specific properties
+        if content.kind == MediaContentKind.DOCUMENT:
+            document_content: DocumentContent = content  # type: ignore
+            print(f"📚 Pages: {document_content.start_page_number} - {document_content.end_page_number}")
 
-#### **Person Management**
-- **`person_directories_add_person.py`** - Add person to directory with tags
-- **`person_directories_get_person.py`** - Get person details using person ID
-- **`person_directories_list_persons.py`** - List all persons in a directory with details
-- **`person_directories_update_person.py`** - Update person tags and face associations
-- **`person_directories_delete_person.py`** - Delete person from directory
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
-#### **Face Management**
-- **`person_directories_get_face.py`** - Retrieve face details from person directory
-- **`person_directories_list_faces.py`** - List all faces in directory with person associations
-- **`person_directories_update_face.py`** - Update face to reassign to different person
-- **`person_directories_delete_face.py`** - Delete face from person directory
+# Run the analysis
+asyncio.run(analyze_document())
+```
 
-#### **Face Recognition**
-- **`person_directories_find_similar_faces.py`** - Find similar faces with positive and negative test cases
-- **`person_directories_identify_person.py`** - Identify persons in group photo using enrolled faces
-- **`faces_detect.py`** - Detect faces in local image files with bounding boxes
-- **`faces_detect_url.py`** - Detect faces in images from remote URLs
+### Extract Structured Fields from Invoices
 
-#### **Enhanced Face Similarity Demo**
-`person_directories_find_similar_faces.py` provides a comprehensive demonstration:
+Use the `prebuilt-invoice` analyzer to extract structured invoice fields:
 
-- **Test 1 (Positive Case)**: Enrolls Bill's faces (Dad1 & Dad2), queries with Dad3 → finds high-confidence matches
-- **Test 2 (Negative Case)**: Queries with Clare's face (Mom1) → finds no matches
-- **Educational Output**: Clear explanations of expected results and confidence scores
-- **Real-world Scenarios**: Demonstrates both successful and failed face matching
+```python
+import asyncio
+import os
+from dotenv import load_dotenv
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import AnalyzeResult, MediaContent
+from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
-## **Quick Start with Samples**
+load_dotenv()
 
-1. **Set up authentication**:
-   ```bash
-   # Copy sample environment file
-   cd samples
-   cp env.sample .env
-   
-   # Edit .env with your endpoint (required)
-   # AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://your-resource-name.services.ai.azure.com/  
-   # Leave AZURE_CONTENT_UNDERSTANDING_KEY empty unless using key-based authentication (not recommended for production)
-   # AZURE_CONTENT_UNDERSTANDING_KEY=
-   
-   # Use Azure CLI for authentication (recommended - secure)
-   az login
-   ```
-   
-   **Security Note**: Only set `AZURE_CONTENT_UNDERSTANDING_KEY` if you need key-based authentication for testing. **Azure CLI (`az login`) or DefaultAzureCredential is recommended** as it eliminates the need to manage secrets, reduces the risk of credential leaks, and enables secure, auditable, and least-privilege access to resources through Azure AD.
+def get_field_value(fields, field_name):
+    """Helper function to safely extract field values."""
+    field = fields.get(field_name)
+    return field["value"] if field and "value" in field else None
 
-2. **Install dependencies**:
-   ```bash
-   pip install azure-ai-contentunderstanding python-dotenv
-   ```
+async def analyze_invoice():
+    endpoint = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
+    key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-3. **Run any sample**:
-   ```bash
-   python content_analyzers_analyze_binary.py       # Analyze binary files (PDFs, images, documents)
-   python content_analyzers_create_or_replace.py    # Create custom analyzer using begin_create_or_replace API
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+        
+        # Analyze invoice using prebuilt-invoice analyzer
+        poller = await client.content_analyzers.begin_analyze(
+            analyzer_id="prebuilt-invoice", 
+            url=file_url
+        )
+        result: AnalyzeResult = await poller.result()
+        
+        # Extract invoice fields
+        content: MediaContent = result.contents[0]
+        
+        # Extract basic invoice information
+        customer_name = get_field_value(content.fields, "CustomerName")
+        invoice_total = get_field_value(content.fields, "InvoiceTotal")
+        invoice_date = get_field_value(content.fields, "InvoiceDate")
+        
+        print(f"Customer Name: {customer_name or '(None)'}")
+        print(f"Invoice Total: ${invoice_total or '(None)'}")
+        print(f"Invoice Date: {invoice_date or '(None)'}")
+        
+        # Extract invoice items (array field)
+        items = get_field_value(content.fields, "Items")
+        if items:
+            print("\n🛒 Invoice Items:")
+            for i, item in enumerate(items):
+                item_obj = item["valueObject"]
+                if item_obj:
+                    description = get_field_value(item_obj, "Description")
+                    quantity = get_field_value(item_obj, "Quantity")
+                    unit_price = get_field_value(item_obj, "UnitPrice")
+                    
+                    print(f"  Item {i + 1}: {description} - Qty: {quantity} @ ${unit_price}")
+
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
+
+# Run the analysis
+asyncio.run(analyze_invoice())
    ```
 
 ## Troubleshooting
@@ -134,6 +177,7 @@ Azure AI Content Understanding requires an [Azure AI Foundry resource](https://p
 For detailed setup instructions and current supported regions, see: **[Azure AI Content Understanding Quickstart Guide](https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api)**
 
 ## Next steps
+
 For more information about Azure AI Content Understanding, see the following additional resources:
 - **[Azure AI Content Understanding Documentation](https://learn.microsoft.com/azure/ai-services/content-understanding/)**
 - **[REST API Reference](https://learn.microsoft.com/rest/api/content-understanding/)**
