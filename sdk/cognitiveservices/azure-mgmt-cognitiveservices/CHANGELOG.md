@@ -38,8 +38,8 @@
   - Added model `ReplacementConfig`
   - Added enum `TierUpgradePolicy`
   - Added enum `UpgradeAvailabilityStatus`
-  - Added model `QuotaTiersOperations`
-  - Added model `RaiTopicsOperations`
+  - Added operation group `QuotaTiersOperations`
+  - Added operation group `RaiTopicsOperations`
 
 ## 14.0.0 (2025-09-22)
 
