@@ -21,7 +21,8 @@ from .._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 logger = logging.getLogger("azure.cosmos.AsyncCosmosBearerTokenCredentialPolicy")
-_credential_locks: "WeakKeyDictionary[Union[AsyncTokenCredential, AsyncSupportsTokenInfo], asyncio.Lock]" = WeakKeyDictionary()
+_credential_locks: "WeakKeyDictionary[Union[AsyncTokenCredential, AsyncSupportsTokenInfo], asyncio.Lock]" = (
+    WeakKeyDictionary())
 
 def _get_credential_lock(credential: Union[AsyncTokenCredential, AsyncSupportsTokenInfo]) -> asyncio.Lock:
     lock = _credential_locks.get(credential)
