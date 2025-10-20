@@ -1156,8 +1156,8 @@ class TestEvaluate:
         assert "metrics" in converted_results
         assert "rows" in converted_results
         assert "studio_url" in converted_results
-        assert "evaluation_results_list" in converted_results
-        assert "evaluation_summary" in converted_results
+        assert "_evaluation_results_list" in converted_results
+        assert "_evaluation_summary" in converted_results
 
         # Verify metrics preserved
         assert converted_results["metrics"]["overall_score"] == 0.75
@@ -1165,12 +1165,12 @@ class TestEvaluate:
         # Verify studio URL preserved
         assert converted_results["studio_url"] == "https://test-studio.com"
 
-        # Verify evaluation_results_list is same as rows (converted format)
-        assert len(converted_results["evaluation_results_list"]) == len(test_rows)
-        assert len(converted_results["evaluation_results_list"]) == len(converted_results["rows"])
+        # Verify _evaluation_results_list is same as rows (converted format)
+        assert len(converted_results["_evaluation_results_list"]) == len(test_rows)
+        assert len(converted_results["_evaluation_results_list"]) == len(converted_results["rows"])
 
         # Verify conversion structure for each row
-        for i, converted_row in enumerate(converted_results["evaluation_results_list"]):
+        for i, converted_row in enumerate(converted_results["_evaluation_results_list"]):
             # Check RunOutputItem structure
             assert "object" in converted_row
             assert converted_row["object"] == "eval.run.output_item"
@@ -1213,8 +1213,8 @@ class TestEvaluate:
                 assert "name" in result
                 assert "metric" in result
 
-        # Verify evaluation summary structure
-        summary = converted_results["evaluation_summary"]
+        # Verify _evaluation_summary structure
+        summary = converted_results["_evaluation_summary"]
         assert "result_counts" in summary
         assert "per_model_usage" in summary
         assert "per_testing_criteria_results" in summary
@@ -1262,8 +1262,8 @@ class TestEvaluate:
         empty_converted = empty_results
 
         assert len(empty_converted["rows"]) == 0
-        assert len(empty_converted["evaluation_results_list"]) == 0
-        assert empty_converted["evaluation_summary"]["result_counts"]["total"] == 0
+        assert len(empty_converted["_evaluation_results_list"]) == 0
+        assert empty_converted["_evaluation_summary"]["result_counts"]["total"] == 0
 
 
 @pytest.mark.unittest
