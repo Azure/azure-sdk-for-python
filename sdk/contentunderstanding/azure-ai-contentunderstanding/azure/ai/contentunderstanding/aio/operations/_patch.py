@@ -10,6 +10,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import re
 from typing import List, Optional, Any, Union, overload, IO
 from collections.abc import MutableMapping
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -19,11 +20,15 @@ from ...models import DetectFacesResult
 from ._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
 from ... import models as _models
 from ._operations import ContentClassifiersOperations as ContentClassifiersOperationsGenerated
-import re
 
 JSON = MutableMapping[str, Any]
 
-__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations", "ContentUnderstandingAnalyzeAsyncLROPoller"]
+__all__: List[str] = [
+    "FacesOperations",
+    "ContentAnalyzersOperations", 
+    "ContentClassifiersOperations",
+    "ContentUnderstandingAnalyzeAsyncLROPoller"
+]
 
 
 def _parse_operation_id(operation_location_header: str) -> str:
@@ -57,14 +62,12 @@ class ContentUnderstandingAnalyzeAsyncLROPoller(AsyncLROPoller[_models.AnalyzeRe
         :raises ValueError: If operation details cannot be extracted
         """
         try:
-            initial_response = self._polling_method._initial_response  # type: ignore[attr-defined]
+            initial_response = self._polling_method._initial_response  # type: ignore[attr-defined]  # pylint: disable=protected-access
             operation_location = initial_response.http_response.headers.get("Operation-Location")
-            
             if not operation_location:
                 raise ValueError("No Operation-Location header found in initial response")
-            
+
             operation_id = _parse_operation_id(operation_location)
-            
             return {
                 "operation_id": operation_id,
             }
@@ -383,18 +386,18 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
             )
             return ContentUnderstandingAnalyzeAsyncLROPoller(
                 self._client,  # type: ignore
-                poller._polling_method._initial_response,  # type: ignore
-                poller._polling_method._deserialization_callback,  # type: ignore
-                poller._polling_method
+                poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
+                poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
+                poller._polling_method  # pylint: disable=protected-access
             )
 
         # Call the original method for all other cases and wrap in custom poller
         poller = await super().begin_analyze(analyzer_id, *args, **kwargs)
         return ContentUnderstandingAnalyzeAsyncLROPoller(
             self._client,  # type: ignore
-            poller._polling_method._initial_response,  # type: ignore
-            poller._polling_method._deserialization_callback,  # type: ignore
-            poller._polling_method
+            poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
+            poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
+            poller._polling_method  # pylint: disable=protected-access
         )
 
 

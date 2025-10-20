@@ -11,7 +11,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import re
-from typing import List, Optional, Any, Union, overload, IO, TypeVar, Callable, Mapping
+from typing import List, Optional, Any, Union, overload, IO, TypeVar, Mapping
 from collections.abc import MutableMapping
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller, PollingMethod
@@ -24,7 +24,12 @@ from ._operations import ContentClassifiersOperations as ContentClassifiersOpera
 JSON = MutableMapping[str, Any]
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
-__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations", "ContentUnderstandingAnalyzeLROPoller"]
+__all__: List[str] = [
+    "FacesOperations",
+    "ContentAnalyzersOperations",
+    "ContentClassifiersOperations",
+    "ContentUnderstandingAnalyzeLROPoller"
+]
 
 
 def _parse_operation_id(operation_location_header: str) -> str:
@@ -38,20 +43,20 @@ def _parse_operation_id(operation_location_header: str) -> str:
     """
     # Pattern: https://endpoint/.../analyzerResults/{operation_id}?api-version=...
     regex = r".*/analyzerResults/([^?/]+)"
-    
+
     match = re.search(regex, operation_location_header)
     if not match:
         raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
-    
+
     return match.group(1)
 
 
 class ContentUnderstandingAnalyzeLROPoller(LROPoller[PollingReturnType_co]):
     """Custom LROPoller for Content Understanding analyze operations.
-    
+
     Provides access to operation details including the operation ID.
     """
-    
+
     @property
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the long-running operation.
@@ -385,18 +390,18 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
             )
             return ContentUnderstandingAnalyzeLROPoller(
                 self._client,  # type: ignore
-                poller._polling_method._initial_response,  # type: ignore
-                poller._polling_method._deserialization_callback,  # type: ignore
-                poller._polling_method
+                poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
+                poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
+                poller._polling_method  # pylint: disable=protected-access
             )
 
         # Call the original method for all other cases and wrap in custom poller
         poller = super().begin_analyze(analyzer_id, *args, **kwargs)
         return ContentUnderstandingAnalyzeLROPoller(
             self._client,  # type: ignore
-            poller._polling_method._initial_response,  # type: ignore
-            poller._polling_method._deserialization_callback,  # type: ignore
-            poller._polling_method
+            poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
+            poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
+            poller._polling_method  # pylint: disable=protected-access
         )
 
 
@@ -569,5 +574,3 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
 
         # Call the original method for all other cases
         return super().begin_classify(classifier_id, *args, **kwargs)
-
-
