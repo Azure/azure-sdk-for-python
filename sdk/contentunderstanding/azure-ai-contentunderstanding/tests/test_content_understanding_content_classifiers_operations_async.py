@@ -17,12 +17,10 @@ from azure.ai.contentunderstanding.models import ContentClassifier
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from test_helpers import (
     generate_classifier_id_async,
-    extract_operation_id_from_poller,
     new_simple_classifier_schema,
     assert_poller_properties,
     assert_classifier_result,
     save_classifier_result_to_file,
-    PollerType,
 )
 
 
@@ -45,7 +43,7 @@ async def classifier_in_list_async(client: ContentUnderstandingClient, classifie
 
 async def create_classifier_and_assert_async(
     client: ContentUnderstandingClient, classifier_id: str, resource: Union[ContentClassifier, Dict[str, Any]]
-) -> Tuple[Any, str]:
+) -> Any:
     """Create a classifier and perform basic assertions (async version).
 
     Args:
@@ -54,7 +52,7 @@ async def create_classifier_and_assert_async(
         resource: The classifier resource dictionary
 
     Returns:
-        Tuple[Any, str]: A tuple containing (poller, operation_id)
+        Any: The poller object
 
     Raises:
         AssertionError: If the creation fails or assertions fail
@@ -66,11 +64,6 @@ async def create_classifier_and_assert_async(
         classifier_id=classifier_id,
         resource=resource,
     )
-
-    # Extract operation_id from the poller using the helper function
-    operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
-    print(f"  Extracted operation_id: {operation_id}")
-
 
     # Wait for the operation to complete
     print(f"  Waiting for classifier {classifier_id} to be created")
@@ -92,7 +85,7 @@ async def create_classifier_and_assert_async(
     ), f"Created classifier with ID '{classifier_id}' was not found in the list"
     print(f"  Verified classifier {classifier_id} is in the list")
 
-    return poller, operation_id
+    return poller
 
 
 async def delete_classifier_and_assert(client: ContentUnderstandingClient, classifier_id: str, created_classifier: bool) -> None:
@@ -148,7 +141,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            poller = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
             created_classifier = True
 
         finally:
@@ -179,7 +172,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create the initial classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(
+            poller = await create_classifier_and_assert_async(
                 client, classifier_id, initial_classifier_schema
             )
             created_classifier = True
@@ -263,7 +256,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            poller = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Get the classifier
@@ -305,7 +298,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            poller = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Verify the classifier is in the list before deletion
@@ -368,7 +361,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create a classifier to ensure we have at least one in the list
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            poller = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Now list all classifiers
@@ -437,7 +430,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            poller = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Use the provided URL for the mixed financial docs PDF
@@ -498,7 +491,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            poller = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Read the mixed_financial_docs.pdf file using absolute path based on this test file's location
@@ -550,9 +543,10 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier for classification test
-            created_classifier, _ = await create_classifier_and_assert_async(
+            poller = await create_classifier_and_assert_async(
                 client, classifier_id, new_simple_classifier_schema(classifier_id)
             )
+            created_classifier = True
 
             # Test URL classification using new overload
             mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
@@ -602,9 +596,10 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier for classification test
-            created_classifier, _ = await create_classifier_and_assert_async(
+            poller = await create_classifier_and_assert_async(
                 client, classifier_id, new_simple_classifier_schema(classifier_id)
             )
+            created_classifier = True
 
             # Read the mixed financial docs PDF file
             pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "mixed_financial_docs.pdf")
@@ -656,9 +651,10 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
         try:
             # Create classifier for classification test
-            created_classifier, _ = await create_classifier_and_assert_async(
+            poller = await create_classifier_and_assert_async(
                 client, classifier_id, new_simple_classifier_schema(classifier_id)
             )
+            created_classifier = True
 
             # Read the mixed financial docs PDF file
             pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "mixed_financial_docs.pdf")

@@ -16,12 +16,10 @@ from azure.ai.contentunderstanding.models import ContentClassifier
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from test_helpers import (
     generate_classifier_id_sync,
-    extract_operation_id_from_poller,
     new_simple_classifier_schema,
     assert_poller_properties,
     assert_classifier_result,
     save_classifier_result_to_file,
-    PollerType,
 )
 
 
@@ -44,7 +42,7 @@ def classifier_in_list_sync(client: ContentUnderstandingClient, classifier_id: s
 
 def create_classifier_and_assert_sync(
     client: ContentUnderstandingClient, classifier_id: str, resource: Union[ContentClassifier, Dict[str, Any]]
-) -> Tuple[Any, str]:
+) -> Any:
     """Create a classifier and perform basic assertions (sync version).
 
     Args:
@@ -53,7 +51,7 @@ def create_classifier_and_assert_sync(
         resource: The classifier resource dictionary
 
     Returns:
-        Tuple[Any, str]: A tuple containing (poller, operation_id)
+        Any: The poller object
 
     Raises:
         AssertionError: If the creation fails or assertions fail
@@ -65,11 +63,6 @@ def create_classifier_and_assert_sync(
         classifier_id=classifier_id,
         resource=resource,
     )
-
-    # Extract operation_id from the poller using the helper function
-    operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
-    print(f"  Extracted operation_id: {operation_id}")
-
 
     # Wait for the operation to complete
     print(f"  Waiting for classifier {classifier_id} to be created")
@@ -91,7 +84,7 @@ def create_classifier_and_assert_sync(
     ), f"Created classifier with ID '{classifier_id}' was not found in the list"
     print(f"  Verified classifier {classifier_id} is in the list")
 
-    return poller, operation_id
+    return poller
 
 
 def delete_classifier_and_assert_sync(client: ContentUnderstandingClient, classifier_id: str, created_classifier: bool) -> None:
@@ -149,7 +142,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
+            poller = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Verify the classifier is in the list after creation
@@ -185,7 +178,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create the initial classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, initial_classifier_schema)
+            poller = create_classifier_and_assert_sync(client, classifier_id, initial_classifier_schema)
             created_classifier = True
 
             # Get the classifier before update to verify initial state
@@ -219,6 +212,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
             # Verify the updated classifier has the new tag and updated description
             assert response.classifier_id == classifier_id
+            assert response.tags is not None
             assert "tag1_field" in response.tags
             assert response.tags["tag1_field"] == "updated_value"
             assert response.description == f"Updated classifier for update test: {classifier_id}"
@@ -268,7 +262,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
+            poller = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Get the classifier
@@ -276,6 +270,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
             assert response is not None
             print(response)
             assert response.classifier_id == classifier_id
+            assert response.description is not None
             assert len(response.description) > 0
             assert response.description == f"test classifier for get: {classifier_id}"
             assert response.status == "ready"
@@ -310,7 +305,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
+            poller = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Verify the classifier is in the list before deletion
@@ -374,7 +369,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
+            poller = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # List classifiers again to include the newly created one
@@ -429,7 +424,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
+            poller = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Use the provided URL for the mixed financial docs PDF
@@ -446,9 +441,6 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
             )
             assert_poller_properties(classify_poller, "Classification poller")
 
-            # Extract operation_id from the classify poller
-            classify_operation_id = extract_operation_id_from_poller(classify_poller, PollerType.CLASSIFY_CALL)
-            print(f"  Extracted classify operation_id: {classify_operation_id}")
 
             # Wait for the classification to complete
             print(f"  Waiting for classification to complete")
@@ -498,7 +490,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
+            poller = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
             created_classifier = True
 
             # Read the mixed_financial_docs.pdf file using absolute path based on this test file's location
@@ -517,9 +509,6 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
             )
             assert_poller_properties(classify_poller, "Classification poller")
 
-            # Extract operation_id from the classify poller
-            classify_operation_id = extract_operation_id_from_poller(classify_poller, PollerType.CLASSIFY_CALL)
-            print(f"  Extracted classify operation_id: {classify_operation_id}")
 
             # Wait for the classification to complete
             print(f"  Waiting for binary classification to complete")
@@ -560,7 +549,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier for classification test
-            _, _ = create_classifier_and_assert_sync(client, classifier_id, new_simple_classifier_schema(classifier_id))
+            poller = create_classifier_and_assert_sync(client, classifier_id, new_simple_classifier_schema(classifier_id))
             created_classifier = True
 
             # Test URL classification using new overload
@@ -606,7 +595,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier for classification test
-            _, _ = create_classifier_and_assert_sync(client, classifier_id, new_simple_classifier_schema(classifier_id))
+            poller = create_classifier_and_assert_sync(client, classifier_id, new_simple_classifier_schema(classifier_id))
             created_classifier = True
 
             # Read the mixed financial docs PDF file
@@ -656,7 +645,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         try:
             # Create classifier for classification test
-            _, _ = create_classifier_and_assert_sync(client, classifier_id, new_simple_classifier_schema(classifier_id))
+            poller = create_classifier_and_assert_sync(client, classifier_id, new_simple_classifier_schema(classifier_id))
             created_classifier = True
 
             # Read the mixed financial docs PDF file

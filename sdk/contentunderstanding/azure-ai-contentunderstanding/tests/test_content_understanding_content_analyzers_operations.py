@@ -17,14 +17,12 @@ from azure.ai.contentunderstanding.models import ContentAnalyzer
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from test_helpers import (
     generate_analyzer_id_sync,
-    extract_operation_id_from_poller,
     new_simple_content_analyzer_object,
     new_marketing_video_analyzer_object,
     assert_poller_properties,
     assert_simple_content_analyzer_result,
     save_analysis_result_to_file,
     save_keyframe_image_to_file,
-    PollerType,
 )
 
 from devtools_testutils import is_live, is_live_and_not_recording
@@ -49,7 +47,7 @@ def analyzer_in_list_sync(client: ContentUnderstandingClient, analyzer_id: str) 
 
 def create_analyzer_and_assert_sync(
     client: ContentUnderstandingClient, analyzer_id: str, resource: Union[ContentAnalyzer, Dict[str, Any]]
-) -> Tuple[Any, str]:
+) -> Any:
     """Create an analyzer and perform basic assertions (sync version).
 
     Args:
@@ -58,7 +56,7 @@ def create_analyzer_and_assert_sync(
         resource: The analyzer resource (ContentAnalyzer object or dict)
 
     Returns:
-        Tuple[Any, str]: A tuple containing (poller, operation_id)
+        Any: The poller object
 
     Raises:
         AssertionError: If the creation fails or assertions fail
@@ -70,11 +68,6 @@ def create_analyzer_and_assert_sync(
         analyzer_id=analyzer_id,
         resource=resource,
     )
-
-    # Extract operation_id from the poller using the helper function
-    operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
-    print(f"  Extracted operation_id: {operation_id}")
-
 
     # Wait for the operation to complete
     print(f"  Waiting for analyzer {analyzer_id} to be created")
@@ -96,7 +89,7 @@ def create_analyzer_and_assert_sync(
     ), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
     print(f"  Verified analyzer {analyzer_id} is in the list")
 
-    return poller, operation_id
+    return poller
 
 
 def delete_analyzer_and_assert_sync(client: ContentUnderstandingClient, analyzer_id: str, created_analyzer: bool) -> None:
@@ -248,7 +241,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
         finally:
@@ -270,7 +263,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create analyzer using the refactored function with JSON resource
-            poller, operation_id = create_analyzer_and_assert_sync(
+            poller = create_analyzer_and_assert_sync(
                 client,
                 analyzer_id,
                 {
@@ -333,7 +326,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create the initial analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, initial_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, initial_analyzer)
             created_analyzer = True
 
             # Get the analyzer before update to verify initial state
@@ -439,7 +432,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Verify the analyzer is in the list before deletion
@@ -536,7 +529,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Use the provided URL for the invoice PDF
@@ -596,7 +589,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Read the sample invoice PDF file using absolute path based on this test file's location
@@ -659,7 +652,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, video_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, video_analyzer)
             created_analyzer = True
 
             # Use the FlightSimulator.mp4 video file from remote location
@@ -687,8 +680,13 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
                 analysis_result, "test_content_analyzers_get_result_file", test_file_dir, analyzer_id
             )
 
-            # Extract operation ID for get_result_file test - this should not fail
-            analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+            # Extract operation ID for get_result_file test using custom poller's details property
+            from azure.ai.contentunderstanding.operations._patch import ContentUnderstandingAnalyzeLROPoller
+            assert isinstance(analysis_poller, ContentUnderstandingAnalyzeLROPoller), "Should return custom ContentUnderstandingAnalyzeLROPoller"
+            
+            details = analysis_poller.details
+            assert "operation_id" in details, "Details should contain operation_id"
+            analysis_operation_id = details["operation_id"]
             assert analysis_operation_id is not None, "Operation ID should not be None"
             assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
             print(f"Analysis operation ID: {analysis_operation_id}")
@@ -728,7 +726,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         try:
             # Create the analyzer
             print(f"Creating analyzer {analyzer_id}")
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
             created_analyzer = True
             print(f"  Analyzer {analyzer_id} created")
 
@@ -810,7 +808,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, video_analyzer)
+            poller = create_analyzer_and_assert_sync(client, analyzer_id, video_analyzer)
             created_analyzer = True
 
             # Use the same video URL as in the sample
