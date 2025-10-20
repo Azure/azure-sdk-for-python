@@ -1056,7 +1056,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 def _build_internal_log_attributes(
     event_data: Dict[str, Any], 
     metric_name: str, 
-    evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]],
+    internal_log_attributes: Dict[str, str]
 ) -> Dict[str, str]:
     """
     Build internal log attributes for OpenTelemetry logging.
@@ -1070,8 +1071,6 @@ def _build_internal_log_attributes(
     :return: Dictionary of internal log attributes
     :rtype: Dict[str, str]
     """
-    internal_log_attributes = {}
-    
     # Add threshold if present
     if event_data.get("threshold"):
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
@@ -1090,6 +1089,9 @@ def _build_internal_log_attributes(
 
             if "evaluator_version" in testing_criteria_config and testing_criteria_config["evaluator_version"] is not None:
                 internal_log_attributes["gen_ai.evaluator.version"] = str(testing_criteria_config["evaluator_version"])
+            
+            if "evaluator_id" in testing_criteria_config and testing_criteria_config["evaluator_id"] is not None:
+                internal_log_attributes["gen_ai.evaluator.id"] = str(testing_criteria_config["evaluator_id"])
                 
             if ("evaluator_definition" in testing_criteria_config and
                 testing_criteria_config["evaluator_definition"] and
@@ -1166,25 +1168,28 @@ def _log_events_to_app_insights(
                 # Prepare log record attributes with specific mappings
                 # The standard attributes are already in https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md#event-eventgen_aievaluationresult
                 metric_name = event_data.get("metric")
-                log_attributes["microsoft.custom_event.name"] = EVALUATION_EVENT_NAME
-                log_attributes["gen_ai.evaluation.name"] = metric_name
-                log_attributes["gen_ai.evaluation.score.value"] = event_data.get("score")
-                log_attributes["gen_ai.evaluation.score.label"] = event_data.get("label")
+                standard_log_attributes = {}
+                standard_log_attributes["microsoft.custom_event.name"] = EVALUATION_EVENT_NAME
+                standard_log_attributes["gen_ai.evaluation.name"] = metric_name
+                if event_data.get("score") is not None:
+                    standard_log_attributes["gen_ai.evaluation.score.value"] = event_data.get("score")
+                if event_data.get("label") is not None:
+                    standard_log_attributes["gen_ai.evaluation.score.label"] = event_data.get("label")
 
                 # Internal proposed attributes
                 # Put it in internal property bag for now, will be expanded if we got sign-off to Otel standard later.
-                internal_log_attributes = _build_internal_log_attributes(event_data, metric_name, evaluator_config)
+                internal_log_attributes = _build_internal_log_attributes(event_data, metric_name, evaluator_config, log_attributes)
 
 
                 # Optional field that may not always be present
                 if "reason" in event_data:
-                    log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
+                    standard_log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
 
                 # Handle error from sample if present
                 # Put the error message in error.type to follow OTel semantic conventions
                 error = event_data.get("sample", {}).get("error", {}).get("message", None)
                 if error:
-                    log_attributes["error.type"] = error
+                    standard_log_attributes["error.type"] = error
 
                 # Handle redteam attack properties if present
                 if "properties" in event_data:
@@ -1206,28 +1211,28 @@ def _log_events_to_app_insights(
 
                 # Add data source item attributes if present
                 if response_id:
-                    log_attributes["gen_ai.response.id"] = response_id
+                    standard_log_attributes["gen_ai.response.id"] = response_id
                 if conversation_id:
                     log_attributes["gen_ai.conversation.id"] = conversation_id
                 if previous_response_id:
                     internal_log_attributes["gen_ai.previous.response.id"] = previous_response_id
                 if agent_id:
-                    log_attributes["gen_ai.agent.id"] = agent_id
+                    standard_log_attributes["gen_ai.agent.id"] = agent_id
                 if agent_name:
-                    log_attributes["gen_ai.agent.name"] = agent_name
+                    standard_log_attributes["gen_ai.agent.name"] = agent_name
                 if agent_version:
                     internal_log_attributes["gen_ai.agent.version"] = agent_version
 
                 # Combine standard and internal attributes, put internal under the properties bag
-                log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
+                standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
-                log_attributes["http.client_ip"] = "0.0.0.0"
+                standard_log_attributes["http.client_ip"] = "0.0.0.0"
                 # Create a LogRecord and emit it
                 log_record = LogRecord(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
                     body=EVALUATION_EVENT_NAME,
-                    attributes=log_attributes,
+                    attributes=standard_log_attributes,
                     resource=resource,  # Pass the anonymized resource
                 )
                 if trace_id:
@@ -2117,7 +2122,7 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     """
     metric = None
     for expected_metric in metric_list:
-        if metric_key.startswith(expected_metric):
+        if metric_key.lower() == expected_metric.lower():
             metric = expected_metric
             break
     if metric is None:

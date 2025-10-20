@@ -113,6 +113,9 @@ class EvaluatorConfig(TypedDict, total=False):
     evaluator_version: NotRequired[Optional[str]] = None
     """Version of the evaluator from the evaluator asset, currently only used for Otel emission"""
 
+    evaluator_id : NotRequired[Optional[str]] = None
+    """ID of the evaluator from the evaluator asset, currently only used for Otel emission"""
+
     evaluator_definition: NotRequired[Optional[EvaluatorDefinition]] = None
     """Definition of the evaluator to be used from the evaluator asset"""
     """Currently only used for Otel emission, will be changed to used in AOAI eval results converter as well in the future."""
