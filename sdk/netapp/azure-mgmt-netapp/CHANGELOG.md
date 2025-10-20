@@ -40,6 +40,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `BackupPatch` deleted or renamed its instance variable `label`
   - Model `BackupPolicyPatch` deleted or renamed its instance variable `backup_policy_id`
   - Model `BackupPolicyPatch` deleted or renamed its instance variable `provisioning_state`
@@ -212,7 +213,7 @@
   - Method `NetAppResourceOperations.query_network_sibling_set` inserted a `positional_or_keyword` parameter `body`
   - Method `NetAppResourceOperations.query_network_sibling_set` deleted or renamed its parameter `network_sibling_set_id` of kind `positional_or_keyword`
   - Method `NetAppResourceOperations.query_network_sibling_set` deleted or renamed its parameter `subnet_id` of kind `positional_or_keyword`
-  - Method `VolumesOperations.begin_delete` changed its parameter `force_delete` from `positional_or_keyword` to `keyword_only`
+  - Parameter `force_delete` of method `VolumesOperations.begin_delete` is now required
 
 ## 14.0.0b3 (2025-10-09)
 
