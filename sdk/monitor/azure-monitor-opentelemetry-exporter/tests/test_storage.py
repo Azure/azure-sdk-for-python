@@ -3,6 +3,7 @@
 
 import os
 import shutil
+import tempfile
 import unittest
 from unittest import mock
 
@@ -15,6 +16,8 @@ from azure.monitor.opentelemetry.exporter._storage import (
 )
 
 TEST_FOLDER = os.path.abspath(".test.storage")
+DUMMY_INSTRUMENTATION_KEY = "00000000-0000-0000-0000-000000000000"
+TEST_USER = "multiuser-test"
 
 
 def throw(exc_type, *args, **kwargs):
@@ -911,6 +914,7 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_check_and_set_folder_permissions_unix_multiuser_scenario(self):
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
         )
         
@@ -918,6 +922,13 @@ class TestLocalFileStorage(unittest.TestCase):
         set_local_storage_setup_state_exception("")
         
         storage_module = "azure.monitor.opentelemetry.exporter._storage"
+        temp_suffix = f"opentelemetry-python-{DUMMY_INSTRUMENTATION_KEY}"
+        temp_root = tempfile.gettempdir()
+        microsoft_dir = os.path.join(temp_root, "Microsoft")
+        shared_root = os.path.join(microsoft_dir, "AzureMonitor")
+        storage_abs_path = os.path.join(
+            shared_root, TEST_USER, temp_suffix
+        )
 
         with mock.patch(f"{storage_module}.os.name", "posix"):
             chmod_calls = []
@@ -929,67 +940,63 @@ class TestLocalFileStorage(unittest.TestCase):
             def mock_makedirs(path, mode=0o777, exist_ok=False):
                 makedirs_calls.append((path, oct(mode), exist_ok))
 
-            test_path = "test_storage_multiuser"
-            storage_abs_path = "/tmp/Microsoft/AzureMonitor/opentelemetry-python-uuid"
-            parent_path = "/tmp/Microsoft/AzureMonitor"
-
             with mock.patch(f"{storage_module}.os.makedirs", side_effect=mock_makedirs):
                 with mock.patch(f"{storage_module}.os.chmod", side_effect=mock_chmod):
-                    with mock.patch(f"{storage_module}.os.path.abspath", return_value=storage_abs_path):
-                        with mock.patch(f"{storage_module}.os.path.dirname", return_value=parent_path):
-                            stor = LocalFileStorage(test_path)
+                    with mock.patch(f"{storage_module}.os.path.abspath", side_effect=lambda path: path):
+                        stor = LocalFileStorage(storage_abs_path)
 
-                            self.assertTrue(stor._enabled)
+                        self.assertTrue(stor._enabled)
 
-                            makedirs_modes = [call[1] for call in makedirs_calls]
-                            self.assertIn('0o755', makedirs_modes,
-                                          f"Expected makedirs with 0o755, got: {makedirs_calls}")
-                            self.assertIn('0o700', makedirs_modes,
-                                          f"Expected makedirs with 0o700, got: {makedirs_calls}")
+                        self.assertEqual(
+                            makedirs_calls,
+                            [(storage_abs_path, '0o777', True)],
+                            f"Unexpected makedirs calls: {makedirs_calls}",
+                        )
 
-                            chmod_modes = [call[1] for call in chmod_calls]
-                            self.assertIn('0o755', chmod_modes,
-                                          f"Expected chmod 0o755, got: {chmod_calls}")
-                            self.assertIn('0o700', chmod_modes,
-                                          f"Expected chmod 0o700, got: {chmod_calls}")
+                        self.assertEqual(
+                            {(storage_abs_path, '0o700')},
+                            {(call_path, mode) for call_path, mode in chmod_calls},
+                            f"Unexpected chmod calls: {chmod_calls}",
+                        )
 
-                            stor.close()
+                        stor.close()
         
         # Clean up
         set_local_storage_setup_state_exception("")
         
     def test_check_and_set_folder_permissions_unix_multiuser_parent_permission_failure(self):
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
         )
-        
+
         # Clear any existing exception state
         set_local_storage_setup_state_exception("")
-        
+
         storage_module = "azure.monitor.opentelemetry.exporter._storage"
+        temp_suffix = f"opentelemetry-python-{DUMMY_INSTRUMENTATION_KEY}"
+        temp_root = tempfile.gettempdir()
+        microsoft_dir = os.path.join(temp_root, "Microsoft")
+        shared_root = os.path.join(microsoft_dir, "AzureMonitor")
+        storage_abs_path = os.path.join(
+            shared_root, TEST_USER, temp_suffix
+        )
 
         with mock.patch(f"{storage_module}.os.name", "posix"):
-            def mock_chmod(path, mode):
-                if "AzureMonitor" in path and mode == 0o755:
-                    raise PermissionError("Operation not permitted on parent directory")
-                elif mode == 0o700:
-                    return
-                else:
-                    raise OSError(f"Unexpected chmod call: {path}, {oct(mode)}")
+            def mock_makedirs(path, mode=0o777, exist_ok=False):
+                raise PermissionError("Operation not permitted on parent directory")
 
-            test_path = "test_storage_multiuser_parent_failure"
-            storage_abs_path = "/tmp/Microsoft/AzureMonitor/opentelemetry-python-uuid"
-            parent_path = "/tmp/Microsoft/AzureMonitor"
+            with mock.patch(f"{storage_module}.os.makedirs", side_effect=mock_makedirs):
+                with mock.patch(f"{storage_module}.os.chmod"):
+                    with mock.patch(f"{storage_module}.os.path.abspath", side_effect=lambda path: path):
+                        stor = LocalFileStorage(storage_abs_path)
 
-            with mock.patch(f"{storage_module}.os.makedirs"):
-                with mock.patch(f"{storage_module}.os.chmod", side_effect=mock_chmod):
-                    with mock.patch(f"{storage_module}.os.path.abspath", return_value=storage_abs_path):
-                        with mock.patch(f"{storage_module}.os.path.dirname", return_value=parent_path):
-                            stor = LocalFileStorage(test_path)
+                        self.assertFalse(stor._enabled)
 
-                            self.assertTrue(stor._enabled)
+                        exception_state = get_local_storage_setup_state_exception()
+                        self.assertEqual(exception_state, "Operation not permitted on parent directory")
 
-                            stor.close()
+                        stor.close()
         
         # Clean up
         set_local_storage_setup_state_exception("")
@@ -1006,32 +1013,31 @@ class TestLocalFileStorage(unittest.TestCase):
         set_local_storage_setup_state_exception("")
         
         storage_module = "azure.monitor.opentelemetry.exporter._storage"
+        temp_suffix = f"opentelemetry-python-{DUMMY_INSTRUMENTATION_KEY}"
+        temp_root = tempfile.gettempdir()
+        microsoft_dir = os.path.join(temp_root, "Microsoft")
+        shared_root = os.path.join(microsoft_dir, "AzureMonitor")
+        storage_abs_path = os.path.join(
+            shared_root, TEST_USER, temp_suffix
+        )
 
         with mock.patch(f"{storage_module}.os.name", "posix"):
             def mock_chmod(path, mode):
-                if mode == 0o755:
-                    return
-                elif mode == 0o700:
+                if mode == 0o700:
                     raise PermissionError(test_error_message)
-                else:
-                    raise OSError(f"Unexpected chmod call: {path}, {oct(mode)}")
-
-            test_path = "test_storage_multiuser_storage_failure"
-            storage_abs_path = "/tmp/Microsoft/AzureMonitor/opentelemetry-python-uuid"
-            parent_path = "/tmp/Microsoft/AzureMonitor"
+                raise OSError(f"Unexpected chmod call: {path}, {oct(mode)}")
 
             with mock.patch(f"{storage_module}.os.makedirs"):
                 with mock.patch(f"{storage_module}.os.chmod", side_effect=mock_chmod):
-                    with mock.patch(f"{storage_module}.os.path.abspath", return_value=storage_abs_path):
-                        with mock.patch(f"{storage_module}.os.path.dirname", return_value=parent_path):
-                            stor = LocalFileStorage(test_path)
+                    with mock.patch(f"{storage_module}.os.path.abspath", side_effect=lambda path: path):
+                        stor = LocalFileStorage(storage_abs_path)
 
-                            self.assertFalse(stor._enabled)
+                        self.assertFalse(stor._enabled)
 
-                            exception_state = get_local_storage_setup_state_exception()
-                            self.assertEqual(exception_state, test_error_message)
+                        exception_state = get_local_storage_setup_state_exception()
+                        self.assertEqual(exception_state, test_error_message)
 
-                            stor.close()
+                        stor.close()
         
         # Clean up
         set_local_storage_setup_state_exception("")
