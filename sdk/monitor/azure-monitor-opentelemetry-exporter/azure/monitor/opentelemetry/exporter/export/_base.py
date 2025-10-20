@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import getpass
 import logging
 import os
 import tempfile
@@ -137,8 +138,10 @@ class BaseExporter:
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
+            shared_root = os.path.join(tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX)
+            user_segment = getpass.getuser()
             self._storage_directory = os.path.join(
-                tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
+                shared_root, user_segment, _TEMPDIR_PREFIX + temp_suffix
             )
         else:
             self._storage_directory = None
