@@ -30,7 +30,6 @@ from ._constants import (
 )
 from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
-    update_correlation_context_header,
     delay_failure,
     process_load_parameters,
     sdk_allowed_kwargs,

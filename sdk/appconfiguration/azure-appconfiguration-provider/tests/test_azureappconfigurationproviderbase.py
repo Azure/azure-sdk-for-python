@@ -177,6 +177,7 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
             self.headers,
             self.request_type,
             self.replica_count,
+            False,  # uses key vault
             True,  # is_failover_request=True
         )
         self.assertIn("Failover", result["Correlation-Context"])

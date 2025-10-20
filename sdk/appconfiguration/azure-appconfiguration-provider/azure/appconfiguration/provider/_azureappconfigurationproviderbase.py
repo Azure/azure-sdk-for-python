@@ -561,6 +561,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         :type request_type: str
         :param replica_count: The number of replica endpoints.
         :type replica_count: int
+        :param uses_key_vault: Whether this request uses Key Vault.
+        :type uses_key_vault: bool
         :param is_failover_request: Whether this is a failover request.
         :type is_failover_request: bool
         :return: The updated headers dictionary.
@@ -633,6 +635,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         except PackageNotFoundError:
             pass
         return ""
+
     def _deduplicate_settings(
         self, configuration_settings: List[ConfigurationSetting]
     ) -> Dict[str, ConfigurationSetting]:
