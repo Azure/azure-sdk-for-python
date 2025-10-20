@@ -1046,11 +1046,63 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data
         )
         if app_insights_configuration := kwargs.get("_app_insights_configuration"):
-            emit_eval_result_events_to_app_insights(app_insights_configuration, result["_evaluation_results_list"])
+            emit_eval_result_events_to_app_insights(app_insights_configuration, result["_evaluation_results_list"], evaluator_config)
 
     if output_path:
         _write_output(output_path, result)
     return result
+
+
+def _build_internal_log_attributes(
+    event_data: Dict[str, Any], 
+    metric_name: str, 
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+) -> Dict[str, str]:
+    """
+    Build internal log attributes for OpenTelemetry logging.
+    
+    :param event_data: The event data containing threshold and name information
+    :type event_data: Dict[str, Any]
+    :param metric_name: The name of the metric being evaluated
+    :type metric_name: str
+    :param evaluator_config: Configuration for evaluators
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    :return: Dictionary of internal log attributes
+    :rtype: Dict[str, str]
+    """
+    internal_log_attributes = {}
+    
+    # Add threshold if present
+    if event_data.get("threshold"):
+        internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
+    
+    # Add testing criteria details if present
+    testing_criteria_name = event_data.get("name")
+    if testing_criteria_name:
+        internal_log_attributes["gen_ai.evaluation.testing_criteria.name"] = testing_criteria_name
+        
+        # Get evaluator definition details
+        if evaluator_config and testing_criteria_name in evaluator_config:
+            testing_criteria_config = evaluator_config[testing_criteria_name]
+            
+            if "evaluator_name" in testing_criteria_config and testing_criteria_config["evaluator_name"]:
+                internal_log_attributes["gen_ai.evaluator.name"] = testing_criteria_config["evaluator_name"]
+
+            if "evaluator_version" in testing_criteria_config and testing_criteria_config["evaluator_version"] is not None:
+                internal_log_attributes["gen_ai.evaluator.version"] = str(testing_criteria_config["evaluator_version"])
+                
+            if ("evaluator_definition" in testing_criteria_config and
+                testing_criteria_config["evaluator_definition"] and
+                metric_name in testing_criteria_config["evaluator_definition"]["metrics"]):
+                metric_config_detail = testing_criteria_config["evaluator_definition"]["metrics"][metric_name]
+
+                if metric_config_detail:
+                    if metric_config_detail.get("min_value") is not None:
+                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail["min_value"])
+                    if metric_config_detail.get("max_value") is not None:
+                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail["max_value"])
+    
+    return internal_log_attributes
 
 
 def _log_events_to_app_insights(
@@ -1058,6 +1110,7 @@ def _log_events_to_app_insights(
     events: List[Dict[str, Any]],
     attributes: Optional[Dict[str, Any]] = None,
     data_source_item: Optional[Dict[str, Any]] = None,
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
@@ -1078,6 +1131,10 @@ def _log_events_to_app_insights(
         trace_id = None
         response_id = None
         conversation_id = None
+        previous_response_id = None
+        agent_id = None
+        agent_version = None
+        agent_name = None
         if data_source_item:
             for key, value in data_source_item.items():
                 if key.endswith("trace_id") and value and isinstance(value, str):
@@ -1085,90 +1142,119 @@ def _log_events_to_app_insights(
                     trace_id_str = str(value).replace("-", "").lower()
                     if len(trace_id_str) == 32:  # Valid trace_id length
                         trace_id = int(trace_id_str, 16)
-                elif key.endswith("response_id") and value and isinstance(value, str):
+                elif key == "previous_response_id" and value and isinstance(value, str):
+                    previous_response_id = value
+                elif key == "response_id" and value and isinstance(value, str):
                     response_id = value
-                elif key.endswith("conversation_id") and value and isinstance(value, str):
+                elif key == "conversation_id" and value and isinstance(value, str):
                     conversation_id = value
+                elif key == "agent_id" and value and isinstance(value, str):
+                    agent_id = value
+                elif key == "agent_version" and value and isinstance(value, str):
+                    agent_version = value
+                elif key == "agent_name" and value and isinstance(value, str):
+                    agent_name = value
 
         # Log each event as a separate log record
         for i, event_data in enumerate(events):
             try:
                 # Prepare log record attributes with specific mappings
-                log_attributes = {
+                # The standard attributes are already in https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md#event-eventgen_aievaluationresult
+                metric_name = event_data.get("metric")
+                standard_log_attributes = {
                     # Use the public API for custom events
                     # The KEY is "microsoft.custom_event.name", the VALUE is the event name
                     "microsoft.custom_event.name": EVALUATION_EVENT_NAME,
                     # These fields are always present and are already strings
-                    "gen_ai.evaluation.name": event_data.get("metric"),
-                    "gen_ai.evaluation.score.value": event_data.get("score"),
-                    "gen_ai.evaluation.score.label": event_data.get("label"),
+                    "gen_ai.evaluation.name": metric_name,
                 }
+
+                if "score" in event_data:
+                    standard_log_attributes["gen_ai.evaluation.score.value"] = str(event_data["score"])
+                if "label" in event_data:
+                    standard_log_attributes["gen_ai.evaluation.score.label"] = str(event_data["label"])
+
+                # Internal proposed attributes
+                # Put it in internal property bag for now, will be expanded if we got sign-off to Otel standard later.
+                internal_log_attributes = _build_internal_log_attributes(event_data, metric_name, evaluator_config)
+
 
                 # Optional field that may not always be present
                 if "reason" in event_data:
-                    log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
+                    standard_log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
 
                 # Handle error from sample if present
                 # Put the error message in error.type to follow OTel semantic conventions
                 error = event_data.get("sample", {}).get("error", {}).get("message", None)
                 if error:
-                    log_attributes["error.type"] = error
+                    standard_log_attributes["error.type"] = error
 
                 # Handle redteam attack properties if present
                 if "properties" in event_data:
                     properties = event_data["properties"]
 
                     if "attack_success" in properties:
-                        log_attributes["gen_ai.redteam.attack.success"] = str(properties["attack_success"])
+                        internal_log_attributes["gen_ai.redteam.attack.success"] = str(properties["attack_success"])
 
                     if "attack_technique" in properties:
-                        log_attributes["gen_ai.redteam.attack.technique"] = str(properties["attack_technique"])
+                        internal_log_attributes["gen_ai.redteam.attack.technique"] = str(properties["attack_technique"])
 
                     if "attack_complexity" in properties:
-                        log_attributes["gen_ai.redteam.attack.complexity"] = str(properties["attack_complexity"])
+                        internal_log_attributes["gen_ai.redteam.attack.complexity"] = str(properties["attack_complexity"])
 
                     if "attack_success_threshold" in properties:
-                        log_attributes["gen_ai.redteam.attack.success_threshold"] = str(
+                        internal_log_attributes["gen_ai.redteam.attack.success_threshold"] = str(
                             properties["attack_success_threshold"]
                         )
 
                 # Add additional attributes from AppInsights config if provided
                 if attributes:
                     if "run_type" in attributes:
-                        log_attributes["gen_ai.evaluation.azure_ai_type"] = str(attributes["run_type"])
+                        internal_log_attributes["gen_ai.evaluation.azure_ai_type"] = str(attributes["run_type"])
 
                     if "schedule_type" in attributes:
-                        log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(attributes["schedule_type"])
+                        internal_log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(attributes["schedule_type"])
 
                     if "run_id" in attributes:
-                        log_attributes["gen_ai.evaluation.run.id"] = str(attributes["run_id"])
+                        internal_log_attributes["gen_ai.evaluation.run.id"] = str(attributes["run_id"])
 
                     if "response_id" in attributes:
-                        log_attributes["gen_ai.response.id"] = str(attributes["response_id"])
+                        standard_log_attributes["gen_ai.response.id"] = str(attributes["response_id"])
 
                     if "agent_id" in attributes:
-                        log_attributes["gen_ai.agent.id"] = str(attributes["agent_id"])
+                        standard_log_attributes["gen_ai.agent.id"] = str(attributes["agent_id"])
 
                     if "agent_name" in attributes:
-                        log_attributes["gen_ai.agent.name"] = str(attributes["agent_name"])
+                        standard_log_attributes["gen_ai.agent.name"] = str(attributes["agent_name"])
 
                     if "agent_version" in attributes:
-                        log_attributes["gen_ai.agent.version"] = str(attributes["agent_version"])
+                        internal_log_attributes["gen_ai.agent.version"] = str(attributes["agent_version"])
 
                     if "project_id" in attributes:
-                        log_attributes["gen_ai.azure_ai_project.id"] = str(attributes["project_id"])
+                        internal_log_attributes["gen_ai.azure_ai_project.id"] = str(attributes["project_id"])
 
+                # Add data source item attributes if present
                 if response_id:
-                    log_attributes["gen_ai.response.id"] = response_id
+                    standard_log_attributes["gen_ai.response.id"] = response_id
                 if conversation_id:
-                    log_attributes["gen_ai.conversation.id"] = conversation_id
+                    standard_log_attributes["gen_ai.conversation.id"] = conversation_id
+                if previous_response_id:
+                    internal_log_attributes["gen_ai.previous.response.id"] = previous_response_id
+                if agent_id:
+                    standard_log_attributes["gen_ai.agent.id"] = agent_id
+                if agent_name:
+                    standard_log_attributes["gen_ai.agent.name"] = agent_name
+                if agent_version:
+                    internal_log_attributes["gen_ai.agent.version"] = agent_version
 
+                # Combine standard and internal attributes, put internal under the properties bag
+                standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
                 # Create a LogRecord and emit it
                 log_record = LogRecord(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
                     body=EVALUATION_EVENT_NAME,
-                    attributes=log_attributes,
+                    attributes=standard_log_attributes,
                 )
                 if trace_id:
                     log_record.trace_id = trace_id
@@ -1182,7 +1268,7 @@ def _log_events_to_app_insights(
         LOGGER.error(f"Failed to log events to App Insights: {e}")
 
 
-def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConfig, results: List[Dict]) -> None:
+def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConfig, results: List[Dict], evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None) -> None:
     """
     Emit evaluation result events to App Insights using OpenTelemetry logging.
     Each result is logged as an independent log record, potentially including trace context.
@@ -1238,6 +1324,7 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
                 events=result["results"],
                 attributes=app_insights_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
+                evaluator_config=evaluator_config
             )
         # Force flush to ensure events are sent
         logger_provider.force_flush()
