@@ -45,7 +45,6 @@ async def main():
             # Get async OpenAI client from project client
             async with await project_client.get_openai_client(api_version="2025-04-01-preview") as open_ai_client:
 
-                # [START finetuning_reinforcement_job_async_sample]
                 # Upload training and validation files using async OpenAI client
                 print("Uploading training file...")
                 with open(training_file_path, "rb") as f:
@@ -111,7 +110,6 @@ async def main():
                 print(f"\nListing checkpoints for fine-tuning job: {fine_tuning_job.id}")
                 async for checkpoint in open_ai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id, limit=10):
                     print(checkpoint)
-                # [END finetuning_reinforcement_job_async_sample]
 
 
 if __name__ == "__main__":

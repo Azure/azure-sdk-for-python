@@ -44,7 +44,6 @@ async def sample_finetuning_job_async():
             # Get OpenAI client from project client
             async with await project_client.get_openai_client(api_version="2025-04-01-preview") as open_ai_client:
 
-                # [START finetuning_supervised_job_async_sample]
                 # Upload training and validation file using OpenAI client
                 print("Uploading training file...")
                 with open(training_file_path, "rb") as f:
@@ -88,7 +87,6 @@ async def sample_finetuning_job_async():
                 print(f"\nCancelling fine-tuning job with ID: {fine_tuning_job.id}")
                 cancelled_job = await open_ai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
-                # [END finetuning_supervised_job_async_sample]
 
 
 if __name__ == "__main__":

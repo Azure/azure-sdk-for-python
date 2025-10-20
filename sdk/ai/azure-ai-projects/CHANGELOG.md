@@ -5,7 +5,8 @@
 ### Features added
 
 ### Sample updates
-* Added fine tuning samples for supervised, reinforcement and dpo types showing how to submit the fine-tuning jobs.
+* Added `fine tuning` samples for supervised, reinforcement and dpo types showing how to submit the fine-tuning jobs.
+* Added `files` samples for operations create, delete, list, retrieve and content.
 
 ## 1.1.0b4 (2025-09-12)
 

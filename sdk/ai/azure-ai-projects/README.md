@@ -10,6 +10,8 @@ resources in your Azure AI Foundry Project. Use it to:
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods the `.indexes` operations.
+* **Upload and list files** using methods the `.files` operations.
+* **Run Fine tuning jobs** using methods the `.fine_tuning.jobs` operations.
 
 The client library uses version `2025-05-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
 
@@ -283,6 +285,42 @@ print(connection)
 
 <!-- END SNIPPET -->
 
+### File operations
+
+The code below shows file operations using the OpenAI client. You can create (upload), retrieve metadata, retrieve content, list, and delete files. Full samples can be found under the "files" folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_files.files_sample -->
+
+```python
+# Create (upload) a file.
+print("Uploading file")
+with open(file_path, "rb") as f:
+    uploaded_file = open_ai_client.files.create(file=f, purpose="fine-tune")
+print(uploaded_file)
+
+# Retrieve file metadata by ID
+print(f"Retrieving file metadata with ID: {uploaded_file.id}")
+retrieved_file = open_ai_client.files.retrieve(uploaded_file.id)
+print(retrieved_file)
+
+# Retrieve file content
+print(f"Retrieving file content with ID: {uploaded_file.id}")
+file_content = open_ai_client.files.content(uploaded_file.id)
+print(file_content.content)
+
+# List all files
+print("Listing all files:")
+for file in open_ai_client.files.list():
+    print(file)
+
+# Delete a file
+print(f"Deleting file with ID: {uploaded_file.id}")
+deleted_file = open_ai_client.files.delete(uploaded_file.id)
+print(f"Successfully deleted file: {deleted_file.id}")
+```
+
+<!-- END SNIPPET -->
+
 ### Dataset operations
 
 The code below shows some Dataset operations. Full samples can be found under the "datasets"
@@ -369,6 +407,60 @@ for index in project_client.indexes.list_versions(name=index_name):
 
 print(f"Delete Index `{index_name}` version `{index_version}`:")
 project_client.indexes.delete(name=index_name, version=index_version)
+```
+
+<!-- END SNIPPET -->
+
+### Fine-tuning operations
+
+The code below shows fine-tuning operations using the OpenAI client. You can create, retrieve, list, and cancel fine-tuning jobs. Full samples for supervised, DPO, and reinforcement learning fine-tuning jobs can be found under the "finetuning" folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_finetuning_supervised_job.finetuning_supervised_job_sample -->
+
+```python
+# Upload training and validation file using OpenAI client
+print("Uploading training file...")
+with open(training_file_path, "rb") as f:
+    train_file = open_ai_client.files.create(file=f, purpose="fine-tune")
+print(f"Uploaded training file with ID: {train_file.id}")
+
+print("Uploading validation file...")
+with open(validation_file_path, "rb") as f:
+    validation_file = open_ai_client.files.create(file=f, purpose="fine-tune")
+print(f"Uploaded validation file with ID: {validation_file.id}")
+
+# Create a supervised fine-tuning job using OpenAI client
+fine_tuning_job = open_ai_client.fine_tuning.jobs.create(
+    training_file=train_file.id,
+    validation_file=validation_file.id,
+    model=model_name,
+    method={
+        "type": "supervised",
+        "supervised": {
+            "hyperparameters": {
+                "n_epochs": 3,
+                "batch_size": 1,
+                "learning_rate_multiplier": 1.0
+            }
+        }
+    }
+)
+print(fine_tuning_job)
+
+# Get the fine-tuning job by ID
+print(f"\nGetting fine-tuning job with ID: {fine_tuning_job.id}")
+retrieved_job = open_ai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+print(retrieved_job)
+
+# List all fine-tuning jobs
+print("\nListing all fine-tuning jobs:")
+for job in open_ai_client.fine_tuning.jobs.list():
+    print(job)
+
+# Cancel the fine-tuning job
+print(f"\nCancelling fine-tuning job with ID: {fine_tuning_job.id}")
+cancelled_job = open_ai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
 ```
 
 <!-- END SNIPPET -->

@@ -45,7 +45,6 @@ async def main():
             # Get async OpenAI client from project client
             async with await project_client.get_openai_client(api_version="2025-04-01-preview") as open_ai_client:
 
-                # [START finetuning_dpo_job_async_sample]
                 # Upload training and validation file using async OpenAI client
                 print("Uploading training file...")
                 with open(training_file_path, "rb") as f:
@@ -79,7 +78,6 @@ async def main():
                 print(f"\nGetting fine-tuning job with ID: {fine_tuning_job.id}")
                 retrieved_job = await open_ai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
                 print(retrieved_job)
-                # [END finetuning_dpo_job_async_sample]
 
 
 if __name__ == "__main__":

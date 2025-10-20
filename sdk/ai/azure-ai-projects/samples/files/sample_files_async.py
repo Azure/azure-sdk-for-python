@@ -65,7 +65,7 @@ async def main() -> None:
                     print(file)
 
                 # Delete a file
-                print(f"\nDeleting file with ID: {uploaded_file.id}")
+                print(f"Deleting file with ID: {uploaded_file.id}")
                 deleted_file = await open_ai_client.files.delete(uploaded_file.id)
                 print(f"Successfully deleted file: {deleted_file.id}")
                 # [END files_async_sample]

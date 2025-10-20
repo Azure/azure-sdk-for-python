@@ -42,7 +42,6 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         # Get OpenAI client from project client
         with project_client.get_openai_client(api_version="2025-04-01-preview") as open_ai_client:
 
-            # [START finetuning_dpo_job_sample]
             # Upload training and validation file using OpenAI client
             print("Uploading training file...")
             with open(training_file_path, "rb") as f:
@@ -76,4 +75,3 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             print(f"\nGetting fine-tuning job with ID: {fine_tuning_job.id}")
             retrieved_job = open_ai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
             print(retrieved_job)
-            # [END finetuning_dpo_job_sample]
