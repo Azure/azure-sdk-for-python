@@ -1058,7 +1058,6 @@ def _log_events_to_app_insights(
     events: List[Dict[str, Any]],
     log_attributes: Dict[str, Any],
     data_source_item: Optional[Dict[str, Any]] = None,
-    resource=None,  # Resource to attach to LogRecords
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
@@ -1072,11 +1071,7 @@ def _log_events_to_app_insights(
     :type log_attributes: Dict[str, Any]
     :param data_source_item: Data source item containing trace_id, response_id, conversation_id
     :type data_source_item: Optional[Dict[str, Any]]
-    :param resource: Resource to attach to LogRecords for anonymization
-    :type resource: Optional[Resource]
     """
-
-    from opentelemetry.sdk._logs import LogRecord
 
     try:
         # Get the trace_id and other context from data source item
@@ -1161,18 +1156,28 @@ def _log_events_to_app_insights(
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
                 log_attributes["http.client_ip"] = "0.0.0.0"
 
-                # Create a LogRecord and emit it, passing the resource for anonymization
-                log_record = LogRecord(
+                # Create context with trace_id if present (for distributed tracing correlation)
+                ctx = None
+                if trace_id:
+                    from opentelemetry import trace
+                    from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
+                    
+                    span_context = SpanContext(
+                        trace_id=trace_id,
+                        span_id=0,
+                        is_remote=False,
+                        trace_flags=TraceFlags(0x01),
+                    )
+                    span = NonRecordingSpan(span_context)
+                    ctx = trace.set_span_in_context(span)
+
+                otel_logger.emit(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
                     body=EVALUATION_EVENT_NAME,
                     attributes=log_attributes,
-                    resource=resource,  # Pass the anonymized resource
+                    context=ctx,
                 )
-                if trace_id:
-                    log_record.trace_id = trace_id
-
-                otel_logger.emit(log_record)
 
             except Exception as e:
                 LOGGER.warning(f"Failed to log event {i}: {e}")
@@ -1251,7 +1256,6 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
                 events=result["results"],
                 log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
-                resource=anonymized_resource,  # Pass the anonymized resource
             )
         # Force flush to ensure events are sent
         logger_provider.force_flush()
