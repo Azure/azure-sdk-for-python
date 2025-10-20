@@ -80,6 +80,11 @@ class TestBase(AzureRecordedTestCase):
         "connection_name": "balapvbyostoragecanary",
     }
 
+    test_files_params = {
+        "test_file_name": "test_file.jsonl",
+        "file_purpose": "fine-tune",
+    }
+
     # Regular expression describing the pattern of an Application Insights connection string.
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
@@ -253,3 +258,23 @@ class TestBase(AzureRecordedTestCase):
             dataset_credential.blob_reference.credential.type == "SAS"
         )  # Why is this not of type CredentialType.SAS as defined for Connections?
         assert dataset_credential.blob_reference.credential.sas_uri
+
+    @classmethod
+    def validate_file(
+        cls,
+        file_obj,
+        *,
+        expected_file_id: Optional[str] = None,
+        expected_filename: Optional[str] = None,
+        expected_purpose: Optional[str] = None,
+    ):
+        assert file_obj is not None
+        assert file_obj.id is not None
+        assert file_obj.bytes is not None
+        assert file_obj.created_at is not None
+        assert file_obj.filename is not None
+        assert file_obj.purpose is not None
+
+        TestBase.assert_equal_or_not_none(file_obj.id, expected_file_id)
+        TestBase.assert_equal_or_not_none(file_obj.filename, expected_filename)
+        TestBase.assert_equal_or_not_none(file_obj.purpose, expected_purpose)
