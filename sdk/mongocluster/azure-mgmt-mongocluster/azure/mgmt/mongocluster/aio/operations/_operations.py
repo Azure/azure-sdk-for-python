@@ -1238,6 +1238,7 @@ class MongoClustersOperations:
             "2025-04-01-preview",
             "2025-07-01-preview",
             "2025-08-01-preview",
+            "2025-09-01",
         ],
     )
     async def _promote_initial(
@@ -1410,6 +1411,7 @@ class MongoClustersOperations:
             "2025-04-01-preview",
             "2025-07-01-preview",
             "2025-08-01-preview",
+            "2025-09-01",
         ],
     )
     async def begin_promote(
@@ -2740,6 +2742,7 @@ class ReplicasOperations:
             "2025-04-01-preview",
             "2025-07-01-preview",
             "2025-08-01-preview",
+            "2025-09-01",
         ],
     )
     def list_by_parent(
@@ -2865,7 +2868,7 @@ class UsersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview", "2025-09-01"],
     )
     async def get(
         self, resource_group_name: str, mongo_cluster_name: str, user_name: str, **kwargs: Any
@@ -2950,7 +2953,7 @@ class UsersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview", "2025-09-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -3131,7 +3134,7 @@ class UsersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview", "2025-09-01"],
     )
     async def begin_create_or_update(
         self,
@@ -3222,7 +3225,7 @@ class UsersOperations:
                 "user_name",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview", "2025-09-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, mongo_cluster_name: str, user_name: str, **kwargs: Any
@@ -3294,7 +3297,7 @@ class UsersOperations:
                 "user_name",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview", "2025-09-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, user_name: str, **kwargs: Any
@@ -3369,7 +3372,7 @@ class UsersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-07-01-preview", "2025-08-01-preview", "2025-09-01"],
     )
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
