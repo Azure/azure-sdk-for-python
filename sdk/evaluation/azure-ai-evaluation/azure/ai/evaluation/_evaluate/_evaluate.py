@@ -1058,6 +1058,7 @@ def _log_events_to_app_insights(
     events: List[Dict[str, Any]],
     log_attributes: Dict[str, Any],
     data_source_item: Optional[Dict[str, Any]] = None,
+    resource=None,  # Resource to attach to LogRecords
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
@@ -1071,6 +1072,8 @@ def _log_events_to_app_insights(
     :type log_attributes: Dict[str, Any]
     :param data_source_item: Data source item containing trace_id, response_id, conversation_id
     :type data_source_item: Optional[Dict[str, Any]]
+    :param resource: Resource to attach to LogRecords for anonymization
+    :type resource: Optional[Resource]
     """
 
     from opentelemetry.sdk._logs import LogRecord
@@ -1155,12 +1158,16 @@ def _log_events_to_app_insights(
                 if agent_id:
                     log_attributes["gen_ai.agent.id"] = agent_id
 
-                # Create a LogRecord and emit it
+                # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
+                log_attributes["http.client_ip"] = "0.0.0.0"
+
+                # Create a LogRecord and emit it, passing the resource for anonymization
                 log_record = LogRecord(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
                     body=EVALUATION_EVENT_NAME,
                     attributes=log_attributes,
+                    resource=resource,  # Pass the anonymized resource
                 )
                 if trace_id:
                     log_record.trace_id = trace_id
@@ -1195,18 +1202,30 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         return
 
     try:
-        # Configure OpenTelemetry logging
-        logger_provider = LoggerProvider()
+        # Configure OpenTelemetry logging with anonymized Resource attributes
+        from opentelemetry.sdk.resources import Resource
+        from opentelemetry.semconv.resource import ResourceAttributes
+        
+        # Create a resource with minimal attributes to prevent sensitive data collection
+        # SERVICE_INSTANCE_ID maps to cloud_RoleInstance in Azure Monitor and prevents
+        # Azure Monitor from auto-detecting the device hostname
+        anonymized_resource = Resource.create({
+            ResourceAttributes.SERVICE_NAME: "unknown",
+            ResourceAttributes.SERVICE_INSTANCE_ID: "unknown",
+        })
+        
+        logger_provider = LoggerProvider(resource=anonymized_resource)
         _logs.set_logger_provider(logger_provider)
 
         # Create Azure Monitor log exporter
         azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
 
-        # Add the exporter to the logger provider
+        # Add the Azure Monitor exporter to the logger provider
         logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
 
-        # Create a logger
-        otel_logger = _logs.get_logger(__name__)
+        # Create a logger from OUR configured logger_provider (not the global one)
+        # This ensures the logger uses our anonymized resource
+        otel_logger = logger_provider.get_logger(__name__)
         
         # Initialize base log attributes with extra_attributes if present, otherwise empty dict
         base_log_attributes = app_insights_config.get("extra_attributes", {})
@@ -1230,6 +1249,7 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
                 events=result["results"],
                 log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
+                resource=anonymized_resource,  # Pass the anonymized resource
             )
         # Force flush to ensure events are sent
         logger_provider.force_flush()
