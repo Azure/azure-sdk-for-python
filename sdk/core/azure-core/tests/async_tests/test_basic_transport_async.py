@@ -1060,15 +1060,18 @@ async def test_aiohttp_timeout_response(port, http_request):
 
         request = http_request("GET", f"http://localhost:{port}/basic/string")
 
-        with pytest.raises(ServiceResponseTimeoutError) as err:
-            await transport.send(request, read_timeout=0.0001)
+        with mock.patch.object(
+            aiohttp.ClientResponse, "start", side_effect=asyncio.TimeoutError("Too slow!")
+        ) as mock_method:
+            with pytest.raises(ServiceResponseTimeoutError) as err:
+                await transport.send(request)
 
-        with pytest.raises(ServiceResponseError) as err:
-            await transport.send(request, read_timeout=0.0001)
+            with pytest.raises(ServiceResponseError) as err:
+                await transport.send(request)
 
-        stream_resp = http_request("GET", f"http://localhost:{port}/streams/basic")
-        with pytest.raises(ServiceResponseTimeoutError) as err:
-            await transport.send(stream_resp, stream=True, read_timeout=0.0001)
+            stream_resp = http_request("GET", f"http://localhost:{port}/streams/basic")
+            with pytest.raises(ServiceResponseTimeoutError) as err:
+                await transport.send(stream_resp, stream=True)
 
         stream_resp = await transport.send(stream_resp, stream=True)
         with mock.patch.object(
