@@ -20,7 +20,7 @@ from test_per_partition_automatic_failover import create_failover_errors, create
 from test_per_partition_circuit_breaker_mm import REGION_1, REGION_2, PK_VALUE, BATCH, write_operations_and_errors, write_operations_and_boolean
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 
-# cspell:disable
+#cspell:ignore PPAF, ppaf
 
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
