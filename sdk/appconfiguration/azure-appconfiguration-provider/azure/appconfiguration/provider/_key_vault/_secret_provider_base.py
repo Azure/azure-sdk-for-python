@@ -30,13 +30,11 @@ class _SecretProviderBase:
             or "secret_resolver" in kwargs
         )
 
-        refresh_interval = kwargs.pop("secret_refresh_interval", 60)
-
-        if refresh_interval <= 1:
+        if kwargs.get("secret_refresh_interval", 60) < 1:
             raise ValueError("Secret refresh interval must be greater than 1 second.")
 
         self.secret_refresh_timer: Optional[_RefreshTimer] = (
-            _RefreshTimer(refresh_interval=refresh_interval)
+            _RefreshTimer(refresh_interval=kwargs.pop("secret_refresh_interval", 60))
             if self.uses_key_vault and "secret_refresh_interval" in kwargs
             else None
         )
