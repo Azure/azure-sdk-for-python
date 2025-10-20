@@ -8,7 +8,8 @@ from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase, setup_configs, has_feature_flag
+from testcase import has_feature_flag
+from asynctestcase import AppConfigTestCase, setup_configs
 from test_constants import FEATURE_MANAGEMENT_KEY
 
 
@@ -31,7 +32,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_select_feature_flags(self, appconfiguration_connection_string):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        await setup_configs(client, None)
+        await setup_configs(client, None, None)
 
         async with await load(
             connection_string=appconfiguration_connection_string,

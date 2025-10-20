@@ -11,8 +11,10 @@ import sys
 from azure.appconfiguration.provider import WatchKey
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase, has_feature_flag
+from testcase import has_feature_flag
+from asynctestcase import AppConfigTestCase
 from test_constants import FEATURE_MANAGEMENT_KEY
+from unittest.mock import Mock
 
 try:
     # Python 3.7 does not support AsyncMock

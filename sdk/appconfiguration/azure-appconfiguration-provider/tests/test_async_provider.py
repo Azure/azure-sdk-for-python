@@ -4,15 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
-from azure.appconfiguration.provider.aio import AzureAppConfigurationProvider
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from asynctestcase import AppConfigTestCase, has_feature_flag
+from testcase import has_feature_flag
+from asynctestcase import AppConfigTestCase
 from test_constants import FEATURE_MANAGEMENT_KEY
 from unittest.mock import MagicMock, patch
-import asyncio
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     update_correlation_context_header,
+)
+from azure.appconfiguration.provider.aio._azureappconfigurationproviderasync import (
+    _buildprovider,
 )
 
 
@@ -130,7 +132,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             ]
 
             # Create the provider with the mocked client manager
-            provider = AzureAppConfigurationProvider(connection_string="mock_connection_string")
+            provider = await _buildprovider("=mock_connection_string;;", None, None)
             provider._replica_client_manager = mock_client_manager
 
             # Call the method to process key-value pairs
