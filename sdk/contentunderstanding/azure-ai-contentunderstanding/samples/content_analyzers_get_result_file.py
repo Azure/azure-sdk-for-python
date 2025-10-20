@@ -16,7 +16,7 @@ from collections.abc import AsyncIterator
 from typing import Any
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.aio.operations import ContentUnderstandingAnalyzeAsyncLROPoller
+from azure.ai.contentunderstanding.aio.operations import AnalyzeAsyncLROPoller
 from azure.ai.contentunderstanding import models as _models
 from azure.ai.contentunderstanding.models import AnalyzeResult
 from azure.ai.contentunderstanding.models import (

@@ -12,7 +12,7 @@ import pytest
 from unittest.mock import Mock, patch
 from azure.core.polling import LROPoller, PollingMethod
 from azure.ai.contentunderstanding.operations._patch import (
-    ContentUnderstandingAnalyzeLROPoller,
+    AnalyzeLROPoller,
     _parse_operation_id,
 )
 
@@ -48,8 +48,8 @@ class TestParseOperationId:
             _parse_operation_id(url)
 
 
-class TestContentUnderstandingAnalyzeLROPoller:
-    """Test the ContentUnderstandingAnalyzeLROPoller class."""
+class TestAnalyzeLROPoller:
+    """Test the AnalyzeLROPoller class."""
 
     def test_details_property_success(self):
         """Test the details property when operation ID can be extracted."""
@@ -65,7 +65,7 @@ class TestContentUnderstandingAnalyzeLROPoller:
         mock_polling_method._initial_response = mock_initial_response
 
         # Create poller instance
-        poller = ContentUnderstandingAnalyzeLROPoller(
+        poller = AnalyzeLROPoller(
             client=Mock(),
             initial_response=Mock(),
             deserialization_callback=Mock(),
@@ -89,7 +89,7 @@ class TestContentUnderstandingAnalyzeLROPoller:
         mock_polling_method._initial_response = mock_initial_response
 
         # Create poller instance
-        poller = ContentUnderstandingAnalyzeLROPoller(
+        poller = AnalyzeLROPoller(
             client=Mock(),
             initial_response=Mock(),
             deserialization_callback=Mock(),
@@ -116,7 +116,7 @@ class TestContentUnderstandingAnalyzeLROPoller:
         mock_polling_method._initial_response = mock_initial_response
 
         # Create poller instance
-        poller = ContentUnderstandingAnalyzeLROPoller(
+        poller = AnalyzeLROPoller(
             client=Mock(),
             initial_response=Mock(),
             deserialization_callback=Mock(),
@@ -140,12 +140,12 @@ class TestContentUnderstandingAnalyzeLROPoller:
         )
 
         # Test the class method
-        poller = ContentUnderstandingAnalyzeLROPoller.from_continuation_token(
+        poller = AnalyzeLROPoller.from_continuation_token(
             polling_method=mock_polling_method,
             continuation_token="test-token"
         )
 
-        assert isinstance(poller, ContentUnderstandingAnalyzeLROPoller)
+        assert isinstance(poller, AnalyzeLROPoller)
         mock_polling_method.from_continuation_token.assert_called_once_with("test-token")
 
 
@@ -153,7 +153,7 @@ class TestPollerIntegration:
     """Test integration with the operations classes."""
 
     def test_analyze_operation_returns_custom_poller(self):
-        """Test that begin_analyze returns ContentUnderstandingAnalyzeLROPoller."""
+        """Test that begin_analyze returns AnalyzeLROPoller."""
         from azure.ai.contentunderstanding.operations._patch import ContentAnalyzersOperations
         
         # Mock the operations class with proper parameters
@@ -171,7 +171,7 @@ class TestPollerIntegration:
             result = operations.begin_analyze("test-analyzer", url="https://example.com/doc.pdf")
             
             # Verify it returns the custom poller
-            assert isinstance(result, ContentUnderstandingAnalyzeLROPoller)
+            assert isinstance(result, AnalyzeLROPoller)
 
     def test_classify_operation_returns_generic_poller(self):
         """Test that begin_classify returns generic LROPoller (no custom functionality)."""
@@ -190,4 +190,4 @@ class TestPollerIntegration:
             
             # Verify it returns the generic poller (not custom)
             assert isinstance(result, LROPoller)
-            assert not isinstance(result, ContentUnderstandingAnalyzeLROPoller)
+            assert not isinstance(result, AnalyzeLROPoller)

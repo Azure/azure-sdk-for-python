@@ -27,7 +27,7 @@ __all__: List[str] = [
     "FacesOperations",
     "ContentAnalyzersOperations", 
     "ContentClassifiersOperations",
-    "ContentUnderstandingAnalyzeAsyncLROPoller"
+    "AnalyzeAsyncLROPoller"
 ]
 
 
@@ -50,7 +50,7 @@ def _parse_operation_id(operation_location_header: str) -> str:
     return match.group(1)
 
 
-class ContentUnderstandingAnalyzeAsyncLROPoller(AsyncLROPoller[_models.AnalyzeResult]):
+class AnalyzeAsyncLROPoller(AsyncLROPoller[_models.AnalyzeResult]):
     """Custom AsyncLROPoller for Content Understanding analyze operations with details property."""
 
     @property
@@ -77,7 +77,7 @@ class ContentUnderstandingAnalyzeAsyncLROPoller(AsyncLROPoller[_models.AnalyzeRe
     @classmethod
     def from_continuation_token(
         cls, polling_method: Any, continuation_token: str, **kwargs: Any
-    ) -> "ContentUnderstandingAnalyzeAsyncLROPoller":
+    ) -> "AnalyzeAsyncLROPoller":
         """Create a new poller from a continuation token.
 
         :param polling_method: The polling method to use
@@ -209,7 +209,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         content_type: str = "application/json",
         inputs: Optional[List[_models.AnalyzeInput]] = None,
         **kwargs: Any
-    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
+    ) -> AnalyzeAsyncLROPoller:
         """Extract content and fields from input using URL.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -245,7 +245,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         content_type: str = "application/octet-stream",
         inputs: Optional[List[_models.AnalyzeInput]] = None,
         **kwargs: Any
-    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
+    ) -> AnalyzeAsyncLROPoller:
         """Extract content and fields from input using binary data.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -279,7 +279,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
+    ) -> AnalyzeAsyncLROPoller:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -311,7 +311,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:
+    ) -> AnalyzeAsyncLROPoller:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -336,7 +336,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
     @distributed_trace_async
     async def begin_analyze(
         self, analyzer_id: str, *args: Any, **kwargs: Any
-    ) -> ContentUnderstandingAnalyzeAsyncLROPoller:  # type: ignore[override]
+    ) -> AnalyzeAsyncLROPoller:  # type: ignore[override]
         """Extract content and fields from input with url/data mutual exclusivity.
 
         This method enforces that url and data cannot be provided simultaneously,
@@ -384,7 +384,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
                 content_type=content_type,
                 **kwargs
             )
-            return ContentUnderstandingAnalyzeAsyncLROPoller(
+            return AnalyzeAsyncLROPoller(
                 self._client,  # type: ignore
                 poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
                 poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access
@@ -393,7 +393,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
 
         # Call the original method for all other cases and wrap in custom poller
         poller = await super().begin_analyze(analyzer_id, *args, **kwargs)
-        return ContentUnderstandingAnalyzeAsyncLROPoller(
+        return AnalyzeAsyncLROPoller(
             self._client,  # type: ignore
             poller._polling_method._initial_response,  # type: ignore  # pylint: disable=protected-access
             poller._polling_method._deserialization_callback,  # type: ignore  # pylint: disable=protected-access

@@ -681,8 +681,8 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             )
 
             # Extract operation ID for get_result_file test using custom poller's details property
-            from azure.ai.contentunderstanding.aio.operations._patch import ContentUnderstandingAnalyzeAsyncLROPoller
-            assert isinstance(analysis_poller, ContentUnderstandingAnalyzeAsyncLROPoller), "Should return custom ContentUnderstandingAnalyzeAsyncLROPoller"
+            from azure.ai.contentunderstanding.aio.operations._patch import AnalyzeAsyncLROPoller
+            assert isinstance(analysis_poller, AnalyzeAsyncLROPoller), "Should return custom AnalyzeAsyncLROPoller"
             
             details = analysis_poller.details
             assert "operation_id" in details, "Details should contain operation_id"
