@@ -64,13 +64,13 @@
   - Added enum `WorkflowHealthState`
   - Added enum `WorkflowKind`
   - Added enum `WorkflowState`
-  - Model `ConnectedEnvironmentsCertificatesOperations` added method `begin_create_or_update`
-  - Model `ConnectedEnvironmentsCertificatesOperations` added method `begin_delete`
-  - Model `ConnectedEnvironmentsCertificatesOperations` added method `begin_update`
-  - Model `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_create_or_update`
-  - Model `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
-  - Model `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
-  - Model `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
   - Added operation group `HttpRouteConfigOperations`
   - Added operation group `LogicAppsOperations`
   - Added operation group `MaintenanceConfigurationsOperations`
