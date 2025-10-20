@@ -62,12 +62,12 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
-# AzureSdkOwners: @xiangyan99
+# AzureSdkOwners: @mrm9084
 # ServiceLabel: %App Configuration
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99
+/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo
 
 # ServiceOwners: @mrm9084
 # ServiceLabel: %App Configuration Provider
