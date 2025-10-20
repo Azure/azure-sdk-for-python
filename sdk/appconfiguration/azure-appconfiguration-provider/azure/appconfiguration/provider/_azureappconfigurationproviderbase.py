@@ -290,20 +290,11 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
         self._trim_prefixes: List[str] = sorted(trim_prefixes, key=len, reverse=True)
-
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
         self._watched_settings: Dict[Tuple[str, str], Optional[str]] = {
             _build_watched_setting(s): None for s in refresh_on
         }
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
-        self._keyvault_credential = kwargs.pop("keyvault_credential", None)
-        self._secret_resolver = kwargs.pop("secret_resolver", None)
-        self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
-        self._uses_key_vault = (
-            self._keyvault_credential is not None
-            or (self._keyvault_client_configs is not None and len(self._keyvault_client_configs) > 0)
-            or self._secret_resolver is not None
-        )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
@@ -598,3 +589,18 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         for feature_flag in feature_flags:
             watched_feature_flags[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return watched_feature_flags
+
+    def _deduplicate_settings(
+        self, configuration_settings: List[ConfigurationSetting]
+    ) -> Dict[str, ConfigurationSetting]:
+        """
+        Deduplicates configuration settings by key.
+
+        :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
+        :return: A dictionary mapping keys to their unique configuration settings
+        :rtype: Dict[str, ConfigurationSetting]
+        """
+        unique_settings: Dict[str, ConfigurationSetting] = {}
+        for settings in configuration_settings:
+            unique_settings[settings.key] = settings
+        return unique_settings
