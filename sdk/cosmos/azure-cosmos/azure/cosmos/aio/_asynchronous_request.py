@@ -23,6 +23,7 @@
 """
 import copy
 import json
+import logging
 import time
 
 from urllib.parse import urlparse
@@ -33,6 +34,7 @@ from .. import http_constants
 from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
+logger = logging.getLogger("azure.cosmos.aio._Request")
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
@@ -96,7 +98,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         and parse_result.hostname != "127.0.0.1"
         and not connection_policy.DisableSSLVerification
     )
-
+    start = time.perf_counter()
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -123,6 +125,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
+    end = time.perf_counter()
+    logger.info(f"client_id={global_endpoint_manager.client.client_id} _PipelineRunFunction e2e_ms={(end - start) * 1000:.2f}")
 
     response = response.http_response
     headers = copy.copy(response.headers)

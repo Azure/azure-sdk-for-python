@@ -25,6 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
+import time
 from typing import Tuple, Any
 
 from azure.core.exceptions import AzureError
@@ -94,7 +95,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     async def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
+        start = time.perf_counter()
         await self.refresh_endpoint_list(database_account)
+        end = time.perf_counter()
+        logger.info(f"client_id={self.client.client_id} refresh endpoint list private call e2e_ms={(end - start) * 1000:.2f}")
         self.startup = False
 
     def update_location_cache(self):
@@ -124,13 +128,20 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 if not self.refresh_needed:
                     return
                 try:
+
+                    start = time.perf_counter()
                     await self._refresh_endpoint_list_private(database_account, **kwargs)
+                    end = time.perf_counter()
+                    logger.info(f"client_id={self.client.client_id} refresh endpoint list private call e2e_ms={(end - start) * 1000:.2f}")
                 except Exception as e:
                     raise e
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account and not self.startup:
+            start = time.perf_counter()
             self.location_cache.perform_on_database_account_read(database_account)
+            end = time.perf_counter()
+            logger.info(f"client_id={self.client.client_id} perform on database account read call e2e_ms={(end - start) * 1000:.2f}")
             self.refresh_needed = False
             self.last_refresh_time = current_time_millis()
         else:
@@ -143,12 +154,18 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self.refresh_task = asyncio.create_task(self._endpoints_health_check(**kwargs))
                 else:
                     # on startup do this in foreground
+                    start = time.perf_counter()
                     await self._endpoints_health_check(**kwargs)
+                    end = time.perf_counter()
+                    logger.info(f"client_id={self.client.client_id} endpoints health check call e2e_ms={(end - start) * 1000:.2f}")
                     self.startup = False
 
     async def _database_account_check(self, endpoint: str, **kwargs: dict[str, Any]):
         try:
+            start = time.perf_counter()
             await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
+            end = time.perf_counter()
+            logger.info(f"client_id={self.client.client_id} endpoints health check call e2e_ms={(end - start) * 1000:.2f}")
             self.location_cache.mark_endpoint_available(endpoint)
         except (exceptions.CosmosHttpResponseError, AzureError):
             self._mark_endpoint_unavailable(endpoint)
@@ -159,17 +176,29 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         Validating if the endpoint is healthy else marking it as unavailable.
         """
         # get the database account from the default endpoint first
+        start = time.perf_counter()
         database_account, attempted_endpoint = await self._GetDatabaseAccount(**kwargs)
+        end = time.perf_counter()
+        logger.info(f"client_id={self.client.client_id} initial get database account call in endpoints health check e2e_ms={(end - start) * 1000:.2f}")
+        start = time.perf_counter()
         self.location_cache.perform_on_database_account_read(database_account)
+        end = time.perf_counter()
+        logger.info(f"client_id={self.client.client_id} perform on database account read call in endpoints health check e2e_ms={(end - start) * 1000:.2f}")
         # get all the endpoints to check
         endpoints = self.location_cache.endpoints_to_health_check()
         database_account_checks = []
         for endpoint in endpoints:
             if endpoint != attempted_endpoint:
                 database_account_checks.append(self._database_account_check(endpoint, **kwargs))
+        start = time.perf_counter()
         await asyncio.gather(*database_account_checks)
+        end = time.perf_counter()
+        logger.info(f"client_id={self.client.client_id} asyncio gather e2e_ms={(end - start) * 1000:.2f}")
 
+        start = time.perf_counter()
         self.location_cache.update_location_cache()
+        end = time.perf_counter()
+        logger.info(f"client_id={self.client.client_id} asyncio gather e2e_ms={(end - start) * 1000:.2f}")
 
     async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.

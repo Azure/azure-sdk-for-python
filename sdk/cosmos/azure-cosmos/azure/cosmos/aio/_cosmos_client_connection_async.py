@@ -23,7 +23,9 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import logging
 import os
+import time
 from urllib.parse import urlparse
 import uuid
 from typing import Callable, Any, Iterable, Mapping, Optional, Sequence, Tuple, Union, cast
@@ -82,6 +84,7 @@ from .._range_partition_resolver import RangePartitionResolver
 
 
 
+logger = logging.getLogger("azure.cosmos.aio.CosmosClientConnection")
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -315,11 +318,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     async def _setup(self) -> None:
         if 'database_account' not in self._setup_kwargs:
+            start = time.perf_counter()
             database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs
             )
+
+            end = time.perf_counter()
+            logger.info(f"client_id={self.client_id} initial get database account call e2e_ms={(end - start) * 1000:.2f}")
             self._setup_kwargs['database_account'] = database_account
+            start = time.perf_counter()
             await self._global_endpoint_manager.force_refresh_on_startup(self._setup_kwargs['database_account'])
+            end = time.perf_counter()
+            logger.info(f"client_id={self.client_id} force refresh on startup call e2e_ms={(end - start) * 1000:.2f}")
         else:
             database_account = self._setup_kwargs['database_account']
 
