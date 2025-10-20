@@ -16,7 +16,7 @@ from azure.mgmt.iothub import IotHubClient
     pip install azure-identity
     pip install azure-mgmt-iothub
 # USAGE
-    python iothub_create_or_update.py
+    python create_or_replace_io_thub_with_device_registry.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -42,6 +42,10 @@ def main():
                     "defaultTtlAsIso8601": "PT1H",
                     "feedback": {"lockDurationAsIso8601": "PT1M", "maxDeliveryCount": 10, "ttlAsIso8601": "PT1H"},
                     "maxDeliveryCount": 10,
+                },
+                "deviceRegistry": {
+                    "identityResourceId": "/subscriptions/ae24ff83-d2ca-4fc8-9717-05dae4bba489/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testIdentity",
+                    "namespaceResourceId": "/subscriptions/ae24ff83-d2ca-4fc8-9717-05dae4bba489/resourceGroups/myResourceGroup/providers/Microsoft.DeviceRegistry/namespaces/testNamespace",
                 },
                 "enableDataResidency": True,
                 "enableFileUploadNotifications": False,
@@ -86,13 +90,13 @@ def main():
                     "$default": {"connectionString": "", "containerName": "", "sasTtlAsIso8601": "PT1H"}
                 },
             },
-            "sku": {"capacity": 1, "name": "S1"},
+            "sku": {"capacity": 1, "name": "GEN2"},
             "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/IoTHub/preview/2025-08-01-preview/examples/iothub_createOrUpdate.json
+# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/IoTHub/preview/2025-08-01-preview/examples/CreateOrReplace_IoTHub_With_DeviceRegistry.json
 if __name__ == "__main__":
     main()
