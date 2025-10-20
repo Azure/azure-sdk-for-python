@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0 (2025-10-19)
+## 4.0.0 (2025-10-20)
 
 ### Features Added
 
@@ -71,11 +71,11 @@
   - Model `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
   - Model `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
   - Model `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
-  - Added model `HttpRouteConfigOperations`
-  - Added model `LogicAppsOperations`
-  - Added model `MaintenanceConfigurationsOperations`
-  - Added model `ManagedEnvironmentPrivateEndpointConnectionsOperations`
-  - Added model `ManagedEnvironmentPrivateLinkResourcesOperations`
+  - Added operation group `HttpRouteConfigOperations`
+  - Added operation group `LogicAppsOperations`
+  - Added operation group `MaintenanceConfigurationsOperations`
+  - Added operation group `ManagedEnvironmentPrivateEndpointConnectionsOperations`
+  - Added operation group `ManagedEnvironmentPrivateLinkResourcesOperations`
 
 ### Breaking Changes
 
@@ -87,7 +87,7 @@
   - Method `ConnectedEnvironmentsOperations.update` inserted a `positional_or_keyword` parameter `environment_envelope`
   - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.create_or_update`
   - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.delete`
-  - Deleted or renamed model `ContainerAppsAPIClientOperationsMixin`
+  - Deleted or renamed operation group `ContainerAppsAPIClientOperationsMixin`
 
 ## 4.0.0b1 (2025-08-19)
 
