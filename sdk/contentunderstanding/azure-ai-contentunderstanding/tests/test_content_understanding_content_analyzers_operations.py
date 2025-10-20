@@ -779,3 +779,107 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
                 print(f"Cleaning up analyzer {analyzer_id}")
                 client.content_analyzers.delete(analyzer_id=analyzer_id)
                 print(f"  Analyzer {analyzer_id} deleted")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_video_analysis_keyframe_times_verification(self, contentunderstanding_endpoint: str) -> None:
+        """
+        Test Summary:
+        - Create video analyzer for KeyFrameTimesMs verification
+        - Analyze video content using the same URL as in samples
+        - Verify that KeyFrameTimesMs is not empty and contains valid data
+        - Verify custom poller functionality and operation ID extraction
+        - Clean up created analyzer
+        
+        This test verifies that the service issue with KeyFrameTimesMs deserialization
+        has been resolved and that keyframe times are properly extracted from video content.
+        """
+        if not is_live_and_not_recording():
+            return  # Skip this test in playback mode as it requires video analysis
+        
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_video_analysis_keyframe_times_verification")
+        created_analyzer = False
+
+        # Create a video analyzer for KeyFrameTimesMs verification
+        video_analyzer = new_marketing_video_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"video analyzer for KeyFrameTimesMs verification: {analyzer_id}",
+            tags={"test_type": "keyframe_times_verification"},
+        )
+
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, video_analyzer)
+            created_analyzer = True
+
+            # Use the same video URL as in the sample
+            video_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-assets/raw/refs/heads/main/videos/sdk_samples/FlightSimulator.mp4"
+            print(f"Using video file from URL: {video_url}")
+
+            # Get test file directory for saving output
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+
+            print(f"Starting video analysis for KeyFrameTimesMs verification")
+
+            # Begin video analysis operation using URL
+            analysis_poller = client.content_analyzers.begin_analyze(
+                analyzer_id=analyzer_id,
+                url=video_url,
+            )
+
+            # Verify we get the custom poller
+            from azure.ai.contentunderstanding.operations._patch import ContentUnderstandingAnalyzeLROPoller
+            assert isinstance(analysis_poller, ContentUnderstandingAnalyzeLROPoller), "Should return custom ContentUnderstandingAnalyzeLROPoller"
+
+            # Test operation ID extraction
+            details = analysis_poller.details
+            assert "operation_id" in details, "Details should contain operation_id"
+            assert details["operation_id"] is not None, "Operation ID should not be None"
+            assert len(details["operation_id"]) > 0, "Operation ID should not be empty"
+            assert details["operation_type"] == "analyze", "Operation type should be 'analyze'"
+            print(f"✅ Operation ID extraction verified: {details['operation_id']}")
+
+            # Wait for analysis completion
+            print(f"Waiting for video analysis completion")
+            analysis_result = analysis_poller.result()
+            print(f"Video analysis completed")
+
+            # Save the analysis result to file
+            output_filename = save_analysis_result_to_file(
+                analysis_result, "test_content_analyzers_video_analysis_keyframe_times_verification", test_file_dir, analyzer_id
+            )
+
+            # Verify the result structure
+            assert analysis_result is not None, "Analysis result should not be None"
+            assert hasattr(analysis_result, 'contents'), "Analysis result should have contents"
+            assert len(analysis_result.contents) > 0, "Analysis result should have at least one content"
+
+            # Find video content and verify KeyFrameTimesMs
+            from azure.ai.contentunderstanding.models import AudioVisualContent
+            
+            video_content_found = False
+            for content in analysis_result.contents:
+                if isinstance(content, AudioVisualContent):
+                    video_content_found = True
+                    
+                    # Verify KeyFrameTimesMs is not empty
+                    assert hasattr(content, 'key_frame_times_ms'), "AudioVisualContent should have key_frame_times_ms attribute"
+                    assert content.key_frame_times_ms is not None, "KeyFrameTimesMs should not be None"
+                    assert len(content.key_frame_times_ms) > 0, f"KeyFrameTimesMs should not be empty, got: {content.key_frame_times_ms}"
+                    
+                    # Verify the values are reasonable (positive integers)
+                    for time_ms in content.key_frame_times_ms:
+                        assert isinstance(time_ms, int), f"KeyFrameTimesMs should contain integers, got: {type(time_ms)}"
+                        assert time_ms >= 0, f"KeyFrameTimesMs should contain non-negative values, got: {time_ms}"
+                    
+                    print(f"✅ KeyFrameTimesMs verification passed: {len(content.key_frame_times_ms)} keyframes found")
+                    print(f"   First few keyframes: {content.key_frame_times_ms[:5]}")
+                    break
+            
+            assert video_content_found, "No AudioVisualContent found in analysis result"
+            print("✅ Video analysis KeyFrameTimesMs verification completed successfully")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
