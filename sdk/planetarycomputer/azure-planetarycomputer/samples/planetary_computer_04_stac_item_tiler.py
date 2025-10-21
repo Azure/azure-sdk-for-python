@@ -293,22 +293,23 @@ def main():
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Define geometry for operations - Georgia NAIP area
+    # Based on actual item bounds to ensure coordinates are within dataset
     geometry = Polygon(
         coordinates=[
             [
-                [-84.43809697097522, 33.63093193547549],
-                [-84.41844018562179, 33.63093193547549],
-                [-84.41844018562179, 33.64850313084044],
-                [-84.43809697097522, 33.64850313084044],
-                [-84.43809697097522, 33.63093193547549],
+                [-84.372943, 33.621853],
+                [-84.370894, 33.689211],
+                [-84.439575, 33.690654],
+                [-84.44157, 33.623293],
+                [-84.372943, 33.621853],
             ]
         ]
     )
     geojson = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
-    # Calculate bounds and center point from polygon
-    bounds = [-84.43809697097522, 33.63093193547549, -84.41844018562179, 33.64850313084044]
-    point = [-84.428268578298505, 33.639717533157965]
+    # Calculate bounds and center point from polygon (within actual dataset bounds)
+    bounds = [-84.44157, 33.621853, -84.370894, 33.690654]
+    point = [-84.406232, 33.656253]
 
     # Execute tiler operations
     get_tile_matrix_definitions(client)

@@ -105,20 +105,20 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
         "id": item_id,
         "collection": collection_id,
         "bbox": [
-            -84.441543,
-            33.559319,
-            -84.370855,
-            33.628174
+            -84.44157,
+            33.621853,
+            -84.370894,
+            33.690654
         ],
         "geometry": {
             "type": "Polygon",
             "coordinates": [
                 [
-                    [-84.372901, 33.559319],
-                    [-84.370855, 33.626731],
-                    [-84.439551, 33.628174],
-                    [-84.441543, 33.560757],
-                    [-84.372901, 33.559319]
+                    [-84.372943, 33.621853],
+                    [-84.370894, 33.689211],
+                    [-84.439575, 33.690654],
+                    [-84.44157, 33.623293],
+                    [-84.372943, 33.621853]
                 ]
             ]
         },
@@ -126,7 +126,7 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
             "gsd": 0.6,
             "datetime": "2021-11-14T16:00:00Z",
             "naip:year": "2021",
-            "proj:bbox": [737508.0, 3716388.0, 743886.0, 3723870.0],
+            "proj:bbox": [737334.0, 3723324.0, 743706.0, 3730800.0],
             "proj:epsg": 26916,
             "providers": [
                 {
@@ -136,8 +136,8 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
                 }
             ],
             "naip:state": "ga",
-            "proj:shape": [12470, 10630],
-            "proj:transform": [0.6, 0.0, 737508.0, 0.0, -0.6, 3723870.0, 0.0, 0.0, 1.0]
+            "proj:shape": [12460, 10620],
+            "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0]
         },
         "links": [
             {
@@ -160,7 +160,7 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
         ],
         "assets": {
             "image": {
-                "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308429_ne_16_060_20211114.tif",
+                "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": ["data"],
                 "title": "RGBIR COG tile",
@@ -172,21 +172,21 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
                 ]
             },
             "thumbnail": {
-                "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308429_ne_16_060_20211114.200.jpg",
+                "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.200.jpg",
                 "type": "image/jpeg",
                 "roles": ["thumbnail"],
                 "title": "Thumbnail"
             },
             "tilejson": {
                 "title": "TileJSON with default rendering",
-                "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/tilejson.json?collection=naip&item=ga_m_3308429_ne_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
+                "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/tilejson.json?collection=naip&item=ga_m_3308421_se_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
                 "type": "application/json",
                 "roles": ["tiles"]
             },
             "rendered_preview": {
                 "title": "Rendered preview",
                 "rel": "preview",
-                "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/preview.png?collection=naip&item=ga_m_3308429_ne_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
+                "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/preview.png?collection=naip&item=ga_m_3308421_se_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
                 "roles": ["overview"],
                 "type": "image/png"
             }

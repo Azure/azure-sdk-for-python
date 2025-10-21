@@ -67,13 +67,10 @@ def create_collection(client, collection_id):
         logging.info("Waiting 60 seconds for deletion to complete...")
         time.sleep(60)
 
-    # Define collection spatial and temporal extents (from NAIP config)
+    # Define collection spatial and temporal extents (Georgia state bounds)
     spatial_extent = StacExtensionSpatialExtent(
         bounding_box=[
-            [-124.784, 24.744, -66.951, 49.346],
-            [-156.003, 19.059, -154.809, 20.127],
-            [-67.316, 17.871, -65.596, 18.565],
-            [-64.94, 17.622, -64.56, 17.814],
+            [-85.605165, 30.357851, -80.839729, 35.000659]
         ]
     )
     temporal_extent = StacCollectionTemporalExtent(interval=[["2010-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]])
@@ -87,7 +84,7 @@ def create_collection(client, collection_id):
         license="proprietary",
         links=[],
         stac_version="1.0.0",
-        title="NAIP (MPC Pro Sample Datasets)",
+        title="NAIP Atlanta (MPC Pro Sample Datasets)",
         type="Collection",
     )
 
@@ -372,9 +369,8 @@ def manage_collection_assets(client, collection_id):
     try:
         client.stac.delete_collection_asset(collection_id=collection_id, asset_id="thumbnail")
         logging.info("Deleted existing thumbnail asset.")
-    except:
+    except Exception:
         logging.info("No existing thumbnail asset to delete.")
-        pass
 
     # Create Collection Asset
     client.stac.create_collection_asset(collection_id=collection_id, body={"data": data, "file": thumbnail_tuple})
