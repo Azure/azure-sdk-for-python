@@ -15,6 +15,7 @@ DESCRIPTION:
     - Searching and querying items with filters, bounding boxes, temporal ranges
     - Working with queryables
     - Creating, updating, and deleting STAC items
+    - Creating or replacing STAC items (idempotent operations)
 
 USAGE:
     python planetarycomputer_stac_specification.py
@@ -38,7 +39,6 @@ from azure.planetarycomputer.models import (
 from azure.core.exceptions import HttpResponseError
 
 import logging
-from azure.core.pipeline.policies import HttpLoggingPolicy
 
 # Enable HTTP request/response logging
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
@@ -234,6 +234,42 @@ def update_stac_item(client, collection_id, item_id):
     logging.info(f"Updated item {stac_item.id}, platform: {stac_item.properties['platform']}")
 
 
+def create_or_replace_stac_item(client, collection_id, item_id):
+    """Create or replace a STAC item (idempotent operation).
+    
+    This demonstrates using begin_create_or_replace_item which is idempotent:
+    - If the item doesn't exist, it creates it
+    - If the item exists, it replaces it completely
+    - Multiple calls with the same data produce the same result
+    """
+    # Create initial item
+    stac_item = get_sample_stac_item(collection_id, item_id)
+    
+    create_poller = client.stac.begin_create_or_replace_item(
+        collection_id=collection_id, item_id=item_id, body=stac_item, polling=True
+    )
+    create_poller.result()
+    logging.info(f"Created item {item_id}")
+    
+    # Verify creation
+    created_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+    logging.info(f"Verified item {created_item.id}")
+    
+    # Update and replace item (idempotent - same call replaces completely)
+    stac_item.properties["platform"] = "NAIP Imagery Updated"
+    stac_item.properties["processing_level"] = "L2"
+    
+    replace_poller = client.stac.begin_create_or_replace_item(
+        collection_id=collection_id, item_id=item_id, body=stac_item, polling=True
+    )
+    replace_poller.result()
+    logging.info(f"Replaced item {item_id}")
+    
+    # Verify replacement
+    replaced_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+    logging.info(f"Verified replaced item, platform: {replaced_item.properties.get('platform', 'N/A')}")
+
+
 def get_collection(client, collection_id):
     """Get a STAC collection."""
     collection = client.stac.get_collection(collection_id=collection_id)
@@ -304,6 +340,7 @@ def main():
     # Execute STAC item operations
     create_stac_item(client, collection_id, item_id)
     update_stac_item(client, collection_id, item_id)
+    create_or_replace_stac_item(client, collection_id, f"{item_id}_replace_demo")
     get_collection(client, collection_id)
 
 

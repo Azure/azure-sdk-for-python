@@ -10,8 +10,12 @@ FILE: planetarycomputer_ingestion_management.py
 DESCRIPTION:
     This sample demonstrates comprehensive ingestion management operations including:
     - Creating and managing ingestion sources (managed identity-based) - DEMONSTRATION ONLY
+    - Creating or replacing sources with create_or_replace_source (idempotent)
+    - Retrieving specific sources with get_source
     - Creating and updating ingestion definitions
+    - Retrieving specific ingestions with get
     - Running ingestion jobs from public catalogs (NAIP)
+    - Listing ingestion runs with list_runs
     - Monitoring ingestion status
     - Managing ingestion operations
 
@@ -80,6 +84,69 @@ def create_managed_identity_ingestion_sources(client: PlanetaryComputerClient, c
         logging.info(f"    Resource ID: {identity.resource_id}")
 
 
+def create_or_replace_source(client: PlanetaryComputerClient, container_uri: str, managed_identity_object_id: str):
+    """Create or replace an ingestion source (idempotent operation).
+    
+    This demonstrates using create_or_replace_source which is idempotent:
+    - If the source doesn't exist, it creates it
+    - If the source exists, it replaces it completely
+    - Multiple calls with the same data produce the same result
+    """
+    source_id = "sample-managed-identity-source"
+    
+    # Create connection info with managed identity
+    connection_info = ManagedIdentityConnection(
+        container_uri=container_uri,
+        object_id=managed_identity_object_id
+    )
+    
+    # Create ingestion source
+    ingestion_source = ManagedIdentityIngestionSource(
+        id=source_id,
+        connection_info=connection_info
+    )
+    
+    logging.info(f"Creating or replacing ingestion source: {source_id}")
+    
+    # Create or replace the source (idempotent operation)
+    created_source = client.ingestion_management.create_or_replace_source(
+        id=source_id,
+        ingestion_source=ingestion_source
+    )
+    
+    logging.info(f"Source created/replaced successfully: {created_source.id}")
+    
+    # Demonstrate idempotency - calling again with same data
+    time.sleep(1)
+    
+    logging.info("Calling create_or_replace_source again (demonstrating idempotency)...")
+    replaced_source = client.ingestion_management.create_or_replace_source(
+        id=source_id,
+        ingestion_source=ingestion_source
+    )
+    
+    logging.info("Source operation completed (idempotent)")
+    
+    return replaced_source.id
+
+
+def get_source_by_id(client: PlanetaryComputerClient, source_id: str):
+    """Retrieve a specific ingestion source by ID.
+    
+    This demonstrates using get_source to fetch a specific source directly
+    instead of listing all sources.
+    """
+    logging.info(f"Retrieving ingestion source: {source_id}")
+    
+    try:
+        source = client.ingestion_management.get_source(id=source_id)
+        logging.info(f"Successfully retrieved source: {source.id}")
+        return source
+    except Exception as e:
+        logging.error(f"Failed to retrieve source {source_id}: {str(e)}")
+        return None
+
+
 def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id: str, source_catalog_url: str):
     """Create, update, and run ingestion from NAIP public catalog on GitHub."""
     
@@ -119,6 +186,68 @@ def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id:
     logging.info(f"Updated ingestion display name to: {updated_definition.display_name}")
 
     return ingestion_id
+
+
+def get_ingestion_by_id(client: PlanetaryComputerClient, collection_id: str, ingestion_id: str):
+    """Retrieve a specific ingestion by ID.
+    
+    This demonstrates using get to fetch a specific ingestion directly
+    instead of listing all ingestions.
+    """
+    logging.info(f"Retrieving ingestion: {ingestion_id} from collection: {collection_id}")
+    
+    try:
+        ingestion = client.ingestion_management.get(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id
+        )
+        
+        logging.info(f"Successfully retrieved ingestion: {ingestion.id}")
+        logging.info(f"  Display name: {ingestion.display_name}")
+        logging.info(f"  Import type: {ingestion.import_type}")
+        if ingestion.source_catalog_url:
+            logging.info(f"  Source catalog: {ingestion.source_catalog_url}")
+        
+        return ingestion
+    except Exception as e:
+        logging.error(f"Failed to retrieve ingestion {ingestion_id}: {str(e)}")
+        return None
+
+
+def list_ingestion_runs(client: PlanetaryComputerClient, collection_id: str, ingestion_id: str):
+    """List all runs for a specific ingestion.
+    
+    This demonstrates using list_runs to get all execution runs for an ingestion,
+    which is useful for monitoring ingestion history and troubleshooting.
+    """
+    logging.info(f"Listing runs for ingestion: {ingestion_id}")
+    
+    try:
+        runs = list(client.ingestion_management.list_runs(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id
+        ))
+        
+        logging.info(f"Found {len(runs)} run(s) for ingestion {ingestion_id}")
+        
+        for run in runs:
+            operation = run.operation
+            logging.info(f"  Run ID: {run.id}")
+            logging.info(f"    Status: {operation.status}")
+            logging.info(f"    Items - Total: {operation.total_items}, "
+                        f"Successful: {operation.total_successful_items}, "
+                        f"Failed: {operation.total_failed_items}, "
+                        f"Pending: {operation.total_pending_items}")
+            
+            if operation.status_history:
+                for status_item in operation.status_history:
+                    if status_item.error_code:
+                        logging.info(f"    Error: {status_item.error_code} - {status_item.error_message}")
+        
+        return runs
+    except Exception as e:
+        logging.error(f"Failed to list runs for ingestion {ingestion_id}: {str(e)}")
+        return []
 
 
 def create_sas_token_ingestion_source(client: PlanetaryComputerClient, sas_container_uri: str, sas_token: str):
@@ -237,14 +366,24 @@ def main():
     # 1. Create managed identity and SAS token ingestion sources
     create_managed_identity_ingestion_sources(client, container_uri, managed_identity_object_id)
     create_sas_token_ingestion_source(client, sas_container_uri, sas_token)
+    
+    # 2. Demonstrate advanced source operations (idempotent)
+    source_id = create_or_replace_source(client, container_uri, managed_identity_object_id)
+    get_source_by_id(client, source_id)
 
-    # 2. Run actual NAIP ingestion hosted on GitHub
+    # 3. Run actual NAIP ingestion hosted on GitHub
     naip_ingestion_id = create_github_naip_ingestion(client, collection_id, source_catalog_url)
     
-    # 3. Monitor the NAIP ingestion
+    # 4. Demonstrate advanced ingestion operations
+    get_ingestion_by_id(client, collection_id, naip_ingestion_id)
+    
+    # 5. Monitor the NAIP ingestion
     run_and_monitor_ingestion(client, collection_id, naip_ingestion_id)
     
-    # 4. Manage operations
+    # 6. List all runs for the ingestion
+    list_ingestion_runs(client, collection_id, naip_ingestion_id)
+    
+    # 7. Manage operations
     manage_operations(client)
 
 
