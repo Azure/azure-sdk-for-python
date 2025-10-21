@@ -23,12 +23,12 @@
         "Connection": "keep-alive",
         "Content-Length": "654",
         "Content-Type": "application/geo+json",
-        "Date": "Sat, 18 Oct 2025 02:51:17 GMT",
-        "Server-Timing": "total;dur=304.57",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "Server-Timing": "total;dur=0.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "54a5d4c73b564b409dd363704c3d2405"
+        "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
         "type": "Feature",

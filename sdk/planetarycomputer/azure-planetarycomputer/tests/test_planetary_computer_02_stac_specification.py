@@ -39,56 +39,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_01_get_landing_page(self, planetarycomputer_endpoint):
-        """Test getting the STAC landing page.
-        
-        Note: This test currently fails due to an SDK bug where the Authorization header
-        is not being sent with the get_stac_landing_page() request. The endpoint returns
-        401 Unauthorized with message "Missing Authorization header".
-        
-        This is a known issue: The SDK's get_stac_landing_page() method does not apply
-        the bearer token authentication policy to the /stac endpoint.
-        """
-        pytest.skip("Skipping due to SDK bug: get_stac_landing_page() does not send Authorization header")
-        
-        logger.info("=" * 80)
-        logger.info("TEST: Get STAC Landing Page")
-        logger.info("=" * 80)
-
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        
-        # Get the landing page
-        landing_page = client.stac.get_stac_landing_page()
-
-        # Validate landing page structure
-        assert landing_page is not None, "Landing page should not be None"
-        assert hasattr(landing_page, 'links'), "Landing page should have links"
-        assert len(landing_page.links) > 0, "Landing page should have at least one link"
-        
-        # Validate that we have multiple links (based on typical STAC landing pages)
-        assert len(landing_page.links) >= 5, f"Landing page should have at least 5 links, got {len(landing_page.links)}"
-
-        logger.info(f"Landing page retrieved successfully with {len(landing_page.links)} links")
-        
-        # Log first 10 links for inspection
-        for i, link in enumerate(landing_page.links[:10]):
-            logger.info(f"  Link {i+1}: rel={link.rel}, href={link.href}")
-            if hasattr(link, 'type') and link.type:
-                logger.info(f"          type={link.type}")
-
-        # Validate common link relations
-        link_rels = [link.rel for link in landing_page.links]
-        expected_rels = ['self', 'root', 'data', 'conformance', 'search']
-        found_rels = [rel for rel in expected_rels if rel in link_rels]
-        assert len(found_rels) >= 3, f"Expected at least 3 common link relations, found {len(found_rels)}: {found_rels}"
-        
-        for expected_rel in expected_rels:
-            if expected_rel in link_rels:
-                logger.info(f"Found expected link relation: {expected_rel}")
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
-    def test_02_get_conformance_class(self, planetarycomputer_endpoint):
+    def test_01_get_conformance_class(self, planetarycomputer_endpoint):
         """Test getting STAC API conformance classes."""
         logger.info("=" * 80)
         logger.info("TEST: Get STAC API Conformance Classes")

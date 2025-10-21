@@ -23,12 +23,12 @@
         "Connection": "keep-alive",
         "Content-Length": "1806",
         "Content-Type": "application/json",
-        "Date": "Sat, 18 Oct 2025 02:51:21 GMT",
-        "Server-Timing": "total;dur=1742.62",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "Server-Timing": "total;dur=0.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "c3d51404ff4a4527b62265b269fcb371"
+        "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
         "image_b1": {

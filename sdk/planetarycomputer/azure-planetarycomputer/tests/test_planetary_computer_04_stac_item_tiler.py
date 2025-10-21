@@ -11,7 +11,7 @@ import logging
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
-from azure.planetarycomputer.models import TilerImageFormat
+from azure.planetarycomputer.models import TilerImageFormat, FeatureType, Feature, Polygon
 
 # Set up test logger
 test_logger = logging.getLogger("test_stac_item_tiler")
@@ -398,3 +398,352 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         assert "TileMatrix" in xml_string, "Response should contain TileMatrix information"
         
         test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_09_get_asset_statistics(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting asset statistics for a STAC item.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_09_get_asset_statistics")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info(f"Calling: get_asset_statistics(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}', assets=['image'])")
+        response = client.tiler.get_asset_statistics(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            assets=["image"]
+        )
+        
+        test_logger.info(f"Response: {response}")
+        assert response is not None
+        assert "image" in response
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_10_crop_geo_json(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test cropping an image by GeoJSON geometry.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_10_crop_geo_json")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        # API requires a GeoJSON Feature, not just a Polygon
+        geometry = Polygon(
+            coordinates=[
+                [
+                    [-84.43809697097522, 33.63093193547549],
+                    [-84.41844018562179, 33.63093193547549],
+                    [-84.41844018562179, 33.64850313084044],
+                    [-84.43809697097522, 33.64850313084044],
+                    [-84.43809697097522, 33.63093193547549],
+                ]
+            ]
+        )
+        geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
+        
+        test_logger.info("Calling: crop_geo_json(...)")
+        response = client.tiler.crop_geo_json(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            body=geojson_feature,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
+            format=TilerImageFormat.PNG
+        )
+        
+        image_bytes = b"".join(response)
+        test_logger.info(f"Image size: {len(image_bytes)} bytes")
+        
+        assert len(image_bytes) > 0
+        assert image_bytes[:8] == b'\x89PNG\r\n\x1a\n', "Should be PNG format"
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_11_crop_geo_json_with_dimensions(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test cropping an image by GeoJSON with custom dimensions.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_11_crop_geo_json_with_dimensions")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        # API requires a GeoJSON Feature, not just a Polygon
+        geometry = Polygon(
+            coordinates=[
+                [
+                    [-84.5, 34.0],
+                    [-84.4, 34.0],
+                    [-84.4, 34.1],
+                    [-84.5, 34.1],
+                    [-84.5, 34.0]
+                ]
+            ]
+        )
+        geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
+        
+        test_logger.info("Calling: crop_geo_json_with_dimensions(...)")
+        response = client.tiler.crop_geo_json_with_dimensions(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            width=256,
+            height=256,
+            body=geojson_feature,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
+            format=TilerImageFormat.PNG
+        )
+        
+        image_bytes = b"".join(response)
+        test_logger.info(f"Image size: {len(image_bytes)} bytes")
+        
+        assert len(image_bytes) > 0
+        assert image_bytes[:8] == b'\x89PNG\r\n\x1a\n', "Should be PNG format"
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_12_get_geo_json_statistics(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting statistics for a GeoJSON area.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_12_get_geo_json_statistics")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        # API requires a GeoJSON Feature, not just a Polygon
+        geometry = Polygon(
+            coordinates=[
+                [
+                    [-84.5, 34.0],
+                    [-84.4, 34.0],
+                    [-84.4, 34.1],
+                    [-84.5, 34.1],
+                    [-84.5, 34.0]
+                ]
+            ]
+        )
+        geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
+        
+        test_logger.info("Calling: get_geo_json_statistics(...)")
+        response = client.tiler.get_geo_json_statistics(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            body=geojson_feature,
+            assets=["image"]
+        )
+        
+        test_logger.info(f"Response: {response}")
+        assert response is not None
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_13_get_part(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting a part of an image by bounding box.
+        """
+        bounds = [-84.43809697097522, 33.63093193547549, -84.41844018562179, 33.64850313084044]
+
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_13_get_part")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info("Calling: get_part(...)")
+        response = client.tiler.get_part(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            minx=bounds[0],
+            miny=bounds[1],
+            maxx=bounds[2],
+            maxy=bounds[3],
+            format=TilerImageFormat.PNG,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"]
+        )
+        
+        image_bytes = b"".join(response)
+        test_logger.info(f"Image size: {len(image_bytes)} bytes")
+        
+        assert len(image_bytes) > 0
+        assert image_bytes[:8] == b'\x89PNG\r\n\x1a\n', "Should be PNG format"
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_14_get_part_with_dimensions(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting a part of an image with custom dimensions.
+        """
+        bounds = [-84.43809697097522, 33.63093193547549, -84.41844018562179, 33.64850313084044]
+
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_14_get_part_with_dimensions")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info("Calling: get_part_with_dimensions(...)")
+        response = client.tiler.get_part_with_dimensions(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            minx=bounds[0],
+            miny=bounds[1],
+            maxx=bounds[2],
+            maxy=bounds[3],
+            width=256,
+            height=256,
+            format=TilerImageFormat.PNG,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"]
+        )
+        
+        image_bytes = b"".join(response)
+        test_logger.info(f"Image size: {len(image_bytes)} bytes")
+        
+        assert len(image_bytes) > 0
+        assert image_bytes[:8] == b'\x89PNG\r\n\x1a\n', "Should be PNG format"
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_15_get_point(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting data for a specific point.
+        """
+        point = [-84.428268578298505, 33.639717533157965]
+
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_15_get_point")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info("Calling: get_point(...)")
+        response = client.tiler.get_point(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            longitude=point[0],
+            latitude=point[1],
+            assets=["image"]
+        )
+        
+        test_logger.info(f"Response: {response}")
+        assert response is not None
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_16_get_preview_with_format(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting a preview with specific format.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_16_get_preview_with_format")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info("Calling: get_preview_with_format(...)")
+        response = client.tiler.get_preview_with_format(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            format=TilerImageFormat.JPEG,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"]
+        )
+        
+        image_bytes = b"".join(response)
+        test_logger.info(f"Image size: {len(image_bytes)} bytes")
+        
+        assert len(image_bytes) > 0
+        assert image_bytes[:3] == b'\xff\xd8\xff', "Should be JPEG format"
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_17_get_tile_json(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting TileJSON metadata.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_17_get_tile_json")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info("Calling: get_tile_json(...)")
+        response = client.tiler.get_tile_json(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            tile_matrix_set_id="WebMercatorQuad",
+            tile_format=TilerImageFormat.PNG,
+            tile_scale=1,
+            min_zoom=7,
+            max_zoom=14,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"]
+        )
+        
+        test_logger.info(f"Response: {response}")
+        assert response is not None
+        assert "tilejson" in response or "tiles" in response
+        
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_18_get_tile(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting a specific tile.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_18_get_tile")
+        test_logger.info("=" * 80)
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info("Calling: get_tile(...)")
+        response = client.tiler.get_tile(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            tile_matrix_set_id="WebMercatorQuad",
+            z=14,
+            x=4349,
+            y=6564,
+            scale=1,
+            assets=["image"],
+            asset_band_indices=["image|1,2,3"],
+            format=TilerImageFormat.PNG
+        )
+        
+        image_bytes = b"".join(response)
+        test_logger.info(f"Tile size: {len(image_bytes)} bytes")
+        
+        assert len(image_bytes) > 0
+        assert image_bytes[:8] == b'\x89PNG\r\n\x1a\n', "Should be PNG format"
+        
+        test_logger.info("Test PASSED\n")
+

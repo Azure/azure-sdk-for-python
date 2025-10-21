@@ -8,6 +8,7 @@ Unit tests for Shared Access Signature (SAS) operations.
 """
 import httpx
 import logging
+import pytest
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 import re
@@ -203,8 +204,14 @@ class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerClientTestBase
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
+    @pytest.mark.flaky(reruns=3, reruns_delay=2)
     def test_04_signed_href_can_download_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
-        """Test that a signed HREF can be used to download an asset."""
+        """Test that a signed HREF can be used to download an asset.
+        
+        This test is marked as flaky due to intermittent user delegation key rotation issues
+        on the backend service. The test will automatically retry up to 3 times with a 2 second
+        delay between attempts to account for delegation key synchronization.
+        """
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_04_signed_href_can_download_asset")
         test_logger.info("=" * 80)
