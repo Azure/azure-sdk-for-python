@@ -1,0 +1,4 @@
+directory: specification/databoxedge/DataBoxEdge.Management
+commit: 78fd8f85507c9a12d47bd8953b864353a6005080
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

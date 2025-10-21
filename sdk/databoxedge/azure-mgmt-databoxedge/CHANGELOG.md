@@ -1,5 +1,190 @@
 # Release History
 
+## 3.0.0 (2025-10-21)
+
+### Features Added
+
+  - Model `DataBoxEdgeDeviceExtendedInfo` added property `system_data`
+  - Model `DataBoxEdgeDevicePatch` added property `properties`
+  - Model `EdgeProfileSubscription` added property `properties`
+  - Model `FileEventTrigger` added property `properties`
+  - Model `Job` added property `system_data`
+  - Model `LoadBalancerConfig` added property `ip_range`
+  - Model `Order` added property `kind`
+  - Model `PeriodicTimerEventTrigger` added property `properties`
+  - Enum `SkuName` added member `EDGE_MR_TCP`
+  - Enum `SkuName` added member `EP2_128_GPU1_MX1_W`
+  - Enum `SkuName` added member `EP2_256_2T4_W`
+  - Enum `SkuName` added member `EP2_256_GPU2_MX1`
+  - Enum `SkuName` added member `EP2_64_1VPU_W`
+  - Enum `SkuName` added member `EP2_64_MX1_W`
+  - Model `UpdateDetails` added property `friendly_version_number`
+  - Model `UpdateDetails` added property `installation_impact`
+  - Added enum `AccessLevel`
+  - Added model `CloudError`
+  - Added model `ClusterCapacityViewData`
+  - Added model `ClusterGpuCapacity`
+  - Added model `ClusterMemoryCapacity`
+  - Added model `ClusterStorageViewData`
+  - Added enum `ClusterWitnessType`
+  - Added model `DCAccessCodeProperties`
+  - Added model `DataBoxEdgeDevicePropertiesPatch`
+  - Added model `DataResidency`
+  - Added enum `DataResidencyType`
+  - Added model `DeviceCapacityInfo`
+  - Added model `DeviceCapacityInfoProperties`
+  - Added model `DeviceCapacityRequestInfo`
+  - Added model `DeviceCapacityRequestInfoProperties`
+  - Added model `DiagnosticProactiveLogCollectionSettings`
+  - Added model `DiagnosticRemoteSupportSettings`
+  - Added model `DiagnosticRemoteSupportSettingsProperties`
+  - Added model `FileTriggerProperties`
+  - Added model `HostCapacity`
+  - Added enum `InstallationImpact`
+  - Added model `MetricDimension_V1`
+  - Added model `MetricSpecification_V1`
+  - Added model `NumaNodeData`
+  - Added model `PeriodicTimerProperties`
+  - Added enum `ProactiveDiagnosticsConsent`
+  - Added model `ProactiveLogCollectionSettingsProperties`
+  - Added model `ProxyResource`
+  - Added model `RawCertificateData`
+  - Added enum `RemoteApplicationType`
+  - Added model `RemoteSupportSettings`
+  - Added model `Resource`
+  - Added model `SubscriptionProperties`
+  - Added model `SupportPackageRequestProperties`
+  - Added model `TrackedResource`
+  - Added model `TriggerSupportPackageRequest`
+  - Added model `VmMemory`
+  - Added model `VmPlacementRequestResult`
+  - Model `DevicesOperations` added method `create_or_update`
+  - Model `UsersOperations` added parameter `filter` in method `list_by_data_box_edge_device`
+  - Added model `DeviceCapacityCheckOperations`
+  - Added model `DeviceCapacityInfoOperations`
+  - Added model `DiagnosticSettingsOperations`
+  - Added model `SupportPackagesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client `DataBoxEdgeManagementClient`
+  - Model `DCAccessCode` deleted or renamed its instance variable `auth_code`
+  - Model `DataBoxEdgeDevicePatch` deleted or renamed its instance variable `edge_profile`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `tenant_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `location_placement_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `quota_id`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `serialized_details`
+  - Model `EdgeProfileSubscription` deleted or renamed its instance variable `registered_features`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `source_info`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `sink_info`
+  - Model `FileEventTrigger` deleted or renamed its instance variable `custom_context_tag`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `source_info`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `sink_info`
+  - Model `PeriodicTimerEventTrigger` deleted or renamed its instance variable `custom_context_tag`
+  - Deleted or renamed enum value `SkuName.EP2_256_2_T4_W`
+  - Deleted or renamed enum value `SkuName.EP2_64_1_VPU_W`
+  - Deleted or renamed enum value `TimeGrain.PT12_H`
+  - Deleted or renamed enum value `TimeGrain.PT15_M`
+  - Deleted or renamed enum value `TimeGrain.PT1_D`
+  - Deleted or renamed enum value `TimeGrain.PT1_H`
+  - Deleted or renamed enum value `TimeGrain.PT1_M`
+  - Deleted or renamed enum value `TimeGrain.PT30_M`
+  - Deleted or renamed enum value `TimeGrain.PT5_M`
+  - Deleted or renamed enum value `TimeGrain.PT6_H`
+  - Model `UploadCertificateRequest` deleted or renamed its instance variable `authentication_type`
+  - Model `UploadCertificateRequest` deleted or renamed its instance variable `certificate`
+  - Deleted or renamed model `AddonList`
+  - Deleted or renamed model `AlertList`
+  - Deleted or renamed model `BandwidthSchedulesList`
+  - Deleted or renamed model `ContainerList`
+  - Deleted or renamed model `DataBoxEdgeDeviceList`
+  - Deleted or renamed model `DataBoxEdgeMoveRequest`
+  - Deleted or renamed model `DataBoxEdgeSkuList`
+  - Deleted or renamed model `MetricDimensionV1`
+  - Deleted or renamed model `MetricSpecificationV1`
+  - Deleted or renamed model `MonitoringMetricConfigurationList`
+  - Deleted or renamed model `NodeList`
+  - Deleted or renamed model `OperationsList`
+  - Deleted or renamed model `OrderList`
+  - Deleted or renamed model `ResourceTypeSku`
+  - Deleted or renamed model `RoleList`
+  - Deleted or renamed model `ShareList`
+  - Deleted or renamed model `SkuInformation`
+  - Deleted or renamed model `SkuInformationList`
+  - Deleted or renamed model `StorageAccountCredentialList`
+  - Deleted or renamed model `StorageAccountList`
+  - Deleted or renamed model `TriggerList`
+  - Deleted or renamed model `UserList`
+  - Method `DevicesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DevicesOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `DevicesOperations.begin_create_or_update`
+  - Method `UsersOperations.list_by_data_box_edge_device` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
+  - Method `UsersOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `UsersOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'expand', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'filter', 'kwargs']`
+  - Method `UsersOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `UsersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'user', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'user', 'kwargs']`
+  - Method `StorageAccountsOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'kwargs']`
+  - Method `StorageAccountsOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `StorageAccountsOperations.get` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'kwargs']`
+  - Method `StorageAccountsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'resource_group_name', 'storage_account', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'storage_account', 'kwargs']`
+  - Method `MonitoringConfigOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'role_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'kwargs']`
+  - Method `MonitoringConfigOperations.list` re-ordered its parameters from `['self', 'device_name', 'role_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'kwargs']`
+  - Method `MonitoringConfigOperations.get` re-ordered its parameters from `['self', 'device_name', 'role_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'kwargs']`
+  - Method `MonitoringConfigOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'role_name', 'resource_group_name', 'monitoring_metric_configuration', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'monitoring_metric_configuration', 'kwargs']`
+  - Method `OperationsStatusOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `JobsOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `RolesOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `RolesOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `RolesOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `RolesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'role', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'role', 'kwargs']`
+  - Method `SharesOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `SharesOperations.begin_refresh` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `SharesOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `SharesOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `SharesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'share', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'share', 'kwargs']`
+  - Method `ContainersOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'container_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'container_name', 'kwargs']`
+  - Method `ContainersOperations.begin_refresh` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'container_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'container_name', 'kwargs']`
+  - Method `ContainersOperations.get` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'container_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'container_name', 'kwargs']`
+  - Method `ContainersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'container_name', 'resource_group_name', 'container', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'container_name', 'container', 'kwargs']`
+  - Method `ContainersOperations.list_by_storage_account` re-ordered its parameters from `['self', 'device_name', 'storage_account_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'storage_account_name', 'kwargs']`
+  - Method `OrdersOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `OrdersOperations.list_dc_access_code` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `OrdersOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `OrdersOperations.get` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `OrdersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'order', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'order', 'kwargs']`
+  - Method `TriggersOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `TriggersOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'filter', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'filter', 'kwargs']`
+  - Method `TriggersOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `TriggersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'trigger', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'trigger', 'kwargs']`
+  - Method `AddonsOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'role_name', 'addon_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'addon_name', 'kwargs']`
+  - Method `AddonsOperations.list_by_role` re-ordered its parameters from `['self', 'device_name', 'role_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'kwargs']`
+  - Method `AddonsOperations.get` re-ordered its parameters from `['self', 'device_name', 'role_name', 'addon_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'addon_name', 'kwargs']`
+  - Method `AddonsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'role_name', 'addon_name', 'resource_group_name', 'addon', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'role_name', 'addon_name', 'addon', 'kwargs']`
+  - Method `AlertsOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `AlertsOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `DevicesOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.begin_create_or_update_security_settings` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'security_settings', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'security_settings', 'kwargs']`
+  - Method `DevicesOperations.upload_certificate` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'parameters', 'kwargs']`
+  - Method `DevicesOperations.begin_install_updates` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.get_network_settings` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.generate_certificate` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.begin_scan_for_updates` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.get` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.get_extended_information` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.update` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'parameters', 'kwargs']`
+  - Method `DevicesOperations.get_update_summary` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `DevicesOperations.update_extended_information` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'parameters', 'kwargs']`
+  - Method `DevicesOperations.begin_download_updates` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `BandwidthSchedulesOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `BandwidthSchedulesOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `BandwidthSchedulesOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `BandwidthSchedulesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'parameters', 'kwargs']`
+  - Method `StorageAccountCredentialsOperations.begin_delete` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `StorageAccountCredentialsOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+  - Method `StorageAccountCredentialsOperations.get` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'kwargs']`
+  - Method `StorageAccountCredentialsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'device_name', 'name', 'resource_group_name', 'storage_account_credential', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'name', 'storage_account_credential', 'kwargs']`
+  - Method `NodesOperations.list_by_data_box_edge_device` re-ordered its parameters from `['self', 'device_name', 'resource_group_name', 'kwargs']` to `['self', 'resource_group_name', 'device_name', 'kwargs']`
+
 ## 3.0.0b1 (2025-08-06)
 
 ### Breaking Changes
