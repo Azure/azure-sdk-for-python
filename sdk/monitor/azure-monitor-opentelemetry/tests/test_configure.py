@@ -842,7 +842,7 @@ class TestConfigure(unittest.TestCase):
         mock_enable_performance_counters.assert_not_called()
 
     @patch(
-        "azure.monitor.opentelemetry._configure.enable_live_metrics",
+        "azure.monitor.opentelemetry._configure._enable_live_metrics",
     )
     def test_setup_live_metrics(
         self,
