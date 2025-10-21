@@ -1056,28 +1056,35 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 def _log_events_to_app_insights(
     otel_logger,
     events: List[Dict[str, Any]],
-    attributes: Optional[Dict[str, Any]] = None,
+    log_attributes: Dict[str, Any],
     data_source_item: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
     No spans are created - events are sent as pure log records.
 
-    :param connection_string: Azure Application Insights connection string
-    :type connection_string: str
+    :param otel_logger: OpenTelemetry logger instance
+    :type otel_logger: Logger
     :param events: List of event data dictionaries to log
     :type events: List[Dict[str, Any]]
-    :param attributes: Additional attributes to add to each event
-    :type attributes: Optional[Dict[str, Any]]
+    :param log_attributes: Attributes dict to use for each event (already includes extra_attributes if present)
+    :type log_attributes: Dict[str, Any]
+    :param data_source_item: Data source item containing trace_id, response_id, conversation_id
+    :type data_source_item: Optional[Dict[str, Any]]
     """
 
-    from opentelemetry.sdk._logs import LogRecord
+    from opentelemetry import trace
+    from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
 
     try:
-        # Get the trace_id
+        # Get the trace_id and other context from data source item
         trace_id = None
         response_id = None
         conversation_id = None
+        previous_response_id = None
+        agent_name = None
+        agent_version = None
+        agent_id = None
         if data_source_item:
             for key, value in data_source_item.items():
                 if key.endswith("trace_id") and value and isinstance(value, str):
@@ -1089,20 +1096,23 @@ def _log_events_to_app_insights(
                     response_id = value
                 elif key.endswith("conversation_id") and value and isinstance(value, str):
                     conversation_id = value
+                elif key.endswith("previous_response_id") and value and isinstance(value, str):
+                    previous_response_id = value
+                elif key.endswith("agent_name") and value and isinstance(value, str):
+                    agent_name = value
+                elif key.endswith("agent_version") and value and isinstance(value, str):
+                    agent_version = value
+                elif key.endswith("agent_id") and value and isinstance(value, str):
+                    agent_id = value
 
         # Log each event as a separate log record
         for i, event_data in enumerate(events):
             try:
-                # Prepare log record attributes with specific mappings
-                log_attributes = {
-                    # Use the public API for custom events
-                    # The KEY is "microsoft.custom_event.name", the VALUE is the event name
-                    "microsoft.custom_event.name": EVALUATION_EVENT_NAME,
-                    # These fields are always present and are already strings
-                    "gen_ai.evaluation.name": event_data.get("metric"),
-                    "gen_ai.evaluation.score.value": event_data.get("score"),
-                    "gen_ai.evaluation.score.label": event_data.get("label"),
-                }
+                # Add standard event attributes
+                log_attributes["microsoft.custom_event.name"] = EVALUATION_EVENT_NAME
+                log_attributes["gen_ai.evaluation.name"] = event_data.get("metric")
+                log_attributes["gen_ai.evaluation.score.value"] = event_data.get("score")
+                log_attributes["gen_ai.evaluation.score.label"] = event_data.get("label")
 
                 # Optional field that may not always be present
                 if "reason" in event_data:
@@ -1132,48 +1142,42 @@ def _log_events_to_app_insights(
                             properties["attack_success_threshold"]
                         )
 
-                # Add additional attributes from AppInsights config if provided
-                if attributes:
-                    if "run_type" in attributes:
-                        log_attributes["gen_ai.evaluation.azure_ai_type"] = str(attributes["run_type"])
-
-                    if "schedule_type" in attributes:
-                        log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(attributes["schedule_type"])
-
-                    if "run_id" in attributes:
-                        log_attributes["gen_ai.evaluation.run.id"] = str(attributes["run_id"])
-
-                    if "response_id" in attributes:
-                        log_attributes["gen_ai.response.id"] = str(attributes["response_id"])
-
-                    if "agent_id" in attributes:
-                        log_attributes["gen_ai.agent.id"] = str(attributes["agent_id"])
-
-                    if "agent_name" in attributes:
-                        log_attributes["gen_ai.agent.name"] = str(attributes["agent_name"])
-
-                    if "agent_version" in attributes:
-                        log_attributes["gen_ai.agent.version"] = str(attributes["agent_version"])
-
-                    if "project_id" in attributes:
-                        log_attributes["gen_ai.azure_ai_project.id"] = str(attributes["project_id"])
-
+                # Add response_id and conversation_id from data source if present
                 if response_id:
                     log_attributes["gen_ai.response.id"] = response_id
                 if conversation_id:
                     log_attributes["gen_ai.conversation.id"] = conversation_id
+                if previous_response_id:
+                    log_attributes["gen_ai.previous.response_id"] = previous_response_id
+                if agent_name:
+                    log_attributes["gen_ai.agent.name"] = agent_name
+                if agent_version:
+                    log_attributes["gen_ai.agent.version"] = agent_version
+                if agent_id:
+                    log_attributes["gen_ai.agent.id"] = agent_id
 
-                # Create a LogRecord and emit it
-                log_record = LogRecord(
+                # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
+                log_attributes["http.client_ip"] = "0.0.0.0"
+
+                # Create context with trace_id if present (for distributed tracing correlation)
+                ctx = None
+                if trace_id:
+                    span_context = SpanContext(
+                        trace_id=trace_id,
+                        span_id=0,
+                        is_remote=False,
+                        trace_flags=TraceFlags(0x01),
+                    )
+                    span = NonRecordingSpan(span_context)
+                    ctx = trace.set_span_in_context(span)
+
+                otel_logger.emit(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
                     body=EVALUATION_EVENT_NAME,
                     attributes=log_attributes,
+                    context=ctx,
                 )
-                if trace_id:
-                    log_record.trace_id = trace_id
-
-                otel_logger.emit(log_record)
 
             except Exception as e:
                 LOGGER.warning(f"Failed to log event {i}: {e}")
@@ -1196,6 +1200,8 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
     from opentelemetry import _logs
     from opentelemetry.sdk._logs import LoggerProvider
     from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from opentelemetry.sdk.resources import Resource
+    from opentelemetry.semconv.resource import ResourceAttributes
     from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
     if not results:
@@ -1203,40 +1209,52 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         return
 
     try:
-        # Extract only the AppInsights config attributes that exist
-        # Configure OpenTelemetry logging
-        logger_provider = LoggerProvider()
+        # Configure OpenTelemetry logging with anonymized Resource attributes
+
+        # Create a resource with minimal attributes to prevent sensitive data collection
+        # SERVICE_INSTANCE_ID maps to cloud_RoleInstance in Azure Monitor and prevents
+        # Azure Monitor from auto-detecting the device hostname
+        anonymized_resource = Resource.create(
+            {
+                ResourceAttributes.SERVICE_NAME: "unknown",
+                ResourceAttributes.SERVICE_INSTANCE_ID: "unknown",
+            }
+        )
+
+        logger_provider = LoggerProvider(resource=anonymized_resource)
         _logs.set_logger_provider(logger_provider)
 
         # Create Azure Monitor log exporter
         azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
 
-        # Add the exporter to the logger provider
+        # Add the Azure Monitor exporter to the logger provider
         logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
 
-        # Create a logger
-        otel_logger = _logs.get_logger(__name__)
-        app_insights_attributes = {}
+        # Create a logger from OUR configured logger_provider (not the global one)
+        # This ensures the logger uses our anonymized resource
+        otel_logger = logger_provider.get_logger(__name__)
+
+        # Initialize base log attributes with extra_attributes if present, otherwise empty dict
+        base_log_attributes = app_insights_config.get("extra_attributes", {})
+
+        # Add AppInsights config attributes with proper semantic convention mappings
         if "run_type" in app_insights_config:
-            app_insights_attributes["run_type"] = app_insights_config["run_type"]
+            base_log_attributes["gen_ai.evaluation.azure_ai_type"] = str(app_insights_config["run_type"])
         if "schedule_type" in app_insights_config:
-            app_insights_attributes["schedule_type"] = app_insights_config["schedule_type"]
+            base_log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(app_insights_config["schedule_type"])
         if "run_id" in app_insights_config:
-            app_insights_attributes["run_id"] = app_insights_config["run_id"]
-        if "agent_id" in app_insights_config:
-            app_insights_attributes["agent_id"] = app_insights_config["agent_id"]
-        if "agent_name" in app_insights_config:
-            app_insights_attributes["agent_name"] = app_insights_config["agent_name"]
-        if "agent_version" in app_insights_config:
-            app_insights_attributes["agent_version"] = app_insights_config["agent_version"]
+            base_log_attributes["gen_ai.evaluation.run.id"] = str(app_insights_config["run_id"])
         if "project_id" in app_insights_config:
-            app_insights_attributes["project_id"] = app_insights_config["project_id"]
+            base_log_attributes["gen_ai.azure_ai_project.id"] = str(app_insights_config["project_id"])
 
         for result in results:
+            # Create a copy of base attributes for this result's events
+            log_attributes = base_log_attributes.copy()
+
             _log_events_to_app_insights(
                 otel_logger=otel_logger,
                 events=result["results"],
-                attributes=app_insights_attributes,
+                log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
             )
         # Force flush to ensure events are sent

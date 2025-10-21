@@ -86,7 +86,7 @@ class TestBuiltInEvaluators:
             "similarity_finish_reason",
             "similarity_model",
             "similarity_sample_input",
-            "similarity_sample_output", 
+            "similarity_sample_output",
         }
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
