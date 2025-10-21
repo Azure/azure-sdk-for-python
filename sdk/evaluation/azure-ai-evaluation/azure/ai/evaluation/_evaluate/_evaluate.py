@@ -1873,6 +1873,7 @@ def _convert_results_to_aoai_evaluation_results(
         for criteria_name, metrics in criteria_groups.items():
             # Extract metrics for this criteria
             expected_metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
+            criteria_type = testing_criteria_name_types_metrics.get(criteria_name, {}).get("type", "unknown")
             result_per_metric = {}
             # Find score - look for various score patterns
             for metric_key, metric_value in metrics.items():
@@ -1883,6 +1884,13 @@ def _convert_results_to_aoai_evaluation_results(
                     else:
                         result_per_metric[metric]["score"] = metric_value
                     _append_indirect_attachments_to_results(result_per_metric, "score", metric, metric_value)
+                if metric_key == "passed":
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"passed": metric_value}
+                    else:
+                        result_per_metric[metric]["passed"] = metric_value
+                    _append_indirect_attachments_to_results(result_per_metric, "passed", metric, metric_value)
                 elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     label = metric_value
@@ -1890,12 +1898,17 @@ def _convert_results_to_aoai_evaluation_results(
                         True if (str(metric_value).lower() == "pass" or str(metric_value).lower() == "true") else False
                     )
                     if metric not in result_per_metric:
-                        result_per_metric[metric] = {"label": label, "passed": passed}
+                        if criteria_type == "azure_ai_evaluator":
+                            result_per_metric[metric] = {"label": label, "passed": passed}
+                        else:
+                            result_per_metric[metric] = {"label": label}
                     else:
                         result_per_metric[metric]["label"] = metric_value
-                        result_per_metric[metric]["passed"] = passed
+                        if criteria_type == "azure_ai_evaluator":
+                            result_per_metric[metric]["passed"] = passed
                     _append_indirect_attachments_to_results(result_per_metric, "label", metric, label)
-                    _append_indirect_attachments_to_results(result_per_metric, "passed", metric, passed)
+                    if criteria_type == "azure_ai_evaluator":
+                        _append_indirect_attachments_to_results(result_per_metric, "passed", metric, passed)
                 elif (
                     metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")
                 ) or metric_key == "reason":
