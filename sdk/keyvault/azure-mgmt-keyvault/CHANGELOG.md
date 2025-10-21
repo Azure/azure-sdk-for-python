@@ -28,32 +28,12 @@
 
 ### Breaking Changes
 
-  - Model `Key` deleted or renamed its instance variable `attributes`
-  - Model `Key` deleted or renamed its instance variable `kty`
-  - Model `Key` deleted or renamed its instance variable `key_ops`
-  - Model `Key` deleted or renamed its instance variable `key_size`
-  - Model `Key` deleted or renamed its instance variable `curve_name`
-  - Model `Key` deleted or renamed its instance variable `key_uri`
-  - Model `Key` deleted or renamed its instance variable `key_uri_with_version`
-  - Model `Key` deleted or renamed its instance variable `rotation_policy`
-  - Model `Key` deleted or renamed its instance variable `release_policy`
-  - Model `MHSMPrivateEndpointConnectionItem` deleted or renamed its instance variable `private_endpoint`
-  - Model `MHSMPrivateEndpointConnectionItem` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `MHSMPrivateEndpointConnectionItem` deleted or renamed its instance variable `provisioning_state`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `attributes`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `kty`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_ops`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_size`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `curve_name`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_uri`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `key_uri_with_version`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `rotation_policy`
-  - Model `ManagedHsmKey` deleted or renamed its instance variable `release_policy`
-  - Model `Operation` deleted or renamed its instance variable `service_specification`
-  - Model `Permissions` deleted or renamed its instance variable `keys`
-  - Model `PrivateEndpointConnectionItem` deleted or renamed its instance variable `private_endpoint`
-  - Model `PrivateEndpointConnectionItem` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `PrivateEndpointConnectionItem` deleted or renamed its instance variable `provisioning_state`
+  - Model `Key` instance variables `attributes`, `kty`, `key_ops`, `key_size`, `curve_name`, `key_uri`, `key_uri_with_version`, `rotation_policy`, and `release_policy` have been moved under property `properties`
+  - Model `MHSMPrivateEndpointConnectionItem` instance variables `private_endpoint`, `private_link_service_connection_state`, and `provisioning_state` have been moved under property `properties`
+  - Model `ManagedHsmKey` instance variables `attributes`, `kty`, `key_ops`, `key_size`, `curve_name`, `key_uri`, `key_uri_with_version`, `rotation_policy`, and `release_policy` have been moved under property `properties`
+  - Model `Operation` instance variable `service_specification` has been moved under property `operation_properties`
+  - Model `Permissions` instance variable `keys` has been moved under property `keys_property`
+  - Model `PrivateEndpointConnectionItem` instance variables `private_endpoint`, `private_link_service_connection_state`, and `provisioning_state` have been moved under property `properties`
   - Deleted or renamed model `IdentityType`
   - Deleted or renamed model `ProxyResourceWithoutSystemData`
   - Deleted or renamed model `Resource`
