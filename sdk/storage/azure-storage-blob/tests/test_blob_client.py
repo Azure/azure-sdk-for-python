@@ -102,6 +102,29 @@ class TestStorageClient(StorageRecordedTestCase):
             assert service.scheme == 'https'
 
     @BlobPreparer()
+    def test_create_service_use_development_storage(self, **kwargs):
+        devstore_account_name = "devstoreaccount1"
+        devstore_account_key = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        devstore_endpoint = "127.0.0.1"
+        devstore_blob_port = "10000"
+
+        for service_type in SERVICES.items():
+            # Act
+            service = service_type[0].from_connection_string(
+                "UseDevelopmentStorage=true;",
+                container_name="test",
+                blob_name="test"
+            )
+
+            # Assert
+            assert service is not None
+            assert service.scheme == "http"
+            assert service.account_name == devstore_account_name
+            assert service.credential.account_name == devstore_account_name
+            assert service.credential.account_key == devstore_account_key
+            assert f"{devstore_endpoint}:{devstore_blob_port}/{devstore_account_name}" in service.url
+
+    @BlobPreparer()
     def test_create_service_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
