@@ -40,7 +40,6 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
 
-
 async def main() -> None:
 
     credential = DefaultAzureCredential()
@@ -133,7 +132,7 @@ async def main() -> None:
                 else:
                     for message_text in message.text_messages:
                         print(f"{message.role}: {message_text.text.value}")
- 
+
 
 if __name__ == "__main__":
     asyncio.run(main())
