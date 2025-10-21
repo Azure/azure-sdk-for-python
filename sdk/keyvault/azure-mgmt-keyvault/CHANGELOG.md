@@ -13,7 +13,6 @@
   - Model `ManagedHsmKey` added property `properties`
   - Model `ManagedHsmKey` added property `system_data`
   - Model `Operation` added property `operation_properties`
-  - Model `Permissions` added property `keys_property`
   - Model `PrivateEndpointConnection` added property `system_data`
   - Model `PrivateEndpointConnectionItem` added property `properties`
   - Model `PrivateLinkResource` added property `system_data`
@@ -32,7 +31,7 @@
   - Model `MHSMPrivateEndpointConnectionItem` instance variables `private_endpoint`, `private_link_service_connection_state`, and `provisioning_state` have been moved under property `properties`
   - Model `ManagedHsmKey` instance variables `attributes`, `kty`, `key_ops`, `key_size`, `curve_name`, `key_uri`, `key_uri_with_version`, `rotation_policy`, and `release_policy` have been moved under property `properties`
   - Model `Operation` instance variable `service_specification` has been moved under property `operation_properties`
-  - Model `Permissions` instance variable `keys` has been moved under property `keys_property`
+  - Model `Permissions` renamed instance variable `keys` to `keys_property`
   - Model `PrivateEndpointConnectionItem` instance variables `private_endpoint`, `private_link_service_connection_state`, and `provisioning_state` have been moved under property `properties`
   - Deleted or renamed model `IdentityType`
   - Deleted or renamed model `ProxyResourceWithoutSystemData`
