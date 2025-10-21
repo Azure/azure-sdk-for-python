@@ -19,10 +19,10 @@ from azure.identity import DefaultAzureCredential
 
 ml_client = MLClient(
     DefaultAzureCredential(), 
-    subscription_id="2d385bf4-0756-4a76-aa95-28bf9ed3b625", 
-    resource_group="kchawla-rg", 
-    registry_name="kchawla-reg"
-    )
+    subscription_id= os.environ["AZURE_SUBSCRIPTION_ID"], 
+    resource_group= os.environ["RESOURCE_GROUP_NAME"], 
+    registry_name="test-reg"
+)
 
 print(ml_client)
 

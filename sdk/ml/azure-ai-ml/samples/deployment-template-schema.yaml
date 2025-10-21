@@ -1,12 +1,12 @@
 $schema: https://azuremlschemas.azureedge.net/latest/deploymentTemplate.schema.json 
-name: DT11
-version: 3
+name: DT-name
+version: 1
 type: deploymenttemplates
 deployment_template_type: Managed
 description: deployment template - with probe routes and port etc
 tags:
   stage: Open
-environment: azureml://registries/kchawla-reg/environments/kchawla-environment/versions/1 
+environment: azureml://registries/test-reg/environments/test-environment/versions/1 
 model_mount_path: /var/azureml-app 
 request_settings:  
  request_timeout_ms: 6000 

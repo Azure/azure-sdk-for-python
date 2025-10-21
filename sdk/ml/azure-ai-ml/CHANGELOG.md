@@ -6,9 +6,11 @@
 
 - Removed the dependencies - msrest and six
 - Added support for `Deployment Templates` along with the following operations:
-  - `ml_client.deployment_templates.create_or_update()` - Only create supported for now
+  - `ml_client.deployment_templates.create_or_update()`
   - `ml_client.deployment_templates.list()`
   - `ml_client.deployment_templates.get()`
+  - `ml_client.deployment_templates.archive()`
+  - `ml_client.deployment_templates.restore()`
 
 ### Bugs Fixed
 - Fix for registry resource group passed to OnlineEndpointOperations when model is in registry in different resource group compared to workspace.
