@@ -5,6 +5,8 @@
 from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired
+from ._evaluator_definition import EvaluatorDefinition
+from typing import Dict, List, Optional, Any
 
 
 class AzureOpenAIModelConfiguration(TypedDict):
@@ -104,6 +106,19 @@ class EvaluatorConfig(TypedDict, total=False):
 
     column_mapping: Dict[str, str]
     """Dictionary mapping evaluator input name to column in data"""
+
+    _evaluator_name: NotRequired[Optional[str]]
+    """Name of the evaluator from the evaluator asset, currently only used for Otel emission"""
+
+    _evaluator_version: NotRequired[Optional[str]]
+    """Version of the evaluator from the evaluator asset, currently only used for Otel emission"""
+
+    _evaluator_id: NotRequired[Optional[str]]
+    """ID of the evaluator from the evaluator asset, currently only used for Otel emission"""
+
+    _evaluator_definition: NotRequired[Optional[EvaluatorDefinition]]
+    """Definition of the evaluator to be used from the evaluator asset"""
+    """Currently only used for Otel emission, will be changed to used in AOAI eval results converter as well in the future."""
 
 
 class Message(TypedDict):
