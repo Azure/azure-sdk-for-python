@@ -5,6 +5,7 @@ import inspect
 import contextlib
 import json
 import logging
+import math
 import os
 import re
 import tempfile
@@ -2011,7 +2012,9 @@ def _convert_results_to_aoai_evaluation_results(
                         label = "pass"
                         score = 1.0
                         passed = True
-                result_obj["score"] = score
+                result_obj["score"] = (
+                    score if not (score is None or (isinstance(score, float) and math.isnan(score))) else None
+                )
                 result_obj["label"] = label
                 result_obj["reason"] = reason
                 result_obj["threshold"] = threshold
