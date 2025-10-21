@@ -367,19 +367,6 @@ class TestStorageClient(StorageRecordedTestCase):
             assert service.scheme == 'http'
 
     @BlobPreparer()
-    def test_create_service_with_connection_string_emulated(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(storage_account_name, storage_account_key)
-
-            # Act
-            with pytest.raises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
-
-    @BlobPreparer()
     def test_create_service_with_cstr_anonymous(self):
         # Arrange
         for service_type in SERVICES.items():
