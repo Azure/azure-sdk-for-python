@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
+  ([#43091](https://github.com/Azure/azure-sdk-for-python/pull/43091))
 
 ### Other Changes
 
