@@ -9,6 +9,7 @@ FILE: planetary_computer_04_stac_item_tiler.py
 
 DESCRIPTION:
     This sample demonstrates STAC item tiling operations from the Azure Planetary Computer Pro SDK.
+    Includes asset information retrieval, statistics, tiling, cropping, and preview operations.
     Uses NAIP sample datasets and saves tiles locally.
 
 USAGE:
@@ -63,6 +64,23 @@ def list_available_assets(client, collection_id, item_id):
     """List available assets for an item."""
     result = client.tiler.list_available_assets(collection_id=collection_id, item_id=item_id)
     logging.info(result)
+
+
+def get_assets_info(client, collection_id, item_id):
+    """Get basic info for dataset's assets.
+    
+    Returns dataset's basic information including data types, bounds, and other metadata
+    for the specified assets. If no assets are specified, returns info for all assets.
+    """
+    
+    # Get info for specific assets
+    result_specific = client.tiler.get_assets_info(
+        collection_id=collection_id,
+        item_id=item_id,
+        assets=["image"]
+    )
+    logging.info("Assets info (image asset only):")
+    logging.info(f"  Dataset: {result_specific}")
 
 
 def list_bounds(client, collection_id, item_id):
@@ -165,6 +183,7 @@ def get_point(client, collection_id, item_id, point):
         assets=["image"],
         longitude=point[0],
         latitude=point[1],
+        no_data=0,
     )
     logging.info(f"Point values at ({point[0]}, {point[1]}): {result}")
 
@@ -268,8 +287,8 @@ def main():
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
 
-    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-sample-datasets")
-    item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
+    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
+    item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID")
 
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
@@ -296,6 +315,7 @@ def main():
     list_tile_matrices(client)
     get_asset_statistics(client, collection_id, item_id)  # Not supported for NAIP
     list_available_assets(client, collection_id, item_id)
+    get_assets_info(client, collection_id, item_id)
     list_bounds(client, collection_id, item_id)
     crop_geo_json(client, collection_id, item_id, geojson)
     crop_geo_json_with_dimensions(client, collection_id, item_id, geojson)

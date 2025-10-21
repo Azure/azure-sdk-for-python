@@ -23,12 +23,12 @@ USAGE:
     python planetarycomputer_ingestion_management.py
 
     Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
-    Set the environment variable AZURE_COLLECTION_ID with your collection ID.
+    Set the environment variable PLANETARYCOMPUTER_COLLECTION_ID with your collection ID.
     
     Optional (for managed identity examples):
-    Set the environment variable AZURE_INGESTION_CONTAINER_URI with your container URI.
-    Set the environment variable AZURE_INGESTION_CATALOG_URL with your source catalog URL.
-    Set the environment variable AZURE_MANAGED_IDENTITY_OBJECT_ID with your managed identity object ID.
+    Set the environment variable PLANETARYCOMPUTER_INGESTION_CONTAINER_URI with your container URI.
+    Set the environment variable PLANETARYCOMPUTER_INGESTION_CATALOG_URL with your source catalog URL.
+    Set the environment variable PLANETARYCOMPUTER_MANAGED_IDENTITY_OBJECT_ID with your managed identity object ID.
     
     Optional (for SAS token examples):
     Set the environment variable AZURE_INGESTION_SAS_CONTAINER_URI with your SAS container URI.
@@ -59,7 +59,19 @@ logging.basicConfig(level=logging.INFO)
 
 
 def create_managed_identity_ingestion_sources(client: PlanetaryComputerClient, container_uri: str, managed_identity_object_id: str):
-    """Create managed identity-based ingestion source."""
+    """Create managed identity-based ingestion source and return the source_id."""
+    
+    # Validate required parameters
+    if not container_uri:
+        raise ValueError(
+            "PLANETARYCOMPUTER_INGESTION_CONTAINER_URI environment variable must be set. "
+            "Example: https://yourstorageaccount.blob.core.windows.net/yourcontainer"
+        )
+    if not managed_identity_object_id:
+        raise ValueError(
+            "PLANETARYCOMPUTER_MANAGED_IDENTITY_OBJECT_ID environment variable must be set. "
+            "This is the object ID of the managed identity with access to the storage account."
+        )
 
     # Clean up existing sources
     existing_sources = list(client.ingestion_management.list_sources())
@@ -82,52 +94,73 @@ def create_managed_identity_ingestion_sources(client: PlanetaryComputerClient, c
     for identity in managed_identities:
         logging.info(f"  - Object ID: {identity.object_id}")
         logging.info(f"    Resource ID: {identity.resource_id}")
-
-
-def create_or_replace_source(client: PlanetaryComputerClient, container_uri: str, managed_identity_object_id: str):
-    """Create or replace an ingestion source (idempotent operation).
     
-    This demonstrates using create_or_replace_source which is idempotent:
-    - If the source doesn't exist, it creates it
-    - If the source exists, it replaces it completely
-    - Multiple calls with the same data produce the same result
+    return source_id
+
+
+def create_or_replace_source(client: PlanetaryComputerClient, sas_container_uri: str, sas_token: str, source_id: str):
+    """Demonstrate create_or_replace_source idempotent operation.
+    
+    This assumes the source already exists (created by create_sas_token_ingestion_source).
+    It demonstrates that create_or_replace_source can be called multiple times with the same source_id
+    to update/replace the source (in this case, updating the SAS token).
     """
-    source_id = "sample-managed-identity-source"
+    # Validate required parameters
+    if not sas_container_uri:
+        raise ValueError(
+            "AZURE_INGESTION_SAS_CONTAINER_URI environment variable must be set for create_or_replace_source"
+        )
+    if not sas_token:
+        raise ValueError(
+            "AZURE_INGESTION_SAS_TOKEN environment variable must be set for create_or_replace_source"
+        )
     
-    # Create connection info with managed identity
-    connection_info = ManagedIdentityConnection(
-        container_uri=container_uri,
-        object_id=managed_identity_object_id
+    # Create connection info with SAS token
+    connection_info = SharedAccessSignatureTokenConnection(
+        container_uri=sas_container_uri,
+        shared_access_signature_token=sas_token
     )
     
     # Create ingestion source
-    ingestion_source = ManagedIdentityIngestionSource(
+    ingestion_source = SharedAccessSignatureTokenIngestionSource(
         id=source_id,
         connection_info=connection_info
     )
     
-    logging.info(f"Creating or replacing ingestion source: {source_id}")
-    
-    # Create or replace the source (idempotent operation)
-    created_source = client.ingestion_management.create_or_replace_source(
+    # First call - replaces the existing source with original token
+    logging.info(f"First call to create_or_replace_source with existing source ID: {source_id}")
+    first_result = client.ingestion_management.create_or_replace_source(
         id=source_id,
         ingestion_source=ingestion_source
     )
+    logging.info(f"First call result: {first_result.id}")
     
-    logging.info(f"Source created/replaced successfully: {created_source.id}")
-    
-    # Demonstrate idempotency - calling again with same data
     time.sleep(1)
     
-    logging.info("Calling create_or_replace_source again (demonstrating idempotency)...")
-    replaced_source = client.ingestion_management.create_or_replace_source(
+    # Second call - replaces again with modified token (demonstrates update capability)
+    # Generate a valid SAS token format with required fields: permission, start, and expiration
+    from datetime import datetime, timedelta
+    start_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    expiry_time = (datetime.utcnow() + timedelta(days=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    updated_token = f"sp=rl&st={start_time}&se={expiry_time}&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    
+    updated_connection_info = SharedAccessSignatureTokenConnection(
+        container_uri=sas_container_uri,
+        shared_access_signature_token=updated_token
+    )
+    updated_ingestion_source = SharedAccessSignatureTokenIngestionSource(
         id=source_id,
-        ingestion_source=ingestion_source
+        connection_info=updated_connection_info
     )
     
-    logging.info("Source operation completed (idempotent)")
+    logging.info("Second call to create_or_replace_source with updated SAS token")
+    second_result = client.ingestion_management.create_or_replace_source(
+        id=source_id,
+        ingestion_source=updated_ingestion_source
+    )
+    logging.info(f"Second call result: {second_result.id}")
     
-    return replaced_source.id
+    return second_result.id
 
 
 def get_source_by_id(client: PlanetaryComputerClient, source_id: str):
@@ -167,6 +200,10 @@ def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id:
     )
 
     # Create the ingestion
+    # TODO: The SDK's ingestion_management.create() method behavior should be reviewed.
+    # Currently, calling create() on an existing ingestion only performs updates rather than
+    # failing or replacing the ingestion. This should be clarified or a separate create_or_update
+    # method should be provided for idempotent operations.
     logging.info("Creating ingestion for NAIP catalog...")
     ingestion_response = client.ingestion_management.create(
         collection_id=collection_id, definition=ingestion_definition
@@ -252,6 +289,19 @@ def list_ingestion_runs(client: PlanetaryComputerClient, collection_id: str, ing
 
 def create_sas_token_ingestion_source(client: PlanetaryComputerClient, sas_container_uri: str, sas_token: str):
     """Create a SAS token ingestion source with example values."""
+    
+    # Validate required parameters
+    if not sas_container_uri:
+        raise ValueError(
+            "AZURE_INGESTION_SAS_CONTAINER_URI environment variable must be set. "
+            "Example: https://yourstorageaccount.blob.core.windows.net/yourcontainer"
+        )
+    if not sas_token:
+        raise ValueError(
+            "AZURE_INGESTION_SAS_TOKEN environment variable must be set. "
+            "This is the SAS token for accessing the storage account."
+        )
+    
     logging.info("Creating SAS token ingestion source...")
     
     # Create connection info with SAS token (using fake/example values)
@@ -339,14 +389,22 @@ def manage_operations(client: PlanetaryComputerClient):
 def main():
     # Get configuration from environment
     endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
-    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-sample-datasets")
+    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
 
     # Get optional ingestion-specific configuration (for examples)
-    container_uri = os.environ.get("PLANETARYCOMPUTER_INGESTION_CONTAINER_URI", "")
-    source_catalog_url = os.environ.get("PLANETARYCOMPUTER_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
-    managed_identity_object_id = os.environ.get("AZURE_MANAGED_IDENTITY_OBJECT_ID", "")
-    sas_container_uri = os.environ.get("PLANETARYCOMPUTER_INGESTION_SAS_CONTAINER_URI", "")
-    sas_token = os.environ.get("PLANETARYCOMPUTER_INGESTION_SAS_TOKEN", "")
+    container_uri = os.environ.get("PLANETARYCOMPUTER_INGESTION_CONTAINER_URI")
+    source_catalog_url = os.environ.get("PLANETARYCOMPUTER_INGESTION_CATALOG_URL")
+    managed_identity_object_id = os.environ.get("PLANETARYCOMPUTER_MANAGED_IDENTITY_OBJECT_ID")
+    sas_container_uri = os.environ.get("AZURE_INGESTION_SAS_CONTAINER_URI")
+    sas_token = os.environ.get("AZURE_INGESTION_SAS_TOKEN")
+
+    assert endpoint is not None
+    assert collection_id is not None
+    assert container_uri is not None
+    assert source_catalog_url is not None
+    assert managed_identity_object_id is not None
+    assert sas_container_uri is not None
+    assert sas_token is not None
 
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
@@ -365,11 +423,11 @@ def main():
     # Execute ingestion management workflow
     # 1. Create managed identity and SAS token ingestion sources
     create_managed_identity_ingestion_sources(client, container_uri, managed_identity_object_id)
-    create_sas_token_ingestion_source(client, sas_container_uri, sas_token)
+    sas_source_id = create_sas_token_ingestion_source(client, sas_container_uri, sas_token)
     
     # 2. Demonstrate advanced source operations (idempotent)
-    source_id = create_or_replace_source(client, container_uri, managed_identity_object_id)
-    get_source_by_id(client, source_id)
+    updated_source_id = create_or_replace_source(client, sas_container_uri, sas_token, sas_source_id)
+    get_source_by_id(client, updated_source_id)
 
     # 3. Run actual NAIP ingestion hosted on GitHub
     naip_ingestion_id = create_github_naip_ingestion(client, collection_id, source_catalog_url)

@@ -238,24 +238,33 @@ def create_or_replace_stac_item(client, collection_id, item_id):
     """Create or replace a STAC item (idempotent operation).
     
     This demonstrates using begin_create_or_replace_item which is idempotent:
-    - If the item doesn't exist, it creates it
-    - If the item exists, it replaces it completely
+    - First ensures item exists by creating it with begin_create_item
+    - Then demonstrates replace using begin_create_or_replace_item
     - Multiple calls with the same data produce the same result
     """
-    # Create initial item
+    # First, create the item using begin_create_item
     stac_item = get_sample_stac_item(collection_id, item_id)
     
-    create_poller = client.stac.begin_create_or_replace_item(
-        collection_id=collection_id, item_id=item_id, body=stac_item, polling=True
-    )
-    create_poller.result()
-    logging.info(f"Created item {item_id}")
+    try:
+        create_poller = client.stac.begin_create_item(
+            collection_id=collection_id, body=stac_item, polling=True
+        )
+        create_poller.result()
+        logging.info(f"Created item {item_id}")
+    except HttpResponseError as e:
+        if "already exists" in str(e).lower():
+            logging.info(f"Item {item_id} already exists, continuing...")
+        else:
+            raise
     
     # Verify creation
     created_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
     logging.info(f"Verified item {created_item.id}")
     
-    # Update and replace item (idempotent - same call replaces completely)
+    # Wait for item to be fully available before replacing
+    time.sleep(2)
+    
+    # Now demonstrate create_or_replace (replace since item exists)
     stac_item.properties["platform"] = "NAIP Imagery Updated"
     stac_item.properties["processing_level"] = "L2"
     
@@ -263,7 +272,7 @@ def create_or_replace_stac_item(client, collection_id, item_id):
         collection_id=collection_id, item_id=item_id, body=stac_item, polling=True
     )
     replace_poller.result()
-    logging.info(f"Replaced item {item_id}")
+    logging.info(f"Replaced item {item_id} using create_or_replace")
     
     # Verify replacement
     replaced_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
@@ -320,8 +329,8 @@ def get_queryables(client, collection_id):
 def main():
     # Get configuration from environment
     endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
-    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-sample-datasets")
-    item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID", "ga_m_3308421_se_16_060_20211114")
+    collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
+    item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID")
 
     if not endpoint:
         raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
