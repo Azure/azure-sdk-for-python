@@ -1069,7 +1069,7 @@ def _log_events_to_app_insights(
     :type events: List[Dict[str, Any]]
     :param log_attributes: Attributes dict to use for each event (already includes extra_attributes if present)
     :type log_attributes: Dict[str, Any]
-    :param data_source_item: Data source item containing trace_id, response_id, conversation_id
+    :param data_source_item: Data source item containing trace, response, and agent information
     :type data_source_item: Optional[Dict[str, Any]]
     """
 
@@ -1079,6 +1079,7 @@ def _log_events_to_app_insights(
     try:
         # Get the trace_id and other context from data source item
         trace_id = None
+        span_id = None
         response_id = None
         conversation_id = None
         previous_response_id = None
@@ -1104,6 +1105,11 @@ def _log_events_to_app_insights(
                     agent_version = value
                 elif key.endswith("agent_id") and value and isinstance(value, str):
                     agent_id = value
+                elif key.endswith("span_id") and value and isinstance(value, str):
+                    # Remove dashes if present and convert to int
+                    span_id_str = str(value).replace("-", "").lower()
+                    if len(span_id_str) == 16:  # Valid span_id length (64-bit = 16 hex chars)
+                        span_id = int(span_id_str, 16)
 
         # Log each event as a separate log record
         for i, event_data in enumerate(events):
@@ -1159,12 +1165,12 @@ def _log_events_to_app_insights(
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
                 log_attributes["http.client_ip"] = "0.0.0.0"
 
-                # Create context with trace_id if present (for distributed tracing correlation)
+                # Create context with trace_id and span_id if present (for distributed tracing correlation)
                 ctx = None
                 if trace_id:
                     span_context = SpanContext(
                         trace_id=trace_id,
-                        span_id=0,
+                        span_id=span_id if span_id else 0,  # Use extracted span_id or 0 if not available
                         is_remote=False,
                         trace_flags=TraceFlags(0x01),
                     )
