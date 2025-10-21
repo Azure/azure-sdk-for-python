@@ -585,7 +585,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         
         # Test cross-partition query with max_item_count
         max_items_per_page = 8
-        query = "SELECT * FROM c ORDER BY c.value"
+        query = "SELECT * FROM c ORDER BY c['value']"
         query_iterable = created_collection.query_items(
             query=query,
             max_item_count=max_items_per_page
