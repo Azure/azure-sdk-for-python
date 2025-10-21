@@ -91,8 +91,8 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
     def _convert_dict_to_deployment_template(self, dict_data: Dict[str, Any]) -> DeploymentTemplate:
         """Convert dictionary format to DeploymentTemplate object.
         
-        This helper method handles the field name conversion from snake_case/user-friendly
-        format to the camelCase format expected by the REST API.
+        This helper method converts a user-provided dictionary to a DeploymentTemplate object
+        using the constructor directly. It handles field name variations and type conversions.
         
         :param dict_data: Dictionary containing deployment template data
         :type dict_data: Dict[str, Any]
@@ -100,61 +100,157 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         """
         # Create a copy to avoid modifying the original
-        fixed_data = dict_data.copy()
+        data = dict_data.copy()
         
-        # Field name mappings from user-friendly format to API format
-        field_mappings = {
-            'allowed_instance_types': 'allowedInstanceType',
-            'deployment_template_type': 'deploymentTemplateType', 
-            'model_mount_path': 'modelMountPath',
-            'scoring_path': 'scoringPath',
-            'scoring_port': 'scoringPort',
-            'default_instance_type': 'defaultInstanceType',
-            'instance_count': 'instanceCount',
-            'environment_variables': 'environmentVariables',
-            'request_settings': 'requestSettings',
-            'liveness_probe': 'livenessProbe',
-            'readiness_probe': 'readinessProbe'
-        }
+        # Handle field name variations (both snake_case and camelCase should work)
+        def get_field_value(data: dict, primary_name: str, alt_name: str = None, default=None):
+            """Get field value, trying both primary and alternative names."""
+            if primary_name in data:
+                return data[primary_name]
+            elif alt_name and alt_name in data:
+                return data[alt_name]
+            return default
         
-        # Apply field name mappings
-        for old_name, new_name in field_mappings.items():
-            if old_name in fixed_data:
-                fixed_data[new_name] = fixed_data[old_name]
-                del fixed_data[old_name]
+        # Extract constructor parameters with field name mappings
+        name = data.get('name')
+        version = data.get('version')
+        description = data.get('description')
+        tags = data.get('tags')
         
-        # Convert string to list for allowed instance types
-        if 'allowedInstanceType' in fixed_data and isinstance(fixed_data['allowedInstanceType'], str):
-            fixed_data['allowedInstanceType'] = fixed_data['allowedInstanceType'].split()
+        # Validate required fields
+        if not name:
+            raise ValueError("name is required")
+        if not version:
+            raise ValueError("version is required")
+            
+        # Handle environment field - check multiple possible names
+        environment = (data.get('environment') or 
+                      data.get('environment_id') or 
+                      data.get('environmentId'))  # Also check camelCase REST API format
+        if not environment:
+            raise ValueError("environment is required but was not found in the data")
         
-        # Fix request settings field names
-        if 'requestSettings' in fixed_data:
-            rs = fixed_data['requestSettings']
-            if 'request_timeout_ms' in rs:
-                rs['requestTimeout'] = rs['request_timeout_ms']
-                del rs['request_timeout_ms']
-            if 'max_concurrent_requests_per_instance' in rs:
-                rs['maxConcurrentRequestsPerInstance'] = rs['max_concurrent_requests_per_instance']
-                del rs['max_concurrent_requests_per_instance']
+        # Handle field name variations for constructor parameters
+        allowed_instance_types = get_field_value(data, 'allowed_instance_types', 'allowedInstanceType')
+        if isinstance(allowed_instance_types, str):
+            # Convert space-separated string to list
+            allowed_instance_types = allowed_instance_types.split()
         
-        # Fix probe settings field names
-        for probe_field in ['livenessProbe', 'readinessProbe']:
-            if probe_field in fixed_data:
-                probe = fixed_data[probe_field]
-                probe_mappings = {
-                    'initial_delay': 'initialDelay',
-                    'failure_threshold': 'failureThreshold',
-                    'success_threshold': 'successThreshold',
-                    'method': 'httpMethod'
-                }
-                for old, new in probe_mappings.items():
-                    if old in probe:
-                        probe[new] = probe[old]
-                        del probe[old]
+        default_instance_type = get_field_value(data, 'default_instance_type', 'defaultInstanceType')
+        deployment_template_type = get_field_value(data, 'deployment_template_type', 'deploymentTemplateType')
+        model_mount_path = get_field_value(data, 'model_mount_path', 'modelMountPath')
+        scoring_path = get_field_value(data, 'scoring_path', 'scoringPath')
+        scoring_port = get_field_value(data, 'scoring_port', 'scoringPort')
+        if scoring_port is not None and isinstance(scoring_port, str):
+            try:
+                scoring_port = int(scoring_port)
+            except (ValueError, TypeError):
+                scoring_port = None
+                
+        instance_count = get_field_value(data, 'instance_count', 'instanceCount')
+        if instance_count is not None and isinstance(instance_count, str):
+            try:
+                instance_count = int(instance_count)
+            except (ValueError, TypeError):
+                instance_count = None
+                
+        environment_variables = get_field_value(data, 'environment_variables', 'environmentVariables')
         
-        # Create DeploymentTemplate object using _from_rest_object
-        rest_data = {"properties": fixed_data}
-        return DeploymentTemplate._from_rest_object(rest_data)
+        # Handle request settings
+        request_settings_data = get_field_value(data, 'request_settings', 'requestSettings')
+        request_settings = None
+        if request_settings_data and isinstance(request_settings_data, dict):
+            from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings
+            # Handle field name variations in request settings
+            timeout = get_field_value(request_settings_data, 'request_timeout_ms', 'requestTimeout')
+            # Also check for 'request_timeout' as an alternative name
+            if timeout is None:
+                timeout = request_settings_data.get('request_timeout')
+            max_concurrent = get_field_value(request_settings_data, 'max_concurrent_requests_per_instance', 'maxConcurrentRequestsPerInstance')
+            
+            # Convert string values to integers if needed
+            if timeout is not None and isinstance(timeout, str):
+                try:
+                    timeout = int(timeout)
+                except (ValueError, TypeError):
+                    timeout = None
+            
+            if max_concurrent is not None and isinstance(max_concurrent, str):
+                try:
+                    max_concurrent = int(max_concurrent)
+                except (ValueError, TypeError):
+                    max_concurrent = None
+                    
+            request_settings = OnlineRequestSettings(
+                request_timeout_ms=timeout,
+                max_concurrent_requests_per_instance=max_concurrent
+            )
+        
+        # Handle probe settings
+        def create_probe_settings(probe_data):
+            if not probe_data or not isinstance(probe_data, dict):
+                return None
+            from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
+            
+            # Helper function to convert string values to integers
+            def convert_to_int(value):
+                if value is not None and isinstance(value, str):
+                    try:
+                        return int(value)
+                    except (ValueError, TypeError):
+                        return None
+                return value
+            
+            return ProbeSettings(
+                initial_delay=convert_to_int(get_field_value(probe_data, 'initial_delay', 'initialDelay')),
+                period=convert_to_int(probe_data.get('period')),
+                timeout=convert_to_int(probe_data.get('timeout')),
+                failure_threshold=convert_to_int(get_field_value(probe_data, 'failure_threshold', 'failureThreshold')),
+                success_threshold=convert_to_int(get_field_value(probe_data, 'success_threshold', 'successThreshold')),
+                scheme=probe_data.get('scheme'),
+                path=probe_data.get('path'),
+                port=convert_to_int(probe_data.get('port')),
+                method=get_field_value(probe_data, 'method', 'httpMethod')
+            )
+        
+        liveness_probe_data = get_field_value(data, 'liveness_probe', 'livenessProbe')
+        liveness_probe = create_probe_settings(liveness_probe_data)
+        
+        readiness_probe_data = get_field_value(data, 'readiness_probe', 'readinessProbe')
+        readiness_probe = create_probe_settings(readiness_probe_data)
+        
+        # Get other fields
+        model = data.get('model')
+        code_configuration = data.get('code_configuration')
+        app_insights_enabled = data.get('app_insights_enabled')
+        stage = data.get('stage')
+        type_field = data.get('type')
+        
+        # Create DeploymentTemplate object using constructor
+        return DeploymentTemplate(
+            name=name,
+            version=version,
+            description=description,
+            tags=tags,
+            environment=environment,
+            request_settings=request_settings,
+            liveness_probe=liveness_probe,
+            readiness_probe=readiness_probe,
+            instance_count=instance_count,
+            instance_type=default_instance_type,
+            model=model,
+            code_configuration=code_configuration,
+            environment_variables=environment_variables,
+            app_insights_enabled=app_insights_enabled,
+            allowed_instance_types=allowed_instance_types,
+            default_instance_type=default_instance_type,
+            scoring_port=scoring_port,
+            scoring_path=scoring_path,
+            model_mount_path=model_mount_path,
+            type=type_field,
+            deployment_template_type=deployment_template_type,
+            stage=stage
+        )
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.List", ActivityType.PUBLICAPI)
@@ -200,77 +296,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     **kwargs
                 )
         )
-        # try:
-        #     if hasattr(self._service_client, 'deployment_templates'):
-        #         registry_name_to_use = self._operation_scope.registry_name or self._operation_scope.workspace_name
-        #         endpoint = f"https://eastus2.api.azureml.ms"  # TODO: Hardcoded value of endpoint
-                
-        #         results = self._service_client.deployment_templates.list_deployment_templates(
-        #             endpoint=endpoint,
-        #             subscription_id=self._operation_scope.subscription_id,
-        #             resource_group_name=self._operation_scope.resource_group_name,
-        #             registry_name=registry_name_to_use,
-        #             name=name,
-        #             tags=tags,
-        #             count=count,
-        #             stage=stage,
-        #             list_view_type=list_view_type,
-        #             **kwargs
-        #         )
-        #         import pdb;pdb.set_trace()
-        #         if results is None or isinstance(results, str):
-        #             return []
-                
-        #         deployment_templates = []
-                
-        #         for paged_result in results:
-        #             if isinstance(paged_result, str):
-        #                 continue
-                    
-        #             # Handle PagedDeploymentTemplate with 'value' property
-        #             if hasattr(paged_result, 'value') and paged_result.value:
-        #                 for deployment_template_obj in paged_result.value:
-        #                     if deployment_template_obj:
-        #                         try:
-        #                             dt = DeploymentTemplate._from_rest_object(deployment_template_obj)
-        #                             deployment_templates.append(dt)
-        #                         except Exception:
-        #                             # Skip malformed objects
-        #                             continue
-        #             elif isinstance(paged_result, dict):
-        #                 # Handle direct response dictionary
-        #                 if 'value' in paged_result:
-        #                     for deployment_template_obj in paged_result['value']:
-        #                         try:
-        #                             dt = DeploymentTemplate._from_rest_object(deployment_template_obj)
-        #                             deployment_templates.append(dt)
-        #                         except Exception:
-        #                             # Skip malformed objects
-        #                             continue
-        #                 else:
-        #                     # Direct DeploymentTemplate object
-        #                     try:
-        #                         dt = DeploymentTemplate._from_rest_object(paged_result)
-        #                         deployment_templates.append(dt)
-        #                     except Exception:
-        #                         # Skip malformed objects
-        #                         continue
-        #             elif hasattr(paged_result, 'name') or hasattr(paged_result, 'properties'):
-        #                 # Direct DeploymentTemplate object
-        #                 try:
-        #                     dt = DeploymentTemplate._from_rest_object(paged_result)
-        #                     deployment_templates.append(dt)
-        #                 except Exception:
-        #                     # Skip malformed objects
-        #                     continue
-                
-        #         return deployment_templates
-        #     else:
-        #         return []
-        # except Exception as e:
-        #     module_logger.warning("DeploymentTemplate list operation failed: %s", e)
-        #     return []
-
+        
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None) -> DeploymentTemplate:
@@ -342,7 +368,6 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             if hasattr(self._service_client, 'deployment_templates'):
                 endpoint = self._get_registry_endpoint()
                 
-                import pdb;pdb.set_trace()
                 rest_object = deployment_template._to_rest_object()
                 self._service_client.deployment_templates.begin_create(
                     endpoint=endpoint,
@@ -410,7 +435,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         try:
             # Get the existing template
             template = self.get(name=name, version=version)
-            import pdb;pdb.set_trace()
+            
             # Set stage to Archived
             template.stage = "Archived"
             
