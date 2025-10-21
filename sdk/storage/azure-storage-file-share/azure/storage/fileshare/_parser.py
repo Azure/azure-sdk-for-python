@@ -39,7 +39,7 @@ def _parse_datetime_from_str(string_datetime):
     us = int(us[:-2])  # microseconds
     datetime_obj = dt + timedelta(microseconds=us)
     if not datetime_obj.tzinfo:
-        datetime_obj = datetime_obj.astimezone(timezone.utc)
+        datetime_obj = datetime_obj.replace(tzinfo=timezone.utc)
     return datetime_obj
 
 
