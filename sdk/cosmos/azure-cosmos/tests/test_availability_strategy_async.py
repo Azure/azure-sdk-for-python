@@ -474,7 +474,7 @@ class TestAsyncAvailabilityStrategy:
                             FaultInjectionTransportAsync.predicate_targets_region(r, failed_over_uri))
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
             0,
-            CosmosHttpResponseError(status_code=status_code, message=f"Injected {status_code} Error", sub_status_code=sub_status_code)
+            CosmosHttpResponseError(status_code=status_code, message=f"Injected {status_code} Error", sub_status=sub_status_code)
         )
 
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)

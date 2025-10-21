@@ -261,9 +261,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return self.default_regional_routing_context.get_primary()
 
         regional_routing_contexts = (
-            self.get_applicable_write_regional_routing_contexts(request)
+            self._get_applicable_write_regional_routing_contexts(request)
             if documents._OperationType.IsWriteOperation(request.operation_type)
-            else self.get_applicable_read_regional_routing_contexts(request)
+            else self._get_applicable_read_regional_routing_contexts(request)
         )
         regional_routing_context = regional_routing_contexts[location_index % len(regional_routing_contexts)]
         return regional_routing_context.get_primary()
