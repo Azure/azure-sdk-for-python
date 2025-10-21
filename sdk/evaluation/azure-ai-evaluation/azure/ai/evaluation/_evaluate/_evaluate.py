@@ -1736,6 +1736,8 @@ def _convert_results_to_aoai_evaluation_results(
             criteria_type = criteria_name_types_from_meta[criteria_name].get("type", None)
             evaluator_name = criteria_name_types_from_meta[criteria_name].get("evaluator_name", None)
             if evaluator_name:
+                if criteria_type=="azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+                    evaluator_name = evaluator_name.replace("builtin.", "")
                 metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
                 if metrics_mapped and len(metrics_mapped) > 0:
                     metrics.extend(metrics_mapped)
@@ -1798,6 +1800,9 @@ def _convert_results_to_aoai_evaluation_results(
                         result_per_metric[metric] = {"score": metric_value}
                     else:
                         result_per_metric[metric]["score"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "score", metric, metric_value
+                    )
                 elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     label = metric_value
@@ -1809,6 +1814,12 @@ def _convert_results_to_aoai_evaluation_results(
                     else:
                         result_per_metric[metric]["label"] = metric_value
                         result_per_metric[metric]["passed"] = passed
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "label", metric, label
+                    )
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "passed", metric, passed
+                    )
                 elif (
                     metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")
                 ) or metric_key == "reason":
@@ -1817,18 +1828,27 @@ def _convert_results_to_aoai_evaluation_results(
                         result_per_metric[metric] = {"reason": metric_value}
                     else:
                         result_per_metric[metric]["reason"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "reason", metric, metric_value
+                    )
                 elif metric_key.endswith("_threshold") or metric_key == "threshold":
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"threshold": metric_value}
                     else:
                         result_per_metric[metric]["threshold"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "threshold", metric, metric_value
+                    )
                 elif metric_key == "sample":
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": metric_value}
                     else:
                         result_per_metric[metric]["sample"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value
+                    )
                 elif metric_key.endswith("_finish_reason"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
@@ -1841,6 +1861,9 @@ def _convert_results_to_aoai_evaluation_results(
                         and "finish_reason" not in result_per_metric[metric]["sample"]
                     ):
                         result_per_metric[metric]["sample"]["finish_reason"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "finish_reason"
+                    )
                 elif metric_key.endswith("_model"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
@@ -1853,6 +1876,9 @@ def _convert_results_to_aoai_evaluation_results(
                         and "model" not in result_per_metric[metric]["sample"]
                     ):
                         result_per_metric[metric]["sample"]["model"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "model"
+                    )
                 elif metric_key.endswith("_sample_input"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     input_metric_val_json: Optional[List[Dict[str, Any]]] = []
@@ -1870,6 +1896,9 @@ def _convert_results_to_aoai_evaluation_results(
                         and "input" not in result_per_metric[metric]["sample"]
                     ):
                         result_per_metric[metric]["sample"]["input"] = input_metric_val_json
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, input_metric_val_json, "input"
+                    )
                 elif metric_key.endswith("_sample_output"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     output_metric_val_json: Optional[List[Dict[str, Any]]] = []
@@ -1887,6 +1916,9 @@ def _convert_results_to_aoai_evaluation_results(
                         and "output" not in result_per_metric[metric]["sample"]
                     ):
                         result_per_metric[metric]["sample"]["output"] = output_metric_val_json
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, output_metric_val_json, "output"
+                    )
                 elif metric_key.endswith("_total_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
@@ -1901,6 +1933,9 @@ def _convert_results_to_aoai_evaluation_results(
                         result_per_metric[metric]["sample"]["usage"] = {"total_tokens": metric_value}
                     else:
                         result_per_metric[metric]["sample"]["usage"]["total_tokens"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "usage", "total_tokens"
+                    )
                 elif metric_key.endswith("_prompt_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
@@ -1915,6 +1950,9 @@ def _convert_results_to_aoai_evaluation_results(
                         result_per_metric[metric]["sample"]["usage"] = {"prompt_tokens": metric_value}
                     else:
                         result_per_metric[metric]["sample"]["usage"]["prompt_tokens"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "usage", "prompt_tokens"
+                    )
                 elif metric_key.endswith("_completion_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
                     if metric not in result_per_metric:
@@ -1929,6 +1967,9 @@ def _convert_results_to_aoai_evaluation_results(
                         result_per_metric[metric]["sample"]["usage"] = {"completion_tokens": metric_value}
                     else:
                         result_per_metric[metric]["sample"]["usage"]["completion_tokens"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "usage", "completion_tokens"
+                    )
                 elif not any(
                     metric_key.endswith(suffix)
                     for suffix in [
@@ -1970,6 +2011,18 @@ def _convert_results_to_aoai_evaluation_results(
                     "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
                 }
                 # Add optional fields
+                if(metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
+                   or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
+                   or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"]):
+                    copy_label = label
+                    if copy_label is not None and isinstance(copy_label, bool) and copy_label == True:
+                        label = "fail"
+                        score = 0.0
+                        passed = False
+                    else:
+                        label = "pass"
+                        score = 1.0
+                        passed = True
                 result_obj["score"] = score
                 result_obj["label"] = label
                 result_obj["reason"] = reason
@@ -2043,6 +2096,65 @@ def _convert_results_to_aoai_evaluation_results(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
 
+def _append_indirect_attachments_to_results(current_result_dict: Dict[str, Any], 
+                                            result_name: str, 
+                                            metric: str, 
+                                            metric_value: Any, 
+                                            nested_result_name: Optional[str] = None, 
+                                            secondnested_result_name: Optional[str] = None) -> None:
+    """
+    Append indirect attachments to the current result dictionary.
+
+    :param current_result_dict: The current result dictionary to update
+    :type current_result_dict: Dict[str, Any]
+    :param result_name: The result name
+    :type result_name: str
+    :param metric: The metric name
+    :type metric: str
+    :param metric_value: The value of the metric
+    :type metric_value: Any
+    """
+    if metric == "xpia" and result_name:
+        for metric_extended in ["xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]:
+            if nested_result_name is None:
+                if metric_extended not in current_result_dict:
+                    current_result_dict[metric_extended] = { result_name: metric_value }
+                else:
+                    current_result_dict[metric_extended][result_name] = metric_value
+            elif nested_result_name is not None and secondnested_result_name is None:
+                if metric_extended not in current_result_dict:
+                    current_result_dict[metric_extended] = {result_name : {nested_result_name: metric_value}}
+                elif (metric_extended in current_result_dict 
+                      and result_name not in current_result_dict[metric_extended]
+                ):
+                    current_result_dict[metric_extended][result_name] = {nested_result_name: metric_value}
+                elif (
+                    metric_extended in current_result_dict
+                    and result_name in current_result_dict[metric_extended]
+                    and nested_result_name not in current_result_dict[metric_extended][result_name]
+                ):
+                    current_result_dict[metric_extended][result_name][nested_result_name] = metric_value
+            elif nested_result_name is not None and secondnested_result_name is not None:
+                if metric_extended not in current_result_dict:
+                    current_result_dict[metric_extended] = {
+                        result_name: {nested_result_name: {secondnested_result_name: metric_value}}
+                    }
+                elif (metric_extended in current_result_dict 
+                      and result_name not in current_result_dict[metric_extended]
+                ):
+                    current_result_dict[metric_extended][result_name] = {
+                        nested_result_name: {secondnested_result_name: metric_value}
+                    }
+                elif (
+                    metric_extended in current_result_dict
+                    and result_name in current_result_dict[metric_extended]
+                    and nested_result_name not in current_result_dict[metric_extended][result_name]
+                ):
+                    current_result_dict[metric_extended][result_name][nested_result_name] = {
+                        secondnested_result_name: metric_value
+                    }
+                else:
+                    current_result_dict[metric_extended][result_name][nested_result_name][secondnested_result_name] = metric_value
 
 def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metric_list: List[str]) -> str:
     """
@@ -2058,6 +2170,16 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     :rtype: str
     """
     metric = None
+
+    if metric_key == "xpia_manipulated_content":
+        metric = "xpia_manipulated_content"
+        return metric
+    elif metric_key == "xpia_intrusion":
+        metric = "xpia_intrusion"
+        return metric
+    elif metric_key == "xpia_information_gathering":
+        metric = "xpia_information_gathering"
+        return metric
     for expected_metric in metric_list:
         if metric_key.startswith(expected_metric):
             metric = expected_metric
@@ -2124,9 +2246,12 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
+        dup_usage_list = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"].copy()
+        dup_usage_list.remove("xpia")
         if isinstance(aoai_result, dict) and aoai_result["results"] and isinstance(aoai_result["results"], list):
             for result_item in aoai_result["results"]:
-                if isinstance(result_item, dict) and "sample" in result_item and result_item["sample"]:
+                if (isinstance(result_item, dict) and "sample" in result_item and result_item["sample"]
+                    and result_item["metric"] not in dup_usage_list):
                     sample_data_list.append(result_item["sample"])
 
         for sample_data in sample_data_list:
