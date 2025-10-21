@@ -1,9 +1,8 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
-
-
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -15,7 +14,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
 from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
-from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
+from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient  # pylint: disable=import-error,no-name-in-module
 
 __all__: List[str] = [
     "ConfidentialLedgerCertificateCredential",
