@@ -206,7 +206,7 @@ def demonstrate_user_agent_in_operations(client, custom_suffix="DemoClient/1.0.0
 
 def demonstrate_operations_with_multiple_user_agents():
     """
-    Show how different user agents help track concurrent async operations.
+    Show how different user agents help track multiple operations.
     """
     print('\n6. Demonstrating Multiple operations with different user agents')
 
@@ -221,8 +221,8 @@ def demonstrate_operations_with_multiple_user_agents():
         print(f'{operation_name} completed with user agent: {user_agent_suffix}')
 
     # Run multiple operations with different user agents
-    operation_with_user_agent("Worker1/1.0.0", "Worker 1"),
-    operation_with_user_agent("Worker2/1.0.0", "Worker 2"),
+    operation_with_user_agent("Worker1/1.0.0", "Worker 1")
+    operation_with_user_agent("Worker2/1.0.0", "Worker 2")
     operation_with_user_agent("Worker3/1.0.0", "Worker 3")
 
     print('\nEach operation can be tracked separately in diagnostics')
