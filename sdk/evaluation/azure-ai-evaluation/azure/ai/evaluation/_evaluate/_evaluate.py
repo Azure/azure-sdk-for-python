@@ -1224,7 +1224,7 @@ def _log_events_to_app_insights(
                 # Combine standard and internal attributes, put internal under the properties bag
                 standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
-                log_attributes["http.client_ip"] = "0.0.0.0"
+                standard_log_attributes["http.client_ip"] = "0.0.0.0"
 
                 # Create context with trace_id if present (for distributed tracing correlation)
                 ctx = None
@@ -1242,7 +1242,7 @@ def _log_events_to_app_insights(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
                     body=EVALUATION_EVENT_NAME,
-                    attributes=log_attributes,
+                    attributes=standard_log_attributes,
                     context=ctx,
                 )
 
@@ -2239,7 +2239,7 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
         metric = "xpia_information_gathering"
         return metric
     for expected_metric in metric_list:
-        if metric_key.lower() == expected_metric.lower():
+        if metric_key.startswith(expected_metric):
             metric = expected_metric
             break
     if metric is None:
