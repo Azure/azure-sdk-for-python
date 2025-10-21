@@ -23,7 +23,6 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.vaults.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-07-01",
         )
         result = [r for r in response]
         assert result == []
@@ -32,7 +31,6 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
     def test_list(self):
         response = self.client.vaults.list(
             filter="resourceType eq 'Microsoft.KeyVault/vaults'",
-            api_version="2015-11-01",
         )
         result = [r for r in response]
         assert result
