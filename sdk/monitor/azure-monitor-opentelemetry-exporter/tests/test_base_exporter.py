@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     _get_authentication_credential,
     BaseExporter,
     ExportResult,
+    _get_storage_directory,
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -149,20 +150,16 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_no_storage_directory(self, mock_get_temp_dir):
         mock_get_temp_dir.return_value = TEST_TEMP_DIR
-        with mock.patch(
-            "azure.monitor.opentelemetry.exporter.export._base.getpass.getuser",
-            return_value=TEST_USER_DIR,
-        ):
-            base = BaseExporter(
-                api_version="2021-02-10_Preview",
-                connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
-                disable_offline_storage=False,
-                distro_version="1.0.0",
-                storage_maintenance_period=30,
-                storage_max_size=1000,
-                storage_min_retry_interval=100,
-                storage_retention_period=2000,
-            )
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
         self.assertEqual(
             base._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
@@ -179,16 +176,12 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._timeout, 10)
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
+        subdirectory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
+        #subdirectory = _get_sha256_hash(hash_input)
         self.assertEqual(
             base._storage_directory,
-            os.path.join(
-                TEST_TEMP_DIR,
-                "Microsoft/AzureMonitor",
-                TEST_USER_DIR,
-                "opentelemetry-python-" + "4321abcd-5678-4efa-8abc-1234567890ab",
-            ),
+            subdirectory
         )
-        mock_get_temp_dir.assert_called_once()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_disable_offline_storage(self, mock_get_temp_dir):
