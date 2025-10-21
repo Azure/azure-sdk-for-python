@@ -22,6 +22,7 @@
 """Module for handling asynchronous request hedging strategies in Azure Cosmos DB."""
 import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
+import os
 from asyncio import Task, CancelledError, Event  # pylint: disable=do-not-import-asyncio
 from types import SimpleNamespace
 from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable
@@ -157,7 +158,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         pending_indices = list(range(len(available_locations)))
         first_task: Optional[Task] = None
         first_request_params_holder: SimpleNamespace = SimpleNamespace(request_params=None)
-        max_concurrency = request_params.availability_strategy_max_concurrency or len(available_locations)
+        max_concurrency = request_params.availability_strategy_max_concurrency or os.cpu_count()
 
         try:
             # Create initial batch of tasks up to max_concurrency
