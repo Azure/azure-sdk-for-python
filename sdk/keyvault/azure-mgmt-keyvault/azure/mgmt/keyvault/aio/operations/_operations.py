@@ -1367,7 +1367,7 @@ class VaultsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         filter: Literal["resourceType eq 'Microsoft.KeyVault/vaults'"] = kwargs.pop("filter")
-        api_version: Literal["2015-11-01"] = kwargs.pop("api_version")
+        api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
         cls: ClsType[List[_models.TrackedResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1405,7 +1405,7 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
+                _next_request_params["api-version"] = api_version
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
