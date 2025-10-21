@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -162,9 +162,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -205,12 +205,20 @@ class GrafanaAvailablePlugin(_Model):
     :vartype plugin_id: str
     :ivar name: Grafana plugin display name.
     :vartype name: str
+    :ivar type: Grafana plugin type.
+    :vartype type: str
+    :ivar author: Grafana plugin author/publisher name.
+    :vartype author: str
     """
 
     plugin_id: Optional[str] = rest_field(name="pluginId", visibility=["read"])
     """Grafana plugin id."""
     name: Optional[str] = rest_field(visibility=["read"])
     """Grafana plugin display name."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Grafana plugin type."""
+    author: Optional[str] = rest_field(visibility=["read"])
+    """Grafana plugin author/publisher name."""
 
 
 class GrafanaAvailablePluginListResponse(_Model):
@@ -222,7 +230,7 @@ class GrafanaAvailablePluginListResponse(_Model):
     :vartype next_link: str
     """
 
-    value: Optional[List["_models.GrafanaAvailablePlugin"]] = rest_field(
+    value: Optional[list["_models.GrafanaAvailablePlugin"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
@@ -231,7 +239,7 @@ class GrafanaAvailablePluginListResponse(_Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.GrafanaAvailablePlugin"]] = None,
+        value: Optional[list["_models.GrafanaAvailablePlugin"]] = None,
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -249,23 +257,23 @@ class GrafanaAvailablePluginListResponse(_Model):
 class GrafanaConfigurations(_Model):
     """Server configurations of a Grafana instance.
 
-    :ivar smtp: Email server settings.
-     `https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp
-     <https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp>`_.
-    :vartype smtp: ~azure.mgmt.dashboard.models.Smtp
-    :ivar snapshots: Grafana Snapshots settings.
-    :vartype snapshots: ~azure.mgmt.dashboard.models.Snapshots
-    :ivar users: Grafana users settings.
-    :vartype users: ~azure.mgmt.dashboard.models.Users
-    :ivar security: Grafana security settings.
-    :vartype security: ~azure.mgmt.dashboard.models.Security
-    :ivar unified_alerting_screenshots: Grafana Unified Alerting Screenshots settings.
-    :vartype unified_alerting_screenshots: ~azure.mgmt.dashboard.models.UnifiedAlertingScreenshots
+       :ivar smtp: Email server settings.
+    `https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp
+        <https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp>`_.
+       :vartype smtp: ~azure.mgmt.dashboard.models.Smtp
+       :ivar snapshots: Grafana Snapshots settings.
+       :vartype snapshots: ~azure.mgmt.dashboard.models.Snapshots
+       :ivar users: Grafana users settings.
+       :vartype users: ~azure.mgmt.dashboard.models.Users
+       :ivar security: Grafana security settings.
+       :vartype security: ~azure.mgmt.dashboard.models.Security
+       :ivar unified_alerting_screenshots: Grafana Unified Alerting Screenshots settings.
+       :vartype unified_alerting_screenshots: ~azure.mgmt.dashboard.models.UnifiedAlertingScreenshots
     """
 
     smtp: Optional["_models.Smtp"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Email server settings.
-     `https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp
+ `https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp
      <https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp>`_."""
     snapshots: Optional["_models.Snapshots"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Grafana Snapshots settings."""
@@ -309,7 +317,7 @@ class GrafanaIntegrations(_Model):
      list[~azure.mgmt.dashboard.models.AzureMonitorWorkspaceIntegration]
     """
 
-    azure_monitor_workspace_integrations: Optional[List["_models.AzureMonitorWorkspaceIntegration"]] = rest_field(
+    azure_monitor_workspace_integrations: Optional[list["_models.AzureMonitorWorkspaceIntegration"]] = rest_field(
         name="azureMonitorWorkspaceIntegrations", visibility=["read", "create", "update", "delete", "query"]
     )
 
@@ -317,7 +325,7 @@ class GrafanaIntegrations(_Model):
     def __init__(
         self,
         *,
-        azure_monitor_workspace_integrations: Optional[List["_models.AzureMonitorWorkspaceIntegration"]] = None,
+        azure_monitor_workspace_integrations: Optional[list["_models.AzureMonitorWorkspaceIntegration"]] = None,
     ) -> None: ...
 
     @overload
@@ -390,7 +398,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -400,7 +408,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -445,7 +453,7 @@ class IntegrationFabric(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.IntegrationFabricProperties"] = None,
     ) -> None: ...
 
@@ -492,7 +500,7 @@ class IntegrationFabricProperties(_Model):
     )
     """The resource Id of the Azure resource which is used to configure Grafana data source. E.g., an
      Azure Monitor Workspace, an Azure Data Explorer cluster, etc."""
-    scenarios: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    scenarios: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of integration scenarios covered by this integration fabric."""
 
     @overload
@@ -501,7 +509,7 @@ class IntegrationFabricProperties(_Model):
         *,
         target_resource_id: Optional[str] = None,
         data_source_resource_id: Optional[str] = None,
-        scenarios: Optional[List[str]] = None,
+        scenarios: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -522,14 +530,14 @@ class IntegrationFabricPropertiesUpdateParameters(_Model):  # pylint: disable=na
     :vartype scenarios: list[str]
     """
 
-    scenarios: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    scenarios: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The new integration scenarios covered by this integration fabric."""
 
     @overload
     def __init__(
         self,
         *,
-        scenarios: Optional[List[str]] = None,
+        scenarios: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -552,7 +560,7 @@ class IntegrationFabricUpdateParameters(_Model):
     :vartype properties: ~azure.mgmt.dashboard.models.IntegrationFabricPropertiesUpdateParameters
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The new tags of the Integration Fabric resource."""
     properties: Optional["_models.IntegrationFabricPropertiesUpdateParameters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -563,7 +571,7 @@ class IntegrationFabricUpdateParameters(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.IntegrationFabricPropertiesUpdateParameters"] = None,
     ) -> None: ...
 
@@ -612,7 +620,7 @@ class ManagedDashboard(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ManagedDashboardProperties"] = None,
     ) -> None: ...
 
@@ -668,14 +676,14 @@ class ManagedDashboardUpdateParameters(_Model):
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The new tags of the managed dashboard resource."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -738,7 +746,7 @@ class ManagedGrafana(ProxyResource):
     """Properties specific to the grafana resource."""
     sku: Optional["_models.ResourceSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Sku of the grafana resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives."""
@@ -753,7 +761,7 @@ class ManagedGrafana(ProxyResource):
         *,
         properties: Optional["_models.ManagedGrafanaProperties"] = None,
         sku: Optional["_models.ResourceSku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -789,6 +797,9 @@ class ManagedGrafanaProperties(_Model):
     :ivar api_key: The api key setting of the Grafana instance. Known values are: "Disabled" and
      "Enabled".
     :vartype api_key: str or ~azure.mgmt.dashboard.models.ApiKey
+    :ivar creator_can_admin: The creator will have admin access for the Grafana instance. Known
+     values are: "Disabled" and "Enabled".
+    :vartype creator_can_admin: str or ~azure.mgmt.dashboard.models.CreatorCanAdmin
     :ivar deterministic_outbound_ip: Whether a Grafana instance uses deterministic outbound IPs.
      Known values are: "Disabled" and "Enabled".
     :vartype deterministic_outbound_ip: str or ~azure.mgmt.dashboard.models.DeterministicOutboundIP
@@ -839,14 +850,19 @@ class ManagedGrafanaProperties(_Model):
         name="apiKey", visibility=["read", "create", "update", "delete", "query"]
     )
     """The api key setting of the Grafana instance. Known values are: \"Disabled\" and \"Enabled\"."""
+    creator_can_admin: Optional[Union[str, "_models.CreatorCanAdmin"]] = rest_field(
+        name="creatorCanAdmin", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The creator will have admin access for the Grafana instance. Known values are: \"Disabled\" and
+     \"Enabled\"."""
     deterministic_outbound_ip: Optional[Union[str, "_models.DeterministicOutboundIP"]] = rest_field(
         name="deterministicOutboundIP", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether a Grafana instance uses deterministic outbound IPs. Known values are: \"Disabled\" and
      \"Enabled\"."""
-    outbound_i_ps: Optional[List[str]] = rest_field(name="outboundIPs", visibility=["read"])
+    outbound_i_ps: Optional[list[str]] = rest_field(name="outboundIPs", visibility=["read"])
     """List of outbound IPs if deterministicOutboundIP is enabled."""
-    private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = rest_field(
+    private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
     """The private endpoint connections of the Grafana instance."""
@@ -867,7 +883,7 @@ class ManagedGrafanaProperties(_Model):
         name="grafanaConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Server configurations of a Grafana instance."""
-    grafana_plugins: Optional[Dict[str, "_models.GrafanaPlugin"]] = rest_field(
+    grafana_plugins: Optional[dict[str, "_models.GrafanaPlugin"]] = rest_field(
         name="grafanaPlugins", visibility=["read", "create", "update", "delete", "query"]
     )
     """Installed plugin list of the Grafana instance. Key is plugin id, value is plugin definition."""
@@ -883,6 +899,7 @@ class ManagedGrafanaProperties(_Model):
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         zone_redundancy: Optional[Union[str, "_models.ZoneRedundancy"]] = None,
         api_key: Optional[Union[str, "_models.ApiKey"]] = None,
+        creator_can_admin: Optional[Union[str, "_models.CreatorCanAdmin"]] = None,
         deterministic_outbound_ip: Optional[Union[str, "_models.DeterministicOutboundIP"]] = None,
         auto_generated_domain_name_label_scope: Optional[
             Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
@@ -890,7 +907,7 @@ class ManagedGrafanaProperties(_Model):
         grafana_integrations: Optional["_models.GrafanaIntegrations"] = None,
         enterprise_configurations: Optional["_models.EnterpriseConfigurations"] = None,
         grafana_configurations: Optional["_models.GrafanaConfigurations"] = None,
-        grafana_plugins: Optional[Dict[str, "_models.GrafanaPlugin"]] = None,
+        grafana_plugins: Optional[dict[str, "_models.GrafanaPlugin"]] = None,
         grafana_major_version: Optional[str] = None,
     ) -> None: ...
 
@@ -914,6 +931,9 @@ class ManagedGrafanaPropertiesUpdateParameters(_Model):
     :ivar api_key: The api key setting of the Grafana instance. Known values are: "Disabled" and
      "Enabled".
     :vartype api_key: str or ~azure.mgmt.dashboard.models.ApiKey
+    :ivar creator_can_admin: The creator will have admin access for the Grafana instance. Known
+     values are: "Disabled" and "Enabled".
+    :vartype creator_can_admin: str or ~azure.mgmt.dashboard.models.CreatorCanAdmin
     :ivar deterministic_outbound_ip: Whether a Grafana instance uses deterministic outbound IPs.
      Known values are: "Disabled" and "Enabled".
     :vartype deterministic_outbound_ip: str or ~azure.mgmt.dashboard.models.DeterministicOutboundIP
@@ -945,6 +965,11 @@ class ManagedGrafanaPropertiesUpdateParameters(_Model):
         name="apiKey", visibility=["read", "create", "update", "delete", "query"]
     )
     """The api key setting of the Grafana instance. Known values are: \"Disabled\" and \"Enabled\"."""
+    creator_can_admin: Optional[Union[str, "_models.CreatorCanAdmin"]] = rest_field(
+        name="creatorCanAdmin", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The creator will have admin access for the Grafana instance. Known values are: \"Disabled\" and
+     \"Enabled\"."""
     deterministic_outbound_ip: Optional[Union[str, "_models.DeterministicOutboundIP"]] = rest_field(
         name="deterministicOutboundIP", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -968,7 +993,7 @@ class ManagedGrafanaPropertiesUpdateParameters(_Model):
         name="grafanaConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Server configurations of a Grafana instance."""
-    grafana_plugins: Optional[Dict[str, "_models.GrafanaPlugin"]] = rest_field(
+    grafana_plugins: Optional[dict[str, "_models.GrafanaPlugin"]] = rest_field(
         name="grafanaPlugins", visibility=["read", "create", "update", "delete", "query"]
     )
     """Update of Grafana plugin. Key is plugin id, value is plugin definition. If plugin definition is
@@ -984,12 +1009,13 @@ class ManagedGrafanaPropertiesUpdateParameters(_Model):
         *,
         zone_redundancy: Optional[Union[str, "_models.ZoneRedundancy"]] = None,
         api_key: Optional[Union[str, "_models.ApiKey"]] = None,
+        creator_can_admin: Optional[Union[str, "_models.CreatorCanAdmin"]] = None,
         deterministic_outbound_ip: Optional[Union[str, "_models.DeterministicOutboundIP"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         grafana_integrations: Optional["_models.GrafanaIntegrations"] = None,
         enterprise_configurations: Optional["_models.EnterpriseConfigurations"] = None,
         grafana_configurations: Optional["_models.GrafanaConfigurations"] = None,
-        grafana_plugins: Optional[Dict[str, "_models.GrafanaPlugin"]] = None,
+        grafana_plugins: Optional[dict[str, "_models.GrafanaPlugin"]] = None,
         grafana_major_version: Optional[str] = None,
     ) -> None: ...
 
@@ -1022,7 +1048,7 @@ class ManagedGrafanaUpdateParameters(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed identity of the grafana resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The new tags of the grafana resource."""
     properties: Optional["_models.ManagedGrafanaPropertiesUpdateParameters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1035,7 +1061,7 @@ class ManagedGrafanaUpdateParameters(_Model):
         *,
         sku: Optional["_models.ResourceSku"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ManagedGrafanaPropertiesUpdateParameters"] = None,
     ) -> None: ...
 
@@ -1110,7 +1136,7 @@ class ManagedPrivateEndpointModel(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ManagedPrivateEndpointModelProperties"] = None,
     ) -> None: ...
 
@@ -1181,7 +1207,7 @@ class ManagedPrivateEndpointModelProperties(_Model):
         name="privateLinkResourceRegion", visibility=["read", "create"]
     )
     """The region of the resource to which the managed private endpoint is pointing to."""
-    group_ids: Optional[List[str]] = rest_field(name="groupIds", visibility=["read", "create"])
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read", "create"])
     """The group Ids of the managed private endpoint."""
     request_message: Optional[str] = rest_field(name="requestMessage", visibility=["read", "create"])
     """User input request message of the managed private endpoint."""
@@ -1202,7 +1228,7 @@ class ManagedPrivateEndpointModelProperties(_Model):
         *,
         private_link_resource_id: Optional[str] = None,
         private_link_resource_region: Optional[str] = None,
-        group_ids: Optional[List[str]] = None,
+        group_ids: Optional[list[str]] = None,
         request_message: Optional[str] = None,
         private_link_service_url: Optional[str] = None,
     ) -> None: ...
@@ -1225,14 +1251,14 @@ class ManagedPrivateEndpointUpdateParameters(_Model):
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The new tags of the managed private endpoint."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1273,7 +1299,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -1283,7 +1309,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -1536,7 +1562,7 @@ class PrivateEndpointConnectionProperties(_Model):
     )
     """A collection of information about the state of the connection between service consumer and
      provider. Required."""
-    group_ids: Optional[List[str]] = rest_field(
+    group_ids: Optional[list[str]] = rest_field(
         name="groupIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The private endpoint connection group ids."""
@@ -1552,7 +1578,7 @@ class PrivateEndpointConnectionProperties(_Model):
         *,
         private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
-        group_ids: Optional[List[str]] = None,
+        group_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1649,9 +1675,9 @@ class PrivateLinkResourceProperties(_Model):
      \"Deleting\", \"Succeeded\", \"Failed\", \"Canceled\", \"Deleted\", and \"NotSpecified\"."""
     group_id: Optional[str] = rest_field(name="groupId", visibility=["read"])
     """The private link resource group id."""
-    required_members: Optional[List[str]] = rest_field(name="requiredMembers", visibility=["read"])
+    required_members: Optional[list[str]] = rest_field(name="requiredMembers", visibility=["read"])
     """The private link resource required member names."""
-    required_zone_names: Optional[List[str]] = rest_field(
+    required_zone_names: Optional[list[str]] = rest_field(
         name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The private link resource Private link DNS zone name."""
@@ -1660,7 +1686,7 @@ class PrivateLinkResourceProperties(_Model):
     def __init__(
         self,
         *,
-        required_zone_names: Optional[List[str]] = None,
+        required_zone_names: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1725,16 +1751,22 @@ class ResourceSku(_Model):
 
     :ivar name: The name of the SKU. Required.
     :vartype name: str
+    :ivar size: Specifies the capacity tier of the Grafana instance. Known values are: "X1" and
+     "X2".
+    :vartype size: str or ~azure.mgmt.dashboard.models.Size
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the SKU. Required."""
+    size: Optional[Union[str, "_models.Size"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the capacity tier of the Grafana instance. Known values are: \"X1\" and \"X2\"."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
+        size: Optional[Union[str, "_models.Size"]] = None,
     ) -> None: ...
 
     @overload
@@ -1828,32 +1860,32 @@ class Security(_Model):
 class Smtp(_Model):
     """Email server settings.
     `https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp
-    <https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp>`_.
+        <https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp>`_.
 
-    :ivar enabled: Enable this to allow Grafana to send email. Default is false.
-    :vartype enabled: bool
-    :ivar host: SMTP server hostname with port, e.g. test.email.net:587.
-    :vartype host: str
-    :ivar user: User of SMTP auth.
-    :vartype user: str
-    :ivar password: Password of SMTP auth. If the password contains # or ;, then you have to wrap
-     it with triple quotes.
-    :vartype password: str
-    :ivar from_address: Address used when sending out emails
+        :ivar enabled: Enable this to allow Grafana to send email. Default is false.
+        :vartype enabled: bool
+        :ivar host: SMTP server hostname with port, e.g. test.email.net:587.
+        :vartype host: str
+        :ivar user: User of SMTP auth.
+        :vartype user: str
+        :ivar password: Password of SMTP auth. If the password contains # or ;, then you have to wrap
+         it with triple quotes.
+        :vartype password: str
+        :ivar from_address: Address used when sending out emails
      `https://pkg.go.dev/net/mail#Address <https://pkg.go.dev/net/mail#Address>`_.
-    :vartype from_address: str
-    :ivar from_name: Name to be used when sending out emails. Default is "Azure Managed Grafana
-     Notification"
+        :vartype from_address: str
+        :ivar from_name: Name to be used when sending out emails. Default is "Azure Managed Grafana
+         Notification"
      `https://pkg.go.dev/net/mail#Address <https://pkg.go.dev/net/mail#Address>`_.
-    :vartype from_name: str
-    :ivar start_tls_policy: The StartTLSPolicy setting of the SMTP configuration
+        :vartype from_name: str
+        :ivar start_tls_policy: The StartTLSPolicy setting of the SMTP configuration
      `https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy
-     <https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy>`_. Known values are:
-     "OpportunisticStartTLS", "MandatoryStartTLS", and "NoStartTLS".
-    :vartype start_tls_policy: str or ~azure.mgmt.dashboard.models.StartTLSPolicy
-    :ivar skip_verify: Verify SSL for SMTP server. Default is false
+         <https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy>`_. Known values are:
+         "OpportunisticStartTLS", "MandatoryStartTLS", and "NoStartTLS".
+        :vartype start_tls_policy: str or ~azure.mgmt.dashboard.models.StartTLSPolicy
+        :ivar skip_verify: Verify SSL for SMTP server. Default is false
      `https://pkg.go.dev/crypto/tls#Config <https://pkg.go.dev/crypto/tls#Config>`_.
-    :vartype skip_verify: bool
+        :vartype skip_verify: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1869,22 +1901,22 @@ class Smtp(_Model):
         name="fromAddress", visibility=["read", "create", "update", "delete", "query"]
     )
     """Address used when sending out emails
-     `https://pkg.go.dev/net/mail#Address <https://pkg.go.dev/net/mail#Address>`_."""
+ `https://pkg.go.dev/net/mail#Address <https://pkg.go.dev/net/mail#Address>`_."""
     from_name: Optional[str] = rest_field(name="fromName", visibility=["read", "create", "update", "delete", "query"])
     """Name to be used when sending out emails. Default is \"Azure Managed Grafana Notification\"
-     `https://pkg.go.dev/net/mail#Address <https://pkg.go.dev/net/mail#Address>`_."""
+ `https://pkg.go.dev/net/mail#Address <https://pkg.go.dev/net/mail#Address>`_."""
     start_tls_policy: Optional[Union[str, "_models.StartTLSPolicy"]] = rest_field(
         name="startTLSPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The StartTLSPolicy setting of the SMTP configuration
-     `https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy
+ `https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy
      <https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy>`_. Known values are:
      \"OpportunisticStartTLS\", \"MandatoryStartTLS\", and \"NoStartTLS\"."""
     skip_verify: Optional[bool] = rest_field(
         name="skipVerify", visibility=["read", "create", "update", "delete", "query"]
     )
     """Verify SSL for SMTP server. Default is false
-     `https://pkg.go.dev/crypto/tls#Config <https://pkg.go.dev/crypto/tls#Config>`_."""
+ `https://pkg.go.dev/crypto/tls#Config <https://pkg.go.dev/crypto/tls#Config>`_."""
 
     @overload
     def __init__(

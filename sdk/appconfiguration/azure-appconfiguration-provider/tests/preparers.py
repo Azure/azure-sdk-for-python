@@ -12,6 +12,8 @@ AppConfigProviderPreparer = functools.partial(
     "appconfiguration",
     keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
     appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+    keyvault_secret_url2="https://Sanitized.vault.azure.net/secrets/fake-secret2/",
+    appconfiguration_keyvault_secret_url2="https://Sanitized.vault.azure.net/secrets/fake-secret2/",
     appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
     appconfiguration_endpoint_string="https://Sanitized.azconfig.io",
 )
@@ -25,6 +27,9 @@ def app_config_decorator(func, **kwargs):
 
         appconfiguration_keyvault_secret_url = kwargs.pop("appconfiguration_keyvault_secret_url")
         kwargs["appconfiguration_keyvault_secret_url"] = appconfiguration_keyvault_secret_url
+
+        appconfiguration_keyvault_secret_url2 = kwargs.pop("appconfiguration_keyvault_secret_url2")
+        kwargs["appconfiguration_keyvault_secret_url2"] = appconfiguration_keyvault_secret_url2
 
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
@@ -42,6 +47,9 @@ def app_config_decorator_aad(func, **kwargs):
 
         appconfiguration_keyvault_secret_url = kwargs.pop("appconfiguration_keyvault_secret_url")
         kwargs["appconfiguration_keyvault_secret_url"] = appconfiguration_keyvault_secret_url
+
+        appconfiguration_keyvault_secret_url2 = kwargs.pop("appconfiguration_keyvault_secret_url2")
+        kwargs["appconfiguration_keyvault_secret_url2"] = appconfiguration_keyvault_secret_url2
 
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)

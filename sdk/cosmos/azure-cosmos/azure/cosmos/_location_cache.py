@@ -105,7 +105,7 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
     if base.IsMasterResource(resource_type):
         applicable_regional_routing_contexts.extend(excluded_regional_routing_contexts)
 
-    # If applicable_regional_routing_contexts is empty add fallback regional routing context
+    # If all preferred locations are excluded, use the fallback endpoint.
     if not applicable_regional_routing_contexts:
         applicable_regional_routing_contexts.append(fall_back_regional_routing_context)
 
@@ -397,8 +397,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     # can use multiple write locations, preferred locations list should be
                     # used for determining both read and write endpoints order.
                     for location in self.effective_preferred_locations:
-                        regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
-                            else None
+                        regional_endpoint = endpoints_by_location.get(location)
                         if regional_endpoint:
                             if self.is_endpoint_unavailable(regional_endpoint.get_primary(),
                                                             expected_available_operation):
@@ -406,10 +405,14 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                             else:
                                 regional_endpoints.append(regional_endpoint)
 
+                # If all preferred locations are unavailable, honor the preferred list by trying them anyway.
+                if not regional_endpoints and unavailable_endpoints:
+                    regional_endpoints.extend(unavailable_endpoints)
+
+                # If there are no preferred locations or none of the preferred locations are in the account,
+                # add the fallback endpoint.
                 if not regional_endpoints:
                     regional_endpoints.append(fallback_endpoint)
-
-                regional_endpoints.extend(unavailable_endpoints)
             else:
                 for location in orderedLocations:
                     if location and location in endpoints_by_location:

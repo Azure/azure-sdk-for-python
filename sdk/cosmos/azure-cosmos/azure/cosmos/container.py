@@ -292,7 +292,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             items: Sequence[Tuple[str, PartitionKeyType]],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: int = 10,
+            max_concurrency: Optional[int] = None,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
             initial_headers: Optional[dict[str, str]] = None,
@@ -311,7 +311,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
                       If not provided, a new executor will be created as needed.
         :keyword int max_concurrency: The maximum number of concurrent operations for the
-                      items request. This value is ignored if an executor is provided. Defaults to 10.
+                      items request. This value is ignored if an executor is provided. If not specified,
+                      the default max_concurrency defined by Python's ThreadPoolExecutor will be applied.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -666,17 +667,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_items(
             self,
             query: str,
+            parameters: Optional[list[dict[str, object]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            enable_cross_partition_query: Optional[bool] = None,
+            max_item_count: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
             *,
             continuation_token_limit: Optional[int] = None,
-            enable_cross_partition_query: Optional[bool] = None,
-            enable_scan_in_query: Optional[bool] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            max_item_count: Optional[int] = None,
-            parameters: Optional[list[dict[str, object]]] = None,
-            partition_key: PartitionKeyType,
             populate_index_metrics: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
@@ -691,14 +692,27 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         the WHERE clause.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
+        :param parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :type parameters: [list[dict[str, object]]]
+        :param partition_key: Partition key at which the query request is targeted. If the partition key is set to
+            None, it will perform a cross partition query. To learn more about using partition keys, see `here
+            <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
+        :param bool enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
-        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
-        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
-            indexing was opted out on the requested paths.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -707,19 +721,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-            Ignored if no query is provided.
-        :paramtype parameters: [list[dict[str, object]]]
-        :keyword partition_key: Partition key at which the query request is targeted. If the partition key is set to
-            None, it will perform a cross partition query. To learn more about using partition keys, see `here
-            <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this option will incur
-            overhead, so it should be enabled only when debugging slow queries.
-        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -812,87 +813,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[dict[str, Any]]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/examples.py
-                :start-after: [START query_items]
-                :end-before: [END query_items]
-                :language: python
-                :dedent: 0
-                :caption: Get all products that have not been discontinued:
-
-            .. literalinclude:: ../samples/examples.py
-                :start-after: [START query_items_param]
-                :end-before: [END query_items_param]
-                :language: python
-                :dedent: 0
-                :caption: Parameterized query to get all products that have been discontinued:
-        """
-        ...
-
-    @overload
-    def query_items(
-            self,
-            query: str,
-            *,
-            continuation_token_limit: Optional[int] = None,
-            enable_cross_partition_query: Optional[bool] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            initial_headers: Optional[dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            max_item_count: Optional[int] = None,
-            parameters: Optional[list[dict[str, object]]] = None,
-            populate_index_metrics: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            session_token: Optional[str] = None,
-            throughput_bucket: Optional[int] = None,
-            **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
-        """Return all results matching the given `query`.
-
-        You can use any value for the container name in the FROM clause, but
-        often the container name is used. In the examples below, the container
-        name is "products," and is aliased as "p" for easier referencing in
-        the WHERE clause.
-
-        :param str query: The Azure Cosmos DB SQL query to execute.
-        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
-            response. Valid values are positive integers.
-            A value of 0 is the same as not passing a value (default no limit).
-        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
-        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
-            indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
-            If all preferred locations were excluded, primary/hub location will be used.
-            This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
-            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
-            responses are guaranteed to be no staler than this value.
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-            Ignored if no query is provided.
-        :paramtype parameters: [List[Dict[str, object]]]
-        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this option will incur
-            overhead, so it should be enabled only when debugging slow queries.
-        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
-            request. Once the user has reached their provisioned throughput, low priority requests are throttled
-            before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -1052,21 +972,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def semantic_rerank(
         self,
-        reranking_context: str,
+        *,
+        context: str,
         documents: list[str],
-        semantic_reranking_options: Optional[dict[str, Any]] = None
+        options: Optional[dict[str, Any]] = None
     ) -> CosmosDict:
-        """Rerank a list of documents using semantic reranking.
+        """ **provisional** Rerank a list of documents using semantic reranking.
 
         This method uses a semantic reranker to score and reorder the provided documents
         based on their relevance to the given reranking context.
 
-        :param str reranking_context: The context or query string to use for reranking the documents.
-        :param list[str] documents: A list of documents (as strings) to be reranked.
-        :param dict[str, Any] semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
+        :keyword str context: The reranking context or query string to use for reranking the documents.
+        :keyword list[str] documents: A list of documents (as strings) to be reranked.
+        :keyword dict[str, Any] options: Optional dictionary of additional request options to customize the semantic reranking process.
 
          Supported options:
-
          * **return_documents** (bool): Whether to return the document text in the response. If False, only scores and indices are returned. Default is True.
          * **top_k** (int): Maximum number of documents to return in the reranked results. If not specified, all documents are returned.
          * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
@@ -1074,7 +994,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
          * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
          * **target_paths** (str): If document_type is "json", the list of JSON paths to extract text from for reranking. Comma-separated string.
 
-        :type semantic_reranking_options: Optional[dict[str, Any]]
         :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
@@ -1088,9 +1007,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             )
 
         result = inference_service.rerank(
-            reranking_context=reranking_context,
+            reranking_context=context,
             documents=documents,
-            semantic_reranking_options=semantic_reranking_options
+            semantic_reranking_options=options
         )
 
         return result
@@ -1110,7 +1029,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1138,9 +1057,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             kwargs or when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1207,7 +1126,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1234,9 +1153,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1301,7 +1220,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[dict[str, str]] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1329,9 +1248,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1403,7 +1322,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1437,9 +1356,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1575,7 +1494,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
@@ -1601,9 +1520,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.

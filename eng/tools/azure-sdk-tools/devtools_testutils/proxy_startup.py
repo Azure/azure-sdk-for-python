@@ -69,6 +69,12 @@ AVAILABLE_TEST_PROXY_BINARIES = {
             "file_name": "test-proxy-standalone-linux-arm64.tar.gz",
             "executable": "Azure.Sdk.Tools.TestProxy",
         },
+        "AARCH64": {  # AARCH64 and ARM64 are synonyms; use the ARM binary
+            "system": "Linux",
+            "machine": "AARCH64",
+            "file_name": "test-proxy-standalone-linux-arm64.tar.gz",
+            "executable": "Azure.Sdk.Tools.TestProxy",
+        },
     },
     "Darwin": {
         "X86_64": {
@@ -299,7 +305,7 @@ def set_common_sanitizers() -> None:
 
     # Remove headers from recordings if we don't need them, and ignore them if present
     # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
-    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id, Accept-Encoding"
     set_custom_default_matcher(excluded_headers=headers_to_ignore)
     batch_sanitizers[Sanitizer.REMOVE_HEADER] = [{"headers": headers_to_ignore}]
 
@@ -341,7 +347,10 @@ def start_test_proxy(request) -> None:
     """
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
-    check_certificate_location(repo_root)
+    requires_https = PROXY_URL.startswith("https://")
+
+    if requires_https:
+        check_certificate_location(repo_root)
 
     if not PROXY_MANUALLY_STARTED:
         if check_availability() == 200:
@@ -367,13 +376,17 @@ def start_test_proxy(request) -> None:
                 _LOGGER.info("Downloading and starting standalone proxy executable...")
                 tool_name = prepare_local_tool(root)
 
-            # Always start the proxy with these two defaults set to allow SSL connection
-            passenv = {
-                "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
-                    root, "eng", "common", "testproxy", "dotnet-devcert.pfx"
-                ),
-                "ASPNETCORE_Kestrel__Certificates__Default__Password": "password",
-            }
+            if requires_https:
+                # Always start the proxy with these two defaults set to allow SSL connection
+                passenv = {
+                    "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
+                        root, "eng", "common", "testproxy", "dotnet-devcert.pfx"
+                    ),
+                    "ASPNETCORE_Kestrel__Certificates__Default__Password": "password",
+                }
+            else:
+                passenv = {}
+
             # If they are already set, override what we give the proxy with what is in os.environ
             passenv.update(os.environ)
 
