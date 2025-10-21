@@ -7,6 +7,11 @@
 from datetime import datetime
 from typing import Optional, Tuple, Dict, Any
 
+# Connection string component prefixes
+_ENDPOINT_PREFIX = "Endpoint="
+_ID_PREFIX = "Id="
+_SECRET_PREFIX = "Secret="
+
 
 def parse_connection_string(connection_string: str) -> Tuple[str, str, str]:
     # connection_string looks like Endpoint=https://xxxxx;Id=xxxxx;Secret=xxxx
@@ -19,12 +24,12 @@ def parse_connection_string(connection_string: str) -> Tuple[str, str, str]:
     secret = ""
     for segment in segments:
         segment = segment.strip()
-        if segment.startswith("Endpoint"):
-            endpoint = str(segment[17:])
-        elif segment.startswith("Id"):
-            id_ = str(segment[3:])
-        elif segment.startswith("Secret"):
-            secret = str(segment[7:])
+        if segment.startswith(_ENDPOINT_PREFIX):
+            endpoint = str(segment[len(_ENDPOINT_PREFIX) :])
+        elif segment.startswith(_ID_PREFIX):
+            id_ = str(segment[len(_ID_PREFIX) :])
+        elif segment.startswith(_SECRET_PREFIX):
+            secret = str(segment[len(_SECRET_PREFIX) :])
         else:
             raise ValueError("Invalid connection string.")
 

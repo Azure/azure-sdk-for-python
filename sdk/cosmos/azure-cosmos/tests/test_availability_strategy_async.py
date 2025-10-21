@@ -6,7 +6,7 @@ import os
 import re
 import unittest
 import uuid
-from typing import Optional, List, Any, Dict
+from typing import Optional, Any
 
 import pytest
 import pytest_asyncio
@@ -15,11 +15,11 @@ from azure.core.exceptions import ServiceResponseError
 import test_config
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos import _location_cache
+from azure.cosmos._availability_strategy_config import _validate_hedging_config
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
-from azure.cosmos._availability_strategy_config import _validate_hedging_config
 
 _Unset: Any = object()
 class MockHandler(logging.Handler):
@@ -101,8 +101,8 @@ async def perform_read_operation(
         created_doc,
         expected_uris,
         excluded_uris,
-        availability_strategy_config: Optional[Dict[str, Any]] = _Unset,
-        excluded_locations: Optional[List[str]] = None,
+        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        excluded_locations: Optional[list[str]] = None,
         **kwargs):
     excluded_locations = [] if excluded_locations is None else excluded_locations
 
@@ -158,8 +158,8 @@ async def perform_write_operation(
         expected_uris,
         excluded_uris,
         retry_write=False,
-        availability_strategy_config: Optional[Dict[str, Any]] = _Unset,
-        excluded_locations: Optional[List[str]] = None,
+        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        excluded_locations: Optional[list[str]] = None,
         **kwargs):
     """Execute different types of write operations"""
     excluded_locations = [] if excluded_locations is None else excluded_locations

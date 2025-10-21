@@ -17,6 +17,7 @@ import logging
 import base64
 import re
 import typing
+import traceback
 import enum
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
@@ -28,7 +29,7 @@ import isodate
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
-from azure.core.serialization import _Null
+from azure.core.serialization import _Null, TypeHandlerRegistry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,6 +37,9 @@ __all__ = ["SdkJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
 TZ_UTC = timezone.utc
 _T = typing.TypeVar("_T")
+
+
+TYPE_HANDLER_REGISTRY = TypeHandlerRegistry()
 
 
 def _timedelta_as_isostr(td: timedelta) -> str:
@@ -161,6 +165,10 @@ class SdkJSONEncoder(JSONEncoder):
             except AttributeError:
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
+
+            custom_serializer = TYPE_HANDLER_REGISTRY.get_serializer(o)
+            if custom_serializer:
+                return custom_serializer(o)
             return super(SdkJSONEncoder, self).default(o)
 
 
@@ -481,6 +489,7 @@ def _is_model(obj: typing.Any) -> bool:
 
 
 def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-many-return-statements
+
     if isinstance(o, list):
         return [_serialize(x, format) for x in o]
     if isinstance(o, dict):
@@ -510,6 +519,12 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
     except AttributeError:
         # This will be raised when it hits value.total_seconds in the method above
         pass
+
+    # Check if there's a custom serializer for the type
+    custom_serializer = TYPE_HANDLER_REGISTRY.get_serializer(o)
+    if custom_serializer:
+        return custom_serializer(o)
+
     return o
 
 
@@ -885,6 +900,10 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
 
     if get_deserializer(annotation, rf):
         return functools.partial(_deserialize_default, get_deserializer(annotation, rf))
+
+    deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(annotation)
+    if deserializer:
+        return deserializer
 
     return functools.partial(_deserialize_default, annotation)
 

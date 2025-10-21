@@ -21,7 +21,7 @@
 
 """Configuration types for Azure Cosmos DB availability strategies."""
 
-from typing import Dict, Optional, Any
+from typing import Optional, Any
 
 
 class CrossRegionHedgingStrategyConfig:
@@ -36,7 +36,7 @@ class CrossRegionHedgingStrategyConfig:
     - threshold_steps_ms: Time interval between routing attempts (default: 100)
     - type: Must be "CrossRegionHedging" if provided
     """
-    def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
+    def __init__(self, config: Optional[dict[str, Any]] = None) -> None:
         if config is None:
             self.threshold_ms = 500
             self.threshold_steps_ms = 100
@@ -49,7 +49,7 @@ class CrossRegionHedgingStrategyConfig:
         if self.threshold_steps_ms <= 0:
             raise ValueError("threshold_steps_ms must be positive")
 
-def _validate_hedging_config(config: Optional[Dict[str, Any]]) -> Optional[CrossRegionHedgingStrategyConfig]:
+def _validate_hedging_config(config: Optional[dict[str, Any]]) -> Optional[CrossRegionHedgingStrategyConfig]:
     """Validate and create a CrossRegionHedgingStrategyConfig.
     
     :param config: Dictionary containing configuration values

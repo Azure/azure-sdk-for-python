@@ -23,18 +23,18 @@
 database service.
 """
 
-import asyncio # pylint: disable=do-not-import-asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Tuple, Dict, Any, List, Optional
+from typing import Tuple, Any, List, Optional
 
 from azure.core.exceptions import AzureError
-from azure.cosmos import DatabaseAccount
 
+from azure.cosmos import DatabaseAccount
 from .. import _constants as constants
 from .. import exceptions
 from .._location_cache import LocationCache, RegionalRoutingContext
-from .._utils import current_time_millis
 from .._request_object import RequestObject
+from .._utils import current_time_millis
 
 # pylint: disable=protected-access
 
@@ -179,7 +179,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self._endpoints_health_check(**kwargs)
                     self.startup = False
 
-    async def _database_account_check(self, endpoint: str, **kwargs: Dict[str, Any]):
+    async def _database_account_check(self, endpoint: str, **kwargs: dict[str, Any]):
         try:
             await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
             self.location_cache.mark_endpoint_available(endpoint)
@@ -217,7 +217,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         try:
             database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
-            self.location_cache.mark_endpoint_available(self.DefaultEndpoint)
             return database_account, self.DefaultEndpoint
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
@@ -226,7 +225,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
-            self._mark_endpoint_unavailable(self.DefaultEndpoint)
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
