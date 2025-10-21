@@ -5,9 +5,12 @@ import logging
 import os
 import tempfile
 import time
+import sys
+from pathlib import Path
 from enum import Enum
 from typing import List, Optional, Any
 from urllib.parse import urlparse
+import psutil
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import (
@@ -55,6 +58,7 @@ from azure.monitor.opentelemetry.exporter._utils import (
     _get_attach_type,
     _get_rp,
     ext_version,
+    _get_sha256_hash
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
@@ -138,11 +142,7 @@ class BaseExporter:
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
-            shared_root = os.path.join(tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX)
-            user_segment = getpass.getuser()
-            self._storage_directory = os.path.join(
-                shared_root, user_segment, _TEMPDIR_PREFIX + temp_suffix
-            )
+            self._storage_directory = _get_storage_directory(temp_suffix)
         else:
             self._storage_directory = None
         self._storage_retention_period = kwargs.get(
@@ -607,3 +607,23 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
     except Exception as e:
         logger.error("Failed to get authentication credential and enable AAD: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
     return None
+
+def _get_storage_directory(instrumentation_key: str) -> str:
+    process = psutil.Process()
+    process_name = process.name()
+    application_directory = Path(process.cwd() or sys.argv[0]).resolve()
+    shared_root = tempfile.gettempdir()
+    user_segment = getpass.getuser()
+    hash_input = ";".join(
+        [
+            instrumentation_key,
+            user_segment,
+            process_name,
+            os.fspath(application_directory),
+        ]
+    )
+    subdirectory = _get_sha256_hash(hash_input)
+    storage_directory = os.path.join(
+        shared_root, subdirectory, _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + instrumentation_key
+    )
+    return storage_directory
