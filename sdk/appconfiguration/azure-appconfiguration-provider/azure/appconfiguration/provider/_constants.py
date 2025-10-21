@@ -33,6 +33,12 @@ PERCENTAGE_FILTER_KEY = "PRCNT"  # cspell:disable-line
 TIME_WINDOW_FILTER_KEY = "TIME"
 TARGETING_FILTER_KEY = "TRGT"  # cspell:disable-line
 
+FEATURE_FLAG_USES_TELEMETRY_TAG = "Telemetry"
+FEATURE_FLAG_USES_SEED_TAG = "Seed"
+FEATURE_FLAG_MAX_VARIANTS_KEY = "MaxVariants"
+FEATURE_FLAG_USES_VARIANT_CONFIGURATION_REFERENCE_TAG = "ConfigRef"
+FEATURE_FLAG_FEATURES_KEY = "FFFeatures"
+
 # Mime profiles
 APP_CONFIG_AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/"
 APP_CONFIG_AICC_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/chat-completion"
