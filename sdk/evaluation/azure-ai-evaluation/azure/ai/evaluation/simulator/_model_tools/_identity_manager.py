@@ -134,7 +134,11 @@ class ManagedIdentityAPITokenManager(APITokenManager):
             or time.time() - self.last_refresh_time > AZURE_TOKEN_REFRESH_INTERVAL
         ):
             self.last_refresh_time = time.time()
-            self.token = self.credential.get_token(self.token_scope.value).token
+            # Pass client_id if available
+            if hasattr(self, 'client_id') and self.client_id:
+                self.token = self.credential.get_token(self.token_scope.value, client_id=self.client_id).token
+            else:
+                self.token = self.credential.get_token(self.token_scope.value).token
             self.logger.info("Refreshed Azure endpoint token.")
 
         return self.token
@@ -151,7 +155,12 @@ class ManagedIdentityAPITokenManager(APITokenManager):
             or time.time() - self.last_refresh_time > AZURE_TOKEN_REFRESH_INTERVAL
         ):
             self.last_refresh_time = time.time()
-            get_token_method = self.credential.get_token(self.token_scope.value)
+            # Pass client_id if available
+            if hasattr(self, 'client_id') and self.client_id:
+                get_token_method = self.credential.get_token(self.token_scope.value, client_id=self.client_id)
+            else:
+                get_token_method = self.credential.get_token(self.token_scope.value)
+                
             if inspect.isawaitable(get_token_method):
                 # If it's awaitable, await it
                 token_response: AccessToken = await get_token_method

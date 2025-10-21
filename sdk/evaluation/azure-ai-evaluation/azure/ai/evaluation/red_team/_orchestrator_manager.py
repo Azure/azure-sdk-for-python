@@ -198,8 +198,8 @@ class OrchestratorManager:
         :type red_team_info: Dict
         :param task_statuses: Dictionary to track task statuses
         :type task_statuses: Dict
-        :param prompt_to_context: Dictionary mapping prompts to their contexts
-        :type prompt_to_context: Dict[str, str]
+        :param prompt_to_context: Dictionary mapping prompts to their contexts (string or dict format)
+        :type prompt_to_context: Dict[str, Union[str, Dict]]
         :return: Configured and initialized orchestrator
         :rtype: Orchestrator
         """
@@ -259,7 +259,12 @@ class OrchestratorManager:
                 # Get context for this prompt
                 context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
 
-                # context_data is always a dict with a 'contexts' list
+                # Normalize context_data: handle both string (legacy) and dict formats
+                # If context_data is a string, convert it to the expected dict format
+                if isinstance(context_data, str):
+                    context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
+
+                # context_data is now always a dict with a 'contexts' list
                 # Each item in contexts is a dict with 'content' key
                 # context_type and tool_name can be present per-context
                 contexts = context_data.get("contexts", [])
@@ -400,7 +405,7 @@ class OrchestratorManager:
         timeout: int = 120,
         red_team_info: Dict = None,
         task_statuses: Dict = None,
-        prompt_to_context: Dict[str, str] = None,
+        prompt_to_context: Dict[str, Union[str, Dict]] = None,
     ) -> Orchestrator:
         """Send prompts via the RedTeamingOrchestrator (multi-turn orchestrator).
 
@@ -473,7 +478,12 @@ class OrchestratorManager:
             # Get context for this prompt
             context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
 
-            # context_data is always a dict with a 'contexts' list
+            # Normalize context_data: handle both string (legacy) and dict formats
+            # If context_data is a string, convert it to the expected dict format
+            if isinstance(context_data, str):
+                context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
+
+            # context_data is now always a dict with a 'contexts' list
             # Each item in contexts is a dict with 'content' key
             # context_type and tool_name can be present per-context
             contexts = context_data.get("contexts", [])
@@ -658,7 +668,7 @@ class OrchestratorManager:
         timeout: int = 120,
         red_team_info: Dict = None,
         task_statuses: Dict = None,
-        prompt_to_context: Dict[str, str] = None,
+        prompt_to_context: Dict[str, Union[str, Dict]] = None,
     ) -> Orchestrator:
         """Send prompts via the CrescendoOrchestrator with optimized performance.
 
@@ -713,7 +723,12 @@ class OrchestratorManager:
             # Get context for this prompt
             context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
 
-            # context_data is always a dict with a 'contexts' list
+            # Normalize context_data: handle both string (legacy) and dict formats
+            # If context_data is a string, convert it to the expected dict format
+            if isinstance(context_data, str):
+                context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
+
+            # context_data is now always a dict with a 'contexts' list
             # Each item in contexts is a dict with 'content' key
             # context_type and tool_name can be present per-context
             contexts = context_data.get("contexts", [])

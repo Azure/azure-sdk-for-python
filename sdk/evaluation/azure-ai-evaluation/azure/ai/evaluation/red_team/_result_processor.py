@@ -285,6 +285,11 @@ class ResultProcessor:
                                             "risk_assessment": (risk_assessment if risk_assessment else None),
                                             "attack_success_threshold": attack_threshold,
                                         }
+                                        
+                                        # Add risk_sub_type if present in the data
+                                        if "risk_sub_type" in conv_data:
+                                            conversation["risk_sub_type"] = conv_data["risk_sub_type"]
+                                        
                                         conversation_index = len(conversations)
                                         conversations.append(conversation)
 

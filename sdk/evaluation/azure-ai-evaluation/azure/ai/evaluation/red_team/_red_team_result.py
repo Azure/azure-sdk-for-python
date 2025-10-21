@@ -216,7 +216,7 @@ class RiskAssessment(TypedDict):
 
 
 @experimental
-class AttackDetails(TypedDict):
+class AttackDetails(TypedDict, total=False):
     """TypedDict representation of a simulated conversation in a red team evaluation.
 
     :param attack_success: Whether the attack was successful
@@ -233,6 +233,8 @@ class AttackDetails(TypedDict):
     :type risk_assessment: Optional[RiskAssessment]
     :param attack_success_threshold: The threshold value used to determine attack success
     :type attack_success_threshold: Optional[int]
+    :param risk_sub_type: Optional risk sub-category/sub-type for the attack
+    :type risk_sub_type: Optional[str]
     """
 
     attack_success: Optional[bool]
@@ -242,6 +244,7 @@ class AttackDetails(TypedDict):
     conversation: List[Dict[str, str]]
     risk_assessment: Optional[RiskAssessment]
     attack_success_threshold: Optional[int]
+    risk_sub_type: Optional[str]
 
 
 @experimental
