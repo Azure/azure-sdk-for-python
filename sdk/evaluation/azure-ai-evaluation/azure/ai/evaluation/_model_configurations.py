@@ -121,3 +121,14 @@ class EvaluationResult(TypedDict):
     metrics: Dict
     studio_url: NotRequired[str]
     rows: List[Dict]
+    _evaluation_results_list: List[Dict]
+    _evaluation_summary: Dict
+
+
+class AppInsightsConfig(TypedDict):
+    connection_string: str
+    project_id: NotRequired[str]
+    run_type: NotRequired[str]
+    schedule_type: NotRequired[str]
+    run_id: NotRequired[str]
+    extra_attributes: NotRequired[Dict[str, Any]]

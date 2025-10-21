@@ -114,6 +114,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     _NOT_APPLICABLE_RESULT = "not applicable"
     _PASS_RESULT = "pass"
     _FAIL_RESULT = "fail"
+    _type = "azure_ai_evaluator"
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
