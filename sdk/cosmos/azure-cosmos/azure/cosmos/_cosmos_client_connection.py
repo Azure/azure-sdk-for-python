@@ -27,7 +27,7 @@ import os
 import urllib.parse
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
-from typing import Callable, Any, Iterable, Mapping, Optional, Sequence, Tuple, Union, cast, Dict
+from typing import Callable, Any, Iterable, Mapping, Optional, Sequence, Tuple, Union, cast
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
 
@@ -81,7 +81,6 @@ from .partition_key import (
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
 )
-
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str

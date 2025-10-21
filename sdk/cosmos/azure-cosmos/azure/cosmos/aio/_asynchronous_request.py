@@ -24,8 +24,8 @@
 import copy
 import json
 import time
-from urllib.parse import urlparse
 
+from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import _retry_utility_async

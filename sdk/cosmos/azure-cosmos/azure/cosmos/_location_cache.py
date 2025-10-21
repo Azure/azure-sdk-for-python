@@ -24,7 +24,7 @@ DatabaseAccount with multiple writable and readable locations.
 """
 import collections
 import logging
-from typing import List, Optional
+from typing import Optional
 from typing import Set, Mapping, OrderedDict
 from urllib.parse import urlparse
 

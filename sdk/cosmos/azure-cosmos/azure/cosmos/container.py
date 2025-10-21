@@ -248,7 +248,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: A CosmosDict representing the item to be retrieved.
@@ -330,7 +330,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
@@ -402,7 +402,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
@@ -483,7 +483,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -530,7 +530,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -564,7 +564,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -609,7 +609,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -654,7 +654,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -771,7 +771,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
@@ -858,7 +858,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
@@ -930,7 +930,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword str query: The Azure Cosmos DB SQL query to execute.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -1123,7 +1123,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
@@ -1225,7 +1225,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
@@ -1326,7 +1326,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
@@ -1440,7 +1440,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
@@ -1496,7 +1496,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         availability_strategy_config: Optional[dict[str, Any]] = _Unset,
         response_hook: Optional[Callable[[Mapping[str, str], list[dict[str, Any]]], None]] = None,
@@ -1517,11 +1517,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -1621,7 +1621,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy_config:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.

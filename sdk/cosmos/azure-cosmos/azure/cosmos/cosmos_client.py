@@ -202,10 +202,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
-    :keyword availability_strategy: The strategy for cross-region request routing. The default value is None.
-        Controls whether and how requests are automatically routed across regions based on availability
-        and response time thresholds. This helps optimize latency and availability for multi-region accounts.
-    :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+    :keyword dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+    :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor: Optional ThreadPoolExecutor for handling concurrent operations.
 
     .. admonition:: Example:
 

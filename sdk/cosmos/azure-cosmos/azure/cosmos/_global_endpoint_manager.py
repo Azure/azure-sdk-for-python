@@ -24,7 +24,7 @@ database service.
 """
 
 import threading
-from typing import Tuple, List, Optional
+from typing import Tuple, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -86,7 +86,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
 
-    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
         """Get the list of applicable read endpoints based on request parameters and excluded locations.
 
         :param request: Request object containing operation parameters and exclusion lists
@@ -94,9 +94,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         :returns: List of regional routing contexts available for read operations
         :rtype: List[RegionalRoutingContext]
         """
-        return self.location_cache.get_applicable_read_regional_routing_contexts(request)
+        return self.location_cache._get_applicable_read_regional_routing_contexts(request)
 
-    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]: # pylint: disable=name-too-long
         """Get the list of applicable write endpoints based on request parameters and excluded locations.
 
         :param request: Request object containing operation parameters and exclusion lists
@@ -104,7 +104,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         :returns: List of regional routing contexts available for write operations
         :rtype: List[RegionalRoutingContext]
         """
-        return self.location_cache.get_applicable_write_regional_routing_contexts(request)
+        return self.location_cache._get_applicable_write_regional_routing_contexts(request)
 
     def get_region_name(self, endpoint: str, is_write_operation: bool) -> Optional[str]:
         """Get the region name associated with an endpoint.

@@ -9,8 +9,6 @@ import os
 
 from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
-from cosmos import CrossRegionHedgingStrategyConfig
-
 
 async def examples_async():
     # All interaction with Cosmos DB starts with an instance of the CosmosClient
