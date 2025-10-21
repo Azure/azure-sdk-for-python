@@ -85,6 +85,15 @@ class TestBase(AzureRecordedTestCase):
         "file_purpose": "fine-tune",
     }
 
+    test_finetuning_params = {
+        "model_name": "gpt-4o-mini",
+        "training_file_name": "training_set.jsonl",
+        "validation_file_name": "validation_set.jsonl",
+        "n_epochs": 1,
+        "batch_size": 1,
+        "learning_rate_multiplier": 1.0,
+    }
+
     # Regular expression describing the pattern of an Application Insights connection string.
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
@@ -278,3 +287,22 @@ class TestBase(AzureRecordedTestCase):
         TestBase.assert_equal_or_not_none(file_obj.id, expected_file_id)
         TestBase.assert_equal_or_not_none(file_obj.filename, expected_filename)
         TestBase.assert_equal_or_not_none(file_obj.purpose, expected_purpose)
+    @classmethod
+    def validate_fine_tuning_job(
+        cls,
+        job_obj,
+        *,
+        expected_job_id: Optional[str] = None,
+        expected_model: Optional[str] = None,
+        expected_status: Optional[str] = None,
+    ):
+        assert job_obj is not None
+        assert job_obj.id is not None
+        assert job_obj.model is not None
+        assert job_obj.created_at is not None
+        assert job_obj.status is not None
+        assert job_obj.training_file is not None
+
+        TestBase.assert_equal_or_not_none(job_obj.id, expected_job_id)
+        TestBase.assert_equal_or_not_none(job_obj.model, expected_model)
+        TestBase.assert_equal_or_not_none(job_obj.status, expected_status)
