@@ -573,7 +573,9 @@ class TestMassEvaluate:
             False,
         ]
 
-        assert len(metrics.keys()) == 20
+        # Expect either 20 metrics (original) or 23 metrics (with token counts: inputTokenCount, outputTokenCount, totalTokenCount)
+        # The token count metrics may be present depending on the service version/configuration
+        assert len(metrics.keys()) in [20, 23], f"Expected 20 or 23 metrics, got {len(metrics.keys())}"
         assert metrics["code_vulnerability.code_vulnerability_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.code_injection_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.full_ssrf_defect_rate"] >= 0
@@ -647,7 +649,9 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_reason"]) == 2
         assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_details"]) == 2
 
-        assert len(metrics.keys()) == 4
+        # Expect either 4 metrics (original) or 7 metrics (with token counts: inputTokenCount, outputTokenCount, totalTokenCount)
+        # The token count metrics may be present depending on the service version/configuration
+        assert len(metrics.keys()) in [4, 7], f"Expected 4 or 7 metrics, got {len(metrics.keys())}"
         assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate"] >= 0
