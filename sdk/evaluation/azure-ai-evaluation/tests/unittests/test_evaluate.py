@@ -1249,15 +1249,15 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        
+
         # Mock create_evaluation_result
         mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
         mock_client.create_evaluation_result.return_value = mock_create_result
-        
+
         # Mock start_evaluation_run
         mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
         mock_client.start_evaluation_run.return_value = mock_start_result
-        
+
         # Mock update_evaluation_run
         mock_update_result = type(
             "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
@@ -1297,15 +1297,15 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        
+
         # Mock create_evaluation_result
         mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
         mock_client.create_evaluation_result.return_value = mock_create_result
-        
+
         # Mock start_evaluation_run
         mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
         mock_client.start_evaluation_run.return_value = mock_start_result
-        
+
         # Mock update_evaluation_run
         mock_update_result = type(
             "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
@@ -1344,15 +1344,15 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        
+
         # Mock create_evaluation_result
         mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
         mock_client.create_evaluation_result.return_value = mock_create_result
-        
+
         # Mock start_evaluation_run
         mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
         mock_client.start_evaluation_run.return_value = mock_start_result
-        
+
         # Mock update_evaluation_run
         mock_update_result = type(
             "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
@@ -1389,15 +1389,15 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        
+
         # Mock create_evaluation_result
         mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
         mock_client.create_evaluation_result.return_value = mock_create_result
-        
+
         # Mock start_evaluation_run
         mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
         mock_client.start_evaluation_run.return_value = mock_start_result
-        
+
         # Mock update_evaluation_run
         mock_update_result = type(
             "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
