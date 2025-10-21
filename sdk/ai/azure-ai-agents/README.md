@@ -369,7 +369,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_bing_grounding.create_agent_with_bing_grounding_tool -->
 
 ```python
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["BING_CONNECTION_NAME"]).id
 
 # Initialize agent bing tool and add the connection id
 bing = BingGroundingTool(connection_id=conn_id)
@@ -556,7 +556,6 @@ Here is an example to integrate Azure AI Search:
 
 ```python
 conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
-
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
@@ -568,10 +567,7 @@ ai_search = AzureAISearchTool(
     filter="",
 )
 
-# Create agent with AI search tool and process agent run
-agents_client = project_client.agents
-
-agent = agents_client.create_agent(
+agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-agent",
     instructions="You are a helpful agent",
@@ -591,7 +587,7 @@ get sensible result, the index needs to have "embedding", "token", "category" an
 
 ```python
 # Fetch and log all messages
-messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+messages = project_client.agents.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 for message in messages:
     if message.role == MessageRole.AGENT and message.url_citation_annotations:
         placeholder_annotations = {
@@ -907,7 +903,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_browser_automation.create_agent_with_browser_automation -->
 
 ```python
-connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
+connection_id = project_client.connections.get(os.environ["AZURE_PLAYWRIGHT_CONNECTION_NAME"]).id
 
 # Initialize Browser Automation tool and add the connection id
 browser_automation = BrowserAutomationTool(connection_id=connection_id)
@@ -942,7 +938,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_fabric.create_agent_with_fabric_tool -->
 
 ```python
-conn_id = os.environ["FABRIC_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["FABRIC_CONNECTION_NAME"]).id
 
 print(conn_id)
 
@@ -1114,8 +1110,7 @@ for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id,
         for tool_call in run_step.step_details.tool_calls:
             if isinstance(tool_call, RunStepConnectedAgentToolCall):
                 print(
-                    f"\tAgent: {tool_call.connected_agent.name} "
-                    f"query: {tool_call.connected_agent.arguments} ",
+                    f"\tAgent: {tool_call.connected_agent.name} " f"query: {tool_call.connected_agent.arguments} ",
                     f"output: {tool_call.connected_agent.output}",
                 )
 ```
