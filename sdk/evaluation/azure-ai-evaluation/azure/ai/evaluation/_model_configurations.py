@@ -107,19 +107,18 @@ class EvaluatorConfig(TypedDict, total=False):
     column_mapping: Dict[str, str]
     """Dictionary mapping evaluator input name to column in data"""
 
-    evaluator_name: NotRequired[Optional[str]] = None
+    _evaluator_name: NotRequired[Optional[str]]
     """Name of the evaluator from the evaluator asset, currently only used for Otel emission"""
 
-    evaluator_version: NotRequired[Optional[str]] = None
+    _evaluator_version: NotRequired[Optional[str]]
     """Version of the evaluator from the evaluator asset, currently only used for Otel emission"""
 
-    evaluator_id : NotRequired[Optional[str]] = None
+    _evaluator_id: NotRequired[Optional[str]]
     """ID of the evaluator from the evaluator asset, currently only used for Otel emission"""
 
-    evaluator_definition: NotRequired[Optional[EvaluatorDefinition]] = None
+    _evaluator_definition: NotRequired[Optional[EvaluatorDefinition]]
     """Definition of the evaluator to be used from the evaluator asset"""
     """Currently only used for Otel emission, will be changed to used in AOAI eval results converter as well in the future."""
-
 
 
 class Message(TypedDict):

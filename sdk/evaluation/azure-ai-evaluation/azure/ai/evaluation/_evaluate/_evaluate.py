@@ -1047,7 +1047,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data
         )
         if app_insights_configuration := kwargs.get("_app_insights_configuration"):
-            emit_eval_result_events_to_app_insights(app_insights_configuration, result["_evaluation_results_list"], evaluator_config)
+            emit_eval_result_events_to_app_insights(
+                app_insights_configuration, result["_evaluation_results_list"], evaluator_config
+            )
 
     if output_path:
         _write_output(output_path, result)
@@ -1055,14 +1057,14 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
 
 def _build_internal_log_attributes(
-    event_data: Dict[str, Any], 
-    metric_name: str, 
+    event_data: Dict[str, Any],
+    metric_name: str,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]],
-    internal_log_attributes: Dict[str, str]
+    internal_log_attributes: Dict[str, str],
 ) -> Dict[str, str]:
     """
     Build internal log attributes for OpenTelemetry logging.
-    
+
     :param event_data: The event data containing threshold and name information
     :type event_data: Dict[str, Any]
     :param metric_name: The name of the metric being evaluated
@@ -1075,36 +1077,34 @@ def _build_internal_log_attributes(
     # Add threshold if present
     if event_data.get("threshold"):
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
-    
+
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
     if testing_criteria_name:
         internal_log_attributes["gen_ai.evaluation.testing_criteria.name"] = testing_criteria_name
-        
+
         # Get evaluator definition details
         if evaluator_config and testing_criteria_name in evaluator_config:
             testing_criteria_config = evaluator_config[testing_criteria_name]
-            
-            if "evaluator_name" in testing_criteria_config and testing_criteria_config["evaluator_name"]:
-                internal_log_attributes["gen_ai.evaluator.name"] = testing_criteria_config["evaluator_name"]
 
-            if "evaluator_version" in testing_criteria_config and testing_criteria_config["evaluator_version"] is not None:
-                internal_log_attributes["gen_ai.evaluator.version"] = str(testing_criteria_config["evaluator_version"])
-            
-            if "evaluator_id" in testing_criteria_config and testing_criteria_config["evaluator_id"] is not None:
-                internal_log_attributes["gen_ai.evaluator.id"] = str(testing_criteria_config["evaluator_id"])
-                
-            if ("evaluator_definition" in testing_criteria_config and
-                testing_criteria_config["evaluator_definition"] and
-                metric_name in testing_criteria_config["evaluator_definition"]["metrics"]):
-                metric_config_detail = testing_criteria_config["evaluator_definition"]["metrics"][metric_name]
+            if evaluator_name := testing_criteria_config.get("_evaluator_name"):
+                internal_log_attributes["gen_ai.evaluator.name"] = str(evaluator_name)
+
+            if evaluator_version := testing_criteria_config.get("_evaluator_version"):
+                internal_log_attributes["gen_ai.evaluator.version"] = str(evaluator_version)
+
+            if evaluator_id := testing_criteria_config.get("_evaluator_id"):
+                internal_log_attributes["gen_ai.evaluator.id"] = str(evaluator_id)
+
+            if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
+                metric_config_detail = evaluator_definition.metrics.get(metric_name)
 
                 if metric_config_detail:
-                    if metric_config_detail.get("min_value") is not None:
-                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail["min_value"])
-                    if metric_config_detail.get("max_value") is not None:
-                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail["max_value"])
-    
+                    if metric_config_detail.min_value is not None:
+                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail.min_value)
+                    if metric_config_detail.max_value is not None:
+                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail.max_value)
+
     return internal_log_attributes
 
 
@@ -1113,7 +1113,7 @@ def _log_events_to_app_insights(
     events: List[Dict[str, Any]],
     log_attributes: Dict[str, Any],
     data_source_item: Optional[Dict[str, Any]] = None,
-    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
@@ -1183,8 +1183,9 @@ def _log_events_to_app_insights(
 
                 # Internal proposed attributes
                 # Put it in internal property bag for now, will be expanded if we got sign-off to Otel standard later.
-                internal_log_attributes = _build_internal_log_attributes(event_data, metric_name, evaluator_config, log_attributes)
-
+                internal_log_attributes = _build_internal_log_attributes(
+                    event_data, metric_name, evaluator_config, log_attributes
+                )
 
                 # Optional field that may not always be present
                 if "reason" in event_data:
@@ -1207,7 +1208,9 @@ def _log_events_to_app_insights(
                         internal_log_attributes["gen_ai.redteam.attack.technique"] = str(properties["attack_technique"])
 
                     if "attack_complexity" in properties:
-                        internal_log_attributes["gen_ai.redteam.attack.complexity"] = str(properties["attack_complexity"])
+                        internal_log_attributes["gen_ai.redteam.attack.complexity"] = str(
+                            properties["attack_complexity"]
+                        )
 
                     if "attack_success_threshold" in properties:
                         internal_log_attributes["gen_ai.redteam.attack.success_threshold"] = str(
@@ -1260,7 +1263,11 @@ def _log_events_to_app_insights(
         LOGGER.error(f"Failed to log events to App Insights: {e}")
 
 
-def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConfig, results: List[Dict], evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None) -> None:
+def emit_eval_result_events_to_app_insights(
+    app_insights_config: AppInsightsConfig,
+    results: List[Dict],
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
+) -> None:
     """
     Emit evaluation result events to App Insights using OpenTelemetry logging.
     Each result is logged as an independent log record, potentially including trace context.
@@ -1330,7 +1337,7 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
                 events=result["results"],
                 log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
-                evaluator_config=evaluator_config
+                evaluator_config=evaluator_config,
             )
         # Force flush to ensure events are sent
         logger_provider.force_flush()
