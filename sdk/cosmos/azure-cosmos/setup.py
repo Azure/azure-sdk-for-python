@@ -73,7 +73,7 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.9",
     install_requires=[
-        "azure-core>=1.30.0",
+        "azure-core>=1.31.0",
         "typing-extensions>=4.6.0"
     ],
 )
