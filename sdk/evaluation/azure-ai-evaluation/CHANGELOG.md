@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
--
+- `image_tag` parameter in `AzureOpenAIPythonGrader` is now optional.
 
 ## 1.12.0 (2025-10-02)
 
