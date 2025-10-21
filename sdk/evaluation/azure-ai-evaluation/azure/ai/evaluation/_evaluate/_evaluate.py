@@ -1097,13 +1097,13 @@ def _build_internal_log_attributes(
                 internal_log_attributes["gen_ai.evaluator.id"] = str(evaluator_id)
 
             if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
-                metric_config_detail = evaluator_definition.metrics.get(metric_name)
+                metric_config_detail = evaluator_definition.get("metrics").get(metric_name)
 
                 if metric_config_detail:
-                    if metric_config_detail.min_value is not None:
-                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail.min_value)
-                    if metric_config_detail.max_value is not None:
-                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail.max_value)
+                    if metric_config_detail.get("min_value") is not None:
+                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail["min_value"])
+                    if metric_config_detail.get("max_value") is not None:
+                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail["max_value"])
 
     return internal_log_attributes
 
