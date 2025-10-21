@@ -40,7 +40,6 @@ from .operations import (
     ScriptCmdletsOperations,
     ScriptExecutionsOperations,
     ScriptPackagesOperations,
-    ServiceComponentsOperations,
     SkusOperations,
     VirtualMachinesOperations,
     WorkloadNetworksOperations,
@@ -95,8 +94,6 @@ class AVSClient:  # pylint: disable=too-many-instance-attributes
     :vartype script_executions: azure.mgmt.avs.aio.operations.ScriptExecutionsOperations
     :ivar script_packages: ScriptPackagesOperations operations
     :vartype script_packages: azure.mgmt.avs.aio.operations.ScriptPackagesOperations
-    :ivar service_components: ServiceComponentsOperations operations
-    :vartype service_components: azure.mgmt.avs.aio.operations.ServiceComponentsOperations
     :ivar skus: SkusOperations operations
     :vartype skus: azure.mgmt.avs.aio.operations.SkusOperations
     :ivar virtual_machines: VirtualMachinesOperations operations
@@ -200,9 +197,6 @@ class AVSClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.script_packages = ScriptPackagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.service_components = ServiceComponentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize

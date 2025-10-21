@@ -32,7 +32,6 @@ from ._operations import PureStoragePoliciesOperations  # type: ignore
 from ._operations import ScriptCmdletsOperations  # type: ignore
 from ._operations import ScriptExecutionsOperations  # type: ignore
 from ._operations import ScriptPackagesOperations  # type: ignore
-from ._operations import ServiceComponentsOperations  # type: ignore
 from ._operations import SkusOperations  # type: ignore
 from ._operations import VirtualMachinesOperations  # type: ignore
 from ._operations import WorkloadNetworksOperations  # type: ignore
@@ -62,7 +61,6 @@ __all__ = [
     "ScriptCmdletsOperations",
     "ScriptExecutionsOperations",
     "ScriptPackagesOperations",
-    "ServiceComponentsOperations",
     "SkusOperations",
     "VirtualMachinesOperations",
     "WorkloadNetworksOperations",
