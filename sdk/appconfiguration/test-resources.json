@@ -122,6 +122,18 @@
             }
         },
         {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(parameters('baseName'), '/TestSecret2')]",
+            "apiVersion": "2016-10-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('baseName'))]"
+            ],
+            "properties": {
+                "value": "Very secret value 2"
+            }
+        },
+        {
             "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
             "apiVersion": "2020-07-01-preview",
             "name": "[concat(variables('uniqueAzConfigName'), '/', 'message')]",
