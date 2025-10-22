@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.trustedsigning import TrustedSigningMgmtClient
+from azure.mgmt.trustedsigning import TrustedSigningMgmt
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.trustedsigning import TrustedSigningMgmtClient
 
 
 def main():
-    client = TrustedSigningMgmtClient(
+    client = TrustedSigningMgmt(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
