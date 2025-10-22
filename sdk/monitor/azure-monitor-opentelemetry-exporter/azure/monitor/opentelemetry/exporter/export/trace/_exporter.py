@@ -459,7 +459,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
         if envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME):
             data.name = envelope.tags[ContextTagKeys.AI_OPERATION_NAME][:1024]
-        if data.name:
+        elif data.name:
             data.name = str(data.name)[:1024]
         if data.result_code:
             data.result_code = str(data.result_code)[:1024]
