@@ -30,8 +30,8 @@ from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
 from devtools_testutils.proxy_fixtures import VariableRecorder
 from pytest_mock import MockFixture
-from azure.ai.ml.tests.test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
-from azure.ai.ml.tests.test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
+from tests.test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+from tests.test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
 
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery

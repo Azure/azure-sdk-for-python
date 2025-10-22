@@ -185,7 +185,7 @@ pytest tests/deployment_template/unittests/test_deployment_template.py::TestDepl
 ```
 
 ## Related Documentation
-- [Azure ML SDK Documentation](https://docs.microsoft.com/en-us/python/api/azure-ai-ml/)
+- [Azure ML SDK Documentation](https://docs.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml?view=azure-python)
 - [Pytest Documentation](https://docs.pytest.org/)
 - [Coverage.py Documentation](https://coverage.readthedocs.io/)
 - [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
