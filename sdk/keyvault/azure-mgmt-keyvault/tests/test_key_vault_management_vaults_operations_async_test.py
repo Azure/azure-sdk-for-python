@@ -29,6 +29,7 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
         result = [r async for r in response]
         assert result == []
 
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list(self):
         response = self.client.vaults.list(
@@ -37,6 +38,7 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
         result = [r async for r in response]
         assert result
 
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_customized_api_version(self):
         # This API is legacy paging API that api-version of init request and next link must be "2015-11-01".
