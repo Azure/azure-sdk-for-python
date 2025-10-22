@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import TrustedSigningMgmtClientConfiguration
+from ._configuration import TrustedSigningMgmtConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import CertificateProfilesOperations, CodeSigningAccountsOperations, Operations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class TrustedSigningMgmtClient:
+class TrustedSigningMgmt:
     """Code Signing resource provider api.
 
     :ivar operations: Operations operations
@@ -68,7 +68,7 @@ class TrustedSigningMgmtClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = TrustedSigningMgmtClientConfiguration(
+        self._config = TrustedSigningMgmtConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

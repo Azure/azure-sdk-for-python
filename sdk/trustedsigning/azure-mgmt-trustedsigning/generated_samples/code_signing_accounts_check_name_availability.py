@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.trustedsigning import TrustedSigningMgmtClient
+from azure.mgmt.trustedsigning import TrustedSigningMgmt
 
 """
 # PREREQUISITES
@@ -25,13 +25,13 @@ from azure.mgmt.trustedsigning import TrustedSigningMgmtClient
 
 
 def main():
-    client = TrustedSigningMgmtClient(
+    client = TrustedSigningMgmt(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.code_signing_accounts.check_name_availability(
-        body={"name": "sample-account"},
+        body={"name": "sample-account", "type": "Microsoft.CodeSigning/codeSigningAccounts"},
     )
     print(response)
 

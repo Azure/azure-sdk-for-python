@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -238,6 +238,19 @@ class CertificateProfile(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = [
+        "profile_type",
+        "include_street_address",
+        "include_city",
+        "include_state",
+        "include_country",
+        "include_postal_code",
+        "identity_validation_id",
+        "provisioning_state",
+        "status",
+        "certificates",
+    ]
+
     @overload
     def __init__(
         self,
@@ -253,7 +266,25 @@ class CertificateProfile(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CertificateProfileProperties(_Model):
@@ -331,8 +362,6 @@ class CertificateProfileProperties(_Model):
     certificates: Optional[list["_models.Certificate"]] = rest_field(visibility=["read"])
     """List of renewed certificates."""
 
-    __flattened_items = [""]
-
     @overload
     def __init__(
         self,
@@ -354,34 +383,20 @@ class CertificateProfileProperties(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.certificates is None:
-                return None
-            return getattr(self.certificates, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.certificates is None:
-                self.certificates = self._attr_to_rest_field["certificates"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
 
 
 class CheckNameAvailability(_Model):
     """The parameters used to check the availability of the trusted signing account name.
 
+    :ivar type: The type of the resource, "Microsoft.CodeSigning/codeSigningAccounts". Required.
+    :vartype type: str
     :ivar name: Trusted signing account name. Required.
     :vartype name: str
     """
 
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the resource, \"Microsoft.CodeSigning/codeSigningAccounts\". Required."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Trusted signing account name. Required."""
 
@@ -389,6 +404,7 @@ class CheckNameAvailability(_Model):
     def __init__(
         self,
         *,
+        type: str,
         name: str,
     ) -> None: ...
 
@@ -500,6 +516,8 @@ class CodeSigningAccount(TrackedResource):
     )
     """The resource-specific properties for this resource."""
 
+    __flattened_items = ["account_uri", "sku", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -517,7 +535,25 @@ class CodeSigningAccount(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CodeSigningAccountPatch(_Model):

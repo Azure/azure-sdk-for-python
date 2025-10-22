@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.trustedsigning import TrustedSigningMgmtClient
+from azure.mgmt.trustedsigning import TrustedSigningMgmt
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -16,7 +16,7 @@ AZURE_LOCATION = "eastus"
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestTrustedSigningMgmtCodeSigningAccountsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(TrustedSigningMgmtClient)
+        self.client = self.create_mgmt_client(TrustedSigningMgmt)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -101,7 +101,7 @@ class TestTrustedSigningMgmtCodeSigningAccountsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_code_signing_accounts_check_name_availability(self, resource_group):
         response = self.client.code_signing_accounts.check_name_availability(
-            body={"name": "str"},
+            body={"name": "str", "type": "str"},
         )
 
         # please add some check logic here by yourself
