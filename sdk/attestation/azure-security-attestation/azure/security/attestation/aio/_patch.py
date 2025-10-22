@@ -436,7 +436,7 @@ class AttestationClient:
             # If it's a base64-encoded string, decode it to bytes
             # Use base64url_decode for proper handling of URL-safe base64
             data = base64url_decode(data)
-        result = TpmAttestationResult(data) # type: ignore
+        result = TpmAttestationResult(data)  # type: ignore
         return result
 
     async def _get_signers(self, **kwargs: Any) -> List[AttestationSigner]:
