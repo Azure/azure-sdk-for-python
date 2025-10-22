@@ -354,9 +354,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         :keyword int paid_bursting_iops: The maximum IOPS the file share can support.
         :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
         :keyword int provisioned_bandwidth_mibps: The provisioned throughput of the share, stored on the share object.
-        :keyword bool enable_smb_directory_lease:
-            SMB only. Specifies whether granting new directory leases for directories
-            present in a share are allowed (True) or blocked (False). Enabled by default.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
 
@@ -379,13 +376,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         paid_bursting_iops = kwargs.pop('paid_bursting_iops', None)
         share_provisioned_iops = kwargs.pop('provisioned_iops', None)
         share_provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
-        enable_smb_directory_lease = kwargs.pop('enable_smb_directory_lease', None)
         if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
             raise ValueError("The enabled protocol must be set to either SMB or NFS.")
         if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
             raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
-        if enable_smb_directory_lease and protocols in ['NFS', ShareProtocols.NFS]:
-            raise ValueError("The 'enable_smb_directory_lease' keyword can only be used on SMB enabled shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
@@ -401,11 +395,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 paid_bursting_max_iops=paid_bursting_iops,
                 share_provisioned_iops=share_provisioned_iops,
                 share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
-                enable_smb_directory_lease=enable_smb_directory_lease,
                 cls=return_response_headers,
                 headers=headers,
-                **kwargs
-            ))
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -637,9 +629,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
         :keyword int provisioned_bandwidth_mibps: The provisioned throughput of the share, stored on the share object.
         :returns: Share-updated property dict (Etag and last modified).
-        :keyword bool enable_smb_directory_lease:
-            SMB only. Specifies whether granting new directory leases for directories
-            present in a share are allowed (True) or blocked (False). Enabled by default.
         :rtype: dict[str, Any]
 
         .. admonition:: Example:
@@ -660,7 +649,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         paid_bursting_iops = kwargs.pop('paid_bursting_iops', None)
         share_provisioned_iops = kwargs.pop('provisioned_iops', None)
         share_provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
-        enable_smb_directory_lease = kwargs.pop('enable_smb_directory_lease', None)
         if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
@@ -674,10 +662,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 paid_bursting_max_iops=paid_bursting_iops,
                 share_provisioned_iops=share_provisioned_iops,
                 share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
-                enable_smb_directory_lease=enable_smb_directory_lease,
                 cls=return_response_headers,
-                **kwargs
-            ))
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
