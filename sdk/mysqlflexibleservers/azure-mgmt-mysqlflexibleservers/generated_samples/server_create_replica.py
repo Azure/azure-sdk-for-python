@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.mysqlflexibleservers import DBforMySQLClient
+from azure.mgmt.mysqlflexibleservers import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.mysqlflexibleservers import DBforMySQLClient
 
 
 def main():
-    client = DBforMySQLClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

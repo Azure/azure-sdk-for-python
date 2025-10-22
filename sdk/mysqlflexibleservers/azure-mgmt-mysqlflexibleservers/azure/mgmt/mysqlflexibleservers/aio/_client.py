@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import DBforMySQLClientConfiguration
+from ._configuration import MySQLManagementClientConfiguration
 from .operations import (
     AdvancedThreatProtectionSettingsOperations,
     AzureADAdministratorsOperations,
@@ -52,7 +52,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DBforMySQLClient:  # pylint: disable=too-many-instance-attributes
+class MySQLManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and
     configurations with new business model.
@@ -157,7 +157,7 @@ class DBforMySQLClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = DBforMySQLClientConfiguration(
+        self._config = MySQLManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

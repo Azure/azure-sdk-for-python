@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import DBforMySQLClientConfiguration
+from .._configuration import MySQLManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -1915,14 +1915,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2016,14 +2016,14 @@ class AzureADAdministratorsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`azure_ad_administrators` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2588,14 +2588,14 @@ class ServersOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`servers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4633,14 +4633,14 @@ class BackupAndExportOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`backup_and_export` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4961,14 +4961,14 @@ class LogFilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`log_files` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5070,14 +5070,14 @@ class ServersMigrationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`servers_migration` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5217,14 +5217,14 @@ class BackupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`backups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5466,14 +5466,14 @@ class LongRunningBackupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`long_running_backups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5646,14 +5646,14 @@ class LongRunningBackupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`long_running_backup` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5920,14 +5920,14 @@ class ConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`configurations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6849,14 +6849,14 @@ class DatabasesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`databases` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7398,14 +7398,14 @@ class FirewallRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`firewall_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7949,14 +7949,14 @@ class AdvancedThreatProtectionSettingsOperations:  # pylint: disable=name-too-lo
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`advanced_threat_protection_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8659,14 +8659,14 @@ class LocationBasedCapabilitySetOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`location_based_capability_set` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8829,14 +8829,14 @@ class MaintenancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`maintenances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9263,14 +9263,14 @@ class PrivateEndpointConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`private_endpoint_connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9801,14 +9801,14 @@ class PrivateLinkResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`private_link_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9984,14 +9984,14 @@ class LocationBasedCapabilitiesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`location_based_capabilities` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10090,14 +10090,14 @@ class CheckVirtualNetworkSubnetUsageOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`check_virtual_network_subnet_usage` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10252,14 +10252,14 @@ class CheckNameAvailabilityOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`check_name_availability` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10421,14 +10421,14 @@ class CheckNameAvailabilityWithoutLocationOperations:  # pylint: disable=name-to
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`check_name_availability_without_location` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10567,14 +10567,14 @@ class OperationResultsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`operation_results` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10653,14 +10653,14 @@ class OperationProgressOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`operation_progress` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10738,14 +10738,14 @@ class GetPrivateDnsZoneSuffixOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`get_private_dns_zone_suffix` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10815,14 +10815,14 @@ class ReplicasOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.mysqlflexibleservers.DBforMySQLClient`'s
+        :class:`~azure.mgmt.mysqlflexibleservers.MySQLManagementClient`'s
         :attr:`replicas` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DBforMySQLClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MySQLManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -306,8 +306,8 @@ class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The major version of a server. 8.0.21 stands for MySQL 8.0, 5.7.44 stands for MySQL 5.7."""
 
-    ENUM_5_7 = "5.7"
-    ENUM_8_0_21 = "8.0.21"
+    FIVE7 = "5.7"
+    EIGHT0_21 = "8.0.21"
 
 
 class StorageRedundancyEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
