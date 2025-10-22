@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import os
 from typing import (  # pylint: disable=unused-import
+    Any,
     cast,
     Tuple,
 )
@@ -13,7 +14,7 @@ from devtools_testutils import is_live, get_credential
 
 
 def create_token_credential():
-    # type: () -> FakeTokenCredential or get_credential
+    # type: () -> Any
     from devtools_testutils import is_live
 
     if not is_live():
@@ -25,7 +26,7 @@ def create_token_credential():
 
 
 def async_create_token_credential():
-    # type: () -> AsyncFakeTokenCredential or get_credential
+    # type: () -> Any
     from devtools_testutils import is_live
 
     if not is_live():
