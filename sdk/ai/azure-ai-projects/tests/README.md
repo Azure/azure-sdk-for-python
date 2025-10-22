@@ -23,7 +23,7 @@ az login
 
 ## Setup up environment variables
 
-Copy the file `azure_ai_projects_tests.template.env` (located in the above folder), and save it as file named `azure_ai_projects_tests.env`.
+Copy the file `.env.template` (located in the above folder), and save it as file named `.env`.
 Enter appropriate values for the environment variables used for the tests you want to run.
 
 ## Configure test proxy

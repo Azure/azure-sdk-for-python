@@ -411,6 +411,25 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 result[pm_metric_name + "_reason"] = (
                     parsed_response["reasoning"] if "reasoning" in parsed_response else ""
                 )
+                result[pm_metric_name + "_total_tokens"] = (
+                    parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_prompt_tokens"] = (
+                    parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_completion_tokens"] = (
+                    parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+                )
+                result[pm_metric_name + "_finish_reason"] = (
+                    parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+                )
+                result[pm_metric_name + "_sample_input"] = (
+                    parsed_response["sample_input"] if "sample_input" in parsed_response else ""
+                )
+                result[pm_metric_name + "_sample_output"] = (
+                    parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+                )
+                result[pm_metric_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
             return result
         if metric_name not in batch_response[0]:
             return {}
@@ -442,9 +461,39 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():
-                if key not in {"label", "reasoning", "version"}:
+                if key not in {
+                    "label",
+                    "reasoning",
+                    "version",
+                    "totalTokenCount",
+                    "inputTokenCount",
+                    "outputTokenCount",
+                    "finish_reason",
+                    "sample_input",
+                    "sample_output",
+                    "model",
+                }:
                     details[key.replace("-", "_")] = value
             result[metric_display_name + "_details"] = details
+        result[metric_display_name + "_total_tokens"] = (
+            parsed_response["totalTokenCount"] if "totalTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_prompt_tokens"] = (
+            parsed_response["inputTokenCount"] if "inputTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_completion_tokens"] = (
+            parsed_response["outputTokenCount"] if "outputTokenCount" in parsed_response else ""
+        )
+        result[metric_display_name + "_finish_reason"] = (
+            parsed_response["finish_reason"] if "finish_reason" in parsed_response else ""
+        )
+        result[metric_display_name + "_sample_input"] = (
+            parsed_response["sample_input"] if "sample_input" in parsed_response else ""
+        )
+        result[metric_display_name + "_sample_output"] = (
+            parsed_response["sample_output"] if "sample_output" in parsed_response else ""
+        )
+        result[metric_display_name + "_model"] = parsed_response["model"] if "model" in parsed_response else ""
         return result
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
@@ -484,6 +533,13 @@ def _parse_content_harm_response(
     except Exception:  # pylint: disable=broad-exception-caught
         harm_response = response[metric_name]
 
+    total_tokens = 0
+    prompt_tokens = 0
+    completion_tokens = 0
+    finish_reason = ""
+    sample_input = ""
+    sample_output = ""
+    model = ""
     if harm_response != "" and isinstance(harm_response, dict):
         # check if "output" is one key in harm_response
         if "output" in harm_response:
@@ -511,6 +567,44 @@ def _parse_content_harm_response(
             reason = harm_response["reason"]
         else:
             reason = ""
+
+        # get token_usage
+        if "totalTokenCount" in harm_response:
+            total_tokens = harm_response["totalTokenCount"]
+        else:
+            total_tokens = 0
+        if "inputTokenCount" in harm_response:
+            prompt_tokens = harm_response["inputTokenCount"]
+        else:
+            prompt_tokens = 0
+        if "outputTokenCount" in harm_response:
+            completion_tokens = harm_response["outputTokenCount"]
+        else:
+            completion_tokens = 0
+
+        # get finish_reason
+        if "finish_reason" in harm_response:
+            finish_reason = harm_response["finish_reason"]
+        else:
+            finish_reason = ""
+
+        # get sample_input
+        if "sample_input" in harm_response:
+            sample_input = harm_response["sample_input"]
+        else:
+            sample_input = ""
+
+        # get sample_output
+        if "sample_output" in harm_response:
+            sample_output = harm_response["sample_output"]
+        else:
+            sample_output = ""
+
+        # get model
+        if "model" in harm_response:
+            model = harm_response["model"]
+        else:
+            model = ""
     elif harm_response != "" and isinstance(harm_response, str):
         metric_value_match = re.findall(r"(\b[0-7])\b", harm_response)
         if metric_value_match:
@@ -537,6 +631,13 @@ def _parse_content_harm_response(
     result[key] = get_harm_severity_level(harm_score)
     result[key + "_score"] = harm_score
     result[key + "_reason"] = reason
+    result[key + "_total_tokens"] = total_tokens
+    result[key + "_prompt_tokens"] = prompt_tokens
+    result[key + "_completion_tokens"] = completion_tokens
+    result[key + "_finish_reason"] = finish_reason
+    result[key + "_sample_input"] = sample_input
+    result[key + "_sample_output"] = sample_output
+    result[key + "_model"] = model
 
     return result
 

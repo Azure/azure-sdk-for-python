@@ -32,12 +32,12 @@ def main():
 
     response = client.gi_minor_versions.list_by_parent(
         location="eastus",
-        giversionname="giVersionName",
+        giversionname="name1",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-03-01/GiMinorVersions_ListByParent_MaximumSet_Gen.json
+# x-ms-original-file: 2025-09-01/GiMinorVersions_ListByParent_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
