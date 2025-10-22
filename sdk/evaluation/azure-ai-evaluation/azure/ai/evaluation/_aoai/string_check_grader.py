@@ -38,6 +38,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     """
 
     id = "azureai://built-in/evaluators/azure-openai/string_check_grader"
+    _type = "string_check"
 
     def __init__(
         self,
@@ -60,6 +61,6 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             name=name,
             operation=operation,
             reference=reference,
-            type="string_check",
+            type=AzureOpenAIStringCheckGrader._type,
         )
         super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

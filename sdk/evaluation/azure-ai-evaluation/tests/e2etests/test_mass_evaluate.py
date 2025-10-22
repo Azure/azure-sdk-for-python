@@ -303,7 +303,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.retrieval.gpt_retrieval"]) >= 2
         assert len(row_result_df["outputs.retrieval.evaluation_per_turn"]) >= 2
 
-        assert len(metrics.keys()) == 32
+        assert len(metrics.keys()) == 88
         assert metrics["coherence.coherence"] >= 0
         assert metrics["coherence.gpt_coherence"] >= 0
         assert metrics["fluency.fluency"] >= 0
@@ -388,7 +388,7 @@ class TestMassEvaluate:
             # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
             assert len(row_result_df.keys()) >= 33
         else:
-            assert len(row_result_df.keys()) == 32
+            assert len(row_result_df.keys()) == 88
         known_keys = [
             "outputs.content_safety.hate_unfairness",
             "outputs.content_safety.hate_unfairness_score",
@@ -453,7 +453,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 5
+        assert len(row_result_df.keys()) == 12
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 2
@@ -641,7 +641,7 @@ class TestMassEvaluate:
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
         # todo: change this once binary results are added to the evaluator
-        assert len(row_result_df.keys()) == 6
+        assert len(row_result_df.keys()) == 13
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["inputs.context"]) == 2
