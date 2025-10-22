@@ -105,7 +105,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         if allowed_instance_types and not allowed_instance_type:
             self.allowed_instance_type = allowed_instance_types  # type: ignore[assignment]
         else:
-            self.allowed_instance_type = allowed_instance_type
+            self.allowed_instance_type = allowed_instance_type  # type: ignore[assignment]
 
         self.default_instance_type = default_instance_type
         self.scoring_port = scoring_port
@@ -455,8 +455,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Store additional fields from the REST response that may be needed
         template.environment_id = environment_id  # Store for retrieval  # type: ignore[attr-defined]
         # Alternative name for deployment_template_type
-        template.template = get_value(obj, "template", deployment_template_type)  # type: ignore[attr-defined]
-        template.code_id = get_value(obj, "code_id")  # Store code_id if present  # type: ignore[attr-defined]
+        template.template = get_value(obj, "template", deployment_template_type)  # type: ignore
+        template.code_id = get_value(obj, "code_id")  # Store code_id if present  # type: ignore
 
         # Store original values of immutable fields to preserve them during updates
         # IMPORTANT: Store the raw values from the API response, not the converted objects
@@ -512,7 +512,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
 
         # Add tags if present
         if self.tags:
-            result["tags"] = dict(self.tags)
+            result["tags"] = dict(self.tags)  # type: ignore[assignment]
 
         # Add environment information
         if hasattr(self, "environment_id") and self.environment_id:
@@ -521,7 +521,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["environmentId"] = str(self.environment)
 
         if self.environment_variables:
-            result["environmentVariables"] = dict(self.environment_variables)
+            result["environmentVariables"] = dict(self.environment_variables)  # type: ignore[assignment]
 
         if hasattr(self, "model_mount_path") and self.model_mount_path:
             result["modelMountPath"] = self.model_mount_path
@@ -530,42 +530,42 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         if self.request_settings:
             request_dict = self.request_settings._to_dict()
             if request_dict:
-                result["requestSettings"] = request_dict
+                result["requestSettings"] = request_dict  # type: ignore[assignment]
 
         # Convert probe settings to dictionaries for API request body
         if self.liveness_probe:
             liveness_dict = self.liveness_probe._to_dict()
             if liveness_dict:
-                result["livenessProbe"] = liveness_dict
+                result["livenessProbe"] = liveness_dict  # type: ignore[assignment]
 
         if self.readiness_probe:
             readiness_dict = self.readiness_probe._to_dict()
             if readiness_dict:
-                result["readinessProbe"] = readiness_dict
+                result["readinessProbe"] = readiness_dict  # type: ignore[assignment]
 
         # Add instance configuration
         if hasattr(self, "instance_type") and self.instance_type:
             result["defaultInstanceType"] = self.instance_type
 
         if hasattr(self, "instance_count") and self.instance_count is not None:
-            result["instanceCount"] = self.instance_count
+            result["instanceCount"] = self.instance_count  # type: ignore[assignment]
 
         # Add scoring configuration
         if hasattr(self, "scoring_path") and self.scoring_path:
             result["scoringPath"] = self.scoring_path
 
         if hasattr(self, "scoring_port") and self.scoring_port is not None:
-            result["scoringPort"] = self.scoring_port
+            result["scoringPort"] = self.scoring_port  # type: ignore[assignment]
 
         # Add other optional fields
         if hasattr(self, "model") and self.model:
             result["model"] = self.model
 
         if hasattr(self, "code_configuration") and self.code_configuration:
-            result["codeConfiguration"] = self.code_configuration  # Use camelCase for API
+            result["codeConfiguration"] = self.code_configuration  # Use camelCase for API  # type: ignore[assignment]
 
         if hasattr(self, "app_insights_enabled") and self.app_insights_enabled is not None:
-            result["appInsightsEnabled"] = self.app_insights_enabled  # Use camelCase for API
+            result["appInsightsEnabled"] = self.app_insights_enabled  # Use camelCase for API  # type: ignore
 
         # Handle allowed instance types - convert string to array format for API
         if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
@@ -576,10 +576,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 instance_types_array = self.allowed_instance_type
             else:
                 instance_types_array = [str(self.allowed_instance_type)]
-            result["allowedInstanceType"] = instance_types_array  # Use camelCase for API
+            result["allowedInstanceType"] = instance_types_array  # Use camelCase for API  # type: ignore[assignment]
         elif hasattr(self, "instance_type") and self.instance_type:
             # Fallback to default instance type if no allowed types specified
-            result["allowedInstanceType"] = [self.instance_type]
+            result["allowedInstanceType"] = [self.instance_type]  # type: ignore[assignment]
 
         return result
 
@@ -616,7 +616,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         if hasattr(self, "modified_time") and self.modified_time:
             result["modifiedTime"] = self.modified_time
         if hasattr(self, "capabilities"):
-            result["capabilities"] = self.capabilities or []
+            result["capabilities"] = self.capabilities or []  # type: ignore[assignment]
 
         # Add environment variables
         if self.environment_variables:

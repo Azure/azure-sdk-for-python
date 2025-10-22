@@ -112,7 +112,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         data = dict_data.copy()
 
         # Handle field name variations (both snake_case and camelCase should work)
-        def get_field_value(data: dict, primary_name: str, alt_name: str = None, default=None):  # type: ignore[assignment]
+        def get_field_value(data: dict, primary_name: str, alt_name: str = None, default=None):  # type: ignore
             """Get field value, trying both primary and alternative names."""
             if primary_name in data:
                 return data[primary_name]
