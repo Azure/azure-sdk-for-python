@@ -33,7 +33,7 @@ class HealthCheckRetryPolicy(object):
     # Tuple of exception types considered transient errors for retry logic.
     transient_exceptions = (ServiceRequestError, ServiceResponseError)
 
-    def __init__(self, connection_policy):
+    def __init__(self, connection_policy, *args):
         self.retry_count = 0
         self.retry_after_in_milliseconds = int(os.getenv(
             _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS,
@@ -44,6 +44,10 @@ class HealthCheckRetryPolicy(object):
             str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT)
         ))
         self.connection_policy = connection_policy
+        self.retry_factor = 1.5
+        self.max_retry_after_in_milliseconds = 1000 * 20  # 20 seconds
+        self.initial_connection_timeout = 5
+        self.request = args[0] if args else None
 
     def ShouldRetry(self, exception):
         """
@@ -54,8 +58,20 @@ class HealthCheckRetryPolicy(object):
         :return: True if the exception is transient and retry attempts to remain, False otherwise.
         :rtype: bool
         """
+        if self.retry_count > 0:
+            # exponential backoff for subsequent retries
+            self.retry_after_in_milliseconds = max(self.retry_after_in_milliseconds ** self.retry_factor,
+                                                   self.max_retry_after_in_milliseconds)
+        if self.request:
+            # increase read timeout for each retry
+            if self.request.read_timeout_override:
+                self.request.read_timeout_override = max(self.request.read_timeout_override ** 2,
+                                                         self.connection_policy.ReadTimeout)
+            else:
+                self.request.read_timeout_override = self.initial_connection_timeout
 
-        if isinstance(exception, self.transient_exceptions) and self.retry_count < self.max_retry_attempt_count:
+
+        if self.retry_count < self.max_retry_attempt_count:
             self.retry_count += 1
             return True
 

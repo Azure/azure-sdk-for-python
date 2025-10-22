@@ -25,10 +25,9 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-import os
 from typing import Any
 
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import AzureError
 from azure.cosmos import DatabaseAccount
 
 from .. import _constants as constants
@@ -58,9 +57,14 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.startup = True
         self.refresh_task = None
         self.refresh_needed = False
+        self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None
+        self._aenter_used = False
+
+    def get_refresh_time_interval_in_ms_stub(self):
+        return constants._Constants.DefaultEndpointsRefreshTime
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
@@ -91,6 +95,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     async def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
+        self._aenter_used = True
         await self.refresh_endpoint_list(database_account)
         self.startup = False
 
@@ -113,10 +118,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 self.refresh_task = None
             except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.error("Health check task failed: %s", exception, exc_info=True)
-        if current_time_millis() - self.last_refresh_time > int(os.getenv(
-                constants._Constants.AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS,
-                str(constants._Constants.DefaultEndpointsRefreshTime)
-        )):
+        if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
             async with self.refresh_lock:
@@ -142,8 +144,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # in background
                     self.refresh_task = asyncio.create_task(self._refresh_database_account_and_health())
                 else:
-                    database_account = await self._GetDatabaseAccount(**kwargs)
-                    self.location_cache.perform_on_database_account_read(database_account)
+                    if not self._aenter_used:
+                        database_account = await self._GetDatabaseAccount(**kwargs)
+                        self.location_cache.perform_on_database_account_read(database_account)
                     # this will perform only calls to check endpoint health
                     # in background
                     self.refresh_task = asyncio.create_task(self._endpoints_health_check(**kwargs))
@@ -158,9 +161,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         try:
             await self.client.health_check(endpoint, **kwargs)
             self.location_cache.mark_endpoint_available(endpoint)
-        except (exceptions.CosmosHttpResponseError, AzureError) as exception:
-            if isinstance(exception, (ServiceRequestError, ServiceResponseError)):
-                self._mark_endpoint_unavailable(endpoint)
+        except (exceptions.CosmosHttpResponseError, AzureError):
+            self._mark_endpoint_unavailable(endpoint)
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
@@ -204,7 +206,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self._database_account_cache = database_account
                     return database_account
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    pass
+                    self._mark_endpoint_unavailable(locational_endpoint)
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):

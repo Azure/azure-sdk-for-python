@@ -472,23 +472,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Checks if able to connect to the endpoint.
+        """Checks health of region.
 
-        :param str url_connection: the endpoint being probed
+        :param str url_connection: the endpoint for the region to check health.
         """
         if url_connection is None:
             url_connection = self.url_connection
-        # Append probe path without creating double slashes; if URL already ends with '/', just add 'probe'.
-        if url_connection.endswith('/'):
-            url_connection = url_connection + 'probe'
-        else:
-            url_connection = url_connection + '/probe'
         initial_headers = dict(self.default_headers)
-        headers = base.GetHeaders(self, initial_headers, "get", "", "",
-                                  http_constants.ResourceType.Probe, documents._OperationType.Read, {},
+        headers = base.GetHeaders(self, initial_headers, "get", "", "","",
+                                  documents._OperationType.Read, {},
                                   client_id=self.client_id)
 
-        request_params = _request_object.RequestObject(http_constants.ResourceType.Probe,
+        request_params = _request_object.RequestObject(http_constants.ResourceType.DatabaseAccount,
                                                        documents._OperationType.Read,
                                                        headers,
                                                        endpoint_override=url_connection)

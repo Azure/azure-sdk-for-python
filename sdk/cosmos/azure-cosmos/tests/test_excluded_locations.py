@@ -190,7 +190,7 @@ def verify_endpoint(messages, client, expected_locations, multiple_write_locatio
         req_resource_type = re.search(r"'x-ms-thinclient-proxy-resource-type':\s*'([^']+)'", req_url)
         resource_value = req_resource_type.group(1)
         # ignore health check requests
-        if resource_value == ResourceType.Probe:
+        if resource_value == ResourceType.DatabaseAccount:
             continue
         if operation_type and resource_type:
             req_operation_type = re.search(r"'x-ms-thinclient-proxy-operation-type':\s*'([^']+)'", req_url)

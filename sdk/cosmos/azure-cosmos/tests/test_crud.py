@@ -1166,9 +1166,9 @@ class TestCRUDOperations(unittest.TestCase):
 
             # client does a getDatabaseAccount on initialization, which will not time out because
             # there is a forced timeout for those calls
-            with self.assertRaises(ServiceRequestError):
-                client = cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
+            client = cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
                                                 connection_policy=connection_policy)
+            with self.assertRaises(ServiceRequestError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
@@ -1177,9 +1177,10 @@ class TestCRUDOperations(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.DBAReadTimeout = 0.000000000001
-        # this will make a get database account call
-        with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
-            print('initialization')
+        with self.assertRaises(ServiceResponseError):
+            # this will make a get database account call
+            with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
+                print('initialization')
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
@@ -1194,8 +1195,8 @@ class TestCRUDOperations(unittest.TestCase):
         )
         # client does a getDatabaseAccount on initialization, which will not time out because
         # there is a forced timeout for those calls
-        with self.assertRaises(ServiceRequestError):
-            with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+        with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+            with self.assertRaises(ServiceRequestError):
                     databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                     container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                     container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})

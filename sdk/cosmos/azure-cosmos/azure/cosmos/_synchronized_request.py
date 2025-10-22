@@ -94,11 +94,13 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         read_timeout = connection_policy.RecoveryReadTimeout
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
         global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
-
-    if request_params.resource_type == http_constants.ResourceType.Probe:
-        # always override health check call timeouts
+    else:
+        # always override database account call timeouts
         read_timeout = connection_policy.DBAReadTimeout
         connection_timeout = connection_policy.DBAConnectionTimeout
+
+    if request_params.read_timeout_override:
+        read_timeout = request_params.read_timeout_override
 
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)

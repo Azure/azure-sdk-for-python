@@ -492,6 +492,7 @@ class TestRetryPolicy(unittest.TestCase):
     def test_health_check_retry_policy(self):
         os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'] = '5'
         os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'] = '100'
+        max_retries = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'])
         retry_after_ms = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'])
         self.original_execute_function = _retry_utility.ExecuteFunction
         mock_execute = self.MockExecuteFunctionHealthCheck(self.original_execute_function)
@@ -501,8 +502,7 @@ class TestRetryPolicy(unittest.TestCase):
             cosmos_client.CosmosClient(self.host, self.masterKey)
             sleep(2)  # Wait for health check to complete
 
-            # 503s should not be retried by health check
-            self.assertEqual(mock_execute.counter, 1)
+            self.assertEqual(mock_execute.counter, max_retries + 1)
             policy = HealthCheckRetryPolicy(self.connectionPolicy)
             self.assertEqual(policy.retry_after_in_milliseconds, retry_after_ms)
         finally:
@@ -516,10 +516,10 @@ class TestRetryPolicy(unittest.TestCase):
         _retry_utility.ExecuteFunction = mock_execute
 
         try:
-            cosmos_client.CosmosClient(self.host, self.masterKey)
-            # give some time for health check to complete in background
-            sleep(2)
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
+                cosmos_client.CosmosClient(self.host, self.masterKey)
 
+            self.assertEqual(context.exception.status_code, 503)
             self.assertEqual(
                 mock_execute.counter,
                 _Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT + 1
@@ -555,50 +555,6 @@ class TestRetryPolicy(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-    def test_dba_fails_no_retries(self):
-        self.original_execute_function = _retry_utility.ExecuteFunction
-        errors = [ServiceResponseError("mocked service response error"),
-                  ServiceRequestError("mocked service request error"),
-                  exceptions.CosmosHttpResponseError(503, "mock 503")]
-        for error in errors:
-            mock_execute = self.MockExecuteFunctionDBAError(self.original_execute_function, error)
-            _retry_utility.ExecuteFunction = mock_execute
-
-            try:
-                with self.assertRaises(type(error)):
-                    # Client initialization triggers database account read
-                    cosmos_client.CosmosClient(self.host, self.masterKey)
-
-                # no retries for database account read calls
-                self.assertEqual(
-                    mock_execute.counter,
-                    1
-                )
-            finally:
-                _retry_utility.ExecuteFunction = self.original_execute_function
-
-    def test_dba_timing_configurable(self):
-        self.original_execute_function = _retry_utility.ExecuteFunction
-        mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
-        _retry_utility.ExecuteFunction = mock_execute
-        os.environ["AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS"] = "10" # 10 ms
-
-        try:
-            client = cosmos_client.CosmosClient(self.host, self.masterKey)
-            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
-            sleep(1)
-            container.create_item({'id': str(uuid.uuid4()), })
-            sleep(1)
-            container.create_item({'id': str(uuid.uuid4()), })
-
-            # multiple database account calls should be made
-            assert mock_execute.counter > 2
-
-        finally:
-            _retry_utility.ExecuteFunction= self.original_execute_function
-            del os.environ["AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS"]
-
     class MockExecuteFunctionDBA(object):
         def __init__(self, org_func):
             self.org_func = org_func
@@ -621,7 +577,7 @@ class TestRetryPolicy(unittest.TestCase):
             # The second argument to the internal _request function is the RequestObject.
             request_object = args[1]
             if (request_object.operation_type == documents._OperationType.Read and
-                    request_object.resource_type == ResourceType.Probe):
+                    request_object.resource_type == ResourceType.DatabaseAccount):
                 self.counter += 1
                 assert request_object.endpoint_override == test_config.TestConfig.host + "probe" or request_object.endpoint_override == "https://127.0.0.1:8081/probe"
                 raise ServiceResponseError("mocked service response error")
@@ -683,7 +639,7 @@ class TestRetryPolicy(unittest.TestCase):
         def __call__(self, func, *args, **kwargs):
             request_object = args[1]
             if (request_object.operation_type == documents._OperationType.Read and
-                    request_object.resource_type == ResourceType.Probe):
+                    request_object.resource_type == ResourceType.DatabaseAccount):
                 self.counter += 1
                 assert request_object.endpoint_override == test_config.TestConfig.host + "probe" or request_object.endpoint_override == "https://127.0.0.1:8081/probe"
                 raise exceptions.CosmosHttpResponseError(

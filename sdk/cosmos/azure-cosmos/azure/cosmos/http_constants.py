@@ -468,7 +468,6 @@ class ResourceType:
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
     PartitionKey = "partitionkey"
-    Probe = "probe"
 
     @staticmethod
     def IsCollectionChild(resourceType: str) -> bool:

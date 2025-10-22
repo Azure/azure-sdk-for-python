@@ -32,7 +32,6 @@ class ServiceResponseRetryPolicy(object):
                                                  location_cache.write_regional_routing_contexts), 2)
             self.location_endpoint = (self.global_endpoint_manager
                                       .resolve_service_endpoint_for_partition(self.request, pk_range_wrapper))
-        self.logger = logging.getLogger('azure.cosmos.ServiceResponseRetryPolicy')
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
@@ -42,12 +41,6 @@ class ServiceResponseRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
-
-        if self.request:
-            # For database account calls, we loop through preferred locations
-            # in global endpoint manager
-            if self.request.resource_type == ResourceType.DatabaseAccount:
-                return False
 
         # Check if the next retry about to be done is safe
         if ((self.failover_retry_count + 1) >= self.total_retries and

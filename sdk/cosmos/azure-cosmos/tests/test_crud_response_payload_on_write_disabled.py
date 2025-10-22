@@ -2030,9 +2030,9 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             connection_policy.RequestTimeout = 0.000000000001
             # client does a getDatabaseAccount on initialization, which will not time out because
             # there is a forced timeout for those calls
-            with self.assertRaises(ServiceRequestError):
-                client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
+            client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
                                                     connection_policy=connection_policy)
+            with self.assertRaises(ServiceRequestError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})

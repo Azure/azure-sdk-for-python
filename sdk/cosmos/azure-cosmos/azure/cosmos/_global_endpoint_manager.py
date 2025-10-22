@@ -28,7 +28,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Callable, Any
 
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import AzureError
 
 from . import _constants as constants
 from . import exceptions
@@ -51,6 +51,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.client = client
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
+        self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
             self.DefaultEndpoint,
             client.connection_policy
@@ -62,6 +63,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.startup = True
         self._refresh_thread = None
         self.executor = ThreadPoolExecutor(max_workers=os.cpu_count())
+
+    def get_refresh_time_interval_in_ms_stub(self):
+        return constants._Constants.DefaultEndpointsRefreshTime
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
@@ -189,24 +193,23 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self._database_account_cache = database_account
                     return database_account
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    pass
+                    self._mark_endpoint_unavailable(locational_endpoint)
             raise
 
     def _endpoints_health_check(self, **kwargs):
-        """Performs concurrent health probes for each endpoint (background-safe)."""
+        """Performs concurrent health checks for each endpoint (background-safe)."""
         endpoints = self.location_cache.endpoints_to_health_check()
 
-        def probe(endpoint: str):
+        def _health_check(endpoint: str):
             try:
                 self.client.health_check(endpoint, **kwargs)
                 self.location_cache.mark_endpoint_available(endpoint)
             except (exceptions.CosmosHttpResponseError, AzureError) as exception:
-                if isinstance(exception, (ServiceRequestError, ServiceResponseError)):
-                    self._mark_endpoint_unavailable(endpoint)
+                self._mark_endpoint_unavailable(endpoint)
 
-        futures = [self.executor.submit(probe, ep) for ep in endpoints]
+        futures = [self.executor.submit(_health_check, ep) for ep in endpoints]
         for f in as_completed(futures):
-            # propagate unexpected exceptions (should be none besides those swallowed in probe)
+            # propagate unexpected exceptions (should be none besides those swallowed in health check)
             _ = f.result()
         # After all probes, update cache once
         self.location_cache.update_location_cache()
