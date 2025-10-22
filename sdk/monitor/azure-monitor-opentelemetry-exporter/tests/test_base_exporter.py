@@ -177,7 +177,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
         subdirectory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
-        #subdirectory = _get_sha256_hash(hash_input)
         self.assertEqual(
             base._storage_directory,
             subdirectory
