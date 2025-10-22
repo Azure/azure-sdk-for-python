@@ -640,15 +640,16 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             body=image_request
         )
         
-        # Extract image ID from response
-        if hasattr(create_response, 'id'):
-            image_id = create_response.id
-        elif hasattr(create_response, 'as_dict'):
-            image_id = create_response.as_dict().get('id')
-        else:
-            image_id = create_response.get('id') if isinstance(create_response, dict) else None
+        url = create_response.url
+        
+        # Extract image ID from URL - split by '?' to remove query params, then get last path segment
+        image_id = url.split("?")[0].split("/")[-1]
         
         test_logger.info(f"Created image with ID: {image_id}")
+        test_logger.info(f"Image URL: {url}")
+        
+        # Assert that we got a valid image ID
+        assert image_id is not None and len(image_id) > 0, f"Failed to get image ID from create_static_image response: {create_response}"
         
         test_logger.info(f"Calling: get_static_image(collection_id='{planetarycomputer_collection_id}', id='{image_id}')")
         image_data = client.tiler.get_static_image(

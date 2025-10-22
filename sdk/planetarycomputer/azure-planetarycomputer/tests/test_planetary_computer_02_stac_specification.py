@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+import os
 from pathlib import Path
 import pytest
 from devtools_testutils import recorded_by_proxy
@@ -131,7 +132,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         collection = client.stac.get_collection(collection_id=collection_id)
 
         # Validate collection
@@ -184,7 +185,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         
         # Create search with spatial filter (Georgia NAIP area)
         search_params = StacSearchParameters(
@@ -260,7 +261,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         items_response = client.stac.list_items(collection_id=collection_id, limit=10)
 
         # Validate response
@@ -301,7 +302,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         queryables = client.stac.list_collection_queryables(collection_id=collection_id)
 
         # Validate queryables
@@ -349,7 +350,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         
         # Search with temporal range using date_time parameter
         search_params = StacSearchParameters(
@@ -396,7 +397,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         
         # Search with descending sort by datetime
         search_params_desc = StacSearchParameters(
@@ -454,7 +455,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         item_id = "ga_m_3308421_se_16_060_20211114_test"
 
         # Create sample STAC item
@@ -463,26 +464,33 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
             "type": "Feature",
             "id": item_id,
             "collection": collection_id,
-            "bbox": [-84.441543, 33.559319, -84.370855, 33.628174],
+            "bbox": [
+                -84.44157,
+                33.621853,
+                -84.370894,
+                33.690654
+            ],
             "geometry": {
                 "type": "Polygon",
-                "coordinates": [[
-                    [-84.372901, 33.559319],
-                    [-84.370855, 33.626731],
-                    [-84.439551, 33.628174],
-                    [-84.441543, 33.560757],
-                    [-84.372901, 33.559319]
-                ]]
+                "coordinates": [
+                    [
+                        [-84.372943, 33.621853],
+                        [-84.370894, 33.689211],
+                        [-84.439575, 33.690654],
+                        [-84.44157, 33.623293],
+                        [-84.372943, 33.621853]
+                    ]
+                ]
             },
             "properties": {
                 "gsd": 0.6,
                 "datetime": "2021-11-14T16:00:00Z",
                 "naip:year": "2021",
-                "proj:bbox": [737508.0, 3716388.0, 743886.0, 3723870.0],
+                "proj:bbox": [737334.0, 3723324.0, 743706.0, 3730800.0],
                 "proj:epsg": 26916,
                 "naip:state": "ga",
-                "proj:shape": [12470, 10630],
-                "proj:transform": [0.6, 0.0, 737508.0, 0.0, -0.6, 3723870.0, 0.0, 0.0, 1.0]
+                "proj:shape": [12460, 10620],
+                "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0]
             },
             "links": [
                 {
@@ -562,7 +570,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         item_id = "ga_m_3308421_se_16_060_20211114_test"
 
         try:
@@ -616,7 +624,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collection_id = "naip-sample-datasets"
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         
         # First, get an item ID from the collection
         items_response = client.stac.list_items(collection_id=collection_id, limit=1)

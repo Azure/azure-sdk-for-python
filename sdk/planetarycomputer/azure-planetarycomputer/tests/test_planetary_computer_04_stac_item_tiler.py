@@ -440,11 +440,11 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         geometry = Polygon(
             coordinates=[
                 [
-                    [-84.43809697097522, 33.63093193547549],
-                    [-84.41844018562179, 33.63093193547549],
-                    [-84.41844018562179, 33.64850313084044],
-                    [-84.43809697097522, 33.64850313084044],
-                    [-84.43809697097522, 33.63093193547549],
+                    [-84.3906, 33.6714],  # bottom-left 
+                    [-84.3814, 33.6714],  # bottom-right
+                    [-84.3814, 33.6806],  # top-right
+                    [-84.3906, 33.6806],  # top-left
+                    [-84.3906, 33.6714],  # close the ring
                 ]
             ]
         )
@@ -484,11 +484,11 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         geometry = Polygon(
             coordinates=[
                 [
-                    [-84.5, 34.0],
-                    [-84.4, 34.0],
-                    [-84.4, 34.1],
-                    [-84.5, 34.1],
-                    [-84.5, 34.0]
+                    [-84.3906, 33.6714],  # bottom-left 
+                    [-84.3814, 33.6714],  # bottom-right
+                    [-84.3814, 33.6806],  # top-right
+                    [-84.3906, 33.6806],  # top-left
+                    [-84.3906, 33.6714],  # close the ring
                 ]
             ]
         )
@@ -530,11 +530,11 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         geometry = Polygon(
             coordinates=[
                 [
-                    [-84.5, 34.0],
-                    [-84.4, 34.0],
-                    [-84.4, 34.1],
-                    [-84.5, 34.1],
-                    [-84.5, 34.0]
+                    [-84.3906, 33.6714],  # bottom-left 
+                    [-84.3814, 33.6714],  # bottom-right
+                    [-84.3814, 33.6806],  # top-right
+                    [-84.3906, 33.6806],  # top-left
+                    [-84.3906, 33.6714],  # close the ring
                 ]
             ]
         )
@@ -559,7 +559,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         """
         Test getting a part of an image by bounding box.
         """
-        bounds = [-84.43809697097522, 33.63093193547549, -84.41844018562179, 33.64850313084044]
+        bounds = [-84.3930, 33.6798, -84.3670, 33.7058]
 
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_13_get_part")
@@ -594,7 +594,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         """
         Test getting a part of an image with custom dimensions.
         """
-        bounds = [-84.43809697097522, 33.63093193547549, -84.41844018562179, 33.64850313084044]
+        bounds = [-84.3930, 33.6798, -84.3670, 33.7058]
 
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_14_get_part_with_dimensions")
@@ -631,7 +631,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         """
         Test getting data for a specific point.
         """
-        point = [-84.428268578298505, 33.639717533157965]
+        point = [-84.3860, 33.6760]
 
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_15_get_point")
