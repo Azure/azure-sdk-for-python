@@ -18,6 +18,15 @@ class Access(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DENY = "Deny"
 
 
+class AccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The access mode of the private link service."""
+
+    DEFAULT = "Default"
+    """Allows unrestricted access to the private link service."""
+    RESTRICTED = "Restricted"
+    """Limits access to subscriptions which are inside visibility list only."""
+
+
 class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Direction that specifies whether the access rules is inbound/outbound."""
 
@@ -398,6 +407,34 @@ class AzureFirewallPacketCaptureFlagsType(str, Enum, metaclass=CaseInsensitiveEn
     URG = "urg"
 
 
+class AzureFirewallPacketCaptureOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packet capture operation to perform. If the Start operation is selected, please provide all
+    the fields in the firewallPacketCaptureParameters to successfully initiate the packet capture.
+    If the Status or Stop operation is selected, only the operation field is required; all other
+    fields in the firewallPacketCaptureParameters can be omitted to successfully retrieve the
+    capture status or stop the capture.
+    """
+
+    START = "Start"
+    STATUS = "Status"
+    STOP = "Stop"
+
+
+class AzureFirewallPacketCaptureResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packet capture operation response codes."""
+
+    NOT_IMPLEMENTED = "NotImplemented"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_SUCCEEDED = "AzureFirewallPacketCaptureStartSucceeded"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_FAILED = "AzureFirewallPacketCaptureStartFailed"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_FAILED_TO_UPLOAD = "AzureFirewallPacketCaptureStartFailedToUpload"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_FAILURE = "AzureFirewallPacketCaptureStartFailure"
+    AZURE_FIREWALL_PACKET_CAPTURE_IN_PROGRESS = "AzureFirewallPacketCaptureInProgress"
+    AZURE_FIREWALL_PACKET_CAPTURE_NOT_IN_PROGRESS = "AzureFirewallPacketCaptureNotInProgress"
+    AZURE_FIREWALL_PACKET_CAPTURE_STOP_SUCCEEDED = "AzureFirewallPacketCaptureStopSucceeded"
+    AZURE_FIREWALL_PACKET_CAPTURE_FAILED = "AzureFirewallPacketCaptureFailed"
+    AZURE_FIREWALL_PACKET_CAPTURE_COMPLETED = "AzureFirewallPacketCaptureCompleted"
+
+
 class AzureFirewallRCActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action type of a rule collection."""
 
@@ -508,6 +545,15 @@ class ConnectedGroupPrivateEndpointsScale(str, Enum, metaclass=CaseInsensitiveEn
     """Default. Allows for up to 2K private endpoints in the connected group."""
     HIGH_SCALE = "HighScale"
     """Allows for up to 20K private endpoints in the connected group."""
+
+
+class ConnectionAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gateway connection authentication type."""
+
+    PSK = "PSK"
+    """Pre-shared key authentication method for VPN gateway connections."""
+    CERTIFICATE = "Certificate"
+    """Certificate-based authentication method for VPN gateway connections."""
 
 
 class ConnectionMonitorEndpointFilterItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -659,7 +705,9 @@ class DisableBgpRoutePropagation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines whether BGP route propagation is enabled. Defaults to true."""
 
     FALSE = "False"
+    """BGP route propagation is enabled."""
     TRUE = "True"
+    """BGP route propagation is disabled."""
 
 
 class EffectiveAdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1243,6 +1291,13 @@ class LoadBalancerOutboundRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumM
     ALL = "All"
 
 
+class LoadBalancerScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the scope of the load balancer: external (Public) or internal (Private)."""
+
+    PUBLIC = "Public"
+    PRIVATE = "Private"
+
+
 class LoadBalancerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of a load balancer SKU."""
 
@@ -1370,7 +1425,9 @@ class NicTypeInRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class NicTypeInResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NIC type - PublicNic, PrivateNic, or AdditionalNic."""
+    """NIC type - PublicNic, PrivateNic, or AdditionalNic; AdditionalPrivateNic and
+    AdditionalPublicNic are only supported for NVAs deployed in VNets.
+    """
 
     PUBLIC_NIC = "PublicNic"
     PRIVATE_NIC = "PrivateNic"
@@ -1407,6 +1464,19 @@ class NspProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
     ACCEPTED = "Accepted"
     FAILED = "Failed"
+
+
+class NvaNicType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NvaNicType."""
+
+    PRIVATE_NIC = "PrivateNic"
+    """The private NIC type"""
+    PUBLIC_NIC = "PublicNic"
+    """The public NIC type"""
+    ADDITIONAL_PRIVATE_NIC = "AdditionalPrivateNic"
+    """An additional private NIC type"""
+    ADDITIONAL_PUBLIC_NIC = "AdditionalPublicNic"
+    """An additional public NIC type"""
 
 
 class OfficeTrafficCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1717,21 +1787,39 @@ class RouteNextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
 
 
+class RouteTableUsageMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Route table usage mode defines which route table will be used by the configuration. If not
+    defined, this will default to 'ManagedOnly'.
+    """
+
+    MANAGED_ONLY = "ManagedOnly"
+    """Only route tables managed by the routing configuration will be used."""
+    USE_EXISTING = "UseExisting"
+    """Use existing user-defined route tables already associated with resources."""
+
+
 class RoutingRuleDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Routing rule destination type."""
 
     ADDRESS_PREFIX = "AddressPrefix"
+    """Destination specified as an IP address prefix (CIDR)."""
     SERVICE_TAG = "ServiceTag"
+    """Destination specified as an Azure service tag."""
 
 
 class RoutingRuleNextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Routing rule next hop type."""
 
     INTERNET = "Internet"
+    """Forward traffic to the Internet."""
     NO_NEXT_HOP = "NoNextHop"
+    """No next hop will be used."""
     VIRTUAL_APPLIANCE = "VirtualAppliance"
+    """Forward traffic to a specified virtual appliance IP address."""
     VIRTUAL_NETWORK_GATEWAY = "VirtualNetworkGateway"
+    """Forward traffic to the virtual network gateway."""
     VNET_LOCAL = "VnetLocal"
+    """Keep traffic within the local virtual network"""
 
 
 class RoutingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1913,6 +2001,7 @@ class TransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UDP = "Udp"
     TCP = "Tcp"
     ALL = "All"
+    QUIC = "Quic"
 
 
 class TunnelConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

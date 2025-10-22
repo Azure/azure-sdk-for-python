@@ -25,7 +25,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     async def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_web_application_firewall_policies_list_all(self, resource_group):
         response = self.client.web_application_firewall_policies.list_all(
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
         response = await self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -427,6 +427,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "type": "str",
                                                                 },
                                                                 "privateLinkService": {
+                                                                    "accessMode": "str",
                                                                     "alias": "str",
                                                                     "autoApproval": {"subscriptions": ["str"]},
                                                                     "destinationIPAddress": "str",
@@ -900,6 +901,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "primary": bool,
                                                                     "privateEndpoint": ...,
                                                                     "privateLinkService": {
+                                                                        "accessMode": "str",
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
                                                                         "destinationIPAddress": "str",
@@ -1476,6 +1478,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "type": "str",
                                                         },
                                                         "privateLinkService": {
+                                                            "accessMode": "str",
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
                                                             "destinationIPAddress": "str",
@@ -2074,6 +2077,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "primary": bool,
                                                             "privateEndpoint": ...,
                                                             "privateLinkService": {
+                                                                "accessMode": "str",
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
                                                                 "destinationIPAddress": "str",
@@ -2738,6 +2742,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "type": "str",
                                                                             },
                                                                             "privateLinkService": {
+                                                                                "accessMode": "str",
                                                                                 "alias": "str",
                                                                                 "autoApproval": {
                                                                                     "subscriptions": ["str"]
@@ -3202,6 +3207,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "primary": bool,
                                                                                 "privateEndpoint": ...,
                                                                                 "privateLinkService": {
+                                                                                    "accessMode": "str",
                                                                                     "alias": "str",
                                                                                     "autoApproval": {
                                                                                         "subscriptions": ["str"]
@@ -3734,6 +3740,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "type": "str",
                                                                     },
                                                                     "privateLinkService": {
+                                                                        "accessMode": "str",
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
                                                                         "destinationIPAddress": "str",
@@ -4169,6 +4176,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "primary": bool,
                                                                         "privateEndpoint": ...,
                                                                         "privateLinkService": {
+                                                                            "accessMode": "str",
                                                                             "alias": "str",
                                                                             "autoApproval": {"subscriptions": ["str"]},
                                                                             "destinationIPAddress": "str",
@@ -4395,6 +4403,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                 "authenticationCertificates": [{"id": "str"}],
                                 "connectionDraining": {"drainTimeoutInSec": 0, "enabled": bool},
                                 "cookieBasedAffinity": "str",
+                                "dedicatedBackendConnection": bool,
                                 "etag": "str",
                                 "hostName": "str",
                                 "id": "str",
@@ -4407,12 +4416,16 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                 "protocol": "str",
                                 "provisioningState": "str",
                                 "requestTimeout": 0,
+                                "sniName": "str",
                                 "trustedRootCertificates": [{"id": "str"}],
                                 "type": "str",
+                                "validateCertChainAndExpiry": True,
+                                "validateSNI": True,
                             }
                         ],
                         "backendSettingsCollection": [
                             {
+                                "enableL4ClientIpPreservation": bool,
                                 "etag": "str",
                                 "hostName": "str",
                                 "id": "str",
@@ -6535,6 +6548,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -9769,6 +9783,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -10370,6 +10385,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                         ],
                         "probes": [
                             {
+                                "enableProbeProxyProtocolHeader": bool,
                                 "etag": "str",
                                 "host": "str",
                                 "id": "str",
@@ -10693,7 +10709,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -10706,7 +10722,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
             await self.client.web_application_firewall_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 policy_name="str",
-                api_version="2024-07-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
