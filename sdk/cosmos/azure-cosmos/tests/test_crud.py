@@ -1197,9 +1197,9 @@ class TestCRUDOperations(unittest.TestCase):
         # there is a forced timeout for those calls
         with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
             with self.assertRaises(ServiceRequestError):
-                    databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
-                    container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                    container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
     # TODO: Skipping this test to debug later
     @unittest.skip

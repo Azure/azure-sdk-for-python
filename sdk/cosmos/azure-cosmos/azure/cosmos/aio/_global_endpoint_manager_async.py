@@ -50,6 +50,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.client = client
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
+        self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
             self.DefaultEndpoint,
             client.connection_policy
@@ -57,7 +58,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.startup = True
         self.refresh_task = None
         self.refresh_needed = False
-        self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None

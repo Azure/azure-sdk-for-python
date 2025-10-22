@@ -915,12 +915,12 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                                 retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
                                 retry_on_status_codes=[500, 502, 504]) as client:
             with self.assertRaises(ServiceRequestError):
-                    databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
-                    container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                    item = {'id': str(uuid.uuid4()), 'name': 'sample'}
-                    await container.create_item(body=item)
-                    await container.read_item(item=item['id'], partition_key=item['id'])
-                    print('Async Initialization')
+                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                item = {'id': str(uuid.uuid4()), 'name': 'sample'}
+                await container.create_item(body=item)
+                await container.read_item(item=item['id'], partition_key=item['id'])
+                print('Async Initialization')
 
     async def test_read_collection_only_once_async(self):
         # Add filter to the filtered diagnostics handler

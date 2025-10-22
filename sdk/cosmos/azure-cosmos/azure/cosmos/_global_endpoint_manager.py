@@ -111,10 +111,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.mark_endpoint_unavailable_for_write(endpoint, False)
 
     def refresh_endpoint_list(self, database_account, **kwargs):
-        if current_time_millis() - self.last_refresh_time > int(os.getenv(
-                constants._Constants.AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS,
-                str(constants._Constants.DefaultEndpointsRefreshTime)
-            )):
+        if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
             with self.refresh_lock:
