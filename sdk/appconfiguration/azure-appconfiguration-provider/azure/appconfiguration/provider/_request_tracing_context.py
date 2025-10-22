@@ -93,6 +93,8 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             features_list.append("AI")
         if self.uses_aicc_configuration:
             features_list.append("AICC")
+        if self.get_assembly_version("azure-ai-projects"):
+            features_list.append("USE_AI")
 
         return Delimiter.join(features_list)
 
