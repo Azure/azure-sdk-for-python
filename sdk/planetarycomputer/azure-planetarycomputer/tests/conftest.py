@@ -32,7 +32,10 @@ def add_sanitizers(test_proxy):
     # Remove default AZSDK sanitizers that would sanitize collection_id and item_id
     # These are public data and should not be sanitized
     from devtools_testutils import remove_batch_sanitizers
-    remove_batch_sanitizers(["AZSDK3493", "AZSDK3430"])
+    # AZSDK3493: Sanitizes JSON path $..name
+    # AZSDK3430: Sanitizes JSON path $..id  
+    # AZSDK2003: Default hostname sanitizer that would reduce URLs to just "Sanitized.com"
+    remove_batch_sanitizers(["AZSDK3493", "AZSDK3430", "AZSDK2003"])
     
     planetarycomputer_subscription_id = os.environ.get(
         "PLANETARYCOMPUTER_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
@@ -149,6 +152,14 @@ def add_sanitizers(test_proxy):
     add_body_regex_sanitizer(
         regex=r'"id"\s*:\s*"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"',
         value='"id": "00000000-0000-0000-0000-000000000000"'
+    )
+    
+    # Sanitize operation-location header for LRO polling
+    # This header contains the polling URL with operation UUID that needs to be sanitized
+    add_header_regex_sanitizer(
+        key="operation-location",
+        regex=r"/operations/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        value="/operations/00000000-0000-0000-0000-000000000000"
     )
     
     # Sanitize collection IDs with random hash suffixes

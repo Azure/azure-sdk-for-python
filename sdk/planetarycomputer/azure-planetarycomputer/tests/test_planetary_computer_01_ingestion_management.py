@@ -561,8 +561,10 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         logger.info(f"Remaining sources: {len(sources)}")
 
-        # Assertions
-        assert source_id not in source_ids, "Deleted source should not be in the list"
+        # Assertions - only check in live mode because in playback mode all UUIDs are sanitized to the same value
+        from devtools_testutils import is_live
+        if is_live():
+            assert source_id not in source_ids, "Deleted source should not be in the list"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
