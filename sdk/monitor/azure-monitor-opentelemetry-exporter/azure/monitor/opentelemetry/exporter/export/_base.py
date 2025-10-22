@@ -619,7 +619,7 @@ def _get_storage_directory(instrumentation_key: str) -> str:
             instrumentation_key,
             user_segment,
             process_name,
-            os.fspath(application_directory),
+            os.fspath(application_directory), # cspell:disable-line
         ]
     )
     subdirectory = _get_sha256_hash(hash_input)
