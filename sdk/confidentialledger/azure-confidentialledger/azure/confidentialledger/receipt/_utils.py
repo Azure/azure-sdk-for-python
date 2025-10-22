@@ -45,8 +45,7 @@ def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
         # If the value is a list, apply algorithm recursively to each element
         elif isinstance(value, list):
             new_dictionary[camel_case_key] = [
-                _convert_dict_to_camel_case(elem) if isinstance(elem, dict) else elem
-                for elem in value
+                _convert_dict_to_camel_case(elem) if isinstance(elem, dict) else elem for elem in value
             ]
 
         # Otherwise, add the key and value to the new dictionary
