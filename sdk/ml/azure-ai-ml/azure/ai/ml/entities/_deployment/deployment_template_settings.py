@@ -8,8 +8,11 @@ import logging
 from typing import Optional
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
-from azure.ai.ml._restclient.v2024_04_01_dataplanepreview.models import OnlineRequestSettings as RestOnlineRequestSettings
+from azure.ai.ml._restclient.v2024_04_01_dataplanepreview.models import (
+    OnlineRequestSettings as RestOnlineRequestSettings,
+)
 from azure.ai.ml._restclient.v2024_04_01_dataplanepreview.models import ProbeSettings as RestProbeSettings
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import (
     from_iso_duration_format,
     from_iso_duration_format_ms,
@@ -57,6 +60,7 @@ class BatchRetrySettings(RestTranslatableMixin):
             self.max_retries = other.max_retries or self.max_retries
 
 
+@experimental
 class OnlineRequestSettings(RestTranslatableMixin):
     """Request Settings entity.
 
@@ -122,6 +126,7 @@ class OnlineRequestSettings(RestTranslatableMixin):
         return not self.__eq__(other)
 
 
+@experimental
 class ProbeSettings(RestTranslatableMixin):
     def __init__(
         self,

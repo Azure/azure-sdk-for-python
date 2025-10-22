@@ -39,9 +39,15 @@ from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as 
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
-from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
-from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
-from azure.ai.ml._restclient.v2024_04_01_dataplanepreview import AzureMachineLearningWorkspaces as ServiceClient042024DataPlanePreview
+from azure.ai.ml._restclient.v2024_10_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient102024Preview,
+)
+from azure.ai.ml._restclient.v2025_01_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient012025Preview,
+)
+from azure.ai.ml._restclient.v2024_04_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces as ServiceClient042024DataPlanePreview,
+)
 from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
@@ -379,7 +385,7 @@ class MLClient:
             base_url=base_url,
             **kwargs,
         )
-        
+
         self._service_client_04_2024_dataplanepreview = ServiceClient042024DataPlanePreview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
@@ -678,14 +684,14 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
         self._operation_container.add(AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments)
-        
+
         self._deployment_templates = DeploymentTemplateOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_04_2024_dataplanepreview,
             **ops_kwargs,
         )
-        
+
         self._data = DataOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,

@@ -1104,6 +1104,7 @@ def load_capability_host(
     return cast(CapabilityHost, load_common(CapabilityHost, source, relative_origin, params_override, **kwargs))
 
 
+@experimental
 def load_deployment_template(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -1113,7 +1114,8 @@ def load_deployment_template(
 ) -> DeploymentTemplate:
     """Construct a DeploymentTemplate object from a YAML file.
 
-    :param source: A path to a local YAML file or an already-open file object containing a deployment template configuration.
+    :param source: A path to a local YAML file or an already-open file object containing a deployment
+        template configuration.
         If the source is a path, it will be opened and read. If the source is an open file, the file will be read
         directly.
     :type source: Union[PathLike, str, io.TextIOWrapper]

@@ -7,6 +7,7 @@ from os import PathLike
 
 from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import DeploymentTemplate
 from azure.core.tracing.decorator import distributed_trace
@@ -16,6 +17,7 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
+@experimental
 class DeploymentTemplateOperations(_ScopeDependentOperations):
     """DeploymentTemplateOperations.
 
@@ -40,21 +42,23 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     def _get_registry_endpoint(self) -> str:
         """Dynamically determine the registry endpoint based on registry region.
-        
+
         :return: The API endpoint URL for the registry
         :rtype: str
         """
         try:
             # Import here to avoid circular dependencies
             from azure.ai.ml.operations import RegistryOperations
-            from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+            from azure.ai.ml._restclient.v2022_10_01_preview import (
+                AzureMachineLearningWorkspaces as ServiceClient102022,
+            )
             # Try to get credential from service client or operation config
             credential = None
             if hasattr(self._service_client, '_config') and hasattr(self._service_client._config, 'credential'):
                 credential = self._service_client._config.credential
             elif hasattr(self._operation_config, 'credential'):
                 credential = self._operation_config.credential
-            
+
             if credential and self._operation_scope.registry_name:
                 # Get registry information to determine the region
                 registry_operations = RegistryOperations(
@@ -67,33 +71,33 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     all_operations=None,
                     credentials=credential
                 )
-                
+
                 registry = registry_operations.get(self._operation_scope.registry_name)
-                
+
                 # Extract region from registry location or replication locations
                 region = None
                 if registry.location:
                     region = registry.location
                 elif registry.replication_locations and len(registry.replication_locations) > 0:
                     region = registry.replication_locations[0].location
-                
+
                 if region:
                     # Format the endpoint using the detected region
                     # return f"https://int.experiments.azureml-test.net"
                     return f"https://{region}.api.azureml.ms"
-                    
+
         except Exception as e:
             module_logger.warning("Could not determine registry region dynamically: %s. Using default.", e)
-        
+
         # Fallback to default region if unable to determine dynamically
         return f"https://int.experiments.azureml-test.net"
 
     def _convert_dict_to_deployment_template(self, dict_data: Dict[str, Any]) -> DeploymentTemplate:
         """Convert dictionary format to DeploymentTemplate object.
-        
+
         This helper method converts a user-provided dictionary to a DeploymentTemplate object
         using the constructor directly. It handles field name variations and type conversions.
-        
+
         :param dict_data: Dictionary containing deployment template data
         :type dict_data: Dict[str, Any]
         :return: DeploymentTemplate object
@@ -101,7 +105,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         """
         # Create a copy to avoid modifying the original
         data = dict_data.copy()
-        
+
         # Handle field name variations (both snake_case and camelCase should work)
         def get_field_value(data: dict, primary_name: str, alt_name: str = None, default=None):
             """Get field value, trying both primary and alternative names."""
@@ -110,32 +114,32 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             elif alt_name and alt_name in data:
                 return data[alt_name]
             return default
-        
+
         # Extract constructor parameters with field name mappings
         name = data.get('name')
         version = data.get('version')
         description = data.get('description')
         tags = data.get('tags')
-        
+
         # Validate required fields
         if not name:
             raise ValueError("name is required")
         if not version:
             raise ValueError("version is required")
-            
+
         # Handle environment field - check multiple possible names
-        environment = (data.get('environment') or 
-                      data.get('environment_id') or 
+        environment = (data.get('environment') or
+                      data.get('environment_id') or
                       data.get('environmentId'))  # Also check camelCase REST API format
         if not environment:
             raise ValueError("environment is required but was not found in the data")
-        
+
         # Handle field name variations for constructor parameters
         allowed_instance_types = get_field_value(data, 'allowed_instance_types', 'allowedInstanceType')
         if isinstance(allowed_instance_types, str):
             # Convert space-separated string to list
             allowed_instance_types = allowed_instance_types.split()
-        
+
         default_instance_type = get_field_value(data, 'default_instance_type', 'defaultInstanceType')
         deployment_template_type = get_field_value(data, 'deployment_template_type', 'deploymentTemplateType')
         model_mount_path = get_field_value(data, 'model_mount_path', 'modelMountPath')
@@ -146,52 +150,58 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                 scoring_port = int(scoring_port)
             except (ValueError, TypeError):
                 scoring_port = None
-                
+
         instance_count = get_field_value(data, 'instance_count', 'instanceCount')
         if instance_count is not None and isinstance(instance_count, str):
             try:
                 instance_count = int(instance_count)
             except (ValueError, TypeError):
                 instance_count = None
-                
+
         environment_variables = get_field_value(data, 'environment_variables', 'environmentVariables')
-        
+
         # Handle request settings
         request_settings_data = get_field_value(data, 'request_settings', 'requestSettings')
         request_settings = None
         if request_settings_data and isinstance(request_settings_data, dict):
             from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings
             # Handle field name variations in request settings
-            timeout = get_field_value(request_settings_data, 'request_timeout_ms', 'requestTimeout')
+            timeout = get_field_value(
+                request_settings_data, 'request_timeout_ms', 'requestTimeout'
+            )
             # Also check for 'request_timeout' as an alternative name
             if timeout is None:
                 timeout = request_settings_data.get('request_timeout')
-            max_concurrent = get_field_value(request_settings_data, 'max_concurrent_requests_per_instance', 'maxConcurrentRequestsPerInstance')
-            
+            max_concurrent = get_field_value(
+                request_settings_data,
+                'max_concurrent_requests_per_instance',
+                'maxConcurrentRequestsPerInstance'
+            )
+
             # Convert string values to integers if needed
             if timeout is not None and isinstance(timeout, str):
                 try:
                     timeout = int(timeout)
                 except (ValueError, TypeError):
                     timeout = None
-            
+
             if max_concurrent is not None and isinstance(max_concurrent, str):
                 try:
                     max_concurrent = int(max_concurrent)
                 except (ValueError, TypeError):
                     max_concurrent = None
-                    
+
             request_settings = OnlineRequestSettings(
                 request_timeout_ms=timeout,
                 max_concurrent_requests_per_instance=max_concurrent
             )
-        
+
         # Handle probe settings
         def create_probe_settings(probe_data):
             if not probe_data or not isinstance(probe_data, dict):
                 return None
             from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
-            
+
             # Helper function to convert string values to integers
             def convert_to_int(value):
                 if value is not None and isinstance(value, str):
@@ -200,7 +210,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     except (ValueError, TypeError):
                         return None
                 return value
-            
+
             return ProbeSettings(
                 initial_delay=convert_to_int(get_field_value(probe_data, 'initial_delay', 'initialDelay')),
                 period=convert_to_int(probe_data.get('period')),
@@ -212,20 +222,20 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                 port=convert_to_int(probe_data.get('port')),
                 method=get_field_value(probe_data, 'method', 'httpMethod')
             )
-        
+
         liveness_probe_data = get_field_value(data, 'liveness_probe', 'livenessProbe')
         liveness_probe = create_probe_settings(liveness_probe_data)
-        
+
         readiness_probe_data = get_field_value(data, 'readiness_probe', 'readinessProbe')
         readiness_probe = create_probe_settings(readiness_probe_data)
-        
+
         # Get other fields
         model = data.get('model')
         code_configuration = data.get('code_configuration')
         app_insights_enabled = data.get('app_insights_enabled')
         stage = data.get('stage')
         type_field = data.get('type')
-        
+
         # Create DeploymentTemplate object using constructor
         return DeploymentTemplate(
             name=name,
@@ -264,7 +274,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ) -> Iterable[DeploymentTemplate]:
         """List deployment templates.
-        
+
         :param name: Filter by deployment template name.
         :type name: Optional[str]
         :param tags: Comma-separated list of tag names (and optionally values). Example:
@@ -273,7 +283,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :param count: Maximum number of items to return.
         :type count: Optional[int]
         :param stage: Filter by deployment template stage.
-        :type stage: Optional[str]  
+        :type stage: Optional[str]
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str
         :return: Iterator of deployment template objects.
@@ -296,7 +306,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     **kwargs
                 )
         )
-        
+
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None) -> DeploymentTemplate:
@@ -311,7 +321,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :raises: ~azure.core.exceptions.ResourceNotFoundError if deployment template not found.
         """
         version = version or "latest"
-        
+
         try:
             endpoint = self._get_registry_endpoint()
 
@@ -327,26 +337,30 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             return DeploymentTemplate._from_rest_object(result)
         except Exception as e:
             module_logger.warning("DeploymentTemplate get operation failed: %s", e)
-            raise ResourceNotFoundError(f"DeploymentTemplate {name}:{version} not found") from e
+            raise ResourceNotFoundError(
+                f"DeploymentTemplate {name}:{version} not found"
+            ) from e
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, deployment_template: Union[DeploymentTemplate, Dict[str, Any], str, PathLike]) -> DeploymentTemplate:
+    def create_or_update(
+        self, deployment_template: Union[DeploymentTemplate, Dict[str, Any], str, PathLike]
+    ) -> DeploymentTemplate:
         """Create or update a deployment template.
 
-        :param deployment_template: DeploymentTemplate object to create or update, dictionary containing deployment 
+        :param deployment_template: DeploymentTemplate object to create or update, dictionary containing deployment
             template definition, or path to a YAML file containing deployment template definition.
         :type deployment_template: Union[DeploymentTemplate, Dict[str, Any], str, PathLike]
         :return: DeploymentTemplate object representing the created or updated resource.
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
-        
+
         .. admonition:: Example
 
-            .. literalinclude:: ../samples/ml_samples_deployment_template.py
+            .. literalinclude:: ../samples/ml_samples_deployment_template_dict.py
                 :start-after: [START deployment_template_create_with_dict]
                 :end-before: [END deployment_template_create_with_dict]
                 :language: python
-                :dedent: 8
+                :dedent: 4
                 :caption: Creating a deployment template using a dictionary.
         """
         try:
@@ -354,20 +368,20 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             if isinstance(deployment_template, (str, PathLike)):
                 from azure.ai.ml.entities._load_functions import load_deployment_template
                 deployment_template = load_deployment_template(source=deployment_template)
-            
+
             # Handle dictionary input
             elif isinstance(deployment_template, dict):
                 deployment_template = self._convert_dict_to_deployment_template(deployment_template)
-            
+
             # Ensure we have a DeploymentTemplate object
             if not isinstance(deployment_template, DeploymentTemplate):
                 raise ValueError(
                     "deployment_template must be a DeploymentTemplate object, dictionary, or path to a YAML file"
                 )
-            
+
             if hasattr(self._service_client, 'deployment_templates'):
                 endpoint = self._get_registry_endpoint()
-                
+
                 rest_object = deployment_template._to_rest_object()
                 self._service_client.deployment_templates.begin_create(
                     endpoint=endpoint,
@@ -397,11 +411,11 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :type version: Optional[str]
         """
         version = version or "latest"
-        
+
         try:
             if hasattr(self._service_client, 'deployment_templates'):
                 endpoint = self._get_registry_endpoint()
-                
+
                 self._service_client.deployment_templates.delete_deployment_template(
                     endpoint=endpoint,
                     subscription_id=self._operation_scope.subscription_id,
@@ -435,10 +449,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         try:
             # Get the existing template
             template = self.get(name=name, version=version)
-            
+
             # Set stage to Archived
             template.stage = "Archived"
-            
+
             # Update the template using create_or_update
             return self.create_or_update(template)
         except Exception as e:
@@ -464,7 +478,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
             # Set stage to Development
             template.stage = "Development"
-            
+
             # Update the template using create_or_update
             return self.create_or_update(template)
         except Exception as e:

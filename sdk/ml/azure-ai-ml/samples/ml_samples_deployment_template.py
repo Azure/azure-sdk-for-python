@@ -14,6 +14,7 @@ USAGE:
     python ml_samples_deployment_template.py
 """
 
+import os
 from azure.ai.ml import MLClient
 from azure.identity import DefaultAzureCredential
 
