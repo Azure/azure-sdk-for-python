@@ -18,6 +18,7 @@ tests/deployment_template/unittests/
 ## Test Coverage Areas
 
 ### 1. DeploymentTemplate Entity Tests (`test_deployment_template.py`)
+
 - **Initialization**: Basic and minimal field initialization
 - **Field Handling**: Type/deployment_template_type field support
 - **Serialization**: `_to_rest_object()` with camelCase field mapping
@@ -26,6 +27,7 @@ tests/deployment_template/unittests/
 - **Edge Cases**: Large data sets, special characters, unicode support
 
 ### 2. Operations Layer Tests (`test_deployment_template_operations.py`)
+
 - **CRUD Operations**: Create, Read, Update, Delete functionality
 - **Input Types**: DeploymentTemplate objects, YAML files, PathLike objects
 - **Error Handling**: HTTP errors, validation errors, file not found
@@ -33,6 +35,7 @@ tests/deployment_template/unittests/
 - **Edge Cases**: Large data, invalid inputs, authentication failures
 
 ### 3. Schema Tests (`test_deployment_template_schema.py`)
+
 - **YAML Loading**: File parsing, data validation, object creation
 - **Field Validation**: Required fields, optional fields, type checking
 - **Serialization**: Round-trip load/dump consistency
@@ -40,6 +43,7 @@ tests/deployment_template/unittests/
 - **Complex Data**: Nested structures, collections, unicode content
 
 ### 4. Integration Tests (`test_deployment_template_integration.py`)
+
 - **Complete Workflows**: End-to-end CRUD operations
 - **YAML to REST API**: File loading through API calls
 - **Field Mapping**: Consistency throughout the workflow
@@ -49,6 +53,7 @@ tests/deployment_template/unittests/
 ## Running Tests
 
 ### Prerequisites
+
 ```bash
 # Ensure you're in the azure-sdk-for-python directory
 cd c:\Projects\azure-sdk-for-python
@@ -64,6 +69,7 @@ pip install pytest pytest-cov pytest-mock
 ```
 
 ### Run All Tests
+
 ```bash
 # Run all deployment template tests
 pytest tests/deployment_template/unittests/ --verbose
@@ -77,6 +83,7 @@ pytest tests/deployment_template/unittests/ \
 ```
 
 ### Run Specific Test Categories
+
 ```bash
 # Entity tests only
 pytest tests/deployment_template/unittests/test_deployment_template.py --verbose
@@ -92,6 +99,7 @@ pytest tests/deployment_template/unittests/test_deployment_template_integration.
 ```
 
 ### Using the Test Runner
+
 ```bash
 # Run all tests with coverage
 python tests/deployment_template/unittests/test_runner.py
@@ -106,21 +114,25 @@ python tests/deployment_template/unittests/test_runner.py integration
 ## Test Features
 
 ### Comprehensive Mocking
+
 - REST client operations mocked for isolated testing
 - File I/O operations mocked for consistent test environment
 - HTTP response simulation for error handling scenarios
 
 ### Data Validation
+
 - All supported field types and combinations tested
 - Edge cases including empty values, None handling, large data sets
 - Unicode and special character support validation
 
 ### Error Scenarios
+
 - HTTP error codes (400, 404, 403, 500, 503)
 - Validation errors and malformed input handling
 - File system errors and authentication failures
 
 ### Performance Testing
+
 - Large data set handling (100+ tags, 50+ properties)
 - Complex nested data structures
 - Memory efficiency validation
@@ -128,11 +140,13 @@ python tests/deployment_template/unittests/test_runner.py integration
 ## Coverage Goals
 
 The test suite aims for **100% code coverage** of:
+
 - `azure.ai.ml.entities._deployment.deployment_template.DeploymentTemplate`
 - `azure.ai.ml.operations._deployment_template_operations.DeploymentTemplateOperations`
 - `azure.ai.ml._schema._deployment.template.deployment_template.DeploymentTemplateSchema`
 
 ### Coverage Validation
+
 ```bash
 # Generate detailed coverage report
 pytest tests/deployment_template/unittests/ \
@@ -148,19 +162,23 @@ pytest tests/deployment_template/unittests/ \
 ## Test Maintenance
 
 ### Adding New Tests
+
 1. Follow existing naming conventions (`test_<functionality>_<scenario>`)
 2. Include docstrings explaining test purpose
 3. Use appropriate fixtures for setup/teardown
 4. Mock external dependencies consistently
 
 ### Updating Tests
+
 When modifying deployment template functionality:
+
 1. Update corresponding test cases
 2. Verify coverage remains at 100%
 3. Test both success and failure scenarios
 4. Validate field mapping consistency
 
 ### Best Practices
+
 - One assertion per test when possible
 - Clear test names describing the scenario
 - Comprehensive error case coverage
@@ -170,12 +188,14 @@ When modifying deployment template functionality:
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Import Errors**: Ensure you're running from the correct directory and virtual environment is activated
 2. **Missing Mocks**: All external dependencies should be mocked - check for unmocked service calls
 3. **Coverage Gaps**: Use `--cov-report=html` to identify untested code paths
 4. **Pylint Errors**: These may be related to test environment setup and can often be ignored for test files
 
 ### Debug Mode
+
 ```bash
 # Run with debugging output
 pytest tests/deployment_template/unittests/ --verbose --tb=long --pdb-trace
@@ -185,7 +205,7 @@ pytest tests/deployment_template/unittests/test_deployment_template.py::TestDepl
 ```
 
 ## Related Documentation
-- [Azure ML SDK Documentation](https://learn.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml?view=azure-python)
+
 - [Pytest Documentation](https://docs.pytest.org/)
 - [Coverage.py Documentation](https://coverage.readthedocs.io/)
 - [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)

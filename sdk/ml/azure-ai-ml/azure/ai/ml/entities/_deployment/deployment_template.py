@@ -2,6 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=docstring-missing-param,docstring-missing-rtype,docstring-missing-return,docstring-missing-type
+# pylint: disable=docstring-should-be-keyword,no-else-return,too-many-locals,too-many-statements
+# pylint: disable=too-many-branches,protected-access,redefined-outer-name,reimported
+# pylint: disable=attribute-defined-outside-init,no-member
+
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
@@ -15,7 +20,7 @@ from azure.ai.ml.entities._resource import Resource
 
 
 @experimental
-class DeploymentTemplate(Resource, RestTranslatableMixin):
+class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """DeploymentTemplate entity for Azure ML deployments.
 
     :param name: Name of the deployment template.
@@ -48,7 +53,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
     :type stage: str
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         name: str,
         version: str,
@@ -73,11 +78,11 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         type: Optional[str] = None,
         deployment_template_type: Optional[str] = None,
         stage: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         # Extract kwargs that should be passed to parent
         parent_kwargs = {}
-        for key in ['description', 'tags', 'properties', 'print_as_yaml', 'id', 'source_path', 'creation_context']:
+        for key in ["description", "tags", "properties", "print_as_yaml", "id", "source_path", "creation_context"]:
             if key in kwargs:
                 parent_kwargs[key] = kwargs.pop(key)
 
@@ -98,7 +103,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
 
         # Handle both singular and plural forms of allowed_instance_type
         if allowed_instance_types and not allowed_instance_type:
-            self.allowed_instance_type = allowed_instance_types
+            self.allowed_instance_type = allowed_instance_types  # type: ignore[assignment]
         else:
             self.allowed_instance_type = allowed_instance_type
 
@@ -115,16 +120,16 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         self._from_service = False
 
         # Store original immutable field values when template comes from service
-        self._original_immutable_fields = {}
+        self._original_immutable_fields = {}  # type: ignore[var-annotated]
 
     @property
-    def request_timeout_seconds(self) -> Optional[int]:
+    def request_timeout_seconds(self) -> Optional[int]:  # pylint: disable=docstring-missing-rtype
         """Get request timeout in seconds (user-friendly format)."""
-        if self.request_settings and hasattr(self.request_settings, 'request_timeout_ms'):
+        if self.request_settings and hasattr(self.request_settings, "request_timeout_ms"):
             if isinstance(self.request_settings.request_timeout_ms, str):
                 # This shouldn't happen with proper OnlineRequestSettings, return a default
                 return self.request_settings.request_timeout_ms
-            else:
+            else:  # pylint: disable=no-else-return
                 # Convert milliseconds to seconds
                 return (
                     self.request_settings.request_timeout_ms // 1000
@@ -134,7 +139,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         return None
 
     @request_timeout_seconds.setter
-    def request_timeout_seconds(self, value: int):
+    def request_timeout_seconds(self, value: int):  # pylint: disable=docstring-missing-param
         """Set request timeout in seconds (user-friendly format)."""
         if not self.request_settings:
             self.request_settings = OnlineRequestSettings(request_timeout_ms=value * 1000)
@@ -142,14 +147,14 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
             self.request_settings.request_timeout_ms = value * 1000
 
     @property
-    def liveness_probe_initial_delay_seconds(self) -> Optional[int]:
+    def liveness_probe_initial_delay_seconds(self) -> Optional[int]:  # pylint: disable=docstring-missing-rtype
         """Get liveness probe initial delay in seconds (user-friendly format)."""
-        if self.liveness_probe and hasattr(self.liveness_probe, 'initial_delay'):
+        if self.liveness_probe and hasattr(self.liveness_probe, "initial_delay"):
             return self.liveness_probe.initial_delay
         return None
 
     @liveness_probe_initial_delay_seconds.setter
-    def liveness_probe_initial_delay_seconds(self, value: int):
+    def liveness_probe_initial_delay_seconds(self, value: int):  # pylint: disable=docstring-missing-param
         """Set liveness probe initial delay in seconds (user-friendly format)."""
         if not self.liveness_probe:
             self.liveness_probe = ProbeSettings(initial_delay=value)
@@ -159,7 +164,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
     @property
     def liveness_probe_period_seconds(self) -> Optional[int]:
         """Get liveness probe period in seconds (user-friendly format)."""
-        if self.liveness_probe and hasattr(self.liveness_probe, 'period'):
+        if self.liveness_probe and hasattr(self.liveness_probe, "period"):
             return self.liveness_probe.period
         return None
 
@@ -174,7 +179,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
     @property
     def liveness_probe_timeout_seconds(self) -> Optional[int]:
         """Get liveness probe timeout in seconds (user-friendly format)."""
-        if self.liveness_probe and hasattr(self.liveness_probe, 'timeout'):
+        if self.liveness_probe and hasattr(self.liveness_probe, "timeout"):
             return self.liveness_probe.timeout
         return None
 
@@ -190,7 +195,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
     @property
     def readiness_probe_initial_delay_seconds(self) -> Optional[int]:
         """Get readiness probe initial delay in seconds (user-friendly format)."""
-        if self.readiness_probe and hasattr(self.readiness_probe, 'initial_delay'):
+        if self.readiness_probe and hasattr(self.readiness_probe, "initial_delay"):
             return self.readiness_probe.initial_delay
         return None
 
@@ -205,7 +210,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
     @property
     def readiness_probe_period_seconds(self) -> Optional[int]:
         """Get readiness probe period in seconds (user-friendly format)."""
-        if self.readiness_probe and hasattr(self.readiness_probe, 'period'):
+        if self.readiness_probe and hasattr(self.readiness_probe, "period"):
             return self.readiness_probe.period
         return None
 
@@ -220,7 +225,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
     @property
     def readiness_probe_timeout_seconds(self) -> Optional[int]:
         """Get readiness probe timeout in seconds (user-friendly format)."""
-        if self.readiness_probe and hasattr(self.readiness_probe, 'timeout'):
+        if self.readiness_probe and hasattr(self.readiness_probe, "timeout"):
             return self.readiness_probe.timeout
         return None
 
@@ -283,36 +288,37 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         if self.environment:
             if isinstance(self.environment, str):
                 result["environment"] = self.environment
-            elif hasattr(self.environment, 'id'):
+            elif hasattr(self.environment, "id"):
                 result["environment"] = self.environment.id
-            elif hasattr(self.environment, 'name'):
+            elif hasattr(self.environment, "name"):
                 result["environment"] = self.environment.name
             else:
                 result["environment"] = str(self.environment)
         if self.request_settings:
-            result["request_settings"] = self.request_settings.__dict__
+            result["request_settings"] = self.request_settings.__dict__  # type: ignore[assignment]
         if self.liveness_probe:
-            result["liveness_probe"] = self.liveness_probe.__dict__
+            result["liveness_probe"] = self.liveness_probe.__dict__  # type: ignore[assignment]
         if self.readiness_probe:
-            result["readiness_probe"] = self.readiness_probe.__dict__
+            result["readiness_probe"] = self.readiness_probe.__dict__  # type: ignore[assignment]
         if self.instance_count is not None:
-            result["instance_count"] = self.instance_count
+            result["instance_count"] = self.instance_count  # type: ignore[assignment]
         if self.instance_type:
             result["instance_type"] = self.instance_type
         if self.model:
             result["model"] = self.model
         if self.code_configuration:
-            result["code_configuration"] = self.code_configuration
+            result["code_configuration"] = self.code_configuration  # type: ignore[assignment]
         if self.environment_variables:
-            result["environment_variables"] = self.environment_variables
+            result["environment_variables"] = self.environment_variables  # type: ignore[assignment]
         if self.app_insights_enabled is not None:
-            result["app_insights_enabled"] = self.app_insights_enabled
+            result["app_insights_enabled"] = self.app_insights_enabled  # type: ignore[assignment]
 
         return result
 
     @classmethod
     def _from_rest_object(cls, obj) -> "DeploymentTemplate":
         """Create from REST object."""
+
         # Helper function to get values from either dict or object with attributes
         def get_value(source, key, default=None):
             if isinstance(source, dict):
@@ -345,21 +351,21 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         tags = get_value(properties, "tags") or get_value(obj, "tags", {})
 
         # Extract from properties using the backend field names
-        environment_id = (get_value(properties, "environmentId") or
-                         get_value(properties, "environment") or
-                         get_value(obj, "environment_id") or
-                         get_value(obj, "environment"))
-        environment_variables = get_value(properties, "environmentVariables") or get_value(
-            obj, "environment_variables"
+        environment_id = (
+            get_value(properties, "environmentId")
+            or get_value(properties, "environment")
+            or get_value(obj, "environment_id")
+            or get_value(obj, "environment")
         )
+        environment_variables = get_value(properties, "environmentVariables") or get_value(obj, "environment_variables")
         request_settings = get_value(properties, "requestSettings") or get_value(obj, "request_settings")
         liveness_probe = get_value(properties, "livenessProbe") or get_value(obj, "liveness_probe")
         readiness_probe = get_value(properties, "readinessProbe") or get_value(obj, "readiness_probe")
         instance_count = get_value(properties, "instanceCount") or get_value(obj, "instance_count")
         default_instance_type = get_value(properties, "defaultInstanceType") or get_value(obj, "default_instance_type")
-        deployment_template_type = get_value(
-            properties, "deploymentTemplateType"
-        ) or get_value(obj, "deployment_template_type")
+        deployment_template_type = get_value(properties, "deploymentTemplateType") or get_value(
+            obj, "deployment_template_type"
+        )
 
         # Extract additional fields
         allowed_instance_type = get_value(properties, "allowedInstanceType") or get_value(obj, "allowed_instance_type")
@@ -376,7 +382,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         # Parse tags if it's a string
         if isinstance(tags, str):
             try:
-                tags = json.loads(tags) if tags and tags != '{}' else {}
+                tags = json.loads(tags) if tags and tags != "{}" else {}
             except (json.JSONDecodeError, ValueError):
                 tags = {}
 
@@ -399,6 +405,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
 
         # Convert probe settings to ProbeSettings objects using the built-in conversion methods
         from azure.ai.ml.entities._deployment.deployment_template_settings import ProbeSettings
+
         liveness_probe_obj = ProbeSettings._from_rest_object(liveness_probe) if liveness_probe else None
         readiness_probe_obj = ProbeSettings._from_rest_object(readiness_probe) if readiness_probe else None
 
@@ -446,31 +453,31 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         template._from_service = True
 
         # Store additional fields from the REST response that may be needed
-        template.environment_id = environment_id  # Store for retrieval
+        template.environment_id = environment_id  # Store for retrieval  # type: ignore[attr-defined]
         # Alternative name for deployment_template_type
-        template.template = get_value(obj, "template", deployment_template_type)
-        template.code_id = get_value(obj, "code_id")  # Store code_id if present
+        template.template = get_value(obj, "template", deployment_template_type)  # type: ignore[attr-defined]
+        template.code_id = get_value(obj, "code_id")  # Store code_id if present  # type: ignore[attr-defined]
 
         # Store original values of immutable fields to preserve them during updates
         # IMPORTANT: Store the raw values from the API response, not the converted objects
         template._original_immutable_fields = {
-            'environment_id': environment_id,
-            'environment_variables': environment_variables,
-            'request_settings': request_settings,  # Store original REST object, not converted
-            'liveness_probe': liveness_probe,      # Store original REST object, not converted
-            'readiness_probe': readiness_probe,    # Store original REST object, not converted
-            'instance_count': instance_count,
-            'default_instance_type': default_instance_type,
-            'model': get_value(obj, "model"),
-            'code_configuration': get_value(obj, "code_configuration"),
-            'app_insights_enabled': get_value(obj, "app_insights_enabled"),
-            'deployment_template_type': deployment_template_type,
-            'allowed_instance_type': allowed_instance_type,
-            'scoring_port': scoring_port,
-            'scoring_path': scoring_path,
-            'model_mount_path': model_mount_path,
-            'stage': stage,  # Store stage for archive/restore functionality
-            'type': type_field,  # Store type field from REST response
+            "environment_id": environment_id,
+            "environment_variables": environment_variables,
+            "request_settings": request_settings,  # Store original REST object, not converted
+            "liveness_probe": liveness_probe,  # Store original REST object, not converted
+            "readiness_probe": readiness_probe,  # Store original REST object, not converted
+            "instance_count": instance_count,
+            "default_instance_type": default_instance_type,
+            "model": get_value(obj, "model"),
+            "code_configuration": get_value(obj, "code_configuration"),
+            "app_insights_enabled": get_value(obj, "app_insights_enabled"),
+            "deployment_template_type": deployment_template_type,
+            "allowed_instance_type": allowed_instance_type,
+            "scoring_port": scoring_port,
+            "scoring_path": scoring_path,
+            "model_mount_path": model_mount_path,
+            "stage": stage,  # Store stage for archive/restore functionality
+            "type": type_field,  # Store type field from REST response
         }
 
         return template
@@ -488,7 +495,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         }
 
         # Always include type field
-        if hasattr(self, 'type') and self.type:
+        if hasattr(self, "type") and self.type:
             result["type"] = self.type
         else:
             result["type"] = "deploymenttemplates"  # Default type if not specified
@@ -497,10 +504,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         if self.description:
             result["description"] = self.description
 
-        if hasattr(self, 'stage') and self.stage:
+        if hasattr(self, "stage") and self.stage:
             result["stage"] = self.stage
 
-        if hasattr(self, 'deployment_template_type') and self.deployment_template_type:
+        if hasattr(self, "deployment_template_type") and self.deployment_template_type:
             result["deploymentTemplateType"] = self.deployment_template_type  # Use camelCase for API
 
         # Add tags if present
@@ -508,7 +515,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
             result["tags"] = dict(self.tags)
 
         # Add environment information
-        if hasattr(self, 'environment_id') and self.environment_id:
+        if hasattr(self, "environment_id") and self.environment_id:
             result["environmentId"] = self.environment_id
         elif self.environment:
             result["environmentId"] = str(self.environment)
@@ -516,7 +523,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         if self.environment_variables:
             result["environmentVariables"] = dict(self.environment_variables)
 
-        if hasattr(self, 'model_mount_path') and self.model_mount_path:
+        if hasattr(self, "model_mount_path") and self.model_mount_path:
             result["modelMountPath"] = self.model_mount_path
 
         # Convert request settings to dictionary for API request body
@@ -537,31 +544,31 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
                 result["readinessProbe"] = readiness_dict
 
         # Add instance configuration
-        if hasattr(self, 'instance_type') and self.instance_type:
+        if hasattr(self, "instance_type") and self.instance_type:
             result["defaultInstanceType"] = self.instance_type
 
-        if hasattr(self, 'instance_count') and self.instance_count is not None:
+        if hasattr(self, "instance_count") and self.instance_count is not None:
             result["instanceCount"] = self.instance_count
 
         # Add scoring configuration
-        if hasattr(self, 'scoring_path') and self.scoring_path:
+        if hasattr(self, "scoring_path") and self.scoring_path:
             result["scoringPath"] = self.scoring_path
 
-        if hasattr(self, 'scoring_port') and self.scoring_port is not None:
+        if hasattr(self, "scoring_port") and self.scoring_port is not None:
             result["scoringPort"] = self.scoring_port
 
         # Add other optional fields
-        if hasattr(self, 'model') and self.model:
+        if hasattr(self, "model") and self.model:
             result["model"] = self.model
 
-        if hasattr(self, 'code_configuration') and self.code_configuration:
+        if hasattr(self, "code_configuration") and self.code_configuration:
             result["codeConfiguration"] = self.code_configuration  # Use camelCase for API
 
-        if hasattr(self, 'app_insights_enabled') and self.app_insights_enabled is not None:
+        if hasattr(self, "app_insights_enabled") and self.app_insights_enabled is not None:
             result["appInsightsEnabled"] = self.app_insights_enabled  # Use camelCase for API
 
         # Handle allowed instance types - convert string to array format for API
-        if hasattr(self, 'allowed_instance_type') and self.allowed_instance_type:
+        if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
             if isinstance(self.allowed_instance_type, str):
                 # Convert space-separated string to array
                 instance_types_array = self.allowed_instance_type.split()
@@ -570,7 +577,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
             else:
                 instance_types_array = [str(self.allowed_instance_type)]
             result["allowedInstanceType"] = instance_types_array  # Use camelCase for API
-        elif hasattr(self, 'instance_type') and self.instance_type:
+        elif hasattr(self, "instance_type") and self.instance_type:
             # Fallback to default instance type if no allowed types specified
             result["allowedInstanceType"] = [self.instance_type]
 
@@ -594,26 +601,26 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
 
         # Add tags if present
         if self.tags:
-            result["tags"] = dict(self.tags)
+            result["tags"] = dict(self.tags)  # type: ignore[assignment]
 
-        if hasattr(self, 'environment_id') and self.environment_id:
+        if hasattr(self, "environment_id") and self.environment_id:
             result["environmentId"] = self.environment_id
         elif self.environment:
             result["environmentId"] = str(self.environment)
 
         # Add metadata fields if available
-        if hasattr(self, 'created_by') and self.created_by:
+        if hasattr(self, "created_by") and self.created_by:
             result["createdBy"] = self.created_by
-        if hasattr(self, 'created_time') and self.created_time:
+        if hasattr(self, "created_time") and self.created_time:
             result["createdTime"] = self.created_time
-        if hasattr(self, 'modified_time') and self.modified_time:
+        if hasattr(self, "modified_time") and self.modified_time:
             result["modifiedTime"] = self.modified_time
-        if hasattr(self, 'capabilities'):
+        if hasattr(self, "capabilities"):
             result["capabilities"] = self.capabilities or []
 
         # Add environment variables
         if self.environment_variables:
-            result["environmentVariables"] = self.environment_variables
+            result["environmentVariables"] = self.environment_variables  # type: ignore[assignment]
 
         # Add model mount path
         if self.model_mount_path:
@@ -623,38 +630,39 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):
         if self.request_settings:
             request_dict = self.request_settings._to_dict()
             if request_dict:
-                result["requestSettings"] = request_dict
+                result["requestSettings"] = request_dict  # type: ignore[assignment]
 
         # Add probe settings using dictionary conversion for JSON serialization
         if self.liveness_probe:
             liveness_dict = self.liveness_probe._to_dict()
             if liveness_dict:
-                result["livenessProbe"] = liveness_dict
+                result["livenessProbe"] = liveness_dict  # type: ignore[assignment]
 
         if self.readiness_probe:
             readiness_dict = self.readiness_probe._to_dict()
             if readiness_dict:
-                result["readinessProbe"] = readiness_dict
+                result["readinessProbe"] = readiness_dict  # type: ignore[assignment]
 
         # Add instance configuration
-        if hasattr(self, 'allowed_instance_type') and self.allowed_instance_type:
-            result["allowedInstanceType"] = self.allowed_instance_type
+        if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
+            result["allowedInstanceType"] = self.allowed_instance_type  # type: ignore[assignment]
         if self.instance_type:
             result["defaultInstanceType"] = self.instance_type
         if self.instance_count is not None:
-            result["instanceCount"] = self.instance_count
+            result["instanceCount"] = self.instance_count  # type: ignore[assignment]
 
         # Add scoring configuration
         if self.scoring_path:
             result["scoringPath"] = self.scoring_path
         if self.scoring_port is not None:
-            result["scoringPort"] = self.scoring_port
+            result["scoringPort"] = self.scoring_port  # type: ignore[assignment]
 
         return result
 
     def __str__(self) -> str:
         """Return a JSON string representation of the deployment template."""
         import json
+
         return json.dumps(self._to_dict(), indent=2)
 
     def __repr__(self) -> str:

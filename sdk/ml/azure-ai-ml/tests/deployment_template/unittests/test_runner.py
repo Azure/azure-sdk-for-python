@@ -31,17 +31,18 @@ import pytest
 import sys
 from pathlib import Path
 
+
 def run_all_tests():
     """Run all deployment template tests with coverage reporting."""
     test_dir = Path(__file__).parent
-    
+
     # Coverage targets
     coverage_targets = [
         "azure.ai.ml.entities._deployment.deployment_template",
-        "azure.ai.ml.operations._deployment_template_operations", 
-        "azure.ai.ml._schema._deployment.template.deployment_template"
+        "azure.ai.ml.operations._deployment_template_operations",
+        "azure.ai.ml._schema._deployment.template.deployment_template",
     ]
-    
+
     # Build pytest command
     pytest_args = [
         str(test_dir),
@@ -50,32 +51,37 @@ def run_all_tests():
         f"--cov={':'.join(coverage_targets)}",
         "--cov-report=term-missing",
         "--cov-report=html:htmlcov",
-        "--cov-fail-under=95"  # Require 95% coverage
+        "--cov-fail-under=95",  # Require 95% coverage
     ]
-    
+
     # Run tests
     exit_code = pytest.main(pytest_args)
     return exit_code
+
 
 def run_entity_tests():
     """Run only DeploymentTemplate entity tests."""
     test_file = Path(__file__).parent / "test_deployment_template.py"
     return pytest.main([str(test_file), "--verbose"])
 
+
 def run_operations_tests():
     """Run only DeploymentTemplateOperations tests."""
     test_file = Path(__file__).parent / "test_deployment_template_operations.py"
     return pytest.main([str(test_file), "--verbose"])
+
 
 def run_schema_tests():
     """Run only DeploymentTemplateSchema tests."""
     test_file = Path(__file__).parent / "test_deployment_template_schema.py"
     return pytest.main([str(test_file), "--verbose"])
 
+
 def run_integration_tests():
     """Run only integration tests."""
     test_file = Path(__file__).parent / "test_deployment_template_integration.py"
     return pytest.main([str(test_file), "--verbose"])
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -94,5 +100,5 @@ if __name__ == "__main__":
             exit_code = 1
     else:
         exit_code = run_all_tests()
-    
+
     sys.exit(exit_code)

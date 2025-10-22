@@ -2,6 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=broad-exception-caught,protected-access,f-string-without-interpolation
+# pylint: disable=too-many-locals,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+# pylint: disable=no-else-return,too-many-statements
+
 from typing import Any, Dict, Iterable, Optional, Union, cast
 from os import PathLike
 
@@ -52,11 +56,12 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             from azure.ai.ml._restclient.v2022_10_01_preview import (
                 AzureMachineLearningWorkspaces as ServiceClient102022,
             )
+
             # Try to get credential from service client or operation config
             credential = None
-            if hasattr(self._service_client, '_config') and hasattr(self._service_client._config, 'credential'):
+            if hasattr(self._service_client, "_config") and hasattr(self._service_client._config, "credential"):
                 credential = self._service_client._config.credential
-            elif hasattr(self._operation_config, 'credential'):
+            elif hasattr(self._operation_config, "credential"):
                 credential = self._operation_config.credential
 
             if credential and self._operation_scope.registry_name:
@@ -66,10 +71,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     service_client=ServiceClient102022(
                         credential=credential,
                         subscription_id=self._operation_scope.subscription_id,
-                        resource_group_name=self._operation_scope.resource_group_name
+                        resource_group_name=self._operation_scope.resource_group_name,
                     ),
-                    all_operations=None,
-                    credentials=credential
+                    all_operations=None,  # type: ignore[arg-type]
+                    credentials=credential,
                 )
 
                 registry = registry_operations.get(self._operation_scope.registry_name)
@@ -107,7 +112,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         data = dict_data.copy()
 
         # Handle field name variations (both snake_case and camelCase should work)
-        def get_field_value(data: dict, primary_name: str, alt_name: str = None, default=None):
+        def get_field_value(data: dict, primary_name: str, alt_name: str = None, default=None):  # type: ignore[assignment]
             """Get field value, trying both primary and alternative names."""
             if primary_name in data:
                 return data[primary_name]
@@ -116,10 +121,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             return default
 
         # Extract constructor parameters with field name mappings
-        name = data.get('name')
-        version = data.get('version')
-        description = data.get('description')
-        tags = data.get('tags')
+        name = data.get("name")
+        version = data.get("version")
+        description = data.get("description")
+        tags = data.get("tags")
 
         # Validate required fields
         if not name:
@@ -128,54 +133,51 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             raise ValueError("version is required")
 
         # Handle environment field - check multiple possible names
-        environment = (data.get('environment') or
-                      data.get('environment_id') or
-                      data.get('environmentId'))  # Also check camelCase REST API format
+        environment = (
+            data.get("environment") or data.get("environment_id") or data.get("environmentId")
+        )  # Also check camelCase REST API format
         if not environment:
             raise ValueError("environment is required but was not found in the data")
 
         # Handle field name variations for constructor parameters
-        allowed_instance_types = get_field_value(data, 'allowed_instance_types', 'allowedInstanceType')
+        allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceType")
         if isinstance(allowed_instance_types, str):
             # Convert space-separated string to list
             allowed_instance_types = allowed_instance_types.split()
 
-        default_instance_type = get_field_value(data, 'default_instance_type', 'defaultInstanceType')
-        deployment_template_type = get_field_value(data, 'deployment_template_type', 'deploymentTemplateType')
-        model_mount_path = get_field_value(data, 'model_mount_path', 'modelMountPath')
-        scoring_path = get_field_value(data, 'scoring_path', 'scoringPath')
-        scoring_port = get_field_value(data, 'scoring_port', 'scoringPort')
+        default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
+        deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")
+        model_mount_path = get_field_value(data, "model_mount_path", "modelMountPath")
+        scoring_path = get_field_value(data, "scoring_path", "scoringPath")
+        scoring_port = get_field_value(data, "scoring_port", "scoringPort")
         if scoring_port is not None and isinstance(scoring_port, str):
             try:
                 scoring_port = int(scoring_port)
             except (ValueError, TypeError):
                 scoring_port = None
 
-        instance_count = get_field_value(data, 'instance_count', 'instanceCount')
+        instance_count = get_field_value(data, "instance_count", "instanceCount")
         if instance_count is not None and isinstance(instance_count, str):
             try:
                 instance_count = int(instance_count)
             except (ValueError, TypeError):
                 instance_count = None
 
-        environment_variables = get_field_value(data, 'environment_variables', 'environmentVariables')
+        environment_variables = get_field_value(data, "environment_variables", "environmentVariables")
 
         # Handle request settings
-        request_settings_data = get_field_value(data, 'request_settings', 'requestSettings')
+        request_settings_data = get_field_value(data, "request_settings", "requestSettings")
         request_settings = None
         if request_settings_data and isinstance(request_settings_data, dict):
             from azure.ai.ml.entities._deployment.deployment_template_settings import OnlineRequestSettings
+
             # Handle field name variations in request settings
-            timeout = get_field_value(
-                request_settings_data, 'request_timeout_ms', 'requestTimeout'
-            )
+            timeout = get_field_value(request_settings_data, "request_timeout_ms", "requestTimeout")
             # Also check for 'request_timeout' as an alternative name
             if timeout is None:
-                timeout = request_settings_data.get('request_timeout')
+                timeout = request_settings_data.get("request_timeout")
             max_concurrent = get_field_value(
-                request_settings_data,
-                'max_concurrent_requests_per_instance',
-                'maxConcurrentRequestsPerInstance'
+                request_settings_data, "max_concurrent_requests_per_instance", "maxConcurrentRequestsPerInstance"
             )
 
             # Convert string values to integers if needed
@@ -192,8 +194,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     max_concurrent = None
 
             request_settings = OnlineRequestSettings(
-                request_timeout_ms=timeout,
-                max_concurrent_requests_per_instance=max_concurrent
+                request_timeout_ms=timeout, max_concurrent_requests_per_instance=max_concurrent
             )
 
         # Handle probe settings
@@ -212,29 +213,29 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                 return value
 
             return ProbeSettings(
-                initial_delay=convert_to_int(get_field_value(probe_data, 'initial_delay', 'initialDelay')),
-                period=convert_to_int(probe_data.get('period')),
-                timeout=convert_to_int(probe_data.get('timeout')),
-                failure_threshold=convert_to_int(get_field_value(probe_data, 'failure_threshold', 'failureThreshold')),
-                success_threshold=convert_to_int(get_field_value(probe_data, 'success_threshold', 'successThreshold')),
-                scheme=probe_data.get('scheme'),
-                path=probe_data.get('path'),
-                port=convert_to_int(probe_data.get('port')),
-                method=get_field_value(probe_data, 'method', 'httpMethod')
+                initial_delay=convert_to_int(get_field_value(probe_data, "initial_delay", "initialDelay")),
+                period=convert_to_int(probe_data.get("period")),
+                timeout=convert_to_int(probe_data.get("timeout")),
+                failure_threshold=convert_to_int(get_field_value(probe_data, "failure_threshold", "failureThreshold")),
+                success_threshold=convert_to_int(get_field_value(probe_data, "success_threshold", "successThreshold")),
+                scheme=probe_data.get("scheme"),
+                path=probe_data.get("path"),
+                port=convert_to_int(probe_data.get("port")),
+                method=get_field_value(probe_data, "method", "httpMethod"),
             )
 
-        liveness_probe_data = get_field_value(data, 'liveness_probe', 'livenessProbe')
+        liveness_probe_data = get_field_value(data, "liveness_probe", "livenessProbe")
         liveness_probe = create_probe_settings(liveness_probe_data)
 
-        readiness_probe_data = get_field_value(data, 'readiness_probe', 'readinessProbe')
+        readiness_probe_data = get_field_value(data, "readiness_probe", "readinessProbe")
         readiness_probe = create_probe_settings(readiness_probe_data)
 
         # Get other fields
-        model = data.get('model')
-        code_configuration = data.get('code_configuration')
-        app_insights_enabled = data.get('app_insights_enabled')
-        stage = data.get('stage')
-        type_field = data.get('type')
+        model = data.get("model")
+        code_configuration = data.get("code_configuration")
+        app_insights_enabled = data.get("app_insights_enabled")
+        stage = data.get("stage")
+        type_field = data.get("type")
 
         # Create DeploymentTemplate object using constructor
         return DeploymentTemplate(
@@ -259,7 +260,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             model_mount_path=model_mount_path,
             type=type_field,
             deployment_template_type=deployment_template_type,
-            stage=stage
+            stage=stage,
         )
 
     @distributed_trace
@@ -294,17 +295,17 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         return cast(
             Iterable[DeploymentTemplate],
             self._service_client.deployment_templates.list(
-                    endpoint=endpoint,
-                    subscription_id=self._operation_scope.subscription_id,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._operation_scope.registry_name,
-                    name=name,
-                    tags=tags,
-                    count=count,
-                    stage=stage,
-                    list_view_type=list_view_type,
-                    **kwargs
-                )
+                endpoint=endpoint,
+                subscription_id=self._operation_scope.subscription_id,
+                resource_group_name=self._operation_scope.resource_group_name,
+                registry_name=self._operation_scope.registry_name,
+                name=name,
+                tags=tags,
+                count=count,
+                stage=stage,
+                list_view_type=list_view_type,
+                **kwargs,
+            ),
         )
 
     @distributed_trace
@@ -332,14 +333,12 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                 registry_name=self._operation_scope.registry_name,
                 name=name,
                 version=version,
-                **self._init_kwargs
+                **self._init_kwargs,
             )
             return DeploymentTemplate._from_rest_object(result)
         except Exception as e:
             module_logger.warning("DeploymentTemplate get operation failed: %s", e)
-            raise ResourceNotFoundError(
-                f"DeploymentTemplate {name}:{version} not found"
-            ) from e
+            raise ResourceNotFoundError(f"DeploymentTemplate {name}:{version} not found") from e
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
@@ -358,6 +357,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             # Handle YAML file path input
             if isinstance(deployment_template, (str, PathLike)):
                 from azure.ai.ml.entities._load_functions import load_deployment_template
+
                 deployment_template = load_deployment_template(source=deployment_template)
 
             # Handle dictionary input
@@ -370,7 +370,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     "deployment_template must be a DeploymentTemplate object, dictionary, or path to a YAML file"
                 )
 
-            if hasattr(self._service_client, 'deployment_templates'):
+            if hasattr(self._service_client, "deployment_templates"):
                 endpoint = self._get_registry_endpoint()
 
                 rest_object = deployment_template._to_rest_object()
@@ -382,7 +382,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     name=deployment_template.name,
                     version=deployment_template.version,
                     body=rest_object,
-                    **self._init_kwargs
+                    **self._init_kwargs,
                 )
                 return deployment_template
             else:
@@ -404,7 +404,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         version = version or "latest"
 
         try:
-            if hasattr(self._service_client, 'deployment_templates'):
+            if hasattr(self._service_client, "deployment_templates"):
                 endpoint = self._get_registry_endpoint()
 
                 self._service_client.deployment_templates.delete_deployment_template(
@@ -414,7 +414,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     registry_name=self._operation_scope.registry_name,
                     name=name,
                     version=version,
-                    **self._init_kwargs
+                    **self._init_kwargs,
                 )
             else:
                 raise RuntimeError("DeploymentTemplate service not available")

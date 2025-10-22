@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=trailing-whitespace,missing-final-newline
+
 # pylint: disable=unused-argument
 
 import logging
@@ -11,16 +13,17 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml._schema.core.fields import (
-    ArmVersionedStr, 
-    NestedField, 
-    PathAwareSchema, 
-    RegistryStr, 
-    UnionField, 
-    VersionField
+    ArmVersionedStr,
+    NestedField,
+    PathAwareSchema,
+    RegistryStr,
+    UnionField,
+    VersionField,
 )
 
 from .probe_settings_schema import ProbeSettingsSchema
 from .request_settings_schema import RequestSettingsSchema
+
 module_logger = logging.getLogger(__name__)
 
 
@@ -55,20 +58,20 @@ class DeploymentTemplateSchema(PathAwareSchema):
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument
         """Post-load processing to create DeploymentTemplate object from dictionary data.
-        
+
         :param data: Dictionary of parsed values from the yaml.
         :type data: typing.Dict
         :return: DeploymentTemplate object made from the yaml
         :rtype: DeploymentTemplate
         """
         from azure.ai.ml.entities._deployment.deployment_template import DeploymentTemplate
-        
+
         # Handle field name mapping
-        if 'default_instance_type' in data and 'instance_type' not in data:
-            data['instance_type'] = data['default_instance_type']
-        
+        if "default_instance_type" in data and "instance_type" not in data:
+            data["instance_type"] = data["default_instance_type"]
+
         # Remove the default_instance_type if both are present to avoid duplicate parameter
-        if 'default_instance_type' in data and 'instance_type' in data:
-            data.pop('default_instance_type')
-        
+        if "default_instance_type" in data and "instance_type" in data:
+            data.pop("default_instance_type")
+
         return DeploymentTemplate(**data)

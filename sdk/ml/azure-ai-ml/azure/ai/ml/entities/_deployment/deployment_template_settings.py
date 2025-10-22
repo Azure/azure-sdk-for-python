@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=arguments-renamed
+# pylint: disable=arguments-renamed,docstring-missing-return,docstring-missing-rtype
 
 import logging
 from typing import Optional
@@ -176,7 +176,7 @@ class ProbeSettings(RestTranslatableMixin):
             http_method=self.method,  # REST client expects http_method, not method
             path=self.path,
             port=self.port,
-        ) # type: ignore
+        )  # type: ignore
 
     def _to_dict(self) -> dict:
         """Convert to plain dictionary for API request body."""
@@ -194,11 +194,11 @@ class ProbeSettings(RestTranslatableMixin):
         if self.scheme is not None:
             result["scheme"] = self.scheme
         if self.method is not None:
-            result["httpMethod"] = self.method  # Use camelCase httpMethod for API
+            result["httpMethod"] = self.method  # Use camelCase httpMethod for API  # type: ignore[assignment]
         if self.path is not None:
-            result["path"] = self.path
+            result["path"] = self.path  # type: ignore[assignment]
         if self.port is not None:
-            result["port"] = self.port
+            result["port"] = self.port  # type: ignore[assignment]
         return result
 
     def _merge_with(self, other: Optional["ProbeSettings"]) -> None:
