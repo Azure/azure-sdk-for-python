@@ -1,6 +1,6 @@
 # Release History
 
-## 24.0.0 (2025-10-20)
+## 24.0.0 (2025-10-22)
 
 ### Features Added
 
@@ -14,7 +14,7 @@
 
 ### Breaking Changes
 
-  - Method `StorageTaskAssignmentsOperations.list` re-ordered its parameters from `['self', 'resource_group_name', 'account_name', 'maxpagesize', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'top', 'kwargs']`
+  - Method `StorageTaskAssignmentsOperations.list` renamed its parameter from `maxpagesize` to `top`
 
 ## 23.1.0 (2025-09-22)
 
