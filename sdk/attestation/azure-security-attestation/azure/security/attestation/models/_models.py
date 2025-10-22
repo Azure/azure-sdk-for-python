@@ -328,24 +328,19 @@ class AttestationResult(_Model):
 class AttestOpenEnclaveRequest(_Model):
     """Attestation request for Intel SGX enclaves.
 
-       :ivar report: OpenEnclave report from the enclave to be attested.
-       :vartype report: bytes
-       :ivar runtime_data: Runtime data provided by the enclave at the time of report generation. The
-        MAA
-    will verify that the first 32 bytes of the report_data field of the quote
-    contains the SHA256 hash of the decoded "data" field of the runtime data.
-       :vartype runtime_data: ~azure.security.attestation.models.RuntimeData
-       :ivar init_time_data: Base64Url encoded "InitTime data". The MAA will verify that the init data
-        was
-    known to the enclave. Note that InitTimeData is invalid for CoffeeLake
-    processors.
-       :vartype init_time_data: ~azure.security.attestation.models.InitTimeData
-       :ivar draft_policy_for_attestation: Attest against the provided draft policy. Note that the
-        resulting token cannot
-    be validated.
-       :vartype draft_policy_for_attestation: str
-       :ivar nonce: Nonce for incoming request - emitted in the generated attestation token.
-       :vartype nonce: str
+    :ivar report: OpenEnclave report from the enclave to be attested.
+    :vartype report: bytes
+    :ivar runtime_data: Runtime data provided by the enclave at the time of report generation. The
+     MAA will verify that the first 32 bytes of the report_data field of the quote
+     contains the SHA256 hash of the decoded "data" field of the runtime data.
+    :vartype runtime_data: ~azure.security.attestation.models.RuntimeData
+    :ivar init_time_data: Base64Url encoded InitTime data.
+    :vartype init_time_data: ~azure.security.attestation.models.InitTimeData
+    :ivar draft_policy_for_attestation: Attest against the provided draft policy. Note that the
+     resulting token cannot be validated.
+    :vartype draft_policy_for_attestation: str
+    :ivar nonce: Nonce for incoming request - emitted in the generated attestation token.
+    :vartype nonce: str
     """
 
     report: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
@@ -395,24 +390,16 @@ class AttestOpenEnclaveRequest(_Model):
 class AttestSgxEnclaveRequest(_Model):
     """Attestation request for Intel SGX enclaves.
 
-       :ivar quote: Quote of the enclave to be attested.
-       :vartype quote: bytes
-       :ivar runtime_data: Runtime data provided by the enclave at the time of quote generation. The
-        MAA
-    will verify that the first 32 bytes of the report_data field of the quote
-    contains the SHA256 hash of the decoded "data" field of the runtime data.
-       :vartype runtime_data: ~azure.security.attestation.models.RuntimeData
-       :ivar init_time_data: Initialization data provided when the enclave is created. MAA will verify
-        that
-    the init data was known to the enclave. Note that InitTimeData is invalid for
-    CoffeeLake processors.
-       :vartype init_time_data: ~azure.security.attestation.models.InitTimeData
-       :ivar draft_policy_for_attestation: Attest against the provided draft policy. Note that the
-        resulting token cannot
-    be validated.
-       :vartype draft_policy_for_attestation: str
-       :ivar nonce: Nonce for incoming request - emitted in the generated attestation token.
-       :vartype nonce: str
+    :ivar quote: Quote of the enclave to be attested.
+    :vartype quote: bytes
+    :ivar runtime_data: Runtime data provided by the enclave at the time of quote generation.
+    :vartype runtime_data: ~azure.security.attestation.models.RuntimeData
+    :ivar init_time_data: Initialization data provided when the enclave is created.
+    :vartype init_time_data: ~azure.security.attestation.models.InitTimeData
+    :ivar draft_policy_for_attestation: Attest against the provided draft policy.
+    :vartype draft_policy_for_attestation: str
+    :ivar nonce: Nonce for incoming request - emitted in the generated attestation token.
+    :vartype nonce: str
     """
 
     quote: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
@@ -460,21 +447,12 @@ class AttestSgxEnclaveRequest(_Model):
 
 
 class InitTimeData(_Model):
-    """Initialization time data are a conduit for any configuration information that
-    is unknown when building the Trusted Execution Environment (TEE) and is defined
-    at TEE launch time. This data can be used with confidential container or VM
-    scenarios to capture configuration settings such as disk volume content,
-    network configuration, etc.
+    """Initialization time data for Trusted Execution Environment (TEE).
 
-        :ivar data: Initialization time data are passed into the Trusted Execution Environment
-     (TEE) when it is created. For an Icelake SGX quote, the SHA256 hash of the
-     InitTimeData must match the lower 32 bytes of the quote's "config id"
-     attribute. For a SEV-SNP quote, the SHA256 hash of the InitTimeData must match
-     the quote's "host data" attribute.
-        :vartype data: bytes
-        :ivar data_type: The type of data contained within the "data" field. Known values are: "Binary"
-         and "JSON".
-        :vartype data_type: str or ~azure.security.attestation.models.DataType
+    :ivar data: Initialization time data passed into the TEE when it is created.
+    :vartype data: bytes
+    :ivar data_type: The type of data contained within the data field.
+    :vartype data_type: str or ~azure.security.attestation.models.DataType
     """
 
     data: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
@@ -511,65 +489,40 @@ class InitTimeData(_Model):
 class JsonWebKey(_Model):
     """JsonWebKey.
 
-       :ivar alg: The "alg" (algorithm) parameter identifies the algorithm intended for
-    use with the key.  The values used should either be registered in the
-    IANA "JSON Web Signature and Encryption Algorithms" registry
-    established by [JWA] or be a value that contains a Collision-
-    Resistant Name.
-       :vartype alg: str
-       :ivar crv: The "crv" (curve) parameter identifies the curve type.
-       :vartype crv: str
-       :ivar d: RSA private exponent or ECC private key.
-       :vartype d: str
-       :ivar dp: RSA Private Key Parameter.
-       :vartype dp: str
-       :ivar dq: RSA Private Key Parameter.
-       :vartype dq: str
-       :ivar e: RSA public exponent, in Base64.
-       :vartype e: str
-       :ivar k: Symmetric key.
-       :vartype k: str
-       :ivar kid: The "kid" (key ID) parameter is used to match a specific key.  This
-    is used, for instance, to choose among a set of keys within a JWK Set
-    during key rollover.  The structure of the "kid" value is
-    unspecified.  When "kid" values are used within a JWK Set, different
-    keys within the JWK Set SHOULD use distinct "kid" values.  (One
-    example in which different keys might use the same "kid" value is if
-    they have different "kty" (key type) values but are considered to be
-    equivalent alternatives by the application using them.)  The "kid"
-    value is a case-sensitive string.
-       :vartype kid: str
-       :ivar kty: The "kty" (key type) parameter identifies the cryptographic algorithm
-    family used with the key, such as "RSA" or "EC". "kty" values should
-    either be registered in the IANA "JSON Web Key Types" registry
-    established by [JWA] or be a value that contains a Collision-
-    Resistant Name.  The "kty" value is a case-sensitive string. Required.
-       :vartype kty: str
-       :ivar n: RSA modulus, in Base64.
-       :vartype n: str
-       :ivar p: RSA secret prime.
-       :vartype p: str
-       :ivar q: RSA secret prime, with p < q.
-       :vartype q: str
-       :ivar qi: RSA Private Key Parameter.
-       :vartype qi: str
-       :ivar use: Use ("public key use") identifies the intended use of
-    the public key. The "use" parameter is employed to indicate whether
-    a public key is used for encrypting data or verifying the signature
-    on data. Values are commonly "sig" (signature) or "enc" (encryption).
-       :vartype use: str
-       :ivar x: X coordinate for the Elliptic Curve point.
-       :vartype x: str
-       :ivar x5_c: The "x5c" (X.509 certificate chain) parameter contains a chain of one
-    or more PKIX certificates [RFC5280].  The certificate chain is
-    represented as a JSON array of certificate value strings.  Each
-    string in the array is a base64-encoded (Section 4 of [RFC4648] --
-    not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value.
-    The PKIX certificate containing the key value MUST be the first
-    certificate.
-       :vartype x5_c: list[str]
-       :ivar y: Y coordinate for the Elliptic Curve point.
-       :vartype y: str
+    :ivar alg: Algorithm parameter for the key.
+    :vartype alg: str
+    :ivar crv: Curve parameter identifies the curve type.
+    :vartype crv: str
+    :ivar d: RSA private exponent or ECC private key.
+    :vartype d: str
+    :ivar dp: RSA Private Key Parameter.
+    :vartype dp: str
+    :ivar dq: RSA Private Key Parameter.
+    :vartype dq: str
+    :ivar e: RSA public exponent, in Base64.
+    :vartype e: str
+    :ivar k: Symmetric key.
+    :vartype k: str
+    :ivar kid: Key ID parameter used to match a specific key.
+    :vartype kid: str
+    :ivar kty: Key type parameter identifies the cryptographic algorithm family.
+    :vartype kty: str
+    :ivar n: RSA modulus, in Base64.
+    :vartype n: str
+    :ivar p: RSA secret prime.
+    :vartype p: str
+    :ivar q: RSA secret prime, with p < q.
+    :vartype q: str
+    :ivar qi: RSA Private Key Parameter.
+    :vartype qi: str
+    :ivar use: Public key use parameter.
+    :vartype use: str
+    :ivar x: X coordinate for the Elliptic Curve point.
+    :vartype x: str
+    :ivar x5_c: X.509 certificate chain parameter.
+    :vartype x5_c: list[str]
+    :ivar y: Y coordinate for the Elliptic Curve point.
+    :vartype y: str
     """
 
     alg: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -669,12 +622,8 @@ class JsonWebKey(_Model):
 class JsonWebKeySet(_Model):
     """JsonWebKeySet.
 
-       :ivar keys_property: The value of the "keys" parameter is an array of JWK values.  By
-    default, the order of the JWK values within the array does not imply
-    an order of preference among them, although applications of JWK Sets
-    can choose to assign a meaning to the order for their purposes, if
-    desired.
-       :vartype keys_property: list[~azure.security.attestation.models.JsonWebKey]
+    :ivar keys_property: Array of JWK values.
+    :vartype keys_property: list[~azure.security.attestation.models.JsonWebKey]
     """
 
     keys_property: Optional[list["_models.JsonWebKey"]] = rest_field(
@@ -764,14 +713,10 @@ class OpenIDConfigurationResponse(_Model):
 class PolicyCertificatesModificationResult(_Model):
     """The result of a policy certificate modification.
 
-       :ivar certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
-        which was added
-    or removed.
-       :vartype certificate_thumbprint: str
-       :ivar certificate_resolution: The result of the operation. Known values are: "IsPresent" and
-        "IsAbsent".
-       :vartype certificate_resolution: str or
-        ~azure.security.attestation.models.CertificateModification
+    :ivar certificate_thumbprint: Hex encoded SHA1 Hash of the certificate.
+    :vartype certificate_thumbprint: str
+    :ivar certificate_resolution: The result of the operation.
+    :vartype certificate_resolution: str or ~azure.security.attestation.models.CertificateModification
     """
 
     certificate_thumbprint: Optional[str] = rest_field(
@@ -806,9 +751,8 @@ class PolicyCertificatesModificationResult(_Model):
 class PolicyCertificatesModifyResponse(_Model):
     """The response to an attestation policy management API.
 
-       :ivar token: An RFC7519 JSON Web Token structure whose body is a
-    PolicyCertificatesModificationResult object.
-       :vartype token: str
+    :ivar token: RFC7519 JSON Web Token with PolicyCertificatesModificationResult body.
+    :vartype token: str
     """
 
     token: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -836,9 +780,8 @@ class PolicyCertificatesModifyResponse(_Model):
 class PolicyCertificatesResponse(_Model):
     """The response to an attestation policy management API.
 
-       :ivar token: An RFC7519 JSON Web Token structure containing a PolicyCertificatesResults
-    object which contains the certificates used to validate policy changes.
-       :vartype token: str
+    :ivar token: RFC7519 JSON Web Token containing PolicyCertificatesResults object.
+    :vartype token: str
     """
 
     token: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -925,16 +868,14 @@ class PolicyResponse(_Model):
 class PolicyResult(_Model):
     """The result of a policy certificate modification.
 
-       :ivar policy_resolution: The result of the operation. Known values are: "Updated" and
-        "Removed".
-       :vartype policy_resolution: str or ~azure.security.attestation.models.PolicyModification
-       :ivar policy_token_hash: The SHA256 hash of the policy object modified.
-       :vartype policy_token_hash: bytes
-       :ivar policy_signer: The certificate used to sign the policy object, if specified.
-       :vartype policy_signer: ~azure.security.attestation.models.JsonWebKey
-       :ivar policy: A JSON Web Token containing a StoredAttestationPolicy object with the
-    attestation policy.
-       :vartype policy: str
+    :ivar policy_resolution: The result of the operation.
+    :vartype policy_resolution: str or ~azure.security.attestation.models.PolicyModification
+    :ivar policy_token_hash: The SHA256 hash of the policy object modified.
+    :vartype policy_token_hash: bytes
+    :ivar policy_signer: The certificate used to sign the policy object.
+    :vartype policy_signer: ~azure.security.attestation.models.JsonWebKey
+    :ivar policy: JSON Web Token containing a StoredAttestationPolicy object.
+    :vartype policy: str
     """
 
     policy_resolution: Optional[Union[str, "_models.PolicyModification"]] = rest_field(
@@ -975,18 +916,12 @@ class PolicyResult(_Model):
 
 
 class RuntimeData(_Model):
-    """Runtime data are a conduit for any information defined by the Trusted Execution
-    Environment (TEE) when actually running.
+    """Runtime data provided during attestation.
 
-        :ivar data: Runtime data are generated by the Trusted Execution Environment (TEE). For an
-     SGX quote (Coffeelake or Icelake), the SHA256 hash of the RuntimeData must
-     match the lower 32 bytes of the quote's "report data" attribute. For a SEV-SNP
-     quote, the SHA256 hash of the RuntimeData must match the quote's "report data"
-     attribute.
-        :vartype data: bytes
-        :ivar data_type: The type of data contained within the "data" field. Known values are: "Binary"
-         and "JSON".
-        :vartype data_type: str or ~azure.security.attestation.models.DataType
+    :ivar data: Runtime data passed into the TEE during attestation.
+    :vartype data: bytes
+    :ivar data_type: The type of data contained within the data field.
+    :vartype data_type: str or ~azure.security.attestation.models.DataType
     """
 
     data: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64url")
@@ -1023,9 +958,8 @@ class RuntimeData(_Model):
 class SealedAttestationResponse(_Model):
     """The sealed result of an attestation operation.
 
-       :ivar token: A sealed RFC 7519 JSON Web Token, the body of which is an AttestationResult
-    object.
-       :vartype token: str
+    :ivar token: Sealed RFC 7519 JSON Web Token with AttestationResult body.
+    :vartype token: str
     """
 
     token: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1081,29 +1015,20 @@ class StoredAttestationPolicy(_Model):
 
 
 class TcbBaseline(_Model):
-    """TEE specific Tcb baseline used in attestation, and baseline details including
-    baseline identifier, release date and minimum required software version.
+    """TEE specific Tcb baseline used in attestation.
 
-        :ivar tcb_identifier: The Tcb baseline Identifier used in attestation policy.
-        :vartype tcb_identifier: str
-        :ivar tcb_evaluation_data_number: A monotonically increasing sequence number changed when Intel
-         updates the
-     content of the TCB evaluation data set. SGX TEE specific property.
-        :vartype tcb_evaluation_data_number: int
-        :ivar tcb_release_date: Date and time when the Tcb is released. SGX TEE specific property.
-        :vartype tcb_release_date: ~datetime.datetime
-        :ivar minimum_psw_linux_version: Minimum Linux PSW version required to support the
-         corresponding Tcb baseline.
-     SGX TEE specific property.
-        :vartype minimum_psw_linux_version: str
-        :ivar minimum_psw_windows_version: Minimum Windows PSW version required to support the
-         corresponding Tcb baseline.
-     SGX TEE specific property.
-        :vartype minimum_psw_windows_version: str
-        :ivar is_selected_tcb: The corresponding Tcb baseline is set in attestation policy and is used
-         in
-     attestation request if set to true.
-        :vartype is_selected_tcb: bool
+    :ivar tcb_identifier: The Tcb baseline Identifier used in attestation policy.
+    :vartype tcb_identifier: str
+    :ivar tcb_evaluation_data_number: Monotonically increasing sequence number.
+    :vartype tcb_evaluation_data_number: int
+    :ivar tcb_release_date: Date and time when the Tcb is released.
+    :vartype tcb_release_date: ~datetime.datetime
+    :ivar minimum_psw_linux_version: Minimum Linux PSW version required.
+    :vartype minimum_psw_linux_version: str
+    :ivar minimum_psw_windows_version: Minimum Windows PSW version required.
+    :vartype minimum_psw_windows_version: str
+    :ivar is_selected_tcb: Whether this Tcb baseline is used in attestation.
+    :vartype is_selected_tcb: bool
     """
 
     tcb_identifier: Optional[str] = rest_field(
@@ -1159,13 +1084,10 @@ class TcbBaseline(_Model):
 
 
 class TcbBaselineResult(_Model):
-    """A list of all Azure supported baseline details for the a TEE type along with an
-    indication of which one is in enforced for the attestation provider.
+    """Azure supported baseline details for a TEE type.
 
-        :ivar tcb_baselines: A list of all Azure supported baseline details for the a TEE type along
-         with an
-     indication of which one is in enforced for the attestation provider.
-        :vartype tcb_baselines: list[~azure.security.attestation.models.TcbBaseline]
+    :ivar tcb_baselines: List of Azure supported baseline details for the TEE type.
+    :vartype tcb_baselines: list[~azure.security.attestation.models.TcbBaseline]
     """
 
     tcb_baselines: Optional[list["_models.TcbBaseline"]] = rest_field(
