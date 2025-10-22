@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/crop/256.0x256.0.png?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114/crop/256.0x256.0.png?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",

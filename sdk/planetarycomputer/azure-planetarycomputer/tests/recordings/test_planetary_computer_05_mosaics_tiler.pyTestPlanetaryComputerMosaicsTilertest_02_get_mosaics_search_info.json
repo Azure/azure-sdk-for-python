@@ -1,13 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/register?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/register?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "342",
+        "Content-Length": "330",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -21,7 +21,7 @@
                 {
                   "property": "collection"
                 },
-                "naip-sample-datasets"
+                "naip-atl"
               ]
             },
             {
@@ -62,7 +62,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "744",
+        "Content-Length": "711",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Server-Timing": "total;dur=0.0",
@@ -75,19 +75,19 @@
         "searchid": "ba13fc7947b9b585690d84ee61aaa653",
         "links": [
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/info",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/info",
             "rel": "metadata",
             "type": "application/json",
             "title": "Mosaic metadata"
           },
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/tilejson.json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/tilejson.json",
             "rel": "tilejson",
             "type": "application/json",
             "title": "Link for TileJSON"
           },
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/WMTSCapabilities.xml",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/WMTSCapabilities.xml",
             "rel": "wmts",
             "type": "application/json",
             "title": "Link for WMTS"
@@ -96,7 +96,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/info?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/info?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -116,7 +116,7 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "1317",
+        "Content-Length": "1260",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Server-Timing": "total;dur=0.0",
@@ -138,7 +138,7 @@
                     {
                       "property": "collection"
                     },
-                    "naip-sample-datasets"
+                    "naip-atl"
                   ]
                 },
                 {
@@ -169,29 +169,29 @@
             ],
             "filter-lang": "cql2-json"
           },
-          "_where": "(collection = 'naip-sample-datasets' AND datetime >= '2021-01-01T00:00:00Z' AND datetime <= '2022-12-31T23:59:59Z')",
+          "_where": "(collection = 'naip-atl' AND datetime >= '2021-01-01T00:00:00Z' AND datetime <= '2022-12-31T23:59:59Z')",
           "orderby": "datetime DESC, id DESC",
-          "lastused": "2025-10-22T13:24:37.675848Z",
-          "usecount": 13,
+          "lastused": "2025-10-22T20:28:57.235224Z",
+          "usecount": 41,
           "metadata": {
             "type": "mosaic"
           }
         },
         "links": [
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/info",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/info",
             "rel": "self",
             "type": "application/json",
             "title": "Mosaic metadata"
           },
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/tilejson.json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/tilejson.json",
             "rel": "tilejson",
             "type": "application/json",
             "title": "Link for TileJSON"
           },
           {
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/WMTSCapabilities.xml",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/ba13fc7947b9b585690d84ee61aaa653/WMTSCapabilities.xml",
             "rel": "wmts",
             "type": "application/json",
             "title": "Link for WMTS"

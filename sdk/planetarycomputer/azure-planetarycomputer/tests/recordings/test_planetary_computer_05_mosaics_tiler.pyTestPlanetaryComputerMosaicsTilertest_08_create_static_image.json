@@ -1,13 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/image/static?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "662",
+        "Content-Length": "638",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -21,7 +21,7 @@
                 {
                   "property": "collection"
                 },
-                "naip-sample-datasets"
+                "naip-atl"
               ]
             },
             {
@@ -68,7 +68,7 @@
           ],
           "type": "Polygon"
         },
-        "render_params": "assets=image&asset_bidx=image|1,2,3&collection=naip-sample-datasets",
+        "render_params": "assets=image&asset_bidx=image|1,2,3&collection=naip-atl",
         "cols": 1080,
         "rows": 1080,
         "imageSize": "1080x1080",
@@ -84,7 +84,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "252",
+        "Content-Length": "217",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Server-Timing": "total;dur=0.0",
@@ -94,7 +94,7 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "url": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/image/static/geocatalog-naip-sample-datasets-ef619aa3830f444f85dd5f3650ff6b54.png?api-version=2025-04-30-preview"
+        "url": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static/geocatalog-naip-atl-3cd9eee79ca94e2d9e0f01d1f9b10ce4.png?api-version=2025-04-30-preview"
       }
     }
   ],

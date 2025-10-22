@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,7 +21,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "30731",
+        "Content-Length": "29228",
         "Content-Type": "application/geo+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -47,27 +47,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308429_nw_16_060_20231008_20240103"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308429_nw_16_060_20231008_20240103"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -94,7 +94,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -102,7 +102,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -111,7 +111,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -148,7 +148,7 @@
               ]
             },
             "_msft:etag": "3f8c4060-fbac-4595-bb2c-bb5d51fbd193",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2023-10-08T16:00:00Z",
@@ -210,27 +210,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308429_ne_16_060_20231008_20240103"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308429_ne_16_060_20231008_20240103"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -257,7 +257,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -265,7 +265,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -274,7 +274,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6e3/ga_m_3308429_ne_16_060_20231008_20240103/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -311,7 +311,7 @@
               ]
             },
             "_msft:etag": "d00f1385-67e4-49b7-bb24-c5518b1425d6",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2023-10-08T16:00:00Z",
@@ -373,27 +373,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308428_ne_16_060_20231008_20240103"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308428_ne_16_060_20231008_20240103"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -420,7 +420,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -428,7 +428,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -437,7 +437,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/667/ga_m_3308428_ne_16_060_20231008_20240103/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -474,7 +474,7 @@
               ]
             },
             "_msft:etag": "17aa20b6-0f99-46de-93b2-a2ada014bcd1",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2023-10-08T16:00:00Z",
@@ -536,27 +536,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308421_sw_16_060_20231008_20240103"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308421_sw_16_060_20231008_20240103"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -583,7 +583,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -591,7 +591,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -600,7 +600,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/59a/ga_m_3308421_sw_16_060_20231008_20240103/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -637,7 +637,7 @@
               ]
             },
             "_msft:etag": "e7d11257-6827-400a-94ab-6fe844116489",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2023-10-08T16:00:00Z",
@@ -699,27 +699,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20231008_20240103"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308421_se_16_060_20231008_20240103"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -746,7 +746,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -754,7 +754,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -763,7 +763,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a18/ga_m_3308421_se_16_060_20231008_20240103/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -800,7 +800,7 @@
               ]
             },
             "_msft:etag": "be55dccb-3620-4198-973d-a453998ca822",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2023-10-08T16:00:00Z",
@@ -862,27 +862,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308420_se_16_060_20231008_20240103"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308420_se_16_060_20231008_20240103"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -909,7 +909,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -917,7 +917,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -926,7 +926,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/aa4/ga_m_3308420_se_16_060_20231008_20240103/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -963,7 +963,7 @@
               ]
             },
             "_msft:etag": "70f67b70-403f-4e1a-905e-3d6c3e8ead96",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2023-10-08T16:00:00Z",
@@ -1025,27 +1025,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308428_ne_16_060_20211115"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308428_ne_16_060_20211115"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -1072,7 +1072,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -1080,7 +1080,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -1089,7 +1089,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/76b/ga_m_3308428_ne_16_060_20211115/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -1126,7 +1126,7 @@
               ]
             },
             "_msft:etag": "6fa17c77-dc8e-4f36-b11a-cbf5412beecf",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2021-11-15T16:00:00Z",
@@ -1184,27 +1184,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308420_se_16_060_20211115"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308420_se_16_060_20211115"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -1231,7 +1231,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -1239,7 +1239,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -1248,7 +1248,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/3fe/ga_m_3308420_se_16_060_20211115/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -1285,7 +1285,7 @@
               ]
             },
             "_msft:etag": "e221708f-4809-4e78-afed-6c9097b099c9",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2021-11-15T16:00:00Z",
@@ -1343,27 +1343,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308429_nw_16_060_20211114"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308429_nw_16_060_20211114"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -1390,7 +1390,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -1398,7 +1398,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -1407,7 +1407,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -1444,7 +1444,7 @@
               ]
             },
             "_msft:etag": "44ccaf80-46a9-41c9-b3a0-e86329784186",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2021-11-14T16:00:00Z",
@@ -1502,27 +1502,27 @@
               {
                 "rel": "collection",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "parent",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
               },
               {
                 "rel": "root",
                 "type": "application/json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
               },
               {
                 "rel": "self",
                 "type": "application/geo+json",
-                "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308429_ne_16_060_20211114"
+                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308429_ne_16_060_20211114"
               }
             ],
             "assets": {
               "image": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/image.tif",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -1549,7 +1549,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/tilejson.json",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -1557,7 +1557,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/thumbnail.jpg",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -1566,7 +1566,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/rendered_preview.png",
+                "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -1603,7 +1603,7 @@
               ]
             },
             "_msft:etag": "97277267-cf76-4ac9-84ec-d793258e4b8b",
-            "collection": "naip-sample-datasets",
+            "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
               "datetime": "2021-11-14T16:00:00Z",
@@ -1653,40 +1653,40 @@
           {
             "rel": "collection",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
           },
           {
             "rel": "parent",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
           },
           {
             "rel": "root",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "self",
             "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items"
           },
           {
             "rel": "next",
             "type": "application/geo+json",
             "method": "GET",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items?api-version=2025-04-30-preview&token=Sanitized"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items?api-version=2025-04-30-preview&token=Sanitized"
           }
         ]
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1161",
+        "Content-Length": "1137",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -1694,7 +1694,7 @@
         "stac_version": "1.0.0",
         "type": "Feature",
         "id": "ga_m_3308421_se_16_060_20211114_test",
-        "collection": "naip-sample-datasets",
+        "collection": "naip-atl",
         "bbox": [
           -84.44157,
           33.621853,
@@ -1760,7 +1760,7 @@
           {
             "rel": "collection",
             "type": "application/json",
-            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip-sample-datasets"
+            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip-atl"
           }
         ],
         "assets": {
@@ -1791,7 +1791,7 @@
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Location": "https://example.com",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/96cb6e57-5d3c-48d9-b149-56313e25c392?api-version=2025-04-30-preview",
+        "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/2141c208-ff64-4c51-9dfb-b473a564eac7?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
@@ -1799,21 +1799,21 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "96cb6e57-5d3c-48d9-b149-56313e25c392",
+        "id": "00000000-0000-0000-0000-000000000000",
         "status": "Pending",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T13:22:14.7815243Z"
+            "timestamp": "2025-10-22T20:26:32.7492119Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-22T13:22:14.7815227Z",
-        "collectionId": "naip-sample-datasets"
+        "creationTime": "2025-10-22T20:26:32.7492103Z",
+        "collectionId": "naip-atl"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/96cb6e57-5d3c-48d9-b149-56313e25c392?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -1842,21 +1842,21 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "96cb6e57-5d3c-48d9-b149-56313e25c392",
+        "id": "00000000-0000-0000-0000-000000000000",
         "status": "Pending",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T13:22:14.7815243Z"
+            "timestamp": "2025-10-22T20:26:32.7492119Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-22T13:22:14.7815227Z",
-        "collectionId": "naip-sample-datasets"
+        "creationTime": "2025-10-22T20:26:32.7492103Z",
+        "collectionId": "naip-atl"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/96cb6e57-5d3c-48d9-b149-56313e25c392?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -1885,228 +1885,41 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "96cb6e57-5d3c-48d9-b149-56313e25c392",
-        "status": "Succeeded",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Failed",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T13:22:14.781522Z"
+            "timestamp": "2025-10-22T20:26:32.74921Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-22T13:22:15.518871Z"
+            "timestamp": "2025-10-22T20:26:33.75097Z"
           },
           {
-            "status": "Finished",
-            "timestamp": "2025-10-22T13:22:19.9879Z"
+            "status": "Failed",
+            "timestamp": "2025-10-22T20:26:34.207036Z",
+            "errorCode": "ItemAlreadyExistsInCollection",
+            "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-22T13:22:14.781522Z",
-        "startTime": "2025-10-22T13:22:14.781522Z",
-        "finishTime": "2025-10-22T13:22:19.9879Z",
-        "collectionId": "naip-sample-datasets",
+        "creationTime": "2025-10-22T20:26:32.74921Z",
+        "startTime": "2025-10-22T20:26:32.74921Z",
+        "finishTime": "2025-10-22T20:26:34.207036Z",
+        "collectionId": "naip-atl",
         "additionalInformation": {
-          "TotalFailedItems": "0",
+          "TotalFailedItems": "1",
           "TotalItems": "1",
           "TotalPendingItems": "0",
-          "TotalSuccessfulItems": "1"
+          "TotalSuccessfulItems": "0"
+        },
+        "error": {
+          "error": {
+            "code": "ItemAlreadyExistsInCollection",
+            "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+          }
         }
-      }
-    },
-    {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/96cb6e57-5d3c-48d9-b149-56313e25c392?api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "id": "96cb6e57-5d3c-48d9-b149-56313e25c392",
-        "status": "Succeeded",
-        "statusHistory": [
-          {
-            "status": "Pending",
-            "timestamp": "2025-10-22T13:22:14.781522Z"
-          },
-          {
-            "status": "Running",
-            "timestamp": "2025-10-22T13:22:15.518871Z"
-          },
-          {
-            "status": "Finished",
-            "timestamp": "2025-10-22T13:22:19.9879Z"
-          }
-        ],
-        "type": "AddItem",
-        "creationTime": "2025-10-22T13:22:14.781522Z",
-        "startTime": "2025-10-22T13:22:14.781522Z",
-        "finishTime": "2025-10-22T13:22:19.9879Z",
-        "collectionId": "naip-sample-datasets",
-        "additionalInformation": {
-          "TotalFailedItems": "0",
-          "TotalItems": "1",
-          "TotalPendingItems": "0",
-          "TotalSuccessfulItems": "1"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114_test?api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Accept-Ranges": "bytes",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "Connection": "keep-alive",
-        "Content-Encoding": "gzip",
-        "Content-Length": "1792",
-        "Content-Type": "application/geo+json",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-00000000000000000000000000000000-0000000000000000-00",
-        "Vary": "Accept-Encoding",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "id": "ga_m_3308421_se_16_060_20211114_test",
-        "bbox": [
-          -84.44157,
-          33.621853,
-          -84.370894,
-          33.690654
-        ],
-        "type": "Feature",
-        "links": [
-          {
-            "rel": "collection",
-            "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
-          },
-          {
-            "rel": "parent",
-            "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
-          },
-          {
-            "rel": "root",
-            "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
-          },
-          {
-            "rel": "self",
-            "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114_test"
-          }
-        ],
-        "assets": {
-          "image": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif",
-            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "roles": [
-              "data"
-            ],
-            "title": "RGBIR COG tile"
-          }
-        },
-        "_msft:ts": "2025-10-22T13:22:19.987940Z",
-        "geometry": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [
-                -84.372943,
-                33.621853
-              ],
-              [
-                -84.370894,
-                33.689211
-              ],
-              [
-                -84.439575,
-                33.690654
-              ],
-              [
-                -84.44157,
-                33.623293
-              ],
-              [
-                -84.372943,
-                33.621853
-              ]
-            ]
-          ]
-        },
-        "_msft:etag": "a87a5041-09ce-42a1-9c30-48f4ae90a532",
-        "collection": "naip-sample-datasets",
-        "properties": {
-          "gsd": 0.6,
-          "datetime": "2021-11-14T16:00:00Z",
-          "naip:year": "2021",
-          "proj:bbox": [
-            737334.0,
-            3723324.0,
-            743706.0,
-            3730800.0
-          ],
-          "proj:epsg": 26916,
-          "naip:state": "ga",
-          "proj:shape": [
-            12460,
-            10620
-          ],
-          "proj:transform": [
-            0.6,
-            0.0,
-            737334.0,
-            0.0,
-            -0.6,
-            3730800.0,
-            0.0,
-            0.0,
-            1.0
-          ]
-        },
-        "stac_extensions": [
-          "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
-        ],
-        "stac_version": "1.0.0"
       }
     }
   ],

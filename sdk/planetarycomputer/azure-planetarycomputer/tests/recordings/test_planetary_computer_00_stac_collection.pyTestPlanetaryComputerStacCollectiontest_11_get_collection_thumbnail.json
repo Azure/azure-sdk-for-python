@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,7 +21,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2986",
+        "Content-Length": "2882",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -32,34 +32,34 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "naip-sample-datasets",
+        "id": "naip-atl",
         "type": "Collection",
         "links": [
           {
             "rel": "items",
             "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/items"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items"
           },
           {
             "rel": "parent",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "root",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "self",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
           }
         ],
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "assets": {
           "thumbnail": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "roles": [
               "thumbnail"
@@ -67,7 +67,7 @@
             "title": "NAIP thumbnail"
           },
           "test-asset": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/collection-assets/test-asset/test-asset.txt",
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
             "type": "text/plain",
             "roles": [
               "metadata"
@@ -195,7 +195,7 @@
         },
         "stac_version": "1.0.0",
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-22T13:03:08.046341Z",
+        "msft:_updated": "2025-10-22T17:10:36.067524Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"
@@ -203,7 +203,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/naip-sample-datasets/thumbnail?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/thumbnail?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",

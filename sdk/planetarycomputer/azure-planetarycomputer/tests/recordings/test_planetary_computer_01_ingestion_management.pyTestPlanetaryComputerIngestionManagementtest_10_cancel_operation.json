@@ -46,19 +46,19 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/naip-sample-datasets/ingestions?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "275",
+        "Content-Length": "270",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "importType": "StaticCatalog",
-        "displayName": "NAIP Ingestion for Cancel Test",
+        "displayName": "Ingestion for Cancel Test",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "keepOriginalAssets": true,
         "skipExistingItems": true
@@ -84,10 +84,10 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "254d92f6-fb42-4d70-a62b-631ba27e1227",
-        "creationTime": "2025-10-22T13:21:34.0684001Z",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "creationTime": "2025-10-22T20:25:49.7665701Z",
         "importType": "StaticCatalog",
-        "displayName": "NAIP Ingestion for Cancel Test",
+        "displayName": "Ingestion for Cancel Test",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -95,13 +95,13 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/collections/naip-sample-datasets/ingestions/254d92f6-fb42-4d70-a62b-631ba27e1227/runs?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/00000000-0000-0000-0000-000000000000/runs?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "100000",
+        "Content-Length": "0",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,
@@ -126,21 +126,21 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "006a8bf0-be50-4807-8a2b-f69f44a87827",
-        "creationTime": "2025-10-22T13:21:34.131098Z",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "creationTime": "2025-10-22T20:25:49.8374957Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
         "operation": {
-          "id": "006a8bf0-be50-4807-8a2b-f69f44a87827",
+          "id": "00000000-0000-0000-0000-000000000000",
           "status": "Pending",
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-22T13:21:34.1210927Z"
+              "timestamp": "2025-10-22T20:25:49.8275277Z"
             }
           ],
-          "creationTime": "2025-10-22T13:21:34.1210914Z",
+          "creationTime": "2025-10-22T20:25:49.8275261Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,
@@ -149,13 +149,13 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/006a8bf0-be50-4807-8a2b-f69f44a87827?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "100000",
+        "Content-Length": "0",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,

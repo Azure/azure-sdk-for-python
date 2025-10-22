@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -21,7 +21,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1099",
+        "Content-Length": "1057",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -38,22 +38,22 @@
           {
             "rel": "items",
             "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
           },
           {
             "rel": "parent",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "root",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "self",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
           }
         ],
         "title": "Test Collection Lifecycle",
@@ -80,18 +80,18 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T13:25:26.451628Z",
-        "msft:_updated": "2025-10-22T13:25:26.451628Z"
+        "msft:_created": "2025-10-22T20:29:45.2092147Z",
+        "msft:_updated": "2025-10-22T20:29:45.2092147Z"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1160",
+        "Content-Length": "1118",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -102,22 +102,22 @@
           {
             "rel": "items",
             "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
           },
           {
             "rel": "parent",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "root",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "self",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
           }
         ],
         "title": "Test Collection Lifecycle",
@@ -144,8 +144,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T13:25:26.451628Z",
-        "msft:_updated": "2025-10-22T13:25:26.451628Z"
+        "msft:_created": "2025-10-22T20:29:45.2092147Z",
+        "msft:_updated": "2025-10-22T20:29:45.2092147Z"
       },
       "StatusCode": 200,
       "ResponseHeaders": {
@@ -215,12 +215,12 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T13:25:26.451628Z",
-        "msft:_updated": "2025-10-22T13:26:10.4672932Z"
+        "msft:_created": "2025-10-22T20:29:45.2092147Z",
+        "msft:_updated": "2025-10-22T20:30:30.1411064Z"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -240,7 +240,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1110",
+        "Content-Length": "1067",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -257,22 +257,22 @@
           {
             "rel": "items",
             "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
           },
           {
             "rel": "parent",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "root",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "self",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
           }
         ],
         "title": "Test Collection Lifecycle",
@@ -299,8 +299,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T13:25:26.451628Z",
-        "msft:_updated": "2025-10-22T13:26:10.4672932Z"
+        "msft:_created": "2025-10-22T20:29:45.2092147Z",
+        "msft:_updated": "2025-10-22T20:30:30.1411064Z"
       }
     }
   ],

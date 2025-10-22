@@ -46,18 +46,18 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/ingestion-sources?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/ingestion-sources?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "205",
+        "Content-Length": "206",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
-        "id": "f11bf162-597d-4935-ab1e-032c27acbf7d",
+        "id": "00000000-0000-0000-0000-000000000000",
         "connectionInfo": {
           "containerUrl": "Sanitized",
           "sasToken": "sv=2021-06-08&ss=b&srt=sco&sp=rl&se=Sanitized&st=Sanitized&spr=https&sig=Sanitized"
@@ -85,9 +85,9 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "5747358a-7d12-42c5-8bef-3eda452ec0a4",
+        "id": "00000000-0000-0000-0000-000000000000",
         "kind": "SasToken",
-        "created": "2025-10-22T13:21:12.5824753Z",
+        "created": "2025-10-22T20:25:28.9051838Z",
         "connectionInfo": {
           "containerUrl": "Sanitized",
           "expiration": "2025-12-31T23:59:59.0000000Z"
@@ -95,13 +95,13 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/ingestion-sources/5747358a-7d12-42c5-8bef-3eda452ec0a4?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/ingestion-sources/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "100000",
+        "Content-Length": "0",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,

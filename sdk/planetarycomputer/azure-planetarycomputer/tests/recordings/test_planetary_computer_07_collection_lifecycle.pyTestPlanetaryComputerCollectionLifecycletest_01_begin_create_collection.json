@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -90,7 +90,7 @@
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Location": "https://example.com",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8492e7c3-0531-44c9-b9e3-a6811c2b2078?api-version=2025-04-30-preview",
+        "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/a578c25c-4800-4c01-9301-2042f5302b67?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
@@ -98,21 +98,21 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "8492e7c3-0531-44c9-b9e3-a6811c2b2078",
+        "id": "00000000-0000-0000-0000-000000000000",
         "status": "Pending",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T13:25:22.672704Z"
+            "timestamp": "2025-10-22T20:29:41.747082Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-22T13:25:22.6727022Z",
+        "creationTime": "2025-10-22T20:29:41.7470755Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8492e7c3-0531-44c9-b9e3-a6811c2b2078?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -141,72 +141,21 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "8492e7c3-0531-44c9-b9e3-a6811c2b2078",
+        "id": "00000000-0000-0000-0000-000000000000",
         "status": "Pending",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T13:25:22.672704Z"
+            "timestamp": "2025-10-22T20:29:41.747082Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-22T13:25:22.6727022Z",
+        "creationTime": "2025-10-22T20:29:41.7470755Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8492e7c3-0531-44c9-b9e3-a6811c2b2078?api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "close",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "id": "8492e7c3-0531-44c9-b9e3-a6811c2b2078",
-        "status": "Succeeded",
-        "statusHistory": [
-          {
-            "status": "Pending",
-            "timestamp": "2025-10-22T13:25:22.672704Z"
-          },
-          {
-            "status": "Running",
-            "timestamp": "2025-10-22T13:25:26.3291003Z"
-          },
-          {
-            "status": "Finished",
-            "timestamp": "2025-10-22T13:25:26.6313258Z"
-          }
-        ],
-        "type": "AddCollection",
-        "creationTime": "2025-10-22T13:25:22.6727022Z",
-        "collectionId": "test-collection-lifecycle"
-      }
-    },
-    {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8492e7c3-0531-44c9-b9e3-a6811c2b2078?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -235,29 +184,80 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "8492e7c3-0531-44c9-b9e3-a6811c2b2078",
+        "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T13:25:22.672704Z"
+            "timestamp": "2025-10-22T20:29:41.747082Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-22T13:25:26.3291003Z"
+            "timestamp": "2025-10-22T20:29:45.1156765Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-22T13:25:26.6313258Z"
+            "timestamp": "2025-10-22T20:29:45.3673286Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-22T13:25:22.6727022Z",
+        "creationTime": "2025-10-22T20:29:41.7470755Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-22T20:29:41.747082Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-22T20:29:45.1156765Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-22T20:29:45.3673286Z"
+          }
+        ],
+        "type": "AddCollection",
+        "creationTime": "2025-10-22T20:29:41.7470755Z",
+        "collectionId": "test-collection-lifecycle"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -277,7 +277,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1099",
+        "Content-Length": "1057",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -294,22 +294,22 @@
           {
             "rel": "items",
             "type": "application/geo+json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
           },
           {
             "rel": "parent",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "root",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
           },
           {
             "rel": "self",
             "type": "application/json",
-            "href": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
           }
         ],
         "title": "Test Collection Lifecycle",
@@ -336,8 +336,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T13:25:26.451628Z",
-        "msft:_updated": "2025-10-22T13:25:26.451628Z"
+        "msft:_created": "2025-10-22T20:29:45.2092147Z",
+        "msft:_updated": "2025-10-22T20:29:45.2092147Z"
       }
     }
   ],

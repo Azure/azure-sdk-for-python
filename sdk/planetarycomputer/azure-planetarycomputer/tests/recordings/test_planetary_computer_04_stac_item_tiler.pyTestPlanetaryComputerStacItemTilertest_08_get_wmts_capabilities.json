@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3&tile_format=png&tile_scale=1&minzoom=7&maxzoom=14",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&assets=image&asset_bidx=image%7C1%2C2%2C3&tile_format=png&tile_scale=1&minzoom=7&maxzoom=14",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -21,7 +21,7 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "8514",
+        "Content-Length": "8422",
         "Content-Type": "application/xml",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Server-Timing": "total;dur=0.0",
@@ -41,7 +41,7 @@
         "        <ows:Operation name=\"GetCapabilities\">\n",
         "            <ows:DCP>\n",
         "                <ows:HTTP>\n",
-        "                    <ows:Get xlink:href=\"https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3&amp;tile_format=png&amp;tile_scale=1&amp;minzoom=7&amp;maxzoom=14\">\n",
+        "                    <ows:Get xlink:href=\"https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3&amp;tile_format=png&amp;tile_scale=1&amp;minzoom=7&amp;maxzoom=14\">\n",
         "                        <ows:Constraint name=\"GetEncoding\">\n",
         "                            <ows:AllowedValues>\n",
         "                                <ows:Value>RESTful</ows:Value>\n",
@@ -54,7 +54,7 @@
         "        <ows:Operation name=\"GetTile\">\n",
         "            <ows:DCP>\n",
         "                <ows:HTTP>\n",
-        "                    <ows:Get xlink:href=\"https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3&amp;tile_format=png&amp;tile_scale=1&amp;minzoom=7&amp;maxzoom=14\">\n",
+        "                    <ows:Get xlink:href=\"https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3&amp;tile_format=png&amp;tile_scale=1&amp;minzoom=7&amp;maxzoom=14\">\n",
         "                        <ows:Constraint name=\"GetEncoding\">\n",
         "                            <ows:AllowedValues>\n",
         "                                <ows:Value>RESTful</ows:Value>\n",
@@ -81,7 +81,7 @@
         "            <TileMatrixSetLink>\n",
         "                <TileMatrixSet>WebMercatorQuad</TileMatrixSet>\n",
         "            </TileMatrixSetLink>\n",
-        "            <ResourceURL format=\"image/png\" resourceType=\"tile\" template=\"https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/tiles/WebMercatorQuad/{TileMatrix}/{TileCol}/{TileRow}@1x.png?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3\" />\n",
+        "            <ResourceURL format=\"image/png\" resourceType=\"tile\" template=\"https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114/tiles/WebMercatorQuad/{TileMatrix}/{TileCol}/{TileRow}@1x.png?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3\" />\n",
         "        </Layer>\n",
         "        <TileMatrixSet>\n",
         "            <ows:Identifier>WebMercatorQuad</ows:Identifier>\n",
@@ -161,7 +161,7 @@
         "                        </TileMatrix>\n",
         "        </TileMatrixSet>\n",
         "    </Contents>\n",
-        "    <ServiceMetadataURL xlink:href=\"https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/data/collections/naip-sample-datasets/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3&amp;tile_format=png&amp;tile_scale=1&amp;minzoom=7&amp;maxzoom=14\" />\n",
+        "    <ServiceMetadataURL xlink:href=\"https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114/WebMercatorQuad/WMTSCapabilities.xml?api-version=2025-04-30-preview&amp;assets=image&amp;asset_bidx=image%7C1%2C2%2C3&amp;tile_format=png&amp;tile_scale=1&amp;minzoom=7&amp;maxzoom=14\" />\n",
         "</Capabilities>"
       ]
     }
