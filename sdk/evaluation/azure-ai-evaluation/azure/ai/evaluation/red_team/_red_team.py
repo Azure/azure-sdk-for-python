@@ -18,6 +18,9 @@ from tqdm import tqdm
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
+
+# from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights #TODO: uncomment when app insights checked in
+# from azure.ai.evaluation._model_configurations import EvaluationResult, AppInsightsConfig
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
@@ -66,6 +69,7 @@ from ._utils.formatting_utils import (
     get_flattened_attack_strategies,
     write_pyrit_outputs_to_file,
     format_scorecard,
+    format_content_by_modality,
 )
 from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
 from ._utils.retry_utils import create_standard_retry_manager
@@ -209,6 +213,9 @@ class RedTeam:
         # keep track of prompt content to context mapping for evaluation
         self.prompt_to_context = {}
 
+        # keep track of prompt content to risk_sub_type mapping for evaluation
+        self.prompt_to_risk_subtype = {}
+
         # Initialize PyRIT
         initialize_pyrit(memory_db_type=DUCK_DB)
 
@@ -277,6 +284,7 @@ class RedTeam:
             one_dp_project=self._one_dp_project,
             retry_config=retry_config,
             scan_output_dir=self.scan_output_dir,
+            red_team=self,
         )
 
         # Initialize evaluation processor
@@ -288,6 +296,7 @@ class RedTeam:
             retry_config=retry_config,
             scan_session_id=self.scan_session_id,
             scan_output_dir=self.scan_output_dir,
+            taxonomy_risk_categories=getattr(self, "taxonomy_risk_categories", None),
         )
 
         # Initialize MLflow integration
@@ -314,6 +323,7 @@ class RedTeam:
         risk_category: Optional[RiskCategory] = None,
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None,
+        is_agent_target: Optional[bool] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
 
@@ -329,6 +339,8 @@ class RedTeam:
         :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
         :type strategy: Optional[str]
+        :param is_agent_target: Optional boolean indicating if target is an agent (True) or model (False)
+        :type is_agent_target: Optional[bool]
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
@@ -350,7 +362,39 @@ class RedTeam:
 
         # Check if custom attack seed prompts are provided in the generator
         if attack_objective_generator.custom_attack_seed_prompts and attack_objective_generator.validated_prompts:
-            return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key)
+            # Check if this specific risk category has custom objectives
+            custom_objectives = attack_objective_generator.valid_prompts_by_category.get(risk_cat_value, [])
+
+            if custom_objectives:
+                # Use custom objectives for this risk category
+                return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key)
+            else:
+                # No custom objectives for this risk category, but risk_categories was specified
+                # Fetch from service if this risk category is in the requested list
+                if (
+                    self.attack_objective_generator.risk_categories
+                    and risk_category in self.attack_objective_generator.risk_categories
+                ):
+                    self.logger.info(
+                        f"No custom objectives found for risk category {risk_cat_value}, fetching from service"
+                    )
+                    return await self._get_rai_attack_objectives(
+                        risk_category,
+                        risk_cat_value,
+                        application_scenario,
+                        strategy,
+                        baseline_objectives_exist,
+                        baseline_key,
+                        current_key,
+                        num_objectives,
+                        is_agent_target,
+                    )
+                else:
+                    # Risk category not in requested list, return empty
+                    self.logger.warning(
+                        f"No custom objectives found for risk category {risk_cat_value} and it's not in the requested risk categories"
+                    )
+                    return []
         else:
             return await self._get_rai_attack_objectives(
                 risk_category,
@@ -361,6 +405,7 @@ class RedTeam:
                 baseline_key,
                 current_key,
                 num_objectives,
+                is_agent_target,
             )
 
     async def _get_custom_attack_objectives(
@@ -422,6 +467,7 @@ class RedTeam:
         baseline_key: tuple,
         current_key: tuple,
         num_objectives: int,
+        is_agent_target: Optional[bool] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI service."""
         content_harm_risk = None
@@ -437,6 +483,8 @@ class RedTeam:
             )
 
             # Get objectives from RAI service
+            target_type_str = "agent" if is_agent_target else "model" if is_agent_target is not None else None
+
             if "tense" in strategy:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
                     risk_type=content_harm_risk,
@@ -445,6 +493,7 @@ class RedTeam:
                     strategy="tense",
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
+                    target=target_type_str,
                 )
             else:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -454,14 +503,17 @@ class RedTeam:
                     strategy=None,
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
+                    target=target_type_str,
                 )
 
             if isinstance(objectives_response, list):
                 self.logger.debug(f"API returned {len(objectives_response)} objectives")
-
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
+            # Handle indirect jailbreak strategy
+            elif strategy == "indirect_jailbreak":
+                objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -472,8 +524,60 @@ class RedTeam:
         if not objectives_response or (
             isinstance(objectives_response, dict) and not objectives_response.get("objectives")
         ):
-            self.logger.warning("Empty or invalid response, returning empty list")
-            return []
+            # If we got no agent objectives, fallback to model objectives
+            if is_agent_target:
+                self.logger.warning(
+                    f"No agent-type attack objectives found for {risk_cat_value}. "
+                    "Falling back to model-type objectives."
+                )
+                try:
+                    # Retry with model target type
+                    if "tense" in strategy:
+                        objectives_response = await self.generated_rai_client.get_attack_objectives(
+                            risk_type=content_harm_risk,
+                            risk_category=other_risk,
+                            application_scenario=application_scenario or "",
+                            strategy="tense",
+                            language=self.language.value,
+                            scan_session_id=self.scan_session_id,
+                            target="model",
+                        )
+                    else:
+                        objectives_response = await self.generated_rai_client.get_attack_objectives(
+                            risk_type=content_harm_risk,
+                            risk_category=other_risk,
+                            application_scenario=application_scenario or "",
+                            strategy=None,
+                            language=self.language.value,
+                            scan_session_id=self.scan_session_id,
+                            target="model",
+                        )
+
+                    if isinstance(objectives_response, list):
+                        self.logger.debug(f"Fallback API returned {len(objectives_response)} model-type objectives")
+
+                    # Apply strategy-specific transformations to fallback objectives
+                    # Still try agent-type attack techniques (jailbreak/XPIA) even with model-type baseline objectives
+                    if strategy == "jailbreak":
+                        objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
+                    elif strategy == "indirect_jailbreak":
+                        # Try agent-type XPIA first, will fallback to model-type XPIA within the method
+                        objectives_response = await self._apply_xpia_prompts(objectives_response, "agent")
+
+                    # Check if fallback response is also empty
+                    if not objectives_response or (
+                        isinstance(objectives_response, dict) and not objectives_response.get("objectives")
+                    ):
+                        self.logger.warning("Fallback to model-type objectives also returned empty list")
+                        return []
+
+                except Exception as fallback_error:
+                    self.logger.error(f"Error calling get_attack_objectives with model fallback: {str(fallback_error)}")
+                    self.logger.warning("Fallback API call failed, returning empty objectives list")
+                    return []
+            else:
+                self.logger.warning("Empty or invalid response, returning empty list")
+                return []
 
         # Filter and select objectives
         selected_cat_objectives = self._filter_and_select_objectives(
@@ -506,6 +610,163 @@ class RedTeam:
 
         return objectives_list
 
+    async def _apply_xpia_prompts(self, objectives_list: List, target_type_str: str) -> List:
+        """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy.
+
+        XPIA prompts are wrapper structures that contain:
+        - content: benign user query to trigger tool use
+        - context: attack vehicle with {attack_text} placeholder
+        - context_type: modality for formatting (email, document, html, code)
+        - tool_name: name for mock tool
+
+        We inject the baseline attack objectives into these XPIA wrapper prompts.
+        """
+        self.logger.debug(f"Applying XPIA prompts to objectives for indirect jailbreak (target_type={target_type_str})")
+
+        try:
+            # Fetch XPIA wrapper prompts from RAI service
+            @self.retry_manager.create_retry_decorator(context="xpia_prompts")
+            async def get_xpia_prompts_with_retry():
+                return await self.generated_rai_client.get_attack_objectives(
+                    risk_type=None,
+                    risk_category="xpia",
+                    application_scenario="",
+                    strategy=None,
+                    language=self.language.value,
+                    scan_session_id=self.scan_session_id,
+                    target=target_type_str,
+                )
+
+            xpia_prompts = await get_xpia_prompts_with_retry()
+
+            # If no agent XPIA prompts and we're trying agent, fallback to model
+            if (not xpia_prompts or len(xpia_prompts) == 0) and target_type_str == "agent":
+                self.logger.debug("No agent-type XPIA prompts available, falling back to model-type XPIA prompts")
+                try:
+                    xpia_prompts = await self.generated_rai_client.get_attack_objectives(
+                        risk_type=None,
+                        risk_category="xpia",
+                        application_scenario="",
+                        strategy=None,
+                        language=self.language.value,
+                        scan_session_id=self.scan_session_id,
+                        target="model",
+                    )
+                    if xpia_prompts and len(xpia_prompts) > 0:
+                        self.logger.debug(f"Fetched {len(xpia_prompts)} model-type XPIA wrapper prompts as fallback")
+                except Exception as fallback_error:
+                    self.logger.error(f"Error fetching model-type XPIA prompts as fallback: {str(fallback_error)}")
+
+            if not xpia_prompts or len(xpia_prompts) == 0:
+                self.logger.warning("No XPIA prompts available (even after fallback), returning objectives unchanged")
+                return objectives_list
+
+            self.logger.debug(f"Fetched {len(xpia_prompts)} XPIA wrapper prompts")
+
+            # Apply XPIA wrapping to each baseline objective
+            for objective in objectives_list:
+                if "messages" in objective and len(objective["messages"]) > 0:
+                    message = objective["messages"][0]
+                    if isinstance(message, dict) and "content" in message:
+                        # Get the baseline attack content to inject
+                        baseline_attack_content = message["content"]
+                        # Preserve the original baseline context if it exists
+                        baseline_context = message.get("context", "")
+
+                        # Normalize baseline_context to a list of context dicts
+                        baseline_contexts = []
+                        if baseline_context:
+                            # Extract baseline context from RAI service format
+                            context_dict = {"content": baseline_context}
+                            if message.get("tool_name"):
+                                context_dict["tool_name"] = message["tool_name"]
+                            if message.get("context_type"):
+                                context_dict["context_type"] = message["context_type"]
+                            baseline_contexts = [context_dict]
+
+                        # Check if baseline contexts have agent fields (context_type, tool_name)
+                        baseline_contexts_with_agent_fields = []
+                        baseline_contexts_without_agent_fields = []
+
+                        for ctx in baseline_contexts:
+                            if isinstance(ctx, dict):
+                                if "context_type" in ctx or "tool_name" in ctx:
+                                    # This baseline context has agent fields - preserve it separately
+                                    baseline_contexts_with_agent_fields.append(ctx)
+                                    self.logger.debug(
+                                        f"Found baseline context with agent fields: tool_name={ctx.get('tool_name')}, context_type={ctx.get('context_type')}"
+                                    )
+                                else:
+                                    # This baseline context has no agent fields - can be embedded
+                                    baseline_contexts_without_agent_fields.append(ctx)
+                            else:
+                                baseline_contexts_without_agent_fields.append({"content": str(ctx)})
+
+                        # For baseline contexts without agent fields, embed them in the attack content
+                        if baseline_contexts_without_agent_fields:
+                            context_texts = [
+                                ctx.get("content", "")
+                                for ctx in baseline_contexts_without_agent_fields
+                                if ctx.get("content")
+                            ]
+                            if context_texts:
+                                combined_context = "\n\n".join(context_texts)
+                                baseline_attack_content = f"{baseline_attack_content}\n\nContext:\n{combined_context}"
+                                self.logger.debug(
+                                    f"Embedded {len(context_texts)} baseline context(s) without agent fields into attack content"
+                                )
+
+                        # Randomly select an XPIA wrapper prompt
+                        xpia_prompt = random.choice(xpia_prompts)
+                        xpia_message = xpia_prompt.get("messages", [{}])[0]
+
+                        # Extract XPIA wrapper structure
+                        user_query = xpia_message.get("content", "")
+                        attack_vehicle_context = xpia_message.get("context", "")
+                        context_type = xpia_message.get("context_type") or "text"
+                        tool_name = xpia_message.get("tool_name", "")
+
+                        # Inject baseline attack (now with appended context) into the {attack_text} placeholder
+                        if "{attack_text}" in attack_vehicle_context:
+                            injected_context = attack_vehicle_context.replace("{attack_text}", baseline_attack_content)
+                        else:
+                            # No placeholder found, append to end
+                            injected_context = f"{attack_vehicle_context}\n\n{baseline_attack_content}"
+
+                        # Apply modality-based formatting
+                        formatted_context = format_content_by_modality(injected_context, context_type)
+
+                        # Update the message with benign user query
+                        message["content"] = user_query
+
+                        # Build the contexts list: XPIA context + any baseline contexts with agent fields
+                        contexts = [
+                            {"content": formatted_context, "context_type": context_type, "tool_name": tool_name}
+                        ]
+
+                        # Add baseline contexts with agent fields as separate context entries
+                        if baseline_contexts_with_agent_fields:
+                            contexts.extend(baseline_contexts_with_agent_fields)
+                            self.logger.debug(
+                                f"Preserved {len(baseline_contexts_with_agent_fields)} baseline context(s) with agent fields"
+                            )
+
+                        message["context"] = contexts
+                        message["context_type"] = (
+                            context_type  # Keep at message level for backward compat (XPIA primary)
+                        )
+                        message["tool_name"] = tool_name
+
+                        self.logger.debug(
+                            f"Wrapped baseline attack in XPIA: total contexts={len(contexts)}, xpia_tool={tool_name}, xpia_type={context_type}"
+                        )
+
+        except Exception as e:
+            self.logger.error(f"Error applying XPIA prompts: {str(e)}")
+            self.logger.warning("XPIA prompt application failed, returning original objectives")
+
+        return objectives_list
+
     def _filter_and_select_objectives(
         self,
         objectives_response: List,
@@ -523,10 +784,52 @@ class RedTeam:
 
             if baseline_objective_ids:
                 self.logger.debug(f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}")
-                selected_cat_objectives = [
-                    obj for obj in objectives_response if obj.get("id") in baseline_objective_ids
-                ]
-                self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
+                # Filter by baseline IDs
+                filtered_objectives = [obj for obj in objectives_response if obj.get("id") in baseline_objective_ids]
+                self.logger.debug(f"Found {len(filtered_objectives)} matching objectives with baseline IDs")
+
+                # For strategies like indirect_jailbreak, the RAI service may return multiple
+                # objectives per baseline ID (e.g., multiple XPIA variations for one baseline objective).
+                # We should select num_objectives total, ensuring each baseline objective gets an XPIA attack.
+                # Group by baseline ID and select one objective per baseline ID up to num_objectives.
+                selected_by_id = {}
+                for obj in filtered_objectives:
+                    obj_id = obj.get("id")
+                    if obj_id not in selected_by_id:
+                        selected_by_id[obj_id] = []
+                    selected_by_id[obj_id].append(obj)
+
+                # Select objectives to match num_objectives
+                selected_cat_objectives = []
+                baseline_ids = list(selected_by_id.keys())
+
+                # If we have enough baseline IDs to cover num_objectives, select one per baseline ID
+                if len(baseline_ids) >= num_objectives:
+                    # Select from the first num_objectives baseline IDs
+                    for i in range(num_objectives):
+                        obj_id = baseline_ids[i]
+                        selected_cat_objectives.append(random.choice(selected_by_id[obj_id]))
+                else:
+                    # If we have fewer baseline IDs than num_objectives, select all and cycle through
+                    for i in range(num_objectives):
+                        obj_id = baseline_ids[i % len(baseline_ids)]
+                        # For repeated IDs, try to select different variations if available
+                        available_variations = selected_by_id[obj_id].copy()
+                        # Remove already selected variations for this baseline ID
+                        already_selected = [obj for obj in selected_cat_objectives if obj.get("id") == obj_id]
+                        for selected_obj in already_selected:
+                            if selected_obj in available_variations:
+                                available_variations.remove(selected_obj)
+
+                        if available_variations:
+                            selected_cat_objectives.append(random.choice(available_variations))
+                        else:
+                            # If no more variations, reuse one (shouldn't happen with proper XPIA generation)
+                            selected_cat_objectives.append(random.choice(selected_by_id[obj_id]))
+
+                self.logger.debug(
+                    f"Selected {len(selected_cat_objectives)} objectives from {len(baseline_ids)} baseline IDs and {len(filtered_objectives)} total variations for {strategy} strategy"
+                )
             else:
                 self.logger.warning("No baseline objective IDs found, using random selection")
                 selected_cat_objectives = random.sample(
@@ -545,17 +848,87 @@ class RedTeam:
         return selected_cat_objectives
 
     def _extract_objective_content(self, selected_objectives: List) -> List[str]:
-        """Extract content from selected objectives."""
+        """Extract content from selected objectives and build prompt-to-context mapping."""
         selected_prompts = []
         for obj in selected_objectives:
+            risk_subtype = None
+            # Extract risk-subtype from target_harms if present
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
+            if target_harms and isinstance(target_harms, list):
+                for harm in target_harms:
+                    if isinstance(harm, dict) and "risk-subtype" in harm:
+                        subtype_value = harm.get("risk-subtype")
+                        if subtype_value:
+                            risk_subtype = subtype_value
+                            break
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
                     content = message["content"]
-                    context = message.get("context", "")
+                    context_raw = message.get("context", "")
+                    # TODO is first if necessary?
+                    # Normalize context to always be a list of dicts with 'content' key
+                    if isinstance(context_raw, list):
+                        # Already a list - ensure each item is a dict with 'content' key
+                        contexts = []
+                        for ctx in context_raw:
+                            if isinstance(ctx, dict) and "content" in ctx:
+                                # Preserve all keys including context_type, tool_name if present
+                                contexts.append(ctx)
+                            elif isinstance(ctx, str):
+                                contexts.append({"content": ctx})
+                    elif context_raw:
+                        # Single string value - wrap in dict
+                        contexts = [{"content": context_raw}]
+                        if message.get("tool_name"):
+                            contexts[0]["tool_name"] = message["tool_name"]
+                        if message.get("context_type"):
+                            contexts[0]["context_type"] = message["context_type"]
+                    else:
+                        contexts = []
+
+                    # Check if any context has agent-specific fields
+                    has_agent_fields = any(
+                        isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
+                    )
+
+                    # For contexts without agent fields, append them to the content
+                    # This applies to baseline and any other attack objectives with plain context
+                    if contexts and not has_agent_fields:
+                        # Extract all context content and append to the attack content
+                        context_texts = []
+                        for ctx in contexts:
+                            if isinstance(ctx, dict):
+                                ctx_content = ctx.get("content", "")
+                                if ctx_content:
+                                    context_texts.append(ctx_content)
+
+                        if context_texts:
+                            # Append context to content
+                            combined_context = "\n\n".join(context_texts)
+                            content = f"{content}\n\nContext:\n{combined_context}"
+                            self.logger.debug(
+                                f"Appended {len(context_texts)} context source(s) to attack content (total context length={len(combined_context)})"
+                            )
+
                     selected_prompts.append(content)
-                    # Store mapping of content to context for later evaluation
-                    self.prompt_to_context[content] = context
+
+                    # Store risk_subtype mapping if it exists
+                    if risk_subtype:
+                        self.prompt_to_risk_subtype[content] = risk_subtype
+
+                    # Always store contexts if they exist (whether or not they have agent fields)
+                    if contexts:
+                        context_dict = {"contexts": contexts}
+                        if has_agent_fields:
+                            self.logger.debug(f"Stored context with agent fields: {len(contexts)} context source(s)")
+                        else:
+                            self.logger.debug(
+                                f"Stored context without agent fields: {len(contexts)} context source(s) (also embedded in content)"
+                            )
+                        self.prompt_to_context[content] = context_dict
+                    else:
+                        self.logger.debug(f"No context to store")
         return selected_prompts
 
     def _cache_attack_objectives(
@@ -575,6 +948,18 @@ class RedTeam:
             target_harms = obj.get("metadata", {}).get("target_harms", [])
             content = ""
             context = ""
+            risk_subtype = None
+
+            # Extract risk-subtype from target_harms if present
+            if target_harms and isinstance(target_harms, list):
+                for harm in target_harms:
+                    if isinstance(harm, dict) and "risk-subtype" in harm:
+                        subtype_value = harm.get("risk-subtype")
+                        # Only store non-empty risk-subtype values
+                        if subtype_value:
+                            risk_subtype = subtype_value
+                            break  # Use the first non-empty risk-subtype found
+
             if "messages" in obj and len(obj["messages"]) > 0:
 
                 message = obj["messages"][0]
@@ -582,6 +967,9 @@ class RedTeam:
                 context = message.get("context", "")
             if content:
                 obj_data = {"id": obj_id, "content": content, "context": context}
+                # Add risk_subtype to obj_data if it exists
+                if risk_subtype:
+                    obj_data["risk_subtype"] = risk_subtype
                 objectives_by_category[risk_cat_value].append(obj_data)
 
         self.attack_objectives[current_key] = {
@@ -788,6 +1176,12 @@ class RedTeam:
         run_id_override = kwargs.get("run_id") or kwargs.get("runId")
         eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
         created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
+        taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories")  # key is risk category value is taxonomy
+        # TODO: uncomment when app insights logging checked in
+        # _app_insights_configuration = kwargs.get("_app_insights_configuration")
+        # self._app_insights_configuration = _app_insights_configuration
+        self.taxonomy_risk_categories = taxonomy_risk_categories or {}
+        is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
@@ -836,6 +1230,19 @@ class RedTeam:
             self.risk_categories = self.attack_objective_generator.risk_categories
             self.result_processor.risk_categories = self.risk_categories
 
+            # Validate risk categories for target type
+            if not is_agent_target:
+                # Check if any agent-only risk categories are used with model targets
+                for risk_cat in self.risk_categories:
+                    if risk_cat == RiskCategory.SensitiveDataLeakage:
+                        raise EvaluationException(
+                            message=f"Risk category '{risk_cat.value}' is only available for agent targets",
+                            internal_message=f"Risk category {risk_cat.value} requires agent target",
+                            target=ErrorTarget.RED_TEAM,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
+                        )
+
             # Show risk categories to user
             tqdm.write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
             self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
@@ -864,9 +1271,11 @@ class RedTeam:
             self._initialize_tracking_dict(flattened_attack_strategies)
 
             # Fetch attack objectives
-            all_objectives = await self._fetch_all_objectives(flattened_attack_strategies, application_scenario)
+            all_objectives = await self._fetch_all_objectives(
+                flattened_attack_strategies, application_scenario, is_agent_target
+            )
 
-            chat_target = get_chat_target(target, self.prompt_to_context)
+            chat_target = get_chat_target(target)
             self.chat_target = chat_target
 
             # Execute attacks
@@ -955,15 +1364,12 @@ class RedTeam:
             )
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
         if AttackStrategy.Tense in flattened_attack_strategies and (
-            RiskCategory.IndirectAttack in self.risk_categories
-            or RiskCategory.UngroundedAttributes in self.risk_categories
+            RiskCategory.UngroundedAttributes in self.risk_categories
         ):
             self.logger.warning(
-                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories. Skipping Tense strategy."
+                "Tense strategy is not compatible with UngroundedAttributes risk categories. Skipping Tense strategy."
             )
-            raise ValueError(
-                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories."
-            )
+            raise ValueError("Tense strategy is not compatible with UngroundedAttributes risk categories.")
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
@@ -979,7 +1385,9 @@ class RedTeam:
                     "status": TASK_STATUS["PENDING"],
                 }
 
-    async def _fetch_all_objectives(self, flattened_attack_strategies: List, application_scenario: str) -> Dict:
+    async def _fetch_all_objectives(
+        self, flattened_attack_strategies: List, application_scenario: str, is_agent_target: bool
+    ) -> Dict:
         """Fetch all attack objectives for all strategies and risk categories."""
         log_section_header(self.logger, "Fetching attack objectives")
         all_objectives = {}
@@ -991,6 +1399,7 @@ class RedTeam:
                 risk_category=risk_category,
                 application_scenario=application_scenario,
                 strategy="baseline",
+                is_agent_target=is_agent_target,
             )
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
@@ -1014,6 +1423,7 @@ class RedTeam:
                     risk_category=risk_category,
                     application_scenario=application_scenario,
                     strategy=strategy_name,
+                    is_agent_target=is_agent_target,
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
 
@@ -1130,7 +1540,9 @@ class RedTeam:
 
         # Extract AOAI summary for passing to MLflow logging
         aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
-
+        # TODO: uncomment when app insights checked in
+        # if self._app_insights_configuration:
+        #     emit_eval_result_events_to_app_insights(self._app_insights_configuration, aoai_summary["output_items"]["data"])
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")

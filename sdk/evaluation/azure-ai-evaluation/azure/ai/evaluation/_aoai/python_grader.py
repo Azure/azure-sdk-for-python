@@ -61,9 +61,9 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
         *,
         model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         name: str,
-        image_tag: str,
         pass_threshold: float,
         source: str,
+        image_tag: Optional[str] = None,
         credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
