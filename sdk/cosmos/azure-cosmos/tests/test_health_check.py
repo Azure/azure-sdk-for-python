@@ -123,7 +123,6 @@ class TestHealthCheck:
 
         def __call__(self, endpoint):
             self.counter += 1
-            return
 
     class MockGetDatabaseAccount(object):
         def __init__(
