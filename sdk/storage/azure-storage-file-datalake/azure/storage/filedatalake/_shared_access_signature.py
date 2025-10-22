@@ -108,6 +108,7 @@ def generate_file_system_sas(
     permission: Optional[Union["FileSystemSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     *,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -193,6 +194,10 @@ def generate_file_system_sas(
         generating and distributing the SAS.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -207,6 +212,7 @@ def generate_file_system_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=cast(Optional[Union["ContainerSasPermissions", str]], permission),
         expiry=expiry,
+        user_delegation_oid=user_delegation_oid,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -220,6 +226,7 @@ def generate_directory_sas(
     permission: Optional[Union["DirectorySasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     *,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -307,6 +314,10 @@ def generate_directory_sas(
         generating and distributing the SAS.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -325,6 +336,7 @@ def generate_directory_sas(
         expiry=expiry,
         sdd=depth,
         is_directory=True,
+        user_delegation_oid=user_delegation_oid,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -339,6 +351,7 @@ def generate_file_sas(
     permission: Optional[Union["FileSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     *,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -428,6 +441,10 @@ def generate_file_sas(
         generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
     :keyword str encryption_scope:
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -448,6 +465,7 @@ def generate_file_sas(
         permission=cast(Optional[Union["BlobSasPermissions", str]], permission),
         expiry=expiry,
         sts_hook=sts_hook,
+        user_delegation_oid=user_delegation_oid,
         **kwargs
     )
 

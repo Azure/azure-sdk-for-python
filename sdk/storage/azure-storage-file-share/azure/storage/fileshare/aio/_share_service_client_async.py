@@ -20,14 +20,15 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import AsyncPipeline
 from .._generated.aio import AzureFileStorage
-from .._generated.models import StorageServiceProperties
+from .._generated.models import KeyInfo, StorageServiceProperties
 from .._models import CorsRule, service_properties_deserialize, ShareProperties
 from .._serialize import get_api_version
 from .._share_service_client_helpers import _parse_url
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.parser import _to_utc_datetime
 from .._shared.policies_async import ExponentialRetry
-from .._shared.response_handlers import process_storage_error
+from .._shared.response_handlers import parse_to_internal_user_delegation_key, process_storage_error
 from ._models import SharePropertiesPaged
 from ._share_client_async import ShareClient
 
@@ -39,7 +40,9 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from datetime import datetime
     from .._models import Metrics, ShareProtocolSettings
+    from .._shared.models import UserDelegationKey
 
 
 class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
@@ -196,6 +199,46 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
+
+    @distributed_trace_async
+    async def get_user_delegation_key(
+        self,
+        *,
+        expiry: "datetime",
+        start: Optional["datetime"] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> "UserDelegationKey":
+        """
+        Obtain a user delegation key for the purpose of signing SAS tokens.
+
+        A token credential must be present on the service object for this request to succeed.
+
+        :keyword expiry:
+            A DateTime value. Indicates when the key stops being valid.
+        :paramtype expiry: ~datetime.datetime
+        :keyword start:
+            A DateTime value. Indicates when the key becomes valid.
+        :paramtype start: Optional[~datetime.datetime]
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
+        :return: The user delegation key.
+        :rtype: ~azure.storage.queue.UserDelegationKey
+        """
+        key_info = KeyInfo(start=_to_utc_datetime(start), expiry=_to_utc_datetime(expiry))
+        try:
+            user_delegation_key = await self._client.service.get_user_delegation_key(  # type: ignore
+                key_info=key_info,
+                timeout=timeout,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            process_storage_error(error)
+        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace_async
     async def get_service_properties(self, **kwargs: Any) -> Dict[str, Any]:

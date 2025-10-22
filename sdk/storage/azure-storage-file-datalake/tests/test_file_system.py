@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import jwt
 import unittest
 from datetime import datetime, timedelta
 from time import sleep
@@ -918,6 +919,30 @@ class TestFileSystem(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_list_paths_start_from(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = self._create_file_system()
+        for i in range(0, 6):
+            dir = file_system.create_directory(f"dir{i}")
+
+            # create a subdirectory under the current directory
+            subdir = dir.create_sub_directory("subdir")
+            subdir.create_sub_directory("subsub")
+
+            # create a file under the current directory
+            subdir.create_file("file")
+
+        paths = list(file_system.get_paths(recursive=True, max_results=2, start_from="dir3"))
+
+        # there are 12 subpaths in total
+        assert len(paths) == 12
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_list_paths_pages_correctly(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1148,6 +1173,123 @@ class TestFileSystem(StorageRecordedTestCase):
 
         # Assert
         assert acl == access_control['acl']
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_get_user_delegation_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(DataLakeServiceClient)
+        service = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "dfs"),
+            credential=token_credential,
+        )
+        start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key_1 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        user_delegation_key_2 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+
+        # Assert key1 is valid
+        assert user_delegation_key_1.signed_oid is not None
+        assert user_delegation_key_1.signed_tid is not None
+        assert user_delegation_key_1.signed_start is not None
+        assert user_delegation_key_1.signed_expiry is not None
+        assert user_delegation_key_1.signed_version is not None
+        assert user_delegation_key_1.signed_service is not None
+        assert user_delegation_key_1.value is not None
+
+        # Assert key1 and key2 are equal, since they have the exact same start and end times
+        assert user_delegation_key_1.signed_oid == user_delegation_key_2.signed_oid
+        assert user_delegation_key_1.signed_tid == user_delegation_key_2.signed_tid
+        assert user_delegation_key_1.signed_start == user_delegation_key_2.signed_start
+        assert user_delegation_key_1.signed_expiry == user_delegation_key_2.signed_expiry
+        assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
+        assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
+        assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    def test_datalake_user_delegation_oid(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        data = b"abc123"
+
+        token_credential = self.get_credential(DataLakeServiceClient)
+        account_url = self.account_url(datalake_storage_account_name, "dfs")
+        dsc = DataLakeServiceClient(account_url, credential=token_credential)
+        file_system_name = self.get_resource_name(TEST_FILE_SYSTEM_PREFIX)
+        file_system = dsc.create_file_system(file_system_name)
+        directory_name = "dir"
+        directory = file_system.create_directory(directory_name)
+        file_name = "file"
+        file = directory.create_file(file_name)
+        file.upload_data(data, length=len(data), overwrite=True)
+
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        user_delegation_key = dsc.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        token = token_credential.get_token("https://storage.azure.com/.default")
+        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+
+        file_system_token = self.generate_sas(
+            generate_file_system_sas,
+            dsc.account_name,
+            file_system_name,
+            user_delegation_key,
+            permission=FileSystemSasPermissions(write=True, read=True, delete=True, list=True),
+            expiry=expiry,
+            user_delegation_oid=user_delegation_oid,
+        )
+        file_system_client = FileSystemClient(
+            f"{account_url}?{file_system_token}",
+            file_system_name=file_system_name,
+            credential=token_credential
+        )
+        paths = list(file_system_client.get_paths())
+        assert len(paths) == 2
+        assert paths[0]["name"] == directory.path_name
+        assert paths[1]["name"] == file.path_name
+
+        directory_token = self.generate_sas(
+            generate_directory_sas,
+            dsc.account_name,
+            file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission=FileSasPermissions(write=True, read=True, delete=True),
+            expiry=expiry,
+            user_delegation_oid=user_delegation_oid
+        )
+        directory_client = DataLakeDirectoryClient(
+            f"{account_url}?{directory_token}",
+            file_system_name=file_system_name,
+            directory_name=directory_name,
+            credential=token_credential
+        )
+        props = directory_client.get_directory_properties()
+        assert props is not None
+
+        file_token = self.generate_sas(
+            generate_file_sas,
+            datalake_storage_account_name,
+            file_system_name,
+            directory_name,
+            file_name,
+            credential=user_delegation_key,
+            permission=FileSasPermissions(write=True, read=True, delete=True),
+            expiry=expiry,
+            user_delegation_oid=user_delegation_oid
+        )
+        file_client = DataLakeFileClient(
+            f"{account_url}?{file_token}",
+            file_system_name=file_system_name,
+            file_path=f"{directory_name}/{file_name}",
+            credential=token_credential
+        )
+        content = file_client.download_file().readall()
+        assert content == data
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

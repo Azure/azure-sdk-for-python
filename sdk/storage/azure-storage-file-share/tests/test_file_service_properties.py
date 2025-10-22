@@ -14,6 +14,7 @@ from azure.storage.fileshare import (
     ShareProtocolSettings,
     ShareServiceClient,
     ShareSmbSettings,
+    SmbEncryptionInTransit,
     SmbMultichannel
 )
 
@@ -76,32 +77,50 @@ class TestFileServiceProperties(StorageRecordedTestCase):
 
         self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
 
-        protocol_properties1 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=False)))
-        protocol_properties2 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=True)))
+        protocol_properties1 = ShareProtocolSettings(
+            smb=ShareSmbSettings(
+                multichannel=SmbMultichannel(enabled=False),
+                encryption_in_transit=SmbEncryptionInTransit(required=False)
+            )
+        )
+        protocol_properties2 = ShareProtocolSettings(
+            smb=ShareSmbSettings(
+                multichannel=SmbMultichannel(enabled=True),
+                encryption_in_transit=SmbEncryptionInTransit(required=True)
+            )
+        )
 
-        # Act
         resp = self.fsc.set_service_properties(
-            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[], protocol=protocol_properties1)
-        # Assert
+            hour_metrics=Metrics(),
+            minute_metrics=Metrics(),
+            cors=[],
+            protocol=protocol_properties1
+        )
         assert resp is None
         props = self.fsc.get_service_properties()
         self._assert_metrics_equal(props['hour_metrics'], Metrics())
         self._assert_metrics_equal(props['minute_metrics'], Metrics())
         self._assert_cors_equal(props['cors'], [])
         assert props['protocol'].smb.multichannel.enabled == False
-        # Assert
-        with pytest.raises(ValueError):
+        assert props['protocol'].smb.encryption_in_transit.required == False
+
+        with pytest.raises(TypeError):
             ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))
         with pytest.raises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings())
         with pytest.raises(ValueError):
             ShareProtocolSettings()
 
-        # Act
-        self.fsc.set_service_properties(
-            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[], protocol=protocol_properties2)
+        resp = self.fsc.set_service_properties(
+            hour_metrics=Metrics(),
+            minute_metrics=Metrics(),
+            cors=[],
+            protocol=protocol_properties2
+        )
+        assert resp is None
         props = self.fsc.get_service_properties()
         assert props['protocol'].smb.multichannel.enabled == True
+        assert props['protocol'].smb.encryption_in_transit.required == True
 
     # --Test cases per feature ---------------------------------------
     @FileSharePreparer()
