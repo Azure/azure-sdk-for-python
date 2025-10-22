@@ -1012,7 +1012,7 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    
+
     # Fix docstring formatting issues for Sphinx documentation
     from ._models import (
         AttestOpenEnclaveRequest,
@@ -1029,7 +1029,7 @@ def patch_sdk():
         TcbBaseline,
         TcbBaselineResult,
     )
-    
+
     # Fix AttestOpenEnclaveRequest docstring
     AttestOpenEnclaveRequest.__doc__ = """Attestation request for Intel SGX enclaves.
 
@@ -1044,7 +1044,7 @@ def patch_sdk():
     :ivar nonce: Nonce for incoming request - emitted in the generated attestation token.
     :vartype nonce: str
     """
-    
+
     # Fix AttestSgxEnclaveRequest docstring
     AttestSgxEnclaveRequest.__doc__ = """Attestation request for Intel SGX enclaves.
 
@@ -1059,7 +1059,7 @@ def patch_sdk():
     :ivar nonce: Nonce for incoming request - emitted in the generated attestation token.
     :vartype nonce: str
     """
-    
+
     # Fix InitTimeData docstring
     InitTimeData.__doc__ = """Initialization time data for Trusted Execution Environment (TEE).
 
@@ -1068,7 +1068,7 @@ def patch_sdk():
     :ivar data_type: The type of data contained within the data field.
     :vartype data_type: str or ~azure.security.attestation.models.DataType
     """
-    
+
     # Fix RuntimeData docstring
     RuntimeData.__doc__ = """Runtime data provided during attestation.
 
