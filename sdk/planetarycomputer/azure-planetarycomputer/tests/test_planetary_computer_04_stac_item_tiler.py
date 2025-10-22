@@ -747,3 +747,40 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         
         test_logger.info("Test PASSED\n")
 
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_19_get_assets_info(self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id):
+        """
+        Test getting detailed information about specific assets.
+        
+        Expected response:
+        - Object with asset information including metadata
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_19_get_assets_info")
+        test_logger.info("=" * 80)
+        test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
+        test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
+        test_logger.info(f"Input - item_id: {planetarycomputer_item_id}")
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        test_logger.info("Calling: get_assets_info(...)")
+        response = client.tiler.get_assets_info(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            assets=["image"]
+        )
+        
+        test_logger.info(f"Response type: {type(response)}")
+        test_logger.info(f"Response: {response}")
+        
+        # Log response details
+        if hasattr(response, 'as_dict'):
+            response_dict = response.as_dict()
+            test_logger.info(f"Response dict keys: {list(response_dict.keys())}")
+            test_logger.info(f"Response dict: {response_dict}")
+        elif isinstance(response, dict):
+            test_logger.info(f"Response keys: {list(response.keys())}")
+
+

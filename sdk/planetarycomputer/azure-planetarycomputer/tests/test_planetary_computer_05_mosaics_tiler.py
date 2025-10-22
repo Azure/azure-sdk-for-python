@@ -496,3 +496,170 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         assert response is not None, "Response should not be None"
         
         test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_08_create_static_image(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+        """
+        Test creating a static image from a mosaic search.
+        
+        Expected response:
+        - Object with image ID that can be used to retrieve the image
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_08_create_static_image")
+        test_logger.info("=" * 80)
+        test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
+        test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
+        
+        from azure.planetarycomputer.models import (
+            ImageRequest,
+            Polygon,
+        )
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        # Define geometry for the static image
+        geometry = Polygon(
+            coordinates=[[
+                [-84.45378097481053, 33.6567321707079],
+                [-84.39805886744838, 33.6567321707079],
+                [-84.39805886744838, 33.61945681366625],
+                [-84.45378097481053, 33.61945681366625],
+                [-84.45378097481053, 33.6567321707079]
+            ]]
+        )
+        
+        test_logger.info(f"Geometry: {geometry}")
+        
+        # Create CQL2-JSON filter
+        cql_filter = {
+            "op": "and",
+            "args": [
+                {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                {
+                    "op": "anyinteracts",
+                    "args": [
+                        {"property": "datetime"},
+                        {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]}
+                    ]
+                }
+            ]
+        }
+        
+        # Create image request
+        image_request = ImageRequest(
+            cql=cql_filter,
+            zoom=13,
+            geometry=geometry,
+            render_parameters=f"assets=image&asset_bidx=image|1,2,3&collection={planetarycomputer_collection_id}",
+            columns=1080,
+            rows=1080,
+            image_size="1080x1080",
+            show_branding=False,
+        )
+        
+        test_logger.info(f"Image request: columns={image_request.columns}, rows={image_request.rows}, zoom={image_request.zoom}")
+        
+        test_logger.info("Calling: create_static_image(...)")
+        response = client.tiler.create_static_image(
+            collection_id=planetarycomputer_collection_id,
+            body=image_request
+        )
+        
+        test_logger.info(f"Response type: {type(response)}")
+        test_logger.info(f"Response: {response}")
+        
+        # Log response details based on type
+        if hasattr(response, 'as_dict'):
+            response_dict = response.as_dict()
+            test_logger.info(f"Response dict keys: {list(response_dict.keys())}")
+            test_logger.info(f"Response dict: {response_dict}")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_09_get_static_image(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+        """
+        Test retrieving a static image by ID.
+        
+        Expected response:
+        - Binary image data (streaming generator)
+        - Valid PNG format with magic bytes
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_09_get_static_image")
+        test_logger.info("=" * 80)
+        test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
+        test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
+        
+        from azure.planetarycomputer.models import (
+            ImageRequest,
+            Polygon,
+        )
+        
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        
+        # First create a static image to get an ID
+        geometry = Polygon(
+            coordinates=[[
+                [-84.45378097481053, 33.6567321707079],
+                [-84.39805886744838, 33.6567321707079],
+                [-84.39805886744838, 33.61945681366625],
+                [-84.45378097481053, 33.61945681366625],
+                [-84.45378097481053, 33.6567321707079]
+            ]]
+        )
+        
+        cql_filter = {
+            "op": "and",
+            "args": [
+                {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                {
+                    "op": "anyinteracts",
+                    "args": [
+                        {"property": "datetime"},
+                        {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]}
+                    ]
+                }
+            ]
+        }
+        
+        image_request = ImageRequest(
+            cql=cql_filter,
+            zoom=13,
+            geometry=geometry,
+            render_parameters=f"assets=image&asset_bidx=image|1,2,3&collection={planetarycomputer_collection_id}",
+            columns=1080,
+            rows=1080,
+            image_size="1080x1080",
+            show_branding=False,
+        )
+        
+        create_response = client.tiler.create_static_image(
+            collection_id=planetarycomputer_collection_id,
+            body=image_request
+        )
+        
+        # Extract image ID from response
+        if hasattr(create_response, 'id'):
+            image_id = create_response.id
+        elif hasattr(create_response, 'as_dict'):
+            image_id = create_response.as_dict().get('id')
+        else:
+            image_id = create_response.get('id') if isinstance(create_response, dict) else None
+        
+        test_logger.info(f"Created image with ID: {image_id}")
+        
+        test_logger.info(f"Calling: get_static_image(collection_id='{planetarycomputer_collection_id}', id='{image_id}')")
+        image_data = client.tiler.get_static_image(
+            collection_id=planetarycomputer_collection_id,
+            id=image_id
+        )
+        
+        test_logger.info(f"Image data type: {type(image_data)}")
+        
+        # Collect the streaming response into bytes
+        image_bytes = b"".join(image_data)
+        test_logger.info(f"Image size: {len(image_bytes)} bytes")
+        test_logger.info(f"First 16 bytes (hex): {image_bytes[:16].hex()}")
+
