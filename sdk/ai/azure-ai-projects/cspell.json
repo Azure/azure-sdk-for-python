@@ -14,7 +14,9 @@
         "fspath",
         "Clippy",
         "Bellingshausen",
-        "Lazarev"
+        "Lazarev",
+        "ROYGBIV",
+        "aiofiles"
     ],
     "ignorePaths": [
     ]
