@@ -1,19 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import ScoreModelGrader
+
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
 
 
 @experimental
 class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
-    """
-    Wrapper class for OpenAI's score model graders.
+    """Wrapper class for OpenAI's score model graders.
 
     Enables continuous scoring evaluation with custom prompts and flexible
     conversation-style inputs. Supports configurable score ranges and
@@ -25,10 +26,8 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     evaluation results.
 
     :param model_config: The model configuration to use for the grader.
-    :type model_config: Union[
-        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evaluation.OpenAIModelConfiguration
-    ]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param input: The input messages for the grader. List of conversation
         messages with role and content.
     :type input: List[Dict[str, str]]
@@ -43,6 +42,8 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     :type pass_threshold: Optional[float]
     :param sampling_params: The sampling parameters for the model.
     :type sampling_params: Optional[Dict[str, Any]]
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
     """
@@ -59,6 +60,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
         range: Optional[List[float]] = None,
         pass_threshold: Optional[float] = None,
         sampling_params: Optional[Dict[str, Any]] = None,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
         # Validate range and pass_threshold
@@ -88,4 +90,4 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
 
         grader = ScoreModelGrader(**grader_kwargs)
 
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

@@ -172,7 +172,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         process_timeout = kwargs.pop("process_timeout", 10)
         require_envvar = kwargs.pop("require_envvar", False)
-        if require_envvar and not os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS):
+        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
+        if require_envvar and not token_credentials_env:
             raise ValueError(
                 "AZURE_TOKEN_CREDENTIALS environment variable is required but is not set or is empty. "
                 "Set it to 'dev', 'prod', or a specific credential name."
@@ -274,18 +275,16 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
+                    _enable_imds_probe=token_credentials_env != "managedidentitycredential",
                     **kwargs,
                 )
             )
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
-            try:
-                # username and/or tenant_id are only required when the cache contains tokens for multiple identities
-                shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
-                )
-                credentials.append(shared_cache)
-            except Exception as ex:  # pylint:disable=broad-except
-                _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
+            # username and/or tenant_id are only required when the cache contains tokens for multiple identities
+            shared_cache = SharedTokenCacheCredential(
+                username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
+            )
+            credentials.append(shared_cache)
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:

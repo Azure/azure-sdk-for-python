@@ -1,0 +1,1 @@
+This folder contains a beta release `pyproject.toml` scenario for azure-mgmt-planetarycomputer with invalid metadata (missing author name and homepage). We use this to ensure that our metadata verification within ParsedSetup properly detects missing required fields for beta packages.

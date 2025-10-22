@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from collections import deque
 from typing import Deque, Dict, List, Optional, Union
 from urllib.parse import urlparse
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from ._rai_client import RAIClient
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException

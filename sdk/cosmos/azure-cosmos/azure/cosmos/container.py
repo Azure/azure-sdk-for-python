@@ -18,14 +18,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import threading
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, cast, overload, Iterable, Callable
+from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -34,40 +33,31 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from . import _utils as utils
-from ._base import (
-    build_options,
-    validate_cache_staleness_value,
-    _deserialize_throughput,
-    _replace_throughput,
-    GenerateGuidId,
-    _build_properties_cache
-)
+from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
+                    GenerateGuidId, validate_cache_staleness_value)
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
+from .exceptions import CosmosHttpResponseError
 from .offer import Offer, ThroughputProperties
-from .partition_key import (
-    NonePartitionKeyValue,
-    PartitionKey,
-    _PartitionKeyType,
-    _SequentialPartitionKeyType,
-    _build_partition_key_from_properties,
-    _return_undefined_or_empty_partition_key, NullPartitionKeyValue,
-)
+from .partition_key import (_build_partition_key_from_properties, PartitionKeyType,
+                            _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
+                            NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
 from .scripts import ScriptsProxy
 
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=too-many-lines,disable=protected-access
+# pylint: disable=too-many-lines,disable=protected-access,line-too-long
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
+# cspell:ignore rerank reranker reranking
 
-def get_epk_range_for_partition_key(
-        container_properties: Dict[str, Any],
-        partition_key_value: _PartitionKeyType) -> Range:
+def _get_epk_range_for_partition_key(
+        container_properties: dict[str, Any],
+        partition_key_value: PartitionKeyType) -> Range:
     partition_key_obj: PartitionKey = _build_partition_key_from_properties(container_properties)
     return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
 
@@ -91,7 +81,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[Dict[str, Any]] = None
+        properties: Optional[dict[str, Any]] = None
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
@@ -107,13 +97,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def _get_properties_with_options(self, options: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         kwargs = {}
         if options and "excludedLocations" in options:
             kwargs['excluded_locations'] = options['excludedLocations']
         return self._get_properties(**kwargs)
 
-    def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
+    def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
         if self.container_link not in self.__get_client_container_caches():
             with self.container_cache_lock:
                 if self.container_link not in self.__get_client_container_caches():
@@ -147,15 +137,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _set_partition_key(
         self,
-        partition_key: _PartitionKeyType
-    ) -> _PartitionKeyType:
+        partition_key: PartitionKeyType
+    ) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         if partition_key == NullPartitionKeyValue:
             return None
-        return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
+        return cast(Union[str, int, float, bool, list[Union[str, int, float, bool]]], partition_key)
 
-    def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
+    def __get_client_container_caches(self) -> dict[str, dict[str, Any]]:
         return self.client_connection._container_properties_cache
 
     @distributed_trace
@@ -166,10 +156,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         populate_quota_info: Optional[bool] = None,
         *,
         priority: Optional[Literal["High", "Low"]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :param bool populate_partition_key_range_statistics: Enable returning partition key
@@ -181,7 +171,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -219,32 +209,31 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         post_trigger_include: Optional[str] = None,
         *,
         session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
-        :type item: Union[str, Dict[str, Any]]
+        :type item: Union[str, dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve. If the partition key is set to None, it will try
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -252,7 +241,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -300,14 +289,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def read_items(
             self,
-            items: Sequence[Tuple[str, _PartitionKeyType]],
+            items: Sequence[Tuple[str, PartitionKeyType]],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: int = 10,
+            max_concurrency: Optional[int] = None,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            excluded_locations: Optional[List[str]] = None,
+            initial_headers: Optional[dict[str, str]] = None,
+            excluded_locations: Optional[list[str]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
@@ -318,15 +307,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         issuing multiple individual point reads.
 
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
-        :type items: List[Tuple[str, PartitionKeyType]]
+        :type items: list[Tuple[str, PartitionKeyType]]
         :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
                       If not provided, a new executor will be created as needed.
         :keyword int max_concurrency: The maximum number of concurrent operations for the
-                      items request. This value is ignored if an executor is provided. Defaults to 10.
+                      items request. This value is ignored if an executor is provided. If not specified,
+                      the default max_concurrency defined by Python's ThreadPoolExecutor will be applied.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -372,20 +362,20 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         populate_query_metrics: Optional[bool] = None,
         *,
         session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """List all the items in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -393,12 +383,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -438,12 +428,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            partition_key: _PartitionKeyType,
+            partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -458,8 +448,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             fetch the changes for an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -469,14 +458,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         ...
 
@@ -484,18 +473,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_items_change_feed(
             self,
             *,
-            feed_range: Dict[str, Any],
+            feed_range: dict[str, Any],
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -512,14 +501,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         ...
 
@@ -530,9 +519,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
@@ -542,14 +531,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         ...
 
@@ -561,9 +550,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
          in the order in which they were modified,
 
@@ -583,14 +572,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         ...
 
@@ -599,18 +588,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *args: Any,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
-        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container). If the partition key is set to None, it will try to
             fetch the changes for an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -626,15 +614,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :param Any args: args
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
 
         # pylint: disable=too-many-statements
@@ -655,9 +643,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         container_properties = self._get_properties_with_options(feed_options)
         if "partition_key" in kwargs:
             partition_key = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(_PartitionKeyType, partition_key))
+            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = \
-                get_epk_range_for_partition_key(container_properties, partition_key)
+                _get_epk_range_for_partition_key(container_properties, partition_key)
         if "feed_range" in kwargs:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
@@ -679,23 +667,23 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_items(
             self,
             query: str,
+            parameters: Optional[list[dict[str, object]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            enable_cross_partition_query: Optional[bool] = None,
+            max_item_count: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
             *,
             continuation_token_limit: Optional[int] = None,
-            enable_cross_partition_query: Optional[bool] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
+            initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            max_item_count: Optional[int] = None,
-            parameters: Optional[List[Dict[str, object]]] = None,
-            partition_key: Optional[_PartitionKeyType] = None,
             populate_index_metrics: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> ItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -704,45 +692,44 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         the WHERE clause.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
-            response. Valid values are positive integers.
-            A value of 0 is the same as not passing a value (default no limit).
-        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
-        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
-            indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
-            If all preferred locations were excluded, primary/hub location will be used.
-            This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
-            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
-            responses are guaranteed to be no staler than this value.
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword parameters: Optional array of parameters to the query.
+        :param parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
-        :paramtype parameters: [List[Dict[str, object]]]
-        :keyword partition_key: Partition key at which the query request is targeted. If the partition key is set to
+        :type parameters: [list[dict[str, object]]]
+        :param partition_key: Partition key at which the query request is targeted. If the partition key is set to
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
+        :param bool enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
-        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: ItemPaged[dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -770,19 +757,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation_token_limit: Optional[int] = None,
             enable_cross_partition_query: Optional[bool] = None,
             enable_scan_in_query: Optional[bool] = None,
-            feed_range: Optional[Dict[str, Any]] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
+            feed_range: dict[str, Any],
+            initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
-            parameters: Optional[List[Dict[str, object]]] = None,
+            parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> ItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -799,12 +786,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             More than one request is necessary if the query is not scoped to single partition key value.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -812,7 +799,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
-        :paramtype parameters: [List[Dict[str, object]]]
+        :paramtype parameters: [list[dict[str, object]]]
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -821,11 +808,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: ItemPaged[dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -850,7 +837,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         *args: Any,
         **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -867,12 +854,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             More than one request is necessary if the query is not scoped to single partition key value.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -880,12 +867,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
-        :paramtype parameters: [List[Dict[str, object]]]
+        :paramtype parameters: [list[dict[str, object]]]
         :keyword partition_key: Partition key at which the query request is targeted. If the partition key is set to
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -895,11 +881,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword str query: The Azure Cosmos DB SQL query to execute.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: ItemPaged[dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -984,23 +970,68 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return items
 
     @distributed_trace
+    def semantic_rerank(
+        self,
+        *,
+        context: str,
+        documents: list[str],
+        options: Optional[dict[str, Any]] = None
+    ) -> CosmosDict:
+        """ **provisional** Rerank a list of documents using semantic reranking.
+
+        This method uses a semantic reranker to score and reorder the provided documents
+        based on their relevance to the given reranking context.
+
+        :keyword str context: The reranking context or query string to use for reranking the documents.
+        :keyword list[str] documents: A list of documents (as strings) to be reranked.
+        :keyword dict[str, Any] options: Optional dictionary of additional request options to customize the semantic reranking process.
+
+         Supported options:
+         * **return_documents** (bool): Whether to return the document text in the response. If False, only scores and indices are returned. Default is True.
+         * **top_k** (int): Maximum number of documents to return in the reranked results. If not specified, all documents are returned.
+         * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
+         * **sort** (bool): Whether to sort the results by relevance score in descending order. Default is True.
+         * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
+         * **target_paths** (str): If document_type is "json", the list of JSON paths to extract text from for reranking. Comma-separated string.
+
+        :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
+        """
+
+        inference_service = self.client_connection._get_inference_service()
+        if inference_service is None:
+            raise CosmosHttpResponseError(
+                message="Semantic reranking requires AAD credentials (inference service not initialized).",
+                response=None
+            )
+
+        result = inference_service.rerank(
+            reranking_context=context,
+            documents=documents,
+            semantic_reranking_options=options
+        )
+
+        return result
+
+    @distributed_trace
     def replace_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        body: Dict[str, Any],
+        body: dict[str, Any],
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         *,
         session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -1008,29 +1039,29 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If the item does not already exist in the container, an exception is raised.
 
         :param item: The ID (name) or dict representing item to be replaced.
-        :type item: Union[str, Dict[str, Any]]
+        :type item: Union[str, dict[str, Any]]
         :param body: A dict representing the item to replace.
-        :type body: Dict[str, Any]
+        :type body: dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             kwargs or when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1084,20 +1115,20 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
         self,
-        body: Dict[str, Any],
+        body: dict[str, Any],
         populate_query_metrics: Optional[bool]=None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         *,
         session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -1106,27 +1137,27 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         does not already exist, it is inserted.
 
         :param body: A dict-like object representing the item to update or insert.
-        :type body: Dict[str, Any]
+        :type body: dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1178,7 +1209,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
         self,
-        body: Dict[str, Any],
+        body: dict[str, Any],
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1186,12 +1217,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         *,
         enable_automatic_id_generation: bool = False,
         session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -1200,7 +1231,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
-        :type body: Dict[str, Any]
+        :type body: dict[str, Any]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :param indexing_directive: Enumerates the possible values to indicate whether the document should
@@ -1208,20 +1239,20 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1279,9 +1310,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def patch_item(
         self,
-        item: Union[str, Dict[str, Any]],
-        partition_key: _PartitionKeyType,
-        patch_operations: List[Dict[str, Any]],
+        item: Union[str, dict[str, Any]],
+        partition_key: PartitionKeyType,
+        patch_operations: list[dict[str, Any]],
         *,
         filter_predicate: Optional[str] = None,
         pre_trigger_include: Optional[str] = None,
@@ -1291,9 +1322,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
@@ -1302,15 +1333,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If the item does not already exist in the container, an exception is raised.
 
         :param item: The ID (name) or dict representing item to be patched.
-        :type item: Union[str, Dict[str, Any]]
+        :type item: Union[str, dict[str, Any]]
         :param partition_key: The partition key of the object to patch. If the partition key is set to None,
             it will try to patch an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param patch_operations: The list of patch operations to apply to the item.
-        :type patch_operations: List[Dict[str, Any]]
+        :type patch_operations: list[dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
@@ -1319,18 +1349,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1378,27 +1408,26 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def execute_item_batch(
         self,
-        batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
-        partition_key: _PartitionKeyType,
+        batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
+        partition_key: PartitionKeyType,
         *,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], List[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, str], list[dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
-        :type batch_operations: List[Tuple[Any]]
+        :type batch_operations: list[Tuple[Any]]
         :param partition_key: The partition key value of the batch operations. If the partition key is set to None, it
             will try to execute batch on an item with a partition key value of null. To learn more about using partition
             keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1406,16 +1435,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: [Callable[[Mapping[str, str], List[Dict[str, Any]]], None]
+        :paramtype response_hook: [Callable[[Mapping[str, str], list[dict[str, Any]]], None]
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-        :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
+        :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
         etag = kwargs.get('etag')
         if etag is not None:
@@ -1455,17 +1484,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         *,
         session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
@@ -1475,28 +1504,27 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If the item does not already exist in the container, an exception is raised.
 
         :param item: The ID (name) or dict representing item to be deleted.
-        :type item: Union[str, Dict[str, Any]]
+        :type item: Union[str, dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item. If the partition key is set to None,
             it will try to delete an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1560,20 +1588,20 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def get_throughput(
             self,
             *,
-            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
             **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], list[dict[str, Any]]], None]
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        throughput_properties: List[Dict[str, Any]]
+        throughput_properties: list[dict[str, Any]]
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -1592,6 +1620,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
@@ -1600,12 +1630,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        throughput_properties: List[Dict[str, Any]]
+        throughput_properties: list[dict[str, Any]]
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -1617,7 +1649,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
-            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
+            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], response_hook=response_hook, **kwargs)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
@@ -1626,14 +1658,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         max_item_count: Optional[int] = None,
         *,
-        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
         **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """List all the conflicts in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -1654,32 +1686,31 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_conflicts(
         self,
         query: str,
-        parameters: Optional[List[Dict[str, object]]] = None,
+        parameters: Optional[list[dict[str, object]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
-        partition_key: Optional[_PartitionKeyType] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
         *,
-        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
         **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: List[Dict[str, object]]
+        :type parameters: list[dict[str, object]]
         :param bool enable_cross_partition_query: Allows sending of more than one request to execute
             the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
         :param partition_key: Specifies the partition key value for the item. If the partition key is set to None,
             it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+        :paramtype response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
         :returns: An Iterable of conflicts (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
@@ -1705,23 +1736,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def get_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
-        :type conflict: Union[str, Dict[str, Any]]
+        :type conflict: Union[str, dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve. If the partition key is set to None,
             it will try to fetch a conflict with a partition key of null. To learn more about using partition keys, see
             `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
-        :rtype: Dict[str, Any]
+        :returns: A CosmosDict representing the retrieved conflict.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -1736,7 +1766,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         **kwargs: Any
     ) -> None:
         """Delete a specified conflict from the container.
@@ -1744,13 +1774,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If the conflict does not already exist in the container, an exception is raised.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
-        :type conflict: Union[str, Dict[str, Any]]
+        :type conflict: Union[str, dict[str, Any]]
         :param partition_key: Partition key for the conflict to delete. If the partition key is set to None, it will
             try to delete a conflict with a partition key value of null. To learn more about using partition keys, see
             `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
@@ -1768,7 +1797,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def delete_all_items_by_partition_key(
         self,
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         *,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1786,13 +1815,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param partition_key: Partition key for the items to be deleted. If the partition key is set to None, it will
             try to delete the items with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1837,14 +1865,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *,
             force_refresh: bool = False,
-            **kwargs: Any) -> Iterable[Dict[str, Any]]:
+            **kwargs: Any) -> Iterable[dict[str, Any]]:
 
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
         :keyword bool force_refresh:
             Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
         :returns: A list representing the feed ranges in base64 encoded string
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys
@@ -1854,7 +1882,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
-        def get_next(continuation_token:str) -> List[Dict[str, Any]]: # pylint: disable=unused-argument
+        def get_next(continuation_token:str) -> list[dict[str, Any]]: # pylint: disable=unused-argument
             partition_key_ranges = \
                 self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
                     self.container_link,
@@ -1866,15 +1894,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             return feed_ranges
 
-        def extract_data(feed_ranges_response: List[Dict[str, Any]]):
+        def extract_data(feed_ranges_response: list[dict[str, Any]]):
             return None, iter(feed_ranges_response)
 
         return ItemPaged(get_next, extract_data)
 
     def get_latest_session_token(
             self,
-            feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
-            target_feed_range: Dict[str, Any]
+            feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
+            target_feed_range: dict[str, Any]
     ) -> str:
         """ **provisional** This method is still in preview and may be subject to breaking changes.
 
@@ -1884,15 +1912,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         the CosmosClient instance will keep track of session token. Session tokens and feed ranges are
         scoped to a container. Only input session tokens and feed ranges obtained from the same container.
         :param feed_ranges_to_session_tokens: List of feed range and session token tuples.
-        :type feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]]
+        :type feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]]
         :param target_feed_range: feed range to get most up to date session token.
-        :type target_feed_range: Dict[str, Any]
+        :type target_feed_range: dict[str, Any]
         :returns: a session token
         :rtype: str
         """
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
-    def feed_range_from_partition_key(self, partition_key: _PartitionKeyType) -> Dict[str, Any]:
+    def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> dict[str, Any]:
         """Gets the feed range for a given partition key.
 
         :param partition_key: Partition key value used to derive the feed range. If set to ``None`` a feed range
@@ -1901,7 +1929,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: PartitionKeyType
         :returns: A feed range corresponding to the supplied partition key value.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys
@@ -1910,15 +1938,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         container_properties = self._get_properties()
         partition_key_value = self._set_partition_key(partition_key)
-        epk_range_for_partition_key = get_epk_range_for_partition_key(container_properties, partition_key_value)
+        epk_range_for_partition_key = _get_epk_range_for_partition_key(container_properties, partition_key_value)
         return FeedRangeInternalEpk(epk_range_for_partition_key).to_dict()
 
-    def is_feed_range_subset(self, parent_feed_range: Dict[str, Any], child_feed_range: Dict[str, Any]) -> bool:
+    def is_feed_range_subset(self, parent_feed_range: dict[str, Any], child_feed_range: dict[str, Any]) -> bool:
         """ Checks if child feed range is a subset of parent feed range.
         :param parent_feed_range: left feed range
-        :type parent_feed_range: Dict[str, Any]
+        :type parent_feed_range: dict[str, Any]
         :param child_feed_range: right feed range
-        :type child_feed_range: Dict[str, Any]
+        :type child_feed_range: dict[str, Any]
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
 

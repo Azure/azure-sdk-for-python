@@ -37,7 +37,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class CognitiveServicesManagementClientOperationsMixin(  # pylint: disable=name-too-long
+class _CognitiveServicesManagementClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], CognitiveServicesManagementClientConfiguration]
 ):
 

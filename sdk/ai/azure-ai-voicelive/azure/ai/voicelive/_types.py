@@ -10,5 +10,5 @@ from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
-Voice = Union[str, "_models.OAIVoice", "_models.OpenAIVoice", "_models.AzureVoice", "_models.Phi4mmVoice"]
-ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceObject"]
+Voice = Union[str, "_models.OpenAIVoiceName", "_models.OpenAIVoice", "_models.AzureVoice"]
+ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceSelection"]

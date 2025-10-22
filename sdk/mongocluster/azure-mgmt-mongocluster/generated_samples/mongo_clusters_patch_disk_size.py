@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/MongoClusters_PatchDiskSize.json
+# x-ms-original-file: 2025-09-01/MongoClusters_PatchDiskSize.json
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ from azure.core.credentials import AccessToken
 import test_config
 from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
-
+from azure.core.exceptions import HttpResponseError
 
 def _remove_padding(encoded_string):
     while encoded_string.endswith("="):
@@ -34,7 +34,6 @@ def get_test_item(num):
 
 
 class CosmosEmulatorCredential(object):
-
     async def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for the emulator. Based on Azure Core's Access Token Credential.
@@ -131,38 +130,141 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 403
             print("403 error assertion success")
 
-    async def test_aad_scope_override_async(self):
-        override_scope = "https://my.custom.scope/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
-
+    async def _run_with_scope_capture_async(self, credential_cls, action):
         scopes_captured = []
-        original_get_token = CosmosEmulatorCredential.get_token
+
+        orig_get_token = credential_cls.get_token
 
         async def capturing_get_token(self, *scopes, **kwargs):
             scopes_captured.extend(scopes)
-            # Await the original method!
-            return await original_get_token(self, *scopes, **kwargs)
+            return await orig_get_token(self, *scopes, **kwargs)
 
-        CosmosEmulatorCredential.get_token = capturing_get_token
-
+        credential_cls.get_token = capturing_get_token
         try:
+            result = await action(scopes_captured)
+            return scopes_captured, result
+        finally:
+            credential_cls.get_token = orig_get_token
+
+    async def test_override_scope_no_fallback_async(self):
+        """When override scope is provided, only that scope is used and no fallback occurs."""
+        override_scope = "https://my.custom.scope/.default"
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+
+        async def action(scopes_captured):
             credential = CosmosEmulatorCredential()
             client = CosmosClient(self.host, credential)
-            database = client.get_database_client(self.configs.TEST_DATABASE_ID)
-            container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            try:
+                db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                await container.create_item(get_test_item(20))
+                return container
+            finally:
+                await client.close()
 
-            await container.create_item(get_test_item(1))
-            item = await container.read_item(item='Item_1', partition_key='pk')
-            assert item["id"] == "Item_1"
-            assert override_scope in scopes_captured
+        scopes, container = await self._run_with_scope_capture_async(CosmosEmulatorCredential, action)
+        try:
+            assert all(scope == override_scope for scope in scopes), f"Expected only override scope, got: {scopes}"
         finally:
-            CosmosEmulatorCredential.get_token = original_get_token
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
             try:
-                await container.delete_item(item='Item_1', partition_key='pk')
+                await container.delete_item(item='Item_20', partition_key='pk')
             except Exception:
                 pass
-            await client.close()
+
+    async def test_override_scope_no_fallback_on_error_async(self):
+        """When override scope is provided and auth fails, no fallback occurs."""
+        override_scope = "https://my.custom.scope/.default"
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+
+        class FailingCredential(CosmosEmulatorCredential):
+            async def get_token(self, *scopes, **kwargs):
+                raise Exception("AADSTS500011: Simulated error for override scope")
+
+        async def action(scopes_captured):
+            credential = FailingCredential()
+            client = CosmosClient(self.host, credential)
+            try:
+                db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                try:
+                    await container.create_item(get_test_item(21))
+                except Exception:
+                    pass
+                return container
+            finally:
+                await client.close()
+
+        scopes, container = await self._run_with_scope_capture_async(FailingCredential, action)
+        try:
+            assert all(scope == override_scope for scope in scopes), f"Expected only override scope, got: {scopes}"
+        finally:
+            del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
+            try:
+                await container.delete_item(item='Item_21', partition_key='pk')
+            except Exception:
+                pass
+
+    async def test_account_scope_only_async(self):
+        """When account scope is provided, only that scope is used."""
+        account_scope = "https://localhost/.default"
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+
+        async def action(scopes_captured):
+            credential = CosmosEmulatorCredential()
+            client = CosmosClient(self.host, credential)
+            try:
+                db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                await container.create_item(get_test_item(22))
+                return container
+            finally:
+                await client.close()
+
+        scopes, container = await self._run_with_scope_capture_async(CosmosEmulatorCredential, action)
+        try:
+            assert all(scope == account_scope for scope in scopes), f"Expected only account scope, got: {scopes}"
+        finally:
+            try:
+                await container.delete_item(item='Item_22', partition_key='pk')
+            except Exception:
+                pass
+
+    async def test_account_scope_fallback_on_error_async(self):
+        """When account scope is provided and auth fails, fallback to default scope occurs."""
+        account_scope = "https://localhost/.default"
+        fallback_scope = "https://cosmos.azure.com/.default"
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+
+        class FallbackCredential(CosmosEmulatorCredential):
+            def __init__(self):
+                self.call_count = 0
+
+            async def get_token(self, *scopes, **kwargs):
+                self.call_count += 1
+                if self.call_count == 1:
+                    raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
+                return await super().get_token(*scopes, **kwargs)
+
+        async def action(scopes_captured):
+            credential = FallbackCredential()
+            client = CosmosClient(self.host, credential)
+            try:
+                db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                await container.create_item(get_test_item(23))
+                return container
+            finally:
+                await client.close()
+
+        scopes, container = await self._run_with_scope_capture_async(FallbackCredential, action)
+        try:
+            assert account_scope in scopes and fallback_scope in scopes, f"Expected fallback to default scope, got: {scopes}"
+        finally:
+            try:
+                await container.delete_item(item='Item_23', partition_key='pk')
+            except Exception:
+                pass
 
 if __name__ == "__main__":
     unittest.main()

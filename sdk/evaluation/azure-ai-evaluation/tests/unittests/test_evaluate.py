@@ -82,6 +82,11 @@ def evaluate_test_data_alphanumeric():
 
 
 @pytest.fixture
+def evaluate_test_data_for_groundedness():
+    return _get_file("evaluate_test_data_for_groundedness.jsonl")
+
+
+@pytest.fixture
 def questions_file():
     return _get_file("questions.jsonl")
 
@@ -460,6 +465,31 @@ class TestEvaluate:
         assert "inputs.response123" in row_result_df.columns
         assert "inputs.query456" in row_result_df.columns
         assert "inputs.context789" in row_result_df.columns
+
+    def test_evaluate_groundedness_tool_result(self, mock_model_config, evaluate_test_data_for_groundedness):
+        # Validates if groundedness evaluator does not add tool_call results to tool call messages
+
+        result = evaluate(
+            data=evaluate_test_data_for_groundedness,
+            evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            fail_on_evaluator_errors=False,
+        )
+
+        # Verify that the test completed without errors related to column mapping format
+        # The test data has the fields with numeric characters, so it should work correctly
+        assert result is not None
+        # Verify we're getting data from the numerically-named fields
+        row_result_df = pd.DataFrame(result["rows"])
+        assert "inputs.response" in row_result_df.columns
+        assert "inputs.query" in row_result_df.columns
+
+        # Break down the assertion for better error handling
+        response_data = row_result_df["inputs.response"][0]
+        first_message = response_data[0]
+        content_data = first_message["content"][0]
+
+        # Now check if "tool_result" is in the keys
+        assert "tool_result" not in content_data.keys()
 
     def test_renaming_column(self):
         """Test that the columns are renamed correctly."""
@@ -975,6 +1005,82 @@ class TestEvaluate:
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1
 
+    def test_evaluate_evaluator_only_kwargs_param(self, evaluate_test_data_jsonl_file):
+        """Validate that an evaluator with only an **kwargs param receives all input in kwargs."""
+
+        def evaluator(**kwargs):
+            return locals()
+
+        result = evaluate(data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator})
+
+        assert len(result["rows"]) == 3
+
+        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][0]["outputs.test.kwargs"])
+        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][1]["outputs.test.kwargs"])
+        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][2]["outputs.test.kwargs"])
+
+    def test_evaluate_evaluator_kwargs_param(self, evaluate_test_data_jsonl_file):
+        """Validate that an evaluator with named parameters and **kwargs obeys python function call semantics."""
+
+        def evaluator(query, response, *, bar=None, **kwargs):
+            return locals()
+
+        result = evaluate(data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator})
+
+        assert len(result["rows"]) == 3
+
+        row1_kwargs = result["rows"][0]["outputs.test.kwargs"]
+        row2_kwargs = result["rows"][1]["outputs.test.kwargs"]
+        row3_kwargs = result["rows"][2]["outputs.test.kwargs"]
+
+        assert {"ground_truth", "context"}.issubset(row1_kwargs), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row1_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row2_kwargs), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row2_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row3_kwargs), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
+
+    def test_evaluate_evaluator_kwargs_param_column_mapping(self, evaluate_test_data_jsonl_file):
+        """Validate that an evaluator with kwargs can receive column mapped values."""
+
+        def evaluator(query, response, *, bar=None, **kwargs):
+            return locals()
+
+        result = evaluate(
+            data=evaluate_test_data_jsonl_file,
+            evaluators={"test": evaluator},
+            evaluator_config={
+                "default": {
+                    "column_mapping": {
+                        "query": "${data.query}",
+                        "response": "${data.response}",
+                        "foo": "${data.context}",
+                        "bar": "${data.ground_truth}",
+                    }
+                }
+            },
+        )
+
+        assert len(result["rows"]) == 3
+
+        row1_kwargs = result["rows"][0]["outputs.test.kwargs"]
+        row2_kwargs = result["rows"][1]["outputs.test.kwargs"]
+        row3_kwargs = result["rows"][2]["outputs.test.kwargs"]
+
+        assert {"ground_truth", "context"}.issubset(row1_kwargs), "Unnamed parameters should be in kwargs"
+        assert "foo" in row1_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row1_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row2_kwargs), "Unnamed parameters should be in kwargs"
+        assert "foo" in row2_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row2_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row3_kwargs), "Unnamed parameters should be in kwargs"
+        assert "foo" in row3_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
+
 
 @pytest.mark.unittest
 class TestTagsInLoggingFunctions:
@@ -1143,17 +1249,26 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8, "f1_score": 0.7}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
         tags = {"experiment": "test-exp", "version": "1.0", "model": "gpt-4"}
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function
         result = _log_metrics_and_instance_results_onedp(
@@ -1167,15 +1282,9 @@ class TestTagsInLoggingFunctions:
 
         # Verify that start_evaluation_run was called with tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags == tags
-        assert start_call_args.display_name == "test-evaluation"
-
-        # Verify that update_evaluation_run was called WITHOUT tags (not redundant)
-        mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert getattr(update_call_args, "tags", None) is None
-        assert update_call_args.status == "Completed"
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags == tags
 
         # Verify return value
         assert result == "https://test-uri"
@@ -1188,16 +1297,25 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
 
         # Call the function with None tags
         result = _log_metrics_and_instance_results_onedp(
@@ -1211,13 +1329,12 @@ class TestTagsInLoggingFunctions:
 
         # Verify that start_evaluation_run was called with None tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags is None
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags is None
 
-        # Verify that update_evaluation_run was called without tags
-        mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert not hasattr(update_call_args, "tags") or update_call_args.tags is None
+        # Verify return value
+        assert result == "https://test-uri"
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
@@ -1227,16 +1344,25 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Test data
         metrics = {"accuracy": 0.8}
         instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
-        project_url = "https://test-project.cognitiveservices.azure.com/"
+        project_url = "https://test-project.cognitiveservices.azure.com/api/projects/test-project"
         empty_tags = {}
 
         # Call the function with empty tags
@@ -1251,22 +1377,32 @@ class TestTagsInLoggingFunctions:
 
         # Verify that start_evaluation_run was called with empty tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
-        assert start_call_args.tags == {}
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags == {}
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
     def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self, mock_client_class, mock_token_manager):
-        """Test that tags are not redundantly set in update_evaluation_run."""
+        """Test that tags are properly included in properties for sync_evals."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
-        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
-        mock_client.update_evaluation_run.return_value = type(
-            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+
+        # Mock create_evaluation_result
+        mock_create_result = type("MockCreateResult", (), {"id": "test-result-id"})()
+        mock_client.create_evaluation_result.return_value = mock_create_result
+
+        # Mock start_evaluation_run
+        mock_start_result = type("MockStartResult", (), {"id": "test-run-id"})()
+        mock_client.start_evaluation_run.return_value = mock_start_result
+
+        # Mock update_evaluation_run
+        mock_update_result = type(
+            "MockUpdateResult", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
         )()
+        mock_client.update_evaluation_run.return_value = mock_update_result
 
         # Mock data for the test
         metrics = {"accuracy": 0.95}
@@ -1277,15 +1413,14 @@ class TestTagsInLoggingFunctions:
         _log_metrics_and_instance_results_onedp(
             metrics=metrics,
             instance_results=instance_results,
-            project_url="https://test-project.cognitiveservices.azure.com/",
+            project_url="https://test-project.cognitiveservices.azure.com/api/projects/test-project",
             evaluation_name="test-evaluation",
             name_map={},
             tags=tags,
         )
 
-        # Verify that update_evaluation_run was called without redundant tags
-        mock_client.update_evaluation_run.assert_called_once()
-        call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert (
-            not hasattr(call_args, "tags") or call_args.tags is None
-        ), "Tags should not be redundantly set in update_evaluation_run"
+        # Verify that start_evaluation_run was called with tags
+        mock_client.start_evaluation_run.assert_called_once()
+        call_args = mock_client.start_evaluation_run.call_args
+        eval_upload = call_args[1]["evaluation"]
+        assert eval_upload.tags == tags

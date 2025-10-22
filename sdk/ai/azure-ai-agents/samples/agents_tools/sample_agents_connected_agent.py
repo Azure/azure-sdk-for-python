@@ -25,7 +25,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import ConnectedAgentTool, MessageRole
+from azure.ai.agents.models import ConnectedAgentTool, ListSortOrder, MessageRole
 from azure.identity import DefaultAzureCredential
 
 
@@ -92,7 +92,7 @@ with project_client:
     print("Deleted stock price agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]

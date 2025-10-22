@@ -5,7 +5,7 @@
 
 from ._test_base import _BlobTest
 
-from devtools_testutils.perfstress_tests import RandomStream, get_random_bytes
+from devtools_testutils.perfstress_tests import RandomStream
 from devtools_testutils.perfstress_tests import AsyncRandomStream
 
 

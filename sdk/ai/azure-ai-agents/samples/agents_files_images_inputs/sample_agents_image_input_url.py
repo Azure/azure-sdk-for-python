@@ -28,6 +28,7 @@ from typing import List
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
+    ListSortOrder,
     MessageTextContent,
     MessageInputContentBlock,
     MessageImageUrlParam,
@@ -79,7 +80,7 @@ with project_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
     # The messages are following in the reverse order,
     # we will iterate them and output only text contents.

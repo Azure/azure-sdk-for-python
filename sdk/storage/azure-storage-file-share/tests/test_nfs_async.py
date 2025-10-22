@@ -58,7 +58,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
                     pass
 
     def teardown_method(self):
-        if self.fsc:
+        if self.is_live and self.fsc:
             try:
                 fsc = ShareServiceClient(
                     account_url=self.account_url,

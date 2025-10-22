@@ -268,12 +268,16 @@ class OperationGroup(VersionedObject):
         def _get_operation(code_model: "CodeModel", name: str) -> Operation:
             return Operation(code_model, name, operation_group=self)
 
-        self.operations = [o for o in _combine_helper(
-            code_model=self.code_model,
-            sorted_api_versions=api_versions,
-            get_cls=_get_operation,
-            get_names_by_api_version=_get_names_by_api_version,
-        ) if o.name != "_api_version"]
+        self.operations = [
+            o
+            for o in _combine_helper(
+                code_model=self.code_model,
+                sorted_api_versions=api_versions,
+                get_cls=_get_operation,
+                get_names_by_api_version=_get_names_by_api_version,
+            )
+            if o.name != "_api_version"
+        ]
 
     def doc(self, async_mode: bool) -> str:
         return strip_version_from_docs(self.generated_class(async_mode).__doc__)
@@ -572,11 +576,13 @@ class Serializer:
             re.search(r"([\s\S]*?)    @classmethod", main_client_source).group(1)
         )
         if any(og.is_mixin for og in self.code_model.operation_groups):
-            client_initialization = client_initialization + "".join([
-                "        self._serialize = Serializer(self._models_dict())\n",
-                "        self._deserialize = Deserializer(self._models_dict())\n",
-                "        self._serialize.client_side_validation = False\n",
-            ])
+            client_initialization = client_initialization + "".join(
+                [
+                    "        self._serialize = Serializer(self._models_dict())\n",
+                    "        self._deserialize = Deserializer(self._models_dict())\n",
+                    "        self._serialize.client_side_validation = False\n",
+                ]
+            )
 
         # TODO: switch to current file path
         with open(f"{self.code_model.get_root_of_code(async_mode)}/_client.py", "w") as fd:

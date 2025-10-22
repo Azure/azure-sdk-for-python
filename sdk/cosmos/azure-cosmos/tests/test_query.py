@@ -598,6 +598,91 @@ class TestQuery(unittest.TestCase):
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.created_db.delete_container(created_collection.id)
 
+    def test_query_pagination_with_max_item_count(self):
+        """Test pagination showing per-page limits and total results counting."""
+        created_collection = self.created_db.create_container(
+            "pagination_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
+        
+        # Create 20 items in a single partition
+        total_items = 20
+        partition_key_value = "test_pk"
+        for i in range(total_items):
+            document_definition = {
+                'pk': partition_key_value,
+                'id': f'item_{i}',
+                'value': i
+            }
+            created_collection.create_item(body=document_definition)
+        
+        # Test pagination with max_item_count limiting items per page
+        max_items_per_page = 7
+        query = "SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']"
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=[{"name": "@pk", "value": partition_key_value}],
+            partition_key=partition_key_value,
+            max_item_count=max_items_per_page
+        )
+        
+        # Iterate through pages and verify per-page counts
+        all_fetched_results = []
+        page_count = 0
+        item_pages = query_iterable.by_page()
+        
+        for page in item_pages:
+            page_count += 1
+            items_in_page = list(page)
+            all_fetched_results.extend(items_in_page)
+            
+            # Each page should have at most max_item_count items
+            # (last page may have fewer)
+            self.assertLessEqual(len(items_in_page), max_items_per_page)
+        
+        # Verify total results match expected count
+        self.assertEqual(len(all_fetched_results), total_items)
+        
+        # Verify we got the expected number of pages
+        # 20 items with max 7 per page = 3 pages (7, 7, 6)
+        self.assertEqual(page_count, 3)
+        
+        # Verify ordering is maintained
+        for i, item in enumerate(all_fetched_results):
+            self.assertEqual(item['value'], i)
+        
+        self.created_db.delete_container(created_collection.id)
+    
+    def test_query_pagination_without_max_item_count(self):
+        """Test pagination behavior without specifying max_item_count."""
+        created_collection = self.created_db.create_container(
+            "pagination_no_max_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
+        
+        # Create 15 items in a single partition
+        total_items = 15
+        partition_key_value = "test_pk_2"
+        for i in range(total_items):
+            document_definition = {
+                'pk': partition_key_value,
+                'id': f'item_{i}',
+                'value': i
+            }
+            created_collection.create_item(body=document_definition)
+        
+        # Query without specifying max_item_count
+        query = "SELECT * FROM c WHERE c.pk = @pk"
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=[{"name": "@pk", "value": partition_key_value}],
+            partition_key=partition_key_value
+        )
+        
+        # Count total results
+        all_results = list(query_iterable)
+        self.assertEqual(len(all_results), total_items)
+        
+        self.created_db.delete_container(created_collection.id)
+
     def test_query_positional_args(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         partition_key_value1 = "pk1"

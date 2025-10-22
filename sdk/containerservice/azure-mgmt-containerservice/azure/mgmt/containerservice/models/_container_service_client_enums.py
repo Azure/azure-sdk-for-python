@@ -11,6 +11,23 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AdvancedNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enable advanced network policies. This allows users to configure Layer 7 network policies
+    (FQDN, HTTP, Kafka). Policies themselves must be configured via the Cilium Network Policy
+    resources, see https://docs.cilium.io/en/latest/security/policy/index.html. This can be enabled
+    only on cilium-based clusters. If not specified, the default value is FQDN if security.enabled
+    is set to true.
+    """
+
+    L7 = "L7"
+    """Enable Layer7 network policies (FQDN, HTTP/S, Kafka). This option is a superset of the FQDN
+    option."""
+    FQDN = "FQDN"
+    """Enable FQDN based network policies"""
+    NONE = "None"
+    """Disable Layer 7 network policies (FQDN, HTTP/S, Kafka)"""
+
+
 class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at all times.
     For additional information on agent pool restrictions and best practices, see:
@@ -26,6 +43,15 @@ class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GATEWAY = "Gateway"
     """Gateway agent pools are dedicated to providing static egress IPs to pods. For more details, see
     https://aka.ms/aks/static-egress-gateway."""
+
+
+class AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SSH access method of an agent pool."""
+
+    LOCAL_USER = "LocalUser"
+    """Can SSH onto the node as a local user using private key."""
+    DISABLED = "Disabled"
+    """SSH service will be turned off on the node."""
 
 
 class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

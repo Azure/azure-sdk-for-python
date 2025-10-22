@@ -1,5 +1,116 @@
 # Release History
 
+## 4.0.0b24 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
+## 4.0.0b23 (2025-09-10)
+
+### Features Added
+
+  - Added operation DatabasesOperations.list_metric_definitions
+  - Added operation DatabasesOperations.list_metrics
+  - Added operation ElasticPoolsOperations.list_metric_definitions
+  - Added operation ElasticPoolsOperations.list_metrics
+  - Added operation GeoBackupPoliciesOperations.list_by_database
+  - Added operation group ElasticPoolActivitiesOperations
+  - Added operation group ElasticPoolDatabaseActivitiesOperations
+  - Added operation group ServerCommunicationLinksOperations
+  - Added operation group ServiceObjectivesOperations
+  - Model ManagedInstanceEditionCapability has a new parameter zone_redundant
+  - Model ServerUsage has a new parameter next_reset_time
+  - Model ServerUsage has a new parameter resource_name
+
+### Breaking Changes
+
+  - Model DataMaskingRuleListResult no longer has parameter next_link
+  - Model DatabaseExtensions no longer has parameter administrator_login
+  - Model DatabaseExtensions no longer has parameter administrator_login_password
+  - Model DatabaseExtensions no longer has parameter authentication_type
+  - Model DatabaseExtensions no longer has parameter database_edition
+  - Model DatabaseExtensions no longer has parameter max_size_bytes
+  - Model DatabaseExtensions no longer has parameter network_isolation
+  - Model DatabaseExtensions no longer has parameter service_objective_name
+  - Model DatabaseKey no longer has parameter key_version
+  - Model EditionCapability no longer has parameter zone_pinning
+  - Model ElasticPool no longer has parameter auto_pause_delay
+  - Model ElasticPoolEditionCapability no longer has parameter zone_pinning
+  - Model ElasticPoolPerDatabaseSettings no longer has parameter auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_min_capacities
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_per_database_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_zones
+  - Model ElasticPoolUpdate no longer has parameter auto_pause_delay
+  - Model EncryptionProtector no longer has parameter key_version
+  - Model GeoBackupPolicyListResult no longer has parameter next_link
+  - Model ImportExportExtensionsOperationResult no longer has parameter blob_uri
+  - Model ImportExportExtensionsOperationResult no longer has parameter private_endpoint_connections
+  - Model ImportExportExtensionsOperationResult no longer has parameter queued_time
+  - Model JobAgent no longer has parameter identity
+  - Model JobAgentUpdate no longer has parameter identity
+  - Model JobAgentUpdate no longer has parameter sku
+  - Model LocationCapabilities no longer has parameter is_zone_resilient_provisioning_allowed
+  - Model LocationCapabilities no longer has parameter supported_job_agent_versions
+  - Model LogicalDatabaseTransparentDataEncryption no longer has parameter scan_state
+  - Model ManagedDatabase no longer has parameter extended_accessibility_info
+  - Model ManagedDatabaseUpdate no longer has parameter extended_accessibility_info
+  - Model ManagedInstance no longer has parameter memory_size_in_gb
+  - Model ManagedInstance no longer has parameter requested_logical_availability_zone
+  - Model ManagedInstanceEditionCapability no longer has parameter is_general_purpose_v2
+  - Model ManagedInstanceFamilyCapability no longer has parameter zone_redundant
+  - Model ManagedInstanceLongTermRetentionBackup no longer has parameter backup_storage_access_tier
+  - Model ManagedInstanceLongTermRetentionPolicy no longer has parameter backup_storage_access_tier
+  - Model ManagedInstancePrivateLinkProperties no longer has parameter required_zone_names
+  - Model ManagedInstanceUpdate no longer has parameter memory_size_in_gb
+  - Model ManagedInstanceUpdate no longer has parameter requested_logical_availability_zone
+  - Model ManagedInstanceVcoresCapability no longer has parameter included_storage_i_ops
+  - Model ManagedInstanceVcoresCapability no longer has parameter included_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability no longer has parameter iops_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter iops_min_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_memory_sizes_in_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_storage_i_ops
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability no longer has parameter throughput_m_bps_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter throughput_m_bps_min_value_override_factor_per_selected_storage_gb
+  - Model SensitivityLabel no longer has parameter client_classification_source
+  - Model ServerKey no longer has parameter key_version
+  - Model ServerUsage no longer has parameter id
+  - Model ServerUsage no longer has parameter type
+  - Model ServerUsageListResult no longer has parameter next_link
+  - Model ServiceObjectiveCapability no longer has parameter supported_free_limit_exhaustion_behaviors
+  - Model ServiceObjectiveCapability no longer has parameter supported_zones
+  - Model ServiceObjectiveCapability no longer has parameter zone_pinning
+  - Operation DataMaskingPoliciesOperations.create_or_update no longer has parameter data_masking_policy_name
+  - Operation DataMaskingPoliciesOperations.get no longer has parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.create_or_update no longer has parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.list_by_database no longer has parameter data_masking_policy_name
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location no longer has parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location no longer has parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location no longer has parameter top
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location no longer has parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location no longer has parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location no longer has parameter top
+  - Operation OutboundFirewallRulesOperations.begin_create_or_update has a new required parameter parameters
+  - Parameter administrator_login_password of model ExportDatabaseDefinition is now required
+  - Parameter administrator_login_password of model ImportExistingDatabaseDefinition is now required
+  - Parameter credential of model JobStepOutput is now required
+  - Parameter state of model GeoBackupPolicy is now required
+  - Parameter value of model ServerUsageListResult is now required
+  - Removed operation GeoBackupPoliciesOperations.list
+  - Removed operation ManagedDatabaseSensitivityLabelsOperations.list_by_database
+  - Removed operation ManagedDatabasesOperations.begin_reevaluate_inaccessible_database_state
+  - Removed operation ManagedInstanceLongTermRetentionPoliciesOperations.begin_delete
+  - Removed operation ManagedInstancesOperations.begin_reevaluate_inaccessible_database_state
+  - Removed operation ManagedInstancesOperations.begin_validate_azure_key_vault_encryption_key
+  - Removed operation SensitivityLabelsOperations.list_by_database
+  - Removed operation TransparentDataEncryptionsOperations.begin_resume
+  - Removed operation TransparentDataEncryptionsOperations.begin_suspend
+  - Removed operation VirtualClustersOperations.begin_create_or_update
+  - Removed operation group InstancePoolOperationsOperations
+  - Removed operation group NetworkSecurityPerimeterConfigurationsOperations
+
 ## 4.0.0b22 (2025-07-30)
 
 ### Features Added

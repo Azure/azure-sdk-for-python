@@ -11,8 +11,18 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessControlRulesMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This property allows you to specify whether the access control rules are in Audit mode, in
+    Enforce mode or Disabled. Possible values are: 'Audit', 'Enforce' or 'Disabled'.
+    """
+
+    AUDIT = "Audit"
+    ENFORCE = "Enforce"
+    DISABLED = "Disabled"
+
+
 class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AccessLevel."""
+    """The Access Level, accepted values include None, Read, Write."""
 
     NONE = "None"
     READ = "Read"
@@ -64,6 +74,15 @@ class ArchitectureTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     X64 = "x64"
     ARM64 = "Arm64"
+
+
+class AvailabilityPolicyDiskDelay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines on how to handle disks with slow I/O."""
+
+    NONE = "None"
+    """Defaults to behavior without av policy specified, which is VM restart upon slow disk io."""
+    AUTOMATIC_REATTACH = "AutomaticReattach"
+    """Upon a disk io failure or slow response, try detaching then reattaching the disk."""
 
 
 class AvailabilitySetSkuTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -255,11 +274,15 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     complete only after all data has been copied from the source."""
     IMPORT_SECURE = "ImportSecure"
     """Similar to Import create option. Create a new Trusted Launch VM or Confidential VM supported
-    disk by importing additional blob for VM guest state specified by securityDataUri in storage
-    account specified by storageAccountId"""
+    disk by importing additional blobs for VM guest state specified by securityDataUri and VM
+    metadata specified by securityMetadataUri in storage account specified by storageAccountId. The
+    VM metadata is optional and only required for certain Confidential VM configurations and not
+    required for Trusted Launch VM."""
     UPLOAD_PREPARED_SECURE = "UploadPreparedSecure"
     """Similar to Upload create option. Create a new Trusted Launch VM or Confidential VM supported
-    disk and upload using write token in both disk and VM guest state"""
+    disk and upload using write token in disk, VM guest state and VM metadata. The VM metadata is
+    optional and only required for certain Confidential VM configurations and not required for
+    Trusted Launch VM."""
     COPY_FROM_SAN_SNAPSHOT = "CopyFromSanSnapshot"
     """Create a new disk by exporting from elastic san volume snapshot"""
     IMPORT_ENUM = "Import"
@@ -439,6 +462,24 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     the other key is Platform managed."""
 
 
+class EndpointAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This property allows you to specify if the requests will be allowed to access the host
+    endpoints. Possible values are: 'Allow', 'Deny'.
+    """
+
+    ALLOW = "Allow"
+    DENY = "Deny"
+
+
+class EndpointTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This property allows you to specify the Endpoint type for which this profile is defining the
+    access control for. Possible values are: 'WireServer' or 'IMDS'.
+    """
+
+    WIRE_SERVER = "WireServer"
+    IMDS = "IMDS"
+
+
 class ExecutionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Script execution status."""
 
@@ -507,6 +548,15 @@ class GalleryApplicationCustomActionParameterType(str, Enum, metaclass=CaseInsen
     LOG_OUTPUT_BLOB = "LogOutputBlob"
 
 
+class GalleryApplicationScriptRebootBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optional. The action to be taken with regards to install/update/remove of the gallery
+    application in the event of a reboot.
+    """
+
+    NONE = "None"
+    RERUN = "Rerun"
+
+
 class GalleryExpandParams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GalleryExpandParams."""
 
@@ -539,6 +589,15 @@ class GallerySharingPermissionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta
     PRIVATE = "Private"
     GROUPS = "Groups"
     COMMUNITY = "Community"
+
+
+class HighSpeedInterconnectPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the high speed interconnect placement for the virtual machine scale set."""
+
+    NONE = "None"
+    """No high speed interconnect placement"""
+    TRUNK = "Trunk"
+    """Trunk high speed interconnect placement"""
 
 
 class HostCaching(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -755,6 +814,17 @@ class OrchestrationServiceNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the service."""
 
     AUTOMATIC_REPAIRS = "AutomaticRepairs"
+    AUTOMATIC_ZONE_REBALANCING = "AutomaticZoneRebalancing"
+    """AutomaticZoneRebalancing orchestration service."""
+
+
+class OrchestrationServiceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The latest operation status of the service."""
+
+    IN_PROGRESS = "InProgress"
+    """InProgress orchestration service operation status."""
+    COMPLETED = "Completed"
+    """Completed orchestration service operation status."""
 
 
 class OrchestrationServiceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -950,6 +1020,21 @@ class ReplicationStatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UEFI_SETTINGS = "UefiSettings"
 
 
+class ReservationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the type of capacity reservation. Allowed values are 'Block' for block capacity
+    reservations and 'Targeted' for reservations that enable a VM to consume a specific capacity
+    reservation when a capacity reservation group is provided. The reservation type is immutable
+    and cannot be changed after it is assigned.
+    """
+
+    TARGETED = "Targeted"
+    """To consume on demand allocated capacity reservation when a capacity reservation group is
+    provided."""
+    BLOCK = "Block"
+    """To consume scheduled allocated block capacity reservation when a capacity reservation group is
+    provided."""
+
+
 class ResilientVMDeletionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the resilient VM deletion status for the virtual machine."""
 
@@ -960,9 +1045,9 @@ class ResilientVMDeletionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity used for the virtual machine scale set. The type 'SystemAssigned,
-    UserAssigned' includes both an implicitly created identity and a set of user assigned
-    identities. The type 'None' will remove any identities from the virtual machine scale set.
+    """The type of identity used for the gallery. The type 'SystemAssigned, UserAssigned' includes
+    both an implicitly created identity and a set of user assigned identities. The type 'None' will
+    remove all identities from the gallery.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
@@ -1040,6 +1125,15 @@ class RollingUpgradeStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
     FAULTED = "Faulted"
+
+
+class ScriptShellTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Script shell types."""
+
+    DEFAULT = "Default"
+    """Default script shell type."""
+    POWERSHELL7 = "Powershell7"
+    """Powershell7 script shell type."""
 
 
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1122,6 +1216,22 @@ class SharingUpdateOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLE_COMMUNITY = "EnableCommunity"
 
 
+class SnapshotAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of snapshot which determines the access availability of the snapshot."""
+
+    UNKNOWN = "Unknown"
+    """Default value."""
+    PENDING = "Pending"
+    """The snapshot cannot be used for restore, copy or download to offline."""
+    AVAILABLE = "Available"
+    """The snapshot can be used for restore, copy to different region, and download to offline."""
+    INSTANT_ACCESS = "InstantAccess"
+    """The snapshot can be used for restoring disks with fast performance but cannot be copied or
+    downloaded."""
+    AVAILABLE_WITH_INSTANT_ACCESS = "AvailableWithInstantAccess"
+    """The snapshot can be used for restoring disks with fast performance, copied and downloaded."""
+
+
 class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name."""
 
@@ -1131,6 +1241,12 @@ class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Premium SSD locally redundant storage"""
     STANDARD_ZRS = "Standard_ZRS"
     """Standard zone redundant storage"""
+
+
+class SoftDeletedArtifactTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """artifact type of the soft-deleted resource."""
+
+    IMAGES = "Images"
 
 
 class SshEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1158,6 +1274,7 @@ class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_LRS = "Standard_LRS"
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
+    PREMIUM_V2_LRS = "PremiumV2_LRS"
 
 
 class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1178,6 +1295,17 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREMIUM_ZRS = "Premium_ZRS"
     STANDARD_SSD_ZRS = "StandardSSD_ZRS"
     PREMIUM_V2_LRS = "PremiumV2_LRS"
+
+
+class SupportedSecurityOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Refers to the security capability of the disk supported to create a Trusted launch or
+    Confidential VM.
+    """
+
+    TRUSTED_LAUNCH_SUPPORTED = "TrustedLaunchSupported"
+    """The disk supports creating Trusted Launch VMs."""
+    TRUSTED_LAUNCH_AND_CONFIDENTIAL_VM_SUPPORTED = "TrustedLaunchAndConfidentialVMSupported"
+    """The disk supports creating both Trusted Launch and Confidential VMs."""
 
 
 class UefiKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1223,6 +1351,14 @@ class UpgradeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "Cancelled"
     COMPLETED = "Completed"
     FAULTED = "Faulted"
+
+
+class ValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This property specifies the status of the validationProfile of the image version."""
+
+    UNKNOWN = "Unknown"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
 
 
 class VirtualMachineEvictionPolicyTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1545,9 +1681,11 @@ class ZonalPlatformFaultDomainAlignMode(str, Enum, metaclass=CaseInsensitiveEnum
 
 
 class ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the policy for virtual machine's placement in availability zone. Possible values are:
-    **Any** - An availability zone will be automatically picked by system as part of virtual
-    machine creation.
+    """Specifies the policy for resource's placement in availability zone. Possible values are:
+    **Any** (used for Virtual Machines), **Auto** (used for Virtual Machine Scale Sets) - An
+    availability zone will be automatically picked by system as part of resource creation.
     """
 
     ANY = "Any"
+    AUTO = "Auto"
+    """Automatic zone placement in a Virtual Machine Scale Set."""

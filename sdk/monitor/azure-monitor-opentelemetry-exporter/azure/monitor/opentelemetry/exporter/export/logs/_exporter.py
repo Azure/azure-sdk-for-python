@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
     _EXCEPTION_ENVELOPE_NAME,
     _MESSAGE_ENVELOPE_NAME,
+    _DEFAULT_LOG_MESSAGE,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import (
     ContextTagKeys,
@@ -189,6 +190,9 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             severity_level=severity_level,  # type: ignore
             properties=properties,
         )
+        data.message = data.message.strip()
+        if len(data.message) == 0:
+            data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
     return envelope

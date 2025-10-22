@@ -15,12 +15,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects openai httpx opentelemetry-sdk opentelemetry-instrumentation-openai-v2
+    pip install azure-ai-projects openai httpx opentelemetry-sdk opentelemetry-instrumentation-openai-v2 python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
     https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs
@@ -38,6 +38,7 @@ ALTERNATIVE USAGE:
 """
 
 import os
+from dotenv import load_dotenv
 from azure.core.settings import settings
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
@@ -45,6 +46,8 @@ from opentelemetry import trace
 from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
+
+load_dotenv()
 
 settings.tracing_implementation = "opentelemetry"
 
@@ -57,8 +60,8 @@ scenario = os.path.basename(__file__)
 
 OpenAIInstrumentor().instrument()
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 with tracer.start_as_current_span(scenario):
 

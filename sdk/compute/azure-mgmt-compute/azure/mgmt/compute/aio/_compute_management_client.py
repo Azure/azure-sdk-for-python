@@ -43,6 +43,8 @@ from .operations import (
     GalleryApplicationsOperations,
     GalleryImageVersionsOperations,
     GalleryImagesOperations,
+    GalleryInVMAccessControlProfileVersionsOperations,
+    GalleryInVMAccessControlProfilesOperations,
     GallerySharingProfileOperations,
     ImagesOperations,
     LogAnalyticsOperations,
@@ -55,6 +57,7 @@ from .operations import (
     SharedGalleryImageVersionsOperations,
     SharedGalleryImagesOperations,
     SnapshotsOperations,
+    SoftDeletedResourceOperations,
     SshPublicKeysOperations,
     UsageOperations,
     VirtualMachineExtensionImagesOperations,
@@ -73,6 +76,7 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -150,6 +154,58 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar virtual_machine_extensions: VirtualMachineExtensionsOperations operations
     :vartype virtual_machine_extensions:
      azure.mgmt.compute.aio.operations.VirtualMachineExtensionsOperations
+    :ivar disk_accesses: DiskAccessesOperations operations
+    :vartype disk_accesses: azure.mgmt.compute.aio.operations.DiskAccessesOperations
+    :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
+    :vartype disk_encryption_sets: azure.mgmt.compute.aio.operations.DiskEncryptionSetsOperations
+    :ivar disks: DisksOperations operations
+    :vartype disks: azure.mgmt.compute.aio.operations.DisksOperations
+    :ivar snapshots: SnapshotsOperations operations
+    :vartype snapshots: azure.mgmt.compute.aio.operations.SnapshotsOperations
+    :ivar disk_restore_point: DiskRestorePointOperations operations
+    :vartype disk_restore_point: azure.mgmt.compute.aio.operations.DiskRestorePointOperations
+    :ivar resource_skus: ResourceSkusOperations operations
+    :vartype resource_skus: azure.mgmt.compute.aio.operations.ResourceSkusOperations
+    :ivar galleries: GalleriesOperations operations
+    :vartype galleries: azure.mgmt.compute.aio.operations.GalleriesOperations
+    :ivar community_galleries: CommunityGalleriesOperations operations
+    :vartype community_galleries: azure.mgmt.compute.aio.operations.CommunityGalleriesOperations
+    :ivar community_gallery_images: CommunityGalleryImagesOperations operations
+    :vartype community_gallery_images:
+     azure.mgmt.compute.aio.operations.CommunityGalleryImagesOperations
+    :ivar community_gallery_image_versions: CommunityGalleryImageVersionsOperations operations
+    :vartype community_gallery_image_versions:
+     azure.mgmt.compute.aio.operations.CommunityGalleryImageVersionsOperations
+    :ivar shared_galleries: SharedGalleriesOperations operations
+    :vartype shared_galleries: azure.mgmt.compute.aio.operations.SharedGalleriesOperations
+    :ivar shared_gallery_images: SharedGalleryImagesOperations operations
+    :vartype shared_gallery_images: azure.mgmt.compute.aio.operations.SharedGalleryImagesOperations
+    :ivar shared_gallery_image_versions: SharedGalleryImageVersionsOperations operations
+    :vartype shared_gallery_image_versions:
+     azure.mgmt.compute.aio.operations.SharedGalleryImageVersionsOperations
+    :ivar gallery_applications: GalleryApplicationsOperations operations
+    :vartype gallery_applications: azure.mgmt.compute.aio.operations.GalleryApplicationsOperations
+    :ivar gallery_application_versions: GalleryApplicationVersionsOperations operations
+    :vartype gallery_application_versions:
+     azure.mgmt.compute.aio.operations.GalleryApplicationVersionsOperations
+    :ivar gallery_images: GalleryImagesOperations operations
+    :vartype gallery_images: azure.mgmt.compute.aio.operations.GalleryImagesOperations
+    :ivar gallery_image_versions: GalleryImageVersionsOperations operations
+    :vartype gallery_image_versions:
+     azure.mgmt.compute.aio.operations.GalleryImageVersionsOperations
+    :ivar gallery_in_vm_access_control_profiles: GalleryInVMAccessControlProfilesOperations
+     operations
+    :vartype gallery_in_vm_access_control_profiles:
+     azure.mgmt.compute.aio.operations.GalleryInVMAccessControlProfilesOperations
+    :ivar gallery_in_vm_access_control_profile_versions:
+     GalleryInVMAccessControlProfileVersionsOperations operations
+    :vartype gallery_in_vm_access_control_profile_versions:
+     azure.mgmt.compute.aio.operations.GalleryInVMAccessControlProfileVersionsOperations
+    :ivar gallery_sharing_profile: GallerySharingProfileOperations operations
+    :vartype gallery_sharing_profile:
+     azure.mgmt.compute.aio.operations.GallerySharingProfileOperations
+    :ivar soft_deleted_resource: SoftDeletedResourceOperations operations
+    :vartype soft_deleted_resource: azure.mgmt.compute.aio.operations.SoftDeletedResourceOperations
     :ivar cloud_service_role_instances: CloudServiceRoleInstancesOperations operations
     :vartype cloud_service_role_instances:
      azure.mgmt.compute.aio.operations.CloudServiceRoleInstancesOperations
@@ -163,68 +219,39 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar cloud_service_operating_systems: CloudServiceOperatingSystemsOperations operations
     :vartype cloud_service_operating_systems:
      azure.mgmt.compute.aio.operations.CloudServiceOperatingSystemsOperations
-    :ivar disks: DisksOperations operations
-    :vartype disks: azure.mgmt.compute.aio.operations.DisksOperations
-    :ivar disk_accesses: DiskAccessesOperations operations
-    :vartype disk_accesses: azure.mgmt.compute.aio.operations.DiskAccessesOperations
-    :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
-    :vartype disk_encryption_sets: azure.mgmt.compute.aio.operations.DiskEncryptionSetsOperations
-    :ivar disk_restore_point: DiskRestorePointOperations operations
-    :vartype disk_restore_point: azure.mgmt.compute.aio.operations.DiskRestorePointOperations
-    :ivar snapshots: SnapshotsOperations operations
-    :vartype snapshots: azure.mgmt.compute.aio.operations.SnapshotsOperations
-    :ivar resource_skus: ResourceSkusOperations operations
-    :vartype resource_skus: azure.mgmt.compute.aio.operations.ResourceSkusOperations
-    :ivar galleries: GalleriesOperations operations
-    :vartype galleries: azure.mgmt.compute.aio.operations.GalleriesOperations
-    :ivar gallery_images: GalleryImagesOperations operations
-    :vartype gallery_images: azure.mgmt.compute.aio.operations.GalleryImagesOperations
-    :ivar gallery_image_versions: GalleryImageVersionsOperations operations
-    :vartype gallery_image_versions:
-     azure.mgmt.compute.aio.operations.GalleryImageVersionsOperations
-    :ivar gallery_applications: GalleryApplicationsOperations operations
-    :vartype gallery_applications: azure.mgmt.compute.aio.operations.GalleryApplicationsOperations
-    :ivar gallery_application_versions: GalleryApplicationVersionsOperations operations
-    :vartype gallery_application_versions:
-     azure.mgmt.compute.aio.operations.GalleryApplicationVersionsOperations
-    :ivar gallery_sharing_profile: GallerySharingProfileOperations operations
-    :vartype gallery_sharing_profile:
-     azure.mgmt.compute.aio.operations.GallerySharingProfileOperations
-    :ivar shared_galleries: SharedGalleriesOperations operations
-    :vartype shared_galleries: azure.mgmt.compute.aio.operations.SharedGalleriesOperations
-    :ivar shared_gallery_images: SharedGalleryImagesOperations operations
-    :vartype shared_gallery_images: azure.mgmt.compute.aio.operations.SharedGalleryImagesOperations
-    :ivar shared_gallery_image_versions: SharedGalleryImageVersionsOperations operations
-    :vartype shared_gallery_image_versions:
-     azure.mgmt.compute.aio.operations.SharedGalleryImageVersionsOperations
-    :ivar community_galleries: CommunityGalleriesOperations operations
-    :vartype community_galleries: azure.mgmt.compute.aio.operations.CommunityGalleriesOperations
-    :ivar community_gallery_images: CommunityGalleryImagesOperations operations
-    :vartype community_gallery_images:
-     azure.mgmt.compute.aio.operations.CommunityGalleryImagesOperations
-    :ivar community_gallery_image_versions: CommunityGalleryImageVersionsOperations operations
-    :vartype community_gallery_image_versions:
-     azure.mgmt.compute.aio.operations.CommunityGalleryImageVersionsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = ComputeManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -317,41 +344,24 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.cloud_service_role_instances = CloudServiceRoleInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.cloud_service_roles = CloudServiceRolesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.cloud_services = CloudServicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.cloud_services_update_domain = CloudServicesUpdateDomainOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.cloud_service_operating_systems = CloudServiceOperatingSystemsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_accesses = DiskAccessesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_encryption_sets = DiskEncryptionSetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.disks = DisksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.disk_restore_point = DiskRestorePointOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.gallery_image_versions = GalleryImageVersionsOperations(
+        self.community_galleries = CommunityGalleriesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.gallery_applications = GalleryApplicationsOperations(
+        self.community_gallery_images = CommunityGalleryImagesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.gallery_application_versions = GalleryApplicationVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.gallery_sharing_profile = GallerySharingProfileOperations(
+        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.shared_galleries = SharedGalleriesOperations(
@@ -363,13 +373,39 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.shared_gallery_image_versions = SharedGalleryImageVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.community_galleries = CommunityGalleriesOperations(
+        self.gallery_applications = GalleryApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.community_gallery_images = CommunityGalleryImagesOperations(
+        self.gallery_application_versions = GalleryApplicationVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
+        self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.gallery_image_versions = GalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_in_vm_access_control_profiles = GalleryInVMAccessControlProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_in_vm_access_control_profile_versions = GalleryInVMAccessControlProfileVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_sharing_profile = GallerySharingProfileOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.soft_deleted_resource = SoftDeletedResourceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cloud_service_role_instances = CloudServiceRoleInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cloud_service_roles = CloudServiceRolesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cloud_services = CloudServicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.cloud_services_update_domain = CloudServicesUpdateDomainOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cloud_service_operating_systems = CloudServiceOperatingSystemsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

@@ -78,7 +78,7 @@ def sample_chat_completions_with_structured_output_pydantic():
         title: str
         servings: int
         prep_time: int = Field(
-            description="Preperation time in minutes",
+            description="Preparation time in minutes",
         )
         cooking_time: int = Field(
             description="Cooking time in minutes",

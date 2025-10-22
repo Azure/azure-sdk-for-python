@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
 import uuid
 
 from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
-from azure.identity import ClientSecretCredential as SyncClientSecretCredential
-from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
+from azure.identity import ManagedIdentityCredential as SyncManagedIdentityCredential
+from azure.identity.aio import ManagedIdentityCredential as AsyncManagedIdentityCredential
 
 from .key_wrapper import KeyWrapper
 
@@ -33,10 +34,11 @@ class _ServiceTest(PerfStressTest):
         # self._client_kwargs['api_version'] = '2019-02-02'  # Used only for comparison with T1 legacy tests
 
         if not _ServiceTest.service_client or self.args.no_client_share:
-            if self.args.use_entra_id:
+            use_managed_identity = os.environ.get("AZURE_STORAGE_USE_MANAGED_IDENTITY", "false").lower() == "true"
+            if self.args.use_entra_id or use_managed_identity:
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
-                sync_token_credential = self.get_credential(is_async=False)
-                async_token_credential = self.get_credential(is_async=True)
+                sync_token_credential = SyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=False)
+                async_token_credential = AsyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=True)
 
                 # We assume these tests will only be run on the Azure public cloud for now.
                 url = f"https://{account_name}.blob.core.windows.net"

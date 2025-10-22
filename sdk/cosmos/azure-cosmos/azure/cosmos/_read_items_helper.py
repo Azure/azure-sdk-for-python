@@ -22,7 +22,7 @@
 import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING,Mapping
+from typing import Tuple, Any, Optional, TYPE_CHECKING, Mapping
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -31,7 +31,7 @@ from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
 if TYPE_CHECKING:
-    from azure.cosmos._cosmos_client_connection import _PartitionKeyType , CosmosClientConnection
+    from azure.cosmos._cosmos_client_connection import PartitionKeyType , CosmosClientConnection
 
 
 
@@ -43,12 +43,12 @@ class ReadItemsHelperSync:
             self,
             client: 'CosmosClientConnection',
             collection_link: str,
-            items: Sequence[Tuple[str, "_PartitionKeyType"]],
+            items: Sequence[Tuple[str, "PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
-            partition_key_definition: Dict[str, Any],
+            partition_key_definition: dict[str, Any],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: int = 10,
+            max_concurrency: Optional[int] = None,
             **kwargs: Any
     ):
         self.client = client
@@ -81,13 +81,14 @@ class ReadItemsHelperSync:
         if self.executor is not None:
             return self._execute_with_executor(self.executor, query_chunks)
 
+        # Create a new executor; if max_concurrency is None, use ThreadPoolExecutor's default
         with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
             return self._execute_with_executor(executor, query_chunks)
 
     def _execute_with_executor(
             self,
             executor: ThreadPoolExecutor,
-            query_chunks: List[Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]]
+            query_chunks: list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]]
     ) -> CosmosList:
         """Execute the queries using the provided executor with improved error handling.
 
@@ -141,7 +142,7 @@ class ReadItemsHelperSync:
 
         return cosmos_list
 
-    def _partition_items_by_range(self) -> Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]:
+    def _partition_items_by_range(self) -> dict[str, list[Tuple[int, str, "PartitionKeyType"]]]:
         # pylint: disable=protected-access
         """Groups items by their partition key range ID efficiently while preserving original order.
 
@@ -150,10 +151,10 @@ class ReadItemsHelperSync:
         """
         collection_rid = _base.GetResourceIdOrFullNameFromLink(self.collection_link)
         partition_key = _get_partition_key_from_partition_key_definition(self.partition_key_definition)
-        items_by_partition: Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]] = {}
+        items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]] = {}
 
         # Group items by logical partition key first to avoid redundant range lookups
-        items_by_pk_value: Dict[Any, List[Tuple[int, str, "_PartitionKeyType"]]] = {}
+        items_by_pk_value: dict[Any, list[Tuple[int, str, "PartitionKeyType"]]] = {}
         for idx, (item_id, pk_value) in enumerate(self.items):
             # Convert list to tuple to use as a dictionary key, as lists are unhashable
             key = tuple(pk_value) if isinstance(pk_value, list) else pk_value
@@ -180,14 +181,14 @@ class ReadItemsHelperSync:
 
     def _create_query_chunks(
             self,
-            items_by_partition: Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]
-    ) -> List[Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]]:
+            items_by_partition: dict[str, list[Tuple[int, str, "PartitionKeyType"]]]
+    ) -> list[dict[str, list[Tuple[int, str, "PartitionKeyType"]]]]:
         """Create query chunks for concurrency control while preserving original indices.
 
         :param items_by_partition: A dictionary mapping partition key range IDs to lists of items with indices.
-        :type items_by_partition: dict[str, list[tuple[int, str, "_PartitionKeyType"]]]
+        :type items_by_partition: dict[str, list[tuple[int, str, "PartitionKeyType"]]]
         :return: A list of query chunks, where each chunk is a dictionary with a single partition.
-        :rtype: list[dict[str, list[tuple[int, str, "_PartitionKeyType"]]]]
+        :rtype: list[dict[str, list[tuple[int, str, "PartitionKeyType"]]]]
         """
         query_chunks = []
         for partition_id, partition_items in items_by_partition.items():
@@ -198,8 +199,8 @@ class ReadItemsHelperSync:
         return query_chunks
 
     def _execute_query_chunk_worker(
-            self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "_PartitionKeyType"]]
-    ) -> Tuple[List[Tuple[int, Dict[str, Any]]], float]:
+            self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "PartitionKeyType"]]
+    ) -> Tuple[list[Tuple[int, dict[str, Any]]], float]:
         """Synchronous worker to build and execute a query for a chunk of items.
 
         :param str partition_id: The ID of the partition to query.
@@ -231,17 +232,17 @@ class ReadItemsHelperSync:
     def _execute_query(
             self,
             partition_id: str,
-            items_for_query: Sequence[Tuple[str, "_PartitionKeyType"]],
-            id_to_idx: Dict[str, int],
-            request_kwargs: Dict[str, Any]
-    ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
+            items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
+            id_to_idx: dict[str, int],
+            request_kwargs: dict[str, Any]
+    ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
         Builds and executes a query for a chunk of items.
 
         :param partition_id: The ID of the partition to query.
         :type partition_id: str
         :param items_for_query: List of tuples containing item IDs and partition key values.
-        :type items_for_query: list[tuple[str, _PartitionKeyType]]
+        :type items_for_query: list[tuple[str, PartitionKeyType]]
         :param id_to_idx: Mapping from item ID to its original index in the input list.
         :type id_to_idx: dict[str, int]
         :param request_kwargs: Additional keyword arguments for the request.
@@ -281,8 +282,8 @@ class ReadItemsHelperSync:
     def _execute_point_read(
             self,
             item_id: str,
-            pk_value: "_PartitionKeyType",
-            request_kwargs: Dict[str, Any]
+            pk_value: "PartitionKeyType",
+            request_kwargs: dict[str, Any]
     ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
         """
         Executes a point read for a single item.

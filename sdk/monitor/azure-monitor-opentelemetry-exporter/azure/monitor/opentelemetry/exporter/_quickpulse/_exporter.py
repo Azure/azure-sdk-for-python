@@ -96,6 +96,7 @@ class _QuickpulseExporter(MetricExporter):
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._credential = kwargs.get("credential")
+        self.aad_audience = parsed_connection_string.aad_audience
         config = QuickpulseClientConfiguration(credential=self._credential)  # type: ignore
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
@@ -105,7 +106,7 @@ class _QuickpulseExporter(MetricExporter):
             ContentDecodePolicy(),
             # Logging for client calls
             config.http_logging_policy,
-            _get_auth_policy(self._credential, config.authentication_policy),
+            _get_auth_policy(self._credential, config.authentication_policy, self.aad_audience),
             config.authentication_policy,
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),

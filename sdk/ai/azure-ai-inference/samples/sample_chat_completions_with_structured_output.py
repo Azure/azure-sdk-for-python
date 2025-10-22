@@ -102,7 +102,7 @@ def sample_chat_completions_with_structured_output():
             },
             "prep_time": {
                 "type": "integer",
-                "description": "Preperation time in minutes",
+                "description": "Preparation time in minutes",
             },
             "cooking_time": {
                 "type": "integer",

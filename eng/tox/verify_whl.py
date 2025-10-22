@@ -11,11 +11,16 @@ import logging
 import os
 import glob
 import shutil
+import tempfile
+import subprocess
+from packaging.version import Version
+from typing import Dict, Any, Optional
 from tox_helper_tasks import (
     unzip_file_to_directory,
 )
 
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, extract_package_metadata
+from pypi_tools.pypi import retrieve_versions_from_pypi
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -45,7 +50,15 @@ def extract_whl(dist_dir, version):
     return extract_location
 
 
-def verify_whl_root_directory(dist_dir, expected_top_level_module, version):
+def verify_whl_root_directory(dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup) -> bool:
+    # Verify metadata compatibility with prior version
+    version: str = parsed_pkg.version
+    metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version))
+    prior_version = get_prior_version(parsed_pkg.name, version)
+    if prior_version:
+        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata):
+            return False
+
     # This method ensures root directory in whl is the directory indicated by our top level namespace
     extract_location = extract_whl(dist_dir, version)
     root_folders = os.listdir(extract_location)
@@ -77,13 +90,89 @@ def should_verify_package(package_name):
     return (
         package_name not in EXCLUDED_PACKAGES
         and "nspkg" not in package_name
-        and "-mgmt" not in package_name
     )
+
+
+def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
+    """Get prior stable version if it exists, otherwise get prior preview version, else return None."""
+    try:
+        all_versions = retrieve_versions_from_pypi(package_name)
+        current_ver = Version(current_version)
+        prior_versions = [Version(v) for v in all_versions if Version(v) < current_ver]
+        if not prior_versions:
+            return None
+
+        # Try stable versions first
+        stable_versions = [v for v in prior_versions if not v.is_prerelease]
+        if stable_versions:
+            return str(max(stable_versions))
+
+        # Fall back to preview versions
+        preview_versions = [v for v in prior_versions if v.is_prerelease]
+        return str(max(preview_versions)) if preview_versions else None
+    except Exception:
+        return None
+
+
+def verify_prior_version_metadata(package_name: str, prior_version: str, current_metadata: Dict[str, Any], package_type: str = "*.whl") -> bool:
+    """Download prior version and verify metadata compatibility."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        try:
+            is_binary = "--only-binary=:all:" if package_type == "*.whl" else "--no-binary=:all:"
+            subprocess.run([
+                "pip", "download", "--no-deps", is_binary,
+                f"{package_name}=={prior_version}", "--dest", tmp_dir
+            ], check=True, capture_output=True)
+            zip_files = glob.glob(os.path.join(tmp_dir, package_type))
+            # If no match and we're not constrained to wheel-only, attempt legacy sdist (zip) once.
+            if not zip_files and package_type != "*.whl":
+                zip_files = glob.glob(os.path.join(tmp_dir, "*.zip"))
+            if not zip_files:  # Still nothing -> treat as no prior artifact to compare.
+                return True
+
+            prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
+            is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
+            return is_compatible
+        except Exception:
+            return True
+
+
+def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metadata: Dict[str, Any]) -> bool:
+    """Verify that all keys from prior version metadata are present in current version.
+
+    Special handling: homepage/repository keys are exempt from prior compatibility check,
+    but current version must have at least one of them.
+    """
+    if not current_metadata:
+        return False
+    # Check that current version has at least one homepage or repository URL
+    repo_urls = ['homepage', 'repository']
+    current_keys_lower = {k.lower() for k in current_metadata.keys()}
+    if not any(key in current_keys_lower for key in repo_urls):
+        logging.error(f"Current metadata must contain at least one of: {repo_urls}")
+        return False
+
+    if not prior_metadata:
+        return True
+
+    # For backward compatibility check, exclude homepage/repository from prior requirements
+    prior_keys_filtered = {k for k in prior_metadata.keys() if k.lower() not in repo_urls}
+    current_keys = set(current_metadata.keys())
+
+    is_compatible = prior_keys_filtered.issubset(current_keys)
+    if not is_compatible:
+        missing_keys = prior_keys_filtered - current_keys
+        logging.error("Metadata compatibility failed. Missing keys: %s", missing_keys)
+    return is_compatible
+
+
+def get_path_to_zip(dist_dir: str, version: str, package_type: str = "*.whl") -> str:
+    return glob.glob(os.path.join(dist_dir, "**", "*{}{}".format(version, package_type)), recursive=True)[0]
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Verify directories included in whl and contents in manifest file"
+        description="Verify directories included in whl, contents in manifest file, and metadata compatibility"
     )
 
     parser.add_argument(
@@ -106,16 +195,14 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    
+
     pkg_details = ParsedSetup.from_path(pkg_dir)
     top_level_module = pkg_details.namespace.split('.')[0]
 
     if should_verify_package(pkg_details.name):
-        logging.info("Verifying root directory in whl for package: [%s]", pkg_details.name)
-        if verify_whl_root_directory(args.dist_dir, top_level_module, pkg_details.version):
-            logging.info("Verified root directory in whl for package: [%s]", pkg_details.name)
+        logging.info("Verifying whl for package: [%s]", pkg_details.name)
+        if verify_whl_root_directory(args.dist_dir, top_level_module, pkg_details):
+            logging.info("Verified whl for package: [%s]", pkg_details.name)
         else:
-            logging.info(
-                "Failed to verify root directory in whl for package: [%s]", pkg_details.name
-            )
+            logging.error("Failed to verify whl for package: [%s]", pkg_details.name)
             exit(1)

@@ -137,8 +137,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     not result[0]['Offers'] and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
-                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
-                                                        headers={HttpHeaders.SubStatus:
+                response = exceptions._InternalCosmosException(status_code=StatusCodes.NOT_FOUND,
+                                                               headers={HttpHeaders.SubStatus:
                                                                      SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
@@ -297,9 +297,9 @@ def _handle_service_response_retries(request, client, response_retry_policy, exc
         raise exception
 
 def is_write_retryable(request_params, client):
-    return (request_params.retry_write or
-            client.connection_policy.RetryNonIdempotentWrites and
-            not request_params.operation_type == _OperationType.Patch)
+    return (request_params.retry_write > 0 or
+            (client.connection_policy.RetryNonIdempotentWrites > 0 and
+            not request_params.operation_type == _OperationType.Patch))
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:

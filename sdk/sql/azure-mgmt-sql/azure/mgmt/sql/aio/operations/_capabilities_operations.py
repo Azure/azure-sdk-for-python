@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -29,7 +29,8 @@ from ...operations._capabilities_operations import build_list_by_location_reques
 from .._configuration import SqlManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class CapabilitiesOperations:
@@ -61,8 +62,8 @@ class CapabilitiesOperations:
         :type location_name: str
         :param include: If specified, restricts the response to only include the selected item. Known
          values are: "supportedEditions", "supportedElasticPoolEditions",
-         "supportedManagedInstanceVersions", "supportedInstancePoolEditions",
-         "supportedManagedInstanceEditions", and "supportedJobAgentVersions". Default value is None.
+         "supportedManagedInstanceVersions", "supportedInstancePoolEditions", and
+         "supportedManagedInstanceEditions". Default value is None.
         :type include: str or ~azure.mgmt.sql.models.CapabilityGroup
         :return: LocationCapabilities or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.LocationCapabilities
@@ -79,7 +80,7 @@ class CapabilitiesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.LocationCapabilities] = kwargs.pop("cls", None)
 
         _request = build_list_by_location_request(
@@ -101,8 +102,7 @@ class CapabilitiesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("LocationCapabilities", pipeline_response.http_response)
 

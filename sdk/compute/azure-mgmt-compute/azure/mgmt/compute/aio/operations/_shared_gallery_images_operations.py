@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -31,7 +31,8 @@ from ...operations._shared_gallery_images_operations import build_get_request, b
 from .._configuration import ComputeManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class SharedGalleryImagesOperations:
@@ -63,7 +64,7 @@ class SharedGalleryImagesOperations:
     ) -> AsyncItemPaged["_models.SharedGalleryImage"]:
         """List shared gallery images by subscription id or tenant id.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param gallery_unique_name: The unique name of the Shared Gallery. Required.
         :type gallery_unique_name: str
@@ -77,7 +78,7 @@ class SharedGalleryImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
         cls: ClsType[_models.SharedGalleryImageList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -138,7 +139,7 @@ class SharedGalleryImagesOperations:
     ) -> _models.SharedGalleryImage:
         """Get a shared gallery image by subscription id or tenant id.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param gallery_unique_name: The unique name of the Shared Gallery. Required.
         :type gallery_unique_name: str
@@ -160,7 +161,7 @@ class SharedGalleryImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
         cls: ClsType[_models.SharedGalleryImage] = kwargs.pop("cls", None)
 
         _request = build_get_request(

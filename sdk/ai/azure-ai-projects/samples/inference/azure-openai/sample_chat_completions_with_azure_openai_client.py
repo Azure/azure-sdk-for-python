@@ -14,12 +14,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects openai
+    pip install azure-ai-projects openai python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project. Required.
-    2) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project. Required.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project. Required.
     3) CONNECTION_NAME - The name of an Azure OpenAI connection, as found in the "Connected resources" tab
        in the Management Center of your AI Foundry project. Required.
 
@@ -28,11 +28,14 @@ USAGE:
 """
 
 import os
+from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+load_dotenv()
+
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 connection_name = os.environ["CONNECTION_NAME"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:

@@ -373,6 +373,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             "ORDER BY RANK FullTextScore(c.title, 'John')"
         )
         literal_results = self.test_container.query_items(literal_query, enable_cross_partition_query=True)
+        literal_results = list(literal_results)
         literal_indices = [res["index"] for res in literal_results]
 
         # Parameterized hybrid query (same as above, but using @term)
@@ -385,6 +386,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         param_results = self.test_container.query_items(
             param_query, parameters=params, enable_cross_partition_query=True
         )
+        param_results = list(param_results)
         param_indices = [res["index"] for res in param_results]
 
         # Checks: both forms produce the same results and match known expectation
@@ -398,6 +400,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             "ORDER BY RANK RRF(FullTextScore(c.title, 'John'), FullTextScore(c.text, 'United States'), [1, 0.5])"
         )
         literal_results = self.test_container.query_items(literal_query, enable_cross_partition_query=True)
+        literal_results = list(literal_results)
         literal_indices = [res["index"] for res in literal_results]
 
         # Parameterized weighted RRF hybrid query (+ response hook)
@@ -414,6 +417,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         param_results = self.test_container.query_items(
             param_query, parameters=params, enable_cross_partition_query=True, response_hook=response_hook
         )
+        param_results = list(param_results)
         param_indices = [res["index"] for res in param_results]
 
         # Checks: number of results, equality against literal, and hook invoked
@@ -423,13 +427,13 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
     def test_hybrid_and_non_hybrid_param_queries_equivalence(self):
         # Hybrid query with vector distance (literal vs param) and compare equality
-        item_vector = self.test_container.read_item("50", "1")["vector"]
-        literal_hybrid = (
-            "SELECT c.index, c.title FROM c "
-            "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) "
-            "OFFSET 0 LIMIT 10"
-        ).format(item_vector)
+        item = self.test_container.read_item('50', '1')
+        item_vector = item['vector']
+        literal_hybrid = "SELECT c.index, c.title FROM c " \
+                "ORDER BY RANK RRF(FullTextScore(c.text, 'United States'), VectorDistance(c.vector, {})) " \
+                "OFFSET 0 LIMIT 10".format(item_vector)
         literal_hybrid_results = self.test_container.query_items(literal_hybrid, enable_cross_partition_query=True)
+        literal_hybrid_results = list(literal_hybrid_results)
         literal_hybrid_indices = [res["index"] for res in literal_hybrid_results]
 
         param_hybrid = (
@@ -444,6 +448,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         param_hybrid_results = self.test_container.query_items(
             param_hybrid, parameters=params_hybrid, enable_cross_partition_query=True
         )
+        param_hybrid_results = list(param_hybrid_results)
         param_hybrid_indices = [res["index"] for res in param_hybrid_results]
 
         assert len(literal_hybrid_indices) == len(param_hybrid_indices) == 10
@@ -453,6 +458,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # Non-hybrid parameterized query equivalence on same container
         literal_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = '1' ORDER BY c.index"
         literal_simple_results = self.test_container.query_items(literal_simple, enable_cross_partition_query=True)
+        literal_simple_results = list(literal_simple_results)
         literal_simple_indices = [res["index"] for res in literal_simple_results]
 
         param_simple = "SELECT TOP 5 c.index FROM c WHERE c.pk = @pk ORDER BY c.index"

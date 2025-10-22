@@ -18,7 +18,7 @@ from ..._credentials.azure_powershell import (
     parse_token,
     CLAIMS_UNSUPPORTED_ERROR,
 )
-from ..._internal import resolve_tenant, validate_tenant_id, validate_scope
+from ..._internal import encode_base64, resolve_tenant, validate_tenant_id, validate_scope
 
 
 class AzurePowerShellCredential(AsyncContextManager):
@@ -124,8 +124,8 @@ class AzurePowerShellCredential(AsyncContextManager):
     ) -> AccessTokenInfo:
 
         # Check if claims challenge is provided
-        if options and options.get("claims"):
-            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=options.get("claims"))
+        if options and "claims" in options and options["claims"]:
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=encode_base64(options["claims"]))
             if options.get("tenant_id"):
                 error_message += f" -Tenant {options.get('tenant_id')}"
             raise CredentialUnavailableError(message=error_message)

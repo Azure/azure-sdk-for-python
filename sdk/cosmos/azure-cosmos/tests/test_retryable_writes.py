@@ -79,7 +79,7 @@ class TestRetryableWrites:
         # Test with retry_write for upsert_item
         me.counter = 0  # Reset counter
         try:
-            container.upsert_item(test_item, retry_write=True)
+            container.upsert_item(test_item, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -107,7 +107,7 @@ class TestRetryableWrites:
         # Test with retry_write for create_item
         me.counter = 0  # Reset counter
         try:
-            container.create_item(test_item_create, retry_write=True)
+            container.create_item(test_item_create, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -138,7 +138,7 @@ class TestRetryableWrites:
         me.counter = 0  # Reset counter
         try:
             container.patch_item(item=test_item['id'], partition_key=test_item['pk'],
-                                 patch_operations=test_patch_operations, retry_write=True)
+                                 patch_operations=test_patch_operations, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -172,7 +172,7 @@ class TestRetryableWrites:
 
         me.counter = 0  # Reset counter
         try:
-            container.delete_item(item=test_item['id'], partition_key=test_item['pk'], retry_write=True)
+            container.delete_item(item=test_item['id'], partition_key=test_item['pk'], retry_write=2)
         except exceptions.CosmosHttpResponseError:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -203,7 +203,7 @@ class TestRetryableWrites:
         me.counter = 0  # Reset counter
         try:
             container.replace_item(item=test_item_replace['id'], body={"id": "3", "pk": "test",
-                                                                       "data": "updated data"}, retry_write=True)
+                                                                       "data": "updated data"}, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -217,7 +217,7 @@ class TestRetryableWrites:
     def test_retryable_writes_client_level(self, setup):
         """Test retryable writes for a container with retry_write set at the client level."""
         # Create a client with retry_write enabled
-        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=True)
+        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=2)
         container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(setup['container'].id)
 
         # Mock retry_utility.execute to track retries
@@ -334,7 +334,7 @@ class TestRetryableWrites:
         # Test with retry_write for upsert_item
         me.counter = 0  # Reset counter
         try:
-            container.upsert_item(test_item, retry_write=True)
+            container.upsert_item(test_item, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -361,7 +361,7 @@ class TestRetryableWrites:
         # Test with retry_write for create_item
         me.counter = 0  # Reset counter
         try:
-            container.create_item(test_item_create, retry_write=True)
+            container.create_item(test_item_create, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -393,7 +393,7 @@ class TestRetryableWrites:
         me.counter = 0  # Reset counter
         try:
             container.patch_item(item=test_item['id'], partition_key=[test_item['state'], test_item['city']],
-                                 patch_operations=test_patch_operations_hpk, retry_write=True)
+                                 patch_operations=test_patch_operations_hpk, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -425,7 +425,7 @@ class TestRetryableWrites:
         me.counter = 0  # Reset counter
         try:
             container.delete_item(item=test_item['id'], partition_key=[test_item['state'], test_item['city']],
-                                  retry_write=True)
+                                  retry_write=2)
         except exceptions.CosmosHttpResponseError:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -458,7 +458,7 @@ class TestRetryableWrites:
         try:
             container.replace_item(item=test_item_replace['id'], body={"id": "6", "state": "CA",
                                                                        "city": "San Francisco",
-                                                                       "data": "updated data"}, retry_write=True)
+                                                                       "data": "updated data"}, retry_write=2)
         except exceptions.CosmosHttpResponseError as e:
             assert me.counter > 1, "Expected multiple retries due to simulated errors"
         finally:
@@ -473,7 +473,7 @@ class TestRetryableWrites:
         """Test retryable writes for a container with hierarchical partition keys and
         retry_write set at the client level."""
         # Create a client with retry_write enabled
-        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=True)
+        client_with_retry = CosmosClient(self.host, credential=self.master_key, retry_write=2)
         container = client_with_retry.get_database_client(self.TEST_DATABASE_ID).get_container_client(
             setup['container_hpk'].id)
 
@@ -605,21 +605,21 @@ class TestRetryableWrites:
         )
         container: ContainerProxy = initialized_objects["col"]
 
-        create_document = container.create_item(body=document_definition, retry_write=True)
+        create_document = container.create_item(body=document_definition, retry_write=2)
         request = create_document.get_response_headers()["_request"]
         assert request.url.startswith(second_region_uri)
 
-        upsert_document = container.upsert_item(body=document_definition, retry_write=True)
+        upsert_document = container.upsert_item(body=document_definition, retry_write=2)
         request = upsert_document.get_response_headers()["_request"]
         assert request.url.startswith(second_region_uri)
 
-        replace_document = container.replace_item(item=document_definition['id'], body=document_definition, retry_write=True)
+        replace_document = container.replace_item(item=document_definition['id'], body=document_definition, retry_write=2)
         request = replace_document.get_response_headers()["_request"]
         assert request.url.startswith(second_region_uri)
 
         operations = [{"op": "add", "path": "/favorite_color", "value": "red"},]
         patch_document = container.patch_item(item=document_definition['id'], partition_key=document_definition['pk'],
-                                                patch_operations=operations, retry_write=True)
+                                                patch_operations=operations, retry_write=2)
         request = patch_document.get_response_headers()["_request"]
         assert request.url.startswith(second_region_uri)
 
@@ -664,7 +664,7 @@ class TestRetryableWrites:
             custom_transport,
             preferred_locations=["First Region", "Second Region"],
             multiple_write_locations=True,
-            retry_write=True
+            retry_write=2
         )
         container: ContainerProxy = initialized_objects["col"]
 

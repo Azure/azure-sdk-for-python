@@ -17,12 +17,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects openai httpx azure-monitor-opentelemetry opentelemetry-instrumentation-openai-v2
+    pip install azure-ai-projects openai httpx azure-monitor-opentelemetry opentelemetry-instrumentation-openai-v2 python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
     3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 
@@ -31,19 +31,22 @@ USAGE:
 """
 
 import os
+from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
 
+load_dotenv()
+
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 OpenAIInstrumentor().instrument()
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 

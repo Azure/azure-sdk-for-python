@@ -19,12 +19,14 @@ async def main():
 
     print(config["message"])
     print(config["my_json"]["key"])
+    await config.close()
 
     # Connecting to Azure App Configuration using connection string and trimmed key prefixes
     trimmed = ["test."]
     config = await load(connection_string=connection_string, trim_prefixes=trimmed, **kwargs)
 
     print(config["message"])
+    await config.close()
 
     # Connection to Azure App Configuration using SettingSelector
     selects = [SettingSelector(key_filter="message*")]
@@ -32,6 +34,7 @@ async def main():
 
     print("message found: " + str("message" in config))
     print("test.message found: " + str("test.message" in config))
+    await config.close()
 
 
 if __name__ == "__main__":

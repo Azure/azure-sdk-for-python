@@ -27,7 +27,7 @@ import re
 import base64
 import json
 import time
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional, Tuple
 
 from ._version import VERSION
 
@@ -59,7 +59,7 @@ def safe_user_agent_header(s: Optional[str] = None) -> str:
     return s
 
 
-def get_index_metrics_info(delimited_string: Optional[str] = None) -> Dict[str, Any]:
+def get_index_metrics_info(delimited_string: Optional[str] = None) -> dict[str, Any]:
     if delimited_string is None:
         return {}
     try:
@@ -78,17 +78,17 @@ def current_time_millis() -> int:
     return int(round(time.time() * 1000))
 
 def add_args_to_kwargs(
-        arg_names: List[str],
+        arg_names: list[str],
         args: Tuple[Any, ...],
-        kwargs: Dict[str, Any]
+        kwargs: dict[str, Any]
     ) -> None:
     """Add positional arguments(args) to keyword argument dictionary(kwargs) using names in arg_names as keys.
     To be backward-compatible, some expected positional arguments has to be allowed. This method will verify number of
     maximum positional arguments and add them to the keyword argument dictionary(kwargs)
 
-    :param List[str] arg_names: The names of positional arguments.
+    :param list[str] arg_names: The names of positional arguments.
     :param Tuple[Any, ...] args: The tuple of positional arguments.
-    :param Dict[str, Any] kwargs: The dictionary of keyword arguments as reference. This dictionary will be updated.
+    :param dict[str, Any] kwargs: The dictionary of keyword arguments as reference. This dictionary will be updated.
     """
 
     if len(args) > len(arg_names):
@@ -101,10 +101,10 @@ def add_args_to_kwargs(
         kwargs[name] = arg
 
 
-def format_list_with_and(items: List[str]) -> str:
+def format_list_with_and(items: list[str]) -> str:
     """Format a list of items into a string with commas and 'and' for the last item.
 
-    :param List[str] items: The list of items to format.
+    :param list[str] items: The list of items to format.
     :return: A formatted string with items separated by commas and 'and' before the last item.
     :rtype: str
     """
@@ -119,13 +119,13 @@ def format_list_with_and(items: List[str]) -> str:
     return formatted_items
 
 def verify_exclusive_arguments(
-        exclusive_keys: List[str],
-        **kwargs: Dict[str, Any]) -> None:
+        exclusive_keys: list[str],
+        **kwargs: dict[str, Any]) -> None:
     """Verify if exclusive arguments are present in kwargs.
     For some Cosmos SDK APIs, some arguments are exclusive, or cannot be used at the same time. This method will verify
     that and raise an error if exclusive arguments are present.
 
-    :param List[str] exclusive_keys: The names of exclusive arguments.
+    :param list[str] exclusive_keys: The names of exclusive arguments.
     """
     keys_in_kwargs = [key for key in exclusive_keys if key in kwargs and kwargs[key] is not None]
 
@@ -134,12 +134,12 @@ def verify_exclusive_arguments(
                          f"please only set one of them.")
 
 def valid_key_value_exist(
-        kwargs: Dict[str, Any],
+        kwargs: dict[str, Any],
         key: str,
         invalid_value: Any = None) -> bool:
     """Check if a valid key and value exists in kwargs. By default, it checks if the value is not None.
 
-    :param Dict[str, Any] kwargs: The dictionary of keyword arguments.
+    :param dict[str, Any] kwargs: The dictionary of keyword arguments.
     :param str key: The key to check.
     :param Any invalid_value: The value that is considered invalid. Default is None.
     :return: True if the key exists and its value is not None, False otherwise.

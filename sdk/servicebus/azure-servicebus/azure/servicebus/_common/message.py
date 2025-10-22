@@ -14,6 +14,7 @@ from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TY
 
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._pyamqp.message import Message as pyamqp_Message
+from .._pyamqp.utils import set_message_properties, set_message_annotations
 from .._transport._pyamqp_transport import PyamqpTransport
 
 from .constants import (
@@ -309,6 +310,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
 
         :rtype: str or None
         """
+        opt_p_key = None
         try:
             opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
             if opt_p_key is not None:
@@ -674,6 +676,16 @@ class ServiceBusMessageBatch(object):
         self._size = size_after_add
         self._count += 1
         self._messages.append(outgoing_sb_message)
+
+        if self._count == 1:  # Populate properties on the batch envelope from the first message
+            if outgoing_sb_message.message_id or outgoing_sb_message.session_id:
+                properties: List[Optional[str]] = [None] * 13
+                properties[0] = outgoing_sb_message.message_id
+                properties[10] = outgoing_sb_message.session_id
+                set_message_properties(self._message, properties)
+
+            if outgoing_sb_message.partition_key:
+                set_message_annotations(self._message, {_X_OPT_PARTITION_KEY: outgoing_sb_message.partition_key})
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:

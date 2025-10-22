@@ -40,6 +40,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
             :start-after: [START task_adherence_evaluator]
             :end-before: [END task_adherence_evaluator]

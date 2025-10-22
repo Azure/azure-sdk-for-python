@@ -24,7 +24,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGIONAL_ENDPOINT = RegionalRoutingContext(host, host)
+    REGIONAL_ENDPOINT = RegionalRoutingContext(host)
 
     @classmethod
     def setUpClass(cls):
@@ -192,7 +192,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceResponseException(Exception)
             _retry_utility.ExecuteFunction = mf
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=2)
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 2
@@ -266,8 +266,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert connection_retry_policy.counter == 3
-            # 4 total requests for each in-region (hub -> write locational endpoint)
-            assert len(connection_retry_policy.request_endpoints) == 8
+            # 4 total in region retries
+            assert len(connection_retry_policy.request_endpoints) == 4
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
 

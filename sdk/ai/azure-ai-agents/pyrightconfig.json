@@ -17,6 +17,7 @@
     "./../../core/azure-core",
     "./../../identity/azure-identity",
     "./../../monitor/azure-monitor-opentelemetry",
+    "./../../logic/azure-mgmt-logic",
     "./../azure-ai-projects"
   ]
 }

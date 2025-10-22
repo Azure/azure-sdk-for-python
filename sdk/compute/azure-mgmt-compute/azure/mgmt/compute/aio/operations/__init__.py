@@ -39,29 +39,32 @@ from ._virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMs
 from ._virtual_machine_scale_set_vm_extensions_operations import VirtualMachineScaleSetVMExtensionsOperations  # type: ignore
 from ._virtual_machine_scale_set_vm_run_commands_operations import VirtualMachineScaleSetVMRunCommandsOperations  # type: ignore
 from ._virtual_machine_extensions_operations import VirtualMachineExtensionsOperations  # type: ignore
+from ._disk_accesses_operations import DiskAccessesOperations  # type: ignore
+from ._disk_encryption_sets_operations import DiskEncryptionSetsOperations  # type: ignore
+from ._disks_operations import DisksOperations  # type: ignore
+from ._snapshots_operations import SnapshotsOperations  # type: ignore
+from ._disk_restore_point_operations import DiskRestorePointOperations  # type: ignore
+from ._resource_skus_operations import ResourceSkusOperations  # type: ignore
+from ._galleries_operations import GalleriesOperations  # type: ignore
+from ._community_galleries_operations import CommunityGalleriesOperations  # type: ignore
+from ._community_gallery_images_operations import CommunityGalleryImagesOperations  # type: ignore
+from ._community_gallery_image_versions_operations import CommunityGalleryImageVersionsOperations  # type: ignore
+from ._shared_galleries_operations import SharedGalleriesOperations  # type: ignore
+from ._shared_gallery_images_operations import SharedGalleryImagesOperations  # type: ignore
+from ._shared_gallery_image_versions_operations import SharedGalleryImageVersionsOperations  # type: ignore
+from ._gallery_applications_operations import GalleryApplicationsOperations  # type: ignore
+from ._gallery_application_versions_operations import GalleryApplicationVersionsOperations  # type: ignore
+from ._gallery_images_operations import GalleryImagesOperations  # type: ignore
+from ._gallery_image_versions_operations import GalleryImageVersionsOperations  # type: ignore
+from ._gallery_in_vm_access_control_profiles_operations import GalleryInVMAccessControlProfilesOperations  # type: ignore
+from ._gallery_in_vm_access_control_profile_versions_operations import GalleryInVMAccessControlProfileVersionsOperations  # type: ignore
+from ._gallery_sharing_profile_operations import GallerySharingProfileOperations  # type: ignore
+from ._soft_deleted_resource_operations import SoftDeletedResourceOperations  # type: ignore
 from ._cloud_service_role_instances_operations import CloudServiceRoleInstancesOperations  # type: ignore
 from ._cloud_service_roles_operations import CloudServiceRolesOperations  # type: ignore
 from ._cloud_services_operations import CloudServicesOperations  # type: ignore
 from ._cloud_services_update_domain_operations import CloudServicesUpdateDomainOperations  # type: ignore
 from ._cloud_service_operating_systems_operations import CloudServiceOperatingSystemsOperations  # type: ignore
-from ._disks_operations import DisksOperations  # type: ignore
-from ._disk_accesses_operations import DiskAccessesOperations  # type: ignore
-from ._disk_encryption_sets_operations import DiskEncryptionSetsOperations  # type: ignore
-from ._disk_restore_point_operations import DiskRestorePointOperations  # type: ignore
-from ._snapshots_operations import SnapshotsOperations  # type: ignore
-from ._resource_skus_operations import ResourceSkusOperations  # type: ignore
-from ._galleries_operations import GalleriesOperations  # type: ignore
-from ._gallery_images_operations import GalleryImagesOperations  # type: ignore
-from ._gallery_image_versions_operations import GalleryImageVersionsOperations  # type: ignore
-from ._gallery_applications_operations import GalleryApplicationsOperations  # type: ignore
-from ._gallery_application_versions_operations import GalleryApplicationVersionsOperations  # type: ignore
-from ._gallery_sharing_profile_operations import GallerySharingProfileOperations  # type: ignore
-from ._shared_galleries_operations import SharedGalleriesOperations  # type: ignore
-from ._shared_gallery_images_operations import SharedGalleryImagesOperations  # type: ignore
-from ._shared_gallery_image_versions_operations import SharedGalleryImageVersionsOperations  # type: ignore
-from ._community_galleries_operations import CommunityGalleriesOperations  # type: ignore
-from ._community_gallery_images_operations import CommunityGalleryImagesOperations  # type: ignore
-from ._community_gallery_image_versions_operations import CommunityGalleryImageVersionsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -94,29 +97,32 @@ __all__ = [
     "VirtualMachineScaleSetVMExtensionsOperations",
     "VirtualMachineScaleSetVMRunCommandsOperations",
     "VirtualMachineExtensionsOperations",
+    "DiskAccessesOperations",
+    "DiskEncryptionSetsOperations",
+    "DisksOperations",
+    "SnapshotsOperations",
+    "DiskRestorePointOperations",
+    "ResourceSkusOperations",
+    "GalleriesOperations",
+    "CommunityGalleriesOperations",
+    "CommunityGalleryImagesOperations",
+    "CommunityGalleryImageVersionsOperations",
+    "SharedGalleriesOperations",
+    "SharedGalleryImagesOperations",
+    "SharedGalleryImageVersionsOperations",
+    "GalleryApplicationsOperations",
+    "GalleryApplicationVersionsOperations",
+    "GalleryImagesOperations",
+    "GalleryImageVersionsOperations",
+    "GalleryInVMAccessControlProfilesOperations",
+    "GalleryInVMAccessControlProfileVersionsOperations",
+    "GallerySharingProfileOperations",
+    "SoftDeletedResourceOperations",
     "CloudServiceRoleInstancesOperations",
     "CloudServiceRolesOperations",
     "CloudServicesOperations",
     "CloudServicesUpdateDomainOperations",
     "CloudServiceOperatingSystemsOperations",
-    "DisksOperations",
-    "DiskAccessesOperations",
-    "DiskEncryptionSetsOperations",
-    "DiskRestorePointOperations",
-    "SnapshotsOperations",
-    "ResourceSkusOperations",
-    "GalleriesOperations",
-    "GalleryImagesOperations",
-    "GalleryImageVersionsOperations",
-    "GalleryApplicationsOperations",
-    "GalleryApplicationVersionsOperations",
-    "GallerySharingProfileOperations",
-    "SharedGalleriesOperations",
-    "SharedGalleryImagesOperations",
-    "SharedGalleryImageVersionsOperations",
-    "CommunityGalleriesOperations",
-    "CommunityGalleryImagesOperations",
-    "CommunityGalleryImageVersionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
