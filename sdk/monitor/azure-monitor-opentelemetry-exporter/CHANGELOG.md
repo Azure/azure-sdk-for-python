@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added Operation Name Propagation for Dependencies and Logs
+  ([#43588](https://github.com/Azure/azure-sdk-for-python/pull/43588))
 
 ### Breaking Changes
 
