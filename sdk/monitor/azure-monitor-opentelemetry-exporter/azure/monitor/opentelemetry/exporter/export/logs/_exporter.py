@@ -116,6 +116,7 @@ def _log_data_is_event(log_data: LogData) -> bool:
 
 
 # pylint: disable=protected-access
+# pylint: disable=too-many-statements
 def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     log_record = log_data.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
@@ -126,6 +127,9 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     )
     envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
+    )
+    envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get( #type: ignore
+        ContextTagKeys.AI_OPERATION_NAME
     )
     if _utils._is_any_synthetic_source(log_record.attributes):
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
