@@ -421,8 +421,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
         collection = client.stac.get_collection(collection_id=planetarycomputer_collection_id)
         
         if not hasattr(collection, 'assets') or collection.assets is None or 'thumbnail' not in collection.assets:
-            test_logger.info("Collection does not have a thumbnail asset, skipping test")
-            return
+            assert False, "Collection does not have a thumbnail asset"
         
         test_logger.info(f"Calling: get_collection_thumbnail(collection_id='{planetarycomputer_collection_id}')")
         response = client.stac.get_collection_thumbnail(collection_id=planetarycomputer_collection_id)

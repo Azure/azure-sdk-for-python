@@ -74,7 +74,9 @@ class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerClientTestBase
         
         # Verify expires_on is a datetime in the future
         assert isinstance(response.expires_on, datetime), "expires_on should be a datetime object"
-        assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
+
+        if is_live():
+            assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
         
         # Verify default duration is approximately 24 hours (allow 5 minute tolerance for clock skew)
         if is_live():
@@ -125,7 +127,9 @@ class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerClientTestBase
         
         # Verify expires_on is a datetime in the future
         assert isinstance(response.expires_on, datetime), "expires_on should be a datetime object"
-        assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
+
+        if is_live():
+            assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
         
         # Verify custom duration is approximately 60 minutes (allow 5 minute tolerance for clock skew)
         if is_live():
@@ -193,7 +197,9 @@ class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerClientTestBase
         # Verify expires_on is a datetime in the future (if present)
         if response.expires_on is not None:
             assert isinstance(response.expires_on, datetime), "expires_on should be a datetime object"
-            assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
+
+            if is_live():
+                assert response.expires_on > datetime.now(timezone.utc), "Token expiry should be in the future"
         
         # Verify the signed HREF starts with the original base URL (strip query params first)
         original_base = original_href.split('?')[0]

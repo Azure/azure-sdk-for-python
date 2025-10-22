@@ -14,7 +14,7 @@ DESCRIPTION:
     - Retrieving specific sources with get_source
     - Creating and updating ingestion definitions
     - Retrieving specific ingestions with get
-    - Running ingestion jobs from public catalogs (NAIP)
+    - Running ingestion jobs from public catalogs
     - Listing ingestion runs with list_runs
     - Monitoring ingestion status
     - Managing ingestion operations
@@ -180,8 +180,8 @@ def get_source_by_id(client: PlanetaryComputerClient, source_id: str):
         return None
 
 
-def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id: str, source_catalog_url: str):
-    """Create, update, and run ingestion from NAIP public catalog on GitHub."""
+def create_github_public_ingestion(client: PlanetaryComputerClient, collection_id: str, source_catalog_url: str):
+    """Create, update, and run ingestion from sample public catalog on GitHub."""
     
     # Delete all existing ingestions
     logging.info("Deleting all existing ingestions...")
@@ -193,7 +193,7 @@ def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id:
     # Create ingestion definition
     ingestion_definition = Ingestion(
         import_type=IngestionType.STATIC_CATALOG,
-        display_name="NAIP Ingestion",
+        display_name="Sample Ingestion",
         source_catalog_url=source_catalog_url,
         keep_original_assets=True,
         skip_existing_items=True,  # Skip items that already exist
@@ -204,7 +204,7 @@ def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id:
     # Currently, calling create() on an existing ingestion only performs updates rather than
     # failing or replacing the ingestion. This should be clarified or a separate create_or_update
     # method should be provided for idempotent operations.
-    logging.info("Creating ingestion for NAIP catalog...")
+    logging.info("Creating ingestion for sample catalog...")
     ingestion_response = client.ingestion_management.create(
         collection_id=collection_id, definition=ingestion_definition
     )
@@ -214,7 +214,7 @@ def create_github_naip_ingestion(client: PlanetaryComputerClient, collection_id:
     # Update the ingestion display name
     updated_definition = Ingestion(
         import_type=IngestionType.STATIC_CATALOG,
-        display_name="NAIP Sample Dataset Ingestion",
+        display_name="Sample Dataset Ingestion",
     )
 
     ingestion = client.ingestion_management.update(
@@ -429,17 +429,17 @@ def main():
     updated_source_id = create_or_replace_source(client, sas_container_uri, sas_token, sas_source_id)
     get_source_by_id(client, updated_source_id)
 
-    # 3. Run actual NAIP ingestion hosted on GitHub
-    naip_ingestion_id = create_github_naip_ingestion(client, collection_id, source_catalog_url)
+    # 3. Run actual ingestion hosted on GitHub
+    public_ingestion_id = create_github_public_ingestion(client, collection_id, source_catalog_url)
     
     # 4. Demonstrate advanced ingestion operations
-    get_ingestion_by_id(client, collection_id, naip_ingestion_id)
+    get_ingestion_by_id(client, collection_id, public_ingestion_id)
     
-    # 5. Monitor the NAIP ingestion
-    run_and_monitor_ingestion(client, collection_id, naip_ingestion_id)
+    # 5. Monitor the ingestion
+    run_and_monitor_ingestion(client, collection_id, public_ingestion_id)
     
     # 6. List all runs for the ingestion
-    list_ingestion_runs(client, collection_id, naip_ingestion_id)
+    list_ingestion_runs(client, collection_id, public_ingestion_id)
     
     # 7. Manage operations
     manage_operations(client)

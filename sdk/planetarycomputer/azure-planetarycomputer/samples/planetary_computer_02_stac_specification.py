@@ -21,7 +21,7 @@ USAGE:
     python planetarycomputer_stac_specification.py
 
     Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
-    Set the environment variable AZURE_COLLECTION_ID with your collection ID (default: naip).
+    Set the environment variable AZURE_COLLECTION_ID with your collection ID.
 """
 
 import os
@@ -66,7 +66,7 @@ def search_collections(client):
 
 def search_items(client, collection_id):
     """Search STAC items with filters and sorting."""
-    # Create Search using StacSearchParameters with NAIP-specific query
+    # Create Search using StacSearchParameters
     # Using date_time with range format instead of CQL2-JSON temporal filter
     search_post_request = StacSearchParameters(
         collections=[collection_id],
@@ -98,7 +98,7 @@ def search_items(client, collection_id):
     logging.info(json.dumps(search_post_response.as_dict()))
 
 def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
-    """Create a sample STAC item based on NAIP data."""
+    """Create a sample STAC item."""
     return StacItem({
         "stac_version": "1.0.0",
         "type": "Feature",
@@ -226,7 +226,7 @@ def create_stac_item(client, collection_id, item_id):
 def update_stac_item(client, collection_id, item_id):
     """Update a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
-    stac_item.properties["platform"] = "NAIP Imagery"
+    stac_item.properties["platform"] = "Imagery"
 
     stac_item_create_or_update_response = client.stac.begin_update_item(
         collection_id=collection_id, item_id=stac_item.id, body=stac_item, polling=True
@@ -267,7 +267,7 @@ def create_or_replace_stac_item(client, collection_id, item_id):
     time.sleep(2)
     
     # Now demonstrate create_or_replace (replace since item exists)
-    stac_item.properties["platform"] = "NAIP Imagery Updated"
+    stac_item.properties["platform"] = "Imagery Updated"
     stac_item.properties["processing_level"] = "L2"
     
     replace_poller = client.stac.begin_create_or_replace_item(

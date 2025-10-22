@@ -79,12 +79,12 @@ def create_collection(client, collection_id):
     # Create StacCollection object
     collection_payload = StacCollection(
         id=collection_id,
-        description="A Subset of NAIP imagery for sample MPC Pro GeoCatalog deployments. Includes multiple city and national park focus areas, useful for quick product evaluation.",
+        description="A Subset of imagery for sample MPC Pro GeoCatalog deployments.",
         extent=extent,
         license="proprietary",
         links=[],
         stac_version="1.0.0",
-        title="NAIP Atlanta (MPC Pro Sample Datasets)",
+        title="MPC Pro Sample Datasets",
         type="Collection",
     )
 
@@ -190,7 +190,7 @@ def manage_partition_type(client, collection_id):
 
 def manage_render_options(client, collection_id):
     """Create and manage render options for a collection."""
-    # Define render options based on NAIP render config
+    # Define render options
     render_option = RenderOption(
         id="natural-color",
         name="Natural color",
@@ -280,7 +280,7 @@ def manage_tile_settings(client, collection_id):
     tile_settings = client.stac.get_tile_settings(collection_id=collection_id)
     logging.info(tile_settings)
 
-    # Update tile settings (based on NAIP tile_settings_config.json)
+    # Update tile settings
     logging.info("Updating tile settings...")
     stac_collection_tile_settings_response = client.stac.replace_tile_settings(
         collection_id=collection_id,
@@ -358,7 +358,7 @@ def manage_collection_assets(client, collection_id):
         "href": thumbnail_url,
         "type": "image/png",
         "roles": ["thumbnail"],
-        "title": "NAIP thumbnail",
+        "title": "Thumbnail",
     }
 
     # Download thumbnail

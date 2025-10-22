@@ -9,7 +9,7 @@ FILE: planetary_computer_05_mosaics_tiler.py
 
 DESCRIPTION:
     This sample demonstrates mosaic tiling and static image operations from the Azure Planetary Computer Pro SDK.
-    Uses NAIP sample datasets and saves tiles and images locally.
+    Uses sample datasets and saves tiles and images locally.
 
 USAGE:
     python planetary_computer_05_mosaics_tiler.py

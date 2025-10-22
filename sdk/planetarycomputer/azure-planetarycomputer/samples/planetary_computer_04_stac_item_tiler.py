@@ -10,7 +10,7 @@ FILE: planetary_computer_04_stac_item_tiler.py
 DESCRIPTION:
     This sample demonstrates STAC item tiling operations from the Azure Planetary Computer Pro SDK.
     Includes asset information retrieval, statistics, tiling, cropping, and preview operations.
-    Uses NAIP sample datasets and saves tiles locally.
+    Uses sample datasets and saves tiles locally.
 
 USAGE:
     python planetary_computer_04_stac_item_tiler.py
@@ -292,8 +292,7 @@ def main():
 
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-    # Define geometry for operations - Georgia NAIP area
-    # Small rectangular geometry for focused operations (subsumed by actual dataset bounds)
+    # Define geometry for operations
     geometry = Polygon(
         coordinates=[
             [
@@ -308,14 +307,13 @@ def main():
     geojson = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
     # Calculate bounds and center point from polygon (within actual dataset bounds)
-    # Bounds: perfectly square at 0.026 degrees × 0.026 degrees
     bounds = [-84.3930, 33.6798, -84.3670, 33.7058]
     point = [-84.3860, 33.6760]
 
     # Execute tiler operations
     get_tile_matrix_definitions(client)
     list_tile_matrices(client)
-    get_asset_statistics(client, collection_id, item_id)  # Not supported for NAIP
+    get_asset_statistics(client, collection_id, item_id)
     list_available_assets(client, collection_id, item_id)
     get_assets_info(client, collection_id, item_id)
     list_bounds(client, collection_id, item_id)

@@ -88,6 +88,10 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("TEST: List STAC Collections")
         logger.info("=" * 80)
 
+        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID")
+
+        assert collection_id is not None
+
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         collections = client.stac.list_collections()
 
@@ -119,16 +123,20 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         assert first_collection.id is not None and len(first_collection.id) > 0, "Collection ID should not be empty"
         assert hasattr(first_collection, 'extent'), "Collection should have extent"
         
-        # Validate that naip-sample-datasets is in the list
+        # Validate that the collection is in the list
         collection_ids = [c.id for c in collections.collections]
-        assert "naip-sample-datasets" in collection_ids, "naip-sample-datasets collection should be present"
+        assert collection_id in collection_ids, f"{collection_id} collection should be present"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_04_get_collection(self, planetarycomputer_endpoint):
         """Test getting a specific STAC collection."""
+
+        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID")
+        assert collection_id is not None
+
         logger.info("=" * 80)
-        logger.info("TEST: Get STAC Collection (naip-sample-datasets)")
+        logger.info(f"TEST: Get STAC Collection ({collection_id})")
         logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -187,7 +195,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
         
-        # Create search with spatial filter (Georgia NAIP area)
+        # Create search with spatial filter
         search_params = StacSearchParameters(
             collections=[collection_id],
             filter_lang=FilterLanguage.CQL2_JSON,
@@ -236,14 +244,6 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
             if hasattr(item, 'properties') and item.properties:
                 if hasattr(item.properties, 'datetime') and item.properties.datetime:
                     logger.info(f"  Datetime: {item.properties.datetime}")
-                # Log NAIP-specific properties
-                props_dict = item.properties.additional_properties if hasattr(item.properties, 'additional_properties') else {}
-                if 'naip:year' in props_dict:
-                    logger.info(f"  NAIP Year: {props_dict['naip:year']}")
-                if 'naip:state' in props_dict:
-                    logger.info(f"  NAIP State: {props_dict['naip:state']}")
-                if 'gsd' in props_dict:
-                    logger.info(f"  GSD: {props_dict['gsd']}")
 
         # Validate items are within date range
         if len(search_response.features) > 0:
@@ -288,7 +288,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
             assert hasattr(first_item, 'assets'), "Item should have assets"
             asset_keys = list(first_item.assets.keys())
             assert len(asset_keys) >= 2, f"Expected at least 2 assets, got {len(asset_keys)}"
-            # Check for common NAIP assets
+            # Check for common assets
             common_assets = ['image', 'tilejson', 'thumbnail', 'rendered_preview']
             found_assets = [asset for asset in common_assets if asset in asset_keys]
             assert len(found_assets) >= 1, f"Expected at least one common asset type, found: {found_assets}"
@@ -583,12 +583,12 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
             if 'properties' not in stac_item_dict:
                 stac_item_dict['properties'] = {}
             
-            stac_item_dict['properties']['platform'] = "NAIP Imagery"
+            stac_item_dict['properties']['platform'] = "Imagery"
             
             # Create updated item from dictionary
             updated_stac_item = StacItem(stac_item_dict)
 
-            logger.info("Updating item with platform property: NAIP Imagery")
+            logger.info("Updating item with platform property: Imagery")
 
             # Update the item
             update_poller = client.stac.begin_update_item(
@@ -663,9 +663,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
                 asset_keys = list(item.assets.keys())
                 logger.info(f"  Assets ({len(asset_keys)}): {', '.join(asset_keys)}")
                 
-                # Validate common NAIP asset types
+                # Validate common asset types
                 common_assets = ['image', 'tilejson', 'thumbnail', 'rendered_preview']
                 found_assets = [asset for asset in common_assets if asset in asset_keys]
-                logger.info(f"  Found common NAIP assets: {', '.join(found_assets)}")
+                logger.info(f"  Found common assets: {', '.join(found_assets)}")
         else:
             logger.warning("No items found in collection to test get_item")

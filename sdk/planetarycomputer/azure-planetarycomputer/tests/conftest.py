@@ -56,28 +56,44 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Date", value="Mon, 01 Jan 2024 00:00:00 GMT")
     add_header_regex_sanitizer(key="Server-Timing", value="total;dur=0.0")
     add_header_regex_sanitizer(key="traceparent", value="00-00000000000000000000000000000000-0000000000000000-00")
-    add_header_regex_sanitizer(key="Content-Length", value="100000")
+    # Note: Removed Content-Length sanitizer as it was causing matching issues with DELETE requests
+    # add_header_regex_sanitizer(key="Content-Length", value="100000")
     add_header_regex_sanitizer(key="mise-correlation-id", value="00000000-0000-0000-0000-000000000000")
     
-    # Add URI sanitizer to sanitize the actual endpoint hostname
-    # The recordings will have hostnames sanitized with descriptive placeholders
-    # This allows playback mode to work regardless of the actual endpoint
-    from devtools_testutils import add_uri_regex_sanitizer
-    # Sanitize any geocatalog endpoint to a descriptive placeholder
-    # This regex matches: SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com
-    #                 or: endpoint.geocatalog.azure.com
-    #                 or: any similar geocatalog hostname
+    # Sanitize the endpoint hostname to match the test proxy's format
+    from devtools_testutils import add_uri_regex_sanitizer, add_general_string_sanitizer
+    
+    # Use the same format as the test proxy: Sanitized.sanitized_label.sanitized_location
+    # This matches what the test proxy does automatically, avoiding conflicts
+    fake_endpoint = "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com"
+    
+    # Replace any real geocatalog hostname with our standardized fake value
     add_uri_regex_sanitizer(
-        regex=r"[a-zA-Z0-9\-\.]+\.geocatalog\.[a-zA-Z0-9\-\.]+\.azure\.com", 
-        value="SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com"
+        regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.[a-zA-Z0-9\-\.]+\.azure\.com", 
+        value=fake_endpoint
     )
     add_uri_regex_sanitizer(
-        regex=r"[a-zA-Z0-9\-\.]+\.geocatalog\.azure\.com", 
-        value="SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com"
+        regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.azure\.com", 
+        value=fake_endpoint
     )
     
-    # Sanitize storage account URLs in request URIs
-    # This regex matches: vojrtgdatasa.blob.core.windows.net or any other storage account
+    # In live mode, also add a string sanitizer for the real endpoint value
+    # This ensures that the EnvironmentVariableLoader's auto-sanitizer uses our fake value
+    if is_live():
+        real_endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT", "")
+        if real_endpoint:
+            add_general_string_sanitizer(target=real_endpoint, value=fake_endpoint)
+    
+    # Sanitize storage account URLs WITH URL-encoded protocol prefix (e.g., in query parameters)
+    # Matches: https%3A%2F%2Fvojrtgdatasa.blob.core.windows.net → https%3A%2F%2FSANITIZED_STORAGE.blob.core.windows.net
+    # This MUST come first to preserve the %2F%2F encoding
+    add_uri_regex_sanitizer(
+        regex=r"https%3A%2F%2F[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
+        value="https%3A%2F%2FSANITIZED_STORAGE.blob.core.windows.net"
+    )
+    
+    # Sanitize storage account URLs WITHOUT URL encoding (normal URLs)
+    # Matches: vojrtgdatasa.blob.core.windows.net → SANITIZED_STORAGE.blob.core.windows.net
     add_uri_regex_sanitizer(
         regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net", 
         value="SANITIZED_STORAGE.blob.core.windows.net"
@@ -97,3 +113,68 @@ def add_sanitizers(test_proxy):
         regex=r"SANITIZED_[A-Z_]*STORAGE\.blob\.core\.windows\.net",
         value="SANITIZED_STORAGE.blob.core.windows.net"
     )
+    
+    # Sanitize operation IDs (UUIDs/GUIDs) in URLs
+    # This matches patterns like /operations/8492e7c3-0531-44c9-b9e3-a6811c2b2078
+    # and replaces them with a zero UUID to ensure consistent playback
+    add_uri_regex_sanitizer(
+        regex=r"/operations/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        value="/operations/00000000-0000-0000-0000-000000000000"
+    )
+    
+    
+    # Sanitize ingestion source IDs (UUIDs/GUIDs) in URLs
+    # This matches patterns like /ingestion-sources/89d8d34d-b7eb-491a-a8e9-49a154697ebb
+    add_uri_regex_sanitizer(
+        regex=r"/ingestion-sources/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        value="/ingestion-sources/00000000-0000-0000-0000-000000000000"
+    )
+    
+    # Sanitize ingestion IDs (UUIDs/GUIDs) in URLs
+    # This matches patterns like /ingestions/8492e7c3-0531-44c9-b9e3-a6811c2b2078
+    add_uri_regex_sanitizer(
+        regex=r"/ingestions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        value="/ingestions/00000000-0000-0000-0000-000000000000"
+    )
+    
+    # Sanitize run IDs (UUIDs/GUIDs) in URLs
+    # This matches patterns like /runs/8492e7c3-0531-44c9-b9e3-a6811c2b2078
+    add_uri_regex_sanitizer(
+        regex=r"/runs/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        value="/runs/00000000-0000-0000-0000-000000000000"
+    )
+    
+    # Sanitize UUIDs in response bodies (JSON)
+    # This ensures operation IDs, source IDs, etc. in response bodies are also sanitized
+    add_body_regex_sanitizer(
+        regex=r'"id"\s*:\s*"[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"',
+        value='"id": "00000000-0000-0000-0000-000000000000"'
+    )
+    
+    # Sanitize collection IDs with random hash suffixes
+    # Pattern: naip-atl-bde3e846 -> naip-atl-00000000
+    # The service appends a random 8-character hex hash to collection IDs at runtime
+    # The env var may be "naip-atl" but the service will return "naip-atl-bde3e846"
+    planetarycomputer_collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+    
+    # ALWAYS sanitize any collection ID with hash suffix pattern
+    # We use the base collection name from env var (which may or may not already have a hash)
+    import re
+    collection_base_match = re.match(r'^(.+)-[a-f0-9]{8}$', planetarycomputer_collection_id)
+    if collection_base_match:
+        # Env var already has hash: use the base part
+        collection_base = collection_base_match.group(1)
+    else:
+        # Env var has no hash: use it as-is (service will add hash at runtime)
+        collection_base = planetarycomputer_collection_id
+    
+    # Sanitize collection IDs with hash: base-XXXXXXXX -> base-00000000
+    add_uri_regex_sanitizer(
+        regex=rf"{re.escape(collection_base)}-[a-f0-9]{{8}}",
+        value=f"{collection_base}-00000000"
+    )
+    add_body_regex_sanitizer(
+        regex=rf'"{re.escape(collection_base)}-[a-f0-9]{{8}}"',
+        value=f'"{collection_base}-00000000"'
+    )
+    # else: no hash suffix, use collection ID as-is (like "naip-atl")

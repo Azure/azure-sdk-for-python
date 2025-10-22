@@ -205,7 +205,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create ingestion definition
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion",
+            display_name="Ingestion",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -254,7 +254,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # First create an ingestion
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Sample Dataset Ingestion",
+            display_name="Sample Dataset Ingestion",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -276,7 +276,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Update the ingestion with new display name
         updated_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Updated Ingestion Name",
+            display_name="Updated Ingestion Name",
         )
 
         updated_ingestion = client.ingestion_management.update(
@@ -293,7 +293,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Assertions
         assert updated_ingestion is not None, "Updated ingestion should not be None"
         assert updated_ingestion.id == ingestion_id, "Ingestion ID should remain the same"
-        assert updated_ingestion.display_name == "NAIP Updated Ingestion Name", "Display name should be updated"
+        assert updated_ingestion.display_name == "Updated Ingestion Name", "Display name should be updated"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -313,7 +313,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create an ingestion first
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion for Run",
+            display_name="Ingestion for Run",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -365,7 +365,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create an ingestion
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion for Status Check",
+            display_name="Ingestion for Status Check",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -472,7 +472,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create an ingestion and run to generate an operation
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion for Operation",
+            display_name="Ingestion for Operation",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -583,7 +583,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create an ingestion and run to generate an operation
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion for Cancel Test",
+            display_name="Ingestion for Cancel Test",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -795,7 +795,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create an ingestion
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion for Lists Test",
+            display_name="Ingestion for Lists Test",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -836,7 +836,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create an ingestion
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion for Get Test",
+            display_name="Ingestion for Get Test",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
@@ -885,7 +885,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create an ingestion
         ingestion_definition = Ingestion(
             import_type=IngestionType.STATIC_CATALOG,
-            display_name="NAIP Ingestion for List Runs Test",
+            display_name="Ingestion for List Runs Test",
             source_catalog_url=source_catalog_url,
             keep_original_assets=True,
             skip_existing_items=True,
