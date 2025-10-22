@@ -14,7 +14,7 @@ from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
         condition=(not is_live_and_not_recording()),
         reason="Skipped because we cannot record network calls with AOAI client",
 )
-class TestFineTuningSFT(TestBase):
+class TestFineTuning(TestBase):
 
     def _create_fine_tuning_job(self, openai_client, train_file_id, validation_file_id):
         """Helper method to create a supervised fine-tuning job."""
@@ -34,6 +34,24 @@ class TestFineTuningSFT(TestBase):
             }
         )
 
+    def _create_dpo_fine_tuning_job(self, openai_client, train_file_id, validation_file_id):
+        """Helper method to create a DPO fine-tuning job."""
+        return openai_client.fine_tuning.jobs.create(
+            training_file=train_file_id,
+            validation_file=validation_file_id,
+            model=self.test_finetuning_params["model_name"],
+            method={
+                "type": "dpo",
+                "dpo": {
+                    "hyperparameters": {
+                        "n_epochs": self.test_finetuning_params["n_epochs"],
+                        "batch_size": self.test_finetuning_params["batch_size"],
+                        "learning_rate_multiplier": self.test_finetuning_params["learning_rate_multiplier"]
+                    }
+                }
+            }
+        )
+
     @servicePreparer()
     @recorded_by_proxy
     def test_finetuning_sft_create_job(self, **kwargs):
@@ -41,8 +59,8 @@ class TestFineTuningSFT(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=False)) as project_client:
             with project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -73,6 +91,9 @@ class TestFineTuningSFT(TestBase):
                 TestBase.validate_fine_tuning_job(fine_tuning_job)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                assert fine_tuning_job.method is not None, "Method should not be None for SFT job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "supervised")
+                print(f"[test_finetuning_sft] SFT method validation passed - type: {fine_tuning_job.method.type}")
                 
                 # Clean up: cancel the job
                 openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
@@ -90,8 +111,8 @@ class TestFineTuningSFT(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=False)) as project_client:
             with project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -137,8 +158,8 @@ class TestFineTuningSFT(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=False)) as project_client:
             with project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -186,8 +207,8 @@ class TestFineTuningSFT(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=False)) as project_client:
             with project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -229,3 +250,57 @@ class TestFineTuningSFT(TestBase):
                 openai_client.files.delete(train_file.id)
                 openai_client.files.delete(validation_file.id)
                 print(f"[test_finetuning_sft] Deleted files: {train_file.id}, {validation_file.id}")
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_finetuning_dpo_create_job(self, **kwargs):
+        endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
+        
+        # Get the path to the DPO test data files
+        test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
+        training_file_path = test_data_dir / self.test_finetuning_params["dpo"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["dpo"]["validation_file_name"]
+        
+        with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=False)) as project_client:
+            with project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
+                # Upload training file
+                with open(training_file_path, "rb") as f:
+                    train_file = openai_client.files.create(file=f, purpose="fine-tune")
+                assert train_file is not None
+                assert train_file.id is not None
+                TestBase.assert_equal_or_not_none(train_file.status, "pending")
+                print(f"[test_finetuning_dpo] Uploaded training file: {train_file.id}")
+                
+                # Upload validation file
+                with open(validation_file_path, "rb") as f:
+                    validation_file = openai_client.files.create(file=f, purpose="fine-tune")
+                assert validation_file is not None
+                assert validation_file.id is not None
+                TestBase.assert_equal_or_not_none(validation_file.status, "pending")
+                print(f"[test_finetuning_dpo] Uploaded validation file: {validation_file.id}")
+
+                # Wait for completion of uploading of files
+                time.sleep(10)
+                
+                # Create a DPO fine-tuning job
+                fine_tuning_job = self._create_dpo_fine_tuning_job(openai_client, train_file.id, validation_file.id)
+                print(f"[test_finetuning_dpo] Created DPO fine-tuning job: {fine_tuning_job.id}")
+                print(fine_tuning_job)
+                
+                # Validate the created job
+                TestBase.validate_fine_tuning_job(fine_tuning_job)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                assert fine_tuning_job.method is not None, "Method should not be None for DPO job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "dpo")
+                
+                print(f"[test_finetuning_dpo] DPO method validation passed - type: {fine_tuning_job.method.type}")
+                
+                # Clean up: cancel the job
+                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_dpo] Cancelled job: {fine_tuning_job.id}")
+                
+                # Clean up: delete the uploaded files
+                openai_client.files.delete(train_file.id)
+                openai_client.files.delete(validation_file.id)
+                print(f"[test_finetuning_dpo] Deleted files: {train_file.id}, {validation_file.id}")

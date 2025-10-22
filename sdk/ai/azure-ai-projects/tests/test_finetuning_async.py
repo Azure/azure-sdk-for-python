@@ -16,7 +16,7 @@ from devtools_testutils import is_live_and_not_recording
         condition=(not is_live_and_not_recording()),
         reason="Skipped because we cannot record network calls with AOAI client",
 )
-class TestFineTuningSFTAsync(TestBase):
+class TestFineTuningAsync(TestBase):
 
     async def _create_fine_tuning_job_async(self, openai_client, train_file_id, validation_file_id):
         """Helper method to create a supervised fine-tuning job asynchronously."""
@@ -36,6 +36,24 @@ class TestFineTuningSFTAsync(TestBase):
             }
         )
 
+    async def _create_dpo_fine_tuning_job_async(self, openai_client, train_file_id, validation_file_id):
+        """Helper method to create a DPO fine-tuning job asynchronously."""
+        return await openai_client.fine_tuning.jobs.create(
+            training_file=train_file_id,
+            validation_file=validation_file_id,
+            model=self.test_finetuning_params["model_name"],
+            method={
+                "type": "dpo",
+                "dpo": {
+                    "hyperparameters": {
+                        "n_epochs": self.test_finetuning_params["n_epochs"],
+                        "batch_size": self.test_finetuning_params["batch_size"],
+                        "learning_rate_multiplier": self.test_finetuning_params["learning_rate_multiplier"]
+                    }
+                }
+            }
+        )
+
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_finetuning_sft_create_job_async(self, **kwargs):
@@ -43,8 +61,8 @@ class TestFineTuningSFTAsync(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         async with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=True)) as project_client:
             async with await project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -75,6 +93,10 @@ class TestFineTuningSFTAsync(TestBase):
                 TestBase.validate_fine_tuning_job(fine_tuning_job)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
                 TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                assert fine_tuning_job.method is not None, "Method should not be None for SFT job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "supervised")
+                
+                print(f"[test_finetuning_sft_async] SFT method validation passed - type: {fine_tuning_job.method.type}")
                 
                 # Clean up: cancel the job
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
@@ -92,8 +114,8 @@ class TestFineTuningSFTAsync(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         async with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=True)) as project_client:
             async with await project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -139,8 +161,8 @@ class TestFineTuningSFTAsync(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         async with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=True)) as project_client:
             async with await project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -191,8 +213,8 @@ class TestFineTuningSFTAsync(TestBase):
         
         # Get the path to the test data files
         test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
-        training_file_path = test_data_dir / self.test_finetuning_params["training_file_name"]
-        validation_file_path = test_data_dir / self.test_finetuning_params["validation_file_name"]
+        training_file_path = test_data_dir / self.test_finetuning_params["sft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["sft"]["validation_file_name"]
         
         async with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=True)) as project_client:
             async with await project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
@@ -205,7 +227,7 @@ class TestFineTuningSFTAsync(TestBase):
                 with open(validation_file_path, "rb") as f:
                     validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
                 print(f"[test_finetuning_sft_async] Uploaded validation file: {validation_file.id}")
-                
+
                 # Wait for files to be processed
                 time.sleep(10)
                 
@@ -234,3 +256,56 @@ class TestFineTuningSFTAsync(TestBase):
                 await openai_client.files.delete(train_file.id)
                 await openai_client.files.delete(validation_file.id)
                 print(f"[test_finetuning_sft_async] Deleted files: {train_file.id}, {validation_file.id}")
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_finetuning_dpo_create_job_async(self, **kwargs):
+        endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
+        
+        # Get the path to the DPO test data files
+        test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
+        training_file_path = test_data_dir / self.test_finetuning_params["dpo"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["dpo"]["validation_file_name"]
+        
+        async with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=True)) as project_client:
+            async with await project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
+                # Upload training file
+                with open(training_file_path, "rb") as f:
+                    train_file = await openai_client.files.create(file=f, purpose="fine-tune")
+                assert train_file is not None
+                assert train_file.id is not None
+                TestBase.assert_equal_or_not_none(train_file.status, "pending")
+                print(f"[test_finetuning_dpo_async] Uploaded training file: {train_file.id}")
+                
+                # Upload validation file
+                with open(validation_file_path, "rb") as f:
+                    validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
+                assert validation_file is not None
+                assert validation_file.id is not None
+                TestBase.assert_equal_or_not_none(validation_file.status, "pending")
+                print(f"[test_finetuning_dpo_async] Uploaded validation file: {validation_file.id}")
+
+                # Wait for completion of uploading of files
+                time.sleep(10)
+                
+                # Create a DPO fine-tuning job
+                fine_tuning_job = await self._create_dpo_fine_tuning_job_async(openai_client, train_file.id, validation_file.id)
+                print(f"[test_finetuning_dpo_async] Created DPO fine-tuning job: {fine_tuning_job.id}")
+                print(fine_tuning_job)
+                
+                # Validate the created job
+                TestBase.validate_fine_tuning_job(fine_tuning_job)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                assert fine_tuning_job.method is not None, "Method should not be None for DPO job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "dpo")
+                print(f"[test_finetuning_dpo_async] DPO method validation passed - type: {fine_tuning_job.method.type}")
+                
+                # Clean up: cancel the job
+                await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_dpo_async] Cancelled job: {fine_tuning_job.id}")
+                
+                # Clean up: delete the uploaded files
+                await openai_client.files.delete(train_file.id)
+                await openai_client.files.delete(validation_file.id)
+                print(f"[test_finetuning_dpo_async] Deleted files: {train_file.id}, {validation_file.id}")

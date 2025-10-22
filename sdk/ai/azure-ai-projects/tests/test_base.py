@@ -87,8 +87,14 @@ class TestBase(AzureRecordedTestCase):
 
     test_finetuning_params = {
         "model_name": "gpt-4o-mini",
-        "training_file_name": "training_set.jsonl",
-        "validation_file_name": "validation_set.jsonl",
+        "sft": {
+            "training_file_name": "training_set.jsonl",
+            "validation_file_name": "validation_set.jsonl",
+        },
+        "dpo": {
+            "training_file_name": "dpo_training_set.jsonl",
+            "validation_file_name": "dpo_validation_set.jsonl",
+        },
         "n_epochs": 1,
         "batch_size": 1,
         "learning_rate_multiplier": 1.0,
