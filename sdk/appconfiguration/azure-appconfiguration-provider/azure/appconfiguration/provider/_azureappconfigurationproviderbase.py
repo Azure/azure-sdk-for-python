@@ -6,7 +6,6 @@
 import base64
 import hashlib
 import json
-import os
 import time
 import datetime
 from threading import Lock
@@ -261,11 +260,12 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
             if feature_flag.label and not feature_flag.label.isspace():
                 feature_flag_reference += f"?label={feature_flag.label}"
-            if feature_flag_value[TELEMETRY_KEY].get("allocation") and feature_flag_value[TELEMETRY_KEY].get("allocation").get("seed"):
+            if feature_flag_value[TELEMETRY_KEY].get("allocation") and feature_flag_value[TELEMETRY_KEY].get(
+                "allocation"
+            ).get("seed"):
                 self._tracing_context.uses_seed = True
             if feature_flag_value[TELEMETRY_KEY].get("variant"):
-                size = len(feature_flag_value[TELEMETRY_KEY].get("variant"))
-                self._tracing_context.update_max_variants(size)
+                self._tracing_context.update_max_variants(len(feature_flag_value[TELEMETRY_KEY].get("variant")))
             if feature_flag_value[TELEMETRY_KEY].get("enabled"):
                 self._tracing_context.uses_telemetry = True
                 feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
