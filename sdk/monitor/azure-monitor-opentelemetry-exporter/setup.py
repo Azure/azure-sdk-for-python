@@ -84,6 +84,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "azure-identity~=1.17",
+        # TODO: Remove fixedint
         "fixedint<1.0.0,>=0.1.6",
         "msrest>=0.6.10",
         "opentelemetry-api~=1.35",
