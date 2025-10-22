@@ -152,33 +152,45 @@ def get_mosaics_assets_for_tile(client, search_id, collection_id):
     logging.info(f"Assets for tile: {result}")
 
 
-def create_static_image(client, collection_id, item_id):
+def create_static_image(client, collection_id):
     """Create a static image from a STAC item.
     
     This demonstrates creating a static image tile with specific rendering parameters.
     The image is created asynchronously and can be retrieved using the returned image ID.
     """
-    # Define CQL filter to select specific item
-    cql_filter = {"op": "=", "args": [{"property": "id"}, item_id]}
+    # Define CQL filter with date range
+    cql_filter = {
+        "op": "and",
+        "args": [
+            {"op": "=", "args": [{"property": "collection"}, collection_id]},
+            {
+                "op": "anyinteracts",
+                "args": [
+                    {"property": "datetime"},
+                    {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]}
+                ]
+            }
+        ]
+    }
     
-    # Define geometry for the image (bounding box area)
+    # Define geometry for the image (within dataset bounds)
     geometry = Polygon(coordinates=[[
-        [-84.5, 34.0],
-        [-84.4, 34.0],
-        [-84.4, 34.1],
-        [-84.5, 34.1],
-        [-84.5, 34.0]
+        [-84.45378097481053, 33.6567321707079],
+        [-84.39805886744838, 33.6567321707079],
+        [-84.39805886744838, 33.61945681366625],
+        [-84.45378097481053, 33.61945681366625],
+        [-84.45378097481053, 33.6567321707079]
     ]])
     
     # Create image request with rendering parameters
     image_request = ImageRequest(
         cql=cql_filter,
-        zoom=10,
+        zoom=13,
         geometry=geometry,
-        render_parameters=f"assets=red&assets=green&assets=blue&nodata=0&collection={collection_id}",
-        columns=512,
-        rows=512,
-        image_size="512x512",
+        render_parameters=f"assets=image&asset_bidx=image|1,2,3&collection={collection_id}",
+        columns=1080,
+        rows=1080,
+        image_size="1080x1080",
         show_branding=False,
     )
     
@@ -202,62 +214,24 @@ def get_static_image(client, collection_id, image_id):
     # Get static image data
     image_data = client.tiler.get_static_image(collection_id=collection_id, id=image_id)
     
+    # Join the generator to get bytes
+    image_bytes = b"".join(image_data)
+    
     # Save the image locally
-    filename = f"static_image_{image_id}.png"
+    filename = f"static_image_{image_id}"
     with open(filename, "wb") as f:
-        f.write(image_data)
+        f.write(image_bytes)
     
-    logging.info(f"Static image saved as: {filename}")
-
-
-def create_custom_static_image(client, collection_id, item_id):
-    """Create a custom static image with false color rendering.
-    
-    This demonstrates creating a static image with custom rendering parameters,
-    including false color (NIR-R-G) and color formula adjustments.
-    """
-    # Define CQL filter
-    cql_filter = {"op": "=", "args": [{"property": "id"}, item_id]}
-    
-    # Define a different geometry area
-    geometry = Polygon(coordinates=[[
-        [-84.45, 34.05],
-        [-84.40, 34.05],
-        [-84.40, 34.08],
-        [-84.45, 34.08],
-        [-84.45, 34.05]
-    ]])
-    
-    # Create custom request with false color and different size
-    custom_request = ImageRequest(
-        cql=cql_filter,
-        zoom=12,
-        geometry=geometry,
-        render_parameters=f"assets=nir&assets=red&assets=green&nodata=0&color_formula=Gamma RGB 3.2 Saturation 0.8 Sigmoidal RGB 25 0.35&collection={collection_id}",
-        columns=1024,
-        rows=768,
-        image_size="1024x768",
-        show_branding=True,
-    )
-    
-    # Create the custom static image
-    custom_response = client.tiler.create_static_image(collection_id=collection_id, body=custom_request)
-    custom_image_id = custom_response.url.split("?")[0].split("/")[-1]
-    
-    logging.info(f"Created custom static image with ID: {custom_image_id}")
-    logging.info(f"Custom image URL: {custom_response.url}")
-    
-    return custom_image_id
+    logging.info(f"Static image saved as: {filename} ({len(image_bytes)} bytes)")
 
 
 def main():
     endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT")
-
-    if not endpoint:
-        raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
-
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
-    item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID")
+
+    assert endpoint is not None
+    assert collection_id is not None
+
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Execute mosaic tiler operations
@@ -272,11 +246,8 @@ def main():
     get_mosaics_assets_for_tile(client, search_id, collection_id)
     
     # Execute static image operations
-    image_id = create_static_image(client, collection_id, item_id)
+    image_id = create_static_image(client, collection_id)
     get_static_image(client, collection_id, image_id)
-    
-    custom_image_id = create_custom_static_image(client, collection_id, item_id)
-    get_static_image(client, collection_id, custom_image_id)
 
 
 if __name__ == "__main__":
