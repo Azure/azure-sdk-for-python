@@ -94,6 +94,7 @@ def send_event_data_list(producer):
     except EventHubError as eh_err:
         print("Sending error: ", eh_err)
 
+
 def send_concurrent_with_shared_client_and_lock():
     """
     Example showing concurrent sending with a shared client using threading.Lock.
