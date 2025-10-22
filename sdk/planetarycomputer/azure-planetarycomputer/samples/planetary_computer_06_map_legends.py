@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python planetary_computer_06_map_legends.py
 
-    Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
+    Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
 """
 
 import os
@@ -56,10 +56,10 @@ def get_legend(client):
 
 
 def main():
-    endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
+    endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT")
 
     if not endpoint:
-        raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
+        raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 

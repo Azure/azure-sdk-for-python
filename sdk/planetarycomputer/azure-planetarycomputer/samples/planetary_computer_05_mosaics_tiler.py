@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python planetary_computer_05_mosaics_tiler.py
 
-    Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
+    Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
 """
 
 import os
@@ -251,10 +251,10 @@ def create_custom_static_image(client, collection_id, item_id):
 
 
 def main():
-    endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
+    endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT")
 
     if not endpoint:
-        raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
+        raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
     item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID")

@@ -20,7 +20,7 @@ DESCRIPTION:
 USAGE:
     python planetarycomputer_stac_specification.py
 
-    Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
+    Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
     Set the environment variable AZURE_COLLECTION_ID with your collection ID (default: naip).
 """
 
@@ -201,6 +201,8 @@ def create_stac_item(client, collection_id, item_id):
     """Create a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
     stac_item_get_items_response = client.stac.list_items(collection_id=collection_id)
+    for item in stac_item_get_items_response.features:
+        logging.error(item.id)
 
     if any(item.id == stac_item.id for item in stac_item_get_items_response.features):
         logging.info(f"Item {stac_item.id} already exists. Deleting it before creating a new one.")
@@ -328,12 +330,12 @@ def get_queryables(client, collection_id):
 
 def main():
     # Get configuration from environment
-    endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
+    endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT")
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
     item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID")
 
     if not endpoint:
-        raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
+        raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
     # Create client
     credential = DefaultAzureCredential()

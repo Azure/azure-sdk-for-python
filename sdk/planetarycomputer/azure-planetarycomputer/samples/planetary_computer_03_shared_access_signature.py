@@ -17,7 +17,7 @@ DESCRIPTION:
 USAGE:
     python planetarycomputer_shared_access_signature.py
 
-    Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
+    Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
     Set the environment variable AZURE_COLLECTION_ID with your collection ID.
 """
 
@@ -87,11 +87,11 @@ def revoke_token(client: PlanetaryComputerClient):
 
 def main():
     # Get configuration from environment
-    endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
+    endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT")
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
 
-    if not endpoint:
-        raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
+    assert endpoint is not None
+    assert collection_id is not None
 
     # Create client
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
@@ -106,7 +106,7 @@ def main():
     
     # Test both methods
     download_asset(signed_href)
-    # download_asset(href_with_sas) TODO fix this
+    download_asset(href_with_sas)
 
     revoke_token(client)
 

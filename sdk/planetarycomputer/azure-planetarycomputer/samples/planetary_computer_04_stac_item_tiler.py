@@ -15,7 +15,7 @@ DESCRIPTION:
 USAGE:
     python planetary_computer_04_stac_item_tiler.py
 
-    Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
+    Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
 """
 
 import os
@@ -282,10 +282,10 @@ def get_wmts_capabilities(client, collection_id, item_id):
 
 
 def main():
-    endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
+    endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT")
 
     if not endpoint:
-        raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
+        raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
     item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID")
@@ -293,23 +293,24 @@ def main():
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Define geometry for operations - Georgia NAIP area
-    # Based on actual item bounds to ensure coordinates are within dataset
+    # Small rectangular geometry for focused operations (subsumed by actual dataset bounds)
     geometry = Polygon(
         coordinates=[
             [
-                [-84.372943, 33.621853],
-                [-84.370894, 33.689211],
-                [-84.439575, 33.690654],
-                [-84.44157, 33.623293],
-                [-84.372943, 33.621853],
+                [-84.3906, 33.6714],  # bottom-left 
+                [-84.3814, 33.6714],  # bottom-right
+                [-84.3814, 33.6806],  # top-right
+                [-84.3906, 33.6806],  # top-left
+                [-84.3906, 33.6714],  # close the ring
             ]
         ]
     )
     geojson = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
     # Calculate bounds and center point from polygon (within actual dataset bounds)
-    bounds = [-84.44157, 33.621853, -84.370894, 33.690654]
-    point = [-84.406232, 33.656253]
+    # Bounds: perfectly square at 0.026 degrees × 0.026 degrees
+    bounds = [-84.3930, 33.6798, -84.3670, 33.7058]
+    point = [-84.3860, 33.6760]
 
     # Execute tiler operations
     get_tile_matrix_definitions(client)

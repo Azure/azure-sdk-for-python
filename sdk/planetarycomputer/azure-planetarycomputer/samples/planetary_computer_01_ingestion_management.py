@@ -22,7 +22,7 @@ DESCRIPTION:
 USAGE:
     python planetarycomputer_ingestion_management.py
 
-    Set the environment variable AZURE_PLANETARY_COMPUTER_ENDPOINT with your endpoint URL.
+    Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
     Set the environment variable PLANETARYCOMPUTER_COLLECTION_ID with your collection ID.
     
     Optional (for managed identity examples):
@@ -388,7 +388,7 @@ def manage_operations(client: PlanetaryComputerClient):
 
 def main():
     # Get configuration from environment
-    endpoint = os.environ.get("AZURE_PLANETARY_COMPUTER_ENDPOINT")
+    endpoint = os.environ.get("PLANETARYCOMPUTER_ENDPOINT")
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
 
     # Get optional ingestion-specific configuration (for examples)
@@ -407,7 +407,7 @@ def main():
     assert sas_token is not None
 
     if not endpoint:
-        raise ValueError("AZURE_PLANETARY_COMPUTER_ENDPOINT environment variable must be set")
+        raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
     logging.info(f"Connected to: {endpoint}")
     logging.info(f"Collection ID: {collection_id}\n")
