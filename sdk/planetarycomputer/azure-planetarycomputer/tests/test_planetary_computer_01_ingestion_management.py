@@ -696,57 +696,78 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_13_create_or_replace_source(self, planetarycomputer_endpoint):
-        """Test creating or replacing an ingestion source."""
+        """Test creating or replacing an ingestion source.
+        
+        This test demonstrates the idempotent create_or_replace_source operation.
+        It first creates a source using create_source, then uses create_or_replace_source
+        to replace it multiple times with different configurations.
+        """
         logger.info("\n" + "="*80)
         logger.info("TEST: Create or Replace Source")
         logger.info("="*80)
 
         from azure.identity import DefaultAzureCredential
+        from datetime import datetime, timedelta
         credential = DefaultAzureCredential()
         client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
 
-        # Get managed identity
-        managed_identities = list(client.ingestion_management.list_managed_identities())
-        if not managed_identities:
-            logger.warning("No managed identities found. Skipping test.")
-            return
-        
-        managed_identity_object_id = managed_identities[0].object_id
-
-        # Create initial source
+        # Generate test SAS token data
         test_container_id = str(uuid.uuid4())
-        container_uri_1 = f"https://test.blob.core.windows.net/test-container-{test_container_id}-1"
+        sas_container_uri = f"https://test.blob.core.windows.net/test-container-{test_container_id}"
         
-        connection_info_1 = ManagedIdentityConnection(
-            container_uri=container_uri_1, 
-            object_id=managed_identity_object_id
+        # Generate a valid SAS token format with required fields
+        start_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        expiry_time = (datetime.utcnow() + timedelta(days=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        sas_token = f"sp=rl&st={start_time}&se={expiry_time}&sv=2023-01-03&sr=c&sig=InitialRandomSignature123456"
+        
+        # Step 1: Create initial source using create_source (like create_sas_token_ingestion_source in sample)
+        logger.info("Step 1: Creating initial SAS token ingestion source with create_source...")
+        sas_connection_info = SharedAccessSignatureTokenConnection(
+            container_uri=sas_container_uri,
+            shared_access_signature_token=sas_token
         )
+        
+        sas_ingestion_source = SharedAccessSignatureTokenIngestionSource(
+            connection_info=sas_connection_info
+        )
+        
+        created_source = client.ingestion_management.create_source(
+            ingestion_source=sas_ingestion_source
+        )
+        source_id = created_source.id
+        logger.info(f"Created SAS token ingestion source: {source_id}")
 
-        source_id = str(uuid.uuid4())
-        ingestion_source_1 = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info_1)
+        # Step 2: First call to create_or_replace_source - replaces the existing source with original token
+        logger.info(f"Step 2: First call to create_or_replace_source with existing source ID: {source_id}")
+        
+        # Update the ingestion_source object with the actual ID
+        sas_ingestion_source_for_replace = SharedAccessSignatureTokenIngestionSource(
+            id=source_id,
+            connection_info=sas_connection_info
+        )
         
         first_result = client.ingestion_management.create_or_replace_source(
             id=source_id,
-            ingestion_source=ingestion_source_1
+            ingestion_source=sas_ingestion_source_for_replace
         )
+        logger.info(f"First call result: {first_result.id}")
 
-        logger.info("First create_or_replace result:")
-        logger.info(f"  - Response type: {type(first_result)}")
-        logger.info(f"  - Response: {first_result}")
-
-        # Replace with new container URI
-        container_uri_2 = f"https://test.blob.core.windows.net/test-container-{test_container_id}-2"
+        # Step 3: Second call to create_or_replace_source - replaces again with updated token
+        logger.info("Step 3: Second call to create_or_replace_source with updated SAS token")
+        updated_token = f"sp=rl&st={start_time}&se={expiry_time}&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
         
-        connection_info_2 = ManagedIdentityConnection(
-            container_uri=container_uri_2, 
-            object_id=managed_identity_object_id
+        updated_connection_info = SharedAccessSignatureTokenConnection(
+            container_uri=sas_container_uri,
+            shared_access_signature_token=updated_token
         )
-
-        ingestion_source_2 = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info_2)
+        updated_ingestion_source = SharedAccessSignatureTokenIngestionSource(
+            id=source_id,
+            connection_info=updated_connection_info
+        )
         
         second_result = client.ingestion_management.create_or_replace_source(
             id=source_id,
-            ingestion_source=ingestion_source_2
+            ingestion_source=updated_ingestion_source
         )
 
         logger.info("Second create_or_replace result (replacement):")

@@ -22,7 +22,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2846",
+        "Content-Length": "2768",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -104,35 +104,17 @@
             "title": "Thumbnail"
           }
         },
-        "msft:_created": "2025-10-17T11:06:27.5343344Z",
-        "msft:_updated": "2025-10-21T13:56:35.625436Z",
-        "title": "NAIP (MPC Pro Sample Datasets)",
+        "msft:_created": "2025-10-22T11:14:31.811918Z",
+        "msft:_updated": "2025-10-22T13:27:25.509263Z",
+        "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
             "bbox": [
               [
-                -124.784,
-                24.744,
-                -66.951,
-                49.346
-              ],
-              [
-                -156.003,
-                19.059,
-                -154.809,
-                20.127
-              ],
-              [
-                -67.316,
-                17.871,
-                -65.596,
-                18.565
-              ],
-              [
-                -64.94,
-                17.622,
-                -64.56,
-                17.814
+                -85.605165,
+                30.357851,
+                -80.839729,
+                35.000659
               ]
             ]
           },
@@ -202,7 +184,7 @@
         },
         "assets": {
           "thumbnail": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "title": "NAIP thumbnail",
             "roles": [
@@ -220,21 +202,21 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "388",
-        "Content-Type": "multipart/form-data; boundary=6df41a045cb69e3556066722efe860b3",
+        "Content-Type": "multipart/form-data; boundary=8a76f3ed1cf4fea0469a4e14f4130125",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--6df41a045cb69e3556066722efe860b3\r\n",
+        "--8a76f3ed1cf4fea0469a4e14f4130125\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "b64:eyJrZXkiOiAidGVzdC1hc3NldCIsICJocmVmIjogImh0dHBzOi8vZXhhbXBsZS5jb20vdGVzdC1hc3NldC50eHQiLCAidHlwZSI6ICJ0ZXh0L3BsYWluIiwgInJvbGVzIjogWyJtZXRhZGF0YSJdLCAidGl0bGUiOiAiVGVzdCBBc3NldCJ9",
         "\r\n",
-        "--6df41a045cb69e3556066722efe860b3\r\n",
+        "--8a76f3ed1cf4fea0469a4e14f4130125\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50",
         "\r\n",
-        "--6df41a045cb69e3556066722efe860b3--\r\n"
+        "--8a76f3ed1cf4fea0469a4e14f4130125--\r\n"
       ],
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -246,7 +228,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "3054",
+        "Content-Length": "2976",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -328,35 +310,17 @@
             "title": "Thumbnail"
           }
         },
-        "msft:_created": "2025-10-17T11:06:27.5343344Z",
-        "msft:_updated": "2025-10-21T13:56:40.973201Z",
-        "title": "NAIP (MPC Pro Sample Datasets)",
+        "msft:_created": "2025-10-22T11:14:31.811918Z",
+        "msft:_updated": "2025-10-22T13:27:30.795064Z",
+        "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
             "bbox": [
               [
-                -124.784,
-                24.744,
-                -66.951,
-                49.346
-              ],
-              [
-                -156.003,
-                19.059,
-                -154.809,
-                20.127
-              ],
-              [
-                -67.316,
-                17.871,
-                -65.596,
-                18.565
-              ],
-              [
-                -64.94,
-                17.622,
-                -64.56,
-                17.814
+                -85.605165,
+                30.357851,
+                -80.839729,
+                35.000659
               ]
             ]
           },
@@ -426,7 +390,7 @@
         },
         "assets": {
           "thumbnail": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "title": "NAIP thumbnail",
             "roles": [
@@ -434,7 +398,7 @@
             ]
           },
           "test-asset": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/test-asset/test-asset.txt",
+            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-bde3e846/collection-assets/test-asset/test-asset.txt",
             "type": "text/plain",
             "title": "Test Asset",
             "roles": [

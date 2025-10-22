@@ -21,7 +21,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1101",
+        "Content-Length": "1099",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -80,8 +80,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-21T13:54:36.4001864Z",
-        "msft:_updated": "2025-10-21T13:54:36.4001864Z"
+        "msft:_created": "2025-10-22T13:25:26.451628Z",
+        "msft:_updated": "2025-10-22T13:25:26.451628Z"
       }
     },
     {
@@ -91,7 +91,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1162",
+        "Content-Length": "1160",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -144,8 +144,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-21T13:54:36.4001864Z",
-        "msft:_updated": "2025-10-21T13:54:36.4001864Z"
+        "msft:_created": "2025-10-22T13:25:26.451628Z",
+        "msft:_updated": "2025-10-22T13:25:26.451628Z"
       },
       "StatusCode": 200,
       "ResponseHeaders": {
@@ -215,8 +215,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-21T13:54:36.4001864Z",
-        "msft:_updated": "2025-10-21T13:55:19.815597Z"
+        "msft:_created": "2025-10-22T13:25:26.451628Z",
+        "msft:_updated": "2025-10-22T13:26:10.4672932Z"
       }
     },
     {
@@ -299,8 +299,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-21T13:54:36.4001864Z",
-        "msft:_updated": "2025-10-21T13:55:19.815597Z"
+        "msft:_created": "2025-10-22T13:25:26.451628Z",
+        "msft:_updated": "2025-10-22T13:26:10.4672932Z"
       }
     }
   ],

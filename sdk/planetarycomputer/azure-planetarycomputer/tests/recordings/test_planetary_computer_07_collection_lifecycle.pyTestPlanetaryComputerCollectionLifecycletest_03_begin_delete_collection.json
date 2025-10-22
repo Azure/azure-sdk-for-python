@@ -25,7 +25,7 @@
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Location": "https://example.com",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/a6d1e75e-48dd-4781-bb67-8212bb854aa8?api-version=2025-04-30-preview",
+        "operation-location": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8f28f1f6-1367-4487-99a6-a6cd06d3b222?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
@@ -33,21 +33,21 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "a6d1e75e-48dd-4781-bb67-8212bb854aa8",
+        "id": "8f28f1f6-1367-4487-99a6-a6cd06d3b222",
         "status": "Pending",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-21T13:55:32.5911272Z"
+            "timestamp": "2025-10-22T13:26:22.8235789Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-21T13:55:32.5911254Z",
+        "creationTime": "2025-10-22T13:26:22.8235738Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/a6d1e75e-48dd-4781-bb67-8212bb854aa8?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8f28f1f6-1367-4487-99a6-a6cd06d3b222?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -76,21 +76,21 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "a6d1e75e-48dd-4781-bb67-8212bb854aa8",
+        "id": "8f28f1f6-1367-4487-99a6-a6cd06d3b222",
         "status": "Pending",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-21T13:55:32.5911272Z"
+            "timestamp": "2025-10-22T13:26:22.8235789Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-21T13:55:32.5911254Z",
+        "creationTime": "2025-10-22T13:26:22.8235738Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
     {
-      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/a6d1e75e-48dd-4781-bb67-8212bb854aa8?api-version=2025-04-30-preview",
+      "RequestUri": "https://SANITIZED_GEOCATALOG.SANITIZED_LABEL.SANITIZED_LOCATION.geocatalog.spatio.azure.com/inma/operations/8f28f1f6-1367-4487-99a6-a6cd06d3b222?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -119,24 +119,24 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "id": "a6d1e75e-48dd-4781-bb67-8212bb854aa8",
+        "id": "8f28f1f6-1367-4487-99a6-a6cd06d3b222",
         "status": "Succeeded",
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-21T13:55:32.5911272Z"
+            "timestamp": "2025-10-22T13:26:22.8235789Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-21T13:55:36.5714452Z"
+            "timestamp": "2025-10-22T13:26:26.655432Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-21T13:55:36.6639548Z"
+            "timestamp": "2025-10-22T13:26:26.8030785Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-21T13:55:32.5911254Z",
+        "creationTime": "2025-10-22T13:26:22.8235738Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
