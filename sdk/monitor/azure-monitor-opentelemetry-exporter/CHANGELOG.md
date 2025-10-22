@@ -3,6 +3,7 @@
 ## 1.0.0b45 (Unreleased)
 
 ### Features Added
+- Added Operation Name Propagation for Dependencies and Logs
 
 ### Breaking Changes
 
