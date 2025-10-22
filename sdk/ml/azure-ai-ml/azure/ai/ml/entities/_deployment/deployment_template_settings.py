@@ -194,7 +194,7 @@ class ProbeSettings(RestTranslatableMixin):
         if self.scheme is not None:
             result["scheme"] = self.scheme  # type: ignore
         if self.method is not None:
-            result["httpMethod"] = self.method  # Use camelCase httpMethod for API  # type: ignore[assignment]
+            result["httpMethod"] = self.method  # type: ignore
         if self.path is not None:
             result["path"] = self.path  # type: ignore[assignment]
         if self.port is not None:

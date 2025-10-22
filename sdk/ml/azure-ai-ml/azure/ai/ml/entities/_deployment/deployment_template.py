@@ -453,10 +453,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         template._from_service = True
 
         # Store additional fields from the REST response that may be needed
-        template.environment_id = environment_id  # Store for retrieval  # type: ignore[attr-defined]
+        template.environment_id = environment_id  # type: ignore[attr-defined]
         # Alternative name for deployment_template_type
         template.template = get_value(obj, "template", deployment_template_type)  # type: ignore
-        template.code_id = get_value(obj, "code_id")  # Store code_id if present  # type: ignore
+        template.code_id = get_value(obj, "code_id")  # type: ignore
 
         # Store original values of immutable fields to preserve them during updates
         # IMPORTANT: Store the raw values from the API response, not the converted objects
@@ -562,10 +562,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["model"] = self.model
 
         if hasattr(self, "code_configuration") and self.code_configuration:
-            result["codeConfiguration"] = self.code_configuration  # Use camelCase for API  # type: ignore[assignment]
+            result["codeConfiguration"] = self.code_configuration  # type: ignore[assignment]
 
         if hasattr(self, "app_insights_enabled") and self.app_insights_enabled is not None:
-            result["appInsightsEnabled"] = self.app_insights_enabled  # Use camelCase for API  # type: ignore
+            result["appInsightsEnabled"] = self.app_insights_enabled  # type: ignore
 
         # Handle allowed instance types - convert string to array format for API
         if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
@@ -576,7 +576,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 instance_types_array = self.allowed_instance_type
             else:
                 instance_types_array = [str(self.allowed_instance_type)]
-            result["allowedInstanceType"] = instance_types_array  # Use camelCase for API  # type: ignore[assignment]
+            result["allowedInstanceType"] = instance_types_array  # type: ignore[assignment]
         elif hasattr(self, "instance_type") and self.instance_type:
             # Fallback to default instance type if no allowed types specified
             result["allowedInstanceType"] = [self.instance_type]  # type: ignore[assignment]
