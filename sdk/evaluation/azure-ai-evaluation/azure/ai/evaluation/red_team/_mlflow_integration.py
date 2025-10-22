@@ -352,7 +352,7 @@ class MLflowIntegration:
                 try:
                     create_evaluation_result_response = (
                         self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                            name=uuid.uuid4(),
+                            name=str(uuid.uuid4()),
                             path=tmpdir,
                             metrics=metrics,
                             result_type=ResultType.REDTEAM,
