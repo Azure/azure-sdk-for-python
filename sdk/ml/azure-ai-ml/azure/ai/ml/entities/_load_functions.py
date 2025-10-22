@@ -1130,14 +1130,5 @@ def load_deployment_template(
         Details will be provided in the error message.
     :return: Loaded DeploymentTemplate object.
     :rtype: ~azure.ai.ml.entities.DeploymentTemplate
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/ml_samples_misc.py
-            :start-after: [START load_deployment_template]
-            :end-before: [END load_deployment_template]
-            :language: python
-            :dedent: 8
-            :caption: Loading a DeploymentTemplate from a YAML config file.
     """
     return cast(DeploymentTemplate, load_common(DeploymentTemplate, source, relative_origin, params_override, **kwargs))
