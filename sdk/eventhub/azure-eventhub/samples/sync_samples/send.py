@@ -94,12 +94,6 @@ def send_event_data_list(producer):
     except EventHubError as eh_err:
         print("Sending error: ", eh_err)
 
-def send_single_large_message(producer, size_mb=17):
-    payload = "X" * (size_mb * 1024 * 1024)
-    batch = producer.create_batch(max_size_in_bytes=19 * 1024 * 1024)
-    batch.add(EventData(payload))
-    producer.send_batch(batch)
-
 def send_concurrent_with_shared_client_and_lock():
     """
     Example showing concurrent sending with a shared client using threading.Lock.
@@ -144,7 +138,6 @@ with producer:
     send_event_data_batch_with_partition_id(producer)
     send_event_data_batch_with_properties(producer)
     send_event_data_list(producer)
-    send_single_large_message(producer, size_mb=17)
 
 print("Send messages in {} seconds.".format(time.time() - start_time))
 
