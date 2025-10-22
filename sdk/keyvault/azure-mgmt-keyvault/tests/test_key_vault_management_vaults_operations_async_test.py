@@ -38,7 +38,6 @@ class TestKeyVaultManagementVaultsOperationsAsync(AzureMgmtRecordedTestCase):
         assert result
 
     @recorded_by_proxy_async
-    @pytest.mark.asyncio
     async def test_list_customized_api_version(self):
         # This API is legacy paging API that api-version of init request and next link must be "2015-11-01".
         # Although this API violates ARM guidelines, we have to support it for backward compatibility.
