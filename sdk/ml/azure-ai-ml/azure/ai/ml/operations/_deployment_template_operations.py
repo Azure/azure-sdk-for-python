@@ -353,15 +353,6 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :type deployment_template: Union[DeploymentTemplate, Dict[str, Any], str, PathLike]
         :return: DeploymentTemplate object representing the created or updated resource.
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
-
-        .. admonition:: Example
-
-            .. literalinclude:: ../samples/ml_samples_deployment_template_dict.py
-                :start-after: [START deployment_template_create_with_dict]
-                :end-before: [END deployment_template_create_with_dict]
-                :language: python
-                :dedent: 4
-                :caption: Creating a deployment template using a dictionary.
         """
         try:
             # Handle YAML file path input
