@@ -115,7 +115,7 @@ from ...operations._operations import (
     build_users_get_request,
     build_users_list_by_data_box_edge_device_request,
 )
-from .._configuration import DataBoxEdgeClientConfiguration
+from .._configuration import DataBoxEdgeManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -123,38 +123,42 @@ JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class OperationsStatusOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
-        :attr:`operations` attribute.
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
+        :attr:`operations_status` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
-        """List all the supported operations.
+    @distributed_trace_async
+    async def get(self, device_name: str, name: str, resource_group_name: str, **kwargs: Any) -> _models.Job:
+        """Gets the details of a specified job on a Data Box Edge/Data Box Gateway device.
 
-        List the operations for the provider.
+        Gets the details of a specified job on a Data Box Edge/Data Box Gateway device.
 
-        :return: An iterator like instance of Operation
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Operation]
+        :param device_name: The device name. Required.
+        :type device_name: str
+        :param name: The job name. Required.
+        :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.mgmt.databoxedge.models.Job
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -163,67 +167,49 @@ class Operations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-                _request = build_operations_list_request(
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_operations_status_get_request(
+            device_name=device_name,
+            name=name,
+            resource_group_name=resource_group_name,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+        response = pipeline_response.http_response
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.CloudError, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Job, response.json())
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
 
 class DevicesOperations:  # pylint: disable=too-many-public-methods
@@ -232,28 +218,30 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`devices` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get_network_settings(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.NetworkSettings:
         """Gets the network settings of the specified Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: NetworkSettings. The NetworkSettings is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.NetworkSettings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -272,10 +260,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.NetworkSettings] = kwargs.pop("cls", None)
 
         _request = build_devices_get_network_settings_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -312,14 +298,14 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, **kwargs: Any) -> _models.DataBoxEdgeDevice:
+    async def get(self, device_name: str, resource_group_name: str, **kwargs: Any) -> _models.DataBoxEdgeDevice:
         """Gets the properties of the Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: DataBoxEdgeDevice. The DataBoxEdgeDevice is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -338,10 +324,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.DataBoxEdgeDevice] = kwargs.pop("cls", None)
 
         _request = build_devices_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -547,8 +531,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: _models.DataBoxEdgeDevicePatch,
         *,
         content_type: str = "application/json",
@@ -556,11 +540,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDevice:
         """Modifies a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The resource parameters. Required.
         :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevicePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -574,8 +558,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -583,11 +567,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDevice:
         """Modifies a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The resource parameters. Required.
         :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -601,8 +585,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -610,11 +594,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDevice:
         """Modifies a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The resource parameters. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -628,18 +612,18 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: Union[_models.DataBoxEdgeDevicePatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataBoxEdgeDevice:
         """Modifies a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The resource parameters. Is one of the following types:
          DataBoxEdgeDevicePatch, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevicePatch or JSON or IO[bytes]
@@ -669,11 +653,9 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_devices_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -710,7 +692,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    async def _delete_initial(self, resource_group_name: str, device_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def _delete_initial(self, device_name: str, resource_group_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -725,10 +707,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_devices_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -766,14 +746,14 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete(self, resource_group_name: str, device_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_delete(self, device_name: str, resource_group_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes the Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -787,8 +767,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -1009,7 +989,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     async def _download_updates_initial(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1025,10 +1005,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_devices_download_updates_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -1067,17 +1045,17 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_download_updates(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Downloads the updates on a Data Box Edge/Data Box Gateway device.
 
         Downloads the updates on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1091,8 +1069,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._download_updates_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -1128,15 +1106,15 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def generate_certificate(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.GenerateCertResponse:
         """Generates certificate for activation key.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: GenerateCertResponse. The GenerateCertResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.GenerateCertResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1155,10 +1133,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.GenerateCertResponse] = kwargs.pop("cls", None)
 
         _request = build_devices_generate_certificate_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -1196,15 +1172,15 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_extended_information(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.DataBoxEdgeDeviceExtendedInfo:
         """Gets additional information for the specified Azure Stack Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: DataBoxEdgeDeviceExtendedInfo. The DataBoxEdgeDeviceExtendedInfo is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceExtendedInfo
@@ -1224,10 +1200,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.DataBoxEdgeDeviceExtendedInfo] = kwargs.pop("cls", None)
 
         _request = build_devices_get_extended_information_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -1264,7 +1238,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     async def _install_updates_initial(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1280,10 +1254,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_devices_install_updates_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -1322,17 +1294,17 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_install_updates(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Installs the updates on the Data Box Edge/Data Box Gateway device.
 
         Installs the updates on the Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1346,8 +1318,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._install_updates_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -1382,7 +1354,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _scan_for_updates_initial(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1398,10 +1370,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_devices_scan_for_updates_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -1440,15 +1410,15 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_scan_for_updates(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Scans for updates on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1462,8 +1432,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._scan_for_updates_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -1499,8 +1469,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
     async def _create_or_update_security_settings_initial(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         security_settings: Union[_models.SecuritySettings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -1526,11 +1496,9 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(security_settings, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_devices_create_or_update_security_settings_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1571,8 +1539,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_or_update_security_settings(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         security_settings: _models.SecuritySettings,
         *,
         content_type: str = "application/json",
@@ -1580,11 +1548,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """Updates the security settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param security_settings: The security settings. Required.
         :type security_settings: ~azure.mgmt.databoxedge.models.SecuritySettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1598,8 +1566,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_or_update_security_settings(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         security_settings: JSON,
         *,
         content_type: str = "application/json",
@@ -1607,11 +1575,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """Updates the security settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param security_settings: The security settings. Required.
         :type security_settings: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1625,8 +1593,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_or_update_security_settings(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         security_settings: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -1634,11 +1602,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """Updates the security settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param security_settings: The security settings. Required.
         :type security_settings: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1652,18 +1620,18 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_create_or_update_security_settings(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         security_settings: Union[_models.SecuritySettings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Updates the security settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param security_settings: The security settings. Is one of the following types:
          SecuritySettings, JSON, IO[bytes] Required.
         :type security_settings: ~azure.mgmt.databoxedge.models.SecuritySettings or JSON or IO[bytes]
@@ -1681,8 +1649,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_security_settings_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 security_settings=security_settings,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -1721,8 +1689,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def update_extended_information(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: _models.DataBoxEdgeDeviceExtendedInfoPatch,
         *,
         content_type: str = "application/json",
@@ -1730,11 +1698,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDeviceExtendedInfo:
         """Gets additional information for the specified Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The patch object. Required.
         :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceExtendedInfoPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1749,8 +1717,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def update_extended_information(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -1758,11 +1726,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDeviceExtendedInfo:
         """Gets additional information for the specified Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The patch object. Required.
         :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1777,8 +1745,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def update_extended_information(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -1786,11 +1754,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDeviceExtendedInfo:
         """Gets additional information for the specified Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The patch object. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1805,18 +1773,18 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def update_extended_information(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: Union[_models.DataBoxEdgeDeviceExtendedInfoPatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataBoxEdgeDeviceExtendedInfo:
         """Gets additional information for the specified Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The patch object. Is one of the following types:
          DataBoxEdgeDeviceExtendedInfoPatch, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceExtendedInfoPatch or JSON or
@@ -1848,11 +1816,9 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_devices_update_extended_information_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1892,8 +1858,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def upload_certificate(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: _models.UploadCertificateRequest,
         *,
         content_type: str = "application/json",
@@ -1901,11 +1867,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.UploadCertificateResponse:
         """Uploads registration certificate for the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The upload certificate request. Required.
         :type parameters: ~azure.mgmt.databoxedge.models.UploadCertificateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1920,8 +1886,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def upload_certificate(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -1929,11 +1895,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.UploadCertificateResponse:
         """Uploads registration certificate for the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The upload certificate request. Required.
         :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1948,8 +1914,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def upload_certificate(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -1957,11 +1923,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.UploadCertificateResponse:
         """Uploads registration certificate for the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The upload certificate request. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1976,18 +1942,18 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def upload_certificate(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         parameters: Union[_models.UploadCertificateRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.UploadCertificateResponse:
         """Uploads registration certificate for the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param parameters: The upload certificate request. Is one of the following types:
          UploadCertificateRequest, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.databoxedge.models.UploadCertificateRequest or JSON or IO[bytes]
@@ -2018,11 +1984,9 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_devices_upload_certificate_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2061,7 +2025,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_update_summary(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.UpdateSummary:
         """Gets information about the availability of updates based on the last scan of the device. It
         also gets information about any ongoing download or install jobs on the device.
@@ -2069,11 +2033,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         Gets information about the availability of updates based on the last scan of the device. It
         also gets information about any ongoing download or install jobs on the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: UpdateSummary. The UpdateSummary is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.UpdateSummary
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2092,10 +2056,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.UpdateSummary] = kwargs.pop("cls", None)
 
         _request = build_devices_get_update_summary_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -2132,36 +2094,143 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
+class Operations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
+        :attr:`operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
+        """List all the supported operations.
+
+        List the operations for the provider.
+
+        :return: An iterator like instance of Operation
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Operation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_operations_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.CloudError, response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
 class AlertsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`alerts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, name: str, **kwargs: Any) -> _models.Alert:
+    async def get(self, device_name: str, name: str, resource_group_name: str, **kwargs: Any) -> _models.Alert:
         """Gets an alert by name.
 
         Gets an alert by name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The alert name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: Alert. The Alert is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Alert
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2180,11 +2249,9 @@ class AlertsOperations:
         cls: ClsType[_models.Alert] = kwargs.pop("cls", None)
 
         _request = build_alerts_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -2222,15 +2289,15 @@ class AlertsOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Alert"]:
         """Gets all the alerts for a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of Alert
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Alert]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2252,10 +2319,8 @@ class AlertsOperations:
             if not next_link:
 
                 _request = build_alerts_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -2320,30 +2385,32 @@ class BandwidthSchedulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`bandwidth_schedules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.BandwidthSchedule:
         """Gets the properties of the specified bandwidth schedule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The bandwidth schedule name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: BandwidthSchedule. The BandwidthSchedule is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.BandwidthSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2362,11 +2429,9 @@ class BandwidthSchedulesOperations:
         cls: ClsType[_models.BandwidthSchedule] = kwargs.pop("cls", None)
 
         _request = build_bandwidth_schedules_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -2404,9 +2469,9 @@ class BandwidthSchedulesOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         parameters: Union[_models.BandwidthSchedule, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -2432,12 +2497,10 @@ class BandwidthSchedulesOperations:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_bandwidth_schedules_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2478,9 +2541,9 @@ class BandwidthSchedulesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         parameters: _models.BandwidthSchedule,
         *,
         content_type: str = "application/json",
@@ -2488,13 +2551,13 @@ class BandwidthSchedulesOperations:
     ) -> AsyncLROPoller[_models.BandwidthSchedule]:
         """Creates or updates a bandwidth schedule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The bandwidth schedule name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param parameters: The bandwidth schedule to be added or updated. Required.
         :type parameters: ~azure.mgmt.databoxedge.models.BandwidthSchedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2509,9 +2572,9 @@ class BandwidthSchedulesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -2519,13 +2582,13 @@ class BandwidthSchedulesOperations:
     ) -> AsyncLROPoller[_models.BandwidthSchedule]:
         """Creates or updates a bandwidth schedule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The bandwidth schedule name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param parameters: The bandwidth schedule to be added or updated. Required.
         :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2540,9 +2603,9 @@ class BandwidthSchedulesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -2550,13 +2613,13 @@ class BandwidthSchedulesOperations:
     ) -> AsyncLROPoller[_models.BandwidthSchedule]:
         """Creates or updates a bandwidth schedule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The bandwidth schedule name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param parameters: The bandwidth schedule to be added or updated. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -2571,21 +2634,21 @@ class BandwidthSchedulesOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         parameters: Union[_models.BandwidthSchedule, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BandwidthSchedule]:
         """Creates or updates a bandwidth schedule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The bandwidth schedule name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param parameters: The bandwidth schedule to be added or updated. Is one of the following
          types: BandwidthSchedule, JSON, IO[bytes] Required.
         :type parameters: ~azure.mgmt.databoxedge.models.BandwidthSchedule or JSON or IO[bytes]
@@ -2604,9 +2667,9 @@ class BandwidthSchedulesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -2648,7 +2711,7 @@ class BandwidthSchedulesOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2664,11 +2727,9 @@ class BandwidthSchedulesOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_bandwidth_schedules_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -2707,17 +2768,17 @@ class BandwidthSchedulesOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified bandwidth schedule.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The bandwidth schedule name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2731,9 +2792,9 @@ class BandwidthSchedulesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -2769,15 +2830,15 @@ class BandwidthSchedulesOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.BandwidthSchedule"]:
         """Gets all the bandwidth schedules for a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of BandwidthSchedule
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.BandwidthSchedule]
@@ -2800,10 +2861,8 @@ class BandwidthSchedulesOperations:
             if not next_link:
 
                 _request = build_bandwidth_schedules_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -2868,14 +2927,16 @@ class DiagnosticSettingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`diagnostic_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3498,30 +3559,32 @@ class JobsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`jobs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, name: str, **kwargs: Any) -> _models.Job:
+    async def get(self, device_name: str, name: str, resource_group_name: str, **kwargs: Any) -> _models.Job:
         """Gets the details of a specified job on a Data Box Edge/Data Box Gateway device.
 
         Gets the details of a specified job on a Data Box Edge/Data Box Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The job name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: Job. The Job is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Job
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3540,100 +3603,9 @@ class JobsOperations:
         cls: ClsType[_models.Job] = kwargs.pop("cls", None)
 
         _request = build_jobs_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.Job, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class OperationsStatusOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
-        :attr:`operations_status` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, name: str, **kwargs: Any) -> _models.Job:
-        """Gets the details of a specified job on a Data Box Edge/Data Box Gateway device.
-
-        Gets the details of a specified job on a Data Box Edge/Data Box Gateway device.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
-        :param name: The job name. Required.
-        :type name: str
-        :return: Job. The Job is compatible with MutableMapping
-        :rtype: ~azure.mgmt.databoxedge.models.Job
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
-
-        _request = build_operations_status_get_request(
             resource_group_name=resource_group_name,
-            device_name=device_name,
-            name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -3676,28 +3648,30 @@ class OrdersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`orders` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, **kwargs: Any) -> _models.Order:
+    async def get(self, device_name: str, resource_group_name: str, **kwargs: Any) -> _models.Order:
         """Gets a specific order by name.
 
         Gets a specific order by name.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: Order. The Order is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Order
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3716,10 +3690,8 @@ class OrdersOperations:
         cls: ClsType[_models.Order] = kwargs.pop("cls", None)
 
         _request = build_orders_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -3756,7 +3728,7 @@ class OrdersOperations:
         return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, device_name: str, order: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
+        self, device_name: str, resource_group_name: str, order: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3780,11 +3752,9 @@ class OrdersOperations:
             _content = json.dumps(order, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_orders_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -3825,8 +3795,8 @@ class OrdersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         order: _models.Order,
         *,
         content_type: str = "application/json",
@@ -3836,11 +3806,11 @@ class OrdersOperations:
 
         Creates or updates an order.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param order: The order to be created or updated. Required.
         :type order: ~azure.mgmt.databoxedge.models.Order
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3855,8 +3825,8 @@ class OrdersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         order: JSON,
         *,
         content_type: str = "application/json",
@@ -3866,11 +3836,11 @@ class OrdersOperations:
 
         Creates or updates an order.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param order: The order to be created or updated. Required.
         :type order: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3885,8 +3855,8 @@ class OrdersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         order: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -3896,11 +3866,11 @@ class OrdersOperations:
 
         Creates or updates an order.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param order: The order to be created or updated. Required.
         :type order: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -3914,17 +3884,17 @@ class OrdersOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, device_name: str, order: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
+        self, device_name: str, resource_group_name: str, order: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.Order]:
         """Creates or updates an order.
 
         Creates or updates an order.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param order: The order to be created or updated. Is one of the following types: Order, JSON,
          IO[bytes] Required.
         :type order: ~azure.mgmt.databoxedge.models.Order or JSON or IO[bytes]
@@ -3943,8 +3913,8 @@ class OrdersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 order=order,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -3985,7 +3955,7 @@ class OrdersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(self, resource_group_name: str, device_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def _delete_initial(self, device_name: str, resource_group_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4000,10 +3970,8 @@ class OrdersOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_orders_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -4041,16 +4009,16 @@ class OrdersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete(self, resource_group_name: str, device_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_delete(self, device_name: str, resource_group_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes the order related to the device.
 
         Deletes the order related to the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4064,8 +4032,8 @@ class OrdersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -4101,17 +4069,17 @@ class OrdersOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Order"]:
         """Lists all the orders related to a Data Box Edge/Data Box Gateway device.
 
         Lists all the orders related to a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of Order
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Order]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4133,10 +4101,8 @@ class OrdersOperations:
             if not next_link:
 
                 _request = build_orders_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -4196,17 +4162,17 @@ class OrdersOperations:
 
     @distributed_trace_async
     async def list_dc_access_code(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.DCAccessCode:
         """Gets the DCAccess Code.
 
         Gets the DCAccess Code.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: DCAccessCode. The DCAccessCode is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DCAccessCode
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4225,10 +4191,8 @@ class OrdersOperations:
         cls: ClsType[_models.DCAccessCode] = kwargs.pop("cls", None)
 
         _request = build_orders_list_dc_access_code_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -4271,28 +4235,30 @@ class RolesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`roles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, name: str, **kwargs: Any) -> _models.Role:
+    async def get(self, device_name: str, name: str, resource_group_name: str, **kwargs: Any) -> _models.Role:
         """Gets a specific role by name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The role name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: Role. The Role is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Role
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4311,11 +4277,9 @@ class RolesOperations:
         cls: ClsType[_models.Role] = kwargs.pop("cls", None)
 
         _request = build_roles_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -4353,9 +4317,9 @@ class RolesOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         role: Union[_models.Role, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -4381,12 +4345,10 @@ class RolesOperations:
             _content = json.dumps(role, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_roles_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4427,9 +4389,9 @@ class RolesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         role: _models.Role,
         *,
         content_type: str = "application/json",
@@ -4437,13 +4399,13 @@ class RolesOperations:
     ) -> AsyncLROPoller[_models.Role]:
         """Create or update a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The role name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param role: The role properties. Required.
         :type role: ~azure.mgmt.databoxedge.models.Role
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4458,9 +4420,9 @@ class RolesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         role: JSON,
         *,
         content_type: str = "application/json",
@@ -4468,13 +4430,13 @@ class RolesOperations:
     ) -> AsyncLROPoller[_models.Role]:
         """Create or update a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The role name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param role: The role properties. Required.
         :type role: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4489,9 +4451,9 @@ class RolesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         role: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -4499,13 +4461,13 @@ class RolesOperations:
     ) -> AsyncLROPoller[_models.Role]:
         """Create or update a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The role name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param role: The role properties. Required.
         :type role: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -4520,21 +4482,21 @@ class RolesOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         role: Union[_models.Role, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Role]:
         """Create or update a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The role name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param role: The role properties. Is one of the following types: Role, JSON, IO[bytes]
          Required.
         :type role: ~azure.mgmt.databoxedge.models.Role or JSON or IO[bytes]
@@ -4553,9 +4515,9 @@ class RolesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 role=role,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -4597,7 +4559,7 @@ class RolesOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4613,11 +4575,9 @@ class RolesOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_roles_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -4656,17 +4616,17 @@ class RolesOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the role on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The role name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4680,9 +4640,9 @@ class RolesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -4718,15 +4678,15 @@ class RolesOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Role"]:
         """Lists all the roles configured in a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of Role
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Role]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4748,10 +4708,8 @@ class RolesOperations:
             if not next_link:
 
                 _request = build_roles_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -4816,32 +4774,34 @@ class AddonsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`addons` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, device_name: str, role_name: str, addon_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, addon_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.Addon:
         """Gets a specific addon by name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
         :param addon_name: The name of the addon. Required.
         :type addon_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: Addon. The Addon is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Addon
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4860,12 +4820,10 @@ class AddonsOperations:
         cls: ClsType[_models.Addon] = kwargs.pop("cls", None)
 
         _request = build_addons_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             role_name=role_name,
             addon_name=addon_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -4903,10 +4861,10 @@ class AddonsOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
         addon_name: str,
+        resource_group_name: str,
         addon: Union[_models.Addon, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -4932,13 +4890,11 @@ class AddonsOperations:
             _content = json.dumps(addon, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_addons_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             role_name=role_name,
             addon_name=addon_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4979,10 +4935,10 @@ class AddonsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
         addon_name: str,
+        resource_group_name: str,
         addon: _models.Addon,
         *,
         content_type: str = "application/json",
@@ -4990,15 +4946,15 @@ class AddonsOperations:
     ) -> AsyncLROPoller[_models.Addon]:
         """Create or update a addon.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
         :param addon_name: The name of the addon. Required.
         :type addon_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param addon: The addon properties. Required.
         :type addon: ~azure.mgmt.databoxedge.models.Addon
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5013,10 +4969,10 @@ class AddonsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
         addon_name: str,
+        resource_group_name: str,
         addon: JSON,
         *,
         content_type: str = "application/json",
@@ -5024,15 +4980,15 @@ class AddonsOperations:
     ) -> AsyncLROPoller[_models.Addon]:
         """Create or update a addon.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
         :param addon_name: The name of the addon. Required.
         :type addon_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param addon: The addon properties. Required.
         :type addon: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5047,10 +5003,10 @@ class AddonsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
         addon_name: str,
+        resource_group_name: str,
         addon: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -5058,15 +5014,15 @@ class AddonsOperations:
     ) -> AsyncLROPoller[_models.Addon]:
         """Create or update a addon.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
         :param addon_name: The name of the addon. Required.
         :type addon_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param addon: The addon properties. Required.
         :type addon: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -5081,24 +5037,24 @@ class AddonsOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
         addon_name: str,
+        resource_group_name: str,
         addon: Union[_models.Addon, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Addon]:
         """Create or update a addon.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
         :param addon_name: The name of the addon. Required.
         :type addon_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param addon: The addon properties. Is one of the following types: Addon, JSON, IO[bytes]
          Required.
         :type addon: ~azure.mgmt.databoxedge.models.Addon or JSON or IO[bytes]
@@ -5117,10 +5073,10 @@ class AddonsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 role_name=role_name,
                 addon_name=addon_name,
+                resource_group_name=resource_group_name,
                 addon=addon,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -5162,7 +5118,7 @@ class AddonsOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, role_name: str, addon_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, addon_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5178,12 +5134,10 @@ class AddonsOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_addons_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             role_name=role_name,
             addon_name=addon_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -5222,19 +5176,19 @@ class AddonsOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, role_name: str, addon_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, addon_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the addon on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
         :param addon_name: The name of the addon. Required.
         :type addon_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5248,10 +5202,10 @@ class AddonsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 role_name=role_name,
                 addon_name=addon_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -5287,17 +5241,17 @@ class AddonsOperations:
 
     @distributed_trace
     def list_by_role(
-        self, resource_group_name: str, device_name: str, role_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Addon"]:
         """Lists all the addons configured in the role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An iterator like instance of Addon
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Addon]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5319,11 +5273,9 @@ class AddonsOperations:
             if not next_link:
 
                 _request = build_addons_list_by_role_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
                     role_name=role_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -5388,30 +5340,32 @@ class SharesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`shares` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, name: str, **kwargs: Any) -> _models.Share:
+    async def get(self, device_name: str, name: str, resource_group_name: str, **kwargs: Any) -> _models.Share:
         """Gets a share by name.
 
         Gets a share by name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The share name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: Share. The Share is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Share
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5430,11 +5384,9 @@ class SharesOperations:
         cls: ClsType[_models.Share] = kwargs.pop("cls", None)
 
         _request = build_shares_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -5472,9 +5424,9 @@ class SharesOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         share: Union[_models.Share, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -5500,12 +5452,10 @@ class SharesOperations:
             _content = json.dumps(share, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_shares_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -5546,9 +5496,9 @@ class SharesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         share: _models.Share,
         *,
         content_type: str = "application/json",
@@ -5558,13 +5508,13 @@ class SharesOperations:
 
         Creates a new share or updates an existing share on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The share name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param share: The share properties. Required.
         :type share: ~azure.mgmt.databoxedge.models.Share
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5579,9 +5529,9 @@ class SharesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         share: JSON,
         *,
         content_type: str = "application/json",
@@ -5591,13 +5541,13 @@ class SharesOperations:
 
         Creates a new share or updates an existing share on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The share name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param share: The share properties. Required.
         :type share: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5612,9 +5562,9 @@ class SharesOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         share: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -5624,13 +5574,13 @@ class SharesOperations:
 
         Creates a new share or updates an existing share on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The share name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param share: The share properties. Required.
         :type share: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -5645,9 +5595,9 @@ class SharesOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         share: Union[_models.Share, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Share]:
@@ -5655,13 +5605,13 @@ class SharesOperations:
 
         Creates a new share or updates an existing share on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The share name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param share: The share properties. Is one of the following types: Share, JSON, IO[bytes]
          Required.
         :type share: ~azure.mgmt.databoxedge.models.Share or JSON or IO[bytes]
@@ -5680,9 +5630,9 @@ class SharesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 share=share,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -5724,7 +5674,7 @@ class SharesOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5740,11 +5690,9 @@ class SharesOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_shares_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -5783,17 +5731,17 @@ class SharesOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the share on the Data Box Edge/Data Box Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The share name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5807,9 +5755,9 @@ class SharesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -5845,17 +5793,17 @@ class SharesOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Share"]:
         """Lists all the shares in a Data Box Edge/Data Box Gateway device.
 
         Lists all the shares in a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of Share
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Share]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5877,10 +5825,8 @@ class SharesOperations:
             if not next_link:
 
                 _request = build_shares_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -5939,7 +5885,7 @@ class SharesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     async def _refresh_initial(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5955,11 +5901,9 @@ class SharesOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_shares_refresh_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -5998,19 +5942,19 @@ class SharesOperations:
 
     @distributed_trace_async
     async def begin_refresh(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Refreshes the share metadata with the data from the cloud.
 
         Refreshes the share metadata with the data from the cloud.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The share name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6024,9 +5968,9 @@ class SharesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._refresh_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -6067,30 +6011,32 @@ class StorageAccountCredentialsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`storage_account_credentials` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.StorageAccountCredential:
         """Gets the properties of the specified storage account credential.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The storage account credential name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: StorageAccountCredential. The StorageAccountCredential is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.StorageAccountCredential
@@ -6110,11 +6056,9 @@ class StorageAccountCredentialsOperations:
         cls: ClsType[_models.StorageAccountCredential] = kwargs.pop("cls", None)
 
         _request = build_storage_account_credentials_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -6152,9 +6096,9 @@ class StorageAccountCredentialsOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         storage_account_credential: Union[_models.StorageAccountCredential, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -6180,12 +6124,10 @@ class StorageAccountCredentialsOperations:
             _content = json.dumps(storage_account_credential, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_storage_account_credentials_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -6226,9 +6168,9 @@ class StorageAccountCredentialsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         storage_account_credential: _models.StorageAccountCredential,
         *,
         content_type: str = "application/json",
@@ -6236,13 +6178,13 @@ class StorageAccountCredentialsOperations:
     ) -> AsyncLROPoller[_models.StorageAccountCredential]:
         """Creates or updates the storage account credential.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The storage account credential name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account_credential: The storage account credential. Required.
         :type storage_account_credential: ~azure.mgmt.databoxedge.models.StorageAccountCredential
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6258,9 +6200,9 @@ class StorageAccountCredentialsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         storage_account_credential: JSON,
         *,
         content_type: str = "application/json",
@@ -6268,13 +6210,13 @@ class StorageAccountCredentialsOperations:
     ) -> AsyncLROPoller[_models.StorageAccountCredential]:
         """Creates or updates the storage account credential.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The storage account credential name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account_credential: The storage account credential. Required.
         :type storage_account_credential: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6290,9 +6232,9 @@ class StorageAccountCredentialsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         storage_account_credential: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -6300,13 +6242,13 @@ class StorageAccountCredentialsOperations:
     ) -> AsyncLROPoller[_models.StorageAccountCredential]:
         """Creates or updates the storage account credential.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The storage account credential name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account_credential: The storage account credential. Required.
         :type storage_account_credential: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -6322,21 +6264,21 @@ class StorageAccountCredentialsOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         storage_account_credential: Union[_models.StorageAccountCredential, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageAccountCredential]:
         """Creates or updates the storage account credential.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The storage account credential name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account_credential: The storage account credential. Is one of the following
          types: StorageAccountCredential, JSON, IO[bytes] Required.
         :type storage_account_credential: ~azure.mgmt.databoxedge.models.StorageAccountCredential or
@@ -6357,9 +6299,9 @@ class StorageAccountCredentialsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 storage_account_credential=storage_account_credential,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -6401,7 +6343,7 @@ class StorageAccountCredentialsOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6417,11 +6359,9 @@ class StorageAccountCredentialsOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_storage_account_credentials_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -6460,17 +6400,17 @@ class StorageAccountCredentialsOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the storage account credential.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The storage account credential name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6484,9 +6424,9 @@ class StorageAccountCredentialsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -6522,17 +6462,17 @@ class StorageAccountCredentialsOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.StorageAccountCredential"]:
         """Gets all the storage account credentials in a Data Box Edge/Data Box Gateway device.
 
         Gets all the storage account credentials in a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of StorageAccountCredential
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.StorageAccountCredential]
@@ -6555,10 +6495,8 @@ class StorageAccountCredentialsOperations:
             if not next_link:
 
                 _request = build_storage_account_credentials_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -6623,32 +6561,34 @@ class StorageAccountsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`storage_accounts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.StorageAccount:
         """Gets a StorageAccount by name.
 
         Gets a StorageAccount by name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: StorageAccount. The StorageAccount is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6667,11 +6607,9 @@ class StorageAccountsOperations:
         cls: ClsType[_models.StorageAccount] = kwargs.pop("cls", None)
 
         _request = build_storage_accounts_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             storage_account_name=storage_account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -6709,9 +6647,9 @@ class StorageAccountsOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
+        resource_group_name: str,
         storage_account: Union[_models.StorageAccount, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -6737,12 +6675,10 @@ class StorageAccountsOperations:
             _content = json.dumps(storage_account, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_storage_accounts_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             storage_account_name=storage_account_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -6783,9 +6719,9 @@ class StorageAccountsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
+        resource_group_name: str,
         storage_account: _models.StorageAccount,
         *,
         content_type: str = "application/json",
@@ -6795,13 +6731,13 @@ class StorageAccountsOperations:
 
         Creates a new StorageAccount or updates an existing StorageAccount on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account: The StorageAccount properties. Required.
         :type storage_account: ~azure.mgmt.databoxedge.models.StorageAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6816,9 +6752,9 @@ class StorageAccountsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
+        resource_group_name: str,
         storage_account: JSON,
         *,
         content_type: str = "application/json",
@@ -6828,13 +6764,13 @@ class StorageAccountsOperations:
 
         Creates a new StorageAccount or updates an existing StorageAccount on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account: The StorageAccount properties. Required.
         :type storage_account: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6849,9 +6785,9 @@ class StorageAccountsOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
+        resource_group_name: str,
         storage_account: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -6861,13 +6797,13 @@ class StorageAccountsOperations:
 
         Creates a new StorageAccount or updates an existing StorageAccount on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account: The StorageAccount properties. Required.
         :type storage_account: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -6882,9 +6818,9 @@ class StorageAccountsOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
+        resource_group_name: str,
         storage_account: Union[_models.StorageAccount, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageAccount]:
@@ -6892,13 +6828,13 @@ class StorageAccountsOperations:
 
         Creates a new StorageAccount or updates an existing StorageAccount on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param storage_account: The StorageAccount properties. Is one of the following types:
          StorageAccount, JSON, IO[bytes] Required.
         :type storage_account: ~azure.mgmt.databoxedge.models.StorageAccount or JSON or IO[bytes]
@@ -6917,9 +6853,9 @@ class StorageAccountsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 storage_account_name=storage_account_name,
+                resource_group_name=resource_group_name,
                 storage_account=storage_account,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -6961,7 +6897,7 @@ class StorageAccountsOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6977,11 +6913,9 @@ class StorageAccountsOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_storage_accounts_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             storage_account_name=storage_account_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -7020,17 +6954,17 @@ class StorageAccountsOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the StorageAccount on the Data Box Edge/Data Box Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7044,9 +6978,9 @@ class StorageAccountsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 storage_account_name=storage_account_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -7082,17 +7016,17 @@ class StorageAccountsOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.StorageAccount"]:
         """Lists all the StorageAccounts in a Data Box Edge/Data Box Gateway device.
 
         Lists all the StorageAccounts in a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of StorageAccount
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.StorageAccount]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7114,10 +7048,8 @@ class StorageAccountsOperations:
             if not next_link:
 
                 _request = build_storage_accounts_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -7182,34 +7114,36 @@ class ContainersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`containers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, container_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, container_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.Container:
         """Gets a container by name.
 
         Gets a container by name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
         :param container_name: The container Name. Required.
         :type container_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: Container. The Container is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Container
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7228,12 +7162,10 @@ class ContainersOperations:
         cls: ClsType[_models.Container] = kwargs.pop("cls", None)
 
         _request = build_containers_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             storage_account_name=storage_account_name,
             container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -7271,10 +7203,10 @@ class ContainersOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
         container_name: str,
+        resource_group_name: str,
         container: Union[_models.Container, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -7300,13 +7232,11 @@ class ContainersOperations:
             _content = json.dumps(container, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_containers_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             storage_account_name=storage_account_name,
             container_name=container_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -7347,10 +7277,10 @@ class ContainersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
         container_name: str,
+        resource_group_name: str,
         container: _models.Container,
         *,
         content_type: str = "application/json",
@@ -7360,15 +7290,15 @@ class ContainersOperations:
 
         Creates a new container or updates an existing container on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
         :param container_name: The container Name. Required.
         :type container_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param container: The container properties. Required.
         :type container: ~azure.mgmt.databoxedge.models.Container
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7383,10 +7313,10 @@ class ContainersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
         container_name: str,
+        resource_group_name: str,
         container: JSON,
         *,
         content_type: str = "application/json",
@@ -7396,15 +7326,15 @@ class ContainersOperations:
 
         Creates a new container or updates an existing container on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
         :param container_name: The container Name. Required.
         :type container_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param container: The container properties. Required.
         :type container: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7419,10 +7349,10 @@ class ContainersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
         container_name: str,
+        resource_group_name: str,
         container: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -7432,15 +7362,15 @@ class ContainersOperations:
 
         Creates a new container or updates an existing container on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
         :param container_name: The container Name. Required.
         :type container_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param container: The container properties. Required.
         :type container: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -7455,10 +7385,10 @@ class ContainersOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         storage_account_name: str,
         container_name: str,
+        resource_group_name: str,
         container: Union[_models.Container, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Container]:
@@ -7466,15 +7396,15 @@ class ContainersOperations:
 
         Creates a new container or updates an existing container on the device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
         :param container_name: The container Name. Required.
         :type container_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param container: The container properties. Is one of the following types: Container, JSON,
          IO[bytes] Required.
         :type container: ~azure.mgmt.databoxedge.models.Container or JSON or IO[bytes]
@@ -7493,10 +7423,10 @@ class ContainersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 storage_account_name=storage_account_name,
                 container_name=container_name,
+                resource_group_name=resource_group_name,
                 container=container,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -7538,7 +7468,7 @@ class ContainersOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, container_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, container_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7554,12 +7484,10 @@ class ContainersOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_containers_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             storage_account_name=storage_account_name,
             container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -7598,19 +7526,19 @@ class ContainersOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, container_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, container_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the container on the Data Box Edge/Data Box Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
         :param container_name: The container Name. Required.
         :type container_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7624,10 +7552,10 @@ class ContainersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 storage_account_name=storage_account_name,
                 container_name=container_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -7663,19 +7591,19 @@ class ContainersOperations:
 
     @distributed_trace
     def list_by_storage_account(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Container"]:
         """Lists all the containers of a storage Account in a Data Box Edge/Data Box Gateway device.
 
         Lists all the containers of a storage Account in a Data Box Edge/Data Box Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An iterator like instance of Container
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Container]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7697,11 +7625,9 @@ class ContainersOperations:
             if not next_link:
 
                 _request = build_containers_list_by_storage_account_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
                     storage_account_name=storage_account_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -7760,7 +7686,7 @@ class ContainersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     async def _refresh_initial(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, container_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, container_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7776,12 +7702,10 @@ class ContainersOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_containers_refresh_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             storage_account_name=storage_account_name,
             container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -7820,21 +7744,21 @@ class ContainersOperations:
 
     @distributed_trace_async
     async def begin_refresh(
-        self, resource_group_name: str, device_name: str, storage_account_name: str, container_name: str, **kwargs: Any
+        self, device_name: str, storage_account_name: str, container_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Refreshes the container metadata with the data from the cloud.
 
         Refreshes the container metadata with the data from the cloud.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param storage_account_name: The storage account name. Required.
         :type storage_account_name: str
         :param container_name: The container Name. Required.
         :type container_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7848,10 +7772,10 @@ class ContainersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._refresh_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 storage_account_name=storage_account_name,
                 container_name=container_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -7892,28 +7816,30 @@ class TriggersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`triggers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, name: str, **kwargs: Any) -> _models.Trigger:
+    async def get(self, device_name: str, name: str, resource_group_name: str, **kwargs: Any) -> _models.Trigger:
         """Get a specific trigger by name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The trigger name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: Trigger. The Trigger is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.Trigger
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7932,11 +7858,9 @@ class TriggersOperations:
         cls: ClsType[_models.Trigger] = kwargs.pop("cls", None)
 
         _request = build_triggers_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -7974,9 +7898,9 @@ class TriggersOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         trigger: Union[_models.Trigger, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8002,12 +7926,10 @@ class TriggersOperations:
             _content = json.dumps(trigger, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_triggers_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -8048,9 +7970,9 @@ class TriggersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         trigger: _models.Trigger,
         *,
         content_type: str = "application/json",
@@ -8058,13 +7980,13 @@ class TriggersOperations:
     ) -> AsyncLROPoller[_models.Trigger]:
         """Creates or updates a trigger.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The trigger name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param trigger: The trigger. Required.
         :type trigger: ~azure.mgmt.databoxedge.models.Trigger
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8079,9 +8001,9 @@ class TriggersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         trigger: JSON,
         *,
         content_type: str = "application/json",
@@ -8089,13 +8011,13 @@ class TriggersOperations:
     ) -> AsyncLROPoller[_models.Trigger]:
         """Creates or updates a trigger.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The trigger name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param trigger: The trigger. Required.
         :type trigger: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8110,9 +8032,9 @@ class TriggersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         trigger: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -8120,13 +8042,13 @@ class TriggersOperations:
     ) -> AsyncLROPoller[_models.Trigger]:
         """Creates or updates a trigger.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The trigger name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param trigger: The trigger. Required.
         :type trigger: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -8141,21 +8063,21 @@ class TriggersOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         trigger: Union[_models.Trigger, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Trigger]:
         """Creates or updates a trigger.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The trigger name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param trigger: The trigger. Is one of the following types: Trigger, JSON, IO[bytes] Required.
         :type trigger: ~azure.mgmt.databoxedge.models.Trigger or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Trigger. The Trigger is compatible with
@@ -8173,9 +8095,9 @@ class TriggersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 trigger=trigger,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -8217,7 +8139,7 @@ class TriggersOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8233,11 +8155,9 @@ class TriggersOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_triggers_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -8276,17 +8196,17 @@ class TriggersOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the trigger on the gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The trigger name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8300,9 +8220,9 @@ class TriggersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -8338,15 +8258,15 @@ class TriggersOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, *, filter: Optional[str] = None, **kwargs: Any
+        self, device_name: str, resource_group_name: str, *, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.Trigger"]:
         """Lists all the triggers configured in the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :keyword filter: Specify $filter='CustomContextTag eq <tag>' to filter on custom context tag
          property. Default value is None.
         :paramtype filter: str
@@ -8371,11 +8291,9 @@ class TriggersOperations:
             if not next_link:
 
                 _request = build_triggers_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
                     filter=filter,
-                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -8440,28 +8358,30 @@ class UsersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`users` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, device_name: str, name: str, **kwargs: Any) -> _models.User:
+    async def get(self, device_name: str, name: str, resource_group_name: str, **kwargs: Any) -> _models.User:
         """Gets the properties of the specified user.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The user name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: User. The User is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8480,11 +8400,9 @@ class UsersOperations:
         cls: ClsType[_models.User] = kwargs.pop("cls", None)
 
         _request = build_users_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -8522,9 +8440,9 @@ class UsersOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         user: Union[_models.User, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8550,12 +8468,10 @@ class UsersOperations:
             _content = json.dumps(user, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_users_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -8596,9 +8512,9 @@ class UsersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         user: _models.User,
         *,
         content_type: str = "application/json",
@@ -8607,13 +8523,13 @@ class UsersOperations:
         """Creates a new user or updates an existing user's information on a Data Box Edge/Data Box
         Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The user name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param user: The user details. Required.
         :type user: ~azure.mgmt.databoxedge.models.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8628,9 +8544,9 @@ class UsersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         user: JSON,
         *,
         content_type: str = "application/json",
@@ -8639,13 +8555,13 @@ class UsersOperations:
         """Creates a new user or updates an existing user's information on a Data Box Edge/Data Box
         Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The user name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param user: The user details. Required.
         :type user: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8660,9 +8576,9 @@ class UsersOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         user: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -8671,13 +8587,13 @@ class UsersOperations:
         """Creates a new user or updates an existing user's information on a Data Box Edge/Data Box
         Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The user name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param user: The user details. Required.
         :type user: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -8692,22 +8608,22 @@ class UsersOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         name: str,
+        resource_group_name: str,
         user: Union[_models.User, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
         """Creates a new user or updates an existing user's information on a Data Box Edge/Data Box
         Gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The user name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param user: The user details. Is one of the following types: User, JSON, IO[bytes] Required.
         :type user: ~azure.mgmt.databoxedge.models.User or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns User. The User is compatible with
@@ -8725,9 +8641,9 @@ class UsersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 user=user,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -8769,7 +8685,7 @@ class UsersOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8785,11 +8701,9 @@ class UsersOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_users_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -8828,17 +8742,17 @@ class UsersOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, name: str, **kwargs: Any
+        self, device_name: str, name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the user on a databox edge/gateway device.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
         :param name: The user name. Required.
         :type name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8852,9 +8766,9 @@ class UsersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 name=name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -8890,15 +8804,15 @@ class UsersOperations:
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, *, filter: Optional[str] = None, **kwargs: Any
+        self, device_name: str, resource_group_name: str, *, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.User"]:
         """Gets all the users registered on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :keyword filter: Specify $filter='Type eq <type>' to filter on user type property. Default
          value is None.
         :paramtype filter: str
@@ -8923,11 +8837,9 @@ class UsersOperations:
             if not next_link:
 
                 _request = build_users_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
                     filter=filter,
-                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -8992,14 +8904,16 @@ class DeviceCapacityCheckOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`device_capacity_check` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9251,28 +9165,30 @@ class NodesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`nodes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_by_data_box_edge_device(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Node"]:
         """Gets all the nodes currently configured under this Data Box Edge device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: An iterator like instance of Node
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.Node]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9294,10 +9210,8 @@ class NodesOperations:
             if not next_link:
 
                 _request = build_nodes_list_by_data_box_edge_device_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -9362,14 +9276,16 @@ class SupportPackagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`support_packages` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9611,14 +9527,16 @@ class DeviceCapacityInfoOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`device_capacity_info` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9697,32 +9615,34 @@ class MonitoringConfigOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`monitoring_config` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, device_name: str, role_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.MonitoringMetricConfiguration:
         """Gets a  metric configuration of a role.
 
         Gets a  metric configuration of a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: MonitoringMetricConfiguration. The MonitoringMetricConfiguration is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.MonitoringMetricConfiguration
@@ -9742,11 +9662,9 @@ class MonitoringConfigOperations:
         cls: ClsType[_models.MonitoringMetricConfiguration] = kwargs.pop("cls", None)
 
         _request = build_monitoring_config_get_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             role_name=role_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -9784,9 +9702,9 @@ class MonitoringConfigOperations:
 
     async def _create_or_update_initial(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
+        resource_group_name: str,
         monitoring_metric_configuration: Union[_models.MonitoringMetricConfiguration, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -9812,12 +9730,10 @@ class MonitoringConfigOperations:
             _content = json.dumps(monitoring_metric_configuration, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_monitoring_config_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             role_name=role_name,
-            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -9858,9 +9774,9 @@ class MonitoringConfigOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
+        resource_group_name: str,
         monitoring_metric_configuration: _models.MonitoringMetricConfiguration,
         *,
         content_type: str = "application/json",
@@ -9870,13 +9786,13 @@ class MonitoringConfigOperations:
 
         Creates a new metric configuration or updates an existing one for a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param monitoring_metric_configuration: The metric configuration. Required.
         :type monitoring_metric_configuration:
          ~azure.mgmt.databoxedge.models.MonitoringMetricConfiguration
@@ -9893,9 +9809,9 @@ class MonitoringConfigOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
+        resource_group_name: str,
         monitoring_metric_configuration: JSON,
         *,
         content_type: str = "application/json",
@@ -9905,13 +9821,13 @@ class MonitoringConfigOperations:
 
         Creates a new metric configuration or updates an existing one for a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param monitoring_metric_configuration: The metric configuration. Required.
         :type monitoring_metric_configuration: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -9927,9 +9843,9 @@ class MonitoringConfigOperations:
     @overload
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
+        resource_group_name: str,
         monitoring_metric_configuration: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -9939,13 +9855,13 @@ class MonitoringConfigOperations:
 
         Creates a new metric configuration or updates an existing one for a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param monitoring_metric_configuration: The metric configuration. Required.
         :type monitoring_metric_configuration: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -9961,9 +9877,9 @@ class MonitoringConfigOperations:
     @distributed_trace_async
     async def begin_create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
         role_name: str,
+        resource_group_name: str,
         monitoring_metric_configuration: Union[_models.MonitoringMetricConfiguration, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MonitoringMetricConfiguration]:
@@ -9971,13 +9887,13 @@ class MonitoringConfigOperations:
 
         Creates a new metric configuration or updates an existing one for a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param monitoring_metric_configuration: The metric configuration. Is one of the following
          types: MonitoringMetricConfiguration, JSON, IO[bytes] Required.
         :type monitoring_metric_configuration:
@@ -9998,9 +9914,9 @@ class MonitoringConfigOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 role_name=role_name,
+                resource_group_name=resource_group_name,
                 monitoring_metric_configuration=monitoring_metric_configuration,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -10042,7 +9958,7 @@ class MonitoringConfigOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, device_name: str, role_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10058,11 +9974,9 @@ class MonitoringConfigOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_monitoring_config_delete_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
             role_name=role_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -10101,19 +10015,19 @@ class MonitoringConfigOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, device_name: str, role_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """deletes a new metric configuration for a role.
 
         deletes a new metric configuration for a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10127,9 +10041,9 @@ class MonitoringConfigOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
                 role_name=role_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -10165,19 +10079,19 @@ class MonitoringConfigOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, device_name: str, role_name: str, **kwargs: Any
+        self, device_name: str, role_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.MonitoringMetricConfiguration"]:
         """Lists metric configurations in a role.
 
         Lists metric configurations in a role.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param device_name: The name of the device. Required.
         :type device_name: str
         :param role_name: The name of the role. Required.
         :type role_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: An iterator like instance of MonitoringMetricConfiguration
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.databoxedge.models.MonitoringMetricConfiguration]
@@ -10200,11 +10114,9 @@ class MonitoringConfigOperations:
             if not next_link:
 
                 _request = build_monitoring_config_list_request(
-                    resource_group_name=resource_group_name,
                     device_name=device_name,
                     role_name=role_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -10269,14 +10181,16 @@ class AvailableSkusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeClient`'s
+        :class:`~azure.mgmt.databoxedge.aio.DataBoxEdgeManagementClient`'s
         :attr:`available_skus` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoxEdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoxEdgeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

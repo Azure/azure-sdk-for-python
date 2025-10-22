@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import DataBoxEdgeClientConfiguration
+from ._configuration import DataBoxEdgeManagementClientConfiguration
 from .operations import (
     AddonsOperations,
     AlertsOperations,
@@ -49,13 +49,15 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataBoxEdgeClient:  # pylint: disable=too-many-instance-attributes
-    """DataBoxEdgeClient.
+class DataBoxEdgeManagementClient:  # pylint: disable=too-many-instance-attributes
+    """DataBoxEdgeManagementClient.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.databoxedge.aio.operations.Operations
+    :ivar operations_status: OperationsStatusOperations operations
+    :vartype operations_status: azure.mgmt.databoxedge.aio.operations.OperationsStatusOperations
     :ivar devices: DevicesOperations operations
     :vartype devices: azure.mgmt.databoxedge.aio.operations.DevicesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.databoxedge.aio.operations.Operations
     :ivar alerts: AlertsOperations operations
     :vartype alerts: azure.mgmt.databoxedge.aio.operations.AlertsOperations
     :ivar bandwidth_schedules: BandwidthSchedulesOperations operations
@@ -66,8 +68,6 @@ class DataBoxEdgeClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.databoxedge.aio.operations.DiagnosticSettingsOperations
     :ivar jobs: JobsOperations operations
     :vartype jobs: azure.mgmt.databoxedge.aio.operations.JobsOperations
-    :ivar operations_status: OperationsStatusOperations operations
-    :vartype operations_status: azure.mgmt.databoxedge.aio.operations.OperationsStatusOperations
     :ivar orders: OrdersOperations operations
     :vartype orders: azure.mgmt.databoxedge.aio.operations.OrdersOperations
     :ivar roles: RolesOperations operations
@@ -132,7 +132,7 @@ class DataBoxEdgeClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = DataBoxEdgeClientConfiguration(
+        self._config = DataBoxEdgeManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
@@ -166,8 +166,11 @@ class DataBoxEdgeClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations_status = OperationsStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.devices = DevicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.alerts = AlertsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.bandwidth_schedules = BandwidthSchedulesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -176,9 +179,6 @@ class DataBoxEdgeClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations_status = OperationsStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.orders = OrdersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.roles = RolesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.addons = AddonsOperations(self._client, self._config, self._serialize, self._deserialize)

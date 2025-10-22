@@ -12,13 +12,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import Operations  # type: ignore
+from ._operations import OperationsStatusOperations  # type: ignore
 from ._operations import DevicesOperations  # type: ignore
+from ._operations import Operations  # type: ignore
 from ._operations import AlertsOperations  # type: ignore
 from ._operations import BandwidthSchedulesOperations  # type: ignore
 from ._operations import DiagnosticSettingsOperations  # type: ignore
 from ._operations import JobsOperations  # type: ignore
-from ._operations import OperationsStatusOperations  # type: ignore
 from ._operations import OrdersOperations  # type: ignore
 from ._operations import RolesOperations  # type: ignore
 from ._operations import AddonsOperations  # type: ignore
@@ -40,13 +40,13 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "Operations",
+    "OperationsStatusOperations",
     "DevicesOperations",
+    "Operations",
     "AlertsOperations",
     "BandwidthSchedulesOperations",
     "DiagnosticSettingsOperations",
     "JobsOperations",
-    "OperationsStatusOperations",
     "OrdersOperations",
     "RolesOperations",
     "AddonsOperations",

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.databoxedge import DataBoxEdgeClient
+from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
 # PREREQUISITES
@@ -25,15 +25,15 @@ from azure.mgmt.databoxedge import DataBoxEdgeClient
 
 
 def main():
-    client = DataBoxEdgeClient(
+    client = DataBoxEdgeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.users.get(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
         name="user1",
+        resource_group_name="GroupForEdgeAutomation",
     )
     print(response)
 

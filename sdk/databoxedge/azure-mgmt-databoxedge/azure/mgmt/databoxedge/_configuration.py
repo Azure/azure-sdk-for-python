@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DataBoxEdgeClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for DataBoxEdgeClient.
+class DataBoxEdgeManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for DataBoxEdgeManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

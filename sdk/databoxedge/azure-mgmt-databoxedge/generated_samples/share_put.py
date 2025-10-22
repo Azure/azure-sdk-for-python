@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.databoxedge import DataBoxEdgeClient
+from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
 # PREREQUISITES
@@ -26,15 +26,15 @@ from azure.mgmt.databoxedge import DataBoxEdgeClient
 
 
 def main():
-    client = DataBoxEdgeClient(
+    client = DataBoxEdgeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.shares.begin_create_or_update(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
         name="smbshare",
+        resource_group_name="GroupForEdgeAutomation",
         share={
             "properties": {
                 "accessProtocol": "SMB",

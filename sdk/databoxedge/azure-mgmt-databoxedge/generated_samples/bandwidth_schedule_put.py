@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.databoxedge import DataBoxEdgeClient
+from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
 # PREREQUISITES
@@ -25,15 +25,15 @@ from azure.mgmt.databoxedge import DataBoxEdgeClient
 
 
 def main():
-    client = DataBoxEdgeClient(
+    client = DataBoxEdgeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.bandwidth_schedules.begin_create_or_update(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
         name="bandwidth-1",
+        resource_group_name="GroupForEdgeAutomation",
         parameters={
             "properties": {"days": ["Sunday", "Monday"], "rateInMbps": 100, "start": "0:0:0", "stop": "13:59:0"}
         },

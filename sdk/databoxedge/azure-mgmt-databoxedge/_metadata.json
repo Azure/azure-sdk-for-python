@@ -1,7 +1,3 @@
 {
-  "apiVersion": "2023-12-01",
-  "commit": "78fd8f85507c9a12d47bd8953b864353a6005080",
-  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/databoxedge/DataBoxEdge.Management",
-  "emitterVersion": "0.52.1"
+  "apiVersion": "2023-12-01"
 }

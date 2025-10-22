@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.databoxedge import DataBoxEdgeClient
+from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
 # PREREQUISITES
@@ -25,16 +25,16 @@ from azure.mgmt.databoxedge import DataBoxEdgeClient
 
 
 def main():
-    client = DataBoxEdgeClient(
+    client = DataBoxEdgeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     client.containers.begin_delete(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
         storage_account_name="storageaccount1",
         container_name="blobcontainer1",
+        resource_group_name="GroupForEdgeAutomation",
     ).result()
 
 
