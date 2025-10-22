@@ -1,5 +1,26 @@
 # Release History
 
+## 1.0.0 (2025-11-16)
+
+### Features Added
+
+  - Model `Certificate` added property `enhanced_key_usage`
+  - Model `CheckNameAvailability` added property `type`
+  - Added model `AccountSkuPatch`
+
+### Breaking Changes
+
+  - Deleted or renamed client `TrustedSigningMgmtClient`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `common_name`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `organization`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `organization_unit`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `street_address`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `city`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `state`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `country`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `postal_code`
+  - Model `CertificateProfileProperties` deleted or renamed its instance variable `enhanced_key_usage`
+
 ## 1.0.0 (2025-10-09)
 
 ### Features Added
