@@ -472,8 +472,8 @@ class RedTeamRun(TypedDict, total=False):
     :type data_source: DataSource
     :param metadata: Additional metadata for the run
     :type metadata: Dict[str, Any]
-    :param result_count: Aggregated counts of evaluation results
-    :type result_count: ResultCount
+    :param result_counts: Aggregated counts of evaluation results
+    :type result_counts: ResultCount
     :param per_model_usage: Usage statistics per model (if applicable)
     :type per_model_usage: List[Any]
     :param per_testing_criteria_results: Results aggregated by testing criteria
@@ -493,7 +493,7 @@ class RedTeamRun(TypedDict, total=False):
     report_url: Optional[str]
     data_source: DataSource
     metadata: Dict[str, Any]
-    result_count: ResultCount
+    result_counts: ResultCount
     per_model_usage: List[Any]
     per_testing_criteria_results: List[PerTestingCriteriaResult]
     output_items: OutputItemsList

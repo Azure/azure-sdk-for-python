@@ -19,8 +19,7 @@ from tqdm import tqdm
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 
-# from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights #TODO: uncomment when app insights checked in
-# from azure.ai.evaluation._model_configurations import EvaluationResult, AppInsightsConfig
+from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
@@ -324,7 +323,6 @@ class RedTeam:
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None,
         is_agent_target: Optional[bool] = None,
-        client_id: Optional[str] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
 
@@ -342,8 +340,6 @@ class RedTeam:
         :type strategy: Optional[str]
         :param is_agent_target: Optional boolean indicating if target is an agent (True) or model (False)
         :type is_agent_target: Optional[bool]
-        :param client_id: Optional client ID to be included in API request headers
-        :type client_id: Optional[str]
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
@@ -391,7 +387,6 @@ class RedTeam:
                         current_key,
                         num_objectives,
                         is_agent_target,
-                        client_id,
                     )
                 else:
                     # Risk category not in requested list, return empty
@@ -410,7 +405,6 @@ class RedTeam:
                 current_key,
                 num_objectives,
                 is_agent_target,
-                client_id,
             )
 
     async def _get_custom_attack_objectives(
@@ -542,7 +536,6 @@ class RedTeam:
         current_key: tuple,
         num_objectives: int,
         is_agent_target: Optional[bool] = None,
-        client_id: Optional[str] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI service."""
         content_harm_risk = None
@@ -569,7 +562,7 @@ class RedTeam:
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
                     target=target_type_str,
-                    client_id=client_id,
+                    client_id=self.client_id if target_type_str == "agent" else None,
                 )
             else:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -580,7 +573,7 @@ class RedTeam:
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
                     target=target_type_str,
-                    client_id=client_id,
+                    client_id=self.client_id if target_type_str == "agent" else None,
                 )
 
             if isinstance(objectives_response, list):
@@ -618,7 +611,7 @@ class RedTeam:
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
                             target="model",
-                            client_id=client_id,
+                            client_id=None,
                         )
                     else:
                         objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -629,7 +622,7 @@ class RedTeam:
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
                             target="model",
-                            client_id=client_id,
+                            client_id=None,
                         )
                     
                     if isinstance(objectives_response, list):
@@ -714,7 +707,7 @@ class RedTeam:
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
                     target=target_type_str,
-                    client_id=getattr(self, 'client_id', None),
+                    client_id=self.client_id if target_type_str == "agent" else None,
                 )
 
             xpia_prompts = await get_xpia_prompts_with_retry()
@@ -731,7 +724,7 @@ class RedTeam:
                         language=self.language.value,
                         scan_session_id=self.scan_session_id,
                         target="model",
-                        client_id=getattr(self, 'client_id', None),
+                        client_id=None,
                     )
                     if xpia_prompts and len(xpia_prompts) > 0:
                         self.logger.debug(f"Fetched {len(xpia_prompts)} model-type XPIA wrapper prompts as fallback")
@@ -1261,12 +1254,12 @@ class RedTeam:
         eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
         created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
         taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories")  # key is risk category value is taxonomy
-        # TODO: uncomment when app insights logging checked in
-        # _app_insights_configuration = kwargs.get("_app_insights_configuration")
-        # self._app_insights_configuration = _app_insights_configuration
+        _app_insights_configuration = kwargs.get("_app_insights_configuration")
+        self._app_insights_configuration = _app_insights_configuration
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
-        # Store client_id for use in API calls
+        self.client_id = kwargs.get("client_id", None)
+        # Store client_id for ACA authorization with agent targets
         self.client_id = client_id
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
@@ -1486,7 +1479,6 @@ class RedTeam:
                 application_scenario=application_scenario,
                 strategy="baseline",
                 is_agent_target=is_agent_target,
-                client_id=getattr(self, 'client_id', None),
             )
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
@@ -1511,7 +1503,6 @@ class RedTeam:
                     application_scenario=application_scenario,
                     strategy=strategy_name,
                     is_agent_target=is_agent_target,
-                    client_id=getattr(self, 'client_id', None),
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
 
@@ -1628,9 +1619,8 @@ class RedTeam:
 
         # Extract AOAI summary for passing to MLflow logging
         aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
-        # TODO: uncomment when app insights checked in
-        # if self._app_insights_configuration:
-        #     emit_eval_result_events_to_app_insights(self._app_insights_configuration, aoai_summary["output_items"]["data"])
+        if self._app_insights_configuration and aoai_summary:
+            emit_eval_result_events_to_app_insights(self._app_insights_configuration, aoai_summary["output_items"]["data"])
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
@@ -1652,10 +1642,14 @@ class RedTeam:
                 os.remove(abs_output_path)
             os.makedirs(abs_output_path, exist_ok=True)
 
-            # Write scan result to eval_result.json (default name when path is directory)
-            _write_output(abs_output_path, red_team_result.scan_result)
+            # Create a copy of scan_result without AOAI_Compatible properties for old format
+            old_format_result = {k: v for k, v in red_team_result.scan_result.items() 
+                                if k not in ["AOAI_Compatible_Summary", "AOAI_Compatible_Row_Results"]}
 
-            # Write the AOAI summary to results.json
+            # Write scan result to eval_result.json (old format - without AOAI_Compatible properties)
+            _write_output(abs_output_path, old_format_result)
+
+            # Write the AOAI summary to results.json (new format)
             if aoai_summary:
                 _write_output(os.path.join(abs_output_path, "results.json"), aoai_summary)
             else:
@@ -1664,11 +1658,14 @@ class RedTeam:
             # Also save a copy to the scan output directory if available
             if self.scan_output_dir:
                 final_output = os.path.join(self.scan_output_dir, "final_results.json")
-                _write_output(final_output, red_team_result.scan_result)
+                _write_output(final_output, old_format_result)
         elif red_team_result.scan_result and self.scan_output_dir:
             # If no output_path was specified but we have scan_output_dir, save there
+            # Create old format copy
+            old_format_result = {k: v for k, v in red_team_result.scan_result.items() 
+                                if k not in ["AOAI_Compatible_Summary", "AOAI_Compatible_Row_Results"]}
             final_output = os.path.join(self.scan_output_dir, "final_results.json")
-            _write_output(final_output, red_team_result.scan_result)
+            _write_output(final_output, old_format_result)
 
         # Display final scorecard and results
         if red_team_result.scan_result:

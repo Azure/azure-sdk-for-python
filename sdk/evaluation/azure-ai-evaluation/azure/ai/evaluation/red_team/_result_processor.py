@@ -274,6 +274,9 @@ class ResultProcessor:
                                                 attack_threshold = 3
 
                                         # Add conversation object
+                                        # Clean messages for old format - remove context and filter tool_calls
+                                        cleaned_messages = self._clean_attack_detail_messages(messages)
+                                        
                                         conversation = {
                                             "attack_success": attack_success,
                                             "attack_technique": strategy_name.replace("Converter", "").replace(
@@ -281,7 +284,7 @@ class ResultProcessor:
                                             ),
                                             "attack_complexity": complexity_level,
                                             "risk_category": risk_category,
-                                            "conversation": messages,
+                                            "conversation": cleaned_messages,
                                             "risk_assessment": (risk_assessment if risk_assessment else None),
                                             "attack_success_threshold": attack_threshold,
                                         }
@@ -503,18 +506,54 @@ class ResultProcessor:
     def _normalize_sample_message(message: Dict[str, Any]) -> Dict[str, Any]:
         """Return a shallow copy of a message limited to supported fields."""
 
-        allowed_keys = {"role", "content", "name", "tool_calls"}
+        allowed_keys = {"role", "content", "name"}
         normalized: Dict[str, Any] = {}
 
         for key, value in message.items():
             if key not in allowed_keys or value is None:
                 continue
-            if key == "tool_calls" and isinstance(value, list):
-                normalized["tool_calls"] = [call for call in value if isinstance(call, dict)]
-            else:
-                normalized[key] = value
+            normalized[key] = value
+
+        # Only include tool_calls for assistant role messages
+        if message.get("role") == "assistant" and "tool_calls" in message:
+            tool_calls_value = message["tool_calls"]
+            if isinstance(tool_calls_value, list):
+                normalized["tool_calls"] = [call for call in tool_calls_value if isinstance(call, dict)]
 
         return normalized
+
+    @staticmethod
+    def _clean_attack_detail_messages(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Clean messages for attack_details in old format files.
+        
+        Removes context field and only includes tool_calls in assistant messages.
+        """
+        cleaned_messages = []
+        for message in messages:
+            if not isinstance(message, dict):
+                continue
+            
+            cleaned = {}
+            # Always include role and content
+            if "role" in message:
+                cleaned["role"] = message["role"]
+            if "content" in message:
+                cleaned["content"] = message["content"]
+            if "name" in message:
+                cleaned["name"] = message["name"]
+            
+            # Only include tool_calls for assistant messages
+            if message.get("role") == "assistant" and "tool_calls" in message:
+                tool_calls_value = message["tool_calls"]
+                if isinstance(tool_calls_value, list):
+                    cleaned["tool_calls"] = [call for call in tool_calls_value if isinstance(call, dict)]
+            
+            # Do NOT include context field in attack_details
+            
+            if cleaned:
+                cleaned_messages.append(cleaned)
+        
+        return cleaned_messages
 
     def _build_datasource_item(
         self,
@@ -1314,7 +1353,7 @@ class ResultProcessor:
             "report_url": scan_result.get("studio_url") or self.ai_studio_url,
             "data_source": data_source,
             "metadata": {},
-            "result_count": result_count,
+            "result_counts": result_count,
             "per_model_usage": [],
             "per_testing_criteria_results": per_testing_results,
             "output_items": list_wrapper,
