@@ -46,6 +46,7 @@ from .constants import (
     OUTGOING_WINDOW,
     DEFAULT_AUTH_TIMEOUT,
     MESSAGE_DELIVERY_DONE_STATES,
+    LINK_MAX_MESSAGE_SIZE
 )
 
 from .management_operation import ManagementOperation
