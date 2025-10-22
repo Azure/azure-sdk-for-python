@@ -21,7 +21,7 @@ class TestFineTuning(TestBase):
         return openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
             validation_file=validation_file_id,
-            model=self.test_finetuning_params["model_name"],
+            model=self.test_finetuning_params["sft"]["model_name"],
             method={
                 "type": "supervised",
                 "supervised": {
@@ -39,7 +39,7 @@ class TestFineTuning(TestBase):
         return openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
             validation_file=validation_file_id,
-            model=self.test_finetuning_params["model_name"],
+            model=self.test_finetuning_params["dpo"]["model_name"],
             method={
                 "type": "dpo",
                 "dpo": {
@@ -47,6 +47,40 @@ class TestFineTuning(TestBase):
                         "n_epochs": self.test_finetuning_params["n_epochs"],
                         "batch_size": self.test_finetuning_params["batch_size"],
                         "learning_rate_multiplier": self.test_finetuning_params["learning_rate_multiplier"]
+                    }
+                }
+            }
+        )
+
+    def _create_rft_finetuning_job(self, openai_client, train_file_id, validation_file_id):
+        """Helper method to create an RFT fine-tuning job."""
+        grader = {
+            "type": "score_model",
+            "model": "o3-mini",
+            "input": [
+                {
+                    "role": "user",
+                    "content": "Evaluate the model's response based on correctness and quality. Rate from 0 to 10."
+                }
+            ],
+            "range": [0.0, 10.0]
+        }
+        
+        return openai_client.fine_tuning.jobs.create(
+            training_file=train_file_id,
+            validation_file=validation_file_id,
+            model=self.test_finetuning_params["rft"]["model_name"],
+            method={
+                "type": "reinforcement",
+                "reinforcement": {
+                    "grader": grader,
+                    "hyperparameters": {
+                        "n_epochs": self.test_finetuning_params["n_epochs"],
+                        "batch_size": self.test_finetuning_params["batch_size"],
+                        "learning_rate_multiplier": self.test_finetuning_params["learning_rate_multiplier"],
+                        "eval_interval": 5,
+                        "eval_samples": 2,
+                        "reasoning_effort": "medium"
                     }
                 }
             }
@@ -304,6 +338,59 @@ class TestFineTuning(TestBase):
                 openai_client.files.delete(train_file.id)
                 openai_client.files.delete(validation_file.id)
                 print(f"[test_finetuning_dpo] Deleted files: {train_file.id}, {validation_file.id}")
+
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_rft_finetuning_create_job(self, **kwargs):
+        endpoint = kwargs.pop("azure_ai_projects_tests_project_endpoint")
+        
+        # Get the path to the RFT test data files
+        test_data_dir = Path(__file__).parent / "test_data" / "finetuning"
+        training_file_path = test_data_dir / self.test_finetuning_params["rft"]["training_file_name"]
+        validation_file_path = test_data_dir / self.test_finetuning_params["rft"]["validation_file_name"]
+        
+        with AIProjectClient(endpoint=endpoint, credential=self.get_credential(AIProjectClient, is_async=False)) as project_client:
+            with project_client.get_openai_client(api_version="2025-04-01-preview") as openai_client:
+                # Upload training file
+                with open(training_file_path, "rb") as f:
+                    train_file = openai_client.files.create(file=f, purpose="fine-tune")
+                assert train_file is not None
+                assert train_file.id is not None
+                TestBase.assert_equal_or_not_none(train_file.status, "pending")
+                print(f"[test_finetuning_rft] Uploaded training file: {train_file.id}")
+                
+                # Upload validation file
+                with open(validation_file_path, "rb") as f:
+                    validation_file = openai_client.files.create(file=f, purpose="fine-tune")
+                assert validation_file is not None
+                assert validation_file.id is not None
+                TestBase.assert_equal_or_not_none(validation_file.status, "pending")
+                print(f"[test_finetuning_rft] Uploaded validation file: {validation_file.id}")
+
+                # Wait for completion of uploading of files
+                time.sleep(10)
+                
+                # Create an RFT fine-tuning job
+                fine_tuning_job = self._create_rft_finetuning_job(openai_client, train_file.id, validation_file.id)
+                print(f"[test_finetuning_rft] Created RFT fine-tuning job: {fine_tuning_job.id}")
+                
+                # Validate the created job
+                TestBase.validate_fine_tuning_job(fine_tuning_job)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                assert fine_tuning_job.method is not None, "Method should not be None for RFT job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "reinforcement")
+                
+                print(f"[test_finetuning_rft] RFT method validation passed - type: {fine_tuning_job.method.type}")
+                
+                # Clean up: cancel the job
+                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_rft] Cancelled job: {fine_tuning_job.id}")
+                
+                # Clean up: delete the uploaded files
+                openai_client.files.delete(train_file.id)
+                openai_client.files.delete(validation_file.id)
+                print(f"[test_finetuning_rft] Deleted files: {train_file.id}, {validation_file.id}")
 
     @servicePreparer()
     @recorded_by_proxy
