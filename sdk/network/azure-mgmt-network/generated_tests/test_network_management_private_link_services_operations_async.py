@@ -27,7 +27,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
             await self.client.private_link_services.begin_delete(
                 resource_group_name=resource_group.name,
                 service_name="str",
-                api_version="2024-07-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
         response = await self.client.private_link_services.get(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -54,6 +54,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 service_name="str",
                 parameters={
+                    "accessMode": "str",
                     "alias": "str",
                     "autoApproval": {"subscriptions": ["str"]},
                     "destinationIPAddress": "str",
@@ -13623,7 +13624,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
                     "type": "str",
                     "visibility": {"subscriptions": ["str"]},
                 },
-                api_version="2024-07-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -13635,7 +13636,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
     async def test_private_link_services_list(self, resource_group):
         response = self.client.private_link_services.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -13645,7 +13646,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_private_link_services_list_by_subscription(self, resource_group):
         response = self.client.private_link_services.list_by_subscription(
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -13658,7 +13659,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             service_name="str",
             pe_connection_name="str",
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -15615,6 +15616,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
                             "primary": bool,
                             "privateEndpoint": ...,
                             "privateLinkService": {
+                                "accessMode": "str",
                                 "alias": "str",
                                 "autoApproval": {"subscriptions": ["str"]},
                                 "destinationIPAddress": "str",
@@ -18725,6 +18727,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
                                     "primary": bool,
                                     "privateEndpoint": ...,
                                     "privateLinkService": {
+                                        "accessMode": "str",
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
                                         "destinationIPAddress": "str",
@@ -19272,7 +19275,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -19286,7 +19289,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 service_name="str",
                 pe_connection_name="str",
-                api_version="2024-07-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -19299,7 +19302,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
         response = self.client.private_link_services.list_private_endpoint_connections(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -19312,7 +19315,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
             await self.client.private_link_services.begin_check_private_link_service_visibility(
                 location="str",
                 parameters={"privateLinkServiceAlias": "str"},
-                api_version="2024-07-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -19329,7 +19332,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
                 location="str",
                 resource_group_name=resource_group.name,
                 parameters={"privateLinkServiceAlias": "str"},
-                api_version="2024-07-01",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -19341,7 +19344,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
     async def test_private_link_services_list_auto_approved_private_link_services(self, resource_group):
         response = self.client.private_link_services.list_auto_approved_private_link_services(
             location="str",
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -19355,7 +19358,7 @@ class TestNetworkManagementPrivateLinkServicesOperationsAsync(AzureMgmtRecordedT
         response = self.client.private_link_services.list_auto_approved_private_link_services_by_resource_group(
             location="str",
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
