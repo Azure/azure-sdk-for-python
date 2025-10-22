@@ -19,7 +19,7 @@ from tqdm import tqdm
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 
-from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights
+# from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
@@ -1619,8 +1619,8 @@ class RedTeam:
 
         # Extract AOAI summary for passing to MLflow logging
         aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
-        if self._app_insights_configuration and aoai_summary:
-            emit_eval_result_events_to_app_insights(self._app_insights_configuration, aoai_summary["output_items"]["data"])
+        # if self._app_insights_configuration and aoai_summary:
+        #     emit_eval_result_events_to_app_insights(self._app_insights_configuration, aoai_summary["output_items"]["data"])
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")

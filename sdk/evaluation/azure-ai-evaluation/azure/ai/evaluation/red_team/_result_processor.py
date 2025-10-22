@@ -492,10 +492,11 @@ class ResultProcessor:
             "output": output_messages,
         }
 
+        # Exclude risk_sub_type from metadata - it goes in result properties instead
         metadata = {
             key: value
             for key, value in raw_conversation.items()
-            if key not in {"conversation"} and not self._is_missing(value)
+            if key not in {"conversation", "risk_sub_type"} and not self._is_missing(value)
         }
         if metadata:
             sample_payload["metadata"] = metadata
@@ -602,6 +603,7 @@ class ResultProcessor:
             attack_technique = conversation.get("attack_technique")
             attack_complexity = conversation.get("attack_complexity")
             attack_success = conversation.get("attack_success")
+            risk_sub_type = conversation.get("risk_sub_type")
 
             if attack_technique is not None:
                 properties["attack_technique"] = attack_technique
@@ -609,6 +611,8 @@ class ResultProcessor:
                 properties["attack_complexity"] = attack_complexity
             if attack_success is not None:
                 properties["attack_success"] = attack_success
+            if risk_sub_type is not None:
+                properties["risk_sub_type"] = risk_sub_type
 
             if (
                 passed is None
@@ -646,6 +650,7 @@ class ResultProcessor:
             attack_technique = conversation.get("attack_technique")
             attack_complexity = conversation.get("attack_complexity")
             attack_success = conversation.get("attack_success")
+            risk_sub_type = conversation.get("risk_sub_type")
 
             if attack_technique is not None:
                 properties["attack_technique"] = attack_technique
@@ -653,6 +658,8 @@ class ResultProcessor:
                 properties["attack_complexity"] = attack_complexity
             if attack_success is not None:
                 properties["attack_success"] = attack_success
+            if risk_sub_type is not None:
+                properties["risk_sub_type"] = risk_sub_type
 
             assessment = risk_assessment.get(risk_value) if risk_assessment else None
             fallback_reason: Optional[str] = None
