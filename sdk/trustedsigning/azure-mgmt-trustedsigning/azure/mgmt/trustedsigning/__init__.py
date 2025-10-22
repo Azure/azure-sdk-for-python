@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
- 
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
