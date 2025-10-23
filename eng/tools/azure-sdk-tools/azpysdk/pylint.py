@@ -90,7 +90,6 @@ class pylint(Check):
                 logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
 
-            # debug a pip freeze result
             self.pip_freeze(executable)
 
             top_level_module = parsed.namespace.split(".")[0]
