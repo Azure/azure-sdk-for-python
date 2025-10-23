@@ -78,9 +78,7 @@ class AttestationClientAttestationSamples(object):
         async with DefaultAzureCredential() as credential, AttestationClient(
             self.shared_url, credential
         ) as attest_client:
-            response, _ = await attest_client.attest_sgx_enclave(
-                quote, runtime_data=runtime_data
-            )
+            response, _ = await attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
 
         print("Issuer of token is: ", response.issuer)
         # [END attest_sgx_enclave_shared]
@@ -98,9 +96,7 @@ class AttestationClientAttestationSamples(object):
         async with DefaultAzureCredential() as credential, AttestationClient(
             self.shared_url, credential
         ) as attest_client:
-            response, _ = await attest_client.attest_open_enclave(
-                oe_report, runtime_json=runtime_data
-            )
+            response, _ = await attest_client.attest_open_enclave(oe_report, runtime_json=runtime_data)
 
         print("Issuer of token is: ", response.issuer)
         # [END attest_open_enclave_shared]
@@ -119,9 +115,7 @@ class AttestationClientAttestationSamples(object):
             self.shared_url,
             credential,
         ) as attest_client:
-            response, _ = await attest_client.attest_open_enclave(
-                oe_report, runtime_json=runtime_data
-            )
+            response, _ = await attest_client.attest_open_enclave(oe_report, runtime_json=runtime_data)
 
         print("Issuer of token is: ", response.issuer)
         print("Response JSON value is:", json.dumps(response.runtime_claims))
@@ -196,13 +190,11 @@ issuancerules {
             async with DefaultAzureCredential() as credential, AttestationClient(
                 self.shared_url, credential
             ) as attest_client:
-                await attest_client.attest_open_enclave(
-                    oe_report, runtime_data=runtime_data, draft_policy=draft_policy
-                )
+                await attest_client.attest_open_enclave(oe_report, runtime_data=runtime_data, draft_policy=draft_policy)
                 print("Unexpectedly passed attestation.")
         except HttpResponseError as err:
             print("Caught expected exception: ", err.message)
-            print("Error is:", err.error.code)
+            print("Error is:", err.error.code)  # type: ignore
             pass
 
     async def attest_open_enclave_shared_with_options(self):
@@ -234,11 +226,7 @@ issuancerules {
             print("     Token was issued at: ", token.issued)
             print("     Token expires at: ", token.expires)
             if token.issuer != self.shared_url:
-                print(
-                    "Token issuer {} does not match expected issuer {}".format(
-                        token.issuer, self.shared_url
-                    )
-                )
+                print("Token issuer {} does not match expected issuer {}".format(token.issuer, self.shared_url))
                 return False
 
             # Check the subject of the signing certificate used to validate the token.
@@ -259,9 +247,7 @@ issuancerules {
         async with DefaultAzureCredential() as credential, AttestationClient(
             self.shared_url, credential, validation_callback=validate_token
         ) as attest_client:
-            response, token = await attest_client.attest_open_enclave(
-                oe_report, runtime_data=runtime_data
-            )
+            response, token = await attest_client.attest_open_enclave(oe_report, runtime_data=runtime_data)
 
             print("Issuer of token is: ", response.issuer)
             print("Expiration time: ", token.expires)
@@ -272,7 +258,7 @@ issuancerules {
             self.shared_url, credential
         ) as attest_client:
             response, token = await attest_client.attest_open_enclave(
-                oe_report, runtime_data=runtime_data, validation_callback=validate_token
+                oe_report, runtime_data=runtime_data, validation_callback=validate_token  # type: ignore
             )
 
             print("Issuer of token is: ", response.issuer)
