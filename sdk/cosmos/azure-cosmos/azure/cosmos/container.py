@@ -25,13 +25,13 @@ import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union
+from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from typing_extensions import Literal
-
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
+
 from . import _utils as utils
 from ._availability_strategy_config import _validate_hedging_config
 from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
