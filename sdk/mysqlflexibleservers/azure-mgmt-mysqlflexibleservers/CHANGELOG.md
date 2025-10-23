@@ -32,14 +32,14 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Model `AdvancedThreatProtectionForUpdate` deleted or renamed its instance variable `state`
+  - Model `AdvancedThreatProtectionForUpdate` instance variable `state` have been moved under property `properties`
   - Model `AzureADAdministrator` instance variables `administrator_type`, `login`, `sid`, `tenant_id`, and `identity_resource_id` have been moved under property `properties`
   - Model `Capability` instance variables `supported_geo_backup_regions`, `supported_flexible_server_editions`, `supported_server_versions`, and `supported_features` have been moved under property `properties`
-  - Model `MaintenanceUpdate` deleted or renamed its instance variable `maintenance_start_time`
+  - Model `MaintenanceUpdate` instance variable `maintenance_start_time` have been moved under property `properties`
   - Model `OperationProgressResult` instance variable `object_type` has been moved under property `properties`
   - Model `ServerBackupV2` instance variables `backup_name_v2`, `backup_type`, `completed_time`, `source`, and `provisioning_state` have been moved under property `properties`
   - Model `ServerForUpdate` instance variables `administrator_login_password`, `version`, `storage`, `backup`, `high_availability`, `maintenance_policy`, `maintenance_window`, `replication_role`, `data_encryption`, and `network` have been moved under property `properties`
-  - Model `ValidateBackupResponse` deleted or renamed its instance variable `number_of_containers`
+  - Model `ValidateBackupResponse` instance variable `number_of_containers` have been moved under property `properties`
   - Deleted or renamed model `CapabilitySetsList`
   - Deleted or renamed model `Provisioning`
   - Method `ConfigurationsOperations.list_by_server` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
