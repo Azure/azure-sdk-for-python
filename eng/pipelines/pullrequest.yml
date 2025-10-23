@@ -10,11 +10,6 @@ pr:
   paths:
     include:
     - "*"
-    # Note: The ExcludePaths template below needs to duplicate
-    # any excludes here. The reason being is that we can't access
-    # pr->paths->exclude
-    exclude:
-    - sdk/cosmos/
 
 parameters:
   - name: Service
