@@ -22,10 +22,10 @@
 """Class for defining internal constants in the Azure Cosmos database service.
 """
 
-
-from typing import Dict
+from enum import IntEnum
 from typing_extensions import Literal
-# cspell:ignore PPAF
+
+# cspell:ignore PPAF, reranker
 
 
 class _Constants:
@@ -55,10 +55,12 @@ class _Constants:
     MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT: int = 50000
     SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG: str = "AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"
     SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG_DEFAULT: str = "True"
-    CIRCUIT_BREAKER_ENABLED_CONFIG: str =  "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
+    CIRCUIT_BREAKER_ENABLED_CONFIG: str = "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
     CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
     AAD_SCOPE_OVERRIDE: str = "AZURE_COSMOS_AAD_SCOPE_OVERRIDE"
     AAD_DEFAULT_SCOPE: str = "https://cosmos.azure.com/.default"
+    INFERENCE_SERVICE_DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
+    SEMANTIC_RERANKER_INFERENCE_ENDPOINT: str = "AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"
 
     # Database Account Retry Policy constants
     AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES: str = "AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES"
@@ -80,7 +82,7 @@ class _Constants:
     # -------------------------------------------------------------------------
 
     # Error code translations
-    ERROR_TRANSLATIONS: Dict[int, str] = {
+    ERROR_TRANSLATIONS: dict[int, str] = {
         400: "BAD_REQUEST - Request being sent is invalid.",
         401: "UNAUTHORIZED - The input authorization token can't serve the request.",
         403: "FORBIDDEN",
@@ -101,6 +103,21 @@ class _Constants:
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
+
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
-        AVAILABILITY_STRATEGY_CONFIG: Literal["availabilityStrategyConfig"] = "availabilityStrategyConfig"
-        """Availability strategy config. Used either at client level or request level"""
+
+    class UserAgentFeatureFlags(IntEnum):
+        """
+        User agent feature flags.
+        Each flag represents a bit in a number to encode what features are enabled. Therefore, the first feature flag
+        will be 1, the second 2, the third 4, etc. When constructing the user agent suffix, the feature flags will be
+        used to encode a unique number representing the features enabled. This number will be converted into a hex
+        string following the prefix "F" to save space in the user agent as it is limited and appended to the user agent
+        suffix. This number will then be used to determine what features are enabled by decoding the hex string back
+        to a number and checking what bits are set.
+
+        Example:
+            If the user agent suffix has "F3", this means that flags 1 and 2.
+        """
+        PER_PARTITION_AUTOMATIC_FAILOVER = 1
+        PER_PARTITION_CIRCUIT_BREAKER = 2

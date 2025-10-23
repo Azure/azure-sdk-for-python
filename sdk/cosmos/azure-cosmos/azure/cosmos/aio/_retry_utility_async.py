@@ -23,15 +23,13 @@
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
-import logging
 import time
 from typing import Optional
+import logging
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from ._global_partition_endpoint_manager_per_partition_automatic_failover_async import \
-    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync
 from .. import _default_retry_policy, _database_account_retry_policy, _service_unavailable_retry_policy
 from .. import _endpoint_discovery_retry_policy
 from .. import _gone_retry_policy
@@ -41,18 +39,21 @@ from .. import _session_retry_policy
 from .. import _timeout_failover_retry_policy
 from .. import exceptions
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
-from .._cosmos_http_logging_policy import _log_diagnostics_error
-from .._request_object import RequestObject
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
                               _has_database_account_header)
-from .._routing.routing_range import PartitionKeyRangeWrapper
 from ..exceptions import CosmosHttpResponseError
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from .._cosmos_http_logging_policy import _log_diagnostics_error
+from ._global_partition_endpoint_manager_per_partition_automatic_failover_async import \
+    _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync
+from .._request_object import RequestObject
+from .._routing.routing_range import PartitionKeyRangeWrapper
+from .._utils import get_user_agent_features
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
-# cspell:ignore ppaf
+# cspell:ignore ppaf, ppcb
 
 # args [0] is the request object
 # args [1] is the connection policy
@@ -118,6 +119,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         container_recreate_retry_policy = ContainerRecreateRetryPolicy(
             client, client._container_properties_cache, None, *args)
 
+    user_agent_features = get_user_agent_features(global_endpoint_manager)
+    if len(user_agent_features) > 0:
+        user_agent = kwargs.pop("user_agent", client._user_agent)
+        user_agent = "{} {}".format(user_agent, user_agent_features)
+        kwargs.update({"user_agent": user_agent})
+        kwargs.update({"user_agent_overwrite": True})
+
     while True:
         client_timeout = kwargs.get('timeout')
         start_time = time.time()
@@ -146,8 +154,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
-                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
-                                                        headers={HttpHeaders.SubStatus:
+                response = exceptions._InternalCosmosException(status_code=StatusCodes.NOT_FOUND,
+                                                               headers={HttpHeaders.SubStatus:
                                                                      SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
@@ -210,9 +218,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
+                if args:
+                    # record the failure for circuit breaker tracking
+                    await global_endpoint_manager.record_ppcb_failure(args[0], pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
+                    # record the failure for ppaf/circuit breaker tracking
                     await _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 retry_policy = timeout_failover_retry_policy
             else:
@@ -273,7 +285,6 @@ async def _record_success_if_request_not_cancelled(
         request_params: RequestObject,
         global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync,
         pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
-
     if not request_params.should_cancel_request():
         await global_endpoint_manager.record_success(request_params, pk_range_wrapper)
 
@@ -281,7 +292,6 @@ async def _record_failure_if_request_not_cancelled(
         request_params: RequestObject,
         global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync,
         pk_range_wrapper: Optional[PartitionKeyRangeWrapper]) -> None:
-
     if not request_params.should_cancel_request():
         await global_endpoint_manager.record_failure(request_params, pk_range_wrapper)
 
