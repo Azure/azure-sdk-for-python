@@ -1444,7 +1444,6 @@ class ResultProcessor:
         eval_id = eval_id_override
         run_name: Optional[str] = None
         created_at = created_at_override
-        import pdb
 
         if eval_run is not None:
             run_info = getattr(eval_run, "info", None)

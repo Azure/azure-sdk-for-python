@@ -27,9 +27,6 @@ from pyrit.prompt_target import PromptChatTarget
 # Local imports
 from ._callback_chat_target import _CallbackChatTarget
 
-# Local imports
-from ._callback_chat_target import _CallbackChatTarget
-
 # Retry imports
 import httpx
 import httpcore
@@ -111,7 +108,6 @@ class OrchestratorManager:
         :param retry_config: Retry configuration for network errors
         :param scan_output_dir: Directory for scan outputs
         :param red_team: Reference to RedTeam instance for accessing prompt mappings
-        :param red_team: Reference to RedTeam instance for accessing prompt mappings
         """
         self.logger = logger
         self.generated_rai_client = generated_rai_client
@@ -120,7 +116,6 @@ class OrchestratorManager:
         self._one_dp_project = one_dp_project
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
-        self.red_team = red_team
         self.red_team = red_team
 
     def _calculate_timeout(self, base_timeout: int, orchestrator_type: str) -> int:
@@ -252,7 +247,6 @@ class OrchestratorManager:
                 red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
             # Process prompts one at a time like multi-turn and crescendo orchestrators
-            # Process prompts one at a time like multi-turn and crescendo orchestrators
             self.logger.debug(f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}")
 
             # Calculate appropriate timeout for single-turn orchestrator
@@ -348,41 +342,6 @@ class OrchestratorManager:
                             timeout=calculated_timeout,
                         )
 
-                    # Execute the retry-enabled function
-                    await send_prompt_with_retry()
-                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
-                    self.logger.debug(
-                        f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
-                    )
-
-                    # Print progress to console
-                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
-                        print(
-                            f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
-                        )
-
-                except (asyncio.TimeoutError, tenacity.RetryError):
-                    self.logger.warning(
-                        f"Prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with remaining prompts"
-                    )
-                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}")
-                    # Set task status to TIMEOUT for this specific prompt
-                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
-                    if task_statuses:
-                        task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
-                    if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                    continue
-                except Exception as e:
-                    log_error(
-                        self.logger,
-                        f"Error processing prompt {prompt_idx+1}",
-                        e,
-                        f"{strategy_name}/{risk_category_name}",
-                    )
-                    if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                    continue
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
                     prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
@@ -626,13 +585,6 @@ class OrchestratorManager:
                         self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
                     )
                     async def send_prompt_with_retry():
-                        memory_labels = {
-                            "risk_strategy_path": output_path,
-                            "batch": prompt_idx + 1,
-                            "context": context_dict,
-                        }
-                        if risk_sub_type:
-                            memory_labels["risk_sub_type"] = risk_sub_type
                         memory_labels = {
                             "risk_strategy_path": output_path,
                             "batch": prompt_idx + 1,
@@ -886,13 +838,6 @@ class OrchestratorManager:
                         self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
                     )
                     async def send_prompt_with_retry():
-                        memory_labels = {
-                            "risk_strategy_path": output_path,
-                            "batch": prompt_idx + 1,
-                            "context": context_dict,
-                        }
-                        if risk_sub_type:
-                            memory_labels["risk_sub_type"] = risk_sub_type
                         memory_labels = {
                             "risk_strategy_path": output_path,
                             "batch": prompt_idx + 1,
