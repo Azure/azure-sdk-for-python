@@ -24,7 +24,7 @@ USAGE:
 import os
 from azure.planetarycomputer import PlanetaryComputerClient
 from azure.identity import DefaultAzureCredential
-import httpx
+from urllib.request import urlopen
 
 import logging
 
@@ -60,20 +60,19 @@ def sign_asset_href(client: PlanetaryComputerClient, collection_id: str):
 
 def download_asset(signed_href: str):
     """Download and verify an asset using a signed HREF."""
-    with httpx.Client() as http_client:
-        get_visual_href_response = http_client.get(signed_href)
+    with urlopen(signed_href) as http_response:
+        content = http_response.read()
         
         # Check HTTP status
-        if get_visual_href_response.status_code != 200:
-            raise Exception(f"Failed to download asset: HTTP {get_visual_href_response.status_code} - {get_visual_href_response.text[:200]}")
+        if http_response.status != 200:
+            raise Exception(f"Failed to download asset: HTTP {http_response.status}")
         
         # Check that the response has content
-        content_length = len(get_visual_href_response.content)
+        content_length = len(content)
         if content_length == 0:
             raise Exception("Downloaded image has zero size")
         
         # Check that it's a PNG by verifying the PNG magic bytes (89 50 4E 47)
-        content = get_visual_href_response.content
         is_png = content[:8] == b'\x89PNG\r\n\x1a\n'
         if not is_png:
             raise Exception(f"Downloaded content is not a valid PNG file (magic bytes: {content[:8].hex()})")

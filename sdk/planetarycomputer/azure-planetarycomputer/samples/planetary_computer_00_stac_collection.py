@@ -26,7 +26,7 @@ USAGE:
 import os
 import time
 from io import BytesIO
-import httpx
+from urllib.request import urlopen
 from azure.planetarycomputer import PlanetaryComputerClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import (
@@ -362,8 +362,9 @@ def manage_collection_assets(client, collection_id):
     }
 
     # Download thumbnail
-    thumbnail_response = httpx.get(thumbnail_url)
-    thumbnail_bytes = BytesIO(thumbnail_response.content)
+    with urlopen(thumbnail_url) as thumbnail_response:
+        thumbnail_content = thumbnail_response.read()
+    thumbnail_bytes = BytesIO(thumbnail_content)
     thumbnail_tuple = ("thumbnail.png", thumbnail_bytes)
 
     try:

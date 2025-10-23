@@ -6,10 +6,10 @@
 """
 Unit tests for Shared Access Signature (SAS) operations.
 """
-import httpx
 import logging
 import pytest
 from pathlib import Path
+from urllib.request import urlopen
 from datetime import datetime, timedelta, timezone
 import re
 from devtools_testutils import recorded_by_proxy, is_live
@@ -210,13 +210,9 @@ class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerClientTestBase
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    @pytest.mark.flaky(reruns=3, reruns_delay=2)
     def test_04_signed_href_can_download_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
-        """Test that a signed HREF can be used to download an asset.
-        
-        This test is marked as flaky due to intermittent user delegation key rotation issues
-        on the backend service. The test will automatically retry up to 3 times with a 2 second
-        delay between attempts to account for delegation key synchronization.
+        """
+        Test that a signed HREF can be used to download an asset.
         """
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_04_signed_href_can_download_asset")
@@ -238,23 +234,23 @@ class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerClientTestBase
         
         if is_live():
             test_logger.info("Attempting to download asset (live mode)...")
-            with httpx.Client() as http_client:
-                download_response = http_client.get(signed_href)
+            with urlopen(signed_href) as download_response:
+                content = download_response.read()
                 
-                test_logger.info(f"Download status code: {download_response.status_code}")
-                test_logger.info(f"Content length: {len(download_response.content)} bytes")
+                test_logger.info(f"Download status code: {download_response.status}")
+                test_logger.info(f"Content length: {len(content)} bytes")
                 content_type = download_response.headers.get('content-type', '').lower()
                 test_logger.info(f"Content-Type: {content_type}")
                 
                 # Verify successful download
-                assert download_response.status_code == 200, f"Expected 200, got {download_response.status_code}"
-                assert len(download_response.content) > 0, "Downloaded content should not be empty"
+                assert download_response.status == 200, f"Expected 200, got {download_response.status}"
+                assert len(content) > 0, "Downloaded content should not be empty"
                 
                 # Verify content is binary data (image file)
                 # Note: Azure Storage may return 'application/octet-stream' instead of 'image/*'
-                assert len(download_response.content) > 1000, "Downloaded file should be larger than 1KB"
+                assert len(content) > 1000, "Downloaded file should be larger than 1KB"
                 # Verify it's actually binary image data by checking PNG magic bytes
-                assert download_response.content[:4] == b'\x89PNG', "Downloaded content should be a PNG image"
+                assert content[:4] == b'\x89PNG', "Downloaded content should be a PNG image"
         else:
             test_logger.info("Skipping download test (playback mode)")
         
