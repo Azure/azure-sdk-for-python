@@ -75,7 +75,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://example.com",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/e99dc557-6c45-4b00-8471-1f3a51799feb?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -85,7 +85,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-22T20:25:44.872597Z",
+        "creationTime": "2025-10-23T06:55:32.8135458Z",
         "importType": "StaticCatalog",
         "displayName": "Ingestion for Operation",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -117,7 +117,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://example.com",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/e99dc557-6c45-4b00-8471-1f3a51799feb/runs/b15dba1b-bf37-46a4-a912-c72b8832f924?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -127,7 +127,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-22T20:25:44.928007Z",
+        "creationTime": "2025-10-23T06:55:32.866621Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -137,10 +137,10 @@
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-22T20:25:44.9187357Z"
+              "timestamp": "2025-10-23T06:55:32.8577493Z"
             }
           ],
-          "creationTime": "2025-10-22T20:25:44.9187345Z",
+          "creationTime": "2025-10-23T06:55:32.8577477Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,
@@ -183,11 +183,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T20:25:44.9187357Z"
+            "timestamp": "2025-10-23T06:55:32.8577493Z"
           }
         ],
         "type": "IngestionStaticCatalog",
-        "creationTime": "2025-10-22T20:25:44.9187345Z",
+        "creationTime": "2025-10-23T06:55:32.8577477Z",
         "collectionId": "naip-atl"
       }
     }

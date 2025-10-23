@@ -76,7 +76,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://example.com",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/ingestion-sources/e4e8e855-faaa-4cc2-aaac-3dbcf56f6b27?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -87,7 +87,7 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "SasToken",
-        "created": "2025-10-22T20:25:28.9051838Z",
+        "created": "2025-10-23T06:55:17.0833949Z",
         "connectionInfo": {
           "containerUrl": "Sanitized",
           "expiration": "2025-12-31T23:59:59.0000000Z"

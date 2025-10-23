@@ -88,7 +88,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/80f2c24c-31af-476d-b66e-512148087db3?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/f0371b22-5d8e-41b5-9c80-bc3f7b700631?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -103,11 +103,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T20:48:01.1314099Z"
+            "timestamp": "2025-10-23T06:59:31.4270384Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-22T20:48:01.1314051Z",
+        "creationTime": "2025-10-23T06:59:31.4270373Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -146,11 +146,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T20:48:01.1314099Z"
+            "timestamp": "2025-10-23T06:59:31.4270384Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-22T20:48:01.1314051Z",
+        "creationTime": "2025-10-23T06:59:31.4270373Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -189,19 +189,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T20:48:01.1314099Z"
+            "timestamp": "2025-10-23T06:59:31.4270384Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-22T20:48:07.9455986Z"
+            "timestamp": "2025-10-23T06:59:54.1997253Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-22T20:48:08.1863451Z"
+            "timestamp": "2025-10-23T06:59:54.4551224Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-22T20:48:01.1314051Z",
+        "creationTime": "2025-10-23T06:59:31.4270373Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -240,19 +240,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-22T20:48:01.1314099Z"
+            "timestamp": "2025-10-23T06:59:31.4270384Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-22T20:48:07.9455986Z"
+            "timestamp": "2025-10-23T06:59:54.1997253Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-22T20:48:08.1863451Z"
+            "timestamp": "2025-10-23T06:59:54.4551224Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-22T20:48:01.1314051Z",
+        "creationTime": "2025-10-23T06:59:31.4270373Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -336,8 +336,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T20:48:08.0624039Z",
-        "msft:_updated": "2025-10-22T20:48:08.0624039Z"
+        "msft:_created": "2025-10-23T06:59:54.3035347Z",
+        "msft:_updated": "2025-10-23T06:59:54.3035347Z"
       }
     }
   ],

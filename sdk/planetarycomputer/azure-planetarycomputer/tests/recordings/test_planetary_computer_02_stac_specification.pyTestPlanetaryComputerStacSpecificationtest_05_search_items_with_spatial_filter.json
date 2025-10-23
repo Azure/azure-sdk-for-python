@@ -601,7 +601,7 @@
                 "title": "RGBIR COG tile"
               }
             },
-            "_msft:ts": "2025-10-22T15:57:18.374465Z",
+            "_msft:ts": "2025-10-22T20:26:34.420257Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -629,7 +629,7 @@
                 ]
               ]
             },
-            "_msft:etag": "4c2a78ea-392a-468f-a39a-a02f1265fe18",
+            "_msft:etag": "b94fae54-5066-47be-b579-5e3a1f114d98",
             "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,

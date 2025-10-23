@@ -75,7 +75,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://example.com",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/ingestion-sources/54410d5b-8595-4a27-8b30-ba784ff43ef1?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -86,10 +86,10 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "SasToken",
-        "created": "2025-10-22T20:25:57.5215396Z",
+        "created": "2025-10-23T06:55:44.1025285Z",
         "connectionInfo": {
           "containerUrl": "Sanitized",
-          "expiration": "2025-10-29T20:25:55.0000000Z"
+          "expiration": "2025-10-30T06:55:41.0000000Z"
         }
       }
     },
@@ -136,7 +136,7 @@
         "kind": "SasToken",
         "connectionInfo": {
           "containerUrl": "Sanitized",
-          "expiration": "2025-10-29T20:25:55.0000000Z"
+          "expiration": "2025-10-30T06:55:41.0000000Z"
         }
       }
     },
@@ -183,7 +183,7 @@
         "kind": "SasToken",
         "connectionInfo": {
           "containerUrl": "Sanitized",
-          "expiration": "2025-10-29T20:25:55.0000000Z"
+          "expiration": "2025-10-30T06:55:41.0000000Z"
         }
       }
     },
