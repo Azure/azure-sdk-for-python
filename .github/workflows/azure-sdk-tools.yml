@@ -63,7 +63,12 @@ jobs:
         with:
           python-version: 3.13
 
-      - name: Install azure-sdk-tools, discover azpysdk checks
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+        shell: bash
+
+      - name: Install azure-sdk-tools on in global uv, discover azpysdk checks
         run: |
           uv pip install --system eng/tools/azure-sdk-tools[build,ghtools,conda]
 
@@ -92,19 +97,19 @@ jobs:
           # end discovery
         shell: bash
 
-      - name: Run all discovered azpysdk environments against aztemplate
+      - name: Run all discovered checks against azure-template using uv as package manager
         run: |
           python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
         shell: bash
         env:
           TOX_PIP_IMPL: "uv"
 
-      - name: Install azure-sdk-tools, discover azpysdk checks
+      - name: Install azure-sdk-tools on global pip env
         run: |
           python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
         shell: bash
 
-      - name: Run all discovered azpysdk environments against aztemplate
+      - name: Run all discovered checks against azure-template using pip as package manager
         run: |
           python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
         shell: bash
