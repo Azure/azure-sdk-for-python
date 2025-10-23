@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
+from azure.mgmt.compute.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
         response = self.client.dedicated_hosts.list_by_host_group(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
                     "type": "str",
                     "virtualMachines": [{"id": "str"}],
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -129,7 +129,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
                     "timeCreated": "2020-02-20 00:00:00",
                     "virtualMachines": [{"id": "str"}],
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -144,7 +144,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 host_group_name="str",
                 host_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -158,7 +158,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             host_group_name="str",
             host_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -172,7 +172,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 host_group_name="str",
                 host_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -187,7 +187,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 host_group_name="str",
                 host_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

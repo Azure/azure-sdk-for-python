@@ -14,18 +14,19 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_backoff(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
-            appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
         min_backoff = 30000
         assert min_backoff == client._refresh_timer._calculate_backoff()
 
         attempts = 2
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
         attempts = 3
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
@@ -34,19 +35,19 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_backoff_max_attempts(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
         min_backoff = 3000
 
         # When attempts is > 30 then it acts as if it was 30
         attempts = 30
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
         attempts = 31
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << 30))
 
@@ -55,7 +56,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_backoff_bounds(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             refresh_interval=1,
         )
@@ -64,7 +65,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client._refresh_timer._max_backoff == 1
 
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             refresh_interval=45,
         )
@@ -73,7 +74,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client._refresh_timer._max_backoff == 45
 
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             refresh_interval=700,
         )
@@ -86,18 +87,19 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_backoff_invalid_attempts(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
-            appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
         min_backoff = 30000  # 30 Seconds in milliseconds
 
         # When attempts is < 1 then it acts as if it was 1
         attempts = 0
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff == min_backoff
 
         attempts = -1
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff == min_backoff
 
@@ -107,10 +109,11 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     def test_backoff_missmatch_settings(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         min_backoff = 30000
         client = self.create_client(
-            appconfiguration_connection_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
 
         # When attempts is < 1 then it acts as if it was 1
-        client._refresh_timer.attempts = 0
+        client._refresh_timer._attempts = 0
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff == min_backoff

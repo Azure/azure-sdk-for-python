@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity pydantic
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -22,30 +23,55 @@ USAGE:
 """
 
 import os
-
-from enum import Enum
-from pydantic import BaseModel, TypeAdapter
+import json
+from typing import Dict, Any
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     ListSortOrder,
-    MessageTextContent,
     MessageRole,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunStatus,
 )
 
-
-# Create the pydantic model to represent the planet names and there masses.
-class Planets(str, Enum):
-    Earth = "Earth"
-    Mars = "Mars"
-    Mercury = "Mercury"
-
-class Planet(BaseModel):
-    planet: Planets
-    mass: float
+# Defines a JSON schema for listing Solar System planets and their masses. We would like the AI model to respond in this format.
+# See `sample_agents_json_schema_response_format_using_pydantic.py` for an alternative way to define the schema using Pydantic.
+json_schema: Dict[str, Any] = {
+    "$defs": {
+        "PlanetName": {
+            "type": "string",
+            "description": "The name of the planet",
+            "enum": ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"],
+        }
+    },
+    "type": "object",
+    "description": "Information about the planets in the Solar System",
+    "properties": {
+        "planets": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "description": "Information about a planet in the Solar System",
+                "properties": {
+                    "name": {"$ref": "#/$defs/PlanetName"},
+                    "mass": {
+                        "type": "number",
+                        "description": "Mass of the planet in kilograms",
+                    },
+                    "relative_mass": {
+                        "type": "number",
+                        "description": "Relative mass of the planet compared to Earth (for example, a value of 2.0 means the planet is twice as massive as Earth)",
+                    },
+                },
+                "required": ["name", "mass"],
+                "additionalProperties": False,
+            },
+        },
+    },
+    "required": ["planets"],
+    "additionalProperties": False,
+}
 
 
 project_client = AIProjectClient(
@@ -59,12 +85,12 @@ with project_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
-        instructions="Extract the information about planets.",
+        instructions="You are helpful agent. Your response is JSON formatted.",
         response_format=ResponseFormatJsonSchemaType(
             json_schema=ResponseFormatJsonSchema(
                 name="planet_mass",
-                description="Extract planet mass.",
-                schema=Planet.model_json_schema(),
+                description="Masses of Solar System planets",
+                schema=json_schema,
             )
         ),
     )
@@ -76,7 +102,7 @@ with project_client:
     message = agents_client.messages.create(
         thread_id=thread.id,
         role="user",
-        content=("The mass of the Mars is 6.4171E23 kg; the mass of the Earth is 5.972168E24 kg;"),
+        content="Hello, give me a list of planets in our solar system, and their mass in kilograms.",
     )
     print(f"Created message, message ID: {message.id}")
 
@@ -88,14 +114,13 @@ with project_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = agents_client.messages.list(
-        thread_id=thread.id,
-        order=ListSortOrder.ASCENDING,
-    )
-
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
-        if msg.role == MessageRole.AGENT:
-            last_part = msg.content[-1]
-            if isinstance(last_part, MessageTextContent):
-                planet = TypeAdapter(Planet).validate_json(last_part.text.value)
-                print(f"The mass of {planet.planet} is {planet.mass} kg.")
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
+            # Convert the Agent's JSON response message to a Dict object, extract and print planet masses
+            if msg.role == MessageRole.AGENT:
+                response_dict = json.loads(last_text.text.value)
+                for planet in response_dict["planets"]:
+                    print(f"The mass of {planet['name']} is {planet['mass']} kg.")

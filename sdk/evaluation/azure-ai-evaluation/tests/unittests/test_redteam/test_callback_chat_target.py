@@ -40,6 +40,7 @@ def mock_request():
     request_piece.converted_value = "test prompt"
     request_piece.converted_value_data_type = "text"
     request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
+    request_piece.labels.get.return_value = None
 
     request = MagicMock()
     request.request_pieces = [request_piece]
@@ -91,7 +92,43 @@ class TestCallbackChatTargetPrompts:
             call_args = mock_callback.call_args[1]
             assert call_args["stream"] is False
             assert call_args["session_state"] is None
-            assert call_args["context"] is None
+            assert call_args["context"] == {}
+
+            # Check memory usage
+            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")
+
+    @pytest.mark.asyncio
+    async def test_send_prompt_async_with_context_from_labels(self, chat_target, mock_callback):
+        """Test send_prompt_async method with context from request labels."""
+        # Create a request with context in labels
+        request_piece = MagicMock()
+        request_piece.conversation_id = "test-id"
+        request_piece.converted_value = "test prompt"
+        request_piece.converted_value_data_type = "text"
+        request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
+        request_piece.labels = {"context": {"contexts": ["test context data"]}}
+
+        mock_request = MagicMock()
+        mock_request.request_pieces = [request_piece]
+
+        with patch.object(chat_target, "_memory") as mock_memory, patch(
+            "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
+        ) as mock_construct:
+            # Setup memory mock
+            mock_memory.get_chat_messages_with_conversation_id.return_value = []
+
+            # Setup construct_response mock
+            mock_construct.return_value = mock_request
+
+            # Call the method
+            response = await chat_target.send_prompt_async(prompt_request=mock_request)
+
+            # Check that callback was called with correct parameters including context from labels
+            mock_callback.assert_called_once()
+            call_args = mock_callback.call_args[1]
+            assert call_args["stream"] is False
+            assert call_args["session_state"] is None
+            assert call_args["context"] == {"contexts": ["test context data"]}
 
             # Check memory usage
             mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")

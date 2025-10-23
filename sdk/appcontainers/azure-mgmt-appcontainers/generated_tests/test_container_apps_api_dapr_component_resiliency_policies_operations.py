@@ -20,12 +20,12 @@ class TestContainerAppsAPIDaprComponentResiliencyPoliciesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_dapr_component_resiliency_policies_list(self, resource_group):
         response = self.client.dapr_component_resiliency_policies.list(
             resource_group_name=resource_group.name,
             environment_name="str",
             component_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestContainerAppsAPIDaprComponentResiliencyPoliciesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_dapr_component_resiliency_policies_get(self, resource_group):
         response = self.client.dapr_component_resiliency_policies.get(
             resource_group_name=resource_group.name,
             environment_name="str",
             component_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestContainerAppsAPIDaprComponentResiliencyPoliciesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_dapr_component_resiliency_policies_create_or_update(self, resource_group):
         response = self.client.dapr_component_resiliency_policies.create_or_update(
             resource_group_name=resource_group.name,
             environment_name="str",
@@ -82,7 +82,7 @@ class TestContainerAppsAPIDaprComponentResiliencyPoliciesOperations(AzureMgmtRec
                 },
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -90,13 +90,13 @@ class TestContainerAppsAPIDaprComponentResiliencyPoliciesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_dapr_component_resiliency_policies_delete(self, resource_group):
         response = self.client.dapr_component_resiliency_policies.delete(
             resource_group_name=resource_group.name,
             environment_name="str",
             component_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import time
 from unittest.mock import patch
 
 import pytest
@@ -17,7 +18,10 @@ from azure.identity import (
     SharedTokenCacheCredential,
     WorkloadIdentityCredential,
 )
+from azure.identity._credentials.broker import BrokerCredential
 from azure.identity._constants import EnvironmentVariables
+
+from helpers import mock_response, Request, validating_transport, GET_TOKEN_METHODS
 
 
 def test_token_credentials_env_dev():
@@ -39,6 +43,7 @@ def test_token_credentials_env_dev():
         assert AzureCliCredential in actual_classes
         assert AzureDeveloperCliCredential in actual_classes
         assert AzurePowerShellCredential in actual_classes
+        assert BrokerCredential in actual_classes
 
         # Assert no duplicates
         assert len(actual_classes) == len(set(actual_classes))
@@ -249,3 +254,35 @@ def test_user_exclude_flags_override_env_var():
         # Other dev credentials should still be present
         assert AzurePowerShellCredential in actual_classes
         assert AzureDeveloperCliCredential in actual_classes
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_imds_credential_skips_probe_when_token_credentials_env_set(get_token_method):
+    """Test that ImdsCredential skips the endpoint probe when AZURE_TOKEN_CREDENTIALS is set to "managedidentitycredential" """
+
+    # Create a transport that would fail the probe but succeed for the actual token request
+    token_response = mock_response(
+        json_payload={
+            "access_token": "token",
+            "expires_in": 42,
+            "expires_on": int(time.time()) + 42,
+            "ext_expires_in": 42,
+            "not_before": int(time.time()),
+            "resource": "scope",
+            "token_type": "Bearer",
+        }
+    )
+
+    # Use a transport that would normally fail the probe (connection_timeout=1, retry_total=0)
+    # but should succeed for the actual token request
+    transport = validating_transport(
+        requests=[Request()], responses=[token_response]  # Only expect one request (no probe)
+    )
+
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TOKEN_CREDENTIALS: "managedidentitycredential"}):
+
+        credential = DefaultAzureCredential(transport=transport)
+
+        # This should succeed without calling the probe
+        token = getattr(credential, get_token_method)("scope")
+        assert token.token == "token"

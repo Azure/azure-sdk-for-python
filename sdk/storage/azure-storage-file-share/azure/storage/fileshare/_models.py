@@ -252,7 +252,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
             smb=generated.smb)
 
 
-class ShareSasPermissions(object):
+class ShareSasPermissions:
     """ShareSasPermissions class to be used to be used with
     generating shared access signature and access policy operations.
 
@@ -794,7 +794,7 @@ class HandlesPaged(PageIterator):
         return self._response.next_marker or None, self.current_page
 
 
-class NTFSAttributes(object):
+class NTFSAttributes:
     """Valid set of attributes to set for file or directory.
 
     To set attribute for directory, 'Directory' should always be enabled except setting 'None' for directory.
@@ -1024,7 +1024,6 @@ class DirectoryPropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
@@ -1219,7 +1218,7 @@ class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NFS = "NFS"
 
 
-class FileSasPermissions(object):
+class FileSasPermissions:
     """FileSasPermissions class to be used with
     generating shared access signature operations.
 

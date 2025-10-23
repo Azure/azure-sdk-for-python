@@ -21,13 +21,13 @@ class TestComputeManagementGallerySharingProfileOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_gallery_sharing_profile_begin_update(self, resource_group):
         response = await (
             await self.client.gallery_sharing_profile.begin_update(
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 sharing_update={"operationType": "str", "groups": [{"ids": ["str"], "type": "str"}]},
-                api_version="2020-09-30",
+                api_version="2024-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 

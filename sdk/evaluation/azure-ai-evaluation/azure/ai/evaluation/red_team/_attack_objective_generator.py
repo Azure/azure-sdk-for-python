@@ -20,6 +20,25 @@ class RiskCategory(str, Enum):
     SelfHarm = "self_harm"
     ProtectedMaterial = "protected_material"
     CodeVulnerability = "code_vulnerability"
+    UngroundedAttributes = "ungrounded_attributes"
+    SensitiveDataLeakage = "sensitive_data_leakage"  # Agent targets only
+    TaskAdherence = "task_adherence"  # Agent targets only
+    ProhibitedActions = "prohibited_actions"  # Agent targets only
+
+
+@experimental
+class SupportedLanguages(Enum):
+    """Supported languages for attack objectives, using ISO standard language codes."""
+
+    Spanish = "es"
+    Italian = "it"
+    French = "fr"
+    German = "de"
+    SimplifiedChinese = "zh-cn"
+    Portuguese = "pt"
+    Japanese = "ja"
+    English = "en"
+    Korean = "ko"
 
 
 @experimental

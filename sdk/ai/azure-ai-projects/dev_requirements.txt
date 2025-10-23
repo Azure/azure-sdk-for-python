@@ -1,6 +1,7 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
+python-dotenv
 azure.ai.inference
 openai

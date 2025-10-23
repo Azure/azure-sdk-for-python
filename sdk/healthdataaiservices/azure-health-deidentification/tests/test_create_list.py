@@ -26,7 +26,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             ),
             target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
             operation_type=DeidentificationOperationType.REDACT,
-            customizations=DeidentificationJobCustomizationOptions(redaction_format="[{type}]"),
+            customizations=DeidentificationJobCustomizationOptions(redaction_format="[{type}]", input_locale="en-US"),
         )
 
         client.begin_deidentify_documents(jobname, job)
@@ -51,3 +51,4 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
         assert job.last_updated_at is not None
         assert job.customizations is not None
         assert job.customizations.redaction_format == "[{type}]"
+        assert job.customizations.input_locale == "en-US"

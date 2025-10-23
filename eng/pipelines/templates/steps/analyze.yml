@@ -48,7 +48,7 @@ steps:
             Condition: succeededOrFailed()
 
   - script: |
-      python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+      $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()
@@ -156,7 +156,6 @@ steps:
   - template: /eng/common/pipelines/templates/steps/validate-all-packages.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
-      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 

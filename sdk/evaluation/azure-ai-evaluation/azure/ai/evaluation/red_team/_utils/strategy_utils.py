@@ -68,6 +68,7 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
         AttackStrategy.Jailbreak: None,
         AttackStrategy.MultiTurn: None,
         AttackStrategy.Crescendo: None,
+        AttackStrategy.IndirectJailbreak: None,
     }
 
 
@@ -88,7 +89,7 @@ def get_converter_for_strategy(
 
 
 def get_chat_target(
-    target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+    target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
@@ -163,8 +164,18 @@ def get_chat_target(
                 messages_list = [_message_to_dict(chat_message) for chat_message in messages]  # type: ignore
                 latest_message = messages_list[-1]
                 application_input = latest_message["content"]
+
+                # Check if target accepts context as a parameter
+                sig = inspect.signature(target)
+                param_names = list(sig.parameters.keys())
+
                 try:
-                    response = target(query=application_input)
+                    if "context" in param_names:
+                        # Pass context if the target function accepts it
+                        response = target(query=application_input, context=context)
+                    else:
+                        # Fallback to original behavior for compatibility
+                        response = target(query=application_input)
                 except Exception as e:
                     response = f"Something went wrong {e!s}"
 
@@ -180,23 +191,3 @@ def get_chat_target(
             chat_target = _CallbackChatTarget(callback=callback_target)  # type: ignore
 
     return chat_target
-
-
-def get_orchestrators_for_attack_strategies(
-    attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-) -> List[Callable]:
-    """
-    Gets a list of orchestrator functions to use based on the attack strategies.
-
-    :param attack_strategies: The list of attack strategies
-    :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-    :return: A list of orchestrator functions
-    :rtype: List[Callable]
-    """
-    call_to_orchestrators = []
-
-    # Since we're just returning one orchestrator type for now, simplify the logic
-    # This can be expanded later if different orchestrators are needed for different strategies
-    return [
-        lambda chat_target, all_prompts, converter, strategy_name, risk_category: None
-    ]  # This will be replaced with the actual orchestrator function in the main class

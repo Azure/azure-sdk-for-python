@@ -21,14 +21,14 @@ class TestDashboardManagementDashboardsOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_dashboards_list_by_subscription(self, resource_group):
-        response = self.client.dashboards.list_by_subscription()
+        response = self.client.managed_dashboards.list_by_subscription()
         result = [r for r in response]
         assert response
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_dashboards_list(self, resource_group):
-        response = self.client.dashboards.list(
+        response = self.client.managed_dashboards.list(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]

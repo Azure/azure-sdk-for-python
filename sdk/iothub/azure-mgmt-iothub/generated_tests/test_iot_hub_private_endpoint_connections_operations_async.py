@@ -25,7 +25,7 @@ class TestIotHubPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestIotHubPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             resource_name="str",
             private_endpoint_connection_name="str",
-            api_version="2023-06-30",
+            api_version="2025-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestIotHubPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecordedTestC
                     "name": "str",
                     "type": "str",
                 },
-                api_version="2023-06-30",
+                api_version="2025-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +80,7 @@ class TestIotHubPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2023-06-30",
+                api_version="2025-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -6,14 +6,18 @@ from itertools import product
 import json
 import time
 from unittest import mock
+from unittest.mock import Mock
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._internal.user_agent import USER_AGENT
-from azure.identity.aio._credentials.imds import ImdsCredential, PIPELINE_SETTINGS
-from azure.identity._internal.utils import within_credential_chain
+from azure.identity.aio._credentials.imds import ImdsCredential, AsyncImdsRetryPolicy
+from azure.identity._credentials.imds import PIPELINE_SETTINGS
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.policies import AsyncRetryPolicy
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 import pytest
 
 from helpers import mock_response, Request, GET_TOKEN_METHODS
@@ -311,7 +315,7 @@ class TestImdsAsync(RecordedTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-    async def test_managed_identity_aci_probe(self, get_token_method):
+    async def test_enable_imds_probe(self, get_token_method):
         access_token = "****"
         expires_on = 42
         expected_token = access_token
@@ -341,8 +345,56 @@ class TestImdsAsync(RecordedTestCase):
                 ),
             ],
         )
-        within_credential_chain.set(True)
-        credential = ImdsCredential(transport=transport)
+        credential = ImdsCredential(transport=transport, _enable_imds_probe=True)
         token = await getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
-        within_credential_chain.set(False)
+
+    async def test_imds_credential_uses_custom_retry_policy(self):
+        credential = ImdsCredential()
+        policies = credential._client._pipeline._impl_policies  # type: ignore
+        assert any(isinstance(policy, AsyncImdsRetryPolicy) for policy in policies)
+        # Only one retry policy should be present
+        assert sum(isinstance(policy, AsyncRetryPolicy) for policy in policies) == 1
+
+    def test_imds_retry_policy(self):
+        retry_policy = AsyncImdsRetryPolicy(**PIPELINE_SETTINGS)
+
+        # Create a shared mock HttpRequest
+        request = Mock(spec=HttpRequest, body=None, files=None)
+        request.method = "GET"
+
+        # Helper to create HttpResponse and PipelineResponse mocks
+        def make_pipeline_response(status_code):
+            response = Mock(spec=HttpResponse, status_code=status_code, http_request=request)
+            response.headers = {}
+            pipeline_response = Mock(spec=PipelineResponse, http_request=request, http_response=response)
+            return pipeline_response
+
+        pipeline_response_410 = make_pipeline_response(410)
+        pipeline_response_404 = make_pipeline_response(404)
+
+        # Simulate 5 retries for 410 response
+        settings_410 = retry_policy.configure_retries({})
+        total_time_410 = 0
+        for _ in range(5):
+            if retry_policy.is_retry(settings_410, pipeline_response_410):
+                retry_policy.increment(settings_410, response=pipeline_response_410, error=None)
+                backoff_time = retry_policy.get_backoff_time(settings_410)
+                total_time_410 += backoff_time
+
+        assert (
+            total_time_410 >= 70
+        ), f"Total retry time for 410 responses should be at least 70 seconds, got {total_time_410:.2f} seconds"
+
+        # Simulate 5 retries for 404 response
+        settings_404 = retry_policy.configure_retries({})
+        total_time_404 = 0
+        for _ in range(5):
+            if retry_policy.is_retry(settings_404, pipeline_response_404):
+                retry_policy.increment(settings_404, response=pipeline_response_404, error=None)
+                backoff_time = retry_policy.get_backoff_time(settings_404)
+                total_time_404 += backoff_time
+
+        assert (
+            total_time_404 < 30
+        ), f"Total retry time for 404 responses should use standard backoff, got {total_time_404:.2f} seconds"

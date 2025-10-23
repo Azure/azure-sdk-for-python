@@ -5,7 +5,7 @@
 import math
 import re
 import os
-from typing import Dict, TypeVar, Union
+from typing import Dict, Optional, TypeVar, Union
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
     from promptflow.core._flow import AsyncPrompty
@@ -13,6 +13,7 @@ else:
     from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from typing_extensions import override
 
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
@@ -63,6 +64,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         model_config: dict,
         eval_last_turn: bool = False,
         threshold: int = 3,
+        credential: Optional[TokenCredential] = None,
         _higher_is_better: bool = False,
         **kwargs,
     ) -> None:
@@ -82,7 +84,10 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         )
 
         self._flow = AsyncPrompty.load(
-            source=self._prompty_file, model=prompty_model_config, is_reasoning_model=self._is_reasoning_model
+            source=self._prompty_file,
+            model=prompty_model_config,
+            token_credential=credential,
+            is_reasoning_model=self._is_reasoning_model,
         )
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
@@ -127,10 +132,19 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        # Call the prompty flow to get the evaluation result.
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
-        if llm_output:
+        if prompty_output_dict:
+            llm_output = prompty_output_dict.get("llm_output", "")
+            input_token_count = prompty_output_dict.get("input_token_count", 0)
+            output_token_count = prompty_output_dict.get("output_token_count", 0)
+            total_token_count = prompty_output_dict.get("total_token_count", 0)
+            finish_reason = prompty_output_dict.get("finish_reason", "")
+            model_id = prompty_output_dict.get("model_id", "")
+            sample_input = prompty_output_dict.get("sample_input", "")
+            sample_output = prompty_output_dict.get("sample_output", "")
             # Parse out score and reason from evaluators known to possess them.
             if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
                 score, reason = parse_quality_evaluator_reason_score(llm_output)
@@ -141,6 +155,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     f"{self._result_key}_reason": reason,
                     f"{self._result_key}_result": binary_result,
                     f"{self._result_key}_threshold": self._threshold,
+                    f"{self._result_key}_prompt_tokens": input_token_count,
+                    f"{self._result_key}_completion_tokens": output_token_count,
+                    f"{self._result_key}_total_tokens": total_token_count,
+                    f"{self._result_key}_finish_reason": finish_reason,
+                    f"{self._result_key}_model": model_id,
+                    f"{self._result_key}_sample_input": sample_input,
+                    f"{self._result_key}_sample_output": sample_output,
                 }
             match = re.search(r"\d", llm_output)
             if match:
@@ -151,6 +172,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 f"gpt_{self._result_key}": float(score),
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_prompt_tokens": input_token_count,
+                f"{self._result_key}_completion_tokens": output_token_count,
+                f"{self._result_key}_total_tokens": total_token_count,
+                f"{self._result_key}_finish_reason": finish_reason,
+                f"{self._result_key}_model": model_id,
+                f"{self._result_key}_sample_input": sample_input,
+                f"{self._result_key}_sample_output": sample_output,
             }
 
         binary_result = self._get_binary_result(score)

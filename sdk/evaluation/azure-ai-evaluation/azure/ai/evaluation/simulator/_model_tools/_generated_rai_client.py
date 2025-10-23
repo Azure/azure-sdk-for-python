@@ -12,7 +12,7 @@ from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenMa
 from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common.utils import is_onedp_project
-from azure.ai.evaluation._common.onedp import AIProjectClient
+from azure.ai.evaluation._common.onedp import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._common import EvaluationServiceOneDPClient
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 import jwt
@@ -30,7 +30,11 @@ class GeneratedRAIClient:
     :type token_manager: ~azure.ai.evaluation.simulator._model_tools._identity_manager.APITokenManager
     """
 
-    def __init__(self, azure_ai_project: Union[AzureAIProject, str], token_manager: ManagedIdentityAPITokenManager):
+    def __init__(
+        self,
+        azure_ai_project: Union[AzureAIProject, str],
+        token_manager: ManagedIdentityAPITokenManager,
+    ):
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager
 
@@ -53,10 +57,14 @@ class GeneratedRAIClient:
             ).rai_svc
         else:
             self._client = AIProjectClient(
-                endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy
+                endpoint=azure_ai_project,
+                credential=token_manager,
+                user_agent_policy=user_agent_policy,
             ).red_teams
             self._evaluation_onedp_client = EvaluationServiceOneDPClient(
-                endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy
+                endpoint=azure_ai_project,
+                credential=token_manager,
+                user_agent_policy=user_agent_policy,
             )
 
     def _get_service_discovery_url(self):
@@ -68,7 +76,10 @@ class GeneratedRAIClient:
         import requests
 
         bearer_token = self._fetch_or_reuse_token(self.token_manager)
-        headers = {"Authorization": f"Bearer {bearer_token}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {bearer_token}",
+            "Content-Type": "application/json",
+        }
 
         response = requests.get(
             f"https://management.azure.com/subscriptions/{self.azure_ai_project['subscription_id']}/"
@@ -100,7 +111,9 @@ class GeneratedRAIClient:
         risk_category: Optional[str] = None,
         application_scenario: str = None,
         strategy: Optional[str] = None,
+        language: str = "en",
         scan_session_id: Optional[str] = None,
+        target: Optional[str] = None,
     ) -> Dict:
         """Get attack objectives using the auto-generated operations.
 
@@ -112,8 +125,12 @@ class GeneratedRAIClient:
         :type application_scenario: str
         :param strategy: Optional strategy to filter the attack objectives
         :type strategy: Optional[str]
+        :param language: Language code for the attack objectives (e.g., "en", "es", "fr")
+        :type language: str
         :param scan_session_id: Optional unique session ID for the scan
         :type scan_session_id: Optional[str]
+        :param target: Optional target type (model/agent)
+        :type target: Optional[str]
         :return: The attack objectives
         :rtype: Dict
         """
@@ -122,8 +139,9 @@ class GeneratedRAIClient:
             response = self._client.get_attack_objectives(
                 risk_types=[risk_type],
                 risk_category=risk_category,
-                lang="en",
+                lang=language,
                 strategy=strategy,
+                target_type=target,
                 headers={"x-ms-client-request-id": scan_session_id},
             )
             return response

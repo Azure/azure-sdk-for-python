@@ -123,7 +123,7 @@ class CosmosClientTimeoutError(AzureError):
         self.history = None
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
 
-class InternalException:
+class _InternalCosmosException:
     def __init__(self, status_code, headers, reason=None):
         self.status_code = status_code
         self.headers = headers
@@ -145,4 +145,4 @@ def _container_recreate_exception(e) -> bool:
     return (is_bad_request and is_collection_rid_mismatch) or (is_not_found and is_throughput_not_found)
 
 def _is_partition_split_or_merge(e):
-    return e.status_code == _StatusCode.GONE and e.status_code == _SubStatusCodes.COMPLETING_SPLIT
+    return e.status_code == _StatusCode.GONE and e.sub_status == _SubStatusCodes.COMPLETING_SPLIT

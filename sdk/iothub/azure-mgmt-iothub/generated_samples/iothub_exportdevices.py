@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,18 @@ def main():
     response = client.iot_hub_resource.export_devices(
         resource_group_name="myResourceGroup",
         resource_name="testHub",
-        export_devices_parameters={"excludeKeys": True, "exportBlobContainerUri": "testBlob"},
+        export_devices_parameters={
+            "authenticationType": "identityBased",
+            "excludeKeys": True,
+            "exportBlobContainerUri": "testBlob",
+            "identity": {
+                "userAssignedIdentity": "/subscriptions/91d12660-3dec-467a-be2a-213b5544ddc0/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1"
+            },
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2023-06-30/examples/iothub_exportdevices.json
+# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/IoTHub/preview/2025-08-01-preview/examples/iothub_exportdevices.json
 if __name__ == "__main__":
     main()

@@ -17,7 +17,7 @@ from ._run_storage import AbstractRunStorage, NoOpRunStorage
 from .._common._logging import incremental_print, print_red_error
 from ._config import BatchEngineConfig
 from ._exceptions import BatchEngineValidationError
-from ._engine import DEFAULTS_KEY, BatchEngine, BatchEngineError, BatchResult
+from ._engine import DEFAULTS_KEY, BatchEngine, BatchEngineError, BatchResult, BatchStatus
 
 
 class RunSubmitter:
@@ -141,6 +141,19 @@ class RunSubmitter:
             run._status = RunStatus.FAILED
             # when run failed in executor, store the exception in result and dump to file
             logger.warning(f"Run {run.name} failed when executing in executor with exception {e}.")
+            if not batch_result:
+                batch_result = BatchResult(
+                    status=BatchStatus.Failed,
+                    total_lines=0,
+                    failed_lines=0,
+                    start_time=datetime.now(timezone.utc),
+                    end_time=datetime.now(timezone.utc),
+                    tokens=None,
+                    details=[],
+                )
+                batch_result.error = e
+            elif not batch_result.error:
+                batch_result.error = e
             # for user error, swallow stack trace and return failed run since user don't need the stack trace
             if not isinstance(e, BatchEngineValidationError):
                 # for other errors, raise it to user to help debug root cause.

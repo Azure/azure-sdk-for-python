@@ -1,5 +1,47 @@
 # Release History
 
+## 14.0.0b3 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
+## 14.0.0b2 (2025-09-26)
+
+### Features Added
+
+  - Model `NetAppManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `Bucket` added property `permissions`
+  - Model `BucketPatch` added property `permissions`
+  - Model `ReplicationObject` added property `mirror_state`
+  - Model `ReplicationObject` added property `relationship_status`
+  - Added enum `BucketPatchPermissions`
+  - Added enum `BucketPermissions`
+  - Added enum `NetAppProvisioningState`
+
+### Breaking Changes
+
+  - Model `ListQuotaReportResponse` deleted or renamed its instance variable `next_link`
+  - Deleted or renamed enum value `RelationshipStatus.FAILED`
+  - Deleted or renamed enum value `RelationshipStatus.UNKNOWN`
+  - Deleted or renamed model `NetappProvisioningState`
+  - Deleted or renamed model `ProvisioningState`
+  - Parameter `body` of method `BucketsOperations.begin_update` is now required
+
+## 13.7.0 (2025-08-18)
+
+### Features Added
+
+  - Model `CapacityPool` added property `custom_throughput_mibps`
+  - Model `CapacityPoolPatch` added property `custom_throughput_mibps`
+  - Enum `ServiceLevel` added member `FLEXIBLE`
+  - Model `Volume` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `Volume` added property `inherited_size_in_bytes`
+  - Model `VolumeGroupVolumeProperties` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `VolumeGroupVolumeProperties` added property `inherited_size_in_bytes`
+  - Added enum `AcceptGrowCapacityPoolForShortTermCloneSplit`
+  - Model `VolumesOperations` added method `begin_split_clone_from_parent`
+
 ## 13.6.0 (2025-07-21)
 
 ### Features Added

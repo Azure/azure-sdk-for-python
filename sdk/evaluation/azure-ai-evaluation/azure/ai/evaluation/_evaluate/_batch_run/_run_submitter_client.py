@@ -159,6 +159,16 @@ class RunSubmitterClient:
             "completed_lines": total_lines - failed_lines,
             "failed_lines": failed_lines,
             "log_path": None,
+            "error_message": (
+                f"({run.result.error.blame.value}) {run.result.error.message}"
+                if run.result and run.result.error and run.result.error.blame
+                else None
+            ),
+            "error_code": (
+                f"{run.result.error.category.value}"
+                if run.result and run.result.error and run.result.error.category
+                else None
+            ),
         }
 
     @staticmethod
