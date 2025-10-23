@@ -288,7 +288,7 @@ def main():
         raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
-    item_id = os.environ.get("PLANETARYCOMPUTER_ITEM_ID")
+    item_id = "ga_m_3308421_se_16_060_20211114"
 
     client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
 

@@ -1,11 +1,6 @@
 -e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
-aiohttp
 pytest
-pytest-asyncio
-pytest-cov
-azure-devtools
 python-dotenv
-azure-core
-azure-identity
+pillow
