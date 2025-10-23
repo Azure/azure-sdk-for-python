@@ -70,24 +70,34 @@ jobs:
           # parse .py files under `eng/tools/azure-sdk-tools/azpysdk/`, excluding `__init__.py`, `Check.py`, and any file starting with `next_`
           # everything else, get the module name without the `.py` extension, and set a comma-separated list of those module names as an environment variable
           # for later consumption in the pipeline on line 78
+          CHECK_DIR="eng/tools/azure-sdk-tools/azpysdk"
+          shopt -s nullglob
+          MODULES=()
+          for f in "$CHECK_DIR"/*.py; do
+            base="$(basename "$f")"
+            case "$base" in
+              __init__.py|Check.py|next_*.py) continue ;;
+            esac
+            name="${base%.py}"
+            MODULES+=("$name")
+          done
+          if [ ${#MODULES[@]} -eq 0 ]; then
+            echo "No azpysdk check modules discovered in $CHECK_DIR" >&2
+            exit 1
+          fi
+          IFS=',' read -r -a SORTED <<< "$(printf '%s\n' "${MODULES[@]}" | sort)"
+          CHECKS="$(printf '%s,' "${SORTED[@]}" | sed 's/,$//')"
+          echo "Discovered azpysdk checks: $CHECKS"
+          echo "AZPYSDK_CHECKS=$CHECKS" >> "$GITHUB_ENV"
+          # end discovery
         shell: bash
 
       - name: Run all discovered azpysdk environments against aztemplate
         run: |
-          python -m azure_sdk_tools.devtools.check_all_azpysdk_on_uv --checks $() azure-template
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
         shell: bash
         env:
           TOX_PIP_IMPL: "uv"
-
-  check-all-azpysdk-on-pip:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.13
 
       - name: Install azure-sdk-tools, discover azpysdk checks
         run: |
@@ -96,7 +106,7 @@ jobs:
 
       - name: Run all discovered azpysdk environments against aztemplate
         run: |
-          python eng/scripts/dispatch_checks.py --checks $() azure-template
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
         shell: bash
 
   dev-setup-and-import:
