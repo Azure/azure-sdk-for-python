@@ -72,29 +72,21 @@ jobs:
         run: |
           uv pip install --system eng/tools/azure-sdk-tools[build,ghtools,conda]
 
-          # parse .py files under `eng/tools/azure-sdk-tools/azpysdk/`, excluding `__init__.py`, `Check.py`, and any file starting with `next_`
-          # everything else, get the module name without the `.py` extension, and set a comma-separated list of those module names as an environment variable
-          # for later consumption in the pipeline on line 78
-          CHECK_DIR="eng/tools/azure-sdk-tools/azpysdk"
-          shopt -s nullglob
-          MODULES=()
-          for f in "$CHECK_DIR"/*.py; do
-            base="$(basename "$f")"
-            case "$base" in
-              __init__.py|Check.py|next_*.py) continue ;;
-            esac
-            name="${base%.py}"
-            MODULES+=("$name")
-          done
-          if [ ${#MODULES[@]} -eq 0 ]; then
-            echo "No azpysdk check modules discovered in $CHECK_DIR" >&2
+          # Discover available azpysdk commands from help output, excluding next-* variants
+          CHECKS="$(azpysdk -h 2>/dev/null | \
+            sed -n '/^commands:/,/^$/p' | \
+            grep -oE '^\s+[a-z_]+' | \
+            tr -d ' ' | \
+            grep -v '^next-' | \
+            sort | \
+            paste -sd,)"
+
+          if [ -z "$CHECKS" ]; then
+            echo "No azpysdk check modules discovered from azpysdk -h" >&2
             exit 1
           fi
-          # Sort and join with commas
-          CHECKS="$(printf '%s\n' "${MODULES[@]}" | sort | paste -sd,)"
           echo "Discovered azpysdk checks: $CHECKS"
           echo "AZPYSDK_CHECKS=$CHECKS" >> "$GITHUB_ENV"
-          # end discovery
         shell: bash
 
       - name: Run all discovered checks against azure-template using uv as package manager
