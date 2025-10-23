@@ -13,6 +13,7 @@ from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 from string import Template
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
+from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage
 from azure.core.exceptions import HttpResponseError
 
 import jwt
@@ -920,31 +921,26 @@ def _build_sync_eval_payload(
     :rtype: Dict
     """
 
-    # Build QueryResponseInlineMessage item
-    item_content = {
-        "type": "azure_ai_query_response_inline_message",
-        "query": data.get("query", ""),
-        "response": data.get("response", ""),
-    }
-
-    # Add optional context
-    if data.get("context") is not None:
-        context = ""
-        context += " ".join(c["content"] for c in data["context"]["contexts"])
-        item_content["context"] = context
-
-    # Add optional tools
-    if data.get("tool_calls") is not None:
-        item_content["tools"] = data.get("tool_calls")
-
-    # Add properties/metadata (category, taxonomy, etc.)
+    # Build properties/metadata (category, taxonomy, etc.)
     properties = {}
     if data.get("risk_sub_type") is not None:
         properties["category"] = data["risk_sub_type"]
     if data.get("taxonomy") is not None:
         properties["taxonomy"] = str(data["taxonomy"])  # Ensure taxonomy is converted to string
-    if properties:
-        item_content["properties"] = properties
+
+    # Prepare context if available
+    context = None
+    if data.get("context") is not None:
+        context = " ".join(c["content"] for c in data["context"]["contexts"])
+
+    # Build QueryResponseInlineMessage object
+    item_content = QueryResponseInlineMessage(
+        query=data.get("query", ""),
+        response=data.get("response", ""),
+        context=context,
+        tools=data.get("tool_calls"),
+        properties=properties if properties else None,
+    )
 
     # Build the data mapping using mustache syntax {{item.field}}
     data_mapping = {
