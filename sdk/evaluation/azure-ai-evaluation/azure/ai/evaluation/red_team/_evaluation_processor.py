@@ -25,7 +25,8 @@ from tenacity import retry
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -53,6 +54,7 @@ class EvaluationProcessor:
         retry_config,
         scan_session_id=None,
         scan_output_dir=None,
+        taxonomy_risk_categories=None,
     ):
         """Initialize the evaluation processor.
 
@@ -63,6 +65,7 @@ class EvaluationProcessor:
         :param retry_config: Retry configuration for network errors
         :param scan_session_id: Session ID for the current scan
         :param scan_output_dir: Directory for scan outputs
+        :param taxonomy_risk_categories: Dictionary mapping risk categories to taxonomy values
         """
         self.logger = logger
         self.azure_ai_project = azure_ai_project
@@ -71,6 +74,7 @@ class EvaluationProcessor:
         self.retry_config = retry_config
         self.scan_session_id = scan_session_id
         self.scan_output_dir = scan_output_dir
+        self.taxonomy_risk_categories = taxonomy_risk_categories or {}
 
     async def evaluate_conversation(
         self,
@@ -79,6 +83,7 @@ class EvaluationProcessor:
         strategy_name: str,
         risk_category: RiskCategory,
         idx: int,
+        risk_sub_type: Optional[str] = None,
     ) -> Dict:
         """Evaluate a single conversation using the specified metric and risk category.
 
@@ -92,16 +97,22 @@ class EvaluationProcessor:
         :type risk_category: RiskCategory
         :param idx: Index of the conversation for tracking purposes
         :type idx: int
+        :param risk_sub_type: Optional risk sub type for the evaluation
+        :type risk_sub_type: Optional[str]
         :return: Dictionary containing evaluation results
         :rtype: Dict
         """
         annotation_task = get_annotation_task_from_risk_category(risk_category)
+
         messages = conversation["conversation"]["messages"]
 
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
         context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+        tool_calls = [
+            msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")
+        ]
 
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
@@ -114,20 +125,45 @@ class EvaluationProcessor:
             if context[0] is not None:
                 query_response["context"] = context[0]
 
+            if tool_calls and any(tool_calls):
+                query_response["tool_calls"] = [call for sublist in tool_calls for call in sublist if call]
+
+            # Add risk_sub_type to query_response if it exists
+            if risk_sub_type:
+                query_response["risk_sub_type"] = risk_sub_type
+
+            # Add taxonomy to query_response if it exists for this risk category
+            if self.taxonomy_risk_categories and risk_category.value in self.taxonomy_risk_categories:
+                taxonomy_value = self.taxonomy_risk_categories[risk_category.value]
+                # Convert taxonomy to string if it's not already a string
+                if taxonomy_value is not None:
+                    query_response["taxonomy"] = str(taxonomy_value)
+
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        return await evaluate_with_rai_service(
-                            data=query_response,
-                            metric_name=metric_name,
-                            project_scope=self.azure_ai_project,
-                            credential=self.credential,
-                            annotation_task=annotation_task,
-                            scan_session_id=self.scan_session_id,
-                        )
+                        # Use sync_evals endpoint for OneDP projects, legacy endpoint for others
+                        if is_onedp_project(self.azure_ai_project):
+                            return await evaluate_with_rai_service_sync(
+                                data=query_response,
+                                metric_name=metric_name,
+                                project_scope=self.azure_ai_project,
+                                credential=self.credential,
+                                annotation_task=annotation_task,
+                                scan_session_id=self.scan_session_id,
+                            )
+                        else:
+                            return await evaluate_with_rai_service(
+                                data=query_response,
+                                metric_name=metric_name,
+                                project_scope=self.azure_ai_project,
+                                credential=self.credential,
+                                annotation_task=annotation_task,
+                                scan_session_id=self.scan_session_id,
+                            )
                     except (
                         httpx.ConnectTimeout,
                         httpx.ReadTimeout,
@@ -306,6 +342,7 @@ class EvaluationProcessor:
                     strategy_name=strategy_name,
                     risk_category=risk_category,
                     idx=idx,
+                    risk_sub_type=conversation.get("risk_sub_type"),
                 )
                 for idx, conversation in enumerate(conversations)
             ]

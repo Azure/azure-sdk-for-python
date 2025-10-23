@@ -132,10 +132,19 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        # Call the prompty flow to get the evaluation result.
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
-        if llm_output:
+        if prompty_output_dict:
+            llm_output = prompty_output_dict.get("llm_output", "")
+            input_token_count = prompty_output_dict.get("input_token_count", 0)
+            output_token_count = prompty_output_dict.get("output_token_count", 0)
+            total_token_count = prompty_output_dict.get("total_token_count", 0)
+            finish_reason = prompty_output_dict.get("finish_reason", "")
+            model_id = prompty_output_dict.get("model_id", "")
+            sample_input = prompty_output_dict.get("sample_input", "")
+            sample_output = prompty_output_dict.get("sample_output", "")
             # Parse out score and reason from evaluators known to possess them.
             if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
                 score, reason = parse_quality_evaluator_reason_score(llm_output)
@@ -146,6 +155,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     f"{self._result_key}_reason": reason,
                     f"{self._result_key}_result": binary_result,
                     f"{self._result_key}_threshold": self._threshold,
+                    f"{self._result_key}_prompt_tokens": input_token_count,
+                    f"{self._result_key}_completion_tokens": output_token_count,
+                    f"{self._result_key}_total_tokens": total_token_count,
+                    f"{self._result_key}_finish_reason": finish_reason,
+                    f"{self._result_key}_model": model_id,
+                    f"{self._result_key}_sample_input": sample_input,
+                    f"{self._result_key}_sample_output": sample_output,
                 }
             match = re.search(r"\d", llm_output)
             if match:
@@ -156,6 +172,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 f"gpt_{self._result_key}": float(score),
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_prompt_tokens": input_token_count,
+                f"{self._result_key}_completion_tokens": output_token_count,
+                f"{self._result_key}_total_tokens": total_token_count,
+                f"{self._result_key}_finish_reason": finish_reason,
+                f"{self._result_key}_model": model_id,
+                f"{self._result_key}_sample_input": sample_input,
+                f"{self._result_key}_sample_output": sample_output,
             }
 
         binary_result = self._get_binary_result(score)
