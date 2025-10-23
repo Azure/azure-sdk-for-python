@@ -53,6 +53,52 @@ jobs:
           black --check --config eng/black-pyproject.toml eng/tools/azure-sdk-tools --exclude 'templates'
         shell: bash
 
+  check-all-azpysdk-on-uv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install azure-sdk-tools, discover azpysdk checks
+        run: |
+          uv pip install --system eng/tools/azure-sdk-tools[build,ghtools,conda]
+
+          # parse .py files under `eng/tools/azure-sdk-tools/azpysdk/`, excluding `__init__.py`, `Check.py`, and any file starting with `next_`
+          # everything else, get the module name without the `.py` extension, and set a comma-separated list of those module names as an environment variable
+          # for later consumption in the pipeline on line 78
+        shell: bash
+
+      - name: Run all discovered azpysdk environments against aztemplate
+        run: |
+          python -m azure_sdk_tools.devtools.check_all_azpysdk_on_uv --checks $() azure-template
+        shell: bash
+        env:
+          TOX_PIP_IMPL: "uv"
+
+  check-all-azpysdk-on-pip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install azure-sdk-tools, discover azpysdk checks
+        run: |
+          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
+        shell: bash
+
+      - name: Run all discovered azpysdk environments against aztemplate
+        run: |
+          python eng/scripts/dispatch_checks.py --checks $() azure-template
+        shell: bash
+
   dev-setup-and-import:
     runs-on: ubuntu-latest
     steps:
