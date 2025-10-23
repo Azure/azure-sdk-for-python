@@ -32,6 +32,11 @@ extends:
     ServiceDirectory: ml
     TestTimeoutInMinutes: 75
     TestProxy: true
+    MatrixConfigs:
+      - Name: ai_ci_matrix
+        Path: sdk/ml/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     MatrixFilters:
       - PythonVersion=^(?!3\.14)
     # This is a short term solution to create API review for python azure-ml package only when running pipeline manually
