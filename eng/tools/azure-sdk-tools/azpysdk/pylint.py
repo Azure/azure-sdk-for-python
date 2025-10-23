@@ -115,29 +115,19 @@ class pylint(Check):
                     ]
                 )
 
-                pylint_result = self.run_venv_command(
-                    executable,
-                    [
-                        "-m",
-                        "pylint",
-                        "--rcfile={}".format(rcFileLocation),
-                        "--output-format=parseable",
-                        os.path.join(package_dir, top_level_module),
-                    ],
-                    cwd=package_dir,
-                    check=True,
+                results.append(
+                    check_call(
+                        [
+                            executable,
+                            "-m",
+                            "pylint",
+                            "--rcfile={}".format(rcFileLocation),
+                            "--output-format=parseable",
+                            os.path.join(package_dir, top_level_module),
+                        ]
+                    )
                 )
-                # todo: why???
-                if pylint_result.stdout:
-                    print(pylint_result.stdout)
-                if pylint_result.stderr:
-                    print(pylint_result.stderr)
-                results.append(pylint_result.returncode)
             except CalledProcessError as e:
-                if hasattr(e, "stdout") and e.stdout:
-                    print(e.stdout)
-                if hasattr(e, "stderr") and e.stderr:
-                    print(e.stderr)
                 logger.error(
                     "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
                         package_name, e.returncode
