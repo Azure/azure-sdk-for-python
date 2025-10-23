@@ -4,17 +4,12 @@ description: 'Identify languages configured in the TypeSpec project and add it t
 # Step 1: Find the list of languages and package names
 **Goal**: Identify languages configured in the TypeSpec project and generate the json object with language and package name.
 1. Identify the language emitter configuration in the `tspconfig.yaml` file in the TypeSpec project root.
-2. Identify the package name or namespace for each language emitter.
+2. Identify and display the package name or namespace for each language emitter.
    - For Java and Python, use `emitter-output-dir` for package name if it exists. Otherwise use `package-dir` to get the package name as fallback approach.
    - For .NET, use namespace property to get package name.
    - For JavaScript, use `packagedetails:name` property to get package name.
    - For Go, use module name and remove `github.com/Azure/azure-sdk-for-go/` to get package name
-3. Validate package names against these prefix rules before proceeding:
-   - .NET package names start with `Azure.`
-   - JavaScript package names start with `@azure/`
-   - Java package names start with `azure-` or start with `com.azure.`
-   - Go package names start with `sdk/`
-   - Python package names start with `azure-`
+3. Use `azsdk_package_validate_name` to validate each of the package names before proceeding.If any of the package names are invalid, correct the package name.
 4. Map the language name in emitter to one of the following in Pascal case(except .NET):
    - .NET
    - Java
