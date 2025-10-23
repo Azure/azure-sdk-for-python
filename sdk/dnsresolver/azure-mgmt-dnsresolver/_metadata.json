@@ -1,6 +1,6 @@
 {
   "apiVersion": "2025-10-01-preview",
-  "commit": "3ec630fc62ebc03e9adf238cb2fb0b538d93ead4",
+  "commit": "95bf758fc791fd2f1684dc05a4149f96df700727",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/dnsresolver/resource-manager/Microsoft.Network/DnsResolver",
   "emitterVersion": "0.52.0"

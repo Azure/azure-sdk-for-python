@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
+class TestDnsResolverManagementDnsResolverPolicyVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(DnsResolverManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_network_links_get(self, resource_group):
-        response = self.client.virtual_network_links.get(
+    def test_dns_resolver_policy_virtual_network_links_get(self, resource_group):
+        response = self.client.dns_resolver_policy_virtual_network_links.get(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            virtual_network_link_name="str",
+            dns_resolver_policy_name="str",
+            dns_resolver_policy_virtual_network_link_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,13 +32,14 @@ class TestNetworkVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_network_links_begin_create_or_update(self, resource_group):
-        response = self.client.virtual_network_links.begin_create_or_update(
+    def test_dns_resolver_policy_virtual_network_links_begin_create_or_update(self, resource_group):
+        response = self.client.dns_resolver_policy_virtual_network_links.begin_create_or_update(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            virtual_network_link_name="str",
+            dns_resolver_policy_name="str",
+            dns_resolver_policy_virtual_network_link_name="str",
             parameters={
-                "properties": {"virtualNetwork": {"id": "str"}, "metadata": {"str": "str"}, "provisioningState": "str"},
+                "location": "str",
+                "properties": {"virtualNetwork": {"id": "str"}, "provisioningState": "str"},
                 "etag": "str",
                 "id": "str",
                 "name": "str",
@@ -50,6 +51,7 @@ class TestNetworkVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -59,12 +61,12 @@ class TestNetworkVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_network_links_begin_update(self, resource_group):
-        response = self.client.virtual_network_links.begin_update(
+    def test_dns_resolver_policy_virtual_network_links_begin_update(self, resource_group):
+        response = self.client.dns_resolver_policy_virtual_network_links.begin_update(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            virtual_network_link_name="str",
-            parameters={"properties": {"metadata": {"str": "str"}}},
+            dns_resolver_policy_name="str",
+            dns_resolver_policy_virtual_network_link_name="str",
+            parameters={"tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -72,11 +74,11 @@ class TestNetworkVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_network_links_begin_delete(self, resource_group):
-        response = self.client.virtual_network_links.begin_delete(
+    def test_dns_resolver_policy_virtual_network_links_begin_delete(self, resource_group):
+        response = self.client.dns_resolver_policy_virtual_network_links.begin_delete(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            virtual_network_link_name="str",
+            dns_resolver_policy_name="str",
+            dns_resolver_policy_virtual_network_link_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -84,10 +86,10 @@ class TestNetworkVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_network_links_list(self, resource_group):
-        response = self.client.virtual_network_links.list(
+    def test_dns_resolver_policy_virtual_network_links_list(self, resource_group):
+        response = self.client.dns_resolver_policy_virtual_network_links.list(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
+            dns_resolver_policy_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

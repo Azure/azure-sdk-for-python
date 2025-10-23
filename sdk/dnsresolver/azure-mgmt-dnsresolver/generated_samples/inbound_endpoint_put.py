@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.dnsresolver import NetworkClient
 
 
 def main():
-    client = NetworkClient(
+    client = DnsResolverManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

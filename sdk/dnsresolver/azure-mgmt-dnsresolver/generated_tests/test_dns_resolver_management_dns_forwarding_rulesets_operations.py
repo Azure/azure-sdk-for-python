@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkDnsResolverDomainListsOperations(AzureMgmtRecordedTestCase):
+class TestDnsResolverManagementDnsForwardingRulesetsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(DnsResolverManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_domain_lists_get(self, resource_group):
-        response = self.client.dns_resolver_domain_lists.get(
+    def test_dns_forwarding_rulesets_get(self, resource_group):
+        response = self.client.dns_forwarding_rulesets.get(
             resource_group_name=resource_group.name,
-            dns_resolver_domain_list_name="str",
+            dns_forwarding_ruleset_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,21 +31,20 @@ class TestNetworkDnsResolverDomainListsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_domain_lists_begin_create_or_update(self, resource_group):
-        response = self.client.dns_resolver_domain_lists.begin_create_or_update(
+    def test_dns_forwarding_rulesets_begin_create_or_update(self, resource_group):
+        response = self.client.dns_forwarding_rulesets.begin_create_or_update(
             resource_group_name=resource_group.name,
-            dns_resolver_domain_list_name="str",
+            dns_forwarding_ruleset_name="str",
             parameters={
                 "location": "str",
-                "etag": "str",
-                "id": "str",
-                "name": "str",
                 "properties": {
-                    "domains": ["str"],
-                    "domainsUrl": "str",
+                    "dnsResolverOutboundEndpoints": [{"id": "str"}],
                     "provisioningState": "str",
                     "resourceGuid": "str",
                 },
+                "etag": "str",
+                "id": "str",
+                "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -64,11 +63,11 @@ class TestNetworkDnsResolverDomainListsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_domain_lists_begin_update(self, resource_group):
-        response = self.client.dns_resolver_domain_lists.begin_update(
+    def test_dns_forwarding_rulesets_begin_update(self, resource_group):
+        response = self.client.dns_forwarding_rulesets.begin_update(
             resource_group_name=resource_group.name,
-            dns_resolver_domain_list_name="str",
-            parameters={"properties": {"domains": ["str"]}, "tags": {"str": "str"}},
+            dns_forwarding_ruleset_name="str",
+            parameters={"dnsResolverOutboundEndpoints": [{"id": "str"}], "tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,10 +75,10 @@ class TestNetworkDnsResolverDomainListsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_domain_lists_begin_delete(self, resource_group):
-        response = self.client.dns_resolver_domain_lists.begin_delete(
+    def test_dns_forwarding_rulesets_begin_delete(self, resource_group):
+        response = self.client.dns_forwarding_rulesets.begin_delete(
             resource_group_name=resource_group.name,
-            dns_resolver_domain_list_name="str",
+            dns_forwarding_ruleset_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,8 +86,8 @@ class TestNetworkDnsResolverDomainListsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_domain_lists_list_by_resource_group(self, resource_group):
-        response = self.client.dns_resolver_domain_lists.list_by_resource_group(
+    def test_dns_forwarding_rulesets_list_by_resource_group(self, resource_group):
+        response = self.client.dns_forwarding_rulesets.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -97,20 +96,19 @@ class TestNetworkDnsResolverDomainListsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_domain_lists_list(self, resource_group):
-        response = self.client.dns_resolver_domain_lists.list()
+    def test_dns_forwarding_rulesets_list(self, resource_group):
+        response = self.client.dns_forwarding_rulesets.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_domain_lists_begin_bulk(self, resource_group):
-        response = self.client.dns_resolver_domain_lists.begin_bulk(
+    def test_dns_forwarding_rulesets_list_by_virtual_network(self, resource_group):
+        response = self.client.dns_forwarding_rulesets.list_by_virtual_network(
             resource_group_name=resource_group.name,
-            dns_resolver_domain_list_name="str",
-            parameters={"properties": {"action": "str", "storageUrl": "str"}},
-        ).result()  # call '.result()' to poll until service return final result
-
+            virtual_network_name="str",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

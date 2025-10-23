@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class NetworkClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for NetworkClient.
+class DnsResolverManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for DnsResolverManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

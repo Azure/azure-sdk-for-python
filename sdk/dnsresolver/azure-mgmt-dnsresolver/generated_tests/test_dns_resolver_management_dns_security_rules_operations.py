@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkForwardingRulesOperations(AzureMgmtRecordedTestCase):
+class TestDnsResolverManagementDnsSecurityRulesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(DnsResolverManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_forwarding_rules_get(self, resource_group):
-        response = self.client.forwarding_rules.get(
+    def test_dns_security_rules_get(self, resource_group):
+        response = self.client.dns_security_rules.get(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            forwarding_rule_name="str",
+            dns_resolver_policy_name="str",
+            dns_security_rule_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,17 +32,19 @@ class TestNetworkForwardingRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_forwarding_rules_create_or_update(self, resource_group):
-        response = self.client.forwarding_rules.create_or_update(
+    def test_dns_security_rules_begin_create_or_update(self, resource_group):
+        response = self.client.dns_security_rules.begin_create_or_update(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            forwarding_rule_name="str",
+            dns_resolver_policy_name="str",
+            dns_security_rule_name="str",
             parameters={
+                "location": "str",
                 "properties": {
-                    "domainName": "str",
-                    "targetDnsServers": [{"ipAddress": "str", "port": 0}],
-                    "forwardingRuleState": "str",
-                    "metadata": {"str": "str"},
+                    "action": {"actionType": "str"},
+                    "priority": 0,
+                    "dnsResolverDomainLists": [{"id": "str"}],
+                    "dnsSecurityRuleState": "str",
+                    "managedDomainLists": ["str"],
                     "provisioningState": "str",
                 },
                 "etag": "str",
@@ -56,50 +58,54 @@ class TestNetworkForwardingRulesOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_forwarding_rules_update(self, resource_group):
-        response = self.client.forwarding_rules.update(
+    def test_dns_security_rules_begin_update(self, resource_group):
+        response = self.client.dns_security_rules.begin_update(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            forwarding_rule_name="str",
+            dns_resolver_policy_name="str",
+            dns_security_rule_name="str",
             parameters={
                 "properties": {
-                    "forwardingRuleState": "str",
-                    "metadata": {"str": "str"},
-                    "targetDnsServers": [{"ipAddress": "str", "port": 0}],
-                }
+                    "action": {"actionType": "str"},
+                    "dnsResolverDomainLists": [{"id": "str"}],
+                    "dnsSecurityRuleState": "str",
+                    "managedDomainLists": ["str"],
+                    "priority": 0,
+                },
+                "tags": {"str": "str"},
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_forwarding_rules_delete(self, resource_group):
-        response = self.client.forwarding_rules.delete(
+    def test_dns_security_rules_begin_delete(self, resource_group):
+        response = self.client.dns_security_rules.begin_delete(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            forwarding_rule_name="str",
-        )
+            dns_resolver_policy_name="str",
+            dns_security_rule_name="str",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_forwarding_rules_list(self, resource_group):
-        response = self.client.forwarding_rules.list(
+    def test_dns_security_rules_list(self, resource_group):
+        response = self.client.dns_security_rules.list(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
+            dns_resolver_policy_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

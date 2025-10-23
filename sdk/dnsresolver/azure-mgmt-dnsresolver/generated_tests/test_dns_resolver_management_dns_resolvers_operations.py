@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkDnsForwardingRulesetsOperations(AzureMgmtRecordedTestCase):
+class TestDnsResolverManagementDnsResolversOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(DnsResolverManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_forwarding_rulesets_get(self, resource_group):
-        response = self.client.dns_forwarding_rulesets.get(
+    def test_dns_resolvers_get(self, resource_group):
+        response = self.client.dns_resolvers.get(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
+            dns_resolver_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,14 +31,15 @@ class TestNetworkDnsForwardingRulesetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_forwarding_rulesets_begin_create_or_update(self, resource_group):
-        response = self.client.dns_forwarding_rulesets.begin_create_or_update(
+    def test_dns_resolvers_begin_create_or_update(self, resource_group):
+        response = self.client.dns_resolvers.begin_create_or_update(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
+            dns_resolver_name="str",
             parameters={
                 "location": "str",
                 "properties": {
-                    "dnsResolverOutboundEndpoints": [{"id": "str"}],
+                    "virtualNetwork": {"id": "str"},
+                    "dnsResolverState": "str",
                     "provisioningState": "str",
                     "resourceGuid": "str",
                 },
@@ -63,11 +64,11 @@ class TestNetworkDnsForwardingRulesetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_forwarding_rulesets_begin_update(self, resource_group):
-        response = self.client.dns_forwarding_rulesets.begin_update(
+    def test_dns_resolvers_begin_update(self, resource_group):
+        response = self.client.dns_resolvers.begin_update(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
-            parameters={"dnsResolverOutboundEndpoints": [{"id": "str"}], "tags": {"str": "str"}},
+            dns_resolver_name="str",
+            parameters={"tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,10 +76,10 @@ class TestNetworkDnsForwardingRulesetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_forwarding_rulesets_begin_delete(self, resource_group):
-        response = self.client.dns_forwarding_rulesets.begin_delete(
+    def test_dns_resolvers_begin_delete(self, resource_group):
+        response = self.client.dns_resolvers.begin_delete(
             resource_group_name=resource_group.name,
-            dns_forwarding_ruleset_name="str",
+            dns_resolver_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,8 +87,8 @@ class TestNetworkDnsForwardingRulesetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_forwarding_rulesets_list_by_resource_group(self, resource_group):
-        response = self.client.dns_forwarding_rulesets.list_by_resource_group(
+    def test_dns_resolvers_list_by_resource_group(self, resource_group):
+        response = self.client.dns_resolvers.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -96,16 +97,16 @@ class TestNetworkDnsForwardingRulesetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_forwarding_rulesets_list(self, resource_group):
-        response = self.client.dns_forwarding_rulesets.list()
+    def test_dns_resolvers_list(self, resource_group):
+        response = self.client.dns_resolvers.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_forwarding_rulesets_list_by_virtual_network(self, resource_group):
-        response = self.client.dns_forwarding_rulesets.list_by_virtual_network(
+    def test_dns_resolvers_list_by_virtual_network(self, resource_group):
+        response = self.client.dns_resolvers.list_by_virtual_network(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
         )

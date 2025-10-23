@@ -34,7 +34,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import NetworkClientConfiguration
+from .._configuration import DnsResolverManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
@@ -2207,14 +2207,16 @@ class DnsResolversOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`dns_resolvers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3261,14 +3263,16 @@ class InboundEndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`inbound_endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4174,14 +4178,16 @@ class OutboundEndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`outbound_endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5097,14 +5103,16 @@ class DnsForwardingRulesetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`dns_forwarding_rulesets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6155,14 +6163,16 @@ class ForwardingRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`forwarding_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6853,14 +6863,16 @@ class VirtualNetworkLinksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`virtual_network_links` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7767,14 +7779,16 @@ class DnsResolverPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`dns_resolver_policies` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8813,14 +8827,16 @@ class DnsSecurityRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`dns_security_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9723,14 +9739,16 @@ class DnsResolverPolicyVirtualNetworkLinksOperations:  # pylint: disable=name-to
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`dns_resolver_policy_virtual_network_links` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10660,14 +10678,16 @@ class DnsResolverDomainListsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dnsresolver.NetworkClient`'s
+        :class:`~azure.mgmt.dnsresolver.DnsResolverManagementClient`'s
         :attr:`dns_resolver_domain_lists` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DnsResolverManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

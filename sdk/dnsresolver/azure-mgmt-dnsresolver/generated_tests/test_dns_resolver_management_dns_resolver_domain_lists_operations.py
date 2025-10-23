@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkOutboundEndpointsOperations(AzureMgmtRecordedTestCase):
+class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(DnsResolverManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_outbound_endpoints_get(self, resource_group):
-        response = self.client.outbound_endpoints.get(
+    def test_dns_resolver_domain_lists_get(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.get(
             resource_group_name=resource_group.name,
-            dns_resolver_name="str",
-            outbound_endpoint_name="str",
+            dns_resolver_domain_list_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,17 +31,21 @@ class TestNetworkOutboundEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_outbound_endpoints_begin_create_or_update(self, resource_group):
-        response = self.client.outbound_endpoints.begin_create_or_update(
+    def test_dns_resolver_domain_lists_begin_create_or_update(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.begin_create_or_update(
             resource_group_name=resource_group.name,
-            dns_resolver_name="str",
-            outbound_endpoint_name="str",
+            dns_resolver_domain_list_name="str",
             parameters={
                 "location": "str",
-                "properties": {"subnet": {"id": "str"}, "provisioningState": "str", "resourceGuid": "str"},
                 "etag": "str",
                 "id": "str",
                 "name": "str",
+                "properties": {
+                    "domains": ["str"],
+                    "domainsUrl": "str",
+                    "provisioningState": "str",
+                    "resourceGuid": "str",
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -61,12 +64,11 @@ class TestNetworkOutboundEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_outbound_endpoints_begin_update(self, resource_group):
-        response = self.client.outbound_endpoints.begin_update(
+    def test_dns_resolver_domain_lists_begin_update(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.begin_update(
             resource_group_name=resource_group.name,
-            dns_resolver_name="str",
-            outbound_endpoint_name="str",
-            parameters={"tags": {"str": "str"}},
+            dns_resolver_domain_list_name="str",
+            parameters={"properties": {"domains": ["str"]}, "tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,11 +76,10 @@ class TestNetworkOutboundEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_outbound_endpoints_begin_delete(self, resource_group):
-        response = self.client.outbound_endpoints.begin_delete(
+    def test_dns_resolver_domain_lists_begin_delete(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.begin_delete(
             resource_group_name=resource_group.name,
-            dns_resolver_name="str",
-            outbound_endpoint_name="str",
+            dns_resolver_domain_list_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,11 +87,30 @@ class TestNetworkOutboundEndpointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_outbound_endpoints_list(self, resource_group):
-        response = self.client.outbound_endpoints.list(
+    def test_dns_resolver_domain_lists_list_by_resource_group(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.list_by_resource_group(
             resource_group_name=resource_group.name,
-            dns_resolver_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_dns_resolver_domain_lists_list(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.list()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_dns_resolver_domain_lists_begin_bulk(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.begin_bulk(
+            resource_group_name=resource_group.name,
+            dns_resolver_domain_list_name="str",
+            parameters={"properties": {"action": "str", "storageUrl": "str"}},
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkDnsSecurityRulesOperations(AzureMgmtRecordedTestCase):
+class TestDnsResolverManagementDnsResolverPoliciesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(DnsResolverManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_security_rules_get(self, resource_group):
-        response = self.client.dns_security_rules.get(
+    def test_dns_resolver_policies_get(self, resource_group):
+        response = self.client.dns_resolver_policies.get(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
-            dns_security_rule_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,24 +31,16 @@ class TestNetworkDnsSecurityRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_security_rules_begin_create_or_update(self, resource_group):
-        response = self.client.dns_security_rules.begin_create_or_update(
+    def test_dns_resolver_policies_begin_create_or_update(self, resource_group):
+        response = self.client.dns_resolver_policies.begin_create_or_update(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
-            dns_security_rule_name="str",
             parameters={
                 "location": "str",
-                "properties": {
-                    "action": {"actionType": "str"},
-                    "priority": 0,
-                    "dnsResolverDomainLists": [{"id": "str"}],
-                    "dnsSecurityRuleState": "str",
-                    "managedDomainLists": ["str"],
-                    "provisioningState": "str",
-                },
                 "etag": "str",
                 "id": "str",
                 "name": "str",
+                "properties": {"provisioningState": "str", "resourceGuid": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -68,21 +59,11 @@ class TestNetworkDnsSecurityRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_security_rules_begin_update(self, resource_group):
-        response = self.client.dns_security_rules.begin_update(
+    def test_dns_resolver_policies_begin_update(self, resource_group):
+        response = self.client.dns_resolver_policies.begin_update(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
-            dns_security_rule_name="str",
-            parameters={
-                "properties": {
-                    "action": {"actionType": "str"},
-                    "dnsResolverDomainLists": [{"id": "str"}],
-                    "dnsSecurityRuleState": "str",
-                    "managedDomainLists": ["str"],
-                    "priority": 0,
-                },
-                "tags": {"str": "str"},
-            },
+            parameters={"tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -90,11 +71,10 @@ class TestNetworkDnsSecurityRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_security_rules_begin_delete(self, resource_group):
-        response = self.client.dns_security_rules.begin_delete(
+    def test_dns_resolver_policies_begin_delete(self, resource_group):
+        response = self.client.dns_resolver_policies.begin_delete(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
-            dns_security_rule_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -102,10 +82,28 @@ class TestNetworkDnsSecurityRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_security_rules_list(self, resource_group):
-        response = self.client.dns_security_rules.list(
+    def test_dns_resolver_policies_list_by_resource_group(self, resource_group):
+        response = self.client.dns_resolver_policies.list_by_resource_group(
             resource_group_name=resource_group.name,
-            dns_resolver_policy_name="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_dns_resolver_policies_list(self, resource_group):
+        response = self.client.dns_resolver_policies.list()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_dns_resolver_policies_list_by_virtual_network(self, resource_group):
+        response = self.client.dns_resolver_policies.list_by_virtual_network(
+            resource_group_name=resource_group.name,
+            virtual_network_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

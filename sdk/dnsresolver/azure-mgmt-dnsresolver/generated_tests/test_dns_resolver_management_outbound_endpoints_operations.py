@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.dnsresolver import NetworkClient
+from azure.mgmt.dnsresolver import DnsResolverManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkDnsResolverPolicyVirtualNetworkLinksOperations(AzureMgmtRecordedTestCase):
+class TestDnsResolverManagementOutboundEndpointsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkClient)
+        self.client = self.create_mgmt_client(DnsResolverManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_policy_virtual_network_links_get(self, resource_group):
-        response = self.client.dns_resolver_policy_virtual_network_links.get(
+    def test_outbound_endpoints_get(self, resource_group):
+        response = self.client.outbound_endpoints.get(
             resource_group_name=resource_group.name,
-            dns_resolver_policy_name="str",
-            dns_resolver_policy_virtual_network_link_name="str",
+            dns_resolver_name="str",
+            outbound_endpoint_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,14 +32,14 @@ class TestNetworkDnsResolverPolicyVirtualNetworkLinksOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_policy_virtual_network_links_begin_create_or_update(self, resource_group):
-        response = self.client.dns_resolver_policy_virtual_network_links.begin_create_or_update(
+    def test_outbound_endpoints_begin_create_or_update(self, resource_group):
+        response = self.client.outbound_endpoints.begin_create_or_update(
             resource_group_name=resource_group.name,
-            dns_resolver_policy_name="str",
-            dns_resolver_policy_virtual_network_link_name="str",
+            dns_resolver_name="str",
+            outbound_endpoint_name="str",
             parameters={
                 "location": "str",
-                "properties": {"virtualNetwork": {"id": "str"}, "provisioningState": "str"},
+                "properties": {"subnet": {"id": "str"}, "provisioningState": "str", "resourceGuid": "str"},
                 "etag": "str",
                 "id": "str",
                 "name": "str",
@@ -61,11 +61,11 @@ class TestNetworkDnsResolverPolicyVirtualNetworkLinksOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_policy_virtual_network_links_begin_update(self, resource_group):
-        response = self.client.dns_resolver_policy_virtual_network_links.begin_update(
+    def test_outbound_endpoints_begin_update(self, resource_group):
+        response = self.client.outbound_endpoints.begin_update(
             resource_group_name=resource_group.name,
-            dns_resolver_policy_name="str",
-            dns_resolver_policy_virtual_network_link_name="str",
+            dns_resolver_name="str",
+            outbound_endpoint_name="str",
             parameters={"tags": {"str": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,11 +74,11 @@ class TestNetworkDnsResolverPolicyVirtualNetworkLinksOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_policy_virtual_network_links_begin_delete(self, resource_group):
-        response = self.client.dns_resolver_policy_virtual_network_links.begin_delete(
+    def test_outbound_endpoints_begin_delete(self, resource_group):
+        response = self.client.outbound_endpoints.begin_delete(
             resource_group_name=resource_group.name,
-            dns_resolver_policy_name="str",
-            dns_resolver_policy_virtual_network_link_name="str",
+            dns_resolver_name="str",
+            outbound_endpoint_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,10 +86,10 @@ class TestNetworkDnsResolverPolicyVirtualNetworkLinksOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_dns_resolver_policy_virtual_network_links_list(self, resource_group):
-        response = self.client.dns_resolver_policy_virtual_network_links.list(
+    def test_outbound_endpoints_list(self, resource_group):
+        response = self.client.outbound_endpoints.list(
             resource_group_name=resource_group.name,
-            dns_resolver_policy_name="str",
+            dns_resolver_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
