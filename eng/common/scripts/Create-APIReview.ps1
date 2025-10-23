@@ -94,7 +94,7 @@ function Upload-SourceArtifact($filePath, $apiLabel, $releaseStatus, $packageVer
     {
         Write-Host "ERROR: API request failed" -ForegroundColor Red
         Write-Host "Status Code: $($_.Exception.Response.StatusCode.Value__)" -ForegroundColor Yellow
-        Write-Host "Response: $($_.Exception.Response)" -ForegroundColor Yellow
+        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Yellow
         $StatusCode = $_.Exception.Response.StatusCode
     }
 
