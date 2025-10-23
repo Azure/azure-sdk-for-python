@@ -40,7 +40,6 @@ class TestVectorPolicy(unittest.TestCase):
         # Using valid data types
         data_types = ["float32", "float16", "int8", "uint8"]
         for data_type in data_types:
-            print("Testing data type: ", data_type)
             vector_embedding_policy = {
                 "vectorEmbeddings": [
                     {
