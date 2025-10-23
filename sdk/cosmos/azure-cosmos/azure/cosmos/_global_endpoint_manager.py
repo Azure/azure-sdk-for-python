@@ -201,7 +201,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             try:
                 self.client.health_check(endpoint, **kwargs)
                 self.location_cache.mark_endpoint_available(endpoint)
-            except (exceptions.CosmosHttpResponseError, AzureError) as exception:
+            except (exceptions.CosmosHttpResponseError, AzureError):
                 self._mark_endpoint_unavailable(endpoint)
 
         futures = [self.executor.submit(_health_check, ep) for ep in endpoints]

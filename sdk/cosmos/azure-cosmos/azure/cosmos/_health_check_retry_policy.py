@@ -49,7 +49,7 @@ class HealthCheckRetryPolicy(object):
         self.initial_connection_timeout = 5
         self.request = args[0] if args else None
 
-    def ShouldRetry(self, exception):
+    def ShouldRetry(self, exception):# pylint: disable=unused-argument
         """
         Determines if the given exception is transient and if a retry should be attempted.
 

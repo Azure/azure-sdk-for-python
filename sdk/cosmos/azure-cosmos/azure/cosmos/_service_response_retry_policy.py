@@ -7,10 +7,7 @@ from the service, and as such we do not know what the output of the operation wa
 only do cross regional retries for read operations.
 """
 
-import logging
 from azure.cosmos.documents import _OperationType
-from azure.cosmos.http_constants import ResourceType
-
 
 class ServiceResponseRetryPolicy(object):
 
