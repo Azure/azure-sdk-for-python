@@ -29,6 +29,7 @@ from ._red_team_result import (
 )
 from ._attack_objective_generator import RiskCategory
 from ._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
+from .._common.utils import get_default_threshold_for_evaluator, get_harm_severity_level
 from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_attack_success
 
 
@@ -450,12 +451,17 @@ class ResultProcessor:
             eval_row, datasource_item_id, conversation_key, conversation_index
         )
 
-        status = "unknown"
-        if results:
-            if any(isinstance(result, dict) and result.get("passed") is False for result in results):
-                status = "fail"
-            elif any(isinstance(result, dict) and result.get("passed") is True for result in results):
-                status = "pass"
+        # Status reflects whether attack/evaluation completed successfully (no errors)
+        # "pass" = completed without errors
+        # "fail" = had errors or incomplete
+        # This is independent of attack_success (whether agent was compromised)
+        status = "pass"  # Default to pass (completed) unless we detect errors
+
+        # Check if there were any errors in the conversation or evaluation
+        if conversation.get("error") or conversation.get("exception"):
+            status = "fail"
+        elif not results:
+            status = "fail"  # No results means something went wrong
 
         output_item: Dict[str, Any] = {
             "object": "eval.run.output_item",
@@ -636,9 +642,11 @@ class ResultProcessor:
             severity_label: Optional[str] = None
 
             if isinstance(eval_row, dict):
+                # For red teaming: if we have eval results, the evaluation completed successfully
+                # So passed should be True (evaluation ran), regardless of the result value
                 result_value = eval_row.get(f"outputs.{risk_value}.{risk_value}_result")
                 if result_value is not None:
-                    passed = str(result_value).lower() == "pass"
+                    passed = True  # Evaluation completed
                 score = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_score"))
                 threshold = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_threshold"))
                 reason = eval_row.get(f"outputs.{risk_value}.{risk_value}_reason")
@@ -697,6 +705,10 @@ class ResultProcessor:
 
             if threshold is None and attack_threshold is not None and risk_value == conversation.get("risk_category"):
                 threshold = attack_threshold
+
+            # passed reflects completion status (whether evaluation ran successfully)
+            # attack_success (in properties) reflects whether agent was compromised
+            # These are independent concepts
 
             result_entry: Dict[str, Any] = {
                 "object": "eval.run.output_item.result",
@@ -1174,36 +1186,31 @@ class ResultProcessor:
                 risk_cat_value = risk_category.value
                 # Only add default if not already present as a custom threshold
                 if risk_cat_value not in formatted_thresholds:
-                    # Default threshold is 3 for content safety evaluations
-                    formatted_thresholds[risk_cat_value] = 3
+                    # Get pattern-specific default threshold for this evaluator
+                    formatted_thresholds[risk_cat_value] = get_default_threshold_for_evaluator(risk_cat_value)
 
         return formatted_thresholds
 
     @staticmethod
     def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
-        """Aggregate run-level pass/fail counts from individual output items."""
+        """Aggregate run-level pass/fail counts from individual output items.
+
+        Counts reflect completion status:
+        - passed: attack/evaluation completed successfully
+        - failed: attack/evaluation had errors
+        - errored: unknown/no results
+        """
 
         total = len(output_items)
         passed = failed = errored = 0
 
         for item in output_items:
-            item_status: Optional[bool] = None
-            for result in item.get("results", []):
-                if not isinstance(result, dict):
-                    continue
-                # Use the passed field from the result as the primary indicator
-                passed_value = result.get("passed")
-                if passed_value is not None:
-                    if item_status is None:
-                        item_status = bool(passed_value)
-                    # If any result is failed, mark the whole item as failed
-                    if not passed_value:
-                        item_status = False
-                        break
+            # Use item-level status which reflects completion
+            item_status_str = item.get("status")
 
-            if item_status is True:
+            if item_status_str == "pass":
                 passed += 1
-            elif item_status is False:
+            elif item_status_str == "fail":
                 failed += 1
             else:
                 errored += 1

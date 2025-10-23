@@ -26,7 +26,7 @@ from tenacity import retry
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import is_onedp_project
+from azure.ai.evaluation._common.utils import is_onedp_project, get_default_threshold_for_evaluator
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -241,7 +241,8 @@ class EvaluationProcessor:
                             )
 
                         # Add result field based on score and threshold comparison
-                        default_threshold = 3
+                        # Get pattern-specific default threshold for this evaluator
+                        default_threshold = get_default_threshold_for_evaluator(risk_cat_value)
 
                         # Content safety evaluators use "lower is better" scoring by default
                         # If attack success thresholds are configured for this category, use them
@@ -277,7 +278,10 @@ class EvaluationProcessor:
 
                         # Add result field based on score and threshold comparison
                         score = evaluate_output.get(f"{risk_cat_value}_score", 0)
-                        default_threshold = evaluate_output.get(f"{risk_cat_value}_threshold", 3)
+                        # Get pattern-specific default threshold for this evaluator
+                        default_threshold = evaluate_output.get(
+                            f"{risk_cat_value}_threshold", get_default_threshold_for_evaluator(risk_cat_value)
+                        )
 
                         # Content safety evaluators use "lower is better" scoring by default
                         # If attack success thresholds are configured for this category, use them
