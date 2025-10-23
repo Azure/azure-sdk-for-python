@@ -208,7 +208,26 @@ class ResultProcessor:
                                         if eval_result:
                                             eval_row = eval_row_lookup.get(conversation_key)
                                             if eval_row:
-                                                if f"outputs.{risk_category}.{risk_category}_result" in eval_row:
+                                                # Check for attack success from _eval_run_output_item first
+                                                eval_run_output_item = eval_row.get("_eval_run_output_item")
+                                                if eval_run_output_item and isinstance(eval_run_output_item, dict):
+                                                    results_list = eval_run_output_item.get("results", [])
+                                                    for result_item in results_list:
+                                                        if isinstance(result_item, dict):
+                                                            result_name = result_item.get("name") or result_item.get("metric")
+                                                            if result_name == risk_category:
+                                                                properties = result_item.get("properties", {})
+                                                                if isinstance(properties, dict):
+                                                                    score_properties = properties.get("scoreProperties", {})
+                                                                    if isinstance(score_properties, dict):
+                                                                        safe_value = score_properties.get("safe")
+                                                                        # safe="false" means attack was successful
+                                                                        if safe_value is not None:
+                                                                            attack_success = str(safe_value).lower() == "false"
+                                                                        break
+                                                
+                                                # Fall back to legacy _result field if scoreProperties not available
+                                                if attack_success is None and f"outputs.{risk_category}.{risk_category}_result" in eval_row:
                                                     attack_success = get_attack_success(
                                                         eval_row[f"outputs.{risk_category}.{risk_category}_result"]
                                                     )
@@ -416,7 +435,7 @@ class ResultProcessor:
         created_time = self._resolve_created_time(eval_row)
         datasource_item_id = self._resolve_datasource_item_id(eval_row, raw_conversation, conversation_index)
         datasource_item = self._build_datasource_item(eval_row, raw_conversation, datasource_item_id)
-        sample_payload = self._build_sample_payload(conversation, raw_conversation)
+        sample_payload = self._build_sample_payload(conversation, raw_conversation, eval_row)
         results = self._build_output_result(
             conversation,
             eval_row,
@@ -453,6 +472,7 @@ class ResultProcessor:
         self,
         conversation: Dict[str, Any],
         raw_conversation: Dict[str, Any],
+        eval_row: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Create the sample payload for an output item."""
 
@@ -492,11 +512,36 @@ class ResultProcessor:
             "output": output_messages,
         }
 
-        # Exclude risk_sub_type from metadata - it goes in result properties instead
+        # Extract token usage from raw_conversation messages (from callback target only)
+        conversation_payload = raw_conversation.get("conversation")
+        if isinstance(conversation_payload, dict) and "messages" in conversation_payload:
+            messages_list = conversation_payload.get("messages", [])
+            # Look for token_usage in the assistant (last) message
+            for message in reversed(messages_list):
+                if isinstance(message, dict) and message.get("role") == "assistant":
+                    token_usage_from_msg = message.get("token_usage")
+                    if token_usage_from_msg and isinstance(token_usage_from_msg, dict):
+                        # Use callback format directly (already has prompt_tokens, completion_tokens, total_tokens, model_name, etc.)
+                        usage_dict = {}
+                        if "model_name" in token_usage_from_msg:
+                            usage_dict["model_name"] = token_usage_from_msg["model_name"]
+                        if "prompt_tokens" in token_usage_from_msg:
+                            usage_dict["prompt_tokens"] = token_usage_from_msg["prompt_tokens"]
+                        if "completion_tokens" in token_usage_from_msg:
+                            usage_dict["completion_tokens"] = token_usage_from_msg["completion_tokens"]
+                        if "total_tokens" in token_usage_from_msg:
+                            usage_dict["total_tokens"] = token_usage_from_msg["total_tokens"]
+                        if "cached_tokens" in token_usage_from_msg:
+                            usage_dict["cached_tokens"] = token_usage_from_msg["cached_tokens"]
+                        if usage_dict:
+                            sample_payload["usage"] = usage_dict
+                            break
+
+        # Exclude risk_sub_type and _eval_run_output_item from metadata
         metadata = {
             key: value
             for key, value in raw_conversation.items()
-            if key not in {"conversation", "risk_sub_type"} and not self._is_missing(value)
+            if key not in {"conversation", "risk_sub_type", "_eval_run_output_item"} and not self._is_missing(value)
         }
         if metadata:
             sample_payload["metadata"] = metadata
@@ -613,6 +658,28 @@ class ResultProcessor:
                 properties["attack_success"] = attack_success
             if risk_sub_type is not None:
                 properties["risk_sub_type"] = risk_sub_type
+            
+            # Extract additional properties from _eval_run_output_item if available
+            if isinstance(eval_row, dict):
+                eval_run_output_item = eval_row.get("_eval_run_output_item")
+                if eval_run_output_item and isinstance(eval_run_output_item, dict):
+                    results_list = eval_run_output_item.get("results", [])
+                    for result_item in results_list:
+                        if isinstance(result_item, dict):
+                            result_name = result_item.get("name") or result_item.get("metric")
+                            if result_name == risk_value:
+                                item_properties = result_item.get("properties", {})
+                                if isinstance(item_properties, dict):
+                                    # Don't include scoreProperties or outcome in output - only use internally
+                                    # But DO include metrics for token usage aggregation
+                                    metrics = item_properties.get("metrics")
+                                    if metrics:
+                                        properties["metrics"] = metrics
+                                    # Include reasoning if present and not already set as reason
+                                    reasoning = item_properties.get("reasoning")
+                                    if reasoning and not reason:
+                                        reason = reasoning
+                                break
 
             if (
                 passed is None
@@ -1117,15 +1184,17 @@ class ResultProcessor:
         for item in output_items:
             item_status: Optional[bool] = None
             for result in item.get("results", []):
-                result_properties = result.get("properties", {}) if isinstance(result, dict) else {}
-                attack_success = result_properties.get("attack_success")
-                if attack_success is True:
-                    item_status = False
-                    break
-                if attack_success is False:
-                    item_status = True
-                elif item_status is None and result.get("passed") is not None:
-                    item_status = bool(result.get("passed"))
+                if not isinstance(result, dict):
+                    continue
+                # Use the passed field from the result as the primary indicator
+                passed_value = result.get("passed")
+                if passed_value is not None:
+                    if item_status is None:
+                        item_status = bool(passed_value)
+                    # If any result is failed, mark the whole item as failed
+                    if not passed_value:
+                        item_status = False
+                        break
 
             if item_status is True:
                 passed += 1
@@ -1140,6 +1209,86 @@ class ResultProcessor:
             "failed": failed,
             "errored": errored,
         }
+
+    @staticmethod
+    def _compute_per_model_usage(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Compute aggregated token usage across all output items.
+        
+        :param output_items: List of output items
+        :return: List containing model usage statistics grouped by model_name
+        """
+        # Track usage by model name
+        model_usage: Dict[str, Dict[str, int]] = {}
+        
+        for item in output_items:
+            if not isinstance(item, dict):
+                continue
+            
+            # Aggregate usage from sample (callback target)
+            sample = item.get("sample")
+            if isinstance(sample, dict):
+                usage = sample.get("usage")
+                if isinstance(usage, dict):
+                    # Get model name from usage if present, otherwise use default
+                    model_name = usage.get("model_name", "azure_ai_system_model")
+                    
+                    if model_name not in model_usage:
+                        model_usage[model_name] = {
+                            "invocation_count": 0,
+                            "prompt_tokens": 0,
+                            "completion_tokens": 0,
+                            "total_tokens": 0,
+                            "cached_tokens": 0,
+                        }
+                    
+                    model_usage[model_name]["invocation_count"] += 1
+                    model_usage[model_name]["prompt_tokens"] += usage.get("prompt_tokens", 0)
+                    model_usage[model_name]["completion_tokens"] += usage.get("completion_tokens", 0)
+                    model_usage[model_name]["total_tokens"] += usage.get("total_tokens", 0)
+                    model_usage[model_name]["cached_tokens"] += usage.get("cached_tokens", 0)
+            
+            # Always aggregate evaluator usage from results (separate from target usage)
+            results_list = item.get("results", [])
+            for result in results_list:
+                if not isinstance(result, dict):
+                    continue
+                properties = result.get("properties", {})
+                if not isinstance(properties, dict):
+                    continue
+                metrics = properties.get("metrics", {})
+                if isinstance(metrics, dict) and metrics:
+                    # Evaluator usage uses azure_ai_system_model
+                    model_name = "azure_ai_system_model"
+                    
+                    if model_name not in model_usage:
+                        model_usage[model_name] = {
+                            "invocation_count": 0,
+                            "prompt_tokens": 0,
+                            "completion_tokens": 0,
+                            "total_tokens": 0,
+                            "cached_tokens": 0,
+                        }
+                    
+                    prompt_tokens = metrics.get("promptTokens", 0)
+                    completion_tokens = metrics.get("completionTokens", 0)
+                    
+                    if prompt_tokens or completion_tokens:
+                        model_usage[model_name]["invocation_count"] += 1
+                        model_usage[model_name]["prompt_tokens"] += prompt_tokens
+                        model_usage[model_name]["completion_tokens"] += completion_tokens
+                        model_usage[model_name]["total_tokens"] += prompt_tokens + completion_tokens
+        
+        if not model_usage:
+            return []
+        
+        # Convert to list format with model_name as a field
+        return [
+            {
+                "model_name": model_name,
+                **stats,
+            }
+            for model_name, stats in sorted(model_usage.items())
+        ]
 
     @staticmethod
     def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -1283,6 +1432,7 @@ class ResultProcessor:
         eval_id = eval_id_override
         run_name: Optional[str] = None
         created_at = created_at_override
+        import pdb; 
 
         if eval_run is not None:
             run_info = getattr(eval_run, "info", None)
@@ -1344,6 +1494,7 @@ class ResultProcessor:
         per_testing_results = self._compute_per_testing_criteria(output_items)
         data_source = self._build_data_source_section(parameters, red_team_info)
         status = self._determine_run_status(scan_result, red_team_info, output_items)
+        per_model_usage = self._compute_per_model_usage(output_items)
 
         list_wrapper: OutputItemsList = {
             "object": "list",
@@ -1361,7 +1512,7 @@ class ResultProcessor:
             "data_source": data_source,
             "metadata": {},
             "result_counts": result_count,
-            "per_model_usage": [],
+            "per_model_usage": per_model_usage,
             "per_testing_criteria_results": per_testing_results,
             "output_items": list_wrapper,
         }

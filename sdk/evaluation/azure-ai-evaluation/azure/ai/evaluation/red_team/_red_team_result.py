@@ -6,6 +6,12 @@ import json
 from azure.ai.evaluation._common._experimental import experimental
 
 
+# NOTE: The RedTeam* TypedDict classes below are being gradually deprecated in favor of
+# the standard EvalRun* models from azure.ai.evaluation._common.onedp.models._models.
+# New code should use EvalRunOutputItem instead of RedTeamOutputItem, etc.
+# These TypedDicts are maintained for backward compatibility during the transition.
+
+
 @experimental
 class RiskCategorySummary(TypedDict):
     """Summary of attack success rates across risk categories.
@@ -324,7 +330,12 @@ class RedTeamRunOutputItemSample(TypedDict, total=False):
 
 @experimental
 class RedTeamOutputItem(TypedDict, total=False):
-    """Structured representation of a conversation and its evaluation artifacts."""
+    """Structured representation of a conversation and its evaluation artifacts.
+    
+    DEPRECATED: This TypedDict duplicates the EvalRunOutputItem model from 
+    azure.ai.evaluation._common.onedp.models._models. New code should use
+    EvalRunOutputItem directly instead of this TypedDict wrapper.
+    """
 
     object: str
     id: str

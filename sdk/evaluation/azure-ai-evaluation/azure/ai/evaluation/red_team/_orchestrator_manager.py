@@ -100,7 +100,6 @@ class OrchestratorManager:
         retry_config,
         scan_output_dir=None,
         red_team=None,
-        red_team=None,
     ):
         """Initialize the orchestrator manager.
 
@@ -600,7 +599,6 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
-                    context=context_string,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -645,7 +643,6 @@ class OrchestratorManager:
                         return await asyncio.wait_for(
                             orchestrator.run_attack_async(
                                 objective=prompt,
-                                memory_labels=memory_labels,
                                 memory_labels=memory_labels,
                             ),
                             timeout=calculated_timeout,
@@ -851,7 +848,6 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
-                    context=context_string,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -882,7 +878,6 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
-                    context=context_string,
                 )
 
                 try:
@@ -908,7 +903,6 @@ class OrchestratorManager:
                         return await asyncio.wait_for(
                             orchestrator.run_attack_async(
                                 objective=prompt,
-                                memory_labels=memory_labels,
                                 memory_labels=memory_labels,
                             ),
                             timeout=calculated_timeout,
