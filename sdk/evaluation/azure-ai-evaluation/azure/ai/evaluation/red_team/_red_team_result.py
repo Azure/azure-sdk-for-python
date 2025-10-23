@@ -331,8 +331,8 @@ class RedTeamRunOutputItemSample(TypedDict, total=False):
 @experimental
 class RedTeamOutputItem(TypedDict, total=False):
     """Structured representation of a conversation and its evaluation artifacts.
-    
-    DEPRECATED: This TypedDict duplicates the EvalRunOutputItem model from 
+
+    DEPRECATED: This TypedDict duplicates the EvalRunOutputItem model from
     azure.ai.evaluation._common.onedp.models._models. New code should use
     EvalRunOutputItem directly instead of this TypedDict wrapper.
     """

@@ -15,7 +15,9 @@ from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
 
 
-def message_to_dict(message: ChatMessage, context: str = None, tool_calls: List[Any] = None, token_usage: Dict[str, Any] = None) -> Dict[str, Any]:
+def message_to_dict(
+    message: ChatMessage, context: str = None, tool_calls: List[Any] = None, token_usage: Dict[str, Any] = None
+) -> Dict[str, Any]:
     """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
@@ -309,7 +311,10 @@ def write_pyrit_outputs_to_file(
                     conv_dict = {
                         "conversation": {
                             "messages": [
-                                message_to_dict(message[0], message[1], message[2], message[4] if len(message) > 4 else None) for message in conversation
+                                message_to_dict(
+                                    message[0], message[1], message[2], message[4] if len(message) > 4 else None
+                                )
+                                for message in conversation
                             ]
                         }
                     }
@@ -342,7 +347,10 @@ def write_pyrit_outputs_to_file(
                 continue
             conv_dict = {
                 "conversation": {
-                    "messages": [message_to_dict(message[0], message[1], message[2], message[4] if len(message) > 4 else None) for message in conversation]
+                    "messages": [
+                        message_to_dict(message[0], message[1], message[2], message[4] if len(message) > 4 else None)
+                        for message in conversation
+                    ]
                 }
             }
             # Add risk_sub_type if present (check first message for the label)

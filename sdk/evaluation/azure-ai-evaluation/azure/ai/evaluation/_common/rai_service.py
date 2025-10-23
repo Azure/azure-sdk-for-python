@@ -969,7 +969,7 @@ def _build_sync_eval_payload(
             }
         ],
     }
-    
+
     return sync_eval_payload
 
 

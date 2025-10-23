@@ -214,20 +214,29 @@ class ResultProcessor:
                                                     results_list = eval_run_output_item.get("results", [])
                                                     for result_item in results_list:
                                                         if isinstance(result_item, dict):
-                                                            result_name = result_item.get("name") or result_item.get("metric")
+                                                            result_name = result_item.get("name") or result_item.get(
+                                                                "metric"
+                                                            )
                                                             if result_name == risk_category:
                                                                 properties = result_item.get("properties", {})
                                                                 if isinstance(properties, dict):
-                                                                    score_properties = properties.get("scoreProperties", {})
+                                                                    score_properties = properties.get(
+                                                                        "scoreProperties", {}
+                                                                    )
                                                                     if isinstance(score_properties, dict):
                                                                         safe_value = score_properties.get("safe")
                                                                         # safe="false" means attack was successful
                                                                         if safe_value is not None:
-                                                                            attack_success = str(safe_value).lower() == "false"
+                                                                            attack_success = (
+                                                                                str(safe_value).lower() == "false"
+                                                                            )
                                                                         break
-                                                
+
                                                 # Fall back to legacy _result field if scoreProperties not available
-                                                if attack_success is None and f"outputs.{risk_category}.{risk_category}_result" in eval_row:
+                                                if (
+                                                    attack_success is None
+                                                    and f"outputs.{risk_category}.{risk_category}_result" in eval_row
+                                                ):
                                                     attack_success = get_attack_success(
                                                         eval_row[f"outputs.{risk_category}.{risk_category}_result"]
                                                     )
@@ -295,7 +304,7 @@ class ResultProcessor:
                                         # Add conversation object
                                         # Clean messages for old format - remove context and filter tool_calls
                                         cleaned_messages = self._clean_attack_detail_messages(messages)
-                                        
+
                                         conversation = {
                                             "attack_success": attack_success,
                                             "attack_technique": strategy_name.replace("Converter", "").replace(
@@ -307,11 +316,11 @@ class ResultProcessor:
                                             "risk_assessment": (risk_assessment if risk_assessment else None),
                                             "attack_success_threshold": attack_threshold,
                                         }
-                                        
+
                                         # Add risk_sub_type if present in the data
                                         if "risk_sub_type" in conv_data:
                                             conversation["risk_sub_type"] = conv_data["risk_sub_type"]
-                                        
+
                                         conversation_index = len(conversations)
                                         conversations.append(conversation)
 
@@ -412,7 +421,9 @@ class ResultProcessor:
         red_team_result.scan_result["AOAI_Compatible_Summary"] = results_payload
 
         # Store all output items (entire objects, not just nested results)
-        red_team_result.scan_result["AOAI_Compatible_Row_Results"] = ordered_output_items if ordered_output_items else None
+        red_team_result.scan_result["AOAI_Compatible_Row_Results"] = (
+            ordered_output_items if ordered_output_items else None
+        )
 
         return red_team_result
 
@@ -565,14 +576,14 @@ class ResultProcessor:
     @staticmethod
     def _clean_attack_detail_messages(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Clean messages for attack_details in old format files.
-        
+
         Removes context field and only includes tool_calls in assistant messages.
         """
         cleaned_messages = []
         for message in messages:
             if not isinstance(message, dict):
                 continue
-            
+
             cleaned = {}
             # Always include role and content
             if "role" in message:
@@ -581,18 +592,18 @@ class ResultProcessor:
                 cleaned["content"] = message["content"]
             if "name" in message:
                 cleaned["name"] = message["name"]
-            
+
             # Only include tool_calls for assistant messages
             if message.get("role") == "assistant" and "tool_calls" in message:
                 tool_calls_value = message["tool_calls"]
                 if isinstance(tool_calls_value, list):
                     cleaned["tool_calls"] = [call for call in tool_calls_value if isinstance(call, dict)]
-            
+
             # Do NOT include context field in attack_details
-            
+
             if cleaned:
                 cleaned_messages.append(cleaned)
-        
+
         return cleaned_messages
 
     def _build_datasource_item(
@@ -652,7 +663,7 @@ class ResultProcessor:
                 properties["attack_success"] = attack_success
             if risk_sub_type is not None:
                 properties["risk_sub_type"] = risk_sub_type
-            
+
             # Extract additional properties from _eval_run_output_item if available
             if isinstance(eval_row, dict):
                 eval_run_output_item = eval_row.get("_eval_run_output_item")
@@ -1207,17 +1218,17 @@ class ResultProcessor:
     @staticmethod
     def _compute_per_model_usage(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Compute aggregated token usage across all output items.
-        
+
         :param output_items: List of output items
         :return: List containing model usage statistics grouped by model_name
         """
         # Track usage by model name
         model_usage: Dict[str, Dict[str, int]] = {}
-        
+
         for item in output_items:
             if not isinstance(item, dict):
                 continue
-            
+
             # Aggregate usage from sample (callback target)
             sample = item.get("sample")
             if isinstance(sample, dict):
@@ -1225,7 +1236,7 @@ class ResultProcessor:
                 if isinstance(usage, dict):
                     # Get model name from usage if present, otherwise use default
                     model_name = usage.get("model_name", "azure_ai_system_model")
-                    
+
                     if model_name not in model_usage:
                         model_usage[model_name] = {
                             "invocation_count": 0,
@@ -1234,13 +1245,13 @@ class ResultProcessor:
                             "total_tokens": 0,
                             "cached_tokens": 0,
                         }
-                    
+
                     model_usage[model_name]["invocation_count"] += 1
                     model_usage[model_name]["prompt_tokens"] += usage.get("prompt_tokens", 0)
                     model_usage[model_name]["completion_tokens"] += usage.get("completion_tokens", 0)
                     model_usage[model_name]["total_tokens"] += usage.get("total_tokens", 0)
                     model_usage[model_name]["cached_tokens"] += usage.get("cached_tokens", 0)
-            
+
             # Always aggregate evaluator usage from results (separate from target usage)
             results_list = item.get("results", [])
             for result in results_list:
@@ -1253,7 +1264,7 @@ class ResultProcessor:
                 if isinstance(metrics, dict) and metrics:
                     # Evaluator usage uses azure_ai_system_model
                     model_name = "azure_ai_system_model"
-                    
+
                     if model_name not in model_usage:
                         model_usage[model_name] = {
                             "invocation_count": 0,
@@ -1262,19 +1273,19 @@ class ResultProcessor:
                             "total_tokens": 0,
                             "cached_tokens": 0,
                         }
-                    
+
                     prompt_tokens = metrics.get("promptTokens", 0)
                     completion_tokens = metrics.get("completionTokens", 0)
-                    
+
                     if prompt_tokens or completion_tokens:
                         model_usage[model_name]["invocation_count"] += 1
                         model_usage[model_name]["prompt_tokens"] += prompt_tokens
                         model_usage[model_name]["completion_tokens"] += completion_tokens
                         model_usage[model_name]["total_tokens"] += prompt_tokens + completion_tokens
-        
+
         if not model_usage:
             return []
-        
+
         # Convert to list format with model_name as a field
         return [
             {
@@ -1426,7 +1437,7 @@ class ResultProcessor:
         eval_id = eval_id_override
         run_name: Optional[str] = None
         created_at = created_at_override
-        import pdb; 
+        import pdb
 
         if eval_run is not None:
             run_info = getattr(eval_run, "info", None)
