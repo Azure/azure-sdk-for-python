@@ -1407,8 +1407,15 @@ class RedTeam:
                 os.remove(abs_output_path)
             os.makedirs(abs_output_path, exist_ok=True)
 
-            # Write scan result to eval_result.json (default name when path is directory)
-            _write_output(abs_output_path, red_team_result.scan_result)
+            # Create a copy of scan_result without AOAI properties for eval_result.json
+            scan_result_without_aoai = {
+                key: value
+                for key, value in red_team_result.scan_result.items()
+                if not key.startswith("AOAI_Compatible")
+            }
+
+            # Write scan result without AOAI properties to eval_result.json
+            _write_output(abs_output_path, scan_result_without_aoai)
 
             # Write the AOAI summary to results.json
             if aoai_summary:
