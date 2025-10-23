@@ -260,9 +260,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
             if feature_flag.label and not feature_flag.label.isspace():
                 feature_flag_reference += f"?label={feature_flag.label}"
-            if feature_flag_value[TELEMETRY_KEY].get("allocation") and feature_flag_value[TELEMETRY_KEY].get(
-                "allocation"
-            ).get("seed"):
+            allocation = feature_flag_value[TELEMETRY_KEY].get("allocation")
+            if allocation and allocation.get("seed"):
                 self._tracing_context.uses_seed = True
             if feature_flag_value[TELEMETRY_KEY].get("variant"):
                 self._tracing_context.update_max_variants(len(feature_flag_value[TELEMETRY_KEY].get("variant")))
