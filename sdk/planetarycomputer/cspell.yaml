@@ -84,3 +84,11 @@ words:
   - unscale   # Remove scaling transformation
   - widthx    # Width in X direction
   - wmts      # Web Map Tile Service
+
+  # Unit test
+  - FGDC
+  - FSANITIZED
+  - Fvojrtgdatasa
+  - hrefs
+  - RGBIR
+  - vojrtgdatasa
