@@ -53,7 +53,7 @@ jobs:
           black --check --config eng/black-pyproject.toml eng/tools/azure-sdk-tools --exclude 'templates'
         shell: bash
 
-  check-all-azpysdk-on-uv:
+  verify-azpysdk-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -90,8 +90,8 @@ jobs:
             echo "No azpysdk check modules discovered in $CHECK_DIR" >&2
             exit 1
           fi
-          IFS=',' read -r -a SORTED <<< "$(printf '%s\n' "${MODULES[@]}" | sort)"
-          CHECKS="$(printf '%s,' "${SORTED[@]}" | sed 's/,$//')"
+          # Sort and join with commas
+          CHECKS="$(printf '%s\n' "${MODULES[@]}" | sort | paste -sd,)"
           echo "Discovered azpysdk checks: $CHECKS"
           echo "AZPYSDK_CHECKS=$CHECKS" >> "$GITHUB_ENV"
           # end discovery
