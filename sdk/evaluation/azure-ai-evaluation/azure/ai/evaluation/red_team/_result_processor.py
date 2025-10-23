@@ -411,14 +411,8 @@ class ResultProcessor:
         # Populate AOAI-compatible fields
         red_team_result.scan_result["AOAI_Compatible_Summary"] = results_payload
 
-        # Extract all results from all output items
-        all_row_results = []
-        for output_item in ordered_output_items:
-            item_results = output_item.get("results", [])
-            if item_results:
-                all_row_results.extend(item_results)
-
-        red_team_result.scan_result["AOAI_Compatible_Row_Results"] = all_row_results if all_row_results else None
+        # Store all output items (entire objects, not just nested results)
+        red_team_result.scan_result["AOAI_Compatible_Row_Results"] = ordered_output_items if ordered_output_items else None
 
         return red_team_result
 
