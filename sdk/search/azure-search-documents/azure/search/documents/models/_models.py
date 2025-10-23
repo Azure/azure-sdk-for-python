@@ -922,10 +922,10 @@ class SearchDocumentsResult(_Model):
 class SearchRequest(_Model):
     """Parameters for filtering, sorting, faceting, paging, and other search query behaviors.
 
-    :ivar include_total_result_count: A value that specifies whether to fetch the total count of
-     results. Default is false. Setting this value to true may have a performance impact. Note that
-     the count returned is an approximation.
-    :vartype include_total_result_count: bool
+    :ivar include_total_count: A value that specifies whether to fetch the total count of results.
+     Default is false. Setting this value to true may have a performance impact. Note that the count
+     returned is an approximation.
+    :vartype include_total_count: bool
     :ivar facets: The list of facet expressions to apply to the search query. Each facet expression
      contains a field name, optionally followed by a comma-separated list of name:value pairs.
     :vartype facets: list[str]
@@ -1002,9 +1002,9 @@ class SearchRequest(_Model):
      "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
      "te-in", and "ur-pk".
     :vartype query_language: str or ~azure.search.documents.models.QueryLanguage
-    :ivar speller: A value that specified the type of the speller to use to spell-correct
+    :ivar query_speller: A value that specified the type of the speller to use to spell-correct
      individual search query terms. Known values are: "none" and "lexicon".
-    :vartype speller: str or ~azure.search.documents.models.QuerySpellerType
+    :vartype query_speller: str or ~azure.search.documents.models.QuerySpellerType
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
      as retrievable in the schema are included.
     :vartype select: str
@@ -1017,9 +1017,9 @@ class SearchRequest(_Model):
      paging, the response will include a continuation token that can be used to issue another Search
      request for the next page of results.
     :vartype top: int
-    :ivar semantic_configuration: The name of a semantic configuration that will be used when
+    :ivar semantic_configuration_name: The name of a semantic configuration that will be used when
      processing documents for queries of type semantic.
-    :vartype semantic_configuration: str
+    :vartype semantic_configuration_name: str
     :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
      completely (default / current behavior), or to return partial results. Known values are:
      "partial" and "fail".
@@ -1053,7 +1053,7 @@ class SearchRequest(_Model):
     :vartype hybrid_search: ~azure.search.documents.models.HybridSearch
     """
 
-    include_total_result_count: Optional[bool] = rest_field(
+    include_total_count: Optional[bool] = rest_field(
         name="count", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value that specifies whether to fetch the total count of results. Default is false. Setting
@@ -1156,8 +1156,8 @@ class SearchRequest(_Model):
      \"et-ee\", \"ca-es\", \"fi-fi\", \"sr-ba\", \"sr-me\", \"sr-rs\", \"sk-sk\", \"nb-no\",
      \"hy-am\", \"bn-in\", \"eu-es\", \"gl-es\", \"gu-in\", \"he-il\", \"ga-ie\", \"kn-in\",
      \"ml-in\", \"mr-in\", \"fa-ae\", \"pa-in\", \"te-in\", and \"ur-pk\"."""
-    speller: Optional[Union[str, "_models.QuerySpellerType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = rest_field(
+        name="speller", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value that specified the type of the speller to use to spell-correct individual search query
      terms. Known values are: \"none\" and \"lexicon\"."""
@@ -1173,7 +1173,7 @@ class SearchRequest(_Model):
      implement client-side paging of search results. If results are truncated due to server-side
      paging, the response will include a continuation token that can be used to issue another Search
      request for the next page of results."""
-    semantic_configuration: Optional[str] = rest_field(
+    semantic_configuration_name: Optional[str] = rest_field(
         name="semanticConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of a semantic configuration that will be used when processing documents for queries of
@@ -1232,7 +1232,7 @@ class SearchRequest(_Model):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        include_total_result_count: Optional[bool] = None,
+        include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
         filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         highlight_fields: Optional[str] = None,
@@ -1250,11 +1250,11 @@ class SearchRequest(_Model):
         search_fields: Optional[str] = None,
         search_mode: Optional[Union[str, "_models.SearchMode"]] = None,
         query_language: Optional[Union[str, "_models.QueryLanguage"]] = None,
-        speller: Optional[Union[str, "_models.QuerySpellerType"]] = None,
+        query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = None,
         select: Optional[str] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        semantic_configuration: Optional[str] = None,
+        semantic_configuration_name: Optional[str] = None,
         semantic_error_handling: Optional[Union[str, "_models.SemanticErrorMode"]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         semantic_query: Optional[str] = None,

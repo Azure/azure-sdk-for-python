@@ -16,18 +16,16 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import SearchClientConfiguration
+from ._operations import _SearchClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
-from .operations import DocumentsOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchClient:
+class SearchClient(_SearchClientOperationsMixin):
     """SearchClient.
 
-    :ivar documents: DocumentsOperations operations
-    :vartype documents: azure.search.documents.operations.DocumentsOperations
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
@@ -72,7 +70,6 @@ class SearchClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.documents = DocumentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

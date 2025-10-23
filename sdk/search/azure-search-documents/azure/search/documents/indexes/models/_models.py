@@ -346,40 +346,68 @@ class AnalyzedTokenInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeRequest(_Model):
+class AnalyzeResult(_Model):
+    """The result of testing an analyzer on text.
+
+    :ivar tokens: The list of tokens returned by the analyzer specified in the request. Required.
+    :vartype tokens: list[~azure.search.documents.indexes.models.AnalyzedTokenInfo]
+    """
+
+    tokens: list["_models.AnalyzedTokenInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of tokens returned by the analyzer specified in the request. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tokens: list["_models.AnalyzedTokenInfo"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeTextOptions(_Model):
     """Specifies some text and analysis components used to break that text into tokens.
 
     :ivar text: The text to break into tokens. Required.
     :vartype text: str
-    :ivar analyzer: The name of the analyzer to use to break the given text. If this parameter is
-     not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
-     mutually exclusive. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft",
-     "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
-     "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
-     "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
-     "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene",
-     "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft",
-     "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft",
-     "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft",
-     "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene",
-     "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene",
-     "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
-     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
-     "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
-     "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
-     "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
-     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
-     "whitespace".
-    :vartype analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar tokenizer: The name of the tokenizer to use to break the given text. If this parameter is
-     not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters are
-     mutually exclusive. Known values are: "classic", "edgeNGram", "keyword_v2", "letter",
-     "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer", "nGram",
-     "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", and "whitespace".
-    :vartype tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
-    :ivar normalizer: The name of the normalizer to use to normalize the given text. Known values
-     are: "asciifolding", "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
+    :ivar analyzer_name: The name of the analyzer to use to break the given text. If this parameter
+     is not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters
+     are mutually exclusive. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene",
+     "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene",
+     "zh-Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
+     "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
+     "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
+     "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
+     "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
+     "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
+     "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
+     "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
+     "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene",
+     "pt-PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
+     "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
+     "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
+     "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
+     "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
+     "simple", "stop", and "whitespace".
+    :vartype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar tokenizer_name: The name of the tokenizer to use to break the given text. If this
+     parameter is not specified, you must specify an analyzer instead. The tokenizer and analyzer
+     parameters are mutually exclusive. Known values are: "classic", "edgeNGram", "keyword_v2",
+     "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
+     "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", and "whitespace".
+    :vartype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :ivar normalizer_name: The name of the normalizer to use to normalize the given text. Known
+     values are: "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+    :vartype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar token_filters: An optional list of token filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
     :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
@@ -390,8 +418,8 @@ class AnalyzeRequest(_Model):
 
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text to break into tokens. Required."""
-    analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+        name="analyzer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the analyzer to use to break the given text. If this parameter is not specified,
      you must specify a tokenizer instead. The tokenizer and analyzer parameters are mutually
@@ -415,8 +443,8 @@ class AnalyzeRequest(_Model):
      \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\", \"vi.microsoft\", \"standard.lucene\",
      \"standardasciifolding.lucene\", \"keyword\", \"pattern\", \"simple\", \"stop\", and
      \"whitespace\"."""
-    tokenizer: Optional[Union[str, "_models.LexicalTokenizerName"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    tokenizer_name: Optional[Union[str, "_models.LexicalTokenizerName"]] = rest_field(
+        name="tokenizer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the tokenizer to use to break the given text. If this parameter is not specified,
      you must specify an analyzer instead. The tokenizer and analyzer parameters are mutually
@@ -424,8 +452,8 @@ class AnalyzeRequest(_Model):
      \"lowercase\", \"microsoft_language_tokenizer\", \"microsoft_language_stemming_tokenizer\",
      \"nGram\", \"path_hierarchy_v2\", \"pattern\", \"standard_v2\", \"uax_url_email\", and
      \"whitespace\"."""
-    normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    normalizer_name: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field(
+        name="normalizer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the normalizer to use to normalize the given text. Known values are:
      \"asciifolding\", \"elision\", \"lowercase\", \"standard\", and \"uppercase\"."""
@@ -445,39 +473,11 @@ class AnalyzeRequest(_Model):
         self,
         *,
         text: str,
-        analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
-        tokenizer: Optional[Union[str, "_models.LexicalTokenizerName"]] = None,
-        normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = None,
+        analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
+        tokenizer_name: Optional[Union[str, "_models.LexicalTokenizerName"]] = None,
+        normalizer_name: Optional[Union[str, "_models.LexicalNormalizerName"]] = None,
         token_filters: Optional[list[Union[str, "_models.TokenFilterName"]]] = None,
         char_filters: Optional[list[Union[str, "_models.CharFilterName"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeResult(_Model):
-    """The result of testing an analyzer on text.
-
-    :ivar tokens: The list of tokens returned by the analyzer specified in the request. Required.
-    :vartype tokens: list[~azure.search.documents.indexes.models.AnalyzedTokenInfo]
-    """
-
-    tokens: list["_models.AnalyzedTokenInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of tokens returned by the analyzer specified in the request. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tokens: list["_models.AnalyzedTokenInfo"],
     ) -> None: ...
 
     @overload
@@ -5803,10 +5803,11 @@ class ListDataSourcesResult(_Model):
     all datasources.
 
     :ivar data_sources: The datasources in the Search service. Required.
-    :vartype data_sources: list[~azure.search.documents.indexes.models.SearchIndexerDataSource]
+    :vartype data_sources:
+     list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
     """
 
-    data_sources: list["_models.SearchIndexerDataSource"] = rest_field(
+    data_sources: list["_models.SearchIndexerDataSourceConnection"] = rest_field(
         name="value", visibility=["read", "create", "update", "delete", "query"]
     )
     """The datasources in the Search service. Required."""
@@ -5815,7 +5816,7 @@ class ListDataSourcesResult(_Model):
     def __init__(
         self,
         *,
-        data_sources: list["_models.SearchIndexerDataSource"],
+        data_sources: list["_models.SearchIndexerDataSourceConnection"],
     ) -> None: ...
 
     @overload
@@ -7585,8 +7586,8 @@ class SearchField(_Model):
     :ivar permission_filter: A value indicating whether the field should be used as a permission
      filter. Known values are: "userIds", "groupIds", and "rbacScope".
     :vartype permission_filter: str or ~azure.search.documents.indexes.models.PermissionFilter
-    :ivar analyzer: The name of the analyzer to use for the field. This option can be used only
-     with searchable fields and it can't be set together with either searchAnalyzer or
+    :ivar analyzer_name: The name of the analyzer to use for the field. This option can be used
+     only with searchable fields and it can't be set together with either searchAnalyzer or
      indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
      for complex fields. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft",
      "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
@@ -7605,11 +7606,11 @@ class SearchField(_Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar search_analyzer: The name of the analyzer used at search time for the field. This option
-     can be used only with searchable fields. It must be set together with indexAnalyzer and it
-     cannot be set together with the analyzer option. This property cannot be set to the name of a
-     language analyzer; use the analyzer property instead if you need a language analyzer. This
+    :vartype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar search_analyzer_name: The name of the analyzer used at search time for the field. This
+     option can be used only with searchable fields. It must be set together with indexAnalyzer and
+     it cannot be set together with the analyzer option. This property cannot be set to the name of
+     a language analyzer; use the analyzer property instead if you need a language analyzer. This
      analyzer can be updated on an existing field. Must be null for complex fields. Known values
      are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
      "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
@@ -7628,13 +7629,14 @@ class SearchField(_Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype search_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar index_analyzer: The name of the analyzer used at indexing time for the field. This option
-     can be used only with searchable fields. It must be set together with searchAnalyzer and it
-     cannot be set together with the analyzer option.  This property cannot be set to the name of a
-     language analyzer; use the analyzer property instead if you need a language analyzer. Once the
-     analyzer is chosen, it cannot be changed for the field. Must be null for complex fields. Known
-     values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene",
+    :vartype search_analyzer_name: str or
+     ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar index_analyzer_name: The name of the analyzer used at indexing time for the field. This
+     option can be used only with searchable fields. It must be set together with searchAnalyzer and
+     it cannot be set together with the analyzer option.  This property cannot be set to the name of
+     a language analyzer; use the analyzer property instead if you need a language analyzer. Once
+     the analyzer is chosen, it cannot be changed for the field. Must be null for complex fields.
+     Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene",
      "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
      "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
      "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
@@ -7651,12 +7653,12 @@ class SearchField(_Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype index_analyzer: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar normalizer: The name of the normalizer to use for the field. This option can be used only
-     with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
-     cannot be changed for the field. Must be null for complex fields. Known values are:
+    :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar normalizer_name: The name of the normalizer to use for the field. This option can be used
+     only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
+     chosen, it cannot be changed for the field. Must be null for complex fields. Known values are:
      "asciifolding", "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
+    :vartype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the
@@ -7665,12 +7667,12 @@ class SearchField(_Model):
     :ivar vector_encoding_format: The encoding format to interpret the field contents. "packedBit"
     :vartype vector_encoding_format: str or
      ~azure.search.documents.indexes.models.VectorEncodingFormat
-    :ivar synonym_maps: A list of the names of synonym maps to associate with this field. This
+    :ivar synonym_map_names: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
      expanded at query-time using the rules in the synonym map. This attribute can be changed on
      existing fields. Must be null or an empty collection for complex fields.
-    :vartype synonym_maps: list[str]
+    :vartype synonym_map_names: list[str]
     :ivar fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
@@ -7747,8 +7749,8 @@ class SearchField(_Model):
     )
     """A value indicating whether the field should be used as a permission filter. Known values are:
      \"userIds\", \"groupIds\", and \"rbacScope\"."""
-    analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+        name="analyzer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the analyzer to use for the field. This option can be used only with searchable
      fields and it can't be set together with either searchAnalyzer or indexAnalyzer. Once the
@@ -7772,7 +7774,7 @@ class SearchField(_Model):
      \"th.lucene\", \"tr.microsoft\", \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\",
      \"vi.microsoft\", \"standard.lucene\", \"standardasciifolding.lucene\", \"keyword\",
      \"pattern\", \"simple\", \"stop\", and \"whitespace\"."""
-    search_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+    search_analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
         name="searchAnalyzer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the analyzer used at search time for the field. This option can be used only with
@@ -7799,7 +7801,7 @@ class SearchField(_Model):
      \"tr.microsoft\", \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\", \"vi.microsoft\",
      \"standard.lucene\", \"standardasciifolding.lucene\", \"keyword\", \"pattern\", \"simple\",
      \"stop\", and \"whitespace\"."""
-    index_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+    index_analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
         name="indexAnalyzer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the analyzer used at indexing time for the field. This option can be used only with
@@ -7826,8 +7828,8 @@ class SearchField(_Model):
      \"th.lucene\", \"tr.microsoft\", \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\",
      \"vi.microsoft\", \"standard.lucene\", \"standardasciifolding.lucene\", \"keyword\",
      \"pattern\", \"simple\", \"stop\", and \"whitespace\"."""
-    normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    normalizer_name: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field(
+        name="normalizer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the normalizer to use for the field. This option can be used only with fields with
      filterable, sortable, or facetable enabled. Once the normalizer is chosen, it cannot be changed
@@ -7846,7 +7848,7 @@ class SearchField(_Model):
         name="vectorEncoding", visibility=["read", "create", "update", "delete", "query"]
     )
     """The encoding format to interpret the field contents. \"packedBit\""""
-    synonym_maps: Optional[list[str]] = rest_field(
+    synonym_map_names: Optional[list[str]] = rest_field(
         name="synonymMaps", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of the names of synonym maps to associate with this field. This option can be used only
@@ -7874,14 +7876,14 @@ class SearchField(_Model):
         sortable: Optional[bool] = None,
         facetable: Optional[bool] = None,
         permission_filter: Optional[Union[str, "_models.PermissionFilter"]] = None,
-        analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
-        search_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
-        index_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
-        normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = None,
+        analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
+        search_analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
+        index_analyzer_name: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
+        normalizer_name: Optional[Union[str, "_models.LexicalNormalizerName"]] = None,
         vector_search_dimensions: Optional[int] = None,
         vector_search_profile_name: Optional[str] = None,
         vector_encoding_format: Optional[Union[str, "_models.VectorEncodingFormat"]] = None,
-        synonym_maps: Optional[list[str]] = None,
+        synonym_map_names: Optional[list[str]] = None,
         fields: Optional[list["_models.SearchField"]] = None,
     ) -> None: ...
 
@@ -8354,7 +8356,7 @@ class SearchIndexerDataNoneIdentity(
         self.odata_type = "#Microsoft.Azure.Search.DataNoneIdentity"  # type: ignore
 
 
-class SearchIndexerDataSource(_Model):
+class SearchIndexerDataSourceConnection(_Model):
     """Represents a datasource definition, which can be used to configure an indexer.
 
     :ivar name: The name of the datasource. Required.

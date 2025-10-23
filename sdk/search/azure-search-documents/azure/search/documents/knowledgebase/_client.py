@@ -17,17 +17,15 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import KnowledgeBaseRetrievalClientConfiguration
-from .operations import KnowledgeRetrievalOperations
+from ._operations import _KnowledgeBaseRetrievalClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class KnowledgeBaseRetrievalClient:
+class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClientOperationsMixin):
     """KnowledgeBaseRetrievalClient.
 
-    :ivar knowledge_retrieval: KnowledgeRetrievalOperations operations
-    :vartype knowledge_retrieval: azure.search.documents.operations.KnowledgeRetrievalOperations
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
@@ -66,9 +64,6 @@ class KnowledgeBaseRetrievalClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.knowledge_retrieval = KnowledgeRetrievalOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
