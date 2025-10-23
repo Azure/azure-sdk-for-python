@@ -27,7 +27,6 @@ from azure.appconfiguration.provider._constants import (
     TIME_WINDOW_FILTER_NAMES,
     TARGETING_FILTER_NAMES,
     FEATURE_FLAG_USES_SEED_TAG,
-    FEATURE_FLAG_USES_VARIANT_CONFIGURATION_REFERENCE_TAG,
     FEATURE_FLAG_USES_TELEMETRY_TAG,
 )
 
@@ -47,7 +46,6 @@ class TestRequestTracingContext(unittest.TestCase):
         self.assertFalse(context.uses_aicc_configuration)
         self.assertFalse(context.uses_telemetry)
         self.assertFalse(context.uses_seed)
-        self.assertFalse(context.uses_variant_configuration_reference)
         self.assertIsNone(context.max_variants)
         self.assertEqual(context.feature_filter_usage, {})
         self.assertEqual(context.host_type, HostType.UNIDENTIFIED)
@@ -95,11 +93,10 @@ class TestRequestTracingContext(unittest.TestCase):
     def test__create_features_string_with_features(self):
         """Test _create_features_string with FF features enabled."""
         self.context.uses_seed = True
-        self.context.uses_variant_configuration_reference = True
         self.context.uses_telemetry = True
 
         result = self.context._create_features_string()
-        expected = f"{FEATURE_FLAG_USES_SEED_TAG}+{FEATURE_FLAG_USES_VARIANT_CONFIGURATION_REFERENCE_TAG}+{FEATURE_FLAG_USES_TELEMETRY_TAG}"
+        expected = f"{FEATURE_FLAG_USES_SEED_TAG}+{FEATURE_FLAG_USES_TELEMETRY_TAG}"
         self.assertEqual(result, expected)
 
     def test_get_host_type_unidentified(self):

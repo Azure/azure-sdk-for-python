@@ -21,7 +21,6 @@ from ._constants import (
     TIME_WINDOW_FILTER_NAMES,
     TARGETING_FILTER_NAMES,
     FEATURE_FLAG_USES_SEED_TAG,
-    FEATURE_FLAG_USES_VARIANT_CONFIGURATION_REFERENCE_TAG,
     FEATURE_FLAG_USES_TELEMETRY_TAG,
 )
 
@@ -55,7 +54,6 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         self.uses_aicc_configuration = False  # AI Chat Completion
         self.uses_telemetry = False
         self.uses_seed = False
-        self.uses_variant_configuration_reference = False
         self.max_variants: Optional[int] = None
         self.feature_filter_usage: Dict[str, bool] = {}
         self.is_key_vault_configured: bool = False
@@ -109,9 +107,6 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
 
         if self.uses_seed:
             features_list.append(FEATURE_FLAG_USES_SEED_TAG)
-
-        if self.uses_variant_configuration_reference:
-            features_list.append(FEATURE_FLAG_USES_VARIANT_CONFIGURATION_REFERENCE_TAG)
 
         if self.uses_telemetry:
             features_list.append(FEATURE_FLAG_USES_TELEMETRY_TAG)
@@ -247,7 +242,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             key_values.append(("MaxVariants", str(self.max_variants)))
 
         # Add feature flag features if present
-        if self.uses_seed or self.uses_telemetry or self.uses_variant_configuration_reference:
+        if self.uses_seed or self.uses_telemetry:
             ff_features_string = self._create_features_string()
             if ff_features_string:
                 key_values.append(("FFFeatures", ff_features_string))
