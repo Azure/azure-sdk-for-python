@@ -198,7 +198,7 @@ class Check(abc.ABC):
             if command[0] == "uv":
                 command += ["freeze", "--python", executable]
             else:
-                command += ["-m", "pip", "freeze"]
+                command += ["freeze"]
 
             result = subprocess.run(command, cwd=os.getcwd(), check=True, capture_output=True, text=True)
             logger.info("Installed packages:")
