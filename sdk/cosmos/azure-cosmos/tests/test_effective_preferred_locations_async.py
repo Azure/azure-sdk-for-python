@@ -87,7 +87,7 @@ class TestPreferredLocationsAsync:
         try:
             client = CosmosClient(default_endpoint, self.master_key, preferred_locations=preferred_location)
             # this will setup the location cache
-            await client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
+            await client.__aenter__()
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_getDatabaseAccountCheck

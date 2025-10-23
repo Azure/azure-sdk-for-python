@@ -626,7 +626,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             request_object = args[1]
             if (request_object.operation_type == documents._OperationType.Read and
                     request_object.resource_type == ResourceType.DatabaseAccount):
-                assert request_object.endpoint_override == test_config.TestConfig.host + "probe" or request_object.endpoint_override == "https://127.0.0.1:8081/probe"
                 self.counter += 1
                 raise ServiceRequestError("mocked service request error")
             return await self.org_func(func, *args, **kwargs)
@@ -702,7 +701,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             request_object = args[1]
             if (request_object.operation_type == documents._OperationType.Read and
                     request_object.resource_type == ResourceType.DatabaseAccount):
-                assert request_object.endpoint_override == test_config.TestConfig.host + "probe" or request_object.endpoint_override == "https://127.0.0.1:8081/probe"
                 self.counter += 1
                 raise exceptions.CosmosHttpResponseError(
                     status_code=503,

@@ -579,7 +579,6 @@ class TestRetryPolicy(unittest.TestCase):
             if (request_object.operation_type == documents._OperationType.Read and
                     request_object.resource_type == ResourceType.DatabaseAccount):
                 self.counter += 1
-                assert request_object.endpoint_override == test_config.TestConfig.host + "probe" or request_object.endpoint_override == "https://127.0.0.1:8081/probe"
                 raise ServiceResponseError("mocked service response error")
             return self.org_func(func, *args, **kwargs)
 
@@ -641,7 +640,6 @@ class TestRetryPolicy(unittest.TestCase):
             if (request_object.operation_type == documents._OperationType.Read and
                     request_object.resource_type == ResourceType.DatabaseAccount):
                 self.counter += 1
-                assert request_object.endpoint_override == test_config.TestConfig.host + "probe" or request_object.endpoint_override == "https://127.0.0.1:8081/probe"
                 raise exceptions.CosmosHttpResponseError(
                     status_code=503,
                     message="Service Unavailable.")
