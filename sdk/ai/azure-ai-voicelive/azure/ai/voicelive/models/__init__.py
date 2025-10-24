@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    AgentConfig,
     Animation,
     AssistantMessageItem,
     AudioEchoCancellation,
@@ -53,7 +52,7 @@ from ._models import (  # type: ignore
     ContentPart,
     ConversationItemBase,
     ConversationRequestItem,
-    EOUDetection,
+    EouDetection,
     ErrorResponse,
     FunctionCallItem,
     FunctionCallOutputItem,
@@ -126,8 +125,8 @@ from ._models import (  # type: ignore
     SystemMessageItem,
     TokenUsage,
     Tool,
-    ToolChoiceFunctionObject,
-    ToolChoiceObject,
+    ToolChoiceFunctionSelection,
+    ToolChoiceSelection,
     TurnDetection,
     UserMessageItem,
     VideoCrop,
@@ -148,7 +147,7 @@ from ._enums import (  # type: ignore
     ItemType,
     MessageRole,
     Modality,
-    OAIVoice,
+    OpenAIVoiceName,
     OutputAudioFormat,
     PersonalVoiceModels,
     ResponseItemStatus,
@@ -163,7 +162,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AgentConfig",
     "Animation",
     "AssistantMessageItem",
     "AudioEchoCancellation",
@@ -202,7 +200,7 @@ __all__ = [
     "ContentPart",
     "ConversationItemBase",
     "ConversationRequestItem",
-    "EOUDetection",
+    "EouDetection",
     "ErrorResponse",
     "FunctionCallItem",
     "FunctionCallOutputItem",
@@ -275,8 +273,8 @@ __all__ = [
     "SystemMessageItem",
     "TokenUsage",
     "Tool",
-    "ToolChoiceFunctionObject",
-    "ToolChoiceObject",
+    "ToolChoiceFunctionSelection",
+    "ToolChoiceSelection",
     "TurnDetection",
     "UserMessageItem",
     "VideoCrop",
@@ -294,7 +292,7 @@ __all__ = [
     "ItemType",
     "MessageRole",
     "Modality",
-    "OAIVoice",
+    "OpenAIVoiceName",
     "OutputAudioFormat",
     "PersonalVoiceModels",
     "ResponseItemStatus",

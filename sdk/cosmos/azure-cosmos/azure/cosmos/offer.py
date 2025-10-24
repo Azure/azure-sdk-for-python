@@ -21,9 +21,10 @@
 """
 
 
-from typing import Optional, Any, Mapping
+from typing import Optional, Any, Mapping, TYPE_CHECKING
 
-from ._cosmos_responses import CosmosDict
+if TYPE_CHECKING:
+    from ._cosmos_responses import CosmosDict
 
 
 class ThroughputProperties:
@@ -43,7 +44,7 @@ class ThroughputProperties:
 
     def __init__(self, *args, **kwargs) -> None:
         self.offer_throughput: Optional[int] = args[0] if args else kwargs.get('offer_throughput')
-        self.properties: Optional[CosmosDict] = args[1] if len(args) > 1 else kwargs.get('properties')
+        self.properties: Optional["CosmosDict"] = args[1] if len(args) > 1 else kwargs.get('properties')
         self.auto_scale_max_throughput: Optional[int] = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent: Optional[int] = kwargs.get('auto_scale_increment_percent')
 

@@ -33,10 +33,11 @@ def generate_typespec(folder: Path) -> None:
         if "'tsp-client' is not recognized" in completed_process.stderr.decode("utf-8"):
             raise ValueError(
                 "tsp-client is not installed. Please run: npm install -g @azure-tools/typespec-client-generator-cli"
-                )
+            )
         raise ValueError("Something happened with tsp-client update step: " + str(completed_process))
 
     _LOGGER.info("TypeSpec generate done")
+
 
 def generate(folder: Path = Path(".")) -> None:
     if (folder / "swagger" / "README.md").exists():
@@ -45,6 +46,7 @@ def generate(folder: Path = Path(".")) -> None:
         generate_typespec(folder)
     else:
         raise ValueError("Didn't find swagger/README.md nor tsp_location.yaml")
+
 
 def generate_main() -> None:
     """Main method"""

@@ -233,11 +233,6 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
                 # Mark as shutdown if we attempted shutdown (even if it failed)
                 self._status = CustomerSdkStatsStatus.SHUTDOWN
 
-            # Clear the singleton instance from the metaclass
-            if shutdown_success:
-                if self.__class__ in CustomerSdkStatsManager._instances:  # pylint: disable=protected-access
-                    del CustomerSdkStatsManager._instances[self.__class__]  # pylint: disable=protected-access
-
         return shutdown_success
 
     def count_successful_items(self, count: int, telemetry_type: str) -> None:

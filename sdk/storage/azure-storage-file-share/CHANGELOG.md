@@ -4,6 +4,17 @@
 
 ### Features Added
 
+## 12.23.0 (2025-10-15)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Bugs Fixed
+- Fixed an issue where `ShareClient`'s `list_directories_and_files` API specified with `name_starts_with`
+would not return all results when the share contains a large number of files and directories.
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
+
 ## 12.22.0 (2025-07-16)
 
 ### Features Added

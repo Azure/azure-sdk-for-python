@@ -5,7 +5,12 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
+
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+)
 
 from azure.ai.voicelive.aio import (
     VoiceLiveConnection,
@@ -21,7 +26,7 @@ from azure.ai.voicelive.models import (
     RequestSession,
     ResponseCreateParams,
     Modality,
-    OAIVoice,
+    OpenAIVoiceName,
     OpenAIVoice,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -242,7 +247,7 @@ class TestVoiceLiveConnectionIntegration:
                 connection = VoiceLiveConnection(endpoint, credential)
 
                 # Test session update
-                session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OAIVoice.ALLOY))
+                session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
 
                 # Mock the send method
                 connection.send = AsyncMock()

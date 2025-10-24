@@ -25,16 +25,18 @@
         "Fallafel",
         "isna",
         "dtype",
-        "duckdb"
+        "duckdb",
+        "semconv"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_retrieval/retrieval.prompty",
 		"sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_intent_resolution/intent_resolution.prompty",
+        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_groundedness/groundedness_with_query.prompty",
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/simulator/_data_sources/grounding.json",
         "sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl",
-        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_task_success/task_success.prompty",
-        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_task_success/_task_success.py"
+        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_task_completion/task_completion.prompty",
+        "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators/_task_completion/_task_completion.py"
     ],
     "words": [
         "Aoai",

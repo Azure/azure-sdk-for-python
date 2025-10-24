@@ -41,7 +41,9 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
         # Will only be added if QuickpulseManager is initialized successfully
         # Is a NoOp if _ConfigurationManager not initialized
         config_manager = get_configuration_manager()
-        config_manager.register_callback(get_quickpulse_configuration_callback)
+        # config_manager would be `None` if control plane is disabled
+        if config_manager:
+            config_manager.register_callback(get_quickpulse_configuration_callback)
 
     # We can detect feature usage for statsbeat since we are in an opt-in model currently
     # Once we move to live metrics on-by-default, we will have to check for both explicit usage

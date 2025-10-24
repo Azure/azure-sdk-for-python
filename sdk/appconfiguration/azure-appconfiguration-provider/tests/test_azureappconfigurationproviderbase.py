@@ -15,8 +15,6 @@ from typing import Dict, Any
 from azure.appconfiguration import FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     delay_failure,
-    update_correlation_context_header,
-    _uses_feature_flags,
     is_json_content_type,
     _build_watched_setting,
     sdk_allowed_kwargs,
@@ -71,51 +69,45 @@ class TestDelayFailure(unittest.TestCase):
 
 
 class TestUpdateCorrelationContextHeader(unittest.TestCase):
-    """Test the update_correlation_context_header function."""
+    """Test the _update_correlation_context_header instance method."""
 
     def setUp(self):
         """Set up test environment."""
         self.headers = {}
         self.request_type = "Test"
         self.replica_count = 2
-        self.uses_feature_flags = True
-        self.feature_filters_used = {}
-        self.uses_key_vault = False
-        self.uses_load_balancing = False
         self.is_failover_request = False
-        self.uses_ai_configuration = False
-        self.uses_aicc_configuration = False
+
+        # Create provider instance with test configuration
+        self.provider = AzureAppConfigurationProviderBase(
+            endpoint="https://test.azconfig.io",
+            feature_flag_enabled=True,
+        )
+        # Set up provider state for testing
+        self.provider._feature_filter_usage = {}
+        self.provider._uses_key_vault = False
+        self.provider._uses_load_balancing = False
+        self.provider._uses_ai_configuration = False
+        self.provider._uses_aicc_configuration = False
 
     def test_disabled_tracing_returns_unchanged_headers(self):
         """Test that tracing disabled returns headers unchanged."""
         with patch.dict(os.environ, {REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE: "true"}):
-            result = update_correlation_context_header(
+            result = self.provider._update_correlation_context_header(
                 self.headers,
                 self.request_type,
                 self.replica_count,
-                self.uses_feature_flags,
-                self.feature_filters_used,
-                self.uses_key_vault,
-                self.uses_load_balancing,
                 self.is_failover_request,
-                self.uses_ai_configuration,
-                self.uses_aicc_configuration,
             )
             self.assertEqual(result, {})
 
     def test_basic_correlation_context(self):
         """Test basic correlation context generation."""
-        result = update_correlation_context_header(
+        result = self.provider._update_correlation_context_header(
             self.headers,
             self.request_type,
             self.replica_count,
-            self.uses_feature_flags,
-            self.feature_filters_used,
-            self.uses_key_vault,
-            self.uses_load_balancing,
             self.is_failover_request,
-            self.uses_ai_configuration,
-            self.uses_aicc_configuration,
         )
         self.assertIn("Correlation-Context", result)
         self.assertIn("RequestType=Test", result["Correlation-Context"])
@@ -123,23 +115,18 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
 
     def test_feature_filters_in_correlation_context(self):
         """Test feature filters are included in correlation context."""
-        feature_filters_used = {
+        # Set up feature filters in provider
+        self.provider._feature_filter_usage = {
             CUSTOM_FILTER_KEY: True,
             PERCENTAGE_FILTER_KEY: True,
             TIME_WINDOW_FILTER_KEY: True,
             TARGETING_FILTER_KEY: True,
         }
-        result = update_correlation_context_header(
+        result = self.provider._update_correlation_context_header(
             self.headers,
             self.request_type,
             self.replica_count,
-            self.uses_feature_flags,
-            feature_filters_used,
-            self.uses_key_vault,
-            self.uses_load_balancing,
             self.is_failover_request,
-            self.uses_ai_configuration,
-            self.uses_aicc_configuration,
         )
         context = result["Correlation-Context"]
         self.assertIn("Filters=", context)
@@ -160,67 +147,61 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
 
         for env_var, expected_host in test_cases:
             with patch.dict(os.environ, {env_var: "test_value"}, clear=True):
-                result = update_correlation_context_header(
+                result = self.provider._update_correlation_context_header(
                     {},
                     self.request_type,
                     self.replica_count,
-                    self.uses_feature_flags,
-                    self.feature_filters_used,
-                    self.uses_key_vault,
-                    self.uses_load_balancing,
                     self.is_failover_request,
-                    self.uses_ai_configuration,
-                    self.uses_aicc_configuration,
                 )
                 self.assertIn(f"Host={expected_host}", result["Correlation-Context"])
 
     def test_features_in_correlation_context(self):
         """Test that features are included in correlation context."""
-        result = update_correlation_context_header(
+        # Configure provider with all features enabled
+        self.provider._uses_load_balancing = True
+        self.provider._uses_ai_configuration = True
+        self.provider._uses_aicc_configuration = True
+
+        result = self.provider._update_correlation_context_header(
             self.headers,
             self.request_type,
             self.replica_count,
-            self.uses_feature_flags,
-            self.feature_filters_used,
-            self.uses_key_vault,
-            True,
             self.is_failover_request,
-            True,
-            True,
         )
         context = result["Correlation-Context"]
         self.assertIn("Features=LB+AI+AICC", context)
 
     def test_failover_request_in_correlation_context(self):
         """Test that failover request is included in correlation context."""
-        result = update_correlation_context_header(
+        result = self.provider._update_correlation_context_header(
             self.headers,
             self.request_type,
             self.replica_count,
-            self.uses_feature_flags,
-            self.feature_filters_used,
-            self.uses_key_vault,
-            self.uses_load_balancing,
-            True,
-            self.uses_ai_configuration,
-            self.uses_aicc_configuration,
+            False,  # uses key vault
+            True,  # is_failover_request=True
         )
         self.assertIn("Failover", result["Correlation-Context"])
 
 
 class TestUsesFeatureFlags(unittest.TestCase):
-    """Test the _uses_feature_flags function."""
+    """Test the _uses_feature_flags instance method."""
+
+    def setUp(self):
+        """Set up test environment."""
+        self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
 
     def test_no_feature_flags_returns_empty(self):
         """Test that no feature flags returns empty string."""
-        result = _uses_feature_flags(False)
+        self.provider._feature_flag_enabled = False
+        result = self.provider._uses_feature_flags()
         self.assertEqual(result, "")
 
     @patch("azure.appconfiguration.provider._azureappconfigurationproviderbase.version")
     def test_feature_flags_with_version(self, mock_version):
         """Test that feature flags with version returns version string."""
         mock_version.return_value = "1.0.0"
-        result = _uses_feature_flags(True)
+        self.provider._feature_flag_enabled = True
+        result = self.provider._uses_feature_flags()
         self.assertEqual(result, ",FMPyVer=1.0.0")
 
     @patch("azure.appconfiguration.provider._azureappconfigurationproviderbase.version")
@@ -229,7 +210,8 @@ class TestUsesFeatureFlags(unittest.TestCase):
         from importlib.metadata import PackageNotFoundError
 
         mock_version.side_effect = PackageNotFoundError()
-        result = _uses_feature_flags(True)
+        self.provider._feature_flag_enabled = True
+        result = self.provider._uses_feature_flags()
         self.assertEqual(result, "")
 
 

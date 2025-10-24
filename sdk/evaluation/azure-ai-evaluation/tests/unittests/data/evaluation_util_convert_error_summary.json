@@ -1,0 +1,11 @@
+{
+    "self_harm": {
+        "status": "Failed",
+        "duration": "0:00:00.000869",
+        "completed_lines": 0,
+        "failed_lines": 0,
+        "log_path": null,
+        "error_message": "(UserError) Missing inputs for line 1: 'data.item.query, data.item.response'",
+        "error_code": "INVALID VALUE"
+    }
+}

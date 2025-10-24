@@ -3,8 +3,8 @@ import os
 import tempfile
 import typing
 import sys
-import subprocess 
-import json 
+import subprocess
+import json
 import pathlib
 
 from typing import Optional, List
@@ -20,6 +20,7 @@ from ci_tools.logging import logger
 PYRIGHT_VERSION = "1.1.287"
 REPO_ROOT = discover_repo_root()
 
+
 def install_from_main(setup_path: str) -> int:
     path = pathlib.Path(setup_path)
     subdirectory = path.relative_to(REPO_ROOT)
@@ -27,16 +28,20 @@ def install_from_main(setup_path: str) -> int:
     with tempfile.TemporaryDirectory() as temp_dir_name:
         os.chdir(temp_dir_name)
         try:
-            subprocess.check_call(['git', 'init'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call(["git", "init"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
             subprocess.check_call(
-                ['git', 'clone', '--no-checkout', 'https://github.com/Azure/azure-sdk-for-python.git', '--depth', '1'],
+                ["git", "clone", "--no-checkout", "https://github.com/Azure/azure-sdk-for-python.git", "--depth", "1"],
                 stdout=subprocess.DEVNULL,
-                stderr=subprocess.STDOUT
+                stderr=subprocess.STDOUT,
             )
             os.chdir("azure-sdk-for-python")
-            subprocess.check_call(['git', 'sparse-checkout', 'init', '--cone'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            subprocess.check_call(['git', 'sparse-checkout', 'set', subdirectory], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            subprocess.check_call(['git', 'checkout', 'main'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call(
+                ["git", "sparse-checkout", "init", "--cone"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
+            )
+            subprocess.check_call(
+                ["git", "sparse-checkout", "set", subdirectory], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
+            )
+            subprocess.check_call(["git", "checkout", "main"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             if not os.path.exists(os.path.join(os.getcwd(), subdirectory)):
                 # code is not checked into main yet, nothing to compare
@@ -45,16 +50,13 @@ def install_from_main(setup_path: str) -> int:
 
             os.chdir(subdirectory)
 
-            command = get_pip_command() + [
-                "install",
-                ".",
-                "--force-reinstall"
-            ]
+            command = get_pip_command() + ["install", ".", "--force-reinstall"]
 
             subprocess.check_call(command, stdout=subprocess.DEVNULL)
         finally:
             os.chdir(cwd)  # allow temp dir to be deleted
         return 0
+
 
 def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = False) -> float:
     try:
@@ -74,9 +76,7 @@ def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = Fa
         if check_pytyped:
             pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
             if not pytyped_present:
-                logger.error(
-                    f"No py.typed file was found. See https://aka.ms/python/typing-guide for information."
-                )
+                logger.error(f"No py.typed file was found. See https://aka.ms/python/typing-guide for information.")
                 return -1.0
         return report["typeCompleteness"]["completenessScore"]
 
@@ -84,15 +84,19 @@ def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = Fa
     report = json.loads(response.stdout)
     return report["typeCompleteness"]["completenessScore"]
 
+
 class verifytypes(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the verifytypes check. The verifytypes check installs verifytypes and runs verifytypes against the target package.
-        """
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
+        """Register the verifytypes check. The verifytypes check installs verifytypes and runs verifytypes against the target package."""
         parents = parent_parsers or []
-        p = subparsers.add_parser("verifytypes", parents=parents, help="Run the verifytypes check to verify type completeness of a package.")
+        p = subparsers.add_parser(
+            "verifytypes", parents=parents, help="Run the verifytypes check to verify type completeness of a package."
+        )
         p.set_defaults(func=self.run)
 
     def run(self, args: argparse.Namespace) -> int:
@@ -119,7 +123,7 @@ class verifytypes(Check):
             except CalledProcessError as e:
                 logger.error(f"Failed to install pyright: {e}")
                 return e.returncode
-            
+
             if in_ci():
                 if not is_check_enabled(package_dir, "verifytypes") or is_typing_ignored(package_name):
                     logger.info(
@@ -139,25 +143,25 @@ class verifytypes(Check):
 
             # get type completeness score from current code
             score_from_current = get_type_complete_score(commands, check_pytyped=True)
-            if (score_from_current == -1.0):
+            if score_from_current == -1.0:
                 results.append(1)
                 continue
 
-            try: 
-                subprocess.check_call(commands[:-1]) 
+            try:
+                subprocess.check_call(commands[:-1])
             except subprocess.CalledProcessError:
-                logger.warning("verifytypes reported issues.") # we don't fail on verifytypes, only if type completeness score worsens from main
+                logger.warning(
+                    "verifytypes reported issues."
+                )  # we don't fail on verifytypes, only if type completeness score worsens from main
 
             if in_ci():
                 # get type completeness score from main
-                logger.info(
-                    "Getting the type completeness score from the code in main..."
-                )
-                if (install_from_main(os.path.abspath(package_dir)) > 0):
+                logger.info("Getting the type completeness score from the code in main...")
+                if install_from_main(os.path.abspath(package_dir)) > 0:
                     continue
 
                 score_from_main = get_type_complete_score(commands)
-                if (score_from_main == -1.0):
+                if score_from_main == -1.0:
                     results.append(1)
                     continue
 

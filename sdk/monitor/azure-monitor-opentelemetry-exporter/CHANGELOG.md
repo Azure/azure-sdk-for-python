@@ -1,14 +1,36 @@
 # Release History
 
-## 1.0.0b43 (Unreleased)
+## 1.0.0b45 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
+  ([#43091](https://github.com/Azure/azure-sdk-for-python/pull/43091))
+
+### Other Changes
+
+## 1.0.0b44 (2025-10-14)
+
+### Bugs Fixed
+- Fixed issue where AAD authentication for Live Metrics failed for users in sovereign cloud environments
+  ([#43392](https://github.com/Azure/azure-sdk-for-python/pull/43392))
+
+## 1.0.0b43 (2025-10-08)
 
 ### Features Added
 - OneSettings control plane: Add live metrics feature control
   ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
 - Adding customer sdkstats to feature statsbeat
   ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
-
-### Breaking Changes
+- OneSettings control plane: Add killswitch + exponential  backoff + sdkstats feature control
+  ([#43147](https://github.com/Azure/azure-sdk-for-python/pull/43147))
+- Performance Counters
+  ([#43024](https://github.com/Azure/azure-sdk-for-python/pull/43024))
+- Performance Counters: Include Consumer spans
+  ([#43261](https://github.com/Azure/azure-sdk-for-python/pull/43261))
 
 ### Bugs Fixed
 - Fixes issues #42897 - TypeError in _transmit_from_storage: LocalFileBlob.get() returns None
@@ -19,8 +41,8 @@
   ([#43122](https://github.com/Azure/azure-sdk-for-python/pull/43122))
 - Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
   ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
-
-### Other Changes
+- Revert #43060
+  ([#43087](https://github.com/Azure/azure-sdk-for-python/pull/43087))
 
 ## 1.0.0b42 (2025-09-17)
 
@@ -33,7 +55,7 @@
   ([#42542](https://github.com/Azure/azure-sdk-for-python/pull/42542))
 - Customer Facing SDKStats: Added the export interval env var for customer sdkstats
   ([#42551](https://github.com/Azure/azure-sdk-for-python/pull/42551))
-- Rename Customer Statsbeat to Customer SDKStats as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581
+- Rename Customer Statsbeat to Customer SDKStats as per [Spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581#issuecomment-3165624749)
   ([#42573](https://github.com/Azure/azure-sdk-for-python/pull/42573))
 - Customer Facing SDKStats: Exception categorization as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/sdkstats/customer_facing_sdk_stats.md
   ([#42695](https://github.com/Azure/azure-sdk-for-python/pull/42695))
@@ -41,7 +63,6 @@
   ([#42655](https://github.com/Azure/azure-sdk-for-python/pull/42655))
 - Customer Facing SDKStats: Added telemetry_success field to dropped items as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/606
   ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
-### Breaking Changes
 
 ### Bugs Fixed
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern

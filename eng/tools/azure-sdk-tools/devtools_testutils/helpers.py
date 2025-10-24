@@ -8,8 +8,9 @@ import os
 import random
 import string
 import sys
-from urllib3 import PoolManager, Retry
+from pathlib import Path
 
+from urllib3 import PoolManager, Retry
 from .config import TestConfig
 
 
@@ -17,6 +18,63 @@ from .config import TestConfig
 # we map test IDs to recording IDs, rather than storing only the current test's recording ID, for parallelization
 this = sys.modules[__name__]
 this.recording_ids = {}
+
+
+def locate_assets(current_test_file: str) -> str:
+    """Locate the test assets directory for the targeted testfile.
+
+    :returns: Absolute path to the test assets directory + assets prefix path
+    :rtype: str
+    :raises FileNotFoundError: If assets.json, breadcrumb files, or assets files cannot be found.
+    """
+    # Get the directory of the current test file
+    test_file_path = Path(current_test_file)
+    current_dir = test_file_path.parent
+
+    # Search upward for assets.json and repo root
+    assets_json_path = None
+    repo_root = None
+    search_dir = current_dir
+    while search_dir != search_dir.parent:  # Stop at filesystem root
+        # early stop at repo root
+        if any((search_dir / indicator).exists() for indicator in [".git", "eng"]):
+            repo_root = search_dir
+            break
+
+        candidate = search_dir / "assets.json"
+        if candidate.exists():
+            assets_json_path = candidate
+        search_dir = search_dir.parent
+
+    if not assets_json_path:
+        raise FileNotFoundError(f"Could not find assets.json starting from {current_dir}")
+
+    if not repo_root:
+        raise FileNotFoundError(f"Could not find repository root starting from {assets_json_path.parent}")
+
+    # Look for breadcrumb files in .assets/breadcrumb/
+    breadcrumb_dir = repo_root / ".assets" / "breadcrumb"
+    if not breadcrumb_dir.exists():
+        raise FileNotFoundError(f"Breadcrumb directory not found at {breadcrumb_dir}")
+
+    # Search for breadcrumb file that matches our asset path
+    relative_asset_path = str(assets_json_path.parent.relative_to(repo_root)).replace(os.sep, "/")
+
+    for breadcrumb_file in breadcrumb_dir.iterdir():
+        if breadcrumb_file.is_file():
+            try:
+                content = breadcrumb_file.read_text().strip()
+                # Check if this breadcrumb file contains our asset path
+                if relative_asset_path in content:
+                    # The breadcrumb file name should correspond to the local asset directory
+                    asset_dir_name = breadcrumb_file.stem
+                    local_assets_path = repo_root / ".assets" / asset_dir_name
+                    if local_assets_path.exists():
+                        return str(local_assets_path.resolve())
+            except (IOError, UnicodeDecodeError):
+                continue  # Skip files that can't be read
+
+    raise FileNotFoundError(f"No matching breadcrumb file found for asset path {relative_asset_path}")
 
 
 def get_http_client(**kwargs):

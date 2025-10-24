@@ -82,6 +82,7 @@ class PyPIClient:
         stable_releases = [version for version in versions if not version.is_prerelease]
         return (versions[-1], stable_releases[-1])
 
+
 def retrieve_versions_from_pypi(package_name: str) -> List[str]:
     """
     Retrieve all published versions on PyPI for the package.

@@ -18,17 +18,18 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-inference azure-identity azure-monitor-opentelemetry
+    pip install azure-ai-projects azure-ai-inference azure-identity azure-monitor-opentelemetry python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
     3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
 import os
+from dotenv import load_dotenv
 from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -37,11 +38,13 @@ from azure.ai.inference.models import UserMessage
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
 
+load_dotenv()
+
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -64,7 +67,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         ) as client:
 
             response = client.complete(
-                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]  # type: ignore[arg-type]
             )
 
             print(response.choices[0].message.content)

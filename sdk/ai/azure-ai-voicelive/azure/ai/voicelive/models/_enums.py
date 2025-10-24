@@ -129,7 +129,7 @@ class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Avatar modality."""
 
 
-class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported OpenAI voice names (string enum)."""
 
     ALLOY = "alloy"

@@ -14,7 +14,6 @@ from azure.identity._credentials.imds import (
     IMDS_AUTHORITY,
     PIPELINE_SETTINGS,
 )
-from azure.identity._internal.utils import within_credential_chain
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import RetryPolicy
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -109,7 +108,7 @@ class TestImds(RecordedTestCase):
         assert isinstance(token.expires_on, int)
 
     @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-    def test_managed_identity_aci_probe(self, get_token_method):
+    def test_enable_imds_probe(self, get_token_method):
         access_token = "****"
         expires_on = 42
         expected_token = access_token
@@ -140,11 +139,9 @@ class TestImds(RecordedTestCase):
                 ),
             ],
         )
-        within_credential_chain.set(True)
-        credential = ImdsCredential(transport=transport)
+        credential = ImdsCredential(transport=transport, _enable_imds_probe=True)
         token = getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
-        within_credential_chain.set(False)
 
     def test_imds_credential_uses_custom_retry_policy(self):
         credential = ImdsCredential()

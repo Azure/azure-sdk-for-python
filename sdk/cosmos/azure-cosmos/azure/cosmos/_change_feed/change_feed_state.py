@@ -28,7 +28,7 @@ import collections
 import json
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Optional, Union, List, Any, Dict, Deque
+from typing import Optional, Union, Any, Deque
 import logging
 from typing_extensions import Literal
 
@@ -57,23 +57,23 @@ class ChangeFeedState(ABC):
         self.version = version
 
     @abstractmethod
-    def populate_feed_options(self, feed_options: Dict[str, Any]) -> None:
+    def populate_feed_options(self, feed_options: dict[str, Any]) -> None:
         pass
 
     @abstractmethod
     def populate_request_headers(
             self,
             routing_provider: SmartRoutingMapProvider,
-            request_headers: Dict[str, Any],
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            request_headers: dict[str, Any],
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         pass
 
     @abstractmethod
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any],
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            request_headers: dict[str, Any],
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         pass
 
     @abstractmethod
@@ -84,7 +84,7 @@ class ChangeFeedState(ABC):
     def from_json(
             container_link: str,
             container_rid: str,
-            change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedState':
+            change_feed_state_context: dict[str, Any]) -> 'ChangeFeedState':
 
         if (change_feed_state_context.get("partitionKeyRangeId")
                 or change_feed_state_context.get("continuationPkRangeId")):
@@ -118,7 +118,7 @@ class ChangeFeedStateV1(ChangeFeedState):
             container_rid: str,
             change_feed_start_from: ChangeFeedStartFromInternal,
             partition_key_range_id: Optional[str] = None,
-            partition_key: Optional[Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]] = None, # pylint: disable=line-too-long
+            partition_key: Optional[Union[str, int, float, bool, list[Union[str, int, float, bool]], _Empty, _Undefined]] = None, # pylint: disable=line-too-long
             continuation: Optional[str] = None) -> None:
 
         self._container_link = container_link
@@ -138,7 +138,7 @@ class ChangeFeedStateV1(ChangeFeedState):
             cls,
             container_link: str,
             container_rid: str,
-            change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV1':
+            change_feed_state_context: dict[str, Any]) -> 'ChangeFeedStateV1':
         return cls(
             container_link,
             container_rid,
@@ -151,8 +151,8 @@ class ChangeFeedStateV1(ChangeFeedState):
     def populate_request_headers(
             self,
             routing_provider: SmartRoutingMapProvider,
-            request_headers: Dict[str, Any],
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            request_headers: dict[str, Any],
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
         self._change_feed_start_from.populate_request_headers(request_headers)
@@ -162,8 +162,8 @@ class ChangeFeedStateV1(ChangeFeedState):
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any],
-            feed_options: Optional[Dict[str, Any]] = None) -> None: # pylint: disable=unused-argument
+            request_headers: dict[str, Any],
+            feed_options: Optional[dict[str, Any]] = None) -> None: # pylint: disable=unused-argument
 
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
@@ -171,7 +171,7 @@ class ChangeFeedStateV1(ChangeFeedState):
         if self._continuation:
             request_headers[http_constants.HttpHeaders.IfNoneMatch] = self._continuation
 
-    def populate_feed_options(self, feed_options: Dict[str, Any]) -> None:
+    def populate_feed_options(self, feed_options: dict[str, Any]) -> None:
         if self._partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = self._partition_key_range_id
         if self._partition_key is not None:
@@ -222,7 +222,7 @@ class ChangeFeedStateV2(ChangeFeedState):
     def container_rid(self) -> str :
         return self._container_rid
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             self.version_property_name: ChangeFeedStateVersion.V2.value,
             self.container_rid_property_name: self._container_rid,
@@ -233,7 +233,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
     def set_start_from_request_headers(
             self,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: dict[str, Any]) -> None:
         # When a merge happens, the child partition will contain documents ordered by LSN but the _ts/creation time
         # of the documents may not be sequential.
         # So when reading the changeFeed by LSN, it is possible to encounter documents with lower _ts.
@@ -251,7 +251,7 @@ class ChangeFeedStateV2(ChangeFeedState):
     def set_pk_range_id_request_headers(
             self,
             over_lapping_ranges,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: dict[str, Any]) -> None:
 
         if len(over_lapping_ranges) > 1:
             raise self.get_feed_range_gone_error(over_lapping_ranges)
@@ -270,7 +270,7 @@ class ChangeFeedStateV2(ChangeFeedState):
 
     def set_mode_request_headers(
             self,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: dict[str, Any]) -> None:
         if self._mode == "AllVersionsAndDeletes":
             request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.FullFidelityFeedHeaderValue
             request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] = \
@@ -281,7 +281,7 @@ class ChangeFeedStateV2(ChangeFeedState):
     def populate_request_headers(
             self,
             routing_provider: SmartRoutingMapProvider,
-            request_headers: Dict[str, Any],
+            request_headers: dict[str, Any],
             feed_options = None) -> None:
         self.set_start_from_request_headers(request_headers)
 
@@ -300,8 +300,8 @@ class ChangeFeedStateV2(ChangeFeedState):
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any],
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            request_headers: dict[str, Any],
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id
@@ -315,21 +315,21 @@ class ChangeFeedStateV2(ChangeFeedState):
 
         self.set_mode_request_headers(request_headers)
 
-    def populate_feed_options(self, feed_options: Dict[str, Any]) -> None:
+    def populate_feed_options(self, feed_options: dict[str, Any]) -> None:
         pass
 
     def handle_feed_range_gone(
             self,
             routing_provider: SmartRoutingMapProvider,
             resource_link: str,
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         self._continuation.handle_feed_range_gone(routing_provider, resource_link, feed_options)
 
     async def handle_feed_range_gone_async(
             self,
             routing_provider: AsyncSmartRoutingMapProvider,
             resource_link: str,
-            feed_options: Optional[Dict[str, Any]] = None) -> None:
+            feed_options: Optional[dict[str, Any]] = None) -> None:
         await self._continuation.handle_feed_range_gone_async(routing_provider, resource_link, feed_options)
 
     def apply_server_response_continuation(self, continuation: str, has_modified_response: bool) -> None:
@@ -341,7 +341,7 @@ class ChangeFeedStateV2(ChangeFeedState):
     def apply_not_modified_response(self) -> None:
         self._continuation.apply_not_modified_response()
 
-    def get_feed_range_gone_error(self, over_lapping_ranges: List[Dict[str, Any]]) -> CosmosHttpResponseError:
+    def get_feed_range_gone_error(self, over_lapping_ranges: list[dict[str, Any]]) -> CosmosHttpResponseError:
         formatted_message =\
             (f"Status code: {StatusCodes.GONE} "
              f"Sub-status: {SubStatusCodes.PARTITION_KEY_RANGE_GONE}. "
@@ -358,7 +358,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             container_rid: str,
-            continuation_json: Dict[str, Any]) -> 'ChangeFeedStateV2':
+            continuation_json: dict[str, Any]) -> 'ChangeFeedStateV2':
 
         container_rid_from_continuation = continuation_json.get(ChangeFeedStateV2.container_rid_property_name)
         if container_rid_from_continuation is None:
@@ -396,7 +396,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             cls,
             container_link: str,
             collection_rid: str,
-            change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
+            change_feed_state_context: dict[str, Any]) -> 'ChangeFeedStateV2':
 
         feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):

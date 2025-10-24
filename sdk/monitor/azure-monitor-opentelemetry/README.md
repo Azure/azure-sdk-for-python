@@ -61,6 +61,7 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 |-------------------|----------------------------------------------------|----------------------|
 | `connection_string` | The [connection string][connection_string_doc] for your Application Insights resource. The connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable if not explicitly passed in. | `APPLICATIONINSIGHTS_CONNECTION_STRING` |
 | `enable_live_metrics` | Enable [live metrics][application_insights_live_metrics] feature. Defaults to `False`. | `N/A` |
+| `enable_performance_counters` | Enable [performance counters][application_insights_performance_counters]. Defaults to `True`. | `N/A` |
 | `logging_formatter` | A Python logging [formatter][python_logging_formatter] that will be used to format collected logs. | `PYTHON_APPLICATIONINSIGHTS_LOGGING_FORMAT` - accepts a STRING field used for formatting, not a [formatter][python_logging_formatter] |
 | `logger_name` | The name of the [Python logger][python_logger] under which telemetry is collected. Setting this value is imperative so logs created from the SDK itself are not tracked. | `PYTHON_APPLICATIONINSIGHTS_LOGGER_NAME` |
 | `instrumentation_options` | A nested dictionary that determines which instrumentations to enable or disable. Instrumentations are referred to by their [Library Names](#officially-supported-instrumentations). For example, `{"azure_sdk": {"enabled": False}, "flask": {"enabled": False}, "django": {"enabled": True}}` will disable Azure Core Tracing and the Flask instrumentation but leave Django and the other default instrumentations enabled. The `OTEL_PYTHON_DISABLED_INSTRUMENTATIONS` environment variable explained below can also be used to disable instrumentations. | `N/A` |
@@ -215,6 +216,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_monitor_opentelemetry_exporters]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#microsoft-opentelemetry-exporter-for-azure-monitor
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
+[application_insights_performance_counters]: https://learn.microsoft.com/azure/azure-monitor/app/metrics-overview?tabs=standard#performance-counters
 [application_insights_live_metrics]: https://learn.microsoft.com/azure/azure-monitor/app/live-stream
 [application_insights_namespace]: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview
 [application_insights_sampling]: https://learn.microsoft.com/azure/azure-monitor/app/sampling

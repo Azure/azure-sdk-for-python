@@ -20,12 +20,11 @@ class _TimeoutFailoverRetryPolicy(object):
         # If an account only has 1 region, then we still want to retry once on the same region
         # We want this to be the default retry attempts as paging through a query means there are requests without
         # a request object
-        self._max_retry_attempt_count = len(self.global_endpoint_manager.
-                                            location_cache.read_regional_routing_contexts) + 1
-       # If the request is a write operation, we only want to retry once if retry write is enabled
+        self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache
+                                            .read_regional_routing_contexts) + 1
+       # If the request is a write operation, we only want to retry as many times as retry_write
         if self.request and _OperationType.IsWriteOperation(self.request.operation_type):
-            self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache.
-                                                write_regional_routing_contexts) + 1
+            self._max_retry_attempt_count = self.request.retry_write
         self.retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
@@ -63,8 +62,6 @@ class _TimeoutFailoverRetryPolicy(object):
     def resolve_next_region_service_endpoint(self):
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
-        # clear the last routed endpoint within same region since we are going to a new region now
-        self.request.last_routed_location_endpoint_within_region = None
         # set location-based routing directive based on retry count
         # ensuring usePreferredLocations is set to True for retry
         self.request.route_to_location_with_preferred_location_flag(self.retry_count, True)
@@ -75,4 +72,4 @@ class _TimeoutFailoverRetryPolicy(object):
     def is_operation_retryable(self):
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):
             return True
-        return self.request.retry_write
+        return self.request.retry_write > 0

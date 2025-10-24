@@ -24,8 +24,8 @@
 import copy
 import json
 import time
-from urllib.parse import urlparse
 
+from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import _retry_utility_async
@@ -176,7 +176,7 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
             not request_params.is_hedging_request and
             request_params.resource_type == ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
-             request_params.retry_write))
+             request_params.retry_write > 0))
 
 async def AsynchronousRequest(
     client,

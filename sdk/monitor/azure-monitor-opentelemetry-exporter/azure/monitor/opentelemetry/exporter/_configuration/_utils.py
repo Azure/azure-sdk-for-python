@@ -46,7 +46,7 @@ class OneSettingsResponse:
     """Response object containing OneSettings API response data.
 
     This class encapsulates the parsed response from a OneSettings API call,
-    including configuration settings, version information, and metadata.
+    including configuration settings, version information, error indicators and metadata.
 
     Attributes:
         etag (Optional[str]): ETag header value for caching and conditional requests
@@ -54,6 +54,7 @@ class OneSettingsResponse:
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
         version (Optional[int]): Configuration version number for change tracking
         status_code (int): HTTP status code from the response
+        has_exception (bool): True if the request resulted in a transient error (network error, timeout, etc.)
     """
 
     def __init__(
@@ -62,7 +63,8 @@ class OneSettingsResponse:
         refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
         settings: Optional[Dict[str, str]] = None,
         version: Optional[int] = None,
-        status_code: int = 200
+        status_code: int = 200,
+        has_exception: bool = False
     ):
         """Initialize OneSettingsResponse with configuration data.
 
@@ -74,12 +76,14 @@ class OneSettingsResponse:
                 Defaults to empty dict if None.
             version (Optional[int], optional): Configuration version number. Defaults to None.
             status_code (int, optional): HTTP status code. Defaults to 200.
+            has_exception (bool, optional): Indicates if request failed with a transient error. Defaults to False.
         """
         self.etag = etag
         self.refresh_interval = refresh_interval
         self.settings = settings or {}
         self.version = version
         self.status_code = status_code
+        self.has_exception = has_exception
 
 
 def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None,
@@ -88,7 +92,7 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
 
     This function handles the complete OneSettings request lifecycle including:
     - Making the HTTP GET request with optional query parameters and headers
-    - Error handling for network, HTTP, and JSON parsing errors
+    - Error handling for network, HTTP, timeout, and JSON parsing errors
     - Parsing the response into a structured OneSettingsResponse object
 
     :param url: The OneSettings API endpoint URL to request
@@ -100,13 +104,13 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
     Common headers include 'If-None-Match' for ETag caching. Defaults to None.
     :type headers: Optional[Dict[str, str]]
 
-    :return: Parsed response containing configuration data and metadata.
-            Returns a default response object if the request fails.
+    :return: Parsed response containing configuration data and metadata, including
+            error indicators for exceptions and timeouts.
     :rtype: OneSettingsResponse
 
     Raises:
         Does not raise exceptions - all errors are caught and logged, returning a
-        default OneSettingsResponse object.
+        OneSettingsResponse object with appropriate error indicators set.
     """
     query_dict = query_dict or {}
     headers = headers or {}
@@ -116,15 +120,18 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
         result.raise_for_status()  # Raises an exception for 4XX/5XX responses
 
         return _parse_onesettings_response(result)
+    except requests.exceptions.Timeout as ex:
+        logger.warning("OneSettings request timed out: %s", str(ex))
+        return OneSettingsResponse(has_exception=True)
     except requests.exceptions.RequestException as ex:
         logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
-        return OneSettingsResponse()
+        return OneSettingsResponse(has_exception=True)
     except json.JSONDecodeError as ex:
         logger.warning("Failed to parse OneSettings response: %s", str(ex))
-        return OneSettingsResponse()
+        return OneSettingsResponse(has_exception=True)
     except Exception as ex:  # pylint: disable=broad-exception-caught
         logger.warning("Unexpected error while fetching configuration: %s", str(ex))
-        return OneSettingsResponse()
+        return OneSettingsResponse(has_exception=True)
 
 
 def _parse_onesettings_response(response: requests.Response) -> OneSettingsResponse:

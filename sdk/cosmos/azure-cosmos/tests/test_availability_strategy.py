@@ -8,7 +8,7 @@ import time
 import unittest
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from typing import Optional, List, Any, Dict
+from typing import Optional, Any
 
 import pytest
 from azure.core.exceptions import ServiceResponseError
@@ -16,10 +16,10 @@ from azure.core.exceptions import ServiceResponseError
 import test_config
 from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos import CosmosClient, _location_cache
+from azure.cosmos._availability_strategy_config import _validate_hedging_config
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
-from azure.cosmos._availability_strategy_config import _validate_hedging_config
 
 _Unset: Any = object()
 class MockHandler(logging.Handler):
@@ -71,8 +71,8 @@ def perform_read_operation(
         created_doc,
         expected_uris,
         excluded_uris,
-        availability_strategy_config: Optional[Dict[str, Any]] = _Unset,
-        excluded_locations: Optional[List[str]] = None,
+        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        excluded_locations: Optional[list[str]] = None,
         **kwargs):
     excluded_locations = [] if excluded_locations is None else excluded_locations
 
@@ -131,8 +131,8 @@ def perform_write_operation(
         expected_uris,
         excluded_uris,
         retry_write=False,
-        availability_strategy_config: Optional[Dict[str, Any]] = _Unset,
-        excluded_locations: Optional[List[str]] = None,
+        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        excluded_locations: Optional[list[str]] = None,
         **kwargs):
     """Execute different types of write operations"""
 
@@ -442,7 +442,7 @@ class TestAvailabilityStrategy:
                                FaultInjectionTransport.predicate_targets_region(r, failed_over_uri))
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
             0,
-            CosmosHttpResponseError(status_code=status_code, message=f"Injected {status_code} Error", sub_status_code=sub_status_code)
+            CosmosHttpResponseError(status_code=status_code, message=f"Injected {status_code} Error", sub_status=sub_status_code)
         )
 
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
@@ -563,8 +563,7 @@ class TestAvailabilityStrategy:
         # Verify error code
         assert exc_info.value.status_code == 400
 
-    # @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    @pytest.mark.parametrize("operation", [UPSERT])
+    @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_request_level_enable_override_client_disable(self, operation):
         """Test that request-level enabled policy overrides client-level disabled policy"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
@@ -575,7 +574,7 @@ class TestAvailabilityStrategy:
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
-            500,  # Add delay to trigger hedging
+            700,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
             # using non retryable errors to verify the request will only go to the first region
         )

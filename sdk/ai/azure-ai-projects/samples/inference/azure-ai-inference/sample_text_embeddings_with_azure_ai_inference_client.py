@@ -16,21 +16,24 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-inference azure-identity
+    pip install azure-ai-projects azure-ai-inference azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
-    2) MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
 """
 
 import os
+from dotenv import load_dotenv
 from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
 from azure.ai.inference import EmbeddingsClient
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+load_dotenv()
+
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 
 # Project endpoint has the form:   https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
 # Inference endpoint has the form: https://your-ai-services-account-name.services.ai.azure.com/models

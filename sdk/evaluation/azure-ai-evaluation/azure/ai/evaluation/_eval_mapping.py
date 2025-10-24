@@ -11,7 +11,7 @@
 
 # Import all evals
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
-from azure.ai.evaluation._evaluators._task_success import TaskSuccessEvaluator
+from azure.ai.evaluation._evaluators._task_completion import TaskCompletionEvaluator
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
     CodeVulnerabilityEvaluator,
@@ -68,7 +68,7 @@ EVAL_CLASS_MAP = {
     SexualEvaluator: "sexual",
     SimilarityEvaluator: "similarity",
     TaskAdherenceEvaluator: "task_adherence",
-    TaskSuccessEvaluator: "task_success",
+    TaskCompletionEvaluator: "task_completion",
     ToolCallAccuracyEvaluator: "tool_call_accuracy",
     UngroundedAttributesEvaluator: "ungrounded_attributes",
     ViolenceEvaluator: "violence",

@@ -13,7 +13,6 @@ import os
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
-from cosmos import CrossRegionHedgingStrategyConfig
 
 url = os.environ["ACCOUNT_URI"]
 key = os.environ["ACCOUNT_KEY"]

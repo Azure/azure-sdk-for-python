@@ -14,8 +14,7 @@ from .aoai_grader import AzureOpenAIGrader
 
 @experimental
 class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
-    """
-    Wrapper class for OpenAI's score model graders.
+    """Wrapper class for OpenAI's score model graders.
 
     Enables continuous scoring evaluation with custom prompts and flexible
     conversation-style inputs. Supports configurable score ranges and
@@ -27,10 +26,8 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     evaluation results.
 
     :param model_config: The model configuration to use for the grader.
-    :type model_config: Union[
-        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evaluation.OpenAIModelConfiguration
-    ]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param input: The input messages for the grader. List of conversation
         messages with role and content.
     :type input: List[Dict[str, str]]
@@ -52,6 +49,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     """
 
     id = "azureai://built-in/evaluators/azure-openai/score_model_grader"
+    _type = "score_model"
 
     def __init__(
         self,
@@ -83,7 +81,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
         self.pass_threshold = pass_threshold
 
         # Create OpenAI ScoreModelGrader instance
-        grader_kwargs = {"input": input, "model": model, "name": name, "type": "score_model"}
+        grader_kwargs = {"input": input, "model": model, "name": name, "type": AzureOpenAIScoreModelGrader._type}
 
         if range is not None:
             grader_kwargs["range"] = range

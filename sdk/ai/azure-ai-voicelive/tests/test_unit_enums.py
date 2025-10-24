@@ -15,7 +15,7 @@ from azure.ai.voicelive.models import (
     ItemType,
     MessageRole,
     Modality,
-    OAIVoice,
+    OpenAIVoiceName,
     OutputAudioFormat,
     PersonalVoiceModels,
     ResponseItemStatus,
@@ -173,24 +173,24 @@ class TestModality:
 
 
 class TestOAIVoice:
-    """Test OAIVoice enum."""
+    """Test OpenAIVoiceName enum."""
 
     def test_all_values(self):
         """Test all enum values are accessible."""
-        assert OAIVoice.ALLOY == "alloy"
-        assert OAIVoice.ASH == "ash"
-        assert OAIVoice.BALLAD == "ballad"
-        assert OAIVoice.CORAL == "coral"
-        assert OAIVoice.ECHO == "echo"
-        assert OAIVoice.SAGE == "sage"
-        assert OAIVoice.SHIMMER == "shimmer"
-        assert OAIVoice.VERSE == "verse"
+        assert OpenAIVoiceName.ALLOY == "alloy"
+        assert OpenAIVoiceName.ASH == "ash"
+        assert OpenAIVoiceName.BALLAD == "ballad"
+        assert OpenAIVoiceName.CORAL == "coral"
+        assert OpenAIVoiceName.ECHO == "echo"
+        assert OpenAIVoiceName.SAGE == "sage"
+        assert OpenAIVoiceName.SHIMMER == "shimmer"
+        assert OpenAIVoiceName.VERSE == "verse"
 
     def test_case_insensitive(self):
         """Test enum is case-insensitive."""
         # Test that enum values work correctly
-        assert OAIVoice.ALLOY.value == "alloy"
-        assert OAIVoice.SHIMMER.value == "shimmer"
+        assert OpenAIVoiceName.ALLOY.value == "alloy"
+        assert OpenAIVoiceName.SHIMMER.value == "shimmer"
 
 
 class TestOutputAudioFormat:
@@ -285,7 +285,7 @@ class TestEnumIntegration:
         """Test enum comparison with strings."""
         assert AzureVoiceType.AZURE_CUSTOM == "azure-custom"
         assert MessageRole.USER == "user"
-        assert OAIVoice.ALLOY == "alloy"
+        assert OpenAIVoiceName.ALLOY == "alloy"
 
     def test_enum_in_collections(self):
         """Test that enums work properly in collections."""

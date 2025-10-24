@@ -12,7 +12,7 @@ from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenMa
 from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common.utils import is_onedp_project
-from azure.ai.evaluation._common.onedp import AIProjectClient
+from azure.ai.evaluation._common.onedp import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._common import EvaluationServiceOneDPClient
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 import jwt
@@ -113,6 +113,7 @@ class GeneratedRAIClient:
         strategy: Optional[str] = None,
         language: str = "en",
         scan_session_id: Optional[str] = None,
+        target: Optional[str] = None,
     ) -> Dict:
         """Get attack objectives using the auto-generated operations.
 
@@ -128,6 +129,8 @@ class GeneratedRAIClient:
         :type language: str
         :param scan_session_id: Optional unique session ID for the scan
         :type scan_session_id: Optional[str]
+        :param target: Optional target type (model/agent)
+        :type target: Optional[str]
         :return: The attack objectives
         :rtype: Dict
         """
@@ -138,6 +141,7 @@ class GeneratedRAIClient:
                 risk_category=risk_category,
                 lang=language,
                 strategy=strategy,
+                target_type=target,
                 headers={"x-ms-client-request-id": scan_session_id},
             )
             return response

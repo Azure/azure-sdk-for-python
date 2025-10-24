@@ -26,7 +26,7 @@ import json
 import logging
 import sys
 from time import sleep
-from typing import Callable, Optional, Any, Dict, List, Mapping, MutableMapping, Tuple, Sequence
+from typing import Callable, Optional, Any, MutableMapping, Mapping, Sequence, Tuple, Dict
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.transport._requests_basic import RequestsTransport, RequestsTransportResponse
@@ -48,10 +48,10 @@ class FaultInjectionTransport(RequestsTransport):
     logger.setLevel(logging.DEBUG)
 
     def __init__(self, *, session: Optional[Session] = None, loop=None, session_owner: bool = True, **config):
-        self.faults: List[Dict[str, Any]] = []
-        self.requestTransformations: List[Dict[str, Any]]  = []
-        self.responseTransformations: List[Dict[str, Any]] = []
-        self.counters: Dict[str, int] = {
+        self.faults: list[dict[str, Any]] = []
+        self.requestTransformations: list[dict[str, Any]]  = []
+        self.responseTransformations: list[dict[str, Any]] = []
+        self.counters: dict[str, int] = {
             ERROR_WITH_COUNTER: 0
         }
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
@@ -358,7 +358,7 @@ class FaultInjectionTransport(RequestsTransport):
                 Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]] = None
 
     class MockHttpResponse(RequestsTransportResponse):
-        def __init__(self, request: HttpRequest, status_code: int, content: Optional[Any] = None):
+        def __init__(self, request: HttpRequest, status_code: int, content: Optional[dict[str, Any]]):
             self.request: HttpRequest = request
             # This is actually never None, and set by all implementations after the call to
             # __init__ of this class. This class is also a legacy impl, so it's risky to change it
@@ -369,7 +369,7 @@ class FaultInjectionTransport(RequestsTransport):
             self.reason: Optional[str] = None
             self.content_type: Optional[str] = None
             self.block_size: int = 4096  # Default to same as R
-            self.content: Optional[Dict[str, Any]] = None
+            self.content: Optional[dict[str, Any]] = None
             self.json_text: str = ""
             self.bytes: bytes = b""
             if content:

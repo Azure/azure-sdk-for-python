@@ -505,6 +505,119 @@ class TestCrossPartitionQuery(unittest.TestCase):
         assert response_hook.count == 2
         self.created_db.delete_container(created_collection.id)
 
+    def test_cross_partition_query_pagination_with_max_item_count(self):
+        """Test cross-partition pagination showing per-page limits and total results."""
+        created_collection = self.created_db.create_container(
+            "cross_partition_pagination_test_" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
+        
+        # Create 30 items across 3 different partitions
+        total_items = 30
+        items_per_partition = 10
+        partitions = ["pk_1", "pk_2", "pk_3"]
+        
+        for pk in partitions:
+            for i in range(items_per_partition):
+                document_definition = {
+                    'pk': pk,
+                    'id': f'{pk}_item_{i}',
+                    'value': i
+                }
+                created_collection.create_item(body=document_definition)
+        
+        # Test cross-partition query with max_item_count
+        max_items_per_page = 8
+        query = "SELECT * FROM c ORDER BY c['value']"
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True,
+            max_item_count=max_items_per_page
+        )
+        
+        # Iterate through pages and verify per-page counts
+        all_fetched_results = []
+        page_count = 0
+        item_pages = query_iterable.by_page()
+        
+        for page in item_pages:
+            page_count += 1
+            items_in_page = list(page)
+            all_fetched_results.extend(items_in_page)
+            
+            # Each page should have at most max_item_count items
+            # In cross-partition queries, pages may have fewer items
+            self.assertLessEqual(len(items_in_page), max_items_per_page)
+            self.assertGreater(len(items_in_page), 0)  # Pages should not be empty
+        
+        # Verify total results match expected count
+        self.assertEqual(len(all_fetched_results), total_items)
+        
+        # Verify we got multiple pages
+        self.assertGreater(page_count, 1)
+        
+        self.created_db.delete_container(created_collection.id)
+    
+    def test_cross_partition_query_pagination_counting_results(self):
+        """Test counting total results while paginating across partitions."""
+        created_collection = self.created_db.create_container(
+            "cross_partition_count_test_" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
+        
+        # Create items across multiple partitions with different counts
+        partitions_config = [
+            ("partition_a", 5),
+            ("partition_b", 8),
+            ("partition_c", 3),
+            ("partition_d", 12)
+        ]
+        
+        total_expected = 0
+        for pk, count in partitions_config:
+            for i in range(count):
+                document_definition = {
+                    'pk': pk,
+                    'id': f'{pk}_item_{i}',
+                    'name': f'Item {i} in {pk}'
+                }
+                created_collection.create_item(body=document_definition)
+                total_expected += 1
+        
+        # Query across partitions with pagination
+        max_items_per_page = 5
+        query = "SELECT * FROM c"
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True,
+            max_item_count=max_items_per_page
+        )
+        
+        # Count items across all pages
+        total_count = 0
+        page_count = 0
+        page_sizes = []
+        
+        item_pages = query_iterable.by_page()
+        for page in item_pages:
+            page_count += 1
+            items = list(page)
+            page_size = len(items)
+            page_sizes.append(page_size)
+            total_count += page_size
+            
+            # Verify page size constraints
+            self.assertLessEqual(page_size, max_items_per_page)
+            self.assertGreater(page_size, 0)
+        
+        # Verify total count matches what we inserted
+        self.assertEqual(total_count, total_expected)
+        
+        # Verify we processed multiple pages
+        self.assertGreater(page_count, 1)
+        
+        self.created_db.delete_container(created_collection.id)
+
     def _MockNextFunction(self):
         if self.count < len(self.payloads):
             item, result = self.get_mock_result(self.payloads, self.count)

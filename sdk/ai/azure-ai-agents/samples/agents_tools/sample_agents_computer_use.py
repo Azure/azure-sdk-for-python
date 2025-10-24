@@ -49,7 +49,9 @@ from azure.ai.agents.models import (
     MessageInputTextBlock,
     MessageInputImageUrlBlock,
     RequiredComputerUseToolCall,
+    ScreenshotAction,
     SubmitToolOutputsAction,
+    ListSortOrder,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -152,7 +154,7 @@ with project_client:
                             tool_outputs.append(
                                 ComputerToolOutput(tool_call_id=tool_call.id, output=computer_screenshot)
                             )
-                        if isinstance(action, ComputerScreenshot):
+                        if isinstance(action, ScreenshotAction):
                             print(f"  Screenshot requested")
                             # (add hook to take screenshot in managed environment API here)
 
@@ -193,6 +195,12 @@ with project_client:
                 print()  # extra newline between tool calls
 
         print()  # extra newline between run steps
+
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
 
     # Optional: Delete the agent once the run is finished.
     agents_client.delete_agent(agent.id)

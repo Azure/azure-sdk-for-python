@@ -21,11 +21,11 @@
 
 """Internal query builder for multi-item operations."""
 
-from typing import Dict, Tuple, Any, TYPE_CHECKING, Sequence
+from typing import Tuple, Any, TYPE_CHECKING, Sequence
 
 from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue
 if TYPE_CHECKING:
-    from azure.cosmos._cosmos_client_connection import _PartitionKeyType
+    from azure.cosmos._cosmos_client_connection import PartitionKeyType
 
 
 class _QueryBuilder:
@@ -49,8 +49,8 @@ class _QueryBuilder:
 
     @staticmethod
     def is_id_partition_key_query(
-            items: Sequence[Tuple[str, "_PartitionKeyType"]],
-            partition_key_definition: Dict[str, Any]
+            items: Sequence[Tuple[str, "PartitionKeyType"]],
+            partition_key_definition: dict[str, Any]
     ) -> bool:
         """Check if we can use the optimized ID IN query.
 
@@ -71,7 +71,7 @@ class _QueryBuilder:
 
     @staticmethod
     def is_single_logical_partition_query(
-            items: Sequence[Tuple[str, "_PartitionKeyType"]]
+            items: Sequence[Tuple[str, "PartitionKeyType"]]
     ) -> bool:
         """Check if all items in a chunk belong to the same logical partition.
 
@@ -88,9 +88,9 @@ class _QueryBuilder:
 
     @staticmethod
     def build_pk_and_id_in_query(
-            items: Sequence[Tuple[str, "_PartitionKeyType"]],
-            partition_key_definition: Dict[str, Any]
-    ) -> Dict[str, Any]:
+            items: Sequence[Tuple[str, "PartitionKeyType"]],
+            partition_key_definition: dict[str, Any]
+    ) -> dict[str, Any]:
         """Build a query for items in a single logical partition using an IN clause for IDs.
 
         e.g., SELECT * FROM c WHERE c.pk = @pk AND c.id IN (@id1, @id2)
@@ -114,7 +114,7 @@ class _QueryBuilder:
         return {"query": query_text, "parameters": parameters}
 
     @staticmethod
-    def build_id_in_query(items: Sequence[Tuple[str, "_PartitionKeyType"]]) -> Dict[str, Any]:
+    def build_id_in_query(items: Sequence[Tuple[str, "PartitionKeyType"]]) -> dict[str, Any]:
         """Build optimized query using ID IN clause when ID equals partition key.
 
         :param Sequence[tuple[str, any]] items: The list of items to build the query for.
@@ -131,9 +131,9 @@ class _QueryBuilder:
 
     @staticmethod
     def build_parameterized_query_for_items(
-            items_by_partition: Dict[str, Sequence[Tuple[str, "_PartitionKeyType"]]],
-            partition_key_definition: Dict[str, Any]
-    ) -> Dict[str, Any]:
+            items_by_partition: dict[str, Sequence[Tuple[str, "PartitionKeyType"]]],
+            partition_key_definition: dict[str, Any]
+    ) -> dict[str, Any]:
         """Builds a parameterized SQL query for reading multiple items.
 
         :param dict[str, Sequence[tuple[str, any]]] items_by_partition: A dictionary of items grouped by partition key.

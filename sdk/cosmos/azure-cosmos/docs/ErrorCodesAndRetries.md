@@ -14,5 +14,46 @@ The Cosmos DB Python SDK has several default policies that will deal with retryi
 | 412         | <ul><li>For Write Operations: </br><ul><li>This exception is encountered when the etag that is sent to the server for validation prior to updating an Item, does not match the etag of the Item on the server. </li><li>The client does NOT retry this operation locally or against any of the remote regions for the account as retries would not help alleviate the etag mismatch. </li><li>The application would need to trigger a retry by first reading the Item, fetching the latest etag and issuing the Upsert/Replace operation. </br><ul><li>This operation can continue to fail with the same exception when multiple updates are executed concurrently for the same Item. </li><li>An upper bound on the number of retries before handing off the Item to a dead letter queue should be implemented by the application. </li></ul></li></ul></li><li>For Query and point read Operations: </br><ul><li>N/A as this exception is only encountered for Create/Insert/Replace/Upsert operations. </li></ul></li></ul> |
 | 429         | For all Operations: </br><ul><li>By default, the client retries the request for a maximum of 9 times (or for a maximum of 30 seconds, whichever limit is reached first). </li><li>The client can also be initialized with a custom retry policy, which overrides the two limits mentioned above. </li><li>After all the retries are exhausted, the client bubbles up the exception to the application. </li><li>**For a multi-region account**, the client does NOT retry the request against a remote region for the account. </li><li>When the application receives a Request Rate too large exception (429), the application would need to instrument its own retry logic and dead letter queues. </li></ul>                                                                                                                                                                                                                                                                                                                |
 | 449         | <ul><li>For Write Operations: </br><ul><li>This exception is encountered when a resource is concurrently updated on the server, which can happen due to concurrent writes, user triggered while conflicts are concurrently being resolved etc. </li><li>Only one update can be executed at a time per item. The other concurrent requests will fail with a Concurrent Execution Exception (449). </li><li>The client does NOT retry requests that failed with a 449. </li></ul></li><li>For Query and point read Operations: </br><ul><li>N/A as this exception is only encountered for Create/Insert/Replace/Upsert operations. </li></ul></li></ul>                                                                                                                                                                                                                                                                                                                                                                          |
-| 500         | <ul><li>For Write Operations: </br><ul><li>The client does NOT retry write requests. </li></ul></li><li>For Read Operations: </br><ul><li>The request will be retried by the SDK on the next preferred regions. </li></ul></li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| 503         | When a Service Unavailable exception is encountered, for all Operations:  </br><ul><li>The request will be retried by the SDK on the next preferred regions.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 500         | For all Operations: </br><ul><li>The occurrence of an Invalid Exception (500) is extremely rare, and the client will retry a request that encounters this exception on the next preferred regions. </li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| 503         | When a Service Unavailable exception is encountered:  </br><ul><li>The request will be retried by the SDK on the next preferred regions.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+
+### Connection Issues Retry Flow And Marking Unavailable
+
+```mermaid
+flowchart TD
+    A[Request] --> B(fails due to connection issues. ex. ServiceRequestErrors)
+    B --> C{ has there been 3 retries for this endpoint? }
+    C --> K(Mark endpoint as unavailable)
+    K -->|Yes| I{Is there another region available?} 
+    I --> |No| J(Bubble up failure to customer)
+    I --> |Yes| D[read or write request?]
+    C -->|No| E(Retries in same region)
+    E --> A
+    D -->|Read| F(Retry on another region)
+    D -->|Write| G{multi-write account?}
+    G --> |Yes| F
+    G --> |No| H(Bubble up failure to customer)
+    H --> A
+    F --> A
+```
+
+### Transient Issues Retry Flow And Marking Unavailable
+
+```mermaid
+flowchart TD
+    A[Request] --> B(fails due to ServiceResponseErrors or 5xx errors excluding 503s)
+    B --> C{Is there another region available?} 
+    C --> |No| E(Try only one more time in initial region)
+    C --> |Yes| D[read or write request?]
+    D -->|Read| F(Retry on another region)
+    D -->|Write| G{retry write enabled?}
+    G --> |Yes| F(Retry on another region)
+    G --> |No| H(Bubble up failure to customer)
+    F --> A
+    E --> A
+```
+
+### SDK Health Checks
+These happen every 5 minutes in the background. A call will be made to all the endpoints the SDK can use based on the preferred locations.
+If the call fails, the endpoint will be marked as unavailable. If it succeeds, it will be marked as available again. 
+This is the only way an endpoint can be marked as available again.
