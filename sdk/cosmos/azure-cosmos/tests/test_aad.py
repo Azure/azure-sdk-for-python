@@ -6,6 +6,7 @@ import json
 import os
 import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from io import StringIO
 
 import pytest
@@ -34,6 +35,11 @@ def get_test_item(num):
 
 
 class CosmosEmulatorCredential(object):
+    def __init__(self):
+        self.token = None
+        # used to verify that get_token was called only once with concurrent clients
+        self.counter = 0
+
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for the emulator. Based on Azure Core's Access Token Credential.
@@ -47,6 +53,9 @@ class CosmosEmulatorCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
         """
+        if self.token:
+            return self.token
+
         aad_header_cosmos_emulator = "{\"typ\":\"JWT\",\"alg\":\"RS256\",\"x5t\":\"" \
                                      "CosmosEmulatorPrimaryMaster\",\"kid\":\"CosmosEmulatorPrimaryMaster\"}"
 
@@ -82,7 +91,10 @@ class CosmosEmulatorCredential(object):
         emulator_key_encoded_padded = str(emulator_key_encoded_bytes, "utf-8")
         emulator_key_encoded = _remove_padding(emulator_key_encoded_padded)
 
-        return AccessToken(first_encoded + "." + second_encoded + "." + emulator_key_encoded, int(time.time() + 7200))
+        self.counter += 1
+        # cache token
+        self.token = AccessToken(first_encoded + "." + second_encoded + "." + emulator_key_encoded, int(time.time() + 7200))
+        return self.token
 
 
 @pytest.mark.cosmosEmulator
@@ -176,9 +188,30 @@ class TestAAD(unittest.TestCase):
 
         scopes, _ = self._run_with_scope_capture(FailingCredential, action)
         try:
-            assert scopes == [override_scope], f"Expected only override scope, got: {scopes}"
+            assert scopes == [override_scope, override_scope], f"Expected only override scope, got: {scopes}"
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
+
+    def test_client_warmup(self):
+        """When multiple clients are created concurrently, only one token request occurs."""
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+
+        credential = CosmosEmulatorCredential()
+        def make_client():
+            client = cosmos_client.CosmosClient(self.host, credential)
+            return client
+
+        clients = []
+        with ThreadPoolExecutor(max_workers=100) as ex:
+            futures = [ex.submit(make_client) for _ in range(100)]
+            for f in as_completed(futures):
+                try:
+                    clients.append(f.result())
+                except Exception:
+                    pass
+
+        assert credential.counter == 1, f"Expected only one token request, got {credential.counter}"
+        del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
 
     def test_account_scope_only(self):
         """When account scope is provided, only that scope is used."""
@@ -212,10 +245,11 @@ class TestAAD(unittest.TestCase):
         class FallbackCredential(CosmosEmulatorCredential):
             def __init__(self):
                 self.call_count = 0
+                super().__init__()
 
             def get_token(self, *scopes, **kwargs):
                 self.call_count += 1
-                if self.call_count == 1:
+                if self.call_count <= 2:
                     raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
                 return super().get_token(*scopes, **kwargs)
 
