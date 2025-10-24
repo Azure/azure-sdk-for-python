@@ -491,7 +491,7 @@ class TestRetryPolicy(unittest.TestCase):
 
     def test_health_check_retry_policy(self):
         os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'] = '5'
-        os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'] = '100'
+        os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'] = '2'
         max_retries = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES'])
         retry_after_ms = int(os.environ['AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS'])
         self.original_execute_function = _retry_utility.ExecuteFunction

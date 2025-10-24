@@ -73,7 +73,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         client.connection_policy, global_endpoint_manager, *args
     )
     health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
-        client.connection_policy
+        client.connection_policy,
+        *args
     )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
         client.connection_policy.RetryOptions.MaxRetryAttemptCount,

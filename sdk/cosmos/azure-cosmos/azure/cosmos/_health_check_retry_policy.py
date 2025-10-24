@@ -60,12 +60,12 @@ class HealthCheckRetryPolicy(object):
         """
         if self.retry_count > 0:
             # exponential backoff for subsequent retries
-            self.retry_after_in_milliseconds = max(self.retry_after_in_milliseconds ** self.retry_factor,
+            self.retry_after_in_milliseconds = min(self.retry_after_in_milliseconds ** self.retry_factor,
                                                    self.max_retry_after_in_milliseconds)
         if self.request:
             # increase read timeout for each retry
             if self.request.read_timeout_override:
-                self.request.read_timeout_override = max(self.request.read_timeout_override ** 2,
+                self.request.read_timeout_override = min(self.request.read_timeout_override ** 2,
                                                          self.connection_policy.ReadTimeout)
             else:
                 self.request.read_timeout_override = self.initial_connection_timeout
