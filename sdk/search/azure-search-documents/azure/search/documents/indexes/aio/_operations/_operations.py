@@ -57,8 +57,8 @@ from ..._operations._operations import (
     build_search_index_get_alias_request,
     build_search_index_get_index_request,
     build_search_index_get_index_statistics_request,
-    build_search_index_get_index_stats_summary_request,
     build_search_index_get_knowledge_source_request,
+    build_search_index_get_service_statistics_request,
     build_search_index_get_synonym_map_request,
     build_search_index_get_synonym_maps_request,
     build_search_index_list_agents_request,
@@ -2954,7 +2954,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_index_stats_summary(self, **kwargs: Any) -> _models2.SearchServiceStatistics:
+    async def get_service_statistics(self, **kwargs: Any) -> _models2.SearchServiceStatistics:
         """Gets service level statistics for a search service.
 
         :return: SearchServiceStatistics. The SearchServiceStatistics is compatible with MutableMapping
@@ -2974,7 +2974,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         cls: ClsType[_models2.SearchServiceStatistics] = kwargs.pop("cls", None)
 
-        _request = build_search_index_list_index_stats_summary_request(
+        _request = build_search_index_get_service_statistics_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3017,7 +3017,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
         api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
-    def get_index_stats_summary(self, **kwargs: Any) -> AsyncItemPaged["_models2.IndexStatisticsSummary"]:
+    def list_index_stats_summary(self, **kwargs: Any) -> AsyncItemPaged["_models2.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.
 
         :return: An iterator like instance of IndexStatisticsSummary
@@ -3041,7 +3041,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_index_get_index_stats_summary_request(
+                _request = build_search_index_list_index_stats_summary_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

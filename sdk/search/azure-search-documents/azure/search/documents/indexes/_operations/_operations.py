@@ -809,7 +809,7 @@ def build_search_index_create_knowledge_source_request(**kwargs: Any) -> HttpReq
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_list_index_stats_summary_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_search_index_get_service_statistics_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -828,7 +828,7 @@ def build_search_index_list_index_stats_summary_request(**kwargs: Any) -> HttpRe
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_get_index_stats_summary_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_search_index_list_index_stats_summary_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -4297,7 +4297,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_index_stats_summary(self, **kwargs: Any) -> _models1.SearchServiceStatistics:
+    def get_service_statistics(self, **kwargs: Any) -> _models1.SearchServiceStatistics:
         """Gets service level statistics for a search service.
 
         :return: SearchServiceStatistics. The SearchServiceStatistics is compatible with MutableMapping
@@ -4317,7 +4317,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         cls: ClsType[_models1.SearchServiceStatistics] = kwargs.pop("cls", None)
 
-        _request = build_search_index_list_index_stats_summary_request(
+        _request = build_search_index_get_service_statistics_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4360,7 +4360,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
         api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
-    def get_index_stats_summary(self, **kwargs: Any) -> ItemPaged["_models1.IndexStatisticsSummary"]:
+    def list_index_stats_summary(self, **kwargs: Any) -> ItemPaged["_models1.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.
 
         :return: An iterator like instance of IndexStatisticsSummary
@@ -4384,7 +4384,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_index_get_index_stats_summary_request(
+                _request = build_search_index_list_index_stats_summary_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

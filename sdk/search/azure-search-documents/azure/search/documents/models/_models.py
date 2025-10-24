@@ -477,7 +477,7 @@ class IndexAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexBatch(_Model):
+class IndexDocumentsBatch(_Model):
     """Contains a batch of document write actions to send to the index.
 
     :ivar actions: The actions in the batch. Required.

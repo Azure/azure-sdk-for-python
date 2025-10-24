@@ -9476,6 +9476,8 @@ class SearchResourceEncryptionKey(_Model):
      resource, if the explicit identity is unspecified, it remains unchanged. If \"none\" is
      specified, the value of this property is cleared."""
 
+    __flattened_items = ["application_id", "application_secret"]
+
     @overload
     def __init__(
         self,
@@ -9495,7 +9497,25 @@ class SearchResourceEncryptionKey(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.access_credentials is None:
+                return None
+            return getattr(self.access_credentials, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.access_credentials is None:
+                self.access_credentials = self._attr_to_rest_field["access_credentials"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SearchServiceCounters(_Model):

@@ -124,7 +124,7 @@ class _SearchClientOperationsMixin(
         },
         api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
-    async def search_get(
+    async def _search_get(
         self,
         *,
         search_text: Optional[str] = None,
@@ -633,7 +633,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def suggest_get(
+    async def _suggest_get(
         self,
         *,
         search_text: str,
@@ -928,7 +928,7 @@ class _SearchClientOperationsMixin(
     @overload
     async def index_documents(
         self,
-        batch: _models2.IndexBatch,
+        batch: _models2.IndexDocumentsBatch,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
@@ -937,7 +937,7 @@ class _SearchClientOperationsMixin(
         """Sends a batch of document write actions to the index.
 
         :param batch: The batch of index actions. Required.
-        :type batch: ~azure.search.documents.models.IndexBatch
+        :type batch: ~azure.search.documents.models.IndexDocumentsBatch
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -1003,16 +1003,16 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     async def index_documents(
         self,
-        batch: Union[_models2.IndexBatch, JSON, IO[bytes]],
+        batch: Union[_models2.IndexDocumentsBatch, JSON, IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> _models2.IndexDocumentsResult:
         """Sends a batch of document write actions to the index.
 
-        :param batch: The batch of index actions. Is one of the following types: IndexBatch, JSON,
-         IO[bytes] Required.
-        :type batch: ~azure.search.documents.models.IndexBatch or JSON or IO[bytes]
+        :param batch: The batch of index actions. Is one of the following types: IndexDocumentsBatch,
+         JSON, IO[bytes] Required.
+        :type batch: ~azure.search.documents.models.IndexDocumentsBatch or JSON or IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -1084,7 +1084,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def autocomplete_get(
+    async def _autocomplete_get(
         self,
         *,
         search_text: str,
