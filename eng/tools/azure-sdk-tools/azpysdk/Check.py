@@ -17,8 +17,9 @@ from ci_tools.functions import (
     install_into_venv,
     get_venv_python,
     get_pip_command,
+    find_whl
 )
-from ci_tools.variables import discover_repo_root
+from ci_tools.variables import discover_repo_root, in_ci
 from ci_tools.logging import logger
 
 # right now, we are assuming you HAVE to be in the azure-sdk-tools repo
@@ -70,9 +71,21 @@ class Check(abc.ABC):
 
             subprocess.check_call(venv_cmd + [venv_location])
 
-            # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
-            # venv
-            install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT)
+            if in_ci():
+                # first attempt to retrieve azure-sdk-tools from the prebuilt wheel directory
+                # if present, install from there instead of constantly rebuilding azure-sdk-tools in a possible
+                # parallel situation
+                wheel_dir = os.path.join(REPO_ROOT, ".wheels")
+                prebuilt_whl = find_whl(wheel_dir, "azure-sdk-tools", "0.0.0")
+
+                if prebuilt_whl:
+                    install_into_venv(venv_location, [f"{prebuilt_whl}[build]"], REPO_ROOT)
+                else:
+                    logger.error("Falling back to manual build and install of azure-sdk-tools into isolated env,"
+                                 f" unable to locate prebuilt azure-sdk-tools within {wheel_dir}")
+            else:
+                install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT)
+
             venv_python_exe = get_venv_python(venv_location)
 
             return venv_python_exe
