@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     _get_authentication_credential,
     BaseExporter,
     ExportResult,
+    _get_storage_directory,
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
@@ -55,6 +56,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
 TEST_TEMP_DIR = "TEST_TEMP_DIR"
+TEST_USER_DIR = "test-user"
 
 
 def throw(exc_type, *args, **kwargs):
@@ -174,15 +176,11 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._timeout, 10)
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
+        subdirectory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
         self.assertEqual(
             base._storage_directory,
-            os.path.join(
-                TEST_TEMP_DIR,
-                "Microsoft/AzureMonitor",
-                "opentelemetry-python-" + "4321abcd-5678-4efa-8abc-1234567890ab",
-            ),
+            subdirectory
         )
-        mock_get_temp_dir.assert_called_once()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_disable_offline_storage(self, mock_get_temp_dir):

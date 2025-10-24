@@ -3,6 +3,7 @@
 
 import os
 import shutil
+import tempfile
 import unittest
 from unittest import mock
 
@@ -14,7 +15,12 @@ from azure.monitor.opentelemetry.exporter._storage import (
     _seconds,
 )
 
+from azure.monitor.opentelemetry.exporter.export._base import _get_storage_directory
+
 TEST_FOLDER = os.path.abspath(".test.storage")
+DUMMY_INSTRUMENTATION_KEY = "00000000-0000-0000-0000-000000000000"
+TEST_USER = "multiuser-test"
+STORAGE_MODULE = "azure.monitor.opentelemetry.exporter._storage"
 
 
 def throw(exc_type, *args, **kwargs):
@@ -507,7 +513,7 @@ class TestLocalFileStorage(unittest.TestCase):
         
         # Clean up - note: cannot easily reset readonly state, but test isolation should handle this
         set_local_storage_setup_state_exception("")
-    
+
     def test_check_and_set_folder_permissions_windows_icacls_failure_sets_exception_state(self):
         test_input = (1, 2, 3)
 
@@ -907,3 +913,113 @@ class TestLocalFileStorage(unittest.TestCase):
         # State should remain True after multiple sets
         final_state = get_local_storage_setup_state_readonly()
         self.assertTrue(final_state)
+
+    def test_check_and_set_folder_permissions_unix_multiuser_scenario(self):
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+        )
+        
+        # Clear any existing exception state
+        set_local_storage_setup_state_exception("")
+        
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            chmod_calls = []
+            makedirs_calls = []
+
+            def mock_chmod(path, mode):
+                chmod_calls.append((path, oct(mode)))
+
+            def mock_makedirs(path, mode=0o777, exist_ok=False):
+                makedirs_calls.append((path, oct(mode), exist_ok))
+
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs", side_effect=mock_makedirs):
+                with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
+                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                        stor = LocalFileStorage(storage_abs_path)
+
+                        self.assertTrue(stor._enabled)
+
+                        self.assertEqual(
+                            makedirs_calls,
+                            [(storage_abs_path, '0o777', True)],
+                            f"Unexpected makedirs calls: {makedirs_calls}",
+                        )
+
+                        self.assertEqual(
+                            {(storage_abs_path, '0o700')},
+                            {(call_path, mode) for call_path, mode in chmod_calls},
+                            f"Unexpected chmod calls: {chmod_calls}",
+                        )
+
+                        stor.close()
+        
+        # Clean up
+        set_local_storage_setup_state_exception("")
+        
+    def test_check_and_set_folder_permissions_unix_multiuser_parent_permission_failure(self):
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+        )
+
+        # Clear any existing exception state
+        set_local_storage_setup_state_exception("")
+
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            def mock_makedirs(path, mode=0o777, exist_ok=False):
+                raise PermissionError("Operation not permitted on parent directory")
+
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs", side_effect=mock_makedirs):
+                with mock.patch(f"{STORAGE_MODULE}.os.chmod"):
+                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                        stor = LocalFileStorage(storage_abs_path)
+
+                        self.assertFalse(stor._enabled)
+
+                        exception_state = get_local_storage_setup_state_exception()
+                        self.assertEqual(exception_state, "Operation not permitted on parent directory")
+
+                        stor.close()
+        
+        # Clean up
+        set_local_storage_setup_state_exception("")
+
+    def test_check_and_set_folder_permissions_unix_multiuser_storage_permission_failure(self):
+        test_error_message = "PermissionError: Operation not permitted on storage directory"
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+        )
+        
+        # Clear any existing exception state
+        set_local_storage_setup_state_exception("")
+
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            def mock_chmod(path, mode):
+                if mode == 0o700:
+                    raise PermissionError(test_error_message)
+                raise OSError(f"Unexpected chmod call: {path}, {oct(mode)}")
+
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
+                with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
+                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                        stor = LocalFileStorage(storage_abs_path)
+
+                        self.assertFalse(stor._enabled)
+
+                        exception_state = get_local_storage_setup_state_exception()
+                        self.assertEqual(exception_state, test_error_message)
+
+                        stor.close()
+        
+        # Clean up
+        set_local_storage_setup_state_exception("")
