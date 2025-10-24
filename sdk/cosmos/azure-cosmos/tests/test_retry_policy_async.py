@@ -11,7 +11,7 @@ from azure.cosmos import documents
 
 import azure.cosmos._retry_options as retry_options
 import azure.cosmos.exceptions as exceptions
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import ServiceRequestError
 import test_config
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
@@ -551,7 +551,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility.ExecuteFunctionAsync = mock_execute
 
         try:
-            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
+            with self.assertRaises(ServiceRequestError) as context:
                 async with CosmosClient( self.host,
                         self.masterKey):
                    pass
