@@ -1,5 +1,92 @@
 # Release History
 
+## 14.0.0b4 (2025-10-24)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added method `send_request`
+  - Model `BackupPolicyPatch` added property `properties`
+  - Model `CapacityPool` added property `properties`
+  - Model `CapacityPoolPatch` added property `properties`
+  - Model `NetAppAccount` added property `properties`
+  - Model `NetAppAccountPatch` added property `properties`
+  - Enum `NetAppProvisioningState` added member `CREATING`
+  - Enum `NetAppProvisioningState` added member `PATCHING`
+  - Model `RegionInfoResource` added property `properties`
+  - Enum `ReplicationSchedule` added member `ENUM_10_MINUTELY`
+  - Model `SnapshotPolicyPatch` added property `properties`
+  - Model `SnapshotPolicyVolumeList` added property `next_link`
+  - Model `SubvolumeInfo` added property `properties`
+  - Model `UsageResult` added property `properties`
+  - Model `VolumeGroupDetails` added property `properties`
+  - Model `VolumeGroupDetails` added property `system_data`
+  - Model `VolumeGroupVolumeProperties` added property `properties`
+  - Model `VolumeQuotaRule` added property `properties`
+  - Model `VolumeQuotaRulePatch` added property `properties`
+  - Added model `AccountProperties`
+  - Added model `BackupPatchProperties`
+  - Added model `GetKeyVaultStatusResponseProperties`
+  - Added model `PoolPatchProperties`
+  - Added model `PoolProperties`
+  - Added model `SnapshotPatch`
+  - Added model `SubvolumePatchParams`
+  - Added model `SubvolumeProperties`
+  - Added model `UsageProperties`
+  - Added enum `VolumeBackupRelationshipStatus`
+  - Added model `VolumeGroupListProperties`
+  - Added model `VolumeQuotaRulesProperties`
+  - Added enum `VolumeReplicationRelationshipStatus`
+  - Added enum `VolumeRestoreRelationshipStatus`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `BackupPatch` instance variable `label` has been moved under property `properties`
+  - Model `BackupPolicyPatch` instance variables `backup_policy_id`, `provisioning_state`, `daily_backups_to_keep`, `weekly_backups_to_keep`, `monthly_backups_to_keep`, `volumes_assigned`, `enabled`, and `volume_backups` have been moved under property `properties`
+  - Model `CapacityPool` instance variables `pool_id`, `size`, `service_level`, `provisioning_state`, `total_throughput_mibps`, `utilized_throughput_mibps`, `custom_throughput_mibps`, `qos_type`, `cool_access`, and `encryption_type` have been moved under property `properties`
+  - Model `CapacityPoolPatch` instance variables `size`, `qos_type`, `cool_access`, and `custom_throughput_mibps` have been moved under property `properties`
+  - Model `GetKeyVaultStatusResponse` instance variables `key_vault_uri`, `key_name`, `key_vault_resource_id`, and `key_vault_private_endpoints` have been moved under property `properties`
+  - Model `NetAppAccount` instance variables `provisioning_state`, `active_directories`, `encryption`, `disable_showmount`, `nfs_v4_id_domain`, `multi_ad_status`, and `ldap_configuration` have been moved under property `properties`
+  - Model `NetAppAccountPatch` instance variables `provisioning_state`, `active_directories`, `encryption`, `disable_showmount`, `nfs_v4_id_domain`, `multi_ad_status`, and `ldap_configuration` have been moved under property `properties`
+  - Deleted or renamed enum value `NetAppProvisioningState.CANCELED`
+  - Deleted or renamed enum value `NetAppProvisioningState.PROVISIONING`
+  - Deleted or renamed enum value `NetAppProvisioningState.UPDATING`
+  - Model `RegionInfoResource` instance variables `storage_to_network_proximity` and `availability_zone_mappings` have been moved under property `properties`
+  - Model `SnapshotPolicyPatch` instance variables `hourly_schedule`, `daily_schedule`, `weekly_schedule`, `monthly_schedule`, `enabled`, and `provisioning_state` have been moved under property `properties`
+  - Model `SubvolumeInfo` instance variables `path`, `size`, `parent_path`, and `provisioning_state` have been moved under property `properties`
+  - Model `SubvolumePatchRequest` instance variables `size` and `path` have been moved under property `properties`
+  - Model `UsageResult` instance variables `current_value`, `limit`, and `unit` have been moved under property `properties`
+  - Model `VolumeGroupDetails` instance variables `provisioning_state`, `group_meta_data`, and `volumes` have been moved under property `properties`
+  - Model `VolumeGroupVolumeProperties` instance variables `file_system_id`, `creation_token`, `service_level`, `usage_threshold`, `export_policy`, `protocol_types`, `provisioning_state`, `snapshot_id`, `delete_base_snapshot`, `backup_id`, `baremetal_tenant_id`, `subnet_id`, `network_features`, `effective_network_features`, `network_sibling_set_id`, `storage_to_network_proximity`, `mount_targets`, `volume_type`, `data_protection`, `accept_grow_capacity_pool_for_short_term_clone_split`, `is_restoring`, `snapshot_directory_visible`, `kerberos_enabled`, `security_style`, `smb_encryption`, `smb_access_based_enumeration`, `smb_non_browsable`, `smb_continuously_available`, `throughput_mibps`, `actual_throughput_mibps`, `encryption_key_source`, `key_vault_private_endpoint_resource_id`, `ldap_enabled`, `ldap_server_type`, `cool_access`, `coolness_period`, `cool_access_retrieval_policy`, `cool_access_tiering_policy`, `unix_permissions`, `clone_progress`, `file_access_logs`, `avs_data_store`, `data_store_resource_id`, `is_default_quota_enabled`, `default_user_quota_in_ki_bs`, `default_group_quota_in_ki_bs`, `maximum_number_of_files`, `volume_group_name`, `capacity_pool_resource_id`, `proximity_placement_group`, `t2_network`, `volume_spec_name`, `encrypted`, `placement_rules`, `enable_subvolumes`, `provisioned_availability_zone`, `is_large_volume`, `originating_resource_id`, `inherited_size_in_bytes`, and `language` have been moved under property `properties`
+  - Model `VolumeQuotaRule` instance variables `provisioning_state`, `quota_size_in_ki_bs`, `quota_type`, and `quota_target` have been moved under property `properties`
+  - Model `VolumeQuotaRulePatch` instance variables `provisioning_state`, `quota_size_in_ki_bs`, `quota_type`, and `quota_target` have been moved under property `properties`
+  - Deleted or renamed model `BackupPoliciesList`
+  - Deleted or renamed model `BackupVaultsList`
+  - Deleted or renamed model `BackupsList`
+  - Deleted or renamed model `BucketList`
+  - Deleted or renamed model `CapacityPoolList`
+  - Deleted or renamed model `CloudErrorBody`
+  - Deleted or renamed model `ListReplications`
+  - Deleted or renamed model `MountTarget`
+  - Deleted or renamed model `NetAppAccountList`
+  - Deleted or renamed model `QuotaItemList`
+  - Deleted or renamed model `RegionInfosList`
+  - Deleted or renamed model `RelationshipStatus`
+  - Deleted or renamed model `ResourceIdentity`
+  - Deleted or renamed model `SnapshotPoliciesList`
+  - Deleted or renamed model `SnapshotPolicyDetails`
+  - Deleted or renamed model `SnapshotsList`
+  - Deleted or renamed model `SubvolumesList`
+  - Deleted or renamed model `VolumeGroupList`
+  - Deleted or renamed model `VolumeList`
+  - Deleted or renamed model `VolumeQuotaRulesList`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` parameters `network_sibling_set_id`, `subnet_id`, and `network_features` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_file_path_availability` parameters `name`, `subnet_id`, and `availability_zone` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_name_availability` parameters `name`, `type`, and `resource_group` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_quota_availability` parameters `name`, `type`, and `resource_group` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.query_network_sibling_set` parameters `network_sibling_set_id` and `subnet_id` have been moved under `positional_or_keyword` parameter `body`
+  - Parameter `force_delete` of method `VolumesOperations.begin_delete` is now required
+
 ## 14.0.0b3 (2025-10-09)
 
 ### Bugs Fixed
