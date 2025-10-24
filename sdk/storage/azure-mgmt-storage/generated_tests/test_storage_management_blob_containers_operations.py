@@ -24,7 +24,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
         response = self.client.blob_containers.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -174,7 +174,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -187,7 +187,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             container_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -200,7 +200,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             container_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -214,7 +214,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             container_name="str",
             legal_hold={"tags": ["str"], "allowProtectedAppendWritesAll": bool, "hasLegalHold": bool},
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -228,7 +228,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             container_name="str",
             legal_hold={"tags": ["str"], "allowProtectedAppendWritesAll": bool, "hasLegalHold": bool},
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -242,7 +242,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             container_name="str",
             immutability_policy_name="default",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -256,7 +256,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             container_name="str",
             immutability_policy_name="default",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -271,7 +271,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             container_name="str",
             if_match="str",
             immutability_policy_name="default",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -285,7 +285,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             container_name="str",
             if_match="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -299,7 +299,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             container_name="str",
             if_match="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -312,7 +312,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             container_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -325,7 +325,7 @@ class TestStorageManagementBlobContainersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             container_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -25,7 +25,7 @@ class TestStorageManagementLocalUsersOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.local_users.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestStorageManagementLocalUsersOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             username="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestStorageManagementLocalUsersOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "userId": 0,
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestStorageManagementLocalUsersOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             username="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestStorageManagementLocalUsersOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             username="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestStorageManagementLocalUsersOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             username="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
