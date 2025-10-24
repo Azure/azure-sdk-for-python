@@ -563,8 +563,7 @@ class TestAvailabilityStrategy:
         # Verify error code
         assert exc_info.value.status_code == 400
 
-    # @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    @pytest.mark.parametrize("operation", [UPSERT])
+    @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     def test_request_level_enable_override_client_disable(self, operation):
         """Test that request-level enabled policy overrides client-level disabled policy"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
@@ -575,7 +574,7 @@ class TestAvailabilityStrategy:
                                FaultInjectionTransport.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
-            500,  # Add delay to trigger hedging
+            700,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
             # using non retryable errors to verify the request will only go to the first region
         )
