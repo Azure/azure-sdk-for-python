@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from opentelemetry.sdk._logs import LogData, LogRecordProcessor
+from opentelemetry.sdk._logs import ReadableLogRecord, LogRecordProcessor
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
 from azure.monitor.opentelemetry.exporter._performance_counters._manager import _PerformanceCountersManager
@@ -13,18 +13,18 @@ class _PerformanceCountersLogRecordProcessor(LogRecordProcessor):
         super().__init__()
         self.call_on_emit = hasattr(super(), 'on_emit')
 
-    def on_emit(self, log_data: LogData) -> None:  # type: ignore
+    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:  # type: ignore
         pcm = _PerformanceCountersManager()
         if pcm:
-            pcm._record_log_record(log_data)
+            pcm._record_log_record(readable_log_record)
         if self.call_on_emit:
-            super().on_emit(log_data)  # type: ignore[safe-super]
+            super().on_emit(readable_log_record)  # type: ignore[safe-super]
         else:
             # this method was removed in opentelemetry-sdk and replaced with on_emit
-            super().emit(log_data)  # type: ignore[safe-super,misc] # pylint: disable=no-member
+            super().emit(readable_log_record)  # type: ignore[safe-super,misc] # pylint: disable=no-member
 
-    def emit(self, log_data: LogData) -> None:
-        self.on_emit(log_data)
+    def emit(self, readable_log_record: ReadableLogRecord) -> None:
+        self.on_emit(readable_log_record)
 
     def shutdown(self):
         pass

@@ -5,7 +5,7 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock
 
-from opentelemetry.sdk._logs import LogData
+from opentelemetry.sdk._logs import ReadableLogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 
 from azure.monitor.opentelemetry.exporter._performance_counters._processor import (
@@ -42,7 +42,7 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         processor = _PerformanceCountersLogRecordProcessor()
         
         # Create mock log data
-        mock_log_data = MagicMock(spec=LogData)
+        mock_log_data = MagicMock(spec=ReadableLogRecord)
         
         processor.on_emit(mock_log_data)
         
@@ -58,7 +58,7 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         processor.on_emit = MagicMock()
         
         # Create mock log data
-        mock_log_data = MagicMock(spec=LogData)
+        mock_log_data = MagicMock(spec=ReadableLogRecord)
         
         processor.emit(mock_log_data)
         
@@ -91,7 +91,7 @@ class TestPerformanceCountersLogRecordProcessor(unittest.TestCase):
         processor = _PerformanceCountersLogRecordProcessor()
         
         # Create mock log data
-        mock_log_data = MagicMock(spec=LogData)
+        mock_log_data = MagicMock(spec=ReadableLogRecord)
         
         # Exception should be propagated
         with self.assertRaises(Exception) as context:

@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch, Mock
 
 from opentelemetry.sdk._logs import LogRecord
-from opentelemetry.sdk.trace import Event, ReadableSpan
+from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.semconv.attributes.http_attributes import (
     HTTP_REQUEST_METHOD,
@@ -248,7 +248,7 @@ class TestExceptionData(unittest.TestCase):
             SpanAttributes.EXCEPTION_STACKTRACE: "Test stack trace"
         }
 
-        self.span_event = Mock(spec=Event)
+        self.span_event = Mock(spec=LogRecord.event_name)
         self.span_event.attributes = {
             SpanAttributes.EXCEPTION_MESSAGE: "Test span event message",
             SpanAttributes.EXCEPTION_STACKTRACE: "Test span event stack trace"

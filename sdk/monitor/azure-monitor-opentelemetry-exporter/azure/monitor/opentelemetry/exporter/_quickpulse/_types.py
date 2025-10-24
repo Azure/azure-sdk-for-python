@@ -177,7 +177,7 @@ class _ExceptionData(_TelemetryData):
 
     @staticmethod
     @no_type_check
-    def _from_span_event(span_event: Event):
+    def _from_span_event(span_event: LogRecord.event_name):
         return _ExceptionData(
             message=str(span_event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
             stack_trace=str(span_event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")),
