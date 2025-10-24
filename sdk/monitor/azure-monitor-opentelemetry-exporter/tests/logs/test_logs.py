@@ -17,7 +17,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
 from opentelemetry.sdk import _logs
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk._logs.export import LogExportResult
+from opentelemetry.sdk._logs.export import LogRecordExportResult
 from opentelemetry._logs.severity import SeverityNumber
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
@@ -63,7 +63,7 @@ class TestAzureLogExporter(unittest.TestCase):
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = cls._exporter_class()
-        cls._log_data = _logs.LogData(
+        cls._log_data = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -77,7 +77,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_empty = _logs.LogData(
+        cls._log_data_empty = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -91,7 +91,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_none = _logs.LogData(
+        cls._log_data_none = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -105,7 +105,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_complex_body = _logs.LogData(
+        cls._log_data_complex_body = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -119,7 +119,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_complex_body_not_serializeable = _logs.LogData(
+        cls._log_data_complex_body_not_serializeable = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -133,7 +133,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_empty_with_whitespaces = _logs.LogData(
+        cls._log_data_empty_with_whitespaces = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -147,7 +147,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_event = _logs.LogData(
+        cls._log_data_event = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -164,7 +164,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_event_complex_body = _logs.LogData(
+        cls._log_data_event_complex_body = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -181,7 +181,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_event_complex_body_not_serializeable = _logs.LogData(
+        cls._log_data_event_complex_body_not_serializeable = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -198,7 +198,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._log_data_custom_event = _logs.LogData(
+        cls._log_data_custom_event = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -216,7 +216,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._exc_data = _logs.LogData(
+        cls._exc_data = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -235,7 +235,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._exc_data_with_exc_body = _logs.LogData(
+        cls._exc_data_with_exc_body = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -254,7 +254,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._exc_data_blank_exception = _logs.LogData(
+        cls._exc_data_blank_exception = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -268,7 +268,7 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
-        cls._exc_data_empty = _logs.LogData(
+        cls._exc_data_empty = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -311,7 +311,7 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_export_empty(self):
         exporter = self._exporter
         result = exporter.export([])
-        self.assertEqual(result, LogExportResult.SUCCESS)
+        self.assertEqual(result, LogRecordExportResult.SUCCESS)
 
     def test_export_failure(self):
         exporter = self._exporter
@@ -322,7 +322,7 @@ class TestAzureLogExporter(unittest.TestCase):
             storage_mock = mock.Mock()
             exporter.storage.put = storage_mock
             result = exporter.export([self._log_data])
-        self.assertEqual(result, LogExportResult.FAILURE)
+        self.assertEqual(result, LogRecordExportResult.FAILURE)
         self.assertEqual(storage_mock.call_count, 1)
 
     def test_export_success(self):
@@ -334,7 +334,7 @@ class TestAzureLogExporter(unittest.TestCase):
             storage_mock = mock.Mock()
             exporter._transmit_from_storage = storage_mock
             result = exporter.export([self._log_data])
-            self.assertEqual(result, LogExportResult.SUCCESS)
+            self.assertEqual(result, LogRecordExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.logs._exporter._logger")
@@ -345,7 +345,7 @@ class TestAzureLogExporter(unittest.TestCase):
             throw(Exception),
         ):  # noqa: E501
             result = exporter.export([self._log_data])
-            self.assertEqual(result, LogExportResult.FAILURE)
+            self.assertEqual(result, LogRecordExportResult.FAILURE)
             self.assertEqual(logger_mock.exception.called, True)
 
     def test_export_not_retryable(self):
@@ -355,7 +355,7 @@ class TestAzureLogExporter(unittest.TestCase):
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
             result = exporter.export([self._log_data])
-            self.assertEqual(result, LogExportResult.FAILURE)
+            self.assertEqual(result, LogRecordExportResult.FAILURE)
 
     def test_log_to_envelope_partA(self):
         exporter = self._exporter
@@ -583,7 +583,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 "service.instance.id": "testServiceInstanceId",
             }
         )
-        log_data = _logs.LogData(
+        log_data = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -615,7 +615,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 "service.instance.id": "testServiceInstanceId",
             }
         )
-        log_data = _logs.LogData(
+        log_data = _logs.ReadWriteLogRecord(
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -672,7 +672,7 @@ class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
             transmit_from_storage_mock = mock.Mock()
             exporter._handle_transmit_from_storage = transmit_from_storage_mock
             result = exporter.export([self._log_data])
-            self.assertEqual(result, LogExportResult.FAILURE)
+            self.assertEqual(result, LogRecordExportResult.FAILURE)
             self.assertEqual(exporter.storage, None)
             self.assertEqual(transmit_from_storage_mock.call_count, 1)
 
@@ -685,7 +685,7 @@ class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
             storage_mock = mock.Mock()
             exporter._transmit_from_storage = storage_mock
             result = exporter.export([self._log_data])
-            self.assertEqual(result, LogExportResult.SUCCESS)
+            self.assertEqual(result, LogRecordExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 0)
 
 
@@ -693,17 +693,17 @@ class TestAzureLogExporterUtils(unittest.TestCase):
     def test_get_log_export_result(self):
         self.assertEqual(
             _get_log_export_result(ExportResult.SUCCESS),
-            LogExportResult.SUCCESS,
+            LogRecordExportResult.SUCCESS,
         )
         self.assertEqual(
             _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE),
-            LogExportResult.FAILURE,
+            LogRecordExportResult.FAILURE,
         )
         self.assertEqual(
             _get_log_export_result(ExportResult.FAILED_RETRYABLE),
-            LogExportResult.FAILURE,
+            LogRecordExportResult.FAILURE,
         )
-        self.assertEqual(_get_log_export_result(None), LogExportResult.FAILURE)
+        self.assertEqual(_get_log_export_result(None), LogRecordExportResult.FAILURE)
 
     def test_get_severity_level(self):
         for sev_num in SeverityNumber:

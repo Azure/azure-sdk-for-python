@@ -5,6 +5,8 @@
 ### Features Added
 
 ### Breaking Changes
+- Fix to accomodate breaking log changes from Otel
+  ([#43626](https://github.com/Azure/azure-sdk-for-python/pull/43626))
 
 ### Bugs Fixed
 - Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
