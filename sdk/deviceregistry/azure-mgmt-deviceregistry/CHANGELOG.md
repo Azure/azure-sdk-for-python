@@ -107,14 +107,14 @@
   - Added enum `SystemAssignedServiceIdentityType`
   - Added model `TrustSettings`
   - Added model `X509CertificateCredentials`
-  - Added model `NamespaceAssetsOperations`
-  - Added model `NamespaceDevicesOperations`
-  - Added model `NamespaceDiscoveredAssetsOperations`
-  - Added model `NamespaceDiscoveredDevicesOperations`
-  - Added model `NamespacesOperations`
-  - Added model `SchemaRegistriesOperations`
-  - Added model `SchemaVersionsOperations`
-  - Added model `SchemasOperations`
+  - Added operation group `NamespaceAssetsOperations`
+  - Added operation group `NamespaceDevicesOperations`
+  - Added operation group `NamespaceDiscoveredAssetsOperations`
+  - Added operation group `NamespaceDiscoveredDevicesOperations`
+  - Added operation group `NamespacesOperations`
+  - Added operation group `SchemaRegistriesOperations`
+  - Added operation group `SchemaVersionsOperations`
+  - Added operation group `SchemasOperations`
 
 ## 1.0.0 (2025-02-26)
 
