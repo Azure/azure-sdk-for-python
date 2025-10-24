@@ -79,7 +79,8 @@ class Check(abc.ABC):
                 prebuilt_whl = find_whl(wheel_dir, "azure-sdk-tools", "0.0.0")
 
                 if prebuilt_whl:
-                    install_into_venv(venv_location, [f"{prebuilt_whl}[build]"], REPO_ROOT)
+                    install_location = os.path.join(wheel_dir, prebuilt_whl)
+                    install_into_venv(venv_location, [f"{install_location}[build]"], REPO_ROOT)
                 else:
                     logger.error("Falling back to manual build and install of azure-sdk-tools into isolated env,"
                                  f" unable to locate prebuilt azure-sdk-tools within {wheel_dir}")
