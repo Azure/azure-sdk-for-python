@@ -284,6 +284,7 @@
         "azure.mgmt.containerservice.models.NetworkPolicy": null,
         "azure.mgmt.containerservice.models.NetworkMode": null,
         "azure.mgmt.containerservice.models.NetworkDataplane": null,
+        "azure.mgmt.containerservice.models.AdvancedNetworkPolicies": null,
         "azure.mgmt.containerservice.models.OutboundType": null,
         "azure.mgmt.containerservice.models.LoadBalancerSku": null,
         "azure.mgmt.containerservice.models.BackendPoolType": null,

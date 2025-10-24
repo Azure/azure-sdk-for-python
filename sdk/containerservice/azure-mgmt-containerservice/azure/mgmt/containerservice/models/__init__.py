@@ -257,9 +257,6 @@ from ._models_py3 import (  # type: ignore
 )
 
 from ._container_service_client_enums import (  # type: ignore
-    AccelerationMode,
-    AddonAutoscaling,
-    AdoptionPolicy,
     AdvancedNetworkPolicies,
     AgentPoolMode,
     AgentPoolSSHAccess,
@@ -590,9 +587,6 @@ __all__ = [
     "VirtualMachinesProfile",
     "WeeklySchedule",
     "WindowsGmsaProfile",
-    "AccelerationMode",
-    "AddonAutoscaling",
-    "AdoptionPolicy",
     "AdvancedNetworkPolicies",
     "AgentPoolMode",
     "AgentPoolSSHAccess",

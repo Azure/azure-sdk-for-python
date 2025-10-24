@@ -326,4 +326,7 @@ _INTEGER_MIN: int = Int32.minval
 
 _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
 
+# Default message for messages(MessageData) with empty body
+_DEFAULT_LOG_MESSAGE = "n/a"
+
 # cSpell:disable

@@ -175,16 +175,11 @@ class AdvancedNetworkingSecurity(_serialization.Model):
      to true. Known values are: "L7", "FQDN", and "None".
     :vartype advanced_network_policies: str or
      ~azure.mgmt.containerservice.models.AdvancedNetworkPolicies
-    :ivar transit_encryption: Encryption configuration for Cilium-based clusters. Once enabled all
-     traffic between Cilium managed pods will be encrypted when it leaves the node boundary.
-    :vartype transit_encryption:
-     ~azure.mgmt.containerservice.models.AdvancedNetworkingSecurityTransitEncryption
     """
 
     _attribute_map = {
         "enabled": {"key": "enabled", "type": "bool"},
         "advanced_network_policies": {"key": "advancedNetworkPolicies", "type": "str"},
-        "transit_encryption": {"key": "transitEncryption", "type": "AdvancedNetworkingSecurityTransitEncryption"},
     }
 
     def __init__(
@@ -192,7 +187,6 @@ class AdvancedNetworkingSecurity(_serialization.Model):
         *,
         enabled: Optional[bool] = None,
         advanced_network_policies: Optional[Union[str, "_models.AdvancedNetworkPolicies"]] = None,
-        transit_encryption: Optional["_models.AdvancedNetworkingSecurityTransitEncryption"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -207,40 +201,10 @@ class AdvancedNetworkingSecurity(_serialization.Model):
          to true. Known values are: "L7", "FQDN", and "None".
         :paramtype advanced_network_policies: str or
          ~azure.mgmt.containerservice.models.AdvancedNetworkPolicies
-        :keyword transit_encryption: Encryption configuration for Cilium-based clusters. Once enabled
-         all traffic between Cilium managed pods will be encrypted when it leaves the node boundary.
-        :paramtype transit_encryption:
-         ~azure.mgmt.containerservice.models.AdvancedNetworkingSecurityTransitEncryption
         """
         super().__init__(**kwargs)
         self.enabled = enabled
         self.advanced_network_policies = advanced_network_policies
-        self.transit_encryption = transit_encryption
-
-
-class AdvancedNetworkingSecurityTransitEncryption(_serialization.Model):  # pylint: disable=name-too-long
-    """Encryption configuration for Cilium-based clusters. Once enabled all traffic between Cilium
-    managed pods will be encrypted when it leaves the node boundary.
-
-    :ivar type: Configures pod-to-pod encryption. This can be enabled only on Cilium-based
-     clusters. If not specified, the default value is None. Known values are: "WireGuard" and
-     "None".
-    :vartype type: str or ~azure.mgmt.containerservice.models.TransitEncryptionType
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, *, type: Optional[Union[str, "_models.TransitEncryptionType"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: Configures pod-to-pod encryption. This can be enabled only on Cilium-based
-         clusters. If not specified, the default value is None. Known values are: "WireGuard" and
-         "None".
-        :paramtype type: str or ~azure.mgmt.containerservice.models.TransitEncryptionType
-        """
-        super().__init__(**kwargs)
-        self.type = type
 
 
 class SubResource(_serialization.Model):
@@ -633,7 +597,6 @@ class AgentPool(SubResource):
         tags: Optional[dict[str, str]] = None,
         node_labels: Optional[dict[str, str]] = None,
         node_taints: Optional[list[str]] = None,
-        node_initialization_taints: Optional[list[str]] = None,
         proximity_placement_group_id: Optional[str] = None,
         kubelet_config: Optional["_models.KubeletConfig"] = None,
         linux_os_config: Optional["_models.LinuxOSConfig"] = None,
@@ -651,7 +614,6 @@ class AgentPool(SubResource):
         artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
-        gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         node_customization_profile: Optional["_models.NodeCustomizationProfile"] = None,
@@ -1308,20 +1270,24 @@ class AgentPoolSecurityProfile(_serialization.Model):
      signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
      If not specified, the default is false.
     :vartype enable_secure_boot: bool
+    :ivar ssh_access: SSH access method of an agent pool. Known values are: "LocalUser" and
+     "Disabled".
+    :vartype ssh_access: str or ~azure.mgmt.containerservice.models.AgentPoolSSHAccess
     """
 
     _attribute_map = {
         "ssh_access": {"key": "sshAccess", "type": "str"},
         "enable_vtpm": {"key": "enableVTPM", "type": "bool"},
         "enable_secure_boot": {"key": "enableSecureBoot", "type": "bool"},
+        "ssh_access": {"key": "sshAccess", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        ssh_access: Optional[Union[str, "_models.AgentPoolSSHAccess"]] = None,
         enable_vtpm: Optional[bool] = None,
         enable_secure_boot: Optional[bool] = None,
+        ssh_access: Optional[Union[str, "_models.AgentPoolSSHAccess"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1336,11 +1302,15 @@ class AgentPoolSecurityProfile(_serialization.Model):
          signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
          If not specified, the default is false.
         :paramtype enable_secure_boot: bool
+        :keyword ssh_access: SSH access method of an agent pool. Known values are: "LocalUser" and
+         "Disabled".
+        :paramtype ssh_access: str or ~azure.mgmt.containerservice.models.AgentPoolSSHAccess
         """
         super().__init__(**kwargs)
         self.ssh_access = ssh_access
         self.enable_vtpm = enable_vtpm
         self.enable_secure_boot = enable_secure_boot
+        self.ssh_access = ssh_access
 
 
 class AgentPoolStatus(_serialization.Model):
@@ -1424,7 +1394,6 @@ class AgentPoolUpgradeProfile(_serialization.Model):
         kubernetes_version: str,
         os_type: Union[str, "_models.OSType"] = "Linux",
         upgrades: Optional[list["_models.AgentPoolUpgradeProfilePropertiesUpgradesItem"]] = None,
-        components_by_releases: Optional[list["_models.ComponentsByRelease"]] = None,
         latest_node_image_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2044,10 +2013,7 @@ class ContainerServiceNetworkProfile(_serialization.Model):
         static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = None,
         pod_cidrs: Optional[list[str]] = None,
         service_cidrs: Optional[list[str]] = None,
-        ip_families: Optional[list[Union[str, "_models.IPFamily"]]] = None,
-        pod_link_local_access: Optional[Union[str, "_models.PodLinkLocalAccess"]] = None,
-        kube_proxy_config: Optional["_models.ContainerServiceNetworkProfileKubeProxyConfig"] = None,
-        advanced_networking: Optional["_models.AdvancedNetworking"] = None,
+        ip_families: Optional[list[Union[str, "_models.IpFamily"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3179,7 +3145,6 @@ class IstioComponents(_serialization.Model):
         *,
         ingress_gateways: Optional[list["_models.IstioIngressGateway"]] = None,
         egress_gateways: Optional[list["_models.IstioEgressGateway"]] = None,
-        proxy_redirection_mechanism: Optional[Union[str, "_models.ProxyRedirectionMechanism"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4526,54 +4491,8 @@ class Machine(SubResource):
         :paramtype properties: ~azure.mgmt.containerservice.models.MachineProperties
         """
         super().__init__(**kwargs)
-        self.zones = zones
-        self.properties = properties
-
-
-class MachineHardwareProfile(_serialization.Model):
-    """The hardware and GPU settings of the machine.
-
-    :ivar vm_size: The size of the VM. VM size availability varies by region. If a node contains
-     insufficient compute resources (memory, cpu, etc) pods might fail to run correctly. For more
-     details on restricted VM sizes, see: https://docs.microsoft.com/azure/aks/quotas-skus-regions.
-    :vartype vm_size: str
-    :ivar gpu_instance_profile: GPUInstanceProfile to be used to specify GPU MIG instance profile
-     for supported GPU VM SKU. Known values are: "MIG1g", "MIG2g", "MIG3g", "MIG4g", and "MIG7g".
-    :vartype gpu_instance_profile: str or ~azure.mgmt.containerservice.models.GPUInstanceProfile
-    :ivar gpu_profile: The GPU settings of the machine.
-    :vartype gpu_profile: ~azure.mgmt.containerservice.models.GPUProfile
-    """
-
-    _attribute_map = {
-        "vm_size": {"key": "vmSize", "type": "str"},
-        "gpu_instance_profile": {"key": "gpuInstanceProfile", "type": "str"},
-        "gpu_profile": {"key": "gpuProfile", "type": "GPUProfile"},
-    }
-
-    def __init__(
-        self,
-        *,
-        vm_size: Optional[str] = None,
-        gpu_instance_profile: Optional[Union[str, "_models.GPUInstanceProfile"]] = None,
-        gpu_profile: Optional["_models.GPUProfile"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword vm_size: The size of the VM. VM size availability varies by region. If a node contains
-         insufficient compute resources (memory, cpu, etc) pods might fail to run correctly. For more
-         details on restricted VM sizes, see: https://docs.microsoft.com/azure/aks/quotas-skus-regions.
-        :paramtype vm_size: str
-        :keyword gpu_instance_profile: GPUInstanceProfile to be used to specify GPU MIG instance
-         profile for supported GPU VM SKU. Known values are: "MIG1g", "MIG2g", "MIG3g", "MIG4g", and
-         "MIG7g".
-        :paramtype gpu_instance_profile: str or ~azure.mgmt.containerservice.models.GPUInstanceProfile
-        :keyword gpu_profile: The GPU settings of the machine.
-        :paramtype gpu_profile: ~azure.mgmt.containerservice.models.GPUProfile
-        """
-        super().__init__(**kwargs)
-        self.vm_size = vm_size
-        self.gpu_instance_profile = gpu_instance_profile
-        self.gpu_profile = gpu_profile
+        self.zones: Optional[list[str]] = None
+        self.properties: Optional["_models.MachineProperties"] = None
 
 
 class MachineIpAddress(_serialization.Model):
@@ -4834,143 +4753,6 @@ class MachineNetworkProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.ip_addresses: Optional[list["_models.MachineIpAddress"]] = None
-        self.vnet_subnet_id = vnet_subnet_id
-        self.pod_subnet_id = pod_subnet_id
-        self.enable_node_public_ip = enable_node_public_ip
-        self.node_public_ip_prefix_id = node_public_ip_prefix_id
-        self.node_public_ip_tags = node_public_ip_tags
-
-
-class MachineOSProfile(_serialization.Model):
-    """The operating system and disk used by the machine.
-
-    :ivar os_type: The operating system type. The default is Linux. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: str or ~azure.mgmt.containerservice.models.OSType
-    :ivar os_sku: Specifies the OS SKU used by the agent pool. If not specified, the default is
-     Ubuntu if OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be
-     changed to Windows2022 after Windows2019 is deprecated. Known values are: "Ubuntu", "Mariner",
-     "AzureLinux", "AzureLinux3", "Flatcar", "CBLMariner", "Windows2019", "Windows2022",
-     "Windows2025", "WindowsAnnual", "Ubuntu2204", and "Ubuntu2404".
-    :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
-    :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
-     in the master/agent pool. If you specify 0, it will apply the default osDisk size according to
-     the vmSize specified.
-    :vartype os_disk_size_gb: int
-    :ivar os_disk_type: The OS disk type to be used for machines in the agent pool. The default is
-     'Ephemeral' if the VM supports it and has a cache disk larger than the requested OSDiskSizeGB.
-     Otherwise, defaults to 'Managed'. May not be changed after creation. For more information see
-     `Ephemeral OS <https://docs.microsoft.com/azure/aks/cluster-configuration#ephemeral-os>`_.
-     Known values are: "Managed" and "Ephemeral".
-    :vartype os_disk_type: str or ~azure.mgmt.containerservice.models.OSDiskType
-    :ivar enable_fips: Whether to use a FIPS-enabled OS.
-    :vartype enable_fips: bool
-    :ivar linux_profile: The Linux machine's specific profile.
-    :vartype linux_profile: ~azure.mgmt.containerservice.models.MachineOSProfileLinuxProfile
-    :ivar windows_profile: The Windows machine's specific profile.
-    :vartype windows_profile: ~azure.mgmt.containerservice.models.AgentPoolWindowsProfile
-    """
-
-    _validation = {
-        "os_disk_size_gb": {"maximum": 2048, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "os_type": {"key": "osType", "type": "str"},
-        "os_sku": {"key": "osSKU", "type": "str"},
-        "os_disk_size_gb": {"key": "osDiskSizeGB", "type": "int"},
-        "os_disk_type": {"key": "osDiskType", "type": "str"},
-        "enable_fips": {"key": "enableFIPS", "type": "bool"},
-        "linux_profile": {"key": "linuxProfile", "type": "MachineOSProfileLinuxProfile"},
-        "windows_profile": {"key": "windowsProfile", "type": "AgentPoolWindowsProfile"},
-    }
-
-    def __init__(
-        self,
-        *,
-        os_type: Union[str, "_models.OSType"] = "Linux",
-        os_sku: Optional[Union[str, "_models.OSSKU"]] = None,
-        os_disk_size_gb: Optional[int] = None,
-        os_disk_type: Optional[Union[str, "_models.OSDiskType"]] = None,
-        enable_fips: Optional[bool] = None,
-        linux_profile: Optional["_models.MachineOSProfileLinuxProfile"] = None,
-        windows_profile: Optional["_models.AgentPoolWindowsProfile"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword os_type: The operating system type. The default is Linux. Known values are: "Linux"
-         and "Windows".
-        :paramtype os_type: str or ~azure.mgmt.containerservice.models.OSType
-        :keyword os_sku: Specifies the OS SKU used by the agent pool. If not specified, the default is
-         Ubuntu if OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be
-         changed to Windows2022 after Windows2019 is deprecated. Known values are: "Ubuntu", "Mariner",
-         "AzureLinux", "AzureLinux3", "Flatcar", "CBLMariner", "Windows2019", "Windows2022",
-         "Windows2025", "WindowsAnnual", "Ubuntu2204", and "Ubuntu2404".
-        :paramtype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
-        :keyword os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
-         machine in the master/agent pool. If you specify 0, it will apply the default osDisk size
-         according to the vmSize specified.
-        :paramtype os_disk_size_gb: int
-        :keyword os_disk_type: The OS disk type to be used for machines in the agent pool. The default
-         is 'Ephemeral' if the VM supports it and has a cache disk larger than the requested
-         OSDiskSizeGB. Otherwise, defaults to 'Managed'. May not be changed after creation. For more
-         information see `Ephemeral OS
-         <https://docs.microsoft.com/azure/aks/cluster-configuration#ephemeral-os>`_. Known values are:
-         "Managed" and "Ephemeral".
-        :paramtype os_disk_type: str or ~azure.mgmt.containerservice.models.OSDiskType
-        :keyword enable_fips: Whether to use a FIPS-enabled OS.
-        :paramtype enable_fips: bool
-        :keyword linux_profile: The Linux machine's specific profile.
-        :paramtype linux_profile: ~azure.mgmt.containerservice.models.MachineOSProfileLinuxProfile
-        :keyword windows_profile: The Windows machine's specific profile.
-        :paramtype windows_profile: ~azure.mgmt.containerservice.models.AgentPoolWindowsProfile
-        """
-        super().__init__(**kwargs)
-        self.os_type = os_type
-        self.os_sku = os_sku
-        self.os_disk_size_gb = os_disk_size_gb
-        self.os_disk_type = os_disk_type
-        self.enable_fips = enable_fips
-        self.linux_profile = linux_profile
-        self.windows_profile = windows_profile
-
-
-class MachineOSProfileLinuxProfile(_serialization.Model):
-    """The Linux machine's specific profile.
-
-    :ivar linux_os_config: The OS configuration of Linux machine.
-    :vartype linux_os_config: ~azure.mgmt.containerservice.models.LinuxOSConfig
-    :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
-     string which will be written to /etc/motd after decoding. This allows customization of the
-     message of the day for Linux nodes. It must not be specified for Windows nodes. It must be a
-     static string (i.e., will be printed raw and not be executed as a script).
-    :vartype message_of_the_day: str
-    """
-
-    _attribute_map = {
-        "linux_os_config": {"key": "linuxOSConfig", "type": "LinuxOSConfig"},
-        "message_of_the_day": {"key": "messageOfTheDay", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        linux_os_config: Optional["_models.LinuxOSConfig"] = None,
-        message_of_the_day: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword linux_os_config: The OS configuration of Linux machine.
-        :paramtype linux_os_config: ~azure.mgmt.containerservice.models.LinuxOSConfig
-        :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
-         base64-encoded string which will be written to /etc/motd after decoding. This allows
-         customization of the message of the day for Linux nodes. It must not be specified for Windows
-         nodes. It must be a static string (i.e., will be printed raw and not be executed as a script).
-        :paramtype message_of_the_day: str
-        """
-        super().__init__(**kwargs)
-        self.linux_os_config = linux_os_config
-        self.message_of_the_day = message_of_the_day
 
 
 class MachineProperties(_serialization.Model):
@@ -6466,7 +6248,6 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         tags: Optional[dict[str, str]] = None,
         node_labels: Optional[dict[str, str]] = None,
         node_taints: Optional[list[str]] = None,
-        node_initialization_taints: Optional[list[str]] = None,
         proximity_placement_group_id: Optional[str] = None,
         kubelet_config: Optional["_models.KubeletConfig"] = None,
         linux_os_config: Optional["_models.LinuxOSConfig"] = None,
@@ -6484,7 +6265,6 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
-        gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         node_customization_profile: Optional["_models.NodeCustomizationProfile"] = None,
@@ -7104,7 +6884,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         tags: Optional[dict[str, str]] = None,
         node_labels: Optional[dict[str, str]] = None,
         node_taints: Optional[list[str]] = None,
-        node_initialization_taints: Optional[list[str]] = None,
         proximity_placement_group_id: Optional[str] = None,
         kubelet_config: Optional["_models.KubeletConfig"] = None,
         linux_os_config: Optional["_models.LinuxOSConfig"] = None,
@@ -7122,7 +6901,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
-        gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         node_customization_profile: Optional["_models.NodeCustomizationProfile"] = None,
@@ -9062,7 +8840,6 @@ class ManagedClusterPoolUpgradeProfile(_serialization.Model):
         os_type: Union[str, "_models.OSType"] = "Linux",
         name: Optional[str] = None,
         upgrades: Optional[list["_models.ManagedClusterPoolUpgradeProfileUpgradesItem"]] = None,
-        components_by_releases: Optional[list["_models.ComponentsByRelease"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9480,8 +9257,6 @@ class ManagedClusterSecurityProfile(_serialization.Model):
         ] = None,
         workload_identity: Optional["_models.ManagedClusterSecurityProfileWorkloadIdentity"] = None,
         image_cleaner: Optional["_models.ManagedClusterSecurityProfileImageCleaner"] = None,
-        image_integrity: Optional["_models.ManagedClusterSecurityProfileImageIntegrity"] = None,
-        node_restriction: Optional["_models.ManagedClusterSecurityProfileNodeRestriction"] = None,
         custom_ca_trust_certificates: Optional[list[bytes]] = None,
         **kwargs: Any
     ) -> None:
@@ -11262,123 +11037,6 @@ class OperationListResult(_serialization.Model):
         self.value: Optional[list["_models.OperationValue"]] = None
 
 
-class OperationStatusResult(_serialization.Model):
-    """The current status of an async operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified ID for the async operation.
-    :vartype id: str
-    :ivar resource_id: Fully qualified ID of the resource against which the original async
-     operation was started.
-    :vartype resource_id: str
-    :ivar name: Name of the async operation.
-    :vartype name: str
-    :ivar status: Operation status. Required.
-    :vartype status: str
-    :ivar percent_complete: Percent of the operation that is complete.
-    :vartype percent_complete: float
-    :ivar start_time: The start time of the operation.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The end time of the operation.
-    :vartype end_time: ~datetime.datetime
-    :ivar operations: The operations list.
-    :vartype operations: list[~azure.mgmt.containerservice.models.OperationStatusResult]
-    :ivar error: If present, details of the operation error.
-    :vartype error: ~azure.mgmt.containerservice.models.ErrorDetail
-    """
-
-    _validation = {
-        "resource_id": {"readonly": True},
-        "status": {"required": True},
-        "percent_complete": {"maximum": 100, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "percent_complete": {"key": "percentComplete", "type": "float"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
-        "error": {"key": "error", "type": "ErrorDetail"},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
-        percent_complete: Optional[float] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        operations: Optional[list["_models.OperationStatusResult"]] = None,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Fully qualified ID for the async operation.
-        :paramtype id: str
-        :keyword name: Name of the async operation.
-        :paramtype name: str
-        :keyword status: Operation status. Required.
-        :paramtype status: str
-        :keyword percent_complete: Percent of the operation that is complete.
-        :paramtype percent_complete: float
-        :keyword start_time: The start time of the operation.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: The end time of the operation.
-        :paramtype end_time: ~datetime.datetime
-        :keyword operations: The operations list.
-        :paramtype operations: list[~azure.mgmt.containerservice.models.OperationStatusResult]
-        :keyword error: If present, details of the operation error.
-        :paramtype error: ~azure.mgmt.containerservice.models.ErrorDetail
-        """
-        super().__init__(**kwargs)
-        self.id = id
-        self.resource_id: Optional[str] = None
-        self.name = name
-        self.status = status
-        self.percent_complete = percent_complete
-        self.start_time = start_time
-        self.end_time = end_time
-        self.operations = operations
-        self.error = error
-
-
-class OperationStatusResultList(_serialization.Model):
-    """The operations list. It contains an URL link to get the next set of results.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List of operations.
-    :vartype value: list[~azure.mgmt.containerservice.models.OperationStatusResult]
-    :ivar next_link: URL to get the next set of operation list results (if there are any).
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[OperationStatusResult]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[list["_models.OperationStatusResult"]] = None
-        self.next_link: Optional[str] = None
-
-
 class OperationValue(_serialization.Model):
     """Describes the properties of a Operation value.
 
@@ -12170,13 +11828,7 @@ class ScaleProfile(_serialization.Model):
         "autoscale": {"key": "autoscale", "type": "AutoScaleProfile"},
     }
 
-    def __init__(
-        self,
-        *,
-        manual: Optional[list["_models.ManualScaleProfile"]] = None,
-        autoscale: Optional["_models.AutoScaleProfile"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, manual: Optional[list["_models.ManualScaleProfile"]] = None, **kwargs: Any) -> None:
         """
         :keyword manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
         :paramtype manual: list[~azure.mgmt.containerservice.models.ManualScaleProfile]

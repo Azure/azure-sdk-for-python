@@ -12,7 +12,7 @@ from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_cl
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._common.onedp.models import SimulationDTO
 from azure.ai.evaluation._common.constants import RAIService
 

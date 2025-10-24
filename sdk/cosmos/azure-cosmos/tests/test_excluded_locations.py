@@ -434,7 +434,7 @@ class TestExcludedLocations:
             item_id = f'doc2-{str(uuid.uuid4())}'
             body = {'id': item_id}
             body.update(PARTITION_KEY_ITEMS)
-            create_item_with_excluded_locations(container, body, None)
+            create_item_with_excluded_locations(container, body, request_excluded_locations)
             MOCK_HANDLER.reset()
 
             # API call: delete_item

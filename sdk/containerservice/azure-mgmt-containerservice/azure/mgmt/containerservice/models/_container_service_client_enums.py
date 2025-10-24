@@ -11,41 +11,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccelerationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enable advanced network acceleration options. This allows users to configure acceleration using
-    BPF host routing. This can be enabled only with Cilium dataplane. If not specified, the default
-    value is None (no acceleration). The acceleration mode can be changed on a pre-existing
-    cluster. See https://aka.ms/acnsperformance for a detailed explanation.
-    """
-
-    BPF_VETH = "BpfVeth"
-    """Enable eBPF host routing with veth device mode."""
-    NONE = "None"
-    """Disable acceleration options."""
-
-
-class AddonAutoscaling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether VPA add-on is enabled and configured to scale AKS-managed add-ons."""
-
-    ENABLED = "Enabled"
-    """Feature to autoscale AKS-managed add-ons is enabled. The default VPA update mode is Initial
-    mode."""
-    DISABLED = "Disabled"
-    """Feature to autoscale AKS-managed add-ons is disabled."""
-
-
-class AdoptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Action if Kubernetes namespace with same name already exists."""
-
-    NEVER = "Never"
-    """If the namespace already exists in Kubernetes, attempts to create that same namespace in ARM
-    will fail."""
-    IF_IDENTICAL = "IfIdentical"
-    """Take over the existing namespace to be managed by ARM, if there is no difference."""
-    ALWAYS = "Always"
-    """Always take over the existing namespace to be managed by ARM, some fields might be overwritten."""
-
-
 class AdvancedNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enable advanced network policies. This allows users to configure Layer 7 network policies
     (FQDN, HTTP, Kafka). Policies themselves must be configured via the Cilium Network Policy
@@ -100,6 +65,15 @@ class AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENTRA_ID = "EntraId"
     """SSH to node with EntraId integration. More information can be found under
     https://aka.ms/aks/ssh/aad"""
+
+
+class AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SSH access method of an agent pool."""
+
+    LOCAL_USER = "LocalUser"
+    """Can SSH onto the node as a local user using private key."""
+    DISABLED = "Disabled"
+    """SSH service will be turned off on the node."""
 
 
 class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
