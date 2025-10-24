@@ -16,7 +16,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
     pip install azure-identity
     pip install azure-mgmt-appcontainers
 # USAGE
-    python container_apps_tcp_app_create_or_update.py
+    python container_apps_kind_function_app_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,47 +28,39 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
 def main():
     client = ContainerAppsAPIClient(
         credential=DefaultAzureCredential(),
-        subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.container_apps.begin_create_or_update(
         resource_group_name="rg",
-        container_app_name="testcontainerapptcp",
+        container_app_name="testcontainerAppFunctionKind",
         container_app_envelope={
-            "location": "East US",
+            "kind": "functionapp",
+            "location": "East Us",
+            "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.Web/sites/testcontainerAppFunctionKind",
             "properties": {
                 "configuration": {
-                    "ingress": {
-                        "exposedPort": 4000,
-                        "external": True,
-                        "targetPort": 3000,
-                        "traffic": [{"revisionName": "testcontainerapptcp-ab1234", "weight": 100}],
-                        "transport": "tcp",
-                    }
+                    "activeRevisionsMode": "Single",
+                    "ingress": {"allowInsecure": False, "external": True, "targetPort": 80},
                 },
-                "environmentId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
+                "managedEnvironmentId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/testmanagedenv3",
                 "template": {
                     "containers": [
                         {
-                            "image": "repo/testcontainerapptcp:v1",
-                            "name": "testcontainerapptcp",
-                            "probes": [
+                            "env": [
                                 {
-                                    "initialDelaySeconds": 3,
-                                    "periodSeconds": 3,
-                                    "tcpSocket": {"port": 8080},
-                                    "type": "Liveness",
-                                }
+                                    "name": "AzureWebJobsStorage",
+                                    "value": "DefaultEndpointsProtocol=https;AccountName=mystorageaccount;AccountKey=mykey;EndpointSuffix=core.windows.net",
+                                },
+                                {"name": "FUNCTIONS_WORKER_RUNTIME", "value": "dotnet"},
+                                {"name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE", "value": "false"},
                             ],
+                            "image": "mcr.microsoft.com/azure-functions/dotnet:4",
+                            "name": "function-app-container",
+                            "resources": {"cpu": 0.5, "memory": "1.0Gi"},
                         }
                     ],
-                    "scale": {
-                        "cooldownPeriod": 350,
-                        "maxReplicas": 5,
-                        "minReplicas": 1,
-                        "pollingInterval": 35,
-                        "rules": [{"name": "tcpscalingrule", "tcp": {"metadata": {"concurrentConnections": "50"}}}],
-                    },
+                    "scale": {"cooldownPeriod": 300, "maxReplicas": 10, "minReplicas": 0, "pollingInterval": 30},
                 },
             },
         },
@@ -76,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ContainerApps_TcpApp_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ContainerApps_Kind_FunctionApp_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
