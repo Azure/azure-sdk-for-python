@@ -4,11 +4,11 @@
 
 ### Features Added
 
--
+- Updated `IndirectAttack` risk category for RedTeam to `IndirectJailbreak` to better reflect its purpose. This change allows users to apply cross-domain prompt injection (XPIA) attack strategies across all risk categories, enabling more comprehensive security testing of AI systems against indirect prompt injection attacks during red teaming.
 
 ### Bugs Fixed
 
--
+- `image_tag` parameter in `AzureOpenAIPythonGrader` is now optional.
 
 ## 1.12.0 (2025-10-02)
 
