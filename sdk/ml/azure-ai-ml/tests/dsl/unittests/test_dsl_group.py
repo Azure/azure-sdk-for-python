@@ -71,6 +71,9 @@ class TestDSLGroup:
         assert isinstance(result.ab, _GroupAttrDict)
         assert isinstance(result.ab.c, PipelineInput)
 
+    @pytest.mark.skipif(
+        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+    )
     def test_auto_generated_functions(self) -> None:
         class EnumOps(PyEnum):
             Option1 = "Option1"
@@ -412,6 +415,9 @@ class TestDSLGroup:
 
         assert "Only primitive types can be used as input of group, got uri_file" in str(e.value)
 
+    @pytest.mark.skipif(
+        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+    )
     def test_group_defaults_with_outputs(self):
         @group
         class MixedGroup:
