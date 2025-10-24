@@ -24,16 +24,18 @@
 import copy
 import json
 import time
+from datetime import datetime, timezone
+import logging
 
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
-from . import _retry_utility_async
 from .. import exceptions
 from .. import http_constants
-from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
+from . import _retry_utility_async
 from .._request_object import RequestObject
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
+from .._utils import get_user_agent_features
 from ..documents import _OperationType
 from ..http_constants import ResourceType
 
@@ -76,6 +78,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         if kwargs['timeout'] <= 0:
             raise exceptions.CosmosClientTimeoutError()
 
+    route_start = time.perf_counter()
+
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
     else:
@@ -101,6 +105,18 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         and parse_result.hostname != "127.0.0.1"
         and not connection_policy.DisableSSLVerification
     )
+
+    if request.headers['x-ms-thinclient-proxy-resource-type'] == "docs":
+        user_agent_features = get_user_agent_features(global_endpoint_manager)
+        if len(user_agent_features) > 0:
+            user_agent = kwargs.pop("user_agent", global_endpoint_manager.client._user_agent)
+            user_agent = "{} {}".format(user_agent, user_agent_features)
+            kwargs.update({"user_agent": user_agent})
+            kwargs.update({"user_agent_overwrite": True})
+
+    route_end = time.perf_counter()
+    route_duration = (route_end - route_start) * 1000
+    start = time.perf_counter()
 
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
@@ -128,6 +144,25 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
+
+    end = time.perf_counter()
+    duration = (end - start) * 1000
+
+    logger = logging.getLogger("internal_requests")
+    response_time = datetime.now(timezone.utc)
+    print_string = f"Response time: {response_time.isoformat()} | "
+    print_string += f"Request URL: {request.url} | "
+    print_string += f"Resource type: {request.headers['x-ms-thinclient-proxy-resource-type']} | "
+    print_string += f"Operation type: {request.headers['x-ms-thinclient-proxy-operation-type']} | "
+    print_string += f"Status code: {response.http_response.status_code} | "
+    print_string += f"Sub-status code: {response.http_response.headers.get('x-ms-substatus', 'N/A')} | "
+    print_string += f"Routing duration: {route_duration} ms | "
+    print_string += f"Request/response duration: {duration} ms | "
+    print_string += f"Activity Id: {request.headers.get('x-ms-activity-id', 'N/A')} |"
+    print_string += f"Partition Id: {response.http_response.headers.get('x-ms-cosmos-internal-partition-id', 'N/A')} |"
+    print_string += f"Physical Id: {response.http_response.headers.get('x-ms-cosmos-physical-partition-id', 'N/A')} |"
+    logger.info(print_string)
+    print(print_string)
 
     response = response.http_response
     headers = copy.copy(response.headers)
@@ -163,7 +198,6 @@ async def _PipelineRunFunction(pipeline_client, request, **kwargs):
 
     return await pipeline_client._pipeline.run(request, **kwargs)
 
-
 def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     """Determine if availability strategy should be applied to the request.
 
@@ -191,8 +225,7 @@ async def AsynchronousRequest(
     """Performs one asynchronous http request according to the parameters.
 
     :param object client: Document client instance
-    :param request_params: Request parameters containing operation details
-    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :param dict request_params:
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
@@ -206,30 +239,6 @@ async def AsynchronousRequest(
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
-
-    if request_params.availability_strategy_config is None:
-        # if ppaf is enabled, then hedging is enabled by default
-        if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
-            request_params.availability_strategy_config = CrossRegionHedgingStrategyConfig()
-
-    # Handle hedging if strategy is configured
-    if _is_availability_strategy_applicable(request_params):
-        from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
-        return await execute_with_availability_strategy(
-            request_params,
-            global_endpoint_manager,
-            request,
-            lambda req_param, r: _retry_utility_async.ExecuteAsync(
-                client,
-                global_endpoint_manager,
-                _Request,
-                req_param,
-                connection_policy,
-                pipeline_client,
-                r,
-                **kwargs
-            )
-        )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return await _retry_utility_async.ExecuteAsync(

@@ -22,9 +22,10 @@
 """Class for defining internal constants in the Azure Cosmos database service.
 """
 
-
+from enum import IntEnum
 from typing_extensions import Literal
-# cspell:ignore PPAF
+
+# cspell:ignore PPAF, reranker
 
 # cspell:ignore reranker
 
@@ -104,6 +105,22 @@ class _Constants:
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
+
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
-        AVAILABILITY_STRATEGY_CONFIG: Literal["availabilityStrategyConfig"] = "availabilityStrategyConfig"
-        """Availability strategy config. Used either at client level or request level"""
+        AVAILABILITY_STRATEGY_CONFIG = "availabilityStrategyConfig"
+
+    class UserAgentFeatureFlags(IntEnum):
+        """
+        User agent feature flags.
+        Each flag represents a bit in a number to encode what features are enabled. Therefore, the first feature flag
+        will be 1, the second 2, the third 4, etc. When constructing the user agent suffix, the feature flags will be
+        used to encode a unique number representing the features enabled. This number will be converted into a hex
+        string following the prefix "F" to save space in the user agent as it is limited and appended to the user agent
+        suffix. This number will then be used to determine what features are enabled by decoding the hex string back
+        to a number and checking what bits are set.
+
+        Example:
+            If the user agent suffix has "F3", this means that flags 1 and 2.
+        """
+        PER_PARTITION_AUTOMATIC_FAILOVER = 1
+        PER_PARTITION_CIRCUIT_BREAKER = 2

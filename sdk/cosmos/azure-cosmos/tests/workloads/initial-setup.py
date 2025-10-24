@@ -26,8 +26,7 @@ async def run_workload(client_id: str):
     # Key always needs to be used for the initial setup to create the database and container as aad for control plane
     # operations using the dataplane sdk is not supported.
     async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
-                           enable_diagnostics_logging=True, logger=logger,
-                           user_agent=str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")) as client:
+                           enable_diagnostics_logging=True, logger=logger) as client:
         db = await client.create_database_if_not_exists(COSMOS_DATABASE)
         cont = await db.create_container_if_not_exists(COSMOS_CONTAINER, PartitionKey("/" + PARTITION_KEY),
                                                        offer_throughput=ThroughputProperties(THROUGHPUT))
