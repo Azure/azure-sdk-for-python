@@ -551,7 +551,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility.ExecuteFunctionAsync = mock_execute
 
         try:
-            with self.assertRaises(ServiceRequestError) as context:
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
                 async with CosmosClient( self.host,
                         self.masterKey):
                    pass
@@ -574,7 +574,7 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility.ExecuteFunctionAsync = mock_execute
 
         try:
-            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
+            with self.assertRaises(ServiceRequestError):
                 async with CosmosClient(self.host, self.masterKey):
                    pass
 
