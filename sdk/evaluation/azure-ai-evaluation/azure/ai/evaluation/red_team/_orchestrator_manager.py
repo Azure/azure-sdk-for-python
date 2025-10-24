@@ -24,6 +24,9 @@ from pyrit.orchestrator import Orchestrator
 from pyrit.prompt_converter import PromptConverter
 from pyrit.prompt_target import PromptChatTarget
 
+# Local imports
+from ._callback_chat_target import _CallbackChatTarget
+
 # Retry imports
 import httpx
 import httpcore
@@ -93,6 +96,7 @@ class OrchestratorManager:
         one_dp_project,
         retry_config,
         scan_output_dir=None,
+        red_team=None,
     ):
         """Initialize the orchestrator manager.
 
@@ -103,6 +107,7 @@ class OrchestratorManager:
         :param one_dp_project: Whether this is a OneDP project
         :param retry_config: Retry configuration for network errors
         :param scan_output_dir: Directory for scan outputs
+        :param red_team: Reference to RedTeam instance for accessing prompt mappings
         """
         self.logger = logger
         self.generated_rai_client = generated_rai_client
@@ -111,6 +116,7 @@ class OrchestratorManager:
         self._one_dp_project = one_dp_project
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
+        self.red_team = red_team
 
     def _calculate_timeout(self, base_timeout: int, orchestrator_type: str) -> int:
         """Calculate appropriate timeout based on orchestrator type.
@@ -192,6 +198,8 @@ class OrchestratorManager:
         :type red_team_info: Dict
         :param task_statuses: Dictionary to track task statuses
         :type task_statuses: Dict
+        :param prompt_to_context: Dictionary mapping prompts to their contexts (string or dict format)
+        :type prompt_to_context: Dict[str, Union[str, Dict]]
         :return: Configured and initialized orchestrator
         :rtype: Orchestrator
         """
@@ -238,52 +246,137 @@ class OrchestratorManager:
             if red_team_info:
                 red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
-            # Process all prompts at once
+            # Process prompts one at a time like multi-turn and crescendo orchestrators
             self.logger.debug(f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}")
-            start_time = datetime.now()
 
             # Calculate appropriate timeout for single-turn orchestrator
             calculated_timeout = self._calculate_timeout(timeout, "single")
 
-            try:
-                # Create retry-enabled function using the reusable decorator
-                @network_retry_decorator(self.retry_config, self.logger, strategy_name, risk_category_name)
-                async def send_all_with_retry():
-                    return await asyncio.wait_for(
-                        orchestrator.send_prompts_async(
-                            prompt_list=all_prompts,
-                            memory_labels={
-                                "risk_strategy_path": output_path,
-                                "batch": 1,
-                            },
-                        ),
-                        timeout=calculated_timeout,
+            for prompt_idx, prompt in enumerate(all_prompts):
+                prompt_start_time = datetime.now()
+                self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
+
+                # Get context for this prompt
+                context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
+
+                # Normalize context_data: handle both string (legacy) and dict formats
+                # If context_data is a string, convert it to the expected dict format
+                if isinstance(context_data, str):
+                    context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
+
+                # context_data is now always a dict with a 'contexts' list
+                # Each item in contexts is a dict with 'content' key
+                # context_type and tool_name can be present per-context
+                contexts = context_data.get("contexts", [])
+
+                # Check if any context has agent-specific fields (context_type, tool_name)
+                has_agent_fields = any(
+                    isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
+                )
+
+                # Build context_dict to pass via memory labels
+                context_dict = {"contexts": contexts}
+
+                # Get risk_sub_type for this prompt if it exists
+                risk_sub_type = (
+                    self.red_team.prompt_to_risk_subtype.get(prompt)
+                    if self.red_team and hasattr(self.red_team, "prompt_to_risk_subtype")
+                    else None
+                )
+
+                # Determine how to handle the prompt based on target type and context fields
+                if isinstance(chat_target, _CallbackChatTarget):
+                    # CallbackChatTarget: Always pass contexts via context_dict, embed in prompt content
+                    if contexts and not has_agent_fields:
+                        # For contexts without agent fields, the prompt already has context embedded
+                        # (done in _extract_objective_content), so just use it as-is
+                        processed_prompt = prompt
+                        self.logger.debug(
+                            f"CallbackChatTarget: Prompt has embedded context, passing {len(contexts)} context source(s) in context_dict"
+                        )
+                    else:
+                        # Agent fields present - prompt is clean, contexts have structure
+                        processed_prompt = prompt
+                        tool_names = [
+                            ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                        ]
+                        self.logger.debug(
+                            f"CallbackChatTarget: Passing {len(contexts)} structured context(s) with agent fields, tool_names={tool_names}"
+                        )
+                else:
+                    # Non-CallbackChatTarget: Embed contexts in the actual PyRIT message
+                    if has_agent_fields:
+                        # Agent target with structured context - don't embed in prompt
+                        processed_prompt = prompt
+                        tool_names = [
+                            ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                        ]
+                        self.logger.debug(
+                            f"Non-CallbackChatTarget with agent fields: {len(contexts)} context source(s), tool_names={tool_names}"
+                        )
+                    elif contexts:
+                        # Model target without agent fields - embed context in prompt
+                        # Note: The prompt already has context embedded from _extract_objective_content
+                        # But for non-CallbackChatTarget, we may need additional wrapping
+                        processed_prompt = prompt
+                        self.logger.debug(f"Non-CallbackChatTarget: Using prompt with embedded context")
+
+                try:
+                    # Create retry-enabled function using the reusable decorator
+                    @network_retry_decorator(
+                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                    )
+                    async def send_prompt_with_retry():
+                        memory_labels = {
+                            "risk_strategy_path": output_path,
+                            "batch": prompt_idx + 1,
+                            "context": context_dict,
+                        }
+                        if risk_sub_type:
+                            memory_labels["risk_sub_type"] = risk_sub_type
+                        return await asyncio.wait_for(
+                            orchestrator.send_prompts_async(
+                                prompt_list=[processed_prompt],
+                                memory_labels=memory_labels,
+                            ),
+                            timeout=calculated_timeout,
+                        )
+
+                    # Execute the retry-enabled function
+                    await send_prompt_with_retry()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(
+                        f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
 
-                # Execute the retry-enabled function
-                await send_all_with_retry()
-                duration = (datetime.now() - start_time).total_seconds()
-                self.logger.debug(
-                    f"Successfully processed all prompts for {strategy_name}/{risk_category_name} in {duration:.2f} seconds"
-                )
-            except (asyncio.TimeoutError, tenacity.RetryError):
-                self.logger.warning(
-                    f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
-                )
-                print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
-                if task_statuses:
-                    task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
-                if red_team_info:
-                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-            except Exception as e:
-                log_error(
-                    self.logger,
-                    "Error processing prompts",
-                    e,
-                    f"{strategy_name}/{risk_category_name}",
-                )
-                if red_team_info:
-                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    # Print progress to console
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(
+                            f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
+                        )
+
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(
+                        f"Prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with remaining prompts"
+                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}")
+                    # Set task status to TIMEOUT for this specific prompt
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
+                    if task_statuses:
+                        task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
+                except Exception as e:
+                    log_error(
+                        self.logger,
+                        f"Error processing prompt {prompt_idx+1}",
+                        e,
+                        f"{strategy_name}/{risk_category_name}",
+                    )
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
 
             if task_statuses:
                 task_statuses[task_key] = TASK_STATUS["COMPLETED"]
@@ -312,7 +405,7 @@ class OrchestratorManager:
         timeout: int = 120,
         red_team_info: Dict = None,
         task_statuses: Dict = None,
-        prompt_to_context: Dict[str, str] = None,
+        prompt_to_context: Dict[str, Union[str, Dict]] = None,
     ) -> Orchestrator:
         """Send prompts via the RedTeamingOrchestrator (multi-turn orchestrator).
 
@@ -381,7 +474,80 @@ class OrchestratorManager:
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
-            context = prompt_to_context.get(prompt, None) if prompt_to_context else None
+
+            # Get context for this prompt
+            context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
+
+            # Normalize context_data: handle both string (legacy) and dict formats
+            # If context_data is a string, convert it to the expected dict format
+            if isinstance(context_data, str):
+                context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
+
+            # context_data is now always a dict with a 'contexts' list
+            # Each item in contexts is a dict with 'content' key
+            # context_type and tool_name can be present per-context
+            contexts = context_data.get("contexts", [])
+
+            # Check if any context has agent-specific fields (context_type, tool_name)
+            has_agent_fields = any(
+                isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
+            )
+
+            # Build context_dict to pass via memory labels
+            context_dict = {"contexts": contexts}
+
+            # Get risk_sub_type for this prompt if it exists
+            risk_sub_type = (
+                self.red_team.prompt_to_risk_subtype.get(prompt)
+                if self.red_team and hasattr(self.red_team, "prompt_to_risk_subtype")
+                else None
+            )
+
+            # For backwards compatibility with scoring, extract string context
+            # This is used by AzureRAIServiceTrueFalseScorer which expects a string
+            context_string = ""
+            if contexts:
+                context_string = "\n".join(
+                    ctx.get("content", "") if isinstance(ctx, dict) else str(ctx) for ctx in contexts
+                )
+
+            # Determine how to handle the prompt based on target type and context fields
+            if isinstance(chat_target, _CallbackChatTarget):
+                # CallbackChatTarget: Always pass contexts via context_dict, embed in prompt content
+                if contexts and not has_agent_fields:
+                    # For contexts without agent fields, the prompt already has context embedded
+                    # (done in _extract_objective_content), so just use it as-is
+                    processed_prompt = prompt
+                    self.logger.debug(
+                        f"CallbackChatTarget: Prompt has embedded context, passing {len(contexts)} context source(s) in context_dict"
+                    )
+                else:
+                    # Agent fields present - prompt is clean, contexts have structure
+                    processed_prompt = prompt
+                    tool_names = [
+                        ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                    ]
+                    self.logger.debug(
+                        f"CallbackChatTarget: Passing {len(contexts)} structured context(s) with agent fields, tool_names={tool_names}"
+                    )
+            else:
+                # Non-CallbackChatTarget: Embed contexts in the actual PyRIT message
+                if has_agent_fields:
+                    # Agent target with structured context - don't embed in prompt
+                    processed_prompt = prompt
+                    tool_names = [
+                        ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                    ]
+                    self.logger.debug(
+                        f"Non-CallbackChatTarget with agent fields: {len(contexts)} context source(s), tool_names={tool_names}"
+                    )
+                elif contexts:
+                    # Model target without agent fields - embed context in prompt
+                    # Note: The prompt already has context embedded from _extract_objective_content
+                    # But for non-CallbackChatTarget, we may need additional wrapping
+                    processed_prompt = prompt
+                    self.logger.debug(f"Non-CallbackChatTarget: Using prompt with embedded context")
+
             try:
                 azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
                     client=self.generated_rai_client,
@@ -391,7 +557,7 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
-                    context=context,
+                    context=context_string,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -419,10 +585,17 @@ class OrchestratorManager:
                         self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
                     )
                     async def send_prompt_with_retry():
+                        memory_labels = {
+                            "risk_strategy_path": output_path,
+                            "batch": prompt_idx + 1,
+                            "context": context_dict,
+                        }
+                        if risk_sub_type:
+                            memory_labels["risk_sub_type"] = risk_sub_type
                         return await asyncio.wait_for(
                             orchestrator.run_attack_async(
                                 objective=prompt,
-                                memory_labels={"risk_strategy_path": output_path, "batch": 1, "context": context},
+                                memory_labels=memory_labels,
                             ),
                             timeout=calculated_timeout,
                         )
@@ -495,7 +668,7 @@ class OrchestratorManager:
         timeout: int = 120,
         red_team_info: Dict = None,
         task_statuses: Dict = None,
-        prompt_to_context: Dict[str, str] = None,
+        prompt_to_context: Dict[str, Union[str, Dict]] = None,
     ) -> Orchestrator:
         """Send prompts via the CrescendoOrchestrator with optimized performance.
 
@@ -546,14 +719,87 @@ class OrchestratorManager:
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
-            context = prompt_to_context.get(prompt, None) if prompt_to_context else None
+
+            # Get context for this prompt
+            context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
+
+            # Normalize context_data: handle both string (legacy) and dict formats
+            # If context_data is a string, convert it to the expected dict format
+            if isinstance(context_data, str):
+                context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
+
+            # context_data is now always a dict with a 'contexts' list
+            # Each item in contexts is a dict with 'content' key
+            # context_type and tool_name can be present per-context
+            contexts = context_data.get("contexts", [])
+
+            # Check if any context has agent-specific fields (context_type, tool_name)
+            has_agent_fields = any(
+                isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
+            )
+
+            # Build context_dict to pass via memory labels
+            context_dict = {"contexts": contexts}
+
+            # Get risk_sub_type for this prompt if it exists
+            risk_sub_type = (
+                self.red_team.prompt_to_risk_subtype.get(prompt)
+                if self.red_team and hasattr(self.red_team, "prompt_to_risk_subtype")
+                else None
+            )
+
+            # For backwards compatibility with scoring, extract string context
+            # This is used by AzureRAIServiceTrueFalseScorer and RAIServiceEvalChatTarget which expect a string
+            context_string = ""
+            if contexts:
+                context_string = "\n".join(
+                    ctx.get("content", "") if isinstance(ctx, dict) else str(ctx) for ctx in contexts
+                )
+
+            # Determine how to handle the prompt based on target type and context fields
+            if isinstance(chat_target, _CallbackChatTarget):
+                # CallbackChatTarget: Always pass contexts via context_dict, embed in prompt content
+                if contexts and not has_agent_fields:
+                    # For contexts without agent fields, the prompt already has context embedded
+                    # (done in _extract_objective_content), so just use it as-is
+                    processed_prompt = prompt
+                    self.logger.debug(
+                        f"CallbackChatTarget: Prompt has embedded context, passing {len(contexts)} context source(s) in context_dict"
+                    )
+                else:
+                    # Agent fields present - prompt is clean, contexts have structure
+                    processed_prompt = prompt
+                    tool_names = [
+                        ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                    ]
+                    self.logger.debug(
+                        f"CallbackChatTarget: Passing {len(contexts)} structured context(s) with agent fields, tool_names={tool_names}"
+                    )
+            else:
+                # Non-CallbackChatTarget: Embed contexts in the actual PyRIT message
+                if has_agent_fields:
+                    # Agent target with structured context - don't embed in prompt
+                    processed_prompt = prompt
+                    tool_names = [
+                        ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                    ]
+                    self.logger.debug(
+                        f"Non-CallbackChatTarget with agent fields: {len(contexts)} context source(s), tool_names={tool_names}"
+                    )
+                elif contexts:
+                    # Model target without agent fields - embed context in prompt
+                    # Note: The prompt already has context embedded from _extract_objective_content
+                    # But for non-CallbackChatTarget, we may need additional wrapping
+                    processed_prompt = prompt
+                    self.logger.debug(f"Non-CallbackChatTarget: Using prompt with embedded context")
+
             try:
                 red_llm_scoring_target = RAIServiceEvalChatTarget(
                     logger=self.logger,
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
-                    context=context,
+                    context=context_string,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -583,7 +829,7 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
-                    context=context,
+                    context=context_string,
                 )
 
                 try:
@@ -592,14 +838,17 @@ class OrchestratorManager:
                         self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
                     )
                     async def send_prompt_with_retry():
+                        memory_labels = {
+                            "risk_strategy_path": output_path,
+                            "batch": prompt_idx + 1,
+                            "context": context_dict,
+                        }
+                        if risk_sub_type:
+                            memory_labels["risk_sub_type"] = risk_sub_type
                         return await asyncio.wait_for(
                             orchestrator.run_attack_async(
                                 objective=prompt,
-                                memory_labels={
-                                    "risk_strategy_path": output_path,
-                                    "batch": prompt_idx + 1,
-                                    "context": context,
-                                },
+                                memory_labels=memory_labels,
                             ),
                             timeout=calculated_timeout,
                         )

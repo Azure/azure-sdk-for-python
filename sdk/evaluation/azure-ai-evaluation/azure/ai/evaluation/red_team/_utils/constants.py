@@ -39,6 +39,7 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
     str(AttackStrategy.MODERATE.value): "moderate",
     str(AttackStrategy.DIFFICULT.value): "difficult",
     str(AttackStrategy.Jailbreak.value): "easy",
+    str(AttackStrategy.IndirectJailbreak.value): "easy",
     str(AttackStrategy.MultiTurn.value): "difficult",
     str(AttackStrategy.Crescendo.value): "difficult",
 }
