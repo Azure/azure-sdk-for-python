@@ -1,5 +1,42 @@
 # Release History
 
+## 13.0.0 (2025-10-21)
+
+### Features Added
+
+  - Client `KeyVaultManagementClient` added method `send_request`
+  - Model `DeletedManagedHsm` added property `system_data`
+  - Model `DeletedVault` added property `system_data`
+  - Model `Key` added property `properties`
+  - Model `Key` added property `system_data`
+  - Model `MHSMPrivateEndpointConnectionItem` added property `properties`
+  - Model `ManagedHsmKey` added property `properties`
+  - Model `ManagedHsmKey` added property `system_data`
+  - Model `Operation` added property `operation_properties`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateEndpointConnectionItem` added property `properties`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `Secret` added property `system_data`
+  - Model `VaultCheckNameAvailabilityParameters` added property `type`
+  - Added model `ArmResource`
+  - Added model `CloudError`
+  - Added enum `CreatedByType`
+  - Added model `OperationProperties`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Model `Key` instance variables `attributes`, `kty`, `key_ops`, `key_size`, `curve_name`, `key_uri`, `key_uri_with_version`, `rotation_policy`, and `release_policy` have been moved under property `properties`
+  - Model `MHSMPrivateEndpointConnectionItem` instance variables `private_endpoint`, `private_link_service_connection_state`, and `provisioning_state` have been moved under property `properties`
+  - Model `ManagedHsmKey` instance variables `attributes`, `kty`, `key_ops`, `key_size`, `curve_name`, `key_uri`, `key_uri_with_version`, `rotation_policy`, and `release_policy` have been moved under property `properties`
+  - Model `Operation` instance variable `service_specification` has been moved under property `operation_properties`
+  - Model `Permissions` renamed instance variable `keys` to `keys_property`
+  - Model `PrivateEndpointConnectionItem` instance variables `private_endpoint`, `private_link_service_connection_state`, and `provisioning_state` have been moved under property `properties`
+  - Deleted or renamed model `IdentityType`
+  - Deleted or renamed model `ProxyResourceWithoutSystemData`
+  - Deleted or renamed model `Resource`
+
 ## 12.1.1 (2025-10-09)
 
 ### Bugs Fixed
