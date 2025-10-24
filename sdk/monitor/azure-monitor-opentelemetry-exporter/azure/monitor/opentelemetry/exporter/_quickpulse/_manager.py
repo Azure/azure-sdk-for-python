@@ -9,7 +9,7 @@ import threading
 
 import psutil
 
-from opentelemetry.sdk._logs import LogData
+from opentelemetry.sdk._logs import ReadableLogRecord
 from opentelemetry.sdk.metrics import MeterProvider, Meter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
@@ -353,7 +353,7 @@ class _QuickpulseManager(metaclass=Singleton):
         except Exception as e:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while recording span: %s", e)  # pylint: disable=C4769
 
-    def _record_log_record(self, log_data: LogData) -> None:
+    def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
         # Only record if in post state and manager is initialized
         if not (_is_post_state() and self.is_initialized()):
             return
@@ -364,9 +364,9 @@ class _QuickpulseManager(metaclass=Singleton):
             return
 
         try:
-            if log_data.log_record:
+            if readable_log_record.log_record:
                 exc_type = None
-                log_record = log_data.log_record
+                log_record = readable_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
