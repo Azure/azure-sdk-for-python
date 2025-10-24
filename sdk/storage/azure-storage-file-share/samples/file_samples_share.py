@@ -44,6 +44,11 @@ class ShareSamples(object):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples1")
+        share.share_name
+        share.snapshot
+        share.allow_trailing_dot
+        share.allow_source_trailing_dot
+        share.file_request_intent
 
         # [START create_share]
         # Create share with Access Tier set to Hot
