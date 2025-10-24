@@ -366,7 +366,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                         if retry_settings['read'] > 0:
                             # record the failure for circuit breaker tracking for retries in connection retry policy
                             # retries in the execute function will mark those failures
-                            await _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager)
+                            await _record_failure_if_request_not_cancelled(request_params, global_endpoint_manager, None)
                             retry_active = self.increment(retry_settings, response=request, error=err)
                             if retry_active:
                                 await self.sleep(retry_settings, request.context.transport)
