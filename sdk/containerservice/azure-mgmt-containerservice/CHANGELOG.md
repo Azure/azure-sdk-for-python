@@ -1,6 +1,6 @@
 # Release History
 
-## 41.0.0b1 (2025-10-19)
+## 41.0.0b1 (2025-10-24)
 
 ### Features Added
 
@@ -205,14 +205,14 @@
   - Model `ManagedClustersOperations` added method `get_safeguards_versions`
   - Model `ManagedClustersOperations` added method `list_guardrails_versions`
   - Model `ManagedClustersOperations` added method `list_safeguards_versions`
-  - Added model `ContainerServiceOperations`
-  - Added model `IdentityBindingsOperations`
-  - Added model `JWTAuthenticatorsOperations`
-  - Added model `LoadBalancersOperations`
-  - Added model `ManagedClusterSnapshotsOperations`
-  - Added model `ManagedNamespacesOperations`
-  - Added model `MeshMembershipsOperations`
-  - Added model `OperationStatusResultOperations`
+  - Added operation group `ContainerServiceOperations`
+  - Added operation group `IdentityBindingsOperations`
+  - Added operation group `JWTAuthenticatorsOperations`
+  - Added operation group `LoadBalancersOperations`
+  - Added operation group `ManagedClusterSnapshotsOperations`
+  - Added operation group `ManagedNamespacesOperations`
+  - Added operation group `MeshMembershipsOperations`
+  - Added operation group `OperationStatusResultOperations`
 
 ### Breaking Changes
 
