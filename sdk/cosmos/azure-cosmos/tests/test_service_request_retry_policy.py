@@ -13,7 +13,7 @@ from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos.documents import _OperationType, ConnectionPolicy
 
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosMultiRegion
 class TestServiceRequestRetryPolicies(unittest.TestCase):
     """Test cases for the read_items API."""
 
@@ -34,7 +34,7 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
         container = self.database.create_container("service_request_mrr_test_" + str(uuid.uuid4()),
                                                    PartitionKey(path="/id"))
 
-        # 1. Get write regions and ensure there are atleast 2 for this test.
+        # 1. Get write regions and ensure there are at least 2 for this test.
         endpoint_manager = self.client.client_connection._global_endpoint_manager
         db_account = self.client.get_database_account()
         endpoint_manager.refresh_endpoint_list(db_account)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-from azure.cosmos import DatabaseProxy
+
 import unittest
 import uuid
 import pytest
@@ -13,7 +13,7 @@ from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos.documents import _OperationType, ConnectionPolicy
 
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosMultiRegion
 class TestServiceRequestRetryPoliciesAsync(unittest.TestCase):
     """Test cases for the read_items API."""
 

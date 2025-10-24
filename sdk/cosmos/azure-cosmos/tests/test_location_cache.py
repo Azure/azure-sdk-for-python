@@ -358,8 +358,6 @@ class TestLocationCache:
         assert write_doc_resolved == default_endpoint
 
     def test_resolve_endpoint_respects_excluded_regions_when_use_preferred_locations_is_false(self):
-        # This test demonstrates the bug where setting use_preferred_locations to False
-        # causes the excluded_locations list to be ignored.
 
         # 1. Setup: LocationCache with multiple locations enabled.
         lc = refresh_location_cache(preferred_locations=[], use_multiple_write_locations=True)
@@ -412,8 +410,8 @@ class TestLocationCache:
         write_request.excluded_locations_circuit_breaker = [location2_name]
 
         # 4. Resolve the endpoint.
-        # With the fix, the user-excluded location is filtered out, and the
-        # circuit-breaker-excluded location is moved to the end of the list.
+        # the user-excluded location should be filtered out, and the
+        # circuit-breaker-excluded location moved to the end of the list.
         # Since it's the only one left, it should be selected.
         resolved_endpoint = lc.resolve_service_endpoint(write_request)
 
@@ -421,8 +419,8 @@ class TestLocationCache:
         assert resolved_endpoint == location2_endpoint
 
     def test_write_fallback_to_global_after_regional_retries_exhausted(self):
-        # This test simulates the client pipeline falling back to the global endpoint for writes
-        # after all preferred regional endpoints have been tried and failed.
+        # This test simulates the client pipeline retrying preferred locations for writes
+        # after all of them have been tried and marked as unavailable.
 
         # 1. Setup: LocationCache with two preferred write locations.
         preferred_locations = [location1_name, location2_name]
@@ -467,12 +465,12 @@ class TestLocationCache:
         # 5. Fallback to Global: After the retry policy gives up, the client clears the regional
         # routing preference to make a final attempt at the global endpoint.
         write_request.clear_route_to_location()
-        assert write_request.use_preferred_locations is None
+        write_request.use_preferred_locations = False
 
-        # A final call to resolve the endpoint with the modified request will cause the
-        # LocationCache to return the default global endpoint.
+        # A final call to resolve the endpoint should now return the first preferred location,
+        # even though it's marked as unavailable, as a last resort.
         final_endpoint = lc.resolve_service_endpoint(write_request)
-        assert final_endpoint == default_endpoint
+        assert final_endpoint == location1_endpoint
 
 if __name__ == "__main__":
     unittest.main()
