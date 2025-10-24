@@ -30,7 +30,7 @@ from azure.core.exceptions import AzureError, ClientAuthenticationError, Service
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _database_account_retry_policy
+from . import _container_recreate_retry_policy, _database_account_retry_policy, _service_unavailable_retry_policy
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -43,9 +43,11 @@ from .documents import _OperationType
 from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 from ._cosmos_http_logging_policy import _log_diagnostics_error
+from ._utils import get_user_agent_features
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
+# cspell:ignore PPAF,ppaf
 
 # args [0] is the request object
 # args [1] is the connection policy
@@ -65,11 +67,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     :rtype: tuple of (dict, dict)
     """
     pk_range_wrapper = None
-    if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
+    if args and (global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0]) or
+                 global_endpoint_manager.is_circuit_breaker_applicable(args[0])):
         pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0])
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
-        client.connection_policy, global_endpoint_manager, *args
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
     )
     database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
         client.connection_policy
@@ -96,8 +99,11 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args,
     )
+    service_unavailable_retry_policy = _service_unavailable_retry_policy._ServiceUnavailableRetryPolicy(
+        client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args)
     # Get logger
     logger = kwargs.get("logger", logging.getLogger("azure.cosmos._retry_utility"))
+
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
     if args and len(args) > 3:
@@ -109,13 +115,20 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(
             client, client._container_properties_cache, None, *args)
 
+    user_agent_features = get_user_agent_features(global_endpoint_manager)
+    if len(user_agent_features) > 0:
+        user_agent = kwargs.pop("user_agent", client._user_agent)
+        user_agent = "{} {}".format(user_agent, user_agent_features)
+        kwargs.update({"user_agent": user_agent})
+        kwargs.update({"user_agent_overwrite": True})
+
     while True:
         client_timeout = kwargs.get('timeout')
         start_time = time.time()
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
-                global_endpoint_manager.record_success(args[0])
+                global_endpoint_manager.record_success(args[0], pk_range_wrapper)
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
@@ -202,10 +215,15 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
+            elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
+                if args:
+                    # record the failure for ppaf/circuit breaker tracking
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
+                retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
-                    # record the failure for circuit breaker tracking
-                    global_endpoint_manager.record_failure(args[0])
+                    # record the failure for ppaf/circuit breaker tracking
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
@@ -239,7 +257,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0])
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
@@ -248,7 +266,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0])
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def ExecuteFunction(function, *args, **kwargs):
@@ -285,7 +303,8 @@ def _handle_service_request_retries(
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if request and (_has_read_retryable_headers(request.headers) or (args and is_write_retryable(args[0], client))):
+    if request and (_has_read_retryable_headers(request.headers) or (args and (is_write_retryable(args[0], client) or
+                            client._global_endpoint_manager.is_per_partition_automatic_failover_applicable(args[0])))):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
