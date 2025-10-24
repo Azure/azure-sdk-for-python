@@ -39,6 +39,8 @@ async def upload_download_sample(filesystem_client):
     print("Creating a file named '{}'.".format(file_name))
     # [START create_file]
     file_client = filesystem_client.get_file_client(file_name)
+    file_client.file_system_name
+    file_client.path_name
     await file_client.create_file()
     # [END create_file]
 
