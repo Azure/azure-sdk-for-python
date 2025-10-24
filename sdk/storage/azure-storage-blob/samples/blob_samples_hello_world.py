@@ -67,6 +67,8 @@ class BlobSamples(object):
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("myblockcontainersync1")
+        container_client.account_name
+        container_client.container_name
 
         try:
             # Create new Container in the service
@@ -74,6 +76,10 @@ class BlobSamples(object):
 
             # Instantiate a new BlobClient
             blob_client = container_client.get_blob_client("myblockblob")
+            blob_client.container_name
+            blob_client.blob_name
+            blob_client.snapshot
+            blob_client.api_version
 
             # [START upload_a_blob]
             # Upload content to block blob
