@@ -3,7 +3,6 @@
 
 import unittest
 import uuid
-from time import sleep
 
 import pytest
 
@@ -499,9 +498,12 @@ class TestRetryPolicy(unittest.TestCase):
         _retry_utility.ExecuteFunction = mock_execute
 
         try:
-            cosmos_client.CosmosClient(self.host, self.masterKey)
-            sleep(2)  # Wait for health check to complete
 
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
+                cosmos_client.CosmosClient(self.host, self.masterKey)
+                # Client initialization triggers database account read
+
+            self.assertEqual(context.exception.status_code, 503)
             self.assertEqual(mock_execute.counter, max_retries + 1)
             policy = HealthCheckRetryPolicy(self.connectionPolicy)
             self.assertEqual(policy.retry_after_in_milliseconds, retry_after_ms)
@@ -512,7 +514,7 @@ class TestRetryPolicy(unittest.TestCase):
 
     def test_health_check_retry_policy_defaults(self):
         self.original_execute_function = _retry_utility.ExecuteFunction
-        mock_execute = self.MockExecuteFunctionHealthCheckServiceResponseError(self.original_execute_function)
+        mock_execute = self.MockExecuteFunctionHealthCheck(self.original_execute_function)
         _retry_utility.ExecuteFunction = mock_execute
 
         try:
@@ -538,9 +540,9 @@ class TestRetryPolicy(unittest.TestCase):
         _retry_utility.ExecuteFunction = mock_execute
 
         try:
-            cosmos_client.CosmosClient(self.host, self.masterKey)
-            # Client initialization triggers database account read
-            sleep(2)
+            with self.assertRaises(ServiceResponseError):
+                cosmos_client.CosmosClient(self.host, self.masterKey)
+                # Client initialization triggers database account read
 
             # Should use default retry attempts from _constants.py
             self.assertEqual(

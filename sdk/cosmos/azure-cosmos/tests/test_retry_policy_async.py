@@ -4,7 +4,6 @@ import asyncio
 import os
 import unittest
 import uuid
-from unittest.mock import patch
 
 import pytest
 
@@ -575,8 +574,9 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility.ExecuteFunctionAsync = mock_execute
 
         try:
-            async with CosmosClient(self.host, self.masterKey):
-               pass
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
+                async with CosmosClient(self.host, self.masterKey):
+                   pass
 
             # Should use default retry attempts from _constants.py
             self.assertEqual(
@@ -599,8 +599,9 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility.ExecuteFunctionAsync = mock_execute
 
         try:
-            async with CosmosClient(self.host, self.masterKey):
-                await asyncio.sleep(2)
+            with self.assertRaises(ServiceRequestError):
+                async with CosmosClient(self.host, self.masterKey):
+                   pass # Triggers database account read
 
             # Should use default retry attempts from _constants.py
             self.assertEqual(
