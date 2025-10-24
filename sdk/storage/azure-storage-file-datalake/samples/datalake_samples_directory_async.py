@@ -38,6 +38,8 @@ async def directory_sample(filesystem_client):
     await filesystem_client.create_directory(dir_name)
 
     directory_client = filesystem_client.get_directory_client(dir_name)
+    directory_client.file_system_name
+    directory_client.path_name
     try:
         # Create the existing directory again will throw exception
         # [START create_directory]

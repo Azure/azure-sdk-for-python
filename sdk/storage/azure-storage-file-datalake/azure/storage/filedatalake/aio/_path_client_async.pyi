@@ -34,6 +34,8 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from ._data_lake_lease_async import DataLakeLeaseClient
 
 class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
+    file_system_name: str
+    path_name: str
     def __init__(
         self,
         account_url: str,

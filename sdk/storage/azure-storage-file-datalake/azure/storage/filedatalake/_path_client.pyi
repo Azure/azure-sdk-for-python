@@ -31,6 +31,8 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 
 class PathClient(StorageAccountHostsMixin):
+    file_system_name: str
+    path_name: str
     def __init__(
         self,
         account_url: str,
