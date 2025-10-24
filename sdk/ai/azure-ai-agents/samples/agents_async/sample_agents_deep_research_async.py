@@ -39,7 +39,13 @@ from typing import Optional, Dict, List
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import DeepResearchTool, MessageRole, ThreadMessage
+from azure.ai.agents.models import (
+    DeepResearchTool,
+    MessageRole,
+    SubmitToolApprovalAction,
+    ThreadMessage,
+    ToolApproval,
+)
 from azure.identity.aio import DefaultAzureCredential
 
 
@@ -255,9 +261,26 @@ async def main() -> None:
         # Poll the run as long as run status is queued or in progress
         run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
         last_message_id: Optional[str] = None
-        while run.status in ("queued", "in_progress"):
+        while run.status in ("queued", "in_progress", "requires_action"):
             await asyncio.sleep(1)
             run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+
+            if run.status == "requires_action" and isinstance(
+                run.required_action, SubmitToolApprovalAction
+            ):
+                tool_calls = run.required_action.submit_tool_approval.tool_calls
+                if not tool_calls:
+                    print("Run requested tool approval but no tool calls were provided; cancelling run.")
+                    await agents_client.runs.cancel(thread_id=thread.id, run_id=run.id)
+                    break
+
+                approvals = [ToolApproval(tool_call_id=tool_call.id, approve=True) for tool_call in tool_calls]
+                run = await agents_client.runs.submit_tool_outputs(
+                    thread_id=thread.id,
+                    run_id=run.id,
+                    tool_approvals=approvals,
+                )
+                continue
 
             last_message_id = await fetch_and_print_new_agent_response(
                 thread_id=thread.id,
