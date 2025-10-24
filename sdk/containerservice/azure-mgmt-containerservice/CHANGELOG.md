@@ -198,13 +198,13 @@
   - Added enum `TransitEncryptionType`
   - Added enum `UpgradeStrategy`
   - Added enum `VmState`
-  - Model `AgentPoolsOperations` added method `begin_complete_upgrade`
-  - Model `MachinesOperations` added method `begin_create_or_update`
-  - Model `ManagedClustersOperations` added method `begin_rebalance_load_balancers`
-  - Model `ManagedClustersOperations` added method `get_guardrails_versions`
-  - Model `ManagedClustersOperations` added method `get_safeguards_versions`
-  - Model `ManagedClustersOperations` added method `list_guardrails_versions`
-  - Model `ManagedClustersOperations` added method `list_safeguards_versions`
+  - Operation group `AgentPoolsOperations` added method `begin_complete_upgrade`
+  - Operation group `MachinesOperations` added method `begin_create_or_update`
+  - Operation group `ManagedClustersOperations` added method `begin_rebalance_load_balancers`
+  - Operation group `ManagedClustersOperations` added method `get_guardrails_versions`
+  - Operation group `ManagedClustersOperations` added method `get_safeguards_versions`
+  - Operation group `ManagedClustersOperations` added method `list_guardrails_versions`
+  - Operation group `ManagedClustersOperations` added method `list_safeguards_versions`
   - Added operation group `ContainerServiceOperations`
   - Added operation group `IdentityBindingsOperations`
   - Added operation group `JWTAuthenticatorsOperations`
