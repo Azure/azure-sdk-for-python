@@ -64,7 +64,7 @@ async def main() -> None:
 
         project_client = AIProjectClient(
             endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=DefaultAzureCredential(),
+            credential=credential,
         )
 
         scenario = os.path.basename(__file__)
