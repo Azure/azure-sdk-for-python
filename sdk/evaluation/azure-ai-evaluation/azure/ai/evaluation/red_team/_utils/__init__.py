@@ -14,6 +14,7 @@ from .progress_utils import ProgressManager, create_progress_manager
 from .exception_utils import (
     ExceptionHandler,
     RedTeamError,
+    NonRetryableError,
     ErrorCategory,
     ErrorSeverity,
     create_exception_handler,
@@ -30,6 +31,7 @@ __all__ = [
     "create_progress_manager",
     "ExceptionHandler",
     "RedTeamError",
+    "NonRetryableError",
     "ErrorCategory",
     "ErrorSeverity",
     "create_exception_handler",
