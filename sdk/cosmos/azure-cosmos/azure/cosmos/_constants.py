@@ -105,6 +105,7 @@ class _Constants:
         """Whether to retry write operations if they fail. Used either at client level or request level."""
 
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
+        AVAILABILITY_STRATEGY_CONFIG = "availabilityStrategyConfig"
 
     class UserAgentFeatureFlags(IntEnum):
         """
