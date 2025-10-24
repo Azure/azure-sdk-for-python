@@ -10,6 +10,14 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionStateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the action."""
+
+    COMPLETED = "Completed"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
@@ -111,6 +119,7 @@ class BareMetalMachineKeySetPrivilegeLevel(str, Enum, metaclass=CaseInsensitiveE
 
     STANDARD = "Standard"
     SUPERUSER = "Superuser"
+    OTHER = "Other"
 
 
 class BareMetalMachineKeySetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -152,6 +161,22 @@ class BareMetalMachineReadyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUE = "True"
     FALSE = "False"
+
+
+class BareMetalMachineReplaceSafeguardMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The safeguard mode to use for the replace action, where None indicates to bypass safeguards and
+    All indicates to utilize all safeguards.
+    """
+
+    ALL = "All"
+    NONE = "None"
+
+
+class BareMetalMachineReplaceStoragePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator of whether to bypass clearing storage while replacing a bare metal machine."""
+
+    PRESERVE = "Preserve"
+    DISCARD_ALL = "DiscardAll"
 
 
 class BareMetalMachineSkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -232,6 +257,23 @@ class CloudServicesNetworkProvisioningState(str, Enum, metaclass=CaseInsensitive
     CANCELED = "Canceled"
     PROVISIONING = "Provisioning"
     ACCEPTED = "Accepted"
+
+
+class CloudServicesNetworkStorageMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator to enable shared storage on the cloud services network. If not specified, the
+    allocation will align with the standard storage enablement.
+    """
+
+    NONE = "None"
+    STANDARD = "Standard"
+
+
+class CloudServicesNetworkStorageStatusStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the storage allocation for the cloud services network."""
+
+    AVAILABLE = "Available"
+    EXPANDING_VOLUME = "ExpandingVolume"
+    EXPANSION_FAILED = "ExpansionFailed"
 
 
 class ClusterConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -349,6 +391,15 @@ class ClusterUpdateStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PAUSE_AFTER_RACK = "PauseAfterRack"
 
 
+class CommandOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of command output for the override."""
+
+    BARE_METAL_MACHINE_RUN_COMMAND = "BareMetalMachineRunCommand"
+    BARE_METAL_MACHINE_RUN_DATA_EXTRACTS = "BareMetalMachineRunDataExtracts"
+    BARE_METAL_MACHINE_RUN_READ_COMMANDS = "BareMetalMachineRunReadCommands"
+    STORAGE_RUN_READ_COMMANDS = "StorageRunReadCommands"
+
+
 class ConsoleDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The more detailed status of the console."""
 
@@ -392,7 +443,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DefaultGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The indicator of whether this is the default gateway.
     Only one of the attached networks (including the CloudServicesNetwork attachment) for a single
-    machine may be specified as True.
+        machine may be specified as True.
     """
 
     TRUE = "True"
@@ -687,6 +738,16 @@ class RackSkuType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SINGLE = "Single"
 
 
+class RelayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator of which relay type the machine should be assigned to use. Platform indicates the
+    use of a platform-dedicated relay. Public indicates the use of the standard public relay for
+    Arc services.
+    """
+
+    PLATFORM = "Platform"
+    PUBLIC = "Public"
+
+
 class RemoteVendorManagementFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The indicator of whether the storage appliance supports remote vendor management."""
 
@@ -721,6 +782,15 @@ class SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUE = "True"
     FALSE = "False"
+
+
+class StepStateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the step. A value of Completed or Failed indicates a terminal state for the step."""
+
+    COMPLETED = "Completed"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+    NOT_STARTED = "NotStarted"
 
 
 class StorageApplianceDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
