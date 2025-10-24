@@ -49,7 +49,6 @@ from ._global_partition_endpoint_manager_per_partition_automatic_failover_async 
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync
 from .._request_object import RequestObject
 from .._routing.routing_range import PartitionKeyRangeWrapper
-from .._utils import get_user_agent_features
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
@@ -118,13 +117,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     else:
         container_recreate_retry_policy = ContainerRecreateRetryPolicy(
             client, client._container_properties_cache, None, *args)
-
-    user_agent_features = get_user_agent_features(global_endpoint_manager)
-    if len(user_agent_features) > 0:
-        user_agent = kwargs.pop("user_agent", client._user_agent)
-        user_agent = "{} {}".format(user_agent, user_agent_features)
-        kwargs.update({"user_agent": user_agent})
-        kwargs.update({"user_agent_overwrite": True})
 
     while True:
         client_timeout = kwargs.get('timeout')
