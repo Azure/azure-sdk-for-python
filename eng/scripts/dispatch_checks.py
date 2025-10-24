@@ -10,7 +10,7 @@ from typing import List
 
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
-from ci_tools.scenario.generation import build_whl_for_req
+from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
 
@@ -133,7 +133,7 @@ def summarize(results: List[CheckResult]) -> int:
     return worst
 
 
-async def run_all_checks(packages, checks, max_parallel):
+async def run_all_checks(packages, checks, max_parallel, wheel_dir):
     """Run all checks for all packages concurrently and return the worst exit code.
 
     :param packages: Iterable of package paths to run checks against.
@@ -142,6 +142,9 @@ async def run_all_checks(packages, checks, max_parallel):
     :type checks: List[str]
     :param max_parallel: Maximum number of concurrent checks to run.
     :type max_parallel: int
+    :param wheel_dir: The directory where wheels should be located and stored when built.
+        In CI should correspond to `$(Build.ArtifactStagingDirectory)`.
+    :type wheel_dir: str
     :returns: The worst exit code from all checks (0 if all passed).
     :rtype: int
     """
@@ -150,6 +153,28 @@ async def run_all_checks(packages, checks, max_parallel):
     semaphore = asyncio.Semaphore(max_parallel)
     combos = [(p, c) for p in packages for c in checks]
     total = len(combos)
+
+    test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
+    dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
+
+    if in_ci():
+        logger.info("Replacing relative requirements in eng/test_tools.txt with prebuilt wheels.")
+        replace_dev_reqs(test_tools_path, root_dir, wheel_dir)
+
+        logger.info("Replacing relative requirements in eng/dependency_tools.txt with prebuilt wheels.")
+        replace_dev_reqs(dependency_tools_path, root_dir, wheel_dir)
+
+        for pkg in packages:
+            destination_dev_req = os.path.join(pkg, "dev_requirements.txt")
+
+            logger.info(f"Replacing dev requirements w/ path {destination_dev_req}")
+            if not os.path.exists(destination_dev_req):
+                logger.info("No dev_requirements present.")
+                with open(destination_dev_req, "w+") as file:
+                    file.write("\n")
+
+            replace_dev_reqs(destination_dev_req, pkg, wheel_dir)
+
     for idx, (package, check) in enumerate(combos, start=1):
         if not is_check_enabled(package, check, CHECK_DEFAULTS.get(check, True)):
             logger.warning(
@@ -352,17 +377,16 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     logger.info(f"Executing checks with the executable {sys.executable}.")
     logger.info(f"Packages targeted: {targeted_packages}")
 
+    temp_wheel_dir = args.wheel_dir or os.path.join(root_dir, ".wheels")
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
-
-    if not os.path.exists(os.path.join(root_dir, ".wheels")):
-        os.makedirs(os.path.join(root_dir, ".wheels"))
+    else:
+        if not os.path.exists(temp_wheel_dir):
+            os.makedirs(temp_wheel_dir)
 
     if in_ci():
-        # prepare a build of eng/tools/azure-sdk-tools
-        # todo: ensure that we honor this .wheels directory when replacing for dev reqs
         build_whl_for_req(
-            "eng/tools/azure-sdk-tools", root_dir, os.path.join(root_dir, ".wheels")
+            "eng/tools/azure-sdk-tools", root_dir, temp_wheel_dir
         )
 
     # so if we have checks whl,import_all and selected package paths `sdk/core/azure-core`, `sdk/storage/azure-storage-blob` we should
@@ -383,7 +407,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     configure_interrupt_handling()
     try:
         exit_code = asyncio.run(
-            run_all_checks(targeted_packages, checks, args.max_parallel)
+            run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir)
         )
     except KeyboardInterrupt:
         logger.error("Aborted by user.")

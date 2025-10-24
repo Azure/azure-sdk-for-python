@@ -75,7 +75,7 @@ class Check(abc.ABC):
                 # first attempt to retrieve azure-sdk-tools from the prebuilt wheel directory
                 # if present, install from there instead of constantly rebuilding azure-sdk-tools in a possible
                 # parallel situation
-                wheel_dir = os.path.join(REPO_ROOT, ".wheels")
+                wheel_dir = os.getenv("PREBUILT_WHEEL_DIR", None) or os.path.join(REPO_ROOT, ".wheels")
                 prebuilt_whl = find_whl(wheel_dir, "azure-sdk-tools", "0.0.0")
 
                 if prebuilt_whl:
