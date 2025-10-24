@@ -13,6 +13,7 @@ from azure.ai.ml.entities._job.resource_configuration import ResourceConfigurati
 from azure.ai.ml.entities._workspace.connections.connection_subtypes import ServerlessConnection
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 
+
 @pytest.mark.skipif(
     condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
 )
