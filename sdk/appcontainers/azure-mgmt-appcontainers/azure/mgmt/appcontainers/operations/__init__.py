@@ -13,45 +13,31 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._app_resiliency_operations import AppResiliencyOperations  # type: ignore
 from ._container_apps_auth_configs_operations import ContainerAppsAuthConfigsOperations  # type: ignore
 from ._available_workload_profiles_operations import AvailableWorkloadProfilesOperations  # type: ignore
 from ._billing_meters_operations import BillingMetersOperations  # type: ignore
-from ._builders_operations import BuildersOperations  # type: ignore
-from ._builds_by_builder_resource_operations import BuildsByBuilderResourceOperations  # type: ignore
-from ._builds_operations import BuildsOperations  # type: ignore
-from ._build_auth_token_operations import BuildAuthTokenOperations  # type: ignore
 from ._connected_environments_operations import ConnectedEnvironmentsOperations  # type: ignore
 from ._connected_environments_certificates_operations import ConnectedEnvironmentsCertificatesOperations  # type: ignore
 from ._connected_environments_dapr_components_operations import ConnectedEnvironmentsDaprComponentsOperations  # type: ignore
 from ._connected_environments_storages_operations import ConnectedEnvironmentsStoragesOperations  # type: ignore
 from ._container_apps_operations import ContainerAppsOperations  # type: ignore
-from ._container_apps_builds_by_container_app_operations import ContainerAppsBuildsByContainerAppOperations  # type: ignore
-from ._container_apps_builds_operations import ContainerAppsBuildsOperations  # type: ignore
-from ._container_apps_label_history_operations import ContainerAppsLabelHistoryOperations  # type: ignore
-from ._container_apps_patches_operations import ContainerAppsPatchesOperations  # type: ignore
 from ._container_apps_revisions_operations import ContainerAppsRevisionsOperations  # type: ignore
 from ._container_apps_revision_replicas_operations import ContainerAppsRevisionReplicasOperations  # type: ignore
 from ._container_apps_diagnostics_operations import ContainerAppsDiagnosticsOperations  # type: ignore
 from ._managed_environment_diagnostics_operations import ManagedEnvironmentDiagnosticsOperations  # type: ignore
 from ._managed_environments_diagnostics_operations import ManagedEnvironmentsDiagnosticsOperations  # type: ignore
 from ._jobs_operations import JobsOperations  # type: ignore
-from ._dot_net_components_operations import DotNetComponentsOperations  # type: ignore
-from ._functions_extension_operations import FunctionsExtensionOperations  # type: ignore
 from ._operations import Operations  # type: ignore
 from ._java_components_operations import JavaComponentsOperations  # type: ignore
 from ._jobs_executions_operations import JobsExecutionsOperations  # type: ignore
 from ._container_apps_api_client_operations import _ContainerAppsAPIClientOperationsMixin  # type: ignore # pylint: disable=unused-import
-from ._logic_apps_operations import LogicAppsOperations  # type: ignore
 from ._managed_environments_operations import ManagedEnvironmentsOperations  # type: ignore
 from ._certificates_operations import CertificatesOperations  # type: ignore
 from ._managed_certificates_operations import ManagedCertificatesOperations  # type: ignore
 from ._namespaces_operations import NamespacesOperations  # type: ignore
 from ._managed_environment_private_endpoint_connections_operations import ManagedEnvironmentPrivateEndpointConnectionsOperations  # type: ignore
 from ._managed_environment_private_link_resources_operations import ManagedEnvironmentPrivateLinkResourcesOperations  # type: ignore
-from ._dapr_component_resiliency_policies_operations import DaprComponentResiliencyPoliciesOperations  # type: ignore
 from ._dapr_components_operations import DaprComponentsOperations  # type: ignore
-from ._dapr_subscriptions_operations import DaprSubscriptionsOperations  # type: ignore
 from ._http_route_config_operations import HttpRouteConfigOperations  # type: ignore
 from ._maintenance_configurations_operations import MaintenanceConfigurationsOperations  # type: ignore
 from ._managed_environments_storages_operations import ManagedEnvironmentsStoragesOperations  # type: ignore
@@ -59,50 +45,37 @@ from ._container_apps_session_pools_operations import ContainerAppsSessionPoolsO
 from ._container_apps_source_controls_operations import ContainerAppsSourceControlsOperations  # type: ignore
 from ._usages_operations import UsagesOperations  # type: ignore
 from ._managed_environment_usages_operations import ManagedEnvironmentUsagesOperations  # type: ignore
+from ._logic_apps_operations import LogicAppsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AppResiliencyOperations",
     "ContainerAppsAuthConfigsOperations",
     "AvailableWorkloadProfilesOperations",
     "BillingMetersOperations",
-    "BuildersOperations",
-    "BuildsByBuilderResourceOperations",
-    "BuildsOperations",
-    "BuildAuthTokenOperations",
     "ConnectedEnvironmentsOperations",
     "ConnectedEnvironmentsCertificatesOperations",
     "ConnectedEnvironmentsDaprComponentsOperations",
     "ConnectedEnvironmentsStoragesOperations",
     "ContainerAppsOperations",
-    "ContainerAppsBuildsByContainerAppOperations",
-    "ContainerAppsBuildsOperations",
-    "ContainerAppsLabelHistoryOperations",
-    "ContainerAppsPatchesOperations",
     "ContainerAppsRevisionsOperations",
     "ContainerAppsRevisionReplicasOperations",
     "ContainerAppsDiagnosticsOperations",
     "ManagedEnvironmentDiagnosticsOperations",
     "ManagedEnvironmentsDiagnosticsOperations",
     "JobsOperations",
-    "DotNetComponentsOperations",
-    "FunctionsExtensionOperations",
     "Operations",
     "JavaComponentsOperations",
     "JobsExecutionsOperations",
-    "LogicAppsOperations",
     "ManagedEnvironmentsOperations",
     "CertificatesOperations",
     "ManagedCertificatesOperations",
     "NamespacesOperations",
     "ManagedEnvironmentPrivateEndpointConnectionsOperations",
     "ManagedEnvironmentPrivateLinkResourcesOperations",
-    "DaprComponentResiliencyPoliciesOperations",
     "DaprComponentsOperations",
-    "DaprSubscriptionsOperations",
     "HttpRouteConfigOperations",
     "MaintenanceConfigurationsOperations",
     "ManagedEnvironmentsStoragesOperations",
@@ -110,6 +83,7 @@ __all__ = [
     "ContainerAppsSourceControlsOperations",
     "UsagesOperations",
     "ManagedEnvironmentUsagesOperations",
+    "LogicAppsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

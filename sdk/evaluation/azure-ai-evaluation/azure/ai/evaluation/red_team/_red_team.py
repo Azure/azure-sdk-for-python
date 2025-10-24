@@ -19,8 +19,9 @@ from tqdm import tqdm
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 
-# from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights #TODO: uncomment when app insights checked in
-# from azure.ai.evaluation._model_configurations import EvaluationResult, AppInsightsConfig
+from azure.ai.evaluation._evaluate._evaluate import (
+    emit_eval_result_events_to_app_insights,
+)  # TODO: uncomment when app insights checked in
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
@@ -511,9 +512,6 @@ class RedTeam:
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
-            # Handle indirect jailbreak strategy
-            elif strategy == "indirect_jailbreak":
-                objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -607,163 +605,6 @@ class RedTeam:
                         message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
         except Exception as e:
             self.logger.error(f"Error applying jailbreak prefixes: {str(e)}")
-
-        return objectives_list
-
-    async def _apply_xpia_prompts(self, objectives_list: List, target_type_str: str) -> List:
-        """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy.
-
-        XPIA prompts are wrapper structures that contain:
-        - content: benign user query to trigger tool use
-        - context: attack vehicle with {attack_text} placeholder
-        - context_type: modality for formatting (email, document, html, code)
-        - tool_name: name for mock tool
-
-        We inject the baseline attack objectives into these XPIA wrapper prompts.
-        """
-        self.logger.debug(f"Applying XPIA prompts to objectives for indirect jailbreak (target_type={target_type_str})")
-
-        try:
-            # Fetch XPIA wrapper prompts from RAI service
-            @self.retry_manager.create_retry_decorator(context="xpia_prompts")
-            async def get_xpia_prompts_with_retry():
-                return await self.generated_rai_client.get_attack_objectives(
-                    risk_type=None,
-                    risk_category="xpia",
-                    application_scenario="",
-                    strategy=None,
-                    language=self.language.value,
-                    scan_session_id=self.scan_session_id,
-                    target=target_type_str,
-                )
-
-            xpia_prompts = await get_xpia_prompts_with_retry()
-
-            # If no agent XPIA prompts and we're trying agent, fallback to model
-            if (not xpia_prompts or len(xpia_prompts) == 0) and target_type_str == "agent":
-                self.logger.debug("No agent-type XPIA prompts available, falling back to model-type XPIA prompts")
-                try:
-                    xpia_prompts = await self.generated_rai_client.get_attack_objectives(
-                        risk_type=None,
-                        risk_category="xpia",
-                        application_scenario="",
-                        strategy=None,
-                        language=self.language.value,
-                        scan_session_id=self.scan_session_id,
-                        target="model",
-                    )
-                    if xpia_prompts and len(xpia_prompts) > 0:
-                        self.logger.debug(f"Fetched {len(xpia_prompts)} model-type XPIA wrapper prompts as fallback")
-                except Exception as fallback_error:
-                    self.logger.error(f"Error fetching model-type XPIA prompts as fallback: {str(fallback_error)}")
-
-            if not xpia_prompts or len(xpia_prompts) == 0:
-                self.logger.warning("No XPIA prompts available (even after fallback), returning objectives unchanged")
-                return objectives_list
-
-            self.logger.debug(f"Fetched {len(xpia_prompts)} XPIA wrapper prompts")
-
-            # Apply XPIA wrapping to each baseline objective
-            for objective in objectives_list:
-                if "messages" in objective and len(objective["messages"]) > 0:
-                    message = objective["messages"][0]
-                    if isinstance(message, dict) and "content" in message:
-                        # Get the baseline attack content to inject
-                        baseline_attack_content = message["content"]
-                        # Preserve the original baseline context if it exists
-                        baseline_context = message.get("context", "")
-
-                        # Normalize baseline_context to a list of context dicts
-                        baseline_contexts = []
-                        if baseline_context:
-                            # Extract baseline context from RAI service format
-                            context_dict = {"content": baseline_context}
-                            if message.get("tool_name"):
-                                context_dict["tool_name"] = message["tool_name"]
-                            if message.get("context_type"):
-                                context_dict["context_type"] = message["context_type"]
-                            baseline_contexts = [context_dict]
-
-                        # Check if baseline contexts have agent fields (context_type, tool_name)
-                        baseline_contexts_with_agent_fields = []
-                        baseline_contexts_without_agent_fields = []
-
-                        for ctx in baseline_contexts:
-                            if isinstance(ctx, dict):
-                                if "context_type" in ctx or "tool_name" in ctx:
-                                    # This baseline context has agent fields - preserve it separately
-                                    baseline_contexts_with_agent_fields.append(ctx)
-                                    self.logger.debug(
-                                        f"Found baseline context with agent fields: tool_name={ctx.get('tool_name')}, context_type={ctx.get('context_type')}"
-                                    )
-                                else:
-                                    # This baseline context has no agent fields - can be embedded
-                                    baseline_contexts_without_agent_fields.append(ctx)
-                            else:
-                                baseline_contexts_without_agent_fields.append({"content": str(ctx)})
-
-                        # For baseline contexts without agent fields, embed them in the attack content
-                        if baseline_contexts_without_agent_fields:
-                            context_texts = [
-                                ctx.get("content", "")
-                                for ctx in baseline_contexts_without_agent_fields
-                                if ctx.get("content")
-                            ]
-                            if context_texts:
-                                combined_context = "\n\n".join(context_texts)
-                                baseline_attack_content = f"{baseline_attack_content}\n\nContext:\n{combined_context}"
-                                self.logger.debug(
-                                    f"Embedded {len(context_texts)} baseline context(s) without agent fields into attack content"
-                                )
-
-                        # Randomly select an XPIA wrapper prompt
-                        xpia_prompt = random.choice(xpia_prompts)
-                        xpia_message = xpia_prompt.get("messages", [{}])[0]
-
-                        # Extract XPIA wrapper structure
-                        user_query = xpia_message.get("content", "")
-                        attack_vehicle_context = xpia_message.get("context", "")
-                        context_type = xpia_message.get("context_type") or "text"
-                        tool_name = xpia_message.get("tool_name", "")
-
-                        # Inject baseline attack (now with appended context) into the {attack_text} placeholder
-                        if "{attack_text}" in attack_vehicle_context:
-                            injected_context = attack_vehicle_context.replace("{attack_text}", baseline_attack_content)
-                        else:
-                            # No placeholder found, append to end
-                            injected_context = f"{attack_vehicle_context}\n\n{baseline_attack_content}"
-
-                        # Apply modality-based formatting
-                        formatted_context = format_content_by_modality(injected_context, context_type)
-
-                        # Update the message with benign user query
-                        message["content"] = user_query
-
-                        # Build the contexts list: XPIA context + any baseline contexts with agent fields
-                        contexts = [
-                            {"content": formatted_context, "context_type": context_type, "tool_name": tool_name}
-                        ]
-
-                        # Add baseline contexts with agent fields as separate context entries
-                        if baseline_contexts_with_agent_fields:
-                            contexts.extend(baseline_contexts_with_agent_fields)
-                            self.logger.debug(
-                                f"Preserved {len(baseline_contexts_with_agent_fields)} baseline context(s) with agent fields"
-                            )
-
-                        message["context"] = contexts
-                        message["context_type"] = (
-                            context_type  # Keep at message level for backward compat (XPIA primary)
-                        )
-                        message["tool_name"] = tool_name
-
-                        self.logger.debug(
-                            f"Wrapped baseline attack in XPIA: total contexts={len(contexts)}, xpia_tool={tool_name}, xpia_type={context_type}"
-                        )
-
-        except Exception as e:
-            self.logger.error(f"Error applying XPIA prompts: {str(e)}")
-            self.logger.warning("XPIA prompt application failed, returning original objectives")
 
         return objectives_list
 
@@ -1177,9 +1018,8 @@ class RedTeam:
         eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
         created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
         taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories")  # key is risk category value is taxonomy
-        # TODO: uncomment when app insights logging checked in
-        # _app_insights_configuration = kwargs.get("_app_insights_configuration")
-        # self._app_insights_configuration = _app_insights_configuration
+        _app_insights_configuration = kwargs.get("_app_insights_configuration")
+        self._app_insights_configuration = _app_insights_configuration
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         with UserAgentSingleton().add_useragent_product(user_agent):
@@ -1369,7 +1209,9 @@ class RedTeam:
             self.logger.warning(
                 "Tense strategy is not compatible with UngroundedAttributes risk categories. Skipping Tense strategy."
             )
-            raise ValueError("Tense strategy is not compatible with UngroundedAttributes risk categories.")
+            raise ValueError(
+                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories."
+            )
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
@@ -1540,9 +1382,10 @@ class RedTeam:
 
         # Extract AOAI summary for passing to MLflow logging
         aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
-        # TODO: uncomment when app insights checked in
-        # if self._app_insights_configuration:
-        #     emit_eval_result_events_to_app_insights(self._app_insights_configuration, aoai_summary["output_items"]["data"])
+        if self._app_insights_configuration:
+            emit_eval_result_events_to_app_insights(
+                self._app_insights_configuration, aoai_summary["output_items"]["data"]
+            )
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
@@ -1564,8 +1407,15 @@ class RedTeam:
                 os.remove(abs_output_path)
             os.makedirs(abs_output_path, exist_ok=True)
 
-            # Write scan result to eval_result.json (default name when path is directory)
-            _write_output(abs_output_path, red_team_result.scan_result)
+            # Create a copy of scan_result without AOAI properties for eval_result.json
+            scan_result_without_aoai = {
+                key: value
+                for key, value in red_team_result.scan_result.items()
+                if not key.startswith("AOAI_Compatible")
+            }
+
+            # Write scan result without AOAI properties to eval_result.json
+            _write_output(abs_output_path, scan_result_without_aoai)
 
             # Write the AOAI summary to results.json
             if aoai_summary:
