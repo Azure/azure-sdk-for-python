@@ -16,9 +16,7 @@ DESCRIPTION:
     - Creating databases and containers with autoscale throughput (async)
     - Reading autoscale throughput settings (async)
     - Updating autoscale maximum throughput (async)
-    - Migrating between manual and autoscale throughput (async)
     - Understanding autoscale increment percentage
-    - Best practices for autoscale in async applications
 
 USAGE:
     python autoscale_throughput_management_async.py

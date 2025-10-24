@@ -16,7 +16,6 @@ DESCRIPTION:
     - Creating databases and containers with autoscale throughput
     - Reading autoscale throughput settings
     - Updating autoscale maximum throughput
-    - Migrating between manual and autoscale throughput
     - Understanding autoscale increment percentage
 
 USAGE:
