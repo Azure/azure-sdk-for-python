@@ -34,6 +34,7 @@ from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
+from .._utils import get_user_agent_features
 
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
@@ -89,6 +90,15 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
+
+    # Add relevant enabled features to user agent for debugging
+    if request.headers['x-ms-thinclient-proxy-resource-type'] == 'docs':
+        user_agent_features = get_user_agent_features(global_endpoint_manager)
+        if len(user_agent_features) > 0:
+            user_agent = kwargs.pop("user_agent", global_endpoint_manager.client._user_agent)
+            user_agent = "{} {}".format(user_agent, user_agent_features)
+            kwargs.update({"user_agent": user_agent})
+            kwargs.update({"user_agent_overwrite": True})
 
     # The requests library now expects header values to be strings only starting 2.11,
     # and will raise an error on validation if they are not, so casting all header values to strings.
