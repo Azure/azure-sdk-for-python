@@ -50,6 +50,12 @@ class DirectorySamplesAsync(object):
             try:
                 # Get the directory client
                 directory = share.get_directory_client(directory_path="mydirectory")
+                directory.share_name
+                directory.directory_path
+                directory.snapshot
+                directory.allow_trailing_dot
+                directory.allow_source_trailing_dot
+                directory.file_request_intent
 
                 # [START create_directory]
                 await directory.create_directory()

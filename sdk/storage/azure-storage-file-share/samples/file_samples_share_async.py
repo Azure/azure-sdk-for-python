@@ -45,6 +45,11 @@ class ShareSamplesAsync(object):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples1async")
+        share.share_name
+        share.snapshot
+        share.allow_trailing_dot
+        share.allow_source_trailing_dot
+        share.file_request_intent
 
         async with share:
             # [START create_share]

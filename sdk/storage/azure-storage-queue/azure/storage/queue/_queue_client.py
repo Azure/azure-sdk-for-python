@@ -89,6 +89,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :caption: Create the queue client with url and credential.
     """
 
+    queue_name: str
+
     def __init__(
         self,
         account_url: str,

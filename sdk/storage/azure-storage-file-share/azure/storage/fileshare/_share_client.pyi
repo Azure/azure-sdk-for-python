@@ -28,7 +28,11 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 
 class ShareClient(StorageAccountHostsMixin):
+    share_name: str
     snapshot: Optional[str]
+    allow_trailing_dot: Optional[bool]
+    allow_source_trailing_dot: Optional[bool]
+    file_request_intent: Optional[Literal["backup"]]
     def __init__(
         self,
         account_url: str,
