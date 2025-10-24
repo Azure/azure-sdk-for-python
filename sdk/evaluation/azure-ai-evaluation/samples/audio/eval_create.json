@@ -1,0 +1,52 @@
+{
+    "name": "audio-grader-demo",
+    "data_source_config": {
+        "type": "custom",
+        "item_schema": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array"
+                }
+            },
+            "required": [
+                "messages"
+            ]
+        },
+        "include_sample_schema": true
+    },
+    "testing_criteria": [
+        {
+            "type": "score_model",
+            "name": "Tone/Emotion Grader",
+            "model": "gpt-4o-audio-preview",
+            "input": [
+                {
+                    "role": "system",
+                    "content": "Evaluate the provided audio for tone and emotion. Return a float score in [0,1] where 1 means the speaker sounds cheerful and friendly."
+                },
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "Listen to this clip and score tone/emotion."
+                        },
+                        {
+                            "type": "input_audio",
+                            "input_audio": {
+                                "data": "{{ sample.output_audio.data }}",
+                                "format": "wav"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "range": [
+                0,
+                1
+            ],
+            "pass_threshold": 0.5
+        }
+    ]
+}
