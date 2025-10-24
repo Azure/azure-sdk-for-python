@@ -1,6 +1,6 @@
 # Release History
 
-## 40.0.0b1 (2025-10-19)
+## 40.0.0b1 (2025-10-24)
 
 ### Features Added
 
