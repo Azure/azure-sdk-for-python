@@ -12,7 +12,6 @@ import uuid
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
-from azure.planetarycomputer import PlanetaryComputerClient
 from azure.planetarycomputer.models import (
     ManagedIdentityConnection,
     ManagedIdentityIngestionSource,
@@ -49,9 +48,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: List Managed Identities")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List managed identities
         managed_identities = list(client.ingestion_management.list_managed_identities())
@@ -74,9 +71,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Create and List Ingestion Sources")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration - must use real managed identity from the environment
         container_uri = os.environ.get("AZURE_INGESTION_CONTAINER_URI", "https://test.blob.core.windows.net/container")
@@ -132,9 +127,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Create SAS Token Ingestion Source")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration - SAS token values
         sas_container_uri = os.environ.get("AZURE_INGESTION_SAS_CONTAINER_URI", "https://test.blob.core.windows.net/sas-container")
@@ -185,9 +178,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Create Ingestion Definition")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -244,9 +235,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Update Ingestion Definition")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -303,9 +292,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Create Ingestion Run")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -355,9 +342,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Get Ingestion Run Status")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -430,9 +415,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: List Operations")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List operations
         operations = list(client.ingestion_management.list_operations())
@@ -462,9 +445,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Get Operation by ID")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -519,9 +500,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Delete Ingestion Source")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration - must use real managed identity from the environment
         # Use a unique container URI to avoid conflicts
@@ -574,10 +553,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Cancel Operation")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
         from azure.core.exceptions import HttpResponseError
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -632,10 +609,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Cancel All Operations")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
         from azure.core.exceptions import HttpResponseError
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Try to cancel all operations
         try:
@@ -658,9 +633,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Get Source")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get managed identity
         managed_identities = list(client.ingestion_management.list_managed_identities())
@@ -708,10 +681,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Create or Replace Source")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
         from datetime import datetime, timedelta
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Generate test SAS token data
         test_container_id = str(uuid.uuid4())
@@ -787,9 +758,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Lists Ingestions")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -828,9 +797,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Get Ingestion")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -877,9 +844,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: List Runs")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration
         source_catalog_url = os.environ.get("AZURE_INGESTION_CATALOG_URL", "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json")
@@ -935,9 +900,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Get Operation (Additional Coverage)")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List existing operations
         operations = list(client.ingestion_management.list_operations())
@@ -969,10 +932,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Cancel All Operations (Additional Coverage)")
         logger.info("="*80)
 
-        from azure.identity import DefaultAzureCredential
         from azure.core.exceptions import HttpResponseError
-        credential = DefaultAzureCredential()
-        client = PlanetaryComputerClient(endpoint=planetarycomputer_endpoint, credential=credential)
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Try to cancel all operations
         try:
