@@ -88,7 +88,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         logger.info("TEST: List STAC Collections")
         logger.info("=" * 80)
 
-        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID")
+        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
 
         assert collection_id is not None
 
@@ -132,7 +132,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
     def test_04_get_collection(self, planetarycomputer_endpoint):
         """Test getting a specific STAC collection."""
 
-        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID")
+        collection_id = os.getenv("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
         assert collection_id is not None
 
         logger.info("=" * 80)
