@@ -45,6 +45,7 @@ from ..._validation import api_version_validation
 from .._configuration import SearchClientConfiguration
 
 JSON = MutableMapping[str, Any]
+_Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -399,7 +400,199 @@ class _SearchClientOperationsMixin(
     @overload
     async def search(
         self,
-        search_request: _models2.SearchRequest,
+        *,
+        query_source_authorization: Optional[str] = None,
+        content_type: str = "application/json",
+        include_total_count: Optional[bool] = None,
+        facets: Optional[list[str]] = None,
+        filter: Optional[str] = None,
+        highlight_fields: Optional[str] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[str] = None,
+        query_type: Optional[Union[str, _models2.QueryType]] = None,
+        scoring_statistics: Optional[Union[str, _models2.ScoringStatistics]] = None,
+        session_id: Optional[str] = None,
+        scoring_parameters: Optional[list[str]] = None,
+        scoring_profile: Optional[str] = None,
+        debug: Optional[Union[str, _models2.QueryDebugMode]] = None,
+        search_text: Optional[str] = None,
+        search_fields: Optional[str] = None,
+        search_mode: Optional[Union[str, _models2.SearchMode]] = None,
+        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
+        query_speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
+        select: Optional[str] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        semantic_configuration_name: Optional[str] = None,
+        semantic_error_handling: Optional[Union[str, _models2.SemanticErrorMode]] = None,
+        semantic_max_wait_in_milliseconds: Optional[int] = None,
+        semantic_query: Optional[str] = None,
+        answers: Optional[Union[str, _models2.QueryAnswerType]] = None,
+        captions: Optional[Union[str, _models2.QueryCaptionType]] = None,
+        query_rewrites: Optional[Union[str, _models2.QueryRewritesType]] = None,
+        semantic_fields: Optional[str] = None,
+        vector_queries: Optional[list[_models2.VectorQuery]] = None,
+        vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
+        hybrid_search: Optional[_models2.HybridSearch] = None,
+        **kwargs: Any
+    ) -> _models2.SearchDocumentsResult:
+        """Searches for documents in the index.
+
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword include_total_count: A value that specifies whether to fetch the total count of
+         results. Default is false. Setting this value to true may have a performance impact. Note that
+         the count returned is an approximation. Default value is None.
+        :paramtype include_total_count: bool
+        :keyword facets: The list of facet expressions to apply to the search query. Each facet
+         expression contains a field name, optionally followed by a comma-separated list of name:value
+         pairs. Default value is None.
+        :paramtype facets: list[str]
+        :keyword filter: The OData $filter expression to apply to the search query. Default value is
+         None.
+        :paramtype filter: str
+        :keyword highlight_fields: The comma-separated list of field names to use for hit highlights.
+         Only searchable fields can be used for hit highlighting. Default value is None.
+        :paramtype highlight_fields: str
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. Default is &lt;/em&gt;. Default value is None.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. Default is &lt;em&gt;. Default value is None.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a search query in order for the query to be reported as a success. This
+         parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 100. Default value is None.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+         results. Each expression can be either a field name or a call to either the geo.distance() or
+         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
+         desc to indicate descending. The default is ascending order. Ties will be broken by the match
+         scores of documents. If no $orderby is specified, the default sort order is descending by
+         document match score. There can be at most 32 $orderby clauses. Default value is None.
+        :paramtype order_by: str
+        :keyword query_type: A value that specifies the syntax of the search query. The default is
+         'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
+         "full", and "semantic". Default value is None.
+        :paramtype query_type: str or ~azure.search.documents.models.QueryType
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+         statistics (such as document frequency) globally for more consistent scoring, or locally, for
+         lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+         before scoring. Using global scoring statistics can increase latency of search queries. Known
+         values are: "local" and "global". Default value is None.
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword session_id: A value to be used to create a sticky session, which can help getting more
+         consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+         to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+         interfere with the load balancing of the requests across replicas and adversely affect the
+         performance of the search service. The value used as sessionId cannot start with a '_'
+         character. Default value is None.
+        :paramtype session_id: str
+        :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
+         example, referencePointParameter) using the format name-values. For example, if the scoring
+         profile defines a function with a parameter called 'mylocation' the parameter string would be
+         "mylocation--122.2,44.8" (without the quotes). Default value is None.
+        :paramtype scoring_parameters: list[str]
+        :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
+         documents in order to sort the results. Default value is None.
+        :paramtype scoring_profile: str
+        :keyword debug: Enables a debugging tool that can be used to further explore your reranked
+         results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
+         "all". Default value is None.
+        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
+        :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
+         match all documents. Default value is None.
+        :paramtype search_text: str
+        :keyword search_fields: The comma-separated list of field names to which to scope the full-text
+         search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
+         field names of each fielded search expression take precedence over any field names listed in
+         this parameter. Default value is None.
+        :paramtype search_fields: str
+        :keyword search_mode: A value that specifies whether any or all of the search terms must be
+         matched in order to count the document as a match. Known values are: "any" and "all". Default
+         value is None.
+        :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Known values
+         are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
+         "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
+         "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
+         "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
+         "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
+         "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
+         "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
+         "te-in", and "ur-pk". Default value is None.
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Known values are: "none" and "lexicon". Default value is None.
+        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
+        :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
+         marked as retrievable in the schema are included. Default value is None.
+        :paramtype select: str
+        :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
+         If you need to scan documents in sequence, but cannot use skip due to this limitation, consider
+         using orderby on a totally-ordered key and filter with a range query instead. Default value is
+         None.
+        :paramtype skip: int
+        :keyword top: The number of search results to retrieve. This can be used in conjunction with
+         $skip to implement client-side paging of search results. If results are truncated due to
+         server-side paging, the response will include a continuation token that can be used to issue
+         another Search request for the next page of results. Default value is None.
+        :paramtype top: int
+        :keyword semantic_configuration_name: The name of a semantic configuration that will be used
+         when processing documents for queries of type semantic. Default value is None.
+        :paramtype semantic_configuration_name: str
+        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+         completely (default / current behavior), or to return partial results. Known values are:
+         "partial" and "fail". Default value is None.
+        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
+        :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
+         of time it takes for semantic enrichment to finish processing before the request fails. Default
+         value is None.
+        :paramtype semantic_max_wait_in_milliseconds: int
+        :keyword semantic_query: Allows setting a separate search query that will be solely used for
+         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+         is a need to use different queries between the base retrieval and ranking phase, and the L2
+         semantic phase. Default value is None.
+        :paramtype semantic_query: str
+        :keyword answers: A value that specifies whether answers should be returned as part of the
+         search response. Known values are: "none" and "extractive". Default value is None.
+        :paramtype answers: str or ~azure.search.documents.models.QueryAnswerType
+        :keyword captions: A value that specifies whether captions should be returned as part of the
+         search response. Known values are: "none" and "extractive". Default value is None.
+        :paramtype captions: str or ~azure.search.documents.models.QueryCaptionType
+        :keyword query_rewrites: A value that specifies whether query rewrites should be generated to
+         augment the search query. Known values are: "none" and "generative". Default value is None.
+        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
+        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
+         Default value is None.
+        :paramtype semantic_fields: str
+        :keyword vector_queries: The query parameters for vector and hybrid search queries. Default
+         value is None.
+        :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
+        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
+         vector search is performed. Default is 'preFilter' for new indexes. Known values are:
+         "postFilter", "preFilter", and "strictPostFilter". Default value is None.
+        :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
+        :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
+         value is None.
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.SearchDocumentsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def search(
+        self,
+        body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
@@ -407,8 +600,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2.SearchDocumentsResult:
         """Searches for documents in the index.
 
-        :param search_request: The definition of the Search request. Required.
-        :type search_request: ~azure.search.documents.models.SearchRequest
+        :param body: Required.
+        :type body: JSON
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -424,7 +617,7 @@ class _SearchClientOperationsMixin(
     @overload
     async def search(
         self,
-        search_request: JSON,
+        body: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
@@ -432,33 +625,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2.SearchDocumentsResult:
         """Searches for documents in the index.
 
-        :param search_request: The definition of the Search request. Required.
-        :type search_request: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def search(
-        self,
-        search_request: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models2.SearchDocumentsResult:
-        """Searches for documents in the index.
-
-        :param search_request: The definition of the Search request. Required.
-        :type search_request: IO[bytes]
+        :param body: Required.
+        :type body: IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -474,20 +642,189 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     async def search(
         self,
-        search_request: Union[_models2.SearchRequest, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         query_source_authorization: Optional[str] = None,
+        include_total_count: Optional[bool] = None,
+        facets: Optional[list[str]] = None,
+        filter: Optional[str] = None,
+        highlight_fields: Optional[str] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[str] = None,
+        query_type: Optional[Union[str, _models2.QueryType]] = None,
+        scoring_statistics: Optional[Union[str, _models2.ScoringStatistics]] = None,
+        session_id: Optional[str] = None,
+        scoring_parameters: Optional[list[str]] = None,
+        scoring_profile: Optional[str] = None,
+        debug: Optional[Union[str, _models2.QueryDebugMode]] = None,
+        search_text: Optional[str] = None,
+        search_fields: Optional[str] = None,
+        search_mode: Optional[Union[str, _models2.SearchMode]] = None,
+        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
+        query_speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
+        select: Optional[str] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        semantic_configuration_name: Optional[str] = None,
+        semantic_error_handling: Optional[Union[str, _models2.SemanticErrorMode]] = None,
+        semantic_max_wait_in_milliseconds: Optional[int] = None,
+        semantic_query: Optional[str] = None,
+        answers: Optional[Union[str, _models2.QueryAnswerType]] = None,
+        captions: Optional[Union[str, _models2.QueryCaptionType]] = None,
+        query_rewrites: Optional[Union[str, _models2.QueryRewritesType]] = None,
+        semantic_fields: Optional[str] = None,
+        vector_queries: Optional[list[_models2.VectorQuery]] = None,
+        vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
+        hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
     ) -> _models2.SearchDocumentsResult:
         """Searches for documents in the index.
 
-        :param search_request: The definition of the Search request. Is one of the following types:
-         SearchRequest, JSON, IO[bytes] Required.
-        :type search_request: ~azure.search.documents.models.SearchRequest or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword include_total_count: A value that specifies whether to fetch the total count of
+         results. Default is false. Setting this value to true may have a performance impact. Note that
+         the count returned is an approximation. Default value is None.
+        :paramtype include_total_count: bool
+        :keyword facets: The list of facet expressions to apply to the search query. Each facet
+         expression contains a field name, optionally followed by a comma-separated list of name:value
+         pairs. Default value is None.
+        :paramtype facets: list[str]
+        :keyword filter: The OData $filter expression to apply to the search query. Default value is
+         None.
+        :paramtype filter: str
+        :keyword highlight_fields: The comma-separated list of field names to use for hit highlights.
+         Only searchable fields can be used for hit highlighting. Default value is None.
+        :paramtype highlight_fields: str
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. Default is &lt;/em&gt;. Default value is None.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. Default is &lt;em&gt;. Default value is None.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a search query in order for the query to be reported as a success. This
+         parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 100. Default value is None.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+         results. Each expression can be either a field name or a call to either the geo.distance() or
+         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
+         desc to indicate descending. The default is ascending order. Ties will be broken by the match
+         scores of documents. If no $orderby is specified, the default sort order is descending by
+         document match score. There can be at most 32 $orderby clauses. Default value is None.
+        :paramtype order_by: str
+        :keyword query_type: A value that specifies the syntax of the search query. The default is
+         'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
+         "full", and "semantic". Default value is None.
+        :paramtype query_type: str or ~azure.search.documents.models.QueryType
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+         statistics (such as document frequency) globally for more consistent scoring, or locally, for
+         lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+         before scoring. Using global scoring statistics can increase latency of search queries. Known
+         values are: "local" and "global". Default value is None.
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword session_id: A value to be used to create a sticky session, which can help getting more
+         consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+         to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+         interfere with the load balancing of the requests across replicas and adversely affect the
+         performance of the search service. The value used as sessionId cannot start with a '_'
+         character. Default value is None.
+        :paramtype session_id: str
+        :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
+         example, referencePointParameter) using the format name-values. For example, if the scoring
+         profile defines a function with a parameter called 'mylocation' the parameter string would be
+         "mylocation--122.2,44.8" (without the quotes). Default value is None.
+        :paramtype scoring_parameters: list[str]
+        :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
+         documents in order to sort the results. Default value is None.
+        :paramtype scoring_profile: str
+        :keyword debug: Enables a debugging tool that can be used to further explore your reranked
+         results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
+         "all". Default value is None.
+        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
+        :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
+         match all documents. Default value is None.
+        :paramtype search_text: str
+        :keyword search_fields: The comma-separated list of field names to which to scope the full-text
+         search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
+         field names of each fielded search expression take precedence over any field names listed in
+         this parameter. Default value is None.
+        :paramtype search_fields: str
+        :keyword search_mode: A value that specifies whether any or all of the search terms must be
+         matched in order to count the document as a match. Known values are: "any" and "all". Default
+         value is None.
+        :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Known values
+         are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
+         "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
+         "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
+         "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
+         "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
+         "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
+         "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
+         "te-in", and "ur-pk". Default value is None.
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Known values are: "none" and "lexicon". Default value is None.
+        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
+        :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
+         marked as retrievable in the schema are included. Default value is None.
+        :paramtype select: str
+        :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
+         If you need to scan documents in sequence, but cannot use skip due to this limitation, consider
+         using orderby on a totally-ordered key and filter with a range query instead. Default value is
+         None.
+        :paramtype skip: int
+        :keyword top: The number of search results to retrieve. This can be used in conjunction with
+         $skip to implement client-side paging of search results. If results are truncated due to
+         server-side paging, the response will include a continuation token that can be used to issue
+         another Search request for the next page of results. Default value is None.
+        :paramtype top: int
+        :keyword semantic_configuration_name: The name of a semantic configuration that will be used
+         when processing documents for queries of type semantic. Default value is None.
+        :paramtype semantic_configuration_name: str
+        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+         completely (default / current behavior), or to return partial results. Known values are:
+         "partial" and "fail". Default value is None.
+        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
+        :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
+         of time it takes for semantic enrichment to finish processing before the request fails. Default
+         value is None.
+        :paramtype semantic_max_wait_in_milliseconds: int
+        :keyword semantic_query: Allows setting a separate search query that will be solely used for
+         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+         is a need to use different queries between the base retrieval and ranking phase, and the L2
+         semantic phase. Default value is None.
+        :paramtype semantic_query: str
+        :keyword answers: A value that specifies whether answers should be returned as part of the
+         search response. Known values are: "none" and "extractive". Default value is None.
+        :paramtype answers: str or ~azure.search.documents.models.QueryAnswerType
+        :keyword captions: A value that specifies whether captions should be returned as part of the
+         search response. Known values are: "none" and "extractive". Default value is None.
+        :paramtype captions: str or ~azure.search.documents.models.QueryCaptionType
+        :keyword query_rewrites: A value that specifies whether query rewrites should be generated to
+         augment the search query. Known values are: "none" and "generative". Default value is None.
+        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
+        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
+         Default value is None.
+        :paramtype semantic_fields: str
+        :keyword vector_queries: The query parameters for vector and hybrid search queries. Default
+         value is None.
+        :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
+        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
+         vector search is performed. Default is 'preFilter' for new indexes. Known values are:
+         "postFilter", "preFilter", and "strictPostFilter". Default value is None.
+        :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
+        :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
+         value is None.
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -506,12 +843,49 @@ class _SearchClientOperationsMixin(
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models2.SearchDocumentsResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            body = {
+                "answers": answers,
+                "captions": captions,
+                "count": include_total_count,
+                "debug": debug,
+                "facets": facets,
+                "filter": filter,
+                "highlight": highlight_fields,
+                "highlightPostTag": highlight_post_tag,
+                "highlightPreTag": highlight_pre_tag,
+                "hybridSearch": hybrid_search,
+                "minimumCoverage": minimum_coverage,
+                "orderby": order_by,
+                "queryLanguage": query_language,
+                "queryRewrites": query_rewrites,
+                "queryType": query_type,
+                "scoringParameters": scoring_parameters,
+                "scoringProfile": scoring_profile,
+                "scoringStatistics": scoring_statistics,
+                "search": search_text,
+                "searchFields": search_fields,
+                "searchMode": search_mode,
+                "select": select,
+                "semanticConfiguration": semantic_configuration_name,
+                "semanticErrorHandling": semantic_error_handling,
+                "semanticFields": semantic_fields,
+                "semanticMaxWaitInMilliseconds": semantic_max_wait_in_milliseconds,
+                "semanticQuery": semantic_query,
+                "sessionId": session_id,
+                "skip": skip,
+                "speller": query_speller,
+                "top": top,
+                "vectorFilterMode": vector_filter_mode,
+                "vectorQueries": vector_queries,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(search_request, (IOBase, bytes)):
-            _content = search_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(search_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_search_request(
             index_name=self._config.index_name,
@@ -770,7 +1144,84 @@ class _SearchClientOperationsMixin(
     @overload
     async def suggest(
         self,
-        suggest_request: _models2.SuggestRequest,
+        *,
+        search_text: str,
+        suggester_name: str,
+        query_source_authorization: Optional[str] = None,
+        content_type: str = "application/json",
+        filter: Optional[str] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[str] = None,
+        search_fields: Optional[str] = None,
+        select: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models2.SuggestDocumentsResult:
+        """Suggests documents in the index that match the given partial query text.
+
+        :keyword search_text: The search text to use to suggest documents. Must be at least 1
+         character, and no more than 100 characters. Required.
+        :paramtype search_text: str
+        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
+         that's part of the index definition. Required.
+        :paramtype suggester_name: str
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword filter: An OData expression that filters the documents considered for suggestions.
+         Default value is None.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         suggestion query. Default is false. When set to true, the query will find suggestions even if
+         there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy suggestion searches are
+         slower and consume more resources. Default value is None.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting of suggestions is disabled. Default value is
+         None.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting of suggestions is disabled. Default value is
+         None.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a suggestion query in order for the query to be reported as a success.
+         This parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 80. Default value is None.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+         results. Each expression can be either a field name or a call to either the geo.distance() or
+         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
+         desc to indicate descending. The default is ascending order. Ties will be broken by the match
+         scores of documents. If no $orderby is specified, the default sort order is descending by
+         document match score. There can be at most 32 $orderby clauses. Default value is None.
+        :paramtype order_by: str
+        :keyword search_fields: The comma-separated list of field names to search for the specified
+         search text. Target fields must be included in the specified suggester. Default value is None.
+        :paramtype search_fields: str
+        :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
+         field will be included in the results. Default value is None.
+        :paramtype select: str
+        :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
+         The default is 5. Default value is None.
+        :paramtype top: int
+        :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.SuggestDocumentsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def suggest(
+        self,
+        body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
@@ -778,8 +1229,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
 
-        :param suggest_request: The Suggest request. Required.
-        :type suggest_request: ~azure.search.documents.models.SuggestRequest
+        :param body: Required.
+        :type body: JSON
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -795,7 +1246,7 @@ class _SearchClientOperationsMixin(
     @overload
     async def suggest(
         self,
-        suggest_request: JSON,
+        body: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
@@ -803,33 +1254,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
 
-        :param suggest_request: The Suggest request. Required.
-        :type suggest_request: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SuggestDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def suggest(
-        self,
-        suggest_request: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models2.SuggestDocumentsResult:
-        """Suggests documents in the index that match the given partial query text.
-
-        :param suggest_request: The Suggest request. Required.
-        :type suggest_request: IO[bytes]
+        :param body: Required.
+        :type body: IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -845,20 +1271,74 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     async def suggest(
         self,
-        suggest_request: Union[_models2.SuggestRequest, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        search_text: str = _Unset,
+        suggester_name: str = _Unset,
         query_source_authorization: Optional[str] = None,
+        filter: Optional[str] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[str] = None,
+        search_fields: Optional[str] = None,
+        select: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> _models2.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
 
-        :param suggest_request: The Suggest request. Is one of the following types: SuggestRequest,
-         JSON, IO[bytes] Required.
-        :type suggest_request: ~azure.search.documents.models.SuggestRequest or JSON or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword search_text: The search text to use to suggest documents. Must be at least 1
+         character, and no more than 100 characters. Required.
+        :paramtype search_text: str
+        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
+         that's part of the index definition. Required.
+        :paramtype suggester_name: str
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword filter: An OData expression that filters the documents considered for suggestions.
+         Default value is None.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         suggestion query. Default is false. When set to true, the query will find suggestions even if
+         there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy suggestion searches are
+         slower and consume more resources. Default value is None.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting of suggestions is disabled. Default value is
+         None.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting of suggestions is disabled. Default value is
+         None.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by a suggestion query in order for the query to be reported as a success.
+         This parameter can be useful for ensuring search availability even for services with only one
+         replica. The default is 80. Default value is None.
+        :paramtype minimum_coverage: float
+        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
+         results. Each expression can be either a field name or a call to either the geo.distance() or
+         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
+         desc to indicate descending. The default is ascending order. Ties will be broken by the match
+         scores of documents. If no $orderby is specified, the default sort order is descending by
+         document match score. There can be at most 32 $orderby clauses. Default value is None.
+        :paramtype order_by: str
+        :keyword search_fields: The comma-separated list of field names to search for the specified
+         search text. Target fields must be included in the specified suggester. Default value is None.
+        :paramtype search_fields: str
+        :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
+         field will be included in the results. Default value is None.
+        :paramtype select: str
+        :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
+         The default is 5. Default value is None.
+        :paramtype top: int
         :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -877,12 +1357,31 @@ class _SearchClientOperationsMixin(
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models2.SuggestDocumentsResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if search_text is _Unset:
+                raise TypeError("missing required argument: search_text")
+            if suggester_name is _Unset:
+                raise TypeError("missing required argument: suggester_name")
+            body = {
+                "filter": filter,
+                "fuzzy": use_fuzzy_matching,
+                "highlightPostTag": highlight_post_tag,
+                "highlightPreTag": highlight_pre_tag,
+                "minimumCoverage": minimum_coverage,
+                "orderby": order_by,
+                "search": search_text,
+                "searchFields": search_fields,
+                "select": select,
+                "suggesterName": suggester_name,
+                "top": top,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(suggest_request, (IOBase, bytes)):
-            _content = suggest_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(suggest_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_suggest_request(
             index_name=self._config.index_name,
@@ -1211,7 +1710,76 @@ class _SearchClientOperationsMixin(
     @overload
     async def autocomplete(
         self,
-        autocomplete_request: _models2.AutocompleteRequest,
+        *,
+        search_text: str,
+        suggester_name: str,
+        query_source_authorization: Optional[str] = None,
+        content_type: str = "application/json",
+        autocomplete_mode: Optional[Union[str, _models2.AutocompleteMode]] = None,
+        filter: Optional[str] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        search_fields: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models2.AutocompleteResult:
+        """Autocompletes incomplete query terms based on input text and matching terms in the index.
+
+        :keyword search_text: The search text on which to base autocomplete results. Required.
+        :paramtype search_text: str
+        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
+         that's part of the index definition. Required.
+        :paramtype suggester_name: str
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+         'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
+         auto-completed terms. Known values are: "oneTerm", "twoTerms", and "oneTermWithContext".
+         Default value is None.
+        :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+        :keyword filter: An OData expression that filters the documents used to produce completed terms
+         for the Autocomplete result. Default value is None.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         autocomplete query. Default is false. When set to true, the query will autocomplete terms even
+         if there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
+         slower and consume more resources. Default value is None.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting is disabled. Default value is None.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting is disabled. Default value is None.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by an autocomplete query in order for the query to be reported as a
+         success. This parameter can be useful for ensuring search availability even for services with
+         only one replica. The default is 80. Default value is None.
+        :paramtype minimum_coverage: float
+        :keyword search_fields: The comma-separated list of field names to consider when querying for
+         auto-completed terms. Target fields must be included in the specified suggester. Default value
+         is None.
+        :paramtype search_fields: str
+        :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
+         and 100. The default is 5. Default value is None.
+        :paramtype top: int
+        :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.AutocompleteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def autocomplete(
+        self,
+        body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
@@ -1219,8 +1787,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
-        :param autocomplete_request: The definition of the Autocomplete request. Required.
-        :type autocomplete_request: ~azure.search.documents.models.AutocompleteRequest
+        :param body: Required.
+        :type body: JSON
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -1236,7 +1804,7 @@ class _SearchClientOperationsMixin(
     @overload
     async def autocomplete(
         self,
-        autocomplete_request: JSON,
+        body: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
@@ -1244,33 +1812,8 @@ class _SearchClientOperationsMixin(
     ) -> _models2.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
-        :param autocomplete_request: The definition of the Autocomplete request. Required.
-        :type autocomplete_request: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.AutocompleteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def autocomplete(
-        self,
-        autocomplete_request: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models2.AutocompleteResult:
-        """Autocompletes incomplete query terms based on input text and matching terms in the index.
-
-        :param autocomplete_request: The definition of the Autocomplete request. Required.
-        :type autocomplete_request: IO[bytes]
+        :param body: Required.
+        :type body: IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -1286,21 +1829,66 @@ class _SearchClientOperationsMixin(
     @distributed_trace_async
     async def autocomplete(
         self,
-        autocomplete_request: Union[_models2.AutocompleteRequest, JSON, IO[bytes]],
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        search_text: str = _Unset,
+        suggester_name: str = _Unset,
         query_source_authorization: Optional[str] = None,
+        autocomplete_mode: Optional[Union[str, _models2.AutocompleteMode]] = None,
+        filter: Optional[str] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        search_fields: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> _models2.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
-        :param autocomplete_request: The definition of the Autocomplete request. Is one of the
-         following types: AutocompleteRequest, JSON, IO[bytes] Required.
-        :type autocomplete_request: ~azure.search.documents.models.AutocompleteRequest or JSON or
-         IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword search_text: The search text on which to base autocomplete results. Required.
+        :paramtype search_text: str
+        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
+         that's part of the index definition. Required.
+        :paramtype suggester_name: str
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+         'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
+         auto-completed terms. Known values are: "oneTerm", "twoTerms", and "oneTermWithContext".
+         Default value is None.
+        :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+        :keyword filter: An OData expression that filters the documents used to produce completed terms
+         for the Autocomplete result. Default value is None.
+        :paramtype filter: str
+        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+         autocomplete query. Default is false. When set to true, the query will autocomplete terms even
+         if there's a substituted or missing character in the search text. While this provides a better
+         experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
+         slower and consume more resources. Default value is None.
+        :paramtype use_fuzzy_matching: bool
+        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+         highlightPreTag. If omitted, hit highlighting is disabled. Default value is None.
+        :paramtype highlight_post_tag: str
+        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+         highlightPostTag. If omitted, hit highlighting is disabled. Default value is None.
+        :paramtype highlight_pre_tag: str
+        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+         that must be covered by an autocomplete query in order for the query to be reported as a
+         success. This parameter can be useful for ensuring search availability even for services with
+         only one replica. The default is 80. Default value is None.
+        :paramtype minimum_coverage: float
+        :keyword search_fields: The comma-separated list of field names to consider when querying for
+         auto-completed terms. Target fields must be included in the specified suggester. Default value
+         is None.
+        :paramtype search_fields: str
+        :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
+         and 100. The default is 5. Default value is None.
+        :paramtype top: int
         :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.AutocompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1319,12 +1907,30 @@ class _SearchClientOperationsMixin(
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models2.AutocompleteResult] = kwargs.pop("cls", None)
 
+        if body is _Unset:
+            if search_text is _Unset:
+                raise TypeError("missing required argument: search_text")
+            if suggester_name is _Unset:
+                raise TypeError("missing required argument: suggester_name")
+            body = {
+                "autocompleteMode": autocomplete_mode,
+                "filter": filter,
+                "fuzzy": use_fuzzy_matching,
+                "highlightPostTag": highlight_post_tag,
+                "highlightPreTag": highlight_pre_tag,
+                "minimumCoverage": minimum_coverage,
+                "search": search_text,
+                "searchFields": search_fields,
+                "suggesterName": suggester_name,
+                "top": top,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(autocomplete_request, (IOBase, bytes)):
-            _content = autocomplete_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(autocomplete_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_search_autocomplete_request(
             index_name=self._config.index_name,
