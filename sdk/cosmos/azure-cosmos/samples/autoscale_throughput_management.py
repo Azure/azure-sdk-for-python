@@ -154,15 +154,15 @@ def read_autoscale_throughput(database, container):
         db_offer = database.get_throughput()
         print(f"\nDatabase '{database.id}' throughput:")
         
-        if db_offer.properties.get('content', {}).get('offerAutopilotSettings'):
-            autopilot_settings = db_offer.properties['content']['offerAutopilotSettings']
+        autopilot_settings = db_offer.properties.get('content', {}).get('offerAutopilotSettings')
+        if autopilot_settings:
             max_throughput = autopilot_settings.get('maxThroughput')
             print(f"  - Autoscale enabled: Yes")
             print(f"  - Maximum throughput: {max_throughput} RU/s")
             print(f"  - Minimum throughput: {max_throughput // 10} RU/s")
             print(f"  - Increment percent: {autopilot_settings.get('autoUpgradePolicy', {}).get('throughputPolicy', {}).get('incrementPercent', 0)}")
         else:
-            throughput = db_offer.properties['content'].get('offerThroughput')
+            throughput = db_offer.properties.get('content', {}).get('offerThroughput')
             print(f"  - Autoscale enabled: No")
             print(f"  - Manual throughput: {throughput} RU/s")
             
@@ -174,14 +174,14 @@ def read_autoscale_throughput(database, container):
         container_offer = container.get_throughput()
         print(f"\nContainer '{container.id}' throughput:")
         
-        if container_offer.properties.get('content', {}).get('offerAutopilotSettings'):
-            autopilot_settings = container_offer.properties['content']['offerAutopilotSettings']
+        autopilot_settings = container_offer.properties.get('content', {}).get('offerAutopilotSettings')
+        if autopilot_settings:
             max_throughput = autopilot_settings.get('maxThroughput')
             print(f"  - Autoscale enabled: Yes")
             print(f"  - Maximum throughput: {max_throughput} RU/s")
             print(f"  - Minimum throughput: {max_throughput // 10} RU/s")
         else:
-            throughput = container_offer.properties['content'].get('offerThroughput')
+            throughput = container_offer.properties.get('content', {}).get('offerThroughput')
             print(f"  - Autoscale enabled: No")
             print(f"  - Manual throughput: {throughput} RU/s")
             
@@ -212,64 +212,18 @@ def update_autoscale_max_throughput(container, new_max_throughput):
         
         updated_offer = container.replace_throughput(new_throughput)
         
-        autopilot_settings = updated_offer.properties['content']['offerAutopilotSettings']
-        max_throughput = autopilot_settings.get('maxThroughput')
-        
-        print(f"Container '{container.id}' autoscale updated:")
-        print(f"  - New maximum throughput: {max_throughput} RU/s")
-        print(f"  - New minimum throughput: {max_throughput // 10} RU/s")
-        print(f"  - Autoscale will now scale within this new range")
+        autopilot_settings = updated_offer.properties.get('content', {}).get('offerAutopilotSettings')
+        if autopilot_settings:
+            max_throughput = autopilot_settings.get('maxThroughput')
+            print(f"Container '{container.id}' autoscale updated:")
+            print(f"  - New maximum throughput: {max_throughput} RU/s")
+            print(f"  - New minimum throughput: {max_throughput // 10} RU/s")
+            print(f"  - Autoscale will now scale within this new range")
+        else:
+            print(f"Warning: Updated offer does not contain autoscale settings")
         
     except exceptions.CosmosHttpResponseError as e:
         print(f"Error updating autoscale throughput: {e.message}")
-
-
-def migrate_to_autoscale(container):
-    """
-    Migrate a container from manual throughput to autoscale.
-    
-    This operation converts fixed RU/s provisioning to autoscale, allowing
-    automatic scaling based on workload demands.
-    
-    Args:
-        container: ContainerProxy instance with manual throughput
-    """
-    print("\nMigrate from Manual to Autoscale Throughput")
-    print("=" * 70)
-    
-    try:
-        # Check current throughput type
-        current_offer = container.get_throughput()
-        
-        if current_offer.properties.get('content', {}).get('offerAutopilotSettings'):
-            print(f"Container '{container.id}' is already using autoscale")
-            return
-        
-        current_throughput = current_offer.properties['content'].get('offerThroughput')
-        print(f"Current manual throughput: {current_throughput} RU/s")
-        
-        # Migrate to autoscale with max throughput based on current throughput
-        # The max is typically set to match or exceed current manual throughput
-        new_max_throughput = max(4000, current_throughput)
-        
-        new_throughput = ThroughputProperties(
-            auto_scale_max_throughput=new_max_throughput,
-            auto_scale_increment_percent=0
-        )
-        
-        updated_offer = container.replace_throughput(new_throughput)
-        
-        autopilot_settings = updated_offer.properties['content']['offerAutopilotSettings']
-        max_throughput = autopilot_settings.get('maxThroughput')
-        
-        print(f"\nMigration completed!")
-        print(f"  - Container now uses autoscale")
-        print(f"  - Maximum throughput: {max_throughput} RU/s")
-        print(f"  - Minimum throughput: {max_throughput // 10} RU/s")
-        print(f"  - Will automatically scale based on usage")
-        
-    except exceptions.CosmosHttpResponseError as e:
-        print(f"Error migrating to autoscale: {e.message}")
 
 def run_sample():
     """
@@ -297,24 +251,6 @@ def run_sample():
         
         # 5. Read updated settings
         read_autoscale_throughput(database, container)
-        
-        # 6. Create a new container with manual throughput to demonstrate migration TO autoscale
-        manual_container = database.create_container(
-            id=CONTAINER_ID + '_manual',
-            partition_key=PartitionKey(path='/id'),
-            offer_throughput=400  # Manual throughput
-        )
-        print(f"\nCreated container '{manual_container.id}' with manual throughput for migration demo")
-        
-        # 7. Migrate manual container to autoscale (supported direction)
-        migrate_to_autoscale(manual_container)
-        
-        # 8. Read autoscale settings after migration
-        read_autoscale_throughput(database, manual_container)
-        
-        # Cleanup manual container
-        database.delete_container(manual_container.id)
-        print(f"Deleted manual container: {manual_container.id}")
         
         # Cleanup
         print("\n" + "=" * 70)
