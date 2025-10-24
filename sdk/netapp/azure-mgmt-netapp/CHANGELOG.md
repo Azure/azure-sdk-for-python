@@ -80,11 +80,11 @@
   - Deleted or renamed model `VolumeGroupList`
   - Deleted or renamed model `VolumeList`
   - Deleted or renamed model `VolumeQuotaRulesList`
-  - Method `NetAppResourceOperations.begin_update_network_sibling_set` positional_or_keyword parameters `network_sibling_set_id`, `subnet_id`, and `network_features` have been moved under keyword_only parameter `body`
-  - Method `NetAppResourceOperations.check_file_path_availability` positional_or_keyword parameters `name`, `subnet_id`, and `availability_zone` have been moved under keyword_only parameter `body`
-  - Method `NetAppResourceOperations.check_name_availability` positional_or_keyword parameters `name`, `type`, and `resource_group` have been moved under keyword_only parameter `body`
-  - Method `NetAppResourceOperations.check_quota_availability` positional_or_keyword parameters `name`, `type`, and `resource_group` have been moved under keyword_only parameter `body`
-  - Method `NetAppResourceOperations.query_network_sibling_set` positional_or_keyword parameters `network_sibling_set_id` and `subnet_id` have been moved under keyword_only parameter `body`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` parameters `network_sibling_set_id`, `subnet_id`, and `network_features` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_file_path_availability` parameters `name`, `subnet_id`, and `availability_zone` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_name_availability` parameters `name`, `type`, and `resource_group` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_quota_availability` parameters `name`, `type`, and `resource_group` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.query_network_sibling_set` parameters `network_sibling_set_id` and `subnet_id` have been moved under `positional_or_keyword` parameter `body`
   - Parameter `force_delete` of method `VolumesOperations.begin_delete` is now required
 
 ## 14.0.0b3 (2025-10-09)
