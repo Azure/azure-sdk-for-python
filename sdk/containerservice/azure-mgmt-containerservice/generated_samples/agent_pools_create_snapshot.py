@@ -39,7 +39,7 @@ def main():
             "properties": {
                 "count": 3,
                 "creationData": {
-                    "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ContainerService/snapshots/snapshot1"
+                    "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.ContainerService/snapshots/snapshot1"
                 },
                 "enableFIPS": True,
                 "orchestratorVersion": "",

@@ -16,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_associate_crg.py
+    python managed_clusters_create_crg.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -51,7 +51,7 @@ def main():
                     }
                 ],
                 "autoScalerProfile": {"scale-down-delay-after-add": "15m", "scan-interval": "20s"},
-                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
+                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
                 "dnsPrefix": "dnsprefix1",
                 "enableRBAC": True,
                 "kubernetesVersion": "",

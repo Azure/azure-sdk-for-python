@@ -54,8 +54,8 @@ content-type = "text/markdown"
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",
-    "samples*",
     "generated_tests*",
+    "samples*",
     "generated_samples*",
     "doc*",
     "azure",
@@ -78,7 +78,7 @@ verifytypes = false
 package_name = "azure-mgmt-containerservice"
 package_pprint_name = "Container Service Management"
 package_doc_id = "container-service"
-is_stable = false
+is_stable = true
 sample_link = ""
 title = "ContainerServiceClient"
 package_nspkg = "azure-mgmt-nspkg"

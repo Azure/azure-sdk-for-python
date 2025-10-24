@@ -28,7 +28,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
 def main():
     client = ContainerServiceClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="26fe00f8-9173-4872-9134-bb1d2e00343a",
     )
 
     response = client.machines.list(

@@ -16,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_create_mcsnapshot.py
+    python agent_pools_create_crg.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,39 +31,23 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.managed_clusters.begin_create_or_update(
+    response = client.agent_pools.begin_create_or_update(
         resource_group_name="rg1",
         resource_name="clustername1",
+        agent_pool_name="agentpool1",
         parameters={
-            "location": "location1",
             "properties": {
-                "agentPoolProfiles": [
-                    {
-                        "count": 3,
-                        "enableFIPS": True,
-                        "enableNodePublicIP": True,
-                        "mode": "System",
-                        "name": "nodepool1",
-                        "osType": "Linux",
-                        "type": "VirtualMachineScaleSets",
-                        "vmSize": "Standard_DS2_v2",
-                    }
-                ],
-                "creationData": {
-                    "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ContainerService/managedclustersnapshots/snapshot1"
-                },
-                "dnsPrefix": "dnsprefix1",
-                "kubernetesVersion": "",
-                "linuxProfile": {"adminUsername": "azureuser", "ssh": {"publicKeys": [{"keyData": "keydata"}]}},
-                "servicePrincipalProfile": {"clientId": "clientid", "secret": "secret"},
-            },
-            "sku": {"name": "Basic", "tier": "Free"},
-            "tags": {"archv2": "", "tier": "production"},
+                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
+                "count": 3,
+                "orchestratorVersion": "",
+                "osType": "Linux",
+                "vmSize": "Standard_DS2_v2",
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/preview/2025-08-02-preview/examples/ManagedClustersCreate_MCSnapshot.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-08-01/examples/AgentPoolsCreate_CRG.json
 if __name__ == "__main__":
     main()
