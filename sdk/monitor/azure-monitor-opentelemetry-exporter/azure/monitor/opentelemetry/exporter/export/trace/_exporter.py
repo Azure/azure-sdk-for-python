@@ -321,7 +321,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             data.url = data.url[:2048]
     else:  # INTERNAL, CLIENT, PRODUCER
         envelope.name = _REMOTE_DEPENDENCY_ENVELOPE_NAME
-        # TODO: ai.operation.name for non-server spans
         time = 0
         if span.end_time and span.start_time:
             time = span.end_time - span.start_time
@@ -334,6 +333,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
+        envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
         target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if span.kind is SpanKind.CLIENT:
             gen_ai_attributes_val = ""
@@ -351,6 +351,12 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     # TODO: Not exposed in Swagger, need to update def
                     envelope.tags["ai.user.userAgent"] = user_agent
                 url = trace_utils._get_url_for_http_dependency(span.attributes)
+                # Http specific logic for ai.operation.name
+                if SpanAttributes.HTTP_ROUTE in span.attributes:
+                    envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
+                        span.attributes[SpanAttributes.HTTP_ROUTE],
+                )
                 # data
                 if url:
                     data.data = url
@@ -363,6 +369,10 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.name = "{} {}".format(
                         span.attributes.get(HTTP_REQUEST_METHOD) or \
                             span.attributes.get(SpanAttributes.HTTP_METHOD),
+                        path,
+                    )
+                    envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
                 status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
@@ -447,7 +457,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
-        if data.name:
+        if envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME):
+            data.name = envelope.tags[ContextTagKeys.AI_OPERATION_NAME][:1024]
+        elif data.name:
             data.name = str(data.name)[:1024]
         if data.result_code:
             data.result_code = str(data.result_code)[:1024]
