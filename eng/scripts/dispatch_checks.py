@@ -73,9 +73,7 @@ async def run_check(
         stderr = stderr_b.decode(errors="replace")
         exit_code = proc.returncode or 0
         status = "OK" if exit_code == 0 else f"FAIL({exit_code})"
-        logger.info(
-            f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s"
-        )
+        logger.info(f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s")
         # Print captured output after completion to avoid interleaving
         header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
         trailer = "=" * len(header)
@@ -96,9 +94,7 @@ async def run_check(
             try:
                 shutil.rmtree(isolate_dir)
             except:
-                logger.warning(
-                    f"Failed to remove isolate dir {isolate_dir} for {package} / {check}"
-                )
+                logger.warning(f"Failed to remove isolate dir {isolate_dir} for {package} / {check}")
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
@@ -122,14 +118,10 @@ def summarize(results: List[CheckResult]) -> int:
     print("-" * len(header))
     for r in sorted(results, key=lambda x: (x.exit_code != 0, x.package, x.check)):
         status = "OK" if r.exit_code == 0 else f"FAIL({r.exit_code})"
-        print(
-            f"{r.package.ljust(pkg_w)}  {r.check.ljust(chk_w)}  {status.ljust(8)}  {r.duration:>10.2f}"
-        )
+        print(f"{r.package.ljust(pkg_w)}  {r.check.ljust(chk_w)}  {status.ljust(8)}  {r.duration:>10.2f}")
     worst = max((r.exit_code for r in results), default=0)
     failed = [r for r in results if r.exit_code != 0]
-    print(
-        f"\nTotal checks: {len(results)} | Failed: {len(failed)} | Worst exit code: {worst}"
-    )
+    print(f"\nTotal checks: {len(results)} | Failed: {len(failed)} | Worst exit code: {worst}")
     return worst
 
 
@@ -177,15 +169,9 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
 
     for idx, (package, check) in enumerate(combos, start=1):
         if not is_check_enabled(package, check, CHECK_DEFAULTS.get(check, True)):
-            logger.warning(
-                f"Skipping disabled check {check} ({idx}/{total}) for package {package}"
-            )
+            logger.warning(f"Skipping disabled check {check} ({idx}/{total}) for package {package}")
             continue
-        tasks.append(
-            asyncio.create_task(
-                run_check(semaphore, package, check, base_args, idx, total)
-            )
-        )
+        tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total)))
 
     # Handle Ctrl+C gracefully
     pending = set(tasks)
@@ -204,9 +190,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
         elif isinstance(res, Exception):
             norm_results.append(CheckResult(package, check, 99, 0.0, "", str(res)))
         else:
-            norm_results.append(
-                CheckResult(package, check, 98, 0.0, "", f"Unknown result type: {res}")
-            )
+            norm_results.append(CheckResult(package, check, 98, 0.0, "", f"Unknown result type: {res}"))
     return summarize(norm_results)
 
 
@@ -282,15 +266,11 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         ),
     )
 
-    parser.add_argument(
-        "--disablecov", help=("Flag. Disables code coverage."), action="store_true"
-    )
+    parser.add_argument("--disablecov", help=("Flag. Disables code coverage."), action="store_true")
 
     parser.add_argument(
         "--service",
-        help=(
-            "Name of service directory (under sdk/) to test. Example: --service applicationinsights"
-        ),
+        help=("Name of service directory (under sdk/) to test. Example: --service applicationinsights"),
     )
 
     parser.add_argument(
@@ -350,9 +330,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     else:
         target_dir = root_dir
 
-    logger.info(
-        f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}."
-    )
+    logger.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
 
     # ensure that recursive virtual envs aren't messed with by this call
     os.environ.pop("VIRTUAL_ENV", None)
@@ -369,9 +347,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     if len(targeted_packages) == 0:
-        logger.info(
-            f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0."
-        )
+        logger.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
         exit(0)
 
     logger.info(f"Executing checks with the executable {sys.executable}.")
@@ -385,9 +361,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
             os.makedirs(temp_wheel_dir)
 
     if in_ci():
-        build_whl_for_req(
-            "eng/tools/azure-sdk-tools", root_dir, temp_wheel_dir
-        )
+        build_whl_for_req("eng/tools/azure-sdk-tools", root_dir, temp_wheel_dir)
 
     # so if we have checks whl,import_all and selected package paths `sdk/core/azure-core`, `sdk/storage/azure-storage-blob` we should
     # shell out to `azypysdk <checkname>` with cwd of the package directory, which is what is in `targeted_packages` array
@@ -406,9 +380,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     configure_interrupt_handling()
     try:
-        exit_code = asyncio.run(
-            run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir)
-        )
+        exit_code = asyncio.run(run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir))
     except KeyboardInterrupt:
         logger.error("Aborted by user.")
         exit_code = 130

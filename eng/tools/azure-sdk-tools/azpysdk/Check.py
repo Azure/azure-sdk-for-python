@@ -17,7 +17,7 @@ from ci_tools.functions import (
     install_into_venv,
     get_venv_python,
     get_pip_command,
-    find_whl
+    find_whl,
 )
 from ci_tools.variables import discover_repo_root, in_ci
 from ci_tools.logging import logger
@@ -82,10 +82,14 @@ class Check(abc.ABC):
                     install_location = os.path.join(wheel_dir, prebuilt_whl)
                     install_into_venv(venv_location, [f"{install_location}[build]"], REPO_ROOT)
                 else:
-                    logger.error("Falling back to manual build and install of azure-sdk-tools into isolated env,"
-                                 f" unable to locate prebuilt azure-sdk-tools within {wheel_dir}")
+                    logger.error(
+                        "Falling back to manual build and install of azure-sdk-tools into isolated env,"
+                        f" unable to locate prebuilt azure-sdk-tools within {wheel_dir}"
+                    )
             else:
-                install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT)
+                install_into_venv(
+                    venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT
+                )
 
             venv_python_exe = get_venv_python(venv_location)
 
