@@ -24,6 +24,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 module_logger = logging.getLogger(__name__)
 
 
+@experimental
 class BatchRetrySettings(RestTranslatableMixin):
     """Retry settings for batch deployment.
 

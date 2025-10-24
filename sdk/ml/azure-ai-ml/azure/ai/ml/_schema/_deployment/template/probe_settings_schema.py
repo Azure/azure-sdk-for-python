@@ -10,10 +10,12 @@ from typing import Any
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._utils._experimental import experimental
 
 module_logger = logging.getLogger(__name__)
 
 
+@experimental
 class ProbeSettingsSchema(metaclass=PatchedSchemaMeta):
     period = fields.Int()
     initial_delay = fields.Int()

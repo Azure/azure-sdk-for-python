@@ -20,6 +20,7 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
     VersionField,
 )
+from azure.ai.ml._utils._experimental import experimental
 
 from .probe_settings_schema import ProbeSettingsSchema
 from .request_settings_schema import RequestSettingsSchema
@@ -27,6 +28,7 @@ from .request_settings_schema import RequestSettingsSchema
 module_logger = logging.getLogger(__name__)
 
 
+@experimental
 class DeploymentTemplateSchema(PathAwareSchema):
     name = fields.Str(required=True)
     description = fields.Str(metadata={"description": "Description of the deployment template ."})
