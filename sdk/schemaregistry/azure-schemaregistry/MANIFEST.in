@@ -1,6 +1,5 @@
 include *.md
 include LICENSE
-include azure/schemaregistry/py.typed
+include schemaregistry/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
-include azure/__init__.py
