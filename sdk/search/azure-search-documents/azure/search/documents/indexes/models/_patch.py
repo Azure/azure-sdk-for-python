@@ -22,23 +22,38 @@ from ._models import (
 from ._enums import (
     LexicalAnalyzerName,
     IndexerPermissionOption,
-    SearchFieldDataType,
+    SearchFieldDataType as _SearchFieldDataType,
     PermissionFilter,
     VectorEncodingFormat,
 )
 
-String = "Edm.String"
-Int32 = "Edm.Int32"
-Int64 = "Edm.Int64"
-Single = "Edm.Single"
-Double = "Edm.Double"
-Boolean = "Edm.Boolean"
-DateTimeOffset = "Edm.DateTimeOffset"
-GeographyPoint = "Edm.GeographyPoint"
-ComplexType = "Edm.ComplexType"
+# Re-export SearchFieldDataType and add Collection helper
+SearchFieldDataType = _SearchFieldDataType
 
+# Add Collection method to SearchFieldDataType enum
+def _collection_helper(typ) -> str:
+    """Helper function to create a collection type string.
+    
+    :param typ: The type to wrap in a collection. Can be a string or an enum value.
+    :return: A collection type string.
+    """
+    # If typ is an enum, get its value; otherwise use it as-is
+    if hasattr(typ, 'value'):
+        typ = typ.value
+    return "Collection({})".format(typ)
 
-def Collection(typ: str) -> str:
+# Monkey-patch the Collection method onto the enum class
+SearchFieldDataType.Collection = staticmethod(_collection_helper)
+
+def Collection(typ) -> str:
+    """Helper function to create a collection type string.
+    
+    :param typ: The type to wrap in a collection. Can be a string or an enum value.
+    :return: A collection type string.
+    """
+    # If typ is an enum, get its value; otherwise use it as-is
+    if hasattr(typ, 'value'):
+        typ = typ.value
     return "Collection({})".format(typ)
 
 
@@ -450,7 +465,7 @@ def SearchableField(
     :return: The search field object.
     :rtype:  SearchField
     """
-    typ = Collection(String) if collection else String
+    typ = Collection(SearchFieldDataType.String) if collection else SearchFieldDataType.String
     result: Dict[str, Any] = {
         "name": name,
         "type": typ,
@@ -491,7 +506,7 @@ def ComplexField(
     :return: The search field object.
     :rtype:  SearchField
     """
-    typ = Collection(ComplexType) if collection else ComplexType
+    typ = Collection(SearchFieldDataType.ComplexType) if collection else SearchFieldDataType.ComplexType
     result: Dict[str, Any] = {"name": name, "type": typ, "fields": fields}
     return _SearchField(**result)
 
@@ -574,6 +589,7 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
 
 __all__: list[str] = [
     "SearchField",
+    "SearchFieldDataType",
     "SimpleField",
     "SearchableField",
     "ComplexField",
