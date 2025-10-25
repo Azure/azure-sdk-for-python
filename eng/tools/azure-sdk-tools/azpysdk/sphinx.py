@@ -246,9 +246,7 @@ class sphinx(Check):
                 results.append(
                     # doc_folder = source
                     # site_folder  = output
-                    self.sphinx_build(
-                        package_dir, doc_folder, site_folder, fail_on_warning, executable
-                    )
+                    self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
                 )
 
                 if in_ci() or args.in_ci:

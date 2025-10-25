@@ -220,7 +220,11 @@ class Check(abc.ABC):
 
     def pip_freeze(self, executable: str) -> None:
         """Run pip freeze in the given virtual environment and log the output. This function handles both isolated and non-isolated
-        environments, as well as calling the proper `uv` executable with additional --python argument if needed."""
+        environments, as well as calling the proper `uv` executable with additional --python argument if needed.
+
+        :param executable: Path to the python executable that should invoke this check.
+        :returns None:
+        """
         try:
             # to uv pip install or freeze to a target environment, we have to add `--python <path to python exe>`
             # to tell uv which environment to target
