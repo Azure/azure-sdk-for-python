@@ -12,20 +12,22 @@ from ._usages_operations import UsagesOperations
 from ._virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from ._quotas_operations import QuotasOperations
 from ._compute_operations import ComputeOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_endpoint_connections_operations import (
+    PrivateEndpointConnectionsOperations,
+)
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_features_operations import WorkspaceFeaturesOperations
 
 __all__ = [
-    'Operations',
-    'WorkspacesOperations',
-    'UsagesOperations',
-    'VirtualMachineSizesOperations',
-    'QuotasOperations',
-    'ComputeOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'WorkspaceConnectionsOperations',
-    'WorkspaceFeaturesOperations',
+    "Operations",
+    "WorkspacesOperations",
+    "UsagesOperations",
+    "VirtualMachineSizesOperations",
+    "QuotasOperations",
+    "ComputeOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "WorkspaceConnectionsOperations",
+    "WorkspaceFeaturesOperations",
 ]

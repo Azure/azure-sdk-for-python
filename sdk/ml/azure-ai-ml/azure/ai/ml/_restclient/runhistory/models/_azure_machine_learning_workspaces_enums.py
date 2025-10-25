@@ -15,6 +15,7 @@ class DatasetConsumptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RUN_INPUT = "RunInput"
     REFERENCE = "Reference"
 
+
 class DatasetDeliveryMechanism(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DIRECT = "Direct"
@@ -22,19 +23,21 @@ class DatasetDeliveryMechanism(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DOWNLOAD = "Download"
     HDFS = "Hdfs"
 
+
 class DatasetOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RUN_OUTPUT = "RunOutput"
     REFERENCE = "Reference"
 
+
 class ExperimentViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ViewType filters experiments by their archived state. Default is ActiveOnly
-    """
+    """ViewType filters experiments by their archived state. Default is ActiveOnly"""
 
     DEFAULT = "Default"
     ALL = "All"
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
+
 
 class MetricValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
@@ -43,6 +46,7 @@ class MetricValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STRING = "String"
     BOOL = "Bool"
     ARTIFACT = "Artifact"
+
 
 class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets span status.
@@ -65,12 +69,16 @@ class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
+
 class SortOrderDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ASC = "Asc"
     DESC = "Desc"
 
-class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+class StoredProcedureParameterType(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
 
     STRING = "String"
     INT = "Int"

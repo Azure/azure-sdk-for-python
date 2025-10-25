@@ -37,7 +37,9 @@ class EndpointStub:
         :return: The specified Online Endpoint
         :rtype: Optional[Endpoint]
         """
-        endpoint_path = self._get_endpoint_cache_file(endpoint_name=endpoint_name)
+        endpoint_path = self._get_endpoint_cache_file(
+            endpoint_name=endpoint_name
+        )
         if endpoint_path.exists():
             return load_online_endpoint(source=endpoint_path)
         return None
@@ -59,7 +61,9 @@ class EndpointStub:
 
         :param str endpoint_name: Name of local endpoint to delete.
         """
-        build_directory = self._get_build_directory(endpoint_name=endpoint_name)
+        build_directory = self._get_build_directory(
+            endpoint_name=endpoint_name
+        )
         shutil.rmtree(build_directory)
 
     def invoke(self):
@@ -82,9 +86,13 @@ class EndpointStub:
         :return: The endpoint cache path
         :rtype: Path
         """
-        endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=str(endpoint.name))
+        endpoint_cache_path = self._get_endpoint_cache_file(
+            endpoint_name=str(endpoint.name)
+        )
         endpoint_metadata = json.dumps(endpoint.dump())
-        endpoint_cache_path.write_text(endpoint_metadata, encoding=DefaultOpenEncoding.WRITE)
+        endpoint_cache_path.write_text(
+            endpoint_metadata, encoding=DefaultOpenEncoding.WRITE
+        )
         return endpoint_cache_path
 
     def _get_endpoint_cache_file(self, endpoint_name: str) -> Path:
@@ -94,7 +102,9 @@ class EndpointStub:
         :return: path to cached endpoint file.
         :rtype: Path
         """
-        build_directory = self._create_build_directory(endpoint_name=endpoint_name)
+        build_directory = self._create_build_directory(
+            endpoint_name=endpoint_name
+        )
         return Path(build_directory, f"{endpoint_name}.json")
 
     def _create_build_directory(self, endpoint_name: str) -> Path:
@@ -104,7 +114,9 @@ class EndpointStub:
         :return: path to endpoint build directory.
         :rtype: Path
         """
-        build_directory = self._get_build_directory(endpoint_name=endpoint_name)
+        build_directory = self._get_build_directory(
+            endpoint_name=endpoint_name
+        )
         build_directory.mkdir(parents=True, exist_ok=True)
         return build_directory
 

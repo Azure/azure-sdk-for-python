@@ -18,7 +18,12 @@ class ChainedIdentity(object):
 
     DELIM = "#"
 
-    def __init__(self, _ident: Optional[str] = None, _parent_logger: Optional[logging.Logger] = None, **kwargs):
+    def __init__(
+        self,
+        _ident: Optional[str] = None,
+        _parent_logger: Optional[logging.Logger] = None,
+        **kwargs
+    ):
         """Internal class used to improve logging information.
 
         :param _ident: Identity of the object
@@ -30,13 +35,19 @@ class ChainedIdentity(object):
         # TODO: Ideally move constructor params to None defaulted
         # and pick up the stack trace as a reasonable approximation
         self._identity = self.__class__.__name__ if _ident is None else _ident
-        parent = logging.getLogger("azureml") if _parent_logger is None else _parent_logger
+        parent = (
+            logging.getLogger("azureml")
+            if _parent_logger is None
+            else _parent_logger
+        )
         self._logger = parent.getChild(self._identity)
         try:
             super(ChainedIdentity, self).__init__(**kwargs)
         except TypeError as type_error:
             raise TypeError(
-                "{}. Found key word arguments: {}.".format(",".join(type_error.args), kwargs.keys())
+                "{}. Found key word arguments: {}.".format(
+                    ",".join(type_error.args), kwargs.keys()
+                )
             ) from type_error
 
     @property
@@ -64,5 +75,7 @@ class LogScope(ChainedIdentity, ContextDecorator):
 
     def __exit__(self, etype, value, traceback) -> None:
         if value is not None:
-            self._logger.debug("Error {0}: {1}\n{2}".format(etype, value, traceback))
+            self._logger.debug(
+                "Error {0}: {1}\n{2}".format(etype, value, traceback)
+            )
         self._logger.debug(STOP_MSG)

@@ -4,8 +4,12 @@
 import binascii
 import re
 
-from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_command
-from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevContainerResolver
+from azure.ai.ml._local_endpoints.utilities.commandline_utility import (
+    run_cli_command,
+)
+from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import (
+    DevContainerResolver,
+)
 from azure.ai.ml.exceptions import VSCodeCommandNotFound
 
 
@@ -31,7 +35,9 @@ class VSCodeClient(object):
         devcontainer.write_file(build_directory)
         return str(devcontainer.local_path)
 
-    def invoke_dev_container(self, devcontainer_path: str, app_path: str) -> None:
+    def invoke_dev_container(
+        self, devcontainer_path: str, app_path: str
+    ) -> None:
         hex_encoded_devcontainer_path = _encode_hex(devcontainer_path)
         command = [
             "code",

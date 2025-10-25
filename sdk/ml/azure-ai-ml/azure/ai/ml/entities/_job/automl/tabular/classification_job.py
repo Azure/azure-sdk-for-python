@@ -316,9 +316,9 @@ class ClassificationJob(AutoMLTabular):
 
         schema_dict: dict = {}
         if inside_pipeline:
-            schema_dict = AutoMLClassificationNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLClassificationNodeSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         else:
-            schema_dict = AutoMLClassificationSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = AutoMLClassificationSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return schema_dict
 

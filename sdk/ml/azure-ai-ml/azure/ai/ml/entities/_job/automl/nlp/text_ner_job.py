@@ -215,7 +215,7 @@ class TextNerJob(AutoMLNLPJob):
             res_autoML: dict = AutoMLTextNerNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
             return res_autoML
 
-        res: dict = TextNerSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = TextNerSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def __eq__(self, other: object) -> bool:

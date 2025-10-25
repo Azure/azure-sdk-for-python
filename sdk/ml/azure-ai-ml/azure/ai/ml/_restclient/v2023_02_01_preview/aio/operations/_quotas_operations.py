@@ -25,10 +25,18 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._quotas_operations import build_list_request, build_update_request
+from ...operations._quotas_operations import (
+    build_list_request,
+    build_update_request,
+)
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[
+        [PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]],
+        Any,
+    ]
+]
 
 
 class QuotasOperations:
@@ -55,7 +63,10 @@ class QuotasOperations:
 
     @distributed_trace_async
     async def update(
-        self, location: str, parameters: "_models.QuotaUpdateParameters", **kwargs: Any
+        self,
+        location: str,
+        parameters: "_models.QuotaUpdateParameters",
+        **kwargs: Any
     ) -> "_models.UpdateWorkspaceQuotasResult":
         """Update quota for each VM family in workspace.
 
@@ -68,12 +79,22 @@ class QuotasOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.UpdateWorkspaceQuotasResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.UpdateWorkspaceQuotasResult"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(parameters, "QuotaUpdateParameters")
 
@@ -94,11 +115,21 @@ class QuotasOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize("UpdateWorkspaceQuotasResult", pipeline_response)
+        deserialized = self._deserialize(
+            "UpdateWorkspaceQuotasResult", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -108,7 +139,9 @@ class QuotasOperations:
     update.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/updateQuotas"}  # type: ignore
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.ListWorkspaceQuotas"]:
+    def list(
+        self, location: str, **kwargs: Any
+    ) -> AsyncIterable["_models.ListWorkspaceQuotas"]:
         """Gets the currently assigned Workspace Quotas based on VMFamily.
 
         :param location: The location for which resource usage is queried.
@@ -119,10 +152,18 @@ class QuotasOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.ListWorkspaceQuotas]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ListWorkspaceQuotas"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ListWorkspaceQuotas"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
@@ -151,7 +192,9 @@ class QuotasOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ListWorkspaceQuotas", pipeline_response)
+            deserialized = self._deserialize(
+                "ListWorkspaceQuotas", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -166,9 +209,17 @@ class QuotasOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 

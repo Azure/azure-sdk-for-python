@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,9 +25,31 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._run_artifacts_operations import build_batch_create_empty_artifacts_by_experiment_id_request, build_batch_create_empty_artifacts_by_experiment_name_request, build_get_by_id_by_experiment_id_request, build_get_by_id_by_experiment_name_request, build_get_content_information_by_experiment_id_request, build_get_content_information_by_experiment_name_request, build_get_sas_uri_by_experiment_id_request, build_get_sas_uri_by_experiment_name_request, build_list_in_container_by_experiment_id_request, build_list_in_container_by_experiment_name_request, build_list_in_path_by_experiment_id_request, build_list_in_path_by_experiment_name_request, build_list_sas_by_prefix_by_experiment_id_request, build_list_sas_by_prefix_by_experiment_name_request
-T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+from ...operations._run_artifacts_operations import (
+    build_batch_create_empty_artifacts_by_experiment_id_request,
+    build_batch_create_empty_artifacts_by_experiment_name_request,
+    build_get_by_id_by_experiment_id_request,
+    build_get_by_id_by_experiment_name_request,
+    build_get_content_information_by_experiment_id_request,
+    build_get_content_information_by_experiment_name_request,
+    build_get_sas_uri_by_experiment_id_request,
+    build_get_sas_uri_by_experiment_name_request,
+    build_list_in_container_by_experiment_id_request,
+    build_list_in_container_by_experiment_name_request,
+    build_list_in_path_by_experiment_id_request,
+    build_list_in_path_by_experiment_name_request,
+    build_list_sas_by_prefix_by_experiment_id_request,
+    build_list_sas_by_prefix_by_experiment_name_request,
+)
+
+T = TypeVar("T")
+ClsType = Optional[
+    Callable[
+        [PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]],
+        Any,
+    ]
+]
+
 
 class RunArtifactsOperations:
     """RunArtifactsOperations async operations.
@@ -77,14 +105,19 @@ class RunArtifactsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedArtifactList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedArtifactList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedArtifactList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_in_container_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -92,13 +125,15 @@ class RunArtifactsOperations:
                     run_id=run_id,
                     experiment_name=experiment_name,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.list_in_container_by_experiment_name.metadata['url'],
+                    template_url=self.list_in_container_by_experiment_name.metadata[
+                        "url"
+                    ],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_in_container_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -114,7 +149,9 @@ class RunArtifactsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedArtifactList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedArtifactList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -124,24 +161,28 @@ class RunArtifactsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_in_container_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts"}  # type: ignore
+    list_in_container_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts"}  # type: ignore
 
     @distributed_trace
     def list_in_container_by_experiment_id(
@@ -175,14 +216,19 @@ class RunArtifactsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedArtifactList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedArtifactList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedArtifactList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_in_container_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -190,13 +236,15 @@ class RunArtifactsOperations:
                     run_id=run_id,
                     experiment_id=experiment_id,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.list_in_container_by_experiment_id.metadata['url'],
+                    template_url=self.list_in_container_by_experiment_id.metadata[
+                        "url"
+                    ],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_in_container_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -212,7 +260,9 @@ class RunArtifactsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedArtifactList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedArtifactList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -222,24 +272,28 @@ class RunArtifactsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_in_container_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts"}  # type: ignore
+    list_in_container_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts"}  # type: ignore
 
     @distributed_trace
     def list_in_path_by_experiment_name(
@@ -276,14 +330,19 @@ class RunArtifactsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedArtifactList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedArtifactList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedArtifactList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_in_path_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -292,13 +351,15 @@ class RunArtifactsOperations:
                     experiment_name=experiment_name,
                     path=path,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.list_in_path_by_experiment_name.metadata['url'],
+                    template_url=self.list_in_path_by_experiment_name.metadata[
+                        "url"
+                    ],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_in_path_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -315,7 +376,9 @@ class RunArtifactsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedArtifactList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedArtifactList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -325,24 +388,28 @@ class RunArtifactsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_in_path_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/path"}  # type: ignore
+    list_in_path_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/path"}  # type: ignore
 
     @distributed_trace
     def list_in_path_by_experiment_id(
@@ -379,14 +446,19 @@ class RunArtifactsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedArtifactList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedArtifactList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedArtifactList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_in_path_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -395,13 +467,15 @@ class RunArtifactsOperations:
                     experiment_id=experiment_id,
                     path=path,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.list_in_path_by_experiment_id.metadata['url'],
+                    template_url=self.list_in_path_by_experiment_id.metadata[
+                        "url"
+                    ],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_in_path_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -418,7 +492,9 @@ class RunArtifactsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedArtifactList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedArtifactList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -428,24 +504,28 @@ class RunArtifactsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_in_path_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/path"}  # type: ignore
+    list_in_path_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/path"}  # type: ignore
 
     @distributed_trace_async
     async def get_by_id_by_experiment_name(
@@ -477,13 +557,14 @@ class RunArtifactsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.Artifact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Artifact"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Artifact"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_by_id_by_experiment_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -491,32 +572,37 @@ class RunArtifactsOperations:
             run_id=run_id,
             experiment_name=experiment_name,
             path=path,
-            template_url=self.get_by_id_by_experiment_name.metadata['url'],
+            template_url=self.get_by_id_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('Artifact', pipeline_response)
+        deserialized = self._deserialize("Artifact", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_id_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/metadata"}  # type: ignore
-
+    get_by_id_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/metadata"}  # type: ignore
 
     @distributed_trace_async
     async def get_by_id_by_experiment_id(
@@ -548,13 +634,14 @@ class RunArtifactsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.Artifact
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Artifact"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Artifact"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_by_id_by_experiment_id_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -562,32 +649,37 @@ class RunArtifactsOperations:
             run_id=run_id,
             experiment_id=experiment_id,
             path=path,
-            template_url=self.get_by_id_by_experiment_id.metadata['url'],
+            template_url=self.get_by_id_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('Artifact', pipeline_response)
+        deserialized = self._deserialize("Artifact", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_id_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/metadata"}  # type: ignore
-
+    get_by_id_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/metadata"}  # type: ignore
 
     @distributed_trace_async
     async def get_content_information_by_experiment_name(
@@ -619,13 +711,16 @@ class RunArtifactsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.ArtifactContentInformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactContentInformation"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ArtifactContentInformation"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_content_information_by_experiment_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -633,32 +728,41 @@ class RunArtifactsOperations:
             run_id=run_id,
             experiment_name=experiment_name,
             path=path,
-            template_url=self.get_content_information_by_experiment_name.metadata['url'],
+            template_url=self.get_content_information_by_experiment_name.metadata[
+                "url"
+            ],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('ArtifactContentInformation', pipeline_response)
+        deserialized = self._deserialize(
+            "ArtifactContentInformation", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_content_information_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/contentinfo"}  # type: ignore
-
+    get_content_information_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/contentinfo"}  # type: ignore
 
     @distributed_trace_async
     async def get_content_information_by_experiment_id(
@@ -690,13 +794,16 @@ class RunArtifactsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.ArtifactContentInformation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArtifactContentInformation"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.ArtifactContentInformation"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_content_information_by_experiment_id_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -704,32 +811,41 @@ class RunArtifactsOperations:
             run_id=run_id,
             experiment_id=experiment_id,
             path=path,
-            template_url=self.get_content_information_by_experiment_id.metadata['url'],
+            template_url=self.get_content_information_by_experiment_id.metadata[
+                "url"
+            ],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('ArtifactContentInformation', pipeline_response)
+        deserialized = self._deserialize(
+            "ArtifactContentInformation", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_content_information_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/contentinfo"}  # type: ignore
-
+    get_content_information_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/contentinfo"}  # type: ignore
 
     @distributed_trace_async
     async def get_sas_uri_by_experiment_name(
@@ -761,13 +877,14 @@ class RunArtifactsOperations:
         :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[str]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_sas_uri_by_experiment_name_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -775,32 +892,37 @@ class RunArtifactsOperations:
             run_id=run_id,
             experiment_name=experiment_name,
             path=path,
-            template_url=self.get_sas_uri_by_experiment_name.metadata['url'],
+            template_url=self.get_sas_uri_by_experiment_name.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize("str", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_sas_uri_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/artifacturi"}  # type: ignore
-
+    get_sas_uri_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/artifacturi"}  # type: ignore
 
     @distributed_trace_async
     async def get_sas_uri_by_experiment_id(
@@ -832,13 +954,14 @@ class RunArtifactsOperations:
         :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[str]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_sas_uri_by_experiment_id_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -846,32 +969,37 @@ class RunArtifactsOperations:
             run_id=run_id,
             experiment_id=experiment_id,
             path=path,
-            template_url=self.get_sas_uri_by_experiment_id.metadata['url'],
+            template_url=self.get_sas_uri_by_experiment_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('str', pipeline_response)
+        deserialized = self._deserialize("str", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_sas_uri_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/artifacturi"}  # type: ignore
-
+    get_sas_uri_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/artifacturi"}  # type: ignore
 
     @distributed_trace
     def list_sas_by_prefix_by_experiment_name(
@@ -908,14 +1036,19 @@ class RunArtifactsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedArtifactContentInformationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedArtifactContentInformationList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedArtifactContentInformationList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_sas_by_prefix_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -924,13 +1057,15 @@ class RunArtifactsOperations:
                     experiment_name=experiment_name,
                     path=path,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.list_sas_by_prefix_by_experiment_name.metadata['url'],
+                    template_url=self.list_sas_by_prefix_by_experiment_name.metadata[
+                        "url"
+                    ],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_sas_by_prefix_by_experiment_name_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -947,7 +1082,9 @@ class RunArtifactsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedArtifactContentInformationList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedArtifactContentInformationList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -957,24 +1094,28 @@ class RunArtifactsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_sas_by_prefix_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/prefix/contentinfo"}  # type: ignore
+    list_sas_by_prefix_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/prefix/contentinfo"}  # type: ignore
 
     @distributed_trace
     def list_sas_by_prefix_by_experiment_id(
@@ -1011,14 +1152,19 @@ class RunArtifactsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedArtifactContentInformationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedArtifactContentInformationList"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.PaginatedArtifactContentInformationList"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_sas_by_prefix_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1027,13 +1173,15 @@ class RunArtifactsOperations:
                     experiment_id=experiment_id,
                     path=path,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.list_sas_by_prefix_by_experiment_id.metadata['url'],
+                    template_url=self.list_sas_by_prefix_by_experiment_id.metadata[
+                        "url"
+                    ],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_sas_by_prefix_by_experiment_id_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -1050,7 +1198,9 @@ class RunArtifactsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PaginatedArtifactContentInformationList", pipeline_response)
+            deserialized = self._deserialize(
+                "PaginatedArtifactContentInformationList", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1060,24 +1210,28 @@ class RunArtifactsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_sas_by_prefix_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/prefix/contentinfo"}  # type: ignore
+    list_sas_by_prefix_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/prefix/contentinfo"}  # type: ignore
 
     @distributed_trace_async
     async def batch_create_empty_artifacts_by_experiment_name(
@@ -1109,16 +1263,22 @@ class RunArtifactsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchArtifactContentInformationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchArtifactContentInformationResult"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.BatchArtifactContentInformationResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'ArtifactPathList')
+            _json = self._serialize.body(body, "ArtifactPathList")
         else:
             _json = None
 
@@ -1130,32 +1290,41 @@ class RunArtifactsOperations:
             experiment_name=experiment_name,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_create_empty_artifacts_by_experiment_name.metadata['url'],
+            template_url=self.batch_create_empty_artifacts_by_experiment_name.metadata[
+                "url"
+            ],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('BatchArtifactContentInformationResult', pipeline_response)
+        deserialized = self._deserialize(
+            "BatchArtifactContentInformationResult", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_create_empty_artifacts_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/batch/metadata"}  # type: ignore
-
+    batch_create_empty_artifacts_by_experiment_name.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/artifacts/batch/metadata"}  # type: ignore
 
     @distributed_trace_async
     async def batch_create_empty_artifacts_by_experiment_id(
@@ -1187,16 +1356,22 @@ class RunArtifactsOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchArtifactContentInformationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchArtifactContentInformationResult"]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.BatchArtifactContentInformationResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'ArtifactPathList')
+            _json = self._serialize.body(body, "ArtifactPathList")
         else:
             _json = None
 
@@ -1208,29 +1383,38 @@ class RunArtifactsOperations:
             experiment_id=experiment_id,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_create_empty_artifacts_by_experiment_id.metadata['url'],
+            template_url=self.batch_create_empty_artifacts_by_experiment_id.metadata[
+                "url"
+            ],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
-        deserialized = self._deserialize('BatchArtifactContentInformationResult', pipeline_response)
+        deserialized = self._deserialize(
+            "BatchArtifactContentInformationResult", pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_create_empty_artifacts_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/batch/metadata"}  # type: ignore
-
+    batch_create_empty_artifacts_by_experiment_id.metadata = {"url": "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/batch/metadata"}  # type: ignore

@@ -9,7 +9,19 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
+from typing import (
+    Any,
+    AsyncIterable,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -44,7 +56,12 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[
+        [PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]],
+        Any,
+    ]
+]
 
 
 class IndexesOperations:
@@ -59,13 +76,23 @@ class IndexesOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace_async
-    async def get(self, name: str, version: str, **kwargs: Any) -> _models.Index:
+    async def get(
+        self, name: str, version: str, **kwargs: Any
+    ) -> _models.Index:
         # pylint: disable=line-too-long
         """Fetch a IndexVersion by name.
 
@@ -129,18 +156,34 @@ class IndexesOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id",
+                self._config.subscription_id,
+                "str",
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name",
+                self._config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self._config.workspace_name",
+                self._config.workspace_name,
+                "str",
+            ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(
+            _request.url, **path_format_arguments
+        )
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -148,7 +191,11 @@ class IndexesOperations:
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -163,7 +210,13 @@ class IndexesOperations:
 
     @overload
     async def create_or_update(
-        self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: _models.Index,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Index:
         # pylint: disable=line-too-long
         """Creates or updates a IndexVersion.
@@ -243,7 +296,13 @@ class IndexesOperations:
 
     @overload
     async def create_or_update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Index:
         # pylint: disable=line-too-long
         """Creates or updates a IndexVersion.
@@ -295,7 +354,13 @@ class IndexesOperations:
 
     @overload
     async def create_or_update(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Index:
         # pylint: disable=line-too-long
         """Creates or updates a IndexVersion.
@@ -347,7 +412,11 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: Union[_models.Index, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Index:
         # pylint: disable=line-too-long
         """Creates or updates a IndexVersion.
@@ -433,7 +502,9 @@ class IndexesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.Index] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -453,18 +524,34 @@ class IndexesOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id",
+                self._config.subscription_id,
+                "str",
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name",
+                self._config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self._config.workspace_name",
+                self._config.workspace_name,
+                "str",
+            ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(
+            _request.url, **path_format_arguments
+        )
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -472,7 +559,11 @@ class IndexesOperations:
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -587,18 +678,28 @@ class IndexesOperations:
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                     "resourceGroupName": self._serialize.url(
-                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                        "self._config.resource_group_name",
+                        self._config.resource_group_name,
+                        "str",
                     ),
                     "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
+                        "self._config.workspace_name",
+                        self._config.workspace_name,
+                        "str",
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -606,49 +707,73 @@ class IndexesOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                     "resourceGroupName": self._serialize.url(
-                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                        "self._config.resource_group_name",
+                        self._config.resource_group_name,
+                        "str",
                     ),
                     "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
+                        "self._config.workspace_name",
+                        self._config.workspace_name,
+                        "str",
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.Index], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("nextLink") or None, AsyncList(
+                list_of_elem
+            )
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -717,18 +842,34 @@ class IndexesOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id",
+                self._config.subscription_id,
+                "str",
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name",
+                self._config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self._config.workspace_name",
+                self._config.workspace_name,
+                "str",
+            ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(
+            _request.url, **path_format_arguments
+        )
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -736,7 +877,11 @@ class IndexesOperations:
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -750,7 +895,9 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_next_version(self, name: str, **kwargs: Any) -> _models.VersionInfo:
+    async def get_next_version(
+        self, name: str, **kwargs: Any
+    ) -> _models.VersionInfo:
         """Get next Index version.
 
         :param name: Name of the index. Required.
@@ -788,18 +935,34 @@ class IndexesOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id",
+                self._config.subscription_id,
+                "str",
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name",
+                self._config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self._config.workspace_name",
+                self._config.workspace_name,
+                "str",
+            ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(
+            _request.url, **path_format_arguments
+        )
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -807,7 +970,11 @@ class IndexesOperations:
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -822,7 +989,11 @@ class IndexesOperations:
 
     @distributed_trace
     def list_latest(
-        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.Index"]:
         # pylint: disable=line-too-long
         """List the latest version of each index.
@@ -892,18 +1063,28 @@ class IndexesOperations:
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                     "resourceGroupName": self._serialize.url(
-                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                        "self._config.resource_group_name",
+                        self._config.resource_group_name,
+                        "str",
                     ),
                     "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
+                        "self._config.workspace_name",
+                        self._config.workspace_name,
+                        "str",
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -911,49 +1092,73 @@ class IndexesOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                     "subscriptionId": self._serialize.url(
-                        "self._config.subscription_id", self._config.subscription_id, "str"
+                        "self._config.subscription_id",
+                        self._config.subscription_id,
+                        "str",
                     ),
                     "resourceGroupName": self._serialize.url(
-                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                        "self._config.resource_group_name",
+                        self._config.resource_group_name,
+                        "str",
                     ),
                     "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
+                        "self._config.workspace_name",
+                        self._config.workspace_name,
+                        "str",
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.Index], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("nextLink") or None, AsyncList(
+                list_of_elem
+            )
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response

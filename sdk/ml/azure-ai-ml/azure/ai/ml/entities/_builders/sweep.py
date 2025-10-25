@@ -17,8 +17,7 @@ from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
-    UserIdentityConfiguration,
-)
+    UserIdentityConfiguration)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
@@ -28,8 +27,7 @@ from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
     MedianStoppingPolicy,
-    TruncationSelectionPolicy,
-)
+    TruncationSelectionPolicy)
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
@@ -44,8 +42,7 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     QUniform,
     Randint,
     SweepDistribution,
-    Uniform,
-)
+    Uniform)
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
@@ -155,8 +152,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
-        **kwargs: Any,
-    ) -> None:
+        **kwargs: Any) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
         self._job_inputs, self._job_outputs = inputs, outputs
 
@@ -168,8 +164,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             inputs=inputs,
             outputs=outputs,
             compute=compute,
-            **kwargs,
-        )
+            **kwargs)
         # init mark for _AttrDict
         self._init = True
         ParameterizedSweep.__init__(
@@ -180,8 +175,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             early_termination=early_termination,
             search_space=search_space,
             queue_settings=queue_settings,
-            resources=resources,
-        )
+            resources=resources)
 
         self.identity: Any = identity
         self._init = False
@@ -197,8 +191,7 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     @property
     def search_space(
-        self,
-    ) -> Optional[
+        self) -> Optional[
         Dict[
             str,
             Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
@@ -252,8 +245,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         supported_types = super()._get_supported_inputs_types() or ()
         return (
             SweepDistribution,
-            *supported_types,
-        )
+            *supported_types)
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Sweep":
@@ -308,7 +300,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
         support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])
 
-        base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)
+        base_sweep = schema.load(obj, partial=True)
         for key, value in base_sweep.items():
             obj[key] = value
 
@@ -359,8 +351,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             outputs=self._job_outputs,
             identity=self.identity,
             queue_settings=self.queue_settings,
-            resources=self.resources,
-        )
+            resources=self.resources)
 
     @classmethod
     def _get_component_attr_name(cls) -> str:
@@ -412,8 +403,7 @@ class Sweep(ParameterizedSweep, BaseNode):
                         message=msg.format(input_name, type(input_obj)),
                         no_personal_data_message=msg.format("[input_name]", type(input_obj)),
                         target=ErrorTarget.SWEEP_JOB,
-                        error_type=ValidationErrorType.INVALID_VALUE,
-                    )
+                        error_type=ValidationErrorType.INVALID_VALUE)
         return inputs, search_space
 
     def _is_input_set(self, input_name: str) -> bool:

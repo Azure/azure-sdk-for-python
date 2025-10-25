@@ -21,5 +21,5 @@ class OversizeDataConfig:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = OversizeDataConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = OversizeDataConfigSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res

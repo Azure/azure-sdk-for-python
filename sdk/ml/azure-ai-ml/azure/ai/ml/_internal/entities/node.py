@@ -81,18 +81,26 @@ class InternalBaseNode(BaseNode):
     def _to_node(self, context: Optional[Dict] = None, **kwargs) -> BaseNode:
         return self
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> Component:
+    def _to_component(
+        self, context: Optional[Dict] = None, **kwargs
+    ) -> Component:
         return self.component
 
     def _to_job(self) -> Job:
         raise RuntimeError("Internal components doesn't support to job")
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
-        raise RuntimeError("Internal components doesn't support load from dict")
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "Job":
+        raise RuntimeError(
+            "Internal components doesn't support load from dict"
+        )
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(
+        cls, context
+    ) -> Union[PathAwareSchema, Schema]:
         from .._schema.node import InternalBaseNodeSchema
 
         return InternalBaseNodeSchema(context=context)
@@ -102,7 +110,9 @@ class InternalBaseNode(BaseNode):
         return self._component
 
     def _to_rest_inputs(self) -> Dict[str, Dict]:
-        rest_dataset_literal_inputs = super(InternalBaseNode, self)._to_rest_inputs()
+        rest_dataset_literal_inputs = super(
+            InternalBaseNode, self
+        )._to_rest_inputs()
         for input_name, input_value in self.inputs.items():
             # hack: remove unfilled input from rest object instead a default input of {"job_input_type": "literal"}
             # note that this hack is not always effective as _data will be set to Input() when visiting input_value.type
@@ -137,7 +147,9 @@ class InternalBaseNode(BaseNode):
 class DataTransfer(InternalBaseNode):
     def __init__(self, **kwargs):
         kwargs.pop("type", None)
-        super(DataTransfer, self).__init__(type=NodeType.DATA_TRANSFER, **kwargs)
+        super(DataTransfer, self).__init__(
+            type=NodeType.DATA_TRANSFER, **kwargs
+        )
 
 
 class HDInsight(InternalBaseNode):
@@ -153,7 +165,9 @@ class HDInsight(InternalBaseNode):
         self._executor_cores: int = kwargs.pop("executor_cores", None)
         self._number_executors: int = kwargs.pop("number_executors", None)
         self._conf: Union[dict, str] = kwargs.pop("conf", None)
-        self._hdinsight_spark_job_name: str = kwargs.pop("hdinsight_spark_job_name", None)
+        self._hdinsight_spark_job_name: str = kwargs.pop(
+            "hdinsight_spark_job_name", None
+        )
         self._init = False
 
     @property
@@ -294,7 +308,9 @@ class HDInsight(InternalBaseNode):
         ]
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(
+        cls, context
+    ) -> Union[PathAwareSchema, Schema]:
         from .._schema.node import HDInsightSchema
 
         return HDInsightSchema(context=context)
@@ -322,7 +338,9 @@ class Hemera(InternalBaseNode):
 class Ae365exepool(InternalBaseNode):
     def __init__(self, **kwargs):
         kwargs.pop("type", None)
-        super(Ae365exepool, self).__init__(type=NodeType.AE365EXEPOOL, **kwargs)
+        super(Ae365exepool, self).__init__(
+            type=NodeType.AE365EXEPOOL, **kwargs
+        )
 
 
 class Sweep(InternalBaseNode):
@@ -335,4 +353,6 @@ class Sweep(InternalBaseNode):
 class AetherBridge(InternalBaseNode):
     def __init__(self, **kwargs):
         kwargs.pop("type", None)
-        super(AetherBridge, self).__init__(type=NodeType.AETHER_BRIDGE, **kwargs)
+        super(AetherBridge, self).__init__(
+            type=NodeType.AETHER_BRIDGE, **kwargs
+        )

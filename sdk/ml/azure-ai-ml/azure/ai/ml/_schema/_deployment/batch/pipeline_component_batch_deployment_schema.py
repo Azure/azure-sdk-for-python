@@ -13,8 +13,7 @@ from azure.ai.ml._schema.core.fields import (
     PathAwareSchema,
     PipelineNodeNameStr,
     StringTransformedEnum,
-    TypeSensitiveUnionField,
-)
+    TypeSensitiveUnionField)
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
@@ -41,7 +40,7 @@ class PipelineComponentBatchDeploymentSchema(PathAwareSchema):
     job_definition = UnionField(
         [
             ArmStr(azureml_type=AzureMLResourceType.JOB),
-            NestedField("PipelineSchema", unknown=INCLUDE),
+            NestedField("PipelineSchema"),
         ]
     )
     tags = fields.Dict()
@@ -50,8 +49,7 @@ class PipelineComponentBatchDeploymentSchema(PathAwareSchema):
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
         from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import (
-            PipelineComponentBatchDeployment,
-        )
+            PipelineComponentBatchDeployment)
 
         return PipelineComponentBatchDeployment(**data)
 
@@ -62,11 +60,10 @@ class NodeNameStr(PipelineNodeNameStr):
 
 
 def PipelineJobsField():
-    pipeline_enable_job_type = {NodeType.PIPELINE: [NestedField("PipelineSchema", unknown=INCLUDE)]}
+    pipeline_enable_job_type = {NodeType.PIPELINE: [NestedField("PipelineSchema")]}
 
     pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),
-        values=TypeSensitiveUnionField(pipeline_enable_job_type),
-    )
+        values=TypeSensitiveUnionField(pipeline_enable_job_type))
 
     return pipeline_job_field

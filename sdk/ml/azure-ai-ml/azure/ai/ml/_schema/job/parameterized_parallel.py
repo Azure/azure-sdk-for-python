@@ -24,22 +24,19 @@ class ParameterizedParallelSchema(PathAwareSchema):
                 "A string of the logging level name, which is defined in 'logging'. "
                 "Possible values are 'WARNING', 'INFO', and 'DEBUG'."
             )
-        },
-    )
-    task = NestedField(ComponentParallelTaskSchema, unknown=INCLUDE)
+        })
+    task = NestedField(ComponentParallelTaskSchema)
     mini_batch_size = fields.Str(
-        metadata={"description": "The batch size of current job."},
-    )
+        metadata={"description": "The batch size of current job."})
     partition_keys = fields.List(
         fields.Str(), metadata={"description": "The keys used to partition input data into mini-batches"}
     )
     input_data = fields.Str()
     resources = NestedField(JobResourceConfigurationSchema)
-    retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
+    retry_settings = NestedField(RetrySettingsSchema)
     max_concurrency_per_instance = fields.Integer(
         dump_default=1,
-        metadata={"description": "The max parallellism that each compute instance has."},
-    )
+        metadata={"description": "The max parallellism that each compute instance has."})
     error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
@@ -49,8 +46,7 @@ class ParameterizedParallelSchema(PathAwareSchema):
                 "For a list of files as inputs, one item means one file reference. "
                 "This setting doesn't apply to command parallelization."
             )
-        },
-    )
+        })
     mini_batch_error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
@@ -61,8 +57,7 @@ class ParameterizedParallelSchema(PathAwareSchema):
                 "This setting can be used by either command or python function parallelization. "
                 "Only one error_threshold setting can be used in one job."
             )
-        },
-    )
+        })
     environment_variables = UnionField(
         [
             fields.Dict(keys=fields.Str(), values=fields.Str()),

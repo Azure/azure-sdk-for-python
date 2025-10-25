@@ -12,8 +12,8 @@ from ._migration_operations import MigrationOperations
 from ._models_operations import ModelsOperations
 
 __all__ = [
-    'AssetsOperations',
-    'ExtensiveModelOperations',
-    'MigrationOperations',
-    'ModelsOperations',
+    "AssetsOperations",
+    "ExtensiveModelOperations",
+    "MigrationOperations",
+    "ModelsOperations",
 ]

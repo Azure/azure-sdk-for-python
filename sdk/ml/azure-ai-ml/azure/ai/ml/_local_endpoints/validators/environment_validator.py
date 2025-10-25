@@ -8,14 +8,26 @@ import os
 from pathlib import Path
 from typing import Optional, Tuple, Union
 
-from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
-from azure.ai.ml._utils._arm_id_utils import parse_name_label, parse_name_version
+from azure.ai.ml._artifacts._artifact_utilities import (
+    download_artifact_from_storage_url,
+)
+from azure.ai.ml._utils._arm_id_utils import (
+    parse_name_label,
+    parse_name_version,
+)
 from azure.ai.ml._utils.utils import dump_yaml, is_url
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, RequiredLocalArtifactsNotFoundError, ValidationException
-from azure.ai.ml.operations._environment_operations import EnvironmentOperations
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    RequiredLocalArtifactsNotFoundError,
+    ValidationException,
+)
+from azure.ai.ml.operations._environment_operations import (
+    EnvironmentOperations,
+)
 
 
 def get_environment_artifacts(
@@ -54,7 +66,9 @@ def get_environment_artifacts(
             label = None
             if not version:
                 name, label = parse_name_label(deployment.environment)
-            environment_asset = environment_operations.get(name=name, version=version, label=label)
+            environment_asset = environment_operations.get(
+                name=name, version=version, label=label
+            )
 
         if not _cloud_environment_is_valid(environment=environment_asset):
             msg = (
@@ -105,15 +119,24 @@ def _get_cloud_environment_artifacts(
             Tuple[None, None, None, Path, str, Optional[Dict]]
         ]
     """
-    if environment_asset.build and environment_asset.build.path and is_url(environment_asset.build.path):
+    if (
+        environment_asset.build
+        and environment_asset.build.path
+        and is_url(environment_asset.build.path)
+    ):
         environment_build_directory = download_artifact_from_storage_url(
             blob_url=str(environment_asset.build.path),
             destination=download_path,
             datastore_operation=environment_operations._datastore_operation,
             datastore_name="workspaceartifactstore",
         )
-        dockerfile_path = Path(environment_build_directory, str(environment_asset.build.dockerfile_path))
-        dockerfile_contents = dockerfile_path.read_text(encoding=DefaultOpenEncoding.READ)
+        dockerfile_path = Path(
+            environment_build_directory,
+            str(environment_asset.build.dockerfile_path),
+        )
+        dockerfile_contents = dockerfile_path.read_text(
+            encoding=DefaultOpenEncoding.READ
+        )
         return (
             None,
             None,
@@ -122,7 +145,11 @@ def _get_cloud_environment_artifacts(
             dockerfile_contents,
             environment_asset.inference_config,
         )
-    conda_file_contents = dump_yaml(environment_asset.conda_file) if environment_asset.conda_file else None
+    conda_file_contents = (
+        dump_yaml(environment_asset.conda_file)
+        if environment_asset.conda_file
+        else None
+    )
     return (
         environment_asset.image,
         environment_asset.id,
@@ -133,7 +160,9 @@ def _get_cloud_environment_artifacts(
     )
 
 
-def _get_local_environment_artifacts(base_path: Union[str, os.PathLike], environment: Environment) -> Optional[Tuple]:
+def _get_local_environment_artifacts(
+    base_path: Union[str, os.PathLike], environment: Environment
+) -> Optional[Tuple]:
     """Retrieves the local environment's artifacts
 
     :param base_path: The base path
@@ -160,9 +189,15 @@ def _get_local_environment_artifacts(base_path: Union[str, os.PathLike], environ
             environment.inference_config,
         )
     if environment.build and environment.build.dockerfile_path:
-        absolute_build_directory = Path(base_path, str(environment.build.path)).resolve()
-        absolute_dockerfile_path = Path(absolute_build_directory, environment.build.dockerfile_path).resolve()
-        dockerfile_contents = absolute_dockerfile_path.read_text(encoding=DefaultOpenEncoding.READ)
+        absolute_build_directory = Path(
+            base_path, str(environment.build.path)
+        ).resolve()
+        absolute_dockerfile_path = Path(
+            absolute_build_directory, environment.build.dockerfile_path
+        ).resolve()
+        dockerfile_contents = absolute_dockerfile_path.read_text(
+            encoding=DefaultOpenEncoding.READ
+        )
         return (
             None,
             None,
@@ -198,5 +233,6 @@ def _cloud_environment_is_valid(environment: Environment):
 
 def _environment_contains_cloud_artifacts(deployment: OnlineDeployment):
     return isinstance(deployment.environment, str) or (
-        deployment.environment is not None and deployment.environment.id is not None
+        deployment.environment is not None
+        and deployment.environment.id is not None
     )

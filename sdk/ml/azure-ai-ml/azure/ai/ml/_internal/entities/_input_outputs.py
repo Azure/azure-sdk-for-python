@@ -105,7 +105,9 @@ class InternalInput(Input):
     def _from_base(cls, _input: Union[Input, Dict]) -> "InternalInput": ...
 
     @classmethod
-    def _from_base(cls, _input: Optional[Union[Input, Dict]]) -> Optional["InternalInput"]:
+    def _from_base(
+        cls, _input: Optional[Union[Input, Dict]]
+    ) -> Optional["InternalInput"]:
         """Cast from Input or Dict to InternalInput.
 
         Do not guarantee to create a new object.
@@ -171,7 +173,9 @@ class InternalOutput(Output):
         super().__init__(**kwargs)
 
     @classmethod
-    def _from_base(cls, _output: Union[Output, Dict]) -> Optional["InternalOutput"]:
+    def _from_base(
+        cls, _output: Union[Output, Dict]
+    ) -> Optional["InternalOutput"]:
         if _output is None:
             return None
         if isinstance(_output, InternalOutput):

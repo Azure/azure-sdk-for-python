@@ -24,8 +24,7 @@ from ...constants._common import (
     ARM_ID_PREFIX,
     BASE_PATH_CONTEXT_KEY,
     REGISTRY_URI_FORMAT,
-    SPARK_ENVIRONMENT_WARNING_MESSAGE,
-)
+    SPARK_ENVIRONMENT_WARNING_MESSAGE)
 from ...constants._component import NodeType
 from ...constants._job.job import SparkConfKey
 from ...entities._assets import Environment
@@ -35,14 +34,12 @@ from ...entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration,
-)
+    _BaseJobIdentityConfiguration)
 from ...entities._inputs_outputs import Input, Output
 from ...entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
-    validate_inputs_for_args,
-)
+    validate_inputs_for_args)
 from ...entities._job.spark_job import SparkJob
 from ...entities._job.spark_job_entry import SparkJobEntryType
 from ...entities._job.spark_resource_configuration import SparkResourceConfiguration
@@ -52,8 +49,7 @@ from .._job.pipeline._io import NodeOutput
 from .._job.spark_helpers import (
     _validate_compute_or_resources,
     _validate_input_output_mode,
-    _validate_spark_configurations,
-)
+    _validate_spark_configurations)
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
@@ -172,8 +168,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
         args: Optional[str] = None,
-        **kwargs: Any,
-    ) -> None:
+        **kwargs: Any) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
@@ -272,8 +267,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
     @property
     def identity(
-        self,
-    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+        self) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the Spark job will use while running on compute.
 
         :rtype: Union[~azure.ai.ml.entities.ManagedIdentityConfiguration, ~azure.ai.ml.entities.AmlTokenConfiguration,
@@ -292,8 +286,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @identity.setter
     def identity(
         self,
-        value: Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration],
-    ) -> None:
+        value: Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]) -> None:
         """Sets the identity that the Spark job will use while running on compute.
 
         :param value: The identity that the Spark job will use while running on compute.
@@ -303,9 +296,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
-                    NestedField(ManagedIdentitySchema, unknown=INCLUDE),
-                    NestedField(AMLTokenIdentitySchema, unknown=INCLUDE),
-                    NestedField(UserIdentitySchema, unknown=INCLUDE),
+                    NestedField(ManagedIdentitySchema),
+                    NestedField(AMLTokenIdentitySchema),
+                    NestedField(UserIdentitySchema),
                 ]
             )
             value = identify_schema._deserialize(value=value, attr=None, data=None)
@@ -337,8 +330,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 message=msg.format(self.component),
                 no_personal_data_message=msg.format(self.component),
                 target=ErrorTarget.SPARK_JOB,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+                error_category=ErrorCategory.USER_ERROR)
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
@@ -411,8 +403,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
             dynamic_allocation_max_executors=rest_spark_conf.get(SparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None),
             resources=SparkResourceConfiguration._from_rest_object(rest_spark_job.resources),
             inputs=from_rest_inputs_to_dataset_literal(rest_spark_job.inputs),
-            outputs=from_rest_data_outputs(rest_spark_job.outputs),
-        )
+            outputs=from_rest_data_outputs(rest_spark_job.outputs))
         return spark_job
 
     @classmethod
@@ -460,8 +451,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 services=self.services,
                 args=self.args,
                 compute=self.compute,
-                resources=self.resources,
-            )
+                resources=self.resources)
 
         return SparkJob(
             experiment_name=self.experiment_name,
@@ -492,8 +482,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
             services=self.services,
             args=self.args,
             compute=self.compute,
-            resources=self.resources,
-        )
+            resources=self.resources)
 
     @classmethod
     def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
@@ -547,8 +536,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         ):
             result.append_warning(
                 yaml_path="environment.image",
-                message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
-            )
+                message=SPARK_ENVIRONMENT_WARNING_MESSAGE)
         result.merge_with(self._validate_entry_exist())
         result.merge_with(self._validate_fields())
         return result
@@ -659,5 +647,4 @@ class Spark(BaseNode, SparkJobEntryMixin):
         raise ValidationException(
             message=msg.format(type(Component), self._component),
             no_personal_data_message=msg.format(type(Component), "self._component"),
-            target=ErrorTarget.SPARK_JOB,
-        )
+            target=ErrorTarget.SPARK_JOB)

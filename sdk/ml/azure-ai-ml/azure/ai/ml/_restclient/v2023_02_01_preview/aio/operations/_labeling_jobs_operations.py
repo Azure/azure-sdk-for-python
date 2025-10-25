@@ -18,7 +18,11 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling import (
+    AsyncLROPoller,
+    AsyncNoPolling,
+    AsyncPollingMethod,
+)
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -38,7 +42,12 @@ from ...operations._labeling_jobs_operations import (
 )
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[
+        [PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]],
+        Any,
+    ]
+]
 
 
 class LabelingJobsOperations:
@@ -91,10 +100,18 @@ class LabelingJobsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.LabelingJobResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.LabelingJobResourceArmPaginatedResult"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.LabelingJobResourceArmPaginatedResult"]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
         def prepare_request(next_link=None):
@@ -129,7 +146,9 @@ class LabelingJobsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("LabelingJobResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize(
+                "LabelingJobResourceArmPaginatedResult", pipeline_response
+            )
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -144,9 +163,17 @@ class LabelingJobsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response
+                )
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat
+                )
 
             return pipeline_response
 
@@ -156,7 +183,11 @@ class LabelingJobsOperations:
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, id: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        **kwargs: Any
     ) -> None:
         """Delete a labeling job.
 
@@ -174,10 +205,16 @@ class LabelingJobsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
@@ -196,9 +233,17 @@ class LabelingJobsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -237,10 +282,16 @@ class LabelingJobsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.LabelingJob"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_get_request(
             subscription_id=self._config.subscription_id,
@@ -261,9 +312,17 @@ class LabelingJobsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         deserialized = self._deserialize("LabelingJob", pipeline_response)
 
@@ -275,14 +334,27 @@ class LabelingJobsOperations:
     get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}"}  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, workspace_name: str, id: str, body: "_models.LabelingJob", **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        body: "_models.LabelingJob",
+        **kwargs: Any
     ) -> "_models.LabelingJob":
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.LabelingJob"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "LabelingJob")
 
@@ -305,16 +377,25 @@ class LabelingJobsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("LabelingJob", pipeline_response)
 
         if response.status_code == 201:
-            response_headers["x-ms-async-operation-timeout"] = self._deserialize(
-                "duration", response.headers.get("x-ms-async-operation-timeout")
+            response_headers["x-ms-async-operation-timeout"] = (
+                self._deserialize(
+                    "duration",
+                    response.headers.get("x-ms-async-operation-timeout"),
+                )
             )
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
@@ -331,7 +412,12 @@ class LabelingJobsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, workspace_name: str, id: str, body: "_models.LabelingJob", **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        body: "_models.LabelingJob",
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.LabelingJob"]:
         """Creates or updates a labeling job (asynchronous).
 
@@ -359,12 +445,22 @@ class LabelingJobsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.LabelingJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.LabelingJob"]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
@@ -386,7 +482,11 @@ class LabelingJobsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay,
+                lro_options={"final-state-via": "original-uri"},
+                **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -398,19 +498,36 @@ class LabelingJobsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}"}  # type: ignore
 
     async def _export_labels_initial(
-        self, resource_group_name: str, workspace_name: str, id: str, body: "_models.ExportSummary", **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        body: "_models.ExportSummary",
+        **kwargs: Any
     ) -> Optional["_models.ExportSummary"]:
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional["_models.ExportSummary"]]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["_models.ExportSummary"]]
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
 
         _json = self._serialize.body(body, "ExportSummary")
 
@@ -433,17 +550,29 @@ class LabelingJobsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("ExportSummary", pipeline_response)
+            deserialized = self._deserialize(
+                "ExportSummary", pipeline_response
+            )
 
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "int", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
@@ -454,7 +583,12 @@ class LabelingJobsOperations:
 
     @distributed_trace_async
     async def begin_export_labels(
-        self, resource_group_name: str, workspace_name: str, id: str, body: "_models.ExportSummary", **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        body: "_models.ExportSummary",
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ExportSummary"]:
         """Export labels from a labeling job (asynchronous).
 
@@ -482,12 +616,22 @@ class LabelingJobsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.ExportSummary]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        content_type = kwargs.pop(
+            "content_type", "application/json"
+        )  # type: Optional[str]
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.ExportSummary"]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._export_labels_initial(
                 resource_group_name=resource_group_name,
@@ -503,13 +647,19 @@ class LabelingJobsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize("ExportSummary", pipeline_response)
+            deserialized = self._deserialize(
+                "ExportSummary", pipeline_response
+            )
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay,
+                lro_options={"final-state-via": "location"},
+                **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -521,13 +671,19 @@ class LabelingJobsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_export_labels.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/exportLabels"}  # type: ignore
 
     @distributed_trace_async
     async def pause(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, id: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        **kwargs: Any
     ) -> None:
         """Pause a labeling job.
 
@@ -545,10 +701,16 @@ class LabelingJobsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_pause_request(
             subscription_id=self._config.subscription_id,
@@ -567,9 +729,17 @@ class LabelingJobsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat
+            )
 
         if cls:
             return cls(pipeline_response, None, {})
@@ -577,13 +747,23 @@ class LabelingJobsOperations:
     pause.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/pause"}  # type: ignore
 
     async def _resume_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, id: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+        }
         error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
 
         request = build_resume_request_initial(
             subscription_id=self._config.subscription_id,
@@ -602,13 +782,23 @@ class LabelingJobsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            map_error(
+                status_code=response.status_code,
+                response=response,
+                error_map=error_map,
+            )
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat
+            )
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
+            response_headers["Retry-After"] = self._deserialize(
+                "int", response.headers.get("Retry-After")
+            )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -617,7 +807,11 @@ class LabelingJobsOperations:
 
     @distributed_trace_async
     async def begin_resume(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, workspace_name: str, id: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        id: str,
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Resume a labeling job (asynchronous).
 
@@ -641,11 +835,19 @@ class LabelingJobsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop("api_version", "2023-02-01-preview")  # type: str
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version = kwargs.pop(
+            "api_version", "2023-02-01-preview"
+        )  # type: str
+        polling = kwargs.pop(
+            "polling", True
+        )  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        lro_delay = kwargs.pop(
+            "polling_interval", self._config.polling_interval
+        )
+        cont_token = kwargs.pop(
+            "continuation_token", None
+        )  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._resume_initial(
                 resource_group_name=resource_group_name,
@@ -662,7 +864,11 @@ class LabelingJobsOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method = AsyncARMPolling(
+                lro_delay,
+                lro_options={"final-state-via": "location"},
+                **kwargs
+            )
         elif polling is False:
             polling_method = AsyncNoPolling()
         else:
@@ -674,6 +880,8 @@ class LabelingJobsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(
+            self._client, raw_result, get_long_running_output, polling_method
+        )
 
     begin_resume.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/resume"}  # type: ignore

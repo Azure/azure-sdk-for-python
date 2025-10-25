@@ -232,7 +232,7 @@ class TextClassificationJob(AutoMLNLPJob):
             res_autoML: dict = AutoMLTextClassificationNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
             return res_autoML
 
-        res: dict = TextClassificationSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = TextClassificationSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def __eq__(self, other: object) -> bool:

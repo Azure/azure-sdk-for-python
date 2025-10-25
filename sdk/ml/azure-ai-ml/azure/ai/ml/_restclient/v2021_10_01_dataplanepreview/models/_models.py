@@ -226,7 +226,9 @@ class IdentityConfiguration(msrest.serialization.Model):
         "identity_type": {"key": "identityType", "type": "str"},
     }
 
-    _subtype_map = {"identity_type": {"AMLToken": "AmlToken", "Managed": "ManagedIdentity"}}
+    _subtype_map = {
+        "identity_type": {"AMLToken": "AmlToken", "Managed": "ManagedIdentity"}
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -537,7 +539,10 @@ class AzureBlobDatastore(Datastore):
         "container_name": {"key": "containerName", "type": "str"},
         "endpoint": {"key": "endpoint", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -570,7 +575,9 @@ class AzureBlobDatastore(Datastore):
         self.container_name = kwargs.get("container_name", None)
         self.endpoint = kwargs.get("endpoint", None)
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class AzureDataLakeGen1Datastore(Datastore):
@@ -617,7 +624,10 @@ class AzureDataLakeGen1Datastore(Datastore):
         "credentials": {"key": "credentials", "type": "DatastoreCredentials"},
         "datastore_type": {"key": "datastoreType", "type": "str"},
         "is_default": {"key": "isDefault", "type": "bool"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
         "store_name": {"key": "storeName", "type": "str"},
     }
 
@@ -641,7 +651,9 @@ class AzureDataLakeGen1Datastore(Datastore):
         """
         super(AzureDataLakeGen1Datastore, self).__init__(**kwargs)
         self.datastore_type = "AzureDataLakeGen1"  # type: str
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
         self.store_name = kwargs["store_name"]
 
 
@@ -700,7 +712,10 @@ class AzureDataLakeGen2Datastore(Datastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "filesystem": {"key": "filesystem", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -733,7 +748,9 @@ class AzureDataLakeGen2Datastore(Datastore):
         self.endpoint = kwargs.get("endpoint", None)
         self.filesystem = kwargs["filesystem"]
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class AzureFileDatastore(Datastore):
@@ -791,7 +808,10 @@ class AzureFileDatastore(Datastore):
         "endpoint": {"key": "endpoint", "type": "str"},
         "file_share_name": {"key": "fileShareName", "type": "str"},
         "protocol": {"key": "protocol", "type": "str"},
-        "service_data_access_auth_identity": {"key": "serviceDataAccessAuthIdentity", "type": "str"},
+        "service_data_access_auth_identity": {
+            "key": "serviceDataAccessAuthIdentity",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -824,7 +844,9 @@ class AzureFileDatastore(Datastore):
         self.endpoint = kwargs.get("endpoint", None)
         self.file_share_name = kwargs["file_share_name"]
         self.protocol = kwargs.get("protocol", None)
-        self.service_data_access_auth_identity = kwargs.get("service_data_access_auth_identity", None)
+        self.service_data_access_auth_identity = kwargs.get(
+            "service_data_access_auth_identity", None
+        )
 
 
 class InferencingServer(msrest.serialization.Model):
@@ -881,7 +903,10 @@ class AzureMLBatchInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
+        "code_configuration": {
+            "key": "codeConfiguration",
+            "type": "CodeConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -912,7 +937,10 @@ class AzureMLOnlineInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "code_configuration": {"key": "codeConfiguration", "type": "CodeConfiguration"},
+        "code_configuration": {
+            "key": "codeConfiguration",
+            "type": "CodeConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -1041,10 +1069,17 @@ class BaseEnvironmentSource(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
     }
 
-    _subtype_map = {"base_environment_source_type": {"EnvironmentAsset": "BaseEnvironmentId"}}
+    _subtype_map = {
+        "base_environment_source_type": {
+            "EnvironmentAsset": "BaseEnvironmentId"
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -1071,7 +1106,10 @@ class BaseEnvironmentId(BaseEnvironmentSource):
     }
 
     _attribute_map = {
-        "base_environment_source_type": {"key": "baseEnvironmentSourceType", "type": "str"},
+        "base_environment_source_type": {
+            "key": "baseEnvironmentSourceType",
+            "type": "str",
+        },
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
@@ -1164,8 +1202,14 @@ class BlobReferenceForConsumptionDto(msrest.serialization.Model):
 
     _attribute_map = {
         "blob_uri": {"key": "blobUri", "type": "str"},
-        "credential": {"key": "credential", "type": "DataReferenceCredentialDto"},
-        "storage_account_arm_id": {"key": "storageAccountArmId", "type": "str"},
+        "credential": {
+            "key": "credential",
+            "type": "DataReferenceCredentialDto",
+        },
+        "storage_account_arm_id": {
+            "key": "storageAccountArmId",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -1180,7 +1224,9 @@ class BlobReferenceForConsumptionDto(msrest.serialization.Model):
         super(BlobReferenceForConsumptionDto, self).__init__(**kwargs)
         self.blob_uri = kwargs.get("blob_uri", None)
         self.credential = kwargs.get("credential", None)
-        self.storage_account_arm_id = kwargs.get("storage_account_arm_id", None)
+        self.storage_account_arm_id = kwargs.get(
+            "storage_account_arm_id", None
+        )
 
 
 class BlobReferenceSASRequestDto(msrest.serialization.Model):
@@ -1231,7 +1277,9 @@ class BlobReferenceSASResponseDto(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.BlobReferenceForConsumptionDto
         """
         super(BlobReferenceSASResponseDto, self).__init__(**kwargs)
-        self.blob_reference_for_consumption = kwargs.get("blob_reference_for_consumption", None)
+        self.blob_reference_for_consumption = kwargs.get(
+            "blob_reference_for_consumption", None
+        )
 
 
 class BuildContext(msrest.serialization.Model):
@@ -1400,7 +1448,11 @@ class CodeConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        "scoring_script": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "scoring_script": {
+            "required": True,
+            "min_length": 1,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
     }
 
     _attribute_map = {
@@ -1763,7 +1815,12 @@ class JobBase(ResourceBase):
     }
 
     _subtype_map = {
-        "job_type": {"Base": "Job", "Command": "CommandJob", "Pipeline": "PipelineJob", "Sweep": "SweepJob"}
+        "job_type": {
+            "Base": "Job",
+            "Command": "CommandJob",
+            "Pipeline": "PipelineJob",
+            "Sweep": "SweepJob",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -1864,7 +1921,11 @@ class CommandJob(JobBase):
         "job_type": {"required": True},
         "parent_job_name": {"readonly": True},
         "status": {"readonly": True},
-        "command": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "command": {
+            "required": True,
+            "min_length": 1,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
         "environment_id": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
         "parameters": {"readonly": True},
     }
@@ -1883,9 +1944,15 @@ class CommandJob(JobBase):
         "status": {"key": "status", "type": "str"},
         "code_id": {"key": "codeId", "type": "str"},
         "command": {"key": "command", "type": "str"},
-        "distribution": {"key": "distribution", "type": "DistributionConfiguration"},
+        "distribution": {
+            "key": "distribution",
+            "type": "DistributionConfiguration",
+        },
         "environment_id": {"key": "environmentId", "type": "str"},
-        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "environment_variables": {
+            "key": "environmentVariables",
+            "type": "{str}",
+        },
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "inputs": {"key": "inputs", "type": "{JobInput}"},
         "limits": {"key": "limits", "type": "CommandJobLimits"},
@@ -1980,7 +2047,12 @@ class JobLimits(msrest.serialization.Model):
         "timeout": {"key": "timeout", "type": "duration"},
     }
 
-    _subtype_map = {"job_limits_type": {"Command": "CommandJobLimits", "Sweep": "SweepJobLimits"}}
+    _subtype_map = {
+        "job_limits_type": {
+            "Command": "CommandJobLimits",
+            "Sweep": "SweepJobLimits",
+        }
+    }
 
     def __init__(self, **kwargs):
         """
@@ -2060,7 +2132,10 @@ class ComponentContainerData(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "ComponentContainerDetails"},
+        "properties": {
+            "key": "properties",
+            "type": "ComponentContainerDetails",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -2147,7 +2222,9 @@ class ComponentContainerResourceArmPaginatedResult(msrest.serialization.Model):
         :keyword value: An array of objects of type ComponentContainer.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ComponentContainerData]
         """
-        super(ComponentContainerResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(ComponentContainerResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -2325,7 +2402,9 @@ class ComponentVersionResourceArmPaginatedResult(msrest.serialization.Model):
         :keyword value: An array of objects of type ComponentVersion.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ComponentVersionData]
         """
-        super(ComponentVersionResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(ComponentVersionResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -2349,7 +2428,10 @@ class CustomInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -2360,7 +2442,9 @@ class CustomInferencingServer(InferencingServer):
         """
         super(CustomInferencingServer, self).__init__(**kwargs)
         self.server_type = "Custom"  # type: str
-        self.inference_configuration = kwargs.get("inference_configuration", None)
+        self.inference_configuration = kwargs.get(
+            "inference_configuration", None
+        )
 
 
 class DataContainerData(Resource):
@@ -2652,11 +2736,18 @@ class DataVersionBaseDetails(AssetBase):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     _subtype_map = {
-        "data_type": {"mltable": "MLTableData", "uri_file": "UriFileDataVersion", "uri_folder": "UriFolderDataVersion"}
+        "data_type": {
+            "mltable": "MLTableData",
+            "uri_file": "UriFileDataVersion",
+            "uri_folder": "UriFolderDataVersion",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -2708,7 +2799,9 @@ class DataVersionBaseResourceArmPaginatedResult(msrest.serialization.Model):
         :keyword value: An array of objects of type DataVersionBase.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.DataVersionBaseData]
         """
-        super(DataVersionBaseResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(DataVersionBaseResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -2734,7 +2827,13 @@ class DistributionConfiguration(msrest.serialization.Model):
         "distribution_type": {"key": "distributionType", "type": "str"},
     }
 
-    _subtype_map = {"distribution_type": {"Mpi": "Mpi", "PyTorch": "PyTorch", "TensorFlow": "TensorFlow"}}
+    _subtype_map = {
+        "distribution_type": {
+            "Mpi": "Mpi",
+            "PyTorch": "PyTorch",
+            "TensorFlow": "TensorFlow",
+        }
+    }
 
     def __init__(self, **kwargs):
         """ """
@@ -2803,7 +2902,10 @@ class EnvironmentContainerData(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "EnvironmentContainerDetails"},
+        "properties": {
+            "key": "properties",
+            "type": "EnvironmentContainerDetails",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -2862,7 +2964,9 @@ class EnvironmentContainerDetails(AssetContainer):
         super(EnvironmentContainerDetails, self).__init__(**kwargs)
 
 
-class EnvironmentContainerResourceArmPaginatedResult(msrest.serialization.Model):
+class EnvironmentContainerResourceArmPaginatedResult(
+    msrest.serialization.Model
+):
     """A paginated list of EnvironmentContainer entities.
 
     :ivar next_link: The link to the next page of EnvironmentContainer objects. If null, there are
@@ -2885,7 +2989,9 @@ class EnvironmentContainerResourceArmPaginatedResult(msrest.serialization.Model)
         :keyword value: An array of objects of type EnvironmentContainer.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.EnvironmentContainerData]
         """
-        super(EnvironmentContainerResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(EnvironmentContainerResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -2925,7 +3031,10 @@ class EnvironmentVersionData(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "EnvironmentVersionDetails"},
+        "properties": {
+            "key": "properties",
+            "type": "EnvironmentVersionDetails",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -3009,8 +3118,14 @@ class EnvironmentVersionDetails(AssetBase):
         "conda_file": {"key": "condaFile", "type": "str"},
         "environment_type": {"key": "environmentType", "type": "str"},
         "image": {"key": "image", "type": "str"},
-        "inference_config": {"key": "inferenceConfig", "type": "InferenceContainerProperties"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "inference_config": {
+            "key": "inferenceConfig",
+            "type": "InferenceContainerProperties",
+        },
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "os_type": {"key": "osType", "type": "str"},
         "stage": {"key": "stage", "type": "str"},
     }
@@ -3094,7 +3209,9 @@ class EnvironmentVersionResourceArmPaginatedResult(msrest.serialization.Model):
         :keyword value: An array of objects of type EnvironmentVersion.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.EnvironmentVersionData]
         """
-        super(EnvironmentVersionResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(EnvironmentVersionResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -3157,7 +3274,10 @@ class ErrorDetail(msrest.serialization.Model):
         "message": {"key": "message", "type": "str"},
         "target": {"key": "target", "type": "str"},
         "details": {"key": "details", "type": "[ErrorDetail]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+        "additional_info": {
+            "key": "additionalInfo",
+            "type": "[ErrorAdditionalInfo]",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -3257,9 +3377,15 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
 
     _attribute_map = {
         "acr_details": {"key": "acrDetails", "type": "AcrDetail"},
-        "credential": {"key": "credential", "type": "DataReferenceCredentialDto"},
+        "credential": {
+            "key": "credential",
+            "type": "DataReferenceCredentialDto",
+        },
         "image_name": {"key": "imageName", "type": "str"},
-        "image_registry_reference": {"key": "imageRegistryReference", "type": "str"},
+        "image_registry_reference": {
+            "key": "imageRegistryReference",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -3277,7 +3403,9 @@ class ImageReferenceForConsumptionDto(msrest.serialization.Model):
         self.acr_details = kwargs.get("acr_details", None)
         self.credential = kwargs.get("credential", None)
         self.image_name = kwargs.get("image_name", None)
-        self.image_registry_reference = kwargs.get("image_registry_reference", None)
+        self.image_registry_reference = kwargs.get(
+            "image_registry_reference", None
+        )
 
 
 class InferenceContainerProperties(msrest.serialization.Model):
@@ -3456,7 +3584,11 @@ class JobInput(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        "job_input_type": {"Dataset": "JobInputDataset", "Literal": "JobInputLiteral", "Uri": "JobInputUri"}
+        "job_input_type": {
+            "Dataset": "JobInputDataset",
+            "Literal": "JobInputLiteral",
+            "Uri": "JobInputUri",
+        }
     }
 
     def __init__(self, **kwargs):
@@ -3619,7 +3751,12 @@ class JobOutput(msrest.serialization.Model):
         "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
-    _subtype_map = {"job_output_type": {"Dataset": "JobOutputDataset", "Uri": "JobOutputUri"}}
+    _subtype_map = {
+        "job_output_type": {
+            "Dataset": "JobOutputDataset",
+            "Uri": "JobOutputUri",
+        }
+    }
 
     def __init__(self, **kwargs):
         """
@@ -3833,10 +3970,22 @@ class ManagedIdentityCredentialDto(msrest.serialization.Model):
 
     _attribute_map = {
         "managed_identity_type": {"key": "managedIdentityType", "type": "str"},
-        "user_managed_identity_client_id": {"key": "userManagedIdentityClientId", "type": "str"},
-        "user_managed_identity_principal_id": {"key": "userManagedIdentityPrincipalId", "type": "str"},
-        "user_managed_identity_resource_id": {"key": "userManagedIdentityResourceId", "type": "str"},
-        "user_managed_identity_tenant_id": {"key": "userManagedIdentityTenantId", "type": "str"},
+        "user_managed_identity_client_id": {
+            "key": "userManagedIdentityClientId",
+            "type": "str",
+        },
+        "user_managed_identity_principal_id": {
+            "key": "userManagedIdentityPrincipalId",
+            "type": "str",
+        },
+        "user_managed_identity_resource_id": {
+            "key": "userManagedIdentityResourceId",
+            "type": "str",
+        },
+        "user_managed_identity_tenant_id": {
+            "key": "userManagedIdentityTenantId",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -3858,10 +4007,18 @@ class ManagedIdentityCredentialDto(msrest.serialization.Model):
         """
         super(ManagedIdentityCredentialDto, self).__init__(**kwargs)
         self.managed_identity_type = kwargs.get("managed_identity_type", None)
-        self.user_managed_identity_client_id = kwargs.get("user_managed_identity_client_id", None)
-        self.user_managed_identity_principal_id = kwargs.get("user_managed_identity_principal_id", None)
-        self.user_managed_identity_resource_id = kwargs.get("user_managed_identity_resource_id", None)
-        self.user_managed_identity_tenant_id = kwargs.get("user_managed_identity_tenant_id", None)
+        self.user_managed_identity_client_id = kwargs.get(
+            "user_managed_identity_client_id", None
+        )
+        self.user_managed_identity_principal_id = kwargs.get(
+            "user_managed_identity_principal_id", None
+        )
+        self.user_managed_identity_resource_id = kwargs.get(
+            "user_managed_identity_resource_id", None
+        )
+        self.user_managed_identity_tenant_id = kwargs.get(
+            "user_managed_identity_tenant_id", None
+        )
 
 
 class MedianStoppingPolicy(EarlyTerminationPolicy):
@@ -3941,7 +4098,10 @@ class MLTableData(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "referenced_uris": {"key": "referencedUris", "type": "[str]"},
     }
 
@@ -4115,7 +4275,9 @@ class ModelContainerResourceArmPaginatedResult(msrest.serialization.Model):
         :keyword value: An array of objects of type ModelContainer.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ModelContainerData]
         """
-        super(ModelContainerResourceArmPaginatedResult, self).__init__(**kwargs)
+        super(ModelContainerResourceArmPaginatedResult, self).__init__(
+            **kwargs
+        )
         self.next_link = kwargs.get("next_link", None)
         self.value = kwargs.get("value", None)
 
@@ -4249,7 +4411,10 @@ class ModelVersionDetails(AssetBase):
         "is_anonymous": {"key": "isAnonymous", "type": "bool"},
         "is_archived": {"key": "isArchived", "type": "bool"},
         "flavors": {"key": "flavors", "type": "{FlavorData}"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
         "job_name": {"key": "jobName", "type": "str"},
         "model_type": {"key": "modelType", "type": "str"},
         "model_uri": {"key": "modelUri", "type": "str"},
@@ -4338,7 +4503,10 @@ class Mpi(DistributionConfiguration):
 
     _attribute_map = {
         "distribution_type": {"key": "distributionType", "type": "str"},
-        "process_count_per_instance": {"key": "processCountPerInstance", "type": "int"},
+        "process_count_per_instance": {
+            "key": "processCountPerInstance",
+            "type": "int",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4348,7 +4516,9 @@ class Mpi(DistributionConfiguration):
         """
         super(Mpi, self).__init__(**kwargs)
         self.distribution_type = "Mpi"  # type: str
-        self.process_count_per_instance = kwargs.get("process_count_per_instance", None)
+        self.process_count_per_instance = kwargs.get(
+            "process_count_per_instance", None
+        )
 
 
 class NoneDatastoreCredentials(DatastoreCredentials):
@@ -4657,15 +4827,30 @@ class PackageRequest(msrest.serialization.Model):
 
     _validation = {
         "inferencing_server": {"required": True},
-        "target_environment_id": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
+        "target_environment_id": {
+            "required": True,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
-        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
-        "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
+        "environment_variables": {
+            "key": "environmentVariables",
+            "type": "{str}",
+        },
+        "inferencing_server": {
+            "key": "inferencingServer",
+            "type": "InferencingServer",
+        },
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "properties": {"key": "properties", "type": "{str}"},
         "sku_architecture_type": {"key": "skuArchitectureType", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
@@ -4696,7 +4881,9 @@ class PackageRequest(msrest.serialization.Model):
         :paramtype target_environment_id: str
         """
         super(PackageRequest, self).__init__(**kwargs)
-        self.base_environment_source = kwargs.get("base_environment_source", None)
+        self.base_environment_source = kwargs.get(
+            "base_environment_source", None
+        )
         self.environment_variables = kwargs.get("environment_variables", None)
         self.inferencing_server = kwargs["inferencing_server"]
         self.inputs = kwargs.get("inputs", None)
@@ -4754,14 +4941,26 @@ class PackageResponse(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "base_environment_source": {"key": "baseEnvironmentSource", "type": "BaseEnvironmentSource"},
+        "base_environment_source": {
+            "key": "baseEnvironmentSource",
+            "type": "BaseEnvironmentSource",
+        },
         "build_id": {"key": "buildId", "type": "str"},
         "build_state": {"key": "buildState", "type": "str"},
-        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
-        "inferencing_server": {"key": "inferencingServer", "type": "InferencingServer"},
+        "environment_variables": {
+            "key": "environmentVariables",
+            "type": "{str}",
+        },
+        "inferencing_server": {
+            "key": "inferencingServer",
+            "type": "InferencingServer",
+        },
         "inputs": {"key": "inputs", "type": "[ModelPackageInput]"},
         "log_url": {"key": "logUrl", "type": "str"},
-        "model_configuration": {"key": "modelConfiguration", "type": "ModelConfiguration"},
+        "model_configuration": {
+            "key": "modelConfiguration",
+            "type": "ModelConfiguration",
+        },
         "properties": {"key": "properties", "type": "{str}"},
         "sku_architecture_type": {"key": "skuArchitectureType", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
@@ -4919,7 +5118,10 @@ class PyTorch(DistributionConfiguration):
 
     _attribute_map = {
         "distribution_type": {"key": "distributionType", "type": "str"},
-        "process_count_per_instance": {"key": "processCountPerInstance", "type": "int"},
+        "process_count_per_instance": {
+            "key": "processCountPerInstance",
+            "type": "int",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -4929,7 +5131,9 @@ class PyTorch(DistributionConfiguration):
         """
         super(PyTorch, self).__init__(**kwargs)
         self.distribution_type = "PyTorch"  # type: str
-        self.process_count_per_instance = kwargs.get("process_count_per_instance", None)
+        self.process_count_per_instance = kwargs.get(
+            "process_count_per_instance", None
+        )
 
 
 class ResourceConfiguration(msrest.serialization.Model):
@@ -5000,7 +5204,10 @@ class ResourceManagementAssetReferenceData(Resource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "properties": {"key": "properties", "type": "ResourceManagementAssetReferenceDetails"},
+        "properties": {
+            "key": "properties",
+            "type": "ResourceManagementAssetReferenceDetails",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5208,7 +5415,10 @@ class ServicePrincipalDatastoreCredentials(DatastoreCredentials):
         "authority_url": {"key": "authorityUrl", "type": "str"},
         "client_id": {"key": "clientId", "type": "str"},
         "resource_url": {"key": "resourceUrl", "type": "str"},
-        "secrets": {"key": "secrets", "type": "ServicePrincipalDatastoreSecrets"},
+        "secrets": {
+            "key": "secrets",
+            "type": "ServicePrincipalDatastoreSecrets",
+        },
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
@@ -5348,7 +5558,10 @@ class SweepJob(JobBase):
         "parent_job_name": {"key": "parentJobName", "type": "str"},
         "services": {"key": "services", "type": "{JobService}"},
         "status": {"key": "status", "type": "str"},
-        "early_termination": {"key": "earlyTermination", "type": "EarlyTerminationPolicy"},
+        "early_termination": {
+            "key": "earlyTermination",
+            "type": "EarlyTerminationPolicy",
+        },
         "identity": {"key": "identity", "type": "IdentityConfiguration"},
         "inputs": {"key": "inputs", "type": "{JobInput}"},
         "limits": {"key": "limits", "type": "SweepJobLimits"},
@@ -5536,8 +5749,14 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
 
     _attribute_map = {
         "asset_id": {"key": "assetId", "type": "str"},
-        "temporary_data_reference_id": {"key": "temporaryDataReferenceId", "type": "str"},
-        "temporary_data_reference_type": {"key": "temporaryDataReferenceType", "type": "str"},
+        "temporary_data_reference_id": {
+            "key": "temporaryDataReferenceId",
+            "type": "str",
+        },
+        "temporary_data_reference_type": {
+            "key": "temporaryDataReferenceType",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5553,8 +5772,12 @@ class TemporaryDataReferenceRequestDto(msrest.serialization.Model):
         """
         super(TemporaryDataReferenceRequestDto, self).__init__(**kwargs)
         self.asset_id = kwargs.get("asset_id", None)
-        self.temporary_data_reference_id = kwargs.get("temporary_data_reference_id", None)
-        self.temporary_data_reference_type = kwargs.get("temporary_data_reference_type", None)
+        self.temporary_data_reference_id = kwargs.get(
+            "temporary_data_reference_id", None
+        )
+        self.temporary_data_reference_type = kwargs.get(
+            "temporary_data_reference_type", None
+        )
 
 
 class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
@@ -5581,8 +5804,14 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
             "key": "imageReferenceForConsumption",
             "type": "ImageReferenceForConsumptionDto",
         },
-        "temporary_data_reference_id": {"key": "temporaryDataReferenceId", "type": "str"},
-        "temporary_data_reference_type": {"key": "temporaryDataReferenceType", "type": "str"},
+        "temporary_data_reference_id": {
+            "key": "temporaryDataReferenceId",
+            "type": "str",
+        },
+        "temporary_data_reference_type": {
+            "key": "temporaryDataReferenceType",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5599,10 +5828,18 @@ class TemporaryDataReferenceResponseDto(msrest.serialization.Model):
         :paramtype temporary_data_reference_type: str
         """
         super(TemporaryDataReferenceResponseDto, self).__init__(**kwargs)
-        self.blob_reference_for_consumption = kwargs.get("blob_reference_for_consumption", None)
-        self.image_reference_for_consumption = kwargs.get("image_reference_for_consumption", None)
-        self.temporary_data_reference_id = kwargs.get("temporary_data_reference_id", None)
-        self.temporary_data_reference_type = kwargs.get("temporary_data_reference_type", None)
+        self.blob_reference_for_consumption = kwargs.get(
+            "blob_reference_for_consumption", None
+        )
+        self.image_reference_for_consumption = kwargs.get(
+            "image_reference_for_consumption", None
+        )
+        self.temporary_data_reference_id = kwargs.get(
+            "temporary_data_reference_id", None
+        )
+        self.temporary_data_reference_type = kwargs.get(
+            "temporary_data_reference_type", None
+        )
 
 
 class TensorFlow(DistributionConfiguration):
@@ -5625,7 +5862,10 @@ class TensorFlow(DistributionConfiguration):
 
     _attribute_map = {
         "distribution_type": {"key": "distributionType", "type": "str"},
-        "parameter_server_count": {"key": "parameterServerCount", "type": "int"},
+        "parameter_server_count": {
+            "key": "parameterServerCount",
+            "type": "int",
+        },
         "worker_count": {"key": "workerCount", "type": "int"},
     }
 
@@ -5664,16 +5904,26 @@ class TrialComponent(msrest.serialization.Model):
     """
 
     _validation = {
-        "command": {"required": True, "min_length": 1, "pattern": r"[a-zA-Z0-9_]"},
+        "command": {
+            "required": True,
+            "min_length": 1,
+            "pattern": r"[a-zA-Z0-9_]",
+        },
         "environment_id": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
         "code_id": {"key": "codeId", "type": "str"},
         "command": {"key": "command", "type": "str"},
-        "distribution": {"key": "distribution", "type": "DistributionConfiguration"},
+        "distribution": {
+            "key": "distribution",
+            "type": "DistributionConfiguration",
+        },
         "environment_id": {"key": "environmentId", "type": "str"},
-        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "environment_variables": {
+            "key": "environmentVariables",
+            "type": "{str}",
+        },
         "resources": {"key": "resources", "type": "ResourceConfiguration"},
     }
 
@@ -5723,7 +5973,10 @@ class TritonInferencingServer(InferencingServer):
 
     _attribute_map = {
         "server_type": {"key": "serverType", "type": "str"},
-        "inference_configuration": {"key": "inferenceConfiguration", "type": "OnlineInferenceConfiguration"},
+        "inference_configuration": {
+            "key": "inferenceConfiguration",
+            "type": "OnlineInferenceConfiguration",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5734,7 +5987,9 @@ class TritonInferencingServer(InferencingServer):
         """
         super(TritonInferencingServer, self).__init__(**kwargs)
         self.server_type = "Triton"  # type: str
-        self.inference_configuration = kwargs.get("inference_configuration", None)
+        self.inference_configuration = kwargs.get(
+            "inference_configuration", None
+        )
 
 
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
@@ -5762,7 +6017,10 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
         "delay_evaluation": {"key": "delayEvaluation", "type": "int"},
         "evaluation_interval": {"key": "evaluationInterval", "type": "int"},
         "policy_type": {"key": "policyType", "type": "str"},
-        "truncation_percentage": {"key": "truncationPercentage", "type": "int"},
+        "truncation_percentage": {
+            "key": "truncationPercentage",
+            "type": "int",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5818,7 +6076,10 @@ class UriFileDataVersion(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -5884,7 +6145,10 @@ class UriFolderDataVersion(DataVersionBaseDetails):
         "is_archived": {"key": "isArchived", "type": "bool"},
         "data_type": {"key": "dataType", "type": "str"},
         "data_uri": {"key": "dataUri", "type": "str"},
-        "intellectual_property": {"key": "intellectualProperty", "type": "IntellectualProperty"},
+        "intellectual_property": {
+            "key": "intellectualProperty",
+            "type": "IntellectualProperty",
+        },
     }
 
     def __init__(self, **kwargs):
