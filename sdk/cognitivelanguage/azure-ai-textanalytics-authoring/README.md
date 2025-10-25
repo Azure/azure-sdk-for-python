@@ -416,9 +416,8 @@ For more information, see the [Code of Conduct FAQ][coc_faq] or contact [opencod
 [text_authoring_pypi_package]: https://pypi.org/project/azure-ai-textanalytics-authoring/
 [text_authoring_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/README.md
 [text_authoring_docs]: https://learn.microsoft.com/azure/ai-services/language-service/custom-text-classification/overview
-[api_reference_authoring]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring
-<!-- TODO: change api_reference_documentation to azuresdkdocs link after first publish -->
-[text_authoring_restdocs]: https://learn.microsoft.com/rest/api/language/text-authoring-project?view=rest-language-2023-04-01
+[api_reference_authoring]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-textanalytics-authoring/latest/azure.ai.textanalytics.authoring.html
+[text_authoring_restdocs]: https://learn.microsoft.com/rest/api/language/analyze-text-authoring/text-authoring-project?view=rest-language-analyze-text-authoring-2023-04-01
 [azure_language_portal]: https://language.cognitive.azure.com/home
 [cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials

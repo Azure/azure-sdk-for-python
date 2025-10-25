@@ -402,6 +402,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [register_aad_app]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/language/question-answering?view=rest-language-2021-10-01
-[questionanswering_rest_docs_authoring]: https://learn.microsoft.com/rest/api/language/question-answering-projects?view=rest-language-2021-10-01
-
+[questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/language/question-answering/question-answering?view=rest-language-question-answering-2023-04-01
+[questionanswering_rest_docs_authoring]: https://learn.microsoft.com/rest/api/language/question-answering-authoring/question-answering-projects?view=rest-language-question-answering-authoring-2023-04-01
