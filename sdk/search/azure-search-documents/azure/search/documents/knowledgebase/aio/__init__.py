@@ -12,11 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import SearchIndexClient  # type: ignore
-from ._client import SearchIndexerClient  # type: ignore
-from .._version import VERSION
-
-__version__ = VERSION
+from ._client import KnowledgeBaseRetrievalClient  # type: ignore
 
 try:
     from ._patch import __all__ as _patch_all
@@ -26,8 +22,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "SearchIndexClient",
-    "SearchIndexerClient",
+    "KnowledgeBaseRetrievalClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
