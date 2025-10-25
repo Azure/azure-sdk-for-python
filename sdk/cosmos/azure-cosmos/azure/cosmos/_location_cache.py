@@ -106,9 +106,9 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
     circuit_breaker_excluded_contexts = []
     for regional_routing_context in applicable_regional_routing_contexts:
         if location_name_by_endpoint.get(regional_routing_context.get_primary()) in circuit_breaker_exclude_list:
-           circuit_breaker_excluded_contexts.append(regional_routing_context)
+            circuit_breaker_excluded_contexts.append(regional_routing_context)
         else:
-           final_applicable_contexts.append(regional_routing_context)
+            final_applicable_contexts.append(regional_routing_context)
 
     # Add circuit breaker excluded locations as a last resort
     final_applicable_contexts.extend(circuit_breaker_excluded_contexts)
