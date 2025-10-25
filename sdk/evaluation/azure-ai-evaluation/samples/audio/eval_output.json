@@ -1,0 +1,104 @@
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "outputitem_68f17537faa08191ba81a37ef3f17a6f",
+      "object": "eval.run.output_item",
+      "created_at": 1760654647,
+      "status": "pass",
+      "_datasource_item_content_hash": "58c903d3af7ed83ff1a733e8377eb9b5f87bdff012e90e524345a822846267bd",
+      "datasource_item": {
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a cheerful assistant that speaks in audio with a natural style. Keep responses under 10 seconds."
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "Introduce yourself in one sentence."
+              }
+            ]
+          }
+        ]
+      },
+      "datasource_item_id": 0,
+      "eval_id": "eval_68f1742bdf948191b62e0cb7af6dbc99",
+      "results": [
+        {
+          "name": "Tone/Emotion Grader-f318f6f8-36cf-43df-87a0-2a28a46f6258",
+          "score": 0.9,
+          "passed": true,
+          "sample": {
+            "input": [
+              {
+                "role": "developer",
+                "content": "Respond ONLY with a single JSON object matching: {\"steps\":[{\"description\":\"string\",\"conclusion\":\"string\"}],\"result\":number}. Do not include any extra text. result must be a float in [0.0, 1.0]."
+              },
+              {
+                "role": "system",
+                "content": "Evaluate the provided audio for tone and emotion. Return a float score in [0,1] where 1 means the speaker sounds cheerful and friendly."
+              },
+              {
+                "role": "user",
+                "content": "Listen to this clip and score tone/emotion. <audio format=wav>[base64 audio omitted]</audio>"
+              }
+            ],
+            "output": [
+              {
+                "role": "assistant",
+                "content": "{\"steps\":[{\"description\":\"Identify key phrases indicating tone and emotion, such as 'friendly assistant' and 'here to help with whatever you need', and analyze overall delivery.\",\"conclusion\":\"The speaker sounds cheerful and friendly.\"}],\"result\":0.9}"
+              }
+            ],
+            "finish_reason": "stop",
+            "model": "gpt-audio-mini-2025-10-06",
+            "usage": {
+              "total_tokens": 209,
+              "completion_tokens": 53,
+              "prompt_tokens": 156,
+              "cached_tokens": 0
+            },
+            "error": null,
+            "temperature": 1,
+            "top_p": 1
+          }
+        }
+      ],
+      "run_id": "evalrun_68f1752c80748191a4fb7718ec445dc3",
+      "sample": {
+        "input": [
+          {
+            "role": "system",
+            "content": "You are a cheerful assistant that speaks in audio with a natural style. Keep responses under 10 seconds."
+          },
+          {
+            "role": "user",
+            "content": "Introduce yourself in one sentence."
+          }
+        ],
+        "output": [
+          {
+            "role": "assistant",
+            "content": "<audio transcript=Hi, I'm your friendly assistant, here to help with whatever you need—just let me know!>[base64 audio omitted]</audio>"
+          }
+        ],
+        "finish_reason": "stop",
+        "model": "gpt-audio-mini-2025-10-06",
+        "usage": {
+          "total_tokens": 164,
+          "completion_tokens": 126,
+          "prompt_tokens": 38,
+          "cached_tokens": 0
+        },
+        "error": null,
+        "temperature": 0.8,
+        "top_p": 1
+      }
+    }
+  ],
+  "first_id": "outputitem_68f17537faa08191ba81a37ef3f17a6f",
+  "has_more": true,
+  "last_id": "outputitem_68f17537faa08191ba81a37ef3f17a6f"
+}

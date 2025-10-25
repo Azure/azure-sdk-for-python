@@ -650,11 +650,12 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
                 "properties": {},
                 "required": [],
             },
+            "include_sample_schema": True,
         }
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
         for key in column_mapping.keys():
-            props[key] = {"type": "string"}
+            props[key] = {"type": "array"}
             req.append(key)
         LOGGER.info(f"AOAI: Flat schema generated with {len(props)} properties: {list(props.keys())}")
         return data_source_config
@@ -696,6 +697,7 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
     return {
         "type": "custom",
         "item_schema": nested_schema,
+        "include_sample_schema": True,
     }
 
 
@@ -715,7 +717,7 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
 
     for column in input_data_df.columns:
         properties[column] = {
-            "type": "string",
+            "type": "array",
         }
         required.append(column)
     data_source_config = {
@@ -821,8 +823,11 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             # Safely fetch value
             val = row.get(df_col, None)
 
-            # Convert value to string to match schema's "type": "string" leaves.
-            str_val = _convert_value_to_string(val)
+            if isinstance(val, list):
+                str_val = val
+            else:
+                # Convert value to string to match schema's "type": "string" leaves.
+                str_val = _convert_value_to_string(val)
 
             # Insert into nested dict
             cursor = item_root
@@ -849,7 +854,19 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
 
     LOGGER.info(f"AOAI: Generated {len(content)} content items for data source.")
     return {
-        "type": "jsonl",
+        "type": "completions",
+        "model": "gpt-4o-audio-preview",
+        "input_messages": {
+            "type": "item_reference",
+            "item_reference": "item.messages"
+        },
+        "sampling_params": {
+            "temperature": 0.8
+        },
+        "modalities": [
+            "text",
+            "audio"
+        ],
         "source": {
             "type": "file_content",
             "content": content,
