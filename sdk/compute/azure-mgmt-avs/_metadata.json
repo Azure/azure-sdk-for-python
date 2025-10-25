@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-09-01",
+  "commit": "d9fea55fd43a4a37a4bbca5bfa1a0f84497f0436",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/vmware/resource-manager/Microsoft.AVS/AVS",
+  "emitterVersion": "0.52.1"
+}
