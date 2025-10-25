@@ -85,21 +85,22 @@ def _get_health_check_endpoints(regional_routing_contexts) -> Set[str]:
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
     preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}
     return preferred_endpoints
-"""
-this method separates the initial list of endpoints into two groups: those the user has explicitly excluded and those they have not.
-It then takes the list of non-excluded endpoints and moves any that are currently marked as unavailable by the circuit breaker to the
-end of that list. This ensures healthy endpoints are tried before unhealthy ones.
-For special metadata requests (which must succeed), it adds the user-excluded locations back to the very end of the list. This 
-allows the SDK to try every possible endpoint as a last resort for critical operations.
-If all available endpoints are filtered out, it adds a default fallback endpoint to the list to ensure there is always at least one endpoint 
-to attempt a connection to
-"""
+
 def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[RegionalRoutingContext],
                                               location_name_by_endpoint: Mapping[str, str],
                                               fall_back_regional_routing_context: RegionalRoutingContext,
                                               exclude_location_list: list[str],
                                               circuit_breaker_exclude_list: list[str],
                                               resource_type: str) -> list[RegionalRoutingContext]:
+    """
+    this method separates the initial list of endpoints into two groups: those the user has explicitly excluded and those they have not.
+    It then takes the list of non-excluded endpoints and moves any that are currently marked as unavailable by the circuit breaker to the
+    end of that list. This ensures healthy endpoints are tried before unhealthy ones.
+    For special metadata requests (which must succeed), it adds the user-excluded locations back to the very end of the list. This
+    allows the SDK to try every possible endpoint as a last resort for critical operations.
+    If all available endpoints are filtered out, it adds a default fallback endpoint to the list to ensure there is always at least one endpoint
+    to attempt a connection to
+    """
     # filter endpoints by excluded locations
     applicable_regional_routing_contexts = []
     user_excluded_regional_routing_contexts = []
@@ -244,25 +245,71 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         # Else, return all regional endpoints
         return self.get_write_regional_routing_contexts()
-    """
-    this method determines the appropriate service endpoint for a request by following this logic:
-    Direct Override: If a specific endpoint is provided in request.location_endpoint_to_route, it is used immediately.
-    Main Logic Branching: It checks if use_preferred_locations is False or if the request is a write operation on a single-write account.
-    If True (No Preferred Locations or Single-Write Failover):
-        For single-write accounts: It alternates between the first two available write locations for failover, ignoring any exclusion lists.
-        For reads or multi-write accounts: It uses the full list of account locations, filters out any user-configured excluded 
-        locations, and moves any circuit-breaker-excluded locations to the end of the list to be used as a last resort. 
-        It then selects an endpoint from this filtered list.
-        It falls back to the default account endpoint if endpoint discovery is disabled or no locations are available.
-    If False (Default path for multi-region accounts using preferred locations):
-        It gets the list of applicable read or write locations, which is already filtered to respect preferred locations, user 
-        exclusions, and circuit-breaker status.
-        It selects an endpoint from this list based on the request's location index.
-        In essence, the method intelligently routes requests by prioritizing explicit overrides, then handling specific failover 
-        and non-preferred location scenarios, and finally defaulting to using the ordered list of preferred locations, all while 
-        respecting various exclusion rules.
-    """
+
+    def _resolve_endpoint_without_preferred_locations(self, request, is_write, location_index):
+        """Resolves an endpoint when not using preferred locations."""
+        ordered_locations = self.account_write_locations if is_write else self.account_read_locations
+        all_contexts_by_loc = (self.account_write_regional_routing_contexts_by_location if is_write
+                               else self.account_read_regional_routing_contexts_by_location)
+
+        # Safety check: if endpoint discovery is off or location cache isn't populated, fallback.
+        if not self.connection_policy.EnableEndpointDiscovery or not ordered_locations:
+            return self.default_regional_routing_context.get_primary()
+
+        # For single-write-region accounts, failover between the first two available write regions.
+        if is_write and not self.can_use_multiple_write_locations_for_request(request):
+            effective_index = min(location_index % 2, len(ordered_locations) - 1)
+            write_location = ordered_locations[effective_index]
+            if write_location in all_contexts_by_loc:
+                return all_contexts_by_loc[write_location].get_primary()
+            return self.default_regional_routing_context.get_primary()  # Fallback if location not found
+
+        # For reads or multi-write, filter locations by user and circuit-breaker exclusions.
+        excluded_locations = self._get_configured_excluded_locations(request)
+        circuit_breaker_excluded_locations = request.excluded_locations_circuit_breaker or []
+
+        applicable_contexts = []
+        circuit_breaker_contexts = []
+        for loc_name in ordered_locations:
+            if loc_name in all_contexts_by_loc:
+                context = all_contexts_by_loc[loc_name]
+                if loc_name in excluded_locations:
+                    continue  # Skip user-excluded locations
+                if loc_name in circuit_breaker_excluded_locations:
+                    circuit_breaker_contexts.append(context)
+                else:
+                    applicable_contexts.append(context)
+
+        # Add circuit breaker excluded locations as a last resort
+        applicable_contexts.extend(circuit_breaker_contexts)
+
+        if applicable_contexts:
+            effective_index = location_index % len(applicable_contexts)
+            return applicable_contexts[effective_index].get_primary()
+
+        # Fallback to the default endpoint if no other endpoint is found.
+        return self.default_regional_routing_context.get_primary()
+
     def resolve_service_endpoint(self, request):
+        """
+        this method determines the appropriate service endpoint for a request by following this logic:
+        Direct Override: If a specific endpoint is provided in request.location_endpoint_to_route, it is used immediately.
+        Main Logic Branching: It checks if use_preferred_locations is False or if the request is a write operation on a single-write account.
+        If True (No Preferred Locations or Single-Write Failover):
+             For single-write accounts: It alternates between the first two available write locations for failover, ignoring any exclusion lists.
+             For reads or multi-write accounts: It uses the full list of account locations, filters out any user-configured excluded
+             locations, and moves any circuit-breaker-excluded locations to the end of the list to be used as a last resort.
+             It then selects an endpoint from this filtered list.
+             It falls back to the default account endpoint if endpoint discovery is disabled or no locations are available.
+        If False (Default path for multi-region accounts using preferred locations):
+             It gets the list of applicable read or write locations, which is already filtered to respect preferred locations, user
+             exclusions, and circuit-breaker status.
+             It selects an endpoint from this list based on the request's location index.
+             In essence, the method intelligently routes requests by prioritizing explicit overrides, then handling specific failover
+             and non-preferred location scenarios, and finally defaulting to using the ordered list of preferred locations, all while
+             respecting various exclusion rules.
+        """
+
         if request.location_endpoint_to_route:
             return request.location_endpoint_to_route
 
@@ -274,54 +321,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         is_write = documents._OperationType.IsWriteOperation(request.operation_type)
 
         if not use_preferred_locations or (
-            is_write and not self.can_use_multiple_write_locations_for_request(request)
+                is_write and not self.can_use_multiple_write_locations_for_request(request)
         ):
-            # When not using preferred locations, we use the full list of account locations,
-            # respecting their original order, while filtering out excluded locations.
-            ordered_locations = self.account_write_locations if is_write else self.account_read_locations
-            all_contexts_by_loc = (self.account_write_regional_routing_contexts_by_location if is_write
-                                   else self.account_read_regional_routing_contexts_by_location)
-
-            # Get user-configured and circuit-breaker excluded locations
-            excluded_locations = self._get_configured_excluded_locations(request)
-            circuit_breaker_excluded_locations = request.excluded_locations_circuit_breaker or []
-
-            applicable_contexts = []
-            circuit_breaker_contexts = []
-
-            # Safety check: if the location cache isn't populated, we can't proceed.
-            if self.connection_policy.EnableEndpointDiscovery and ordered_locations:
-                # For single-write-region accounts, the logic is simpler: try the first two available regions.
-                if is_write and not self.can_use_multiple_write_locations_for_request(request):
-                    location_index = min(location_index % 2, len(ordered_locations) - 1)
-                    write_location = ordered_locations[location_index]
-                    if write_location in all_contexts_by_loc:
-                        return all_contexts_by_loc[write_location].get_primary()
-                else:
-                    # For reads (or multi-write) with use_preferred_locations=False, filter the locations.
-                    for loc_name in ordered_locations:
-                        if loc_name in all_contexts_by_loc:
-                            context = all_contexts_by_loc[loc_name]
-                            if loc_name in excluded_locations:
-                                continue  # Skip user-excluded locations
-                            if loc_name in circuit_breaker_excluded_locations:
-                                circuit_breaker_contexts.append(context)
-                            else:
-                                applicable_contexts.append(context)
-
-                    # Add circuit breaker excluded locations as a last resort
-                    applicable_contexts.extend(circuit_breaker_contexts)
-
-                    if applicable_contexts:
-                        effective_index = location_index % len(applicable_contexts)
-                        return applicable_contexts[effective_index].get_primary()
-
-            # Fallback to the default endpoint if no other endpoint is found or discovery is off.
-            return self.default_regional_routing_context.get_primary()
+            return self._resolve_endpoint_without_preferred_locations(request, is_write, location_index)
 
         regional_routing_contexts = (
             self._get_applicable_write_regional_routing_contexts(request)
-            if documents._OperationType.IsWriteOperation(request.operation_type)
+            if is_write
             else self._get_applicable_read_regional_routing_contexts(request)
         )
         regional_routing_context = regional_routing_contexts[location_index % len(regional_routing_contexts)]
