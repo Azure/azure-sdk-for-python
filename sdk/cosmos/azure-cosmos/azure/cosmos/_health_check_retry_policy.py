@@ -27,16 +27,13 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import _constants
 
 
-class DatabaseAccountRetryPolicy(object):
-    """Implements retry logic for database account reads in Azure Cosmos DB."""
-
-    # List of HTTP status codes considered transient errors for retry logic.
-    transient_status_codes = [502, 503, 504]
+class HealthCheckRetryPolicy(object):
+    """Implements retry logic for health checks in Azure Cosmos DB."""
 
     # Tuple of exception types considered transient errors for retry logic.
     transient_exceptions = (ServiceRequestError, ServiceResponseError)
 
-    def __init__(self, connection_policy):
+    def __init__(self, connection_policy, *args):
         self.retry_count = 0
         self.retry_after_in_milliseconds = int(os.getenv(
             _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS,
@@ -47,8 +44,12 @@ class DatabaseAccountRetryPolicy(object):
             str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT)
         ))
         self.connection_policy = connection_policy
+        self.retry_factor = 1.5
+        self.max_retry_after_in_milliseconds = 1000 * 20  # 20 seconds
+        self.initial_connection_timeout = 5
+        self.request = args[0] if args else None
 
-    def ShouldRetry(self, exception):
+    def ShouldRetry(self, exception):# pylint: disable=unused-argument
         """
         Determines if the given exception is transient and if a retry should be attempted.
 
@@ -57,19 +58,20 @@ class DatabaseAccountRetryPolicy(object):
         :return: True if the exception is transient and retry attempts to remain, False otherwise.
         :rtype: bool
         """
+        if self.retry_count > 0:
+            # exponential backoff for subsequent retries
+            self.retry_after_in_milliseconds = min(self.retry_after_in_milliseconds ** self.retry_factor,
+                                                   self.max_retry_after_in_milliseconds)
+        if self.request:
+            # increase read timeout for each retry
+            if self.request.read_timeout_override:
+                self.request.read_timeout_override = min(self.request.read_timeout_override ** 2,
+                                                         self.connection_policy.ReadTimeout)
+            else:
+                self.request.read_timeout_override = self.initial_connection_timeout
 
-        is_transient = False
 
-        # Check for transient HTTP status codes
-        status_code = getattr(exception, "status_code", None)
-        if status_code in self.transient_status_codes:
-            is_transient = True
-
-        # Check for transient exception types
-        if isinstance(exception, self.transient_exceptions):
-            is_transient = True
-
-        if is_transient and self.retry_count < self.max_retry_attempt_count:
+        if self.retry_count < self.max_retry_attempt_count:
             self.retry_count += 1
             return True
 

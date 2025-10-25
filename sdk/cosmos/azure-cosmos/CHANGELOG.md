@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Further optimized health checks for sync and async clients. See [PR 43339](https://github.com/Azure/azure-sdk-for-python/pull/43339)
 
 ### 4.14.0 (2025-10-13)
 This version and all future versions will require Python 3.9+.

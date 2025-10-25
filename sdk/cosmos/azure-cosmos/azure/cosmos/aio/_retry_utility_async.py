@@ -29,7 +29,7 @@ import logging
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from .. import _default_retry_policy, _database_account_retry_policy
+from .. import _default_retry_policy, _health_check_retry_policy
 from .. import _endpoint_discovery_retry_policy
 from .. import _gone_retry_policy
 from .. import _resource_throttle_retry_policy
@@ -72,8 +72,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
-    database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
-        client.connection_policy
+    health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
+        client.connection_policy,
+        *args
     )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
         client.connection_policy.RetryOptions.MaxRetryAttemptCount,
@@ -161,7 +162,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 # update session token for relevant operations
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
-                retry_policy = database_account_retry_policy
+                retry_policy = health_check_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
                 retry_policy = endpointDiscovery_retry_policy
@@ -233,14 +234,14 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 try:

@@ -16,9 +16,8 @@ import uuid
 import pytest
 import requests
 from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
-from urllib3.util.retry import Retry
 from typing import Any, Dict, Optional
 
 import azure.cosmos._base as base
@@ -2032,8 +2031,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             # client does a getDatabaseAccount on initialization, which will not time out because
             # there is a forced timeout for those calls
             client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
-                                                connection_policy=connection_policy)
-            with self.assertRaises(Exception):
+                                                    connection_policy=connection_policy)
+            with self.assertRaises(ServiceRequestError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})

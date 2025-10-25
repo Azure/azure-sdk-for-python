@@ -15,7 +15,7 @@ import os
 import pytest
 import requests
 from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from urllib3.util.retry import Retry
 
@@ -1162,30 +1162,35 @@ class TestCRUDOperations(unittest.TestCase):
         if not ('localhost' in self.host or '127.0.0.1' in self.host):
             connection_policy = documents.ConnectionPolicy()
             # making timeout 0 ms to make sure it will throw
-            connection_policy.RequestTimeout = 0.000000000001
+            connection_policy.ReadTimeout = 0.000000000001
 
             # client does a getDatabaseAccount on initialization, which will not time out because
             # there is a forced timeout for those calls
             client = cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
                                                 connection_policy=connection_policy)
-            with self.assertRaises(Exception):
+            with self.assertRaises(ServiceResponseError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
-    def test_read_timeout_async(self):
+    def test_read_timeout(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.DBAReadTimeout = 0.000000000001
-        with self.assertRaises(ServiceResponseError):
-            # this will make a get database account call
+        # this will make a get database account call
+        # this succeeds because the timeout is changed for database account call retries
+        with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
+            print('initialization')
+
+        connection_policy.DBAConnectionTimeout = 0.000000000001
+        with self.assertRaises(ServiceRequestError):
             with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
                 print('initialization')
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0.000000000001
+        connection_policy.ReadTimeout = 0.000000000001
         connection_policy.ConnectionRetryConfiguration = Retry(
             total=3,
             read=3,
@@ -1196,7 +1201,7 @@ class TestCRUDOperations(unittest.TestCase):
         # client does a getDatabaseAccount on initialization, which will not time out because
         # there is a forced timeout for those calls
         with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
-            with self.assertRaises(AzureError):
+            with self.assertRaises(ServiceResponseError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
