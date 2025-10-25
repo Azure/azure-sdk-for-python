@@ -24,13 +24,14 @@ DatabaseAccount with multiple writable and readable locations.
 """
 import collections
 import logging
+from typing import Optional
 from typing import Set, Mapping, OrderedDict
 from urllib.parse import urlparse
 
 from . import documents, _base as base
-from .http_constants import ResourceType
-from .documents import ConnectionPolicy
 from ._request_object import RequestObject
+from .documents import ConnectionPolicy
+from .http_constants import ResourceType
 
 # pylint: disable=protected-access
 
@@ -221,6 +222,16 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         # Else, return all regional endpoints
         return self.get_write_regional_routing_contexts()
+
+    def get_region_name(self, endpoint: str, is_write_operation: bool) -> Optional[str]:
+        if is_write_operation:
+            if endpoint in self.account_locations_by_write_endpoints:
+                return self.account_locations_by_write_endpoints[endpoint]
+        else:
+            if endpoint in self.account_locations_by_read_endpoints:
+                return self.account_locations_by_read_endpoints[endpoint]
+
+        return None
 
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:

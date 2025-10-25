@@ -3,6 +3,7 @@
 ### 4.14.1 (Unreleased)
 
 #### Features Added
+* Added support for AvailabilityStrategy to help improve request latency and availability in multi-region deployments. See [PR 42584](https://github.com/Azure/azure-sdk-for-python/pull/42584)
 
 #### Breaking Changes
 
