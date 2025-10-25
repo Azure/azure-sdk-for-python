@@ -1231,7 +1231,6 @@ class ResultProcessor:
         """
         # Track usage by model name
         model_usage: Dict[str, Dict[str, int]] = {}
-
         for item in output_items:
             if not isinstance(item, dict):
                 continue
@@ -1254,10 +1253,11 @@ class ResultProcessor:
                         }
 
                     model_usage[model_name]["invocation_count"] += 1
-                    model_usage[model_name]["prompt_tokens"] += usage.get("prompt_tokens", 0)
-                    model_usage[model_name]["completion_tokens"] += usage.get("completion_tokens", 0)
-                    model_usage[model_name]["total_tokens"] += usage.get("total_tokens", 0)
-                    model_usage[model_name]["cached_tokens"] += usage.get("cached_tokens", 0)
+                    # Convert to int to handle cases where values come as strings
+                    model_usage[model_name]["prompt_tokens"] += int(usage.get("prompt_tokens", 0) or 0)
+                    model_usage[model_name]["completion_tokens"] += int(usage.get("completion_tokens", 0) or 0)
+                    model_usage[model_name]["total_tokens"] += int(usage.get("total_tokens", 0) or 0)
+                    model_usage[model_name]["cached_tokens"] += int(usage.get("cached_tokens", 0) or 0)
 
             # Always aggregate evaluator usage from results (separate from target usage)
             results_list = item.get("results", [])
@@ -1286,9 +1286,10 @@ class ResultProcessor:
 
                     if prompt_tokens or completion_tokens:
                         model_usage[model_name]["invocation_count"] += 1
-                        model_usage[model_name]["prompt_tokens"] += prompt_tokens
-                        model_usage[model_name]["completion_tokens"] += completion_tokens
-                        model_usage[model_name]["total_tokens"] += prompt_tokens + completion_tokens
+                        # Convert to int to handle cases where values come as strings
+                        model_usage[model_name]["prompt_tokens"] += int(prompt_tokens or 0)
+                        model_usage[model_name]["completion_tokens"] += int(completion_tokens or 0)
+                        model_usage[model_name]["total_tokens"] += int(prompt_tokens or 0) + int(completion_tokens or 0)
 
         if not model_usage:
             return []
