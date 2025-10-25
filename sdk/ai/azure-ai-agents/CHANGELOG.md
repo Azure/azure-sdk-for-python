@@ -2,7 +2,14 @@
 
 # Release History
 
-## 1.2.0b5 (Unreleased)
+## 1.2.0b6 (2025-10-24)
+
+### Bugs Fixed
+
+- Fix missing `await` in calls to asynchronous Agent methods, when `AIAgentsInstrumentor().instrument()`
+is called but no tracer is configured
+
+## 1.2.0b5 (2025-09-29)
 
 ### Features Added
 - Added `run_handler` parameter to `runs.create_and_process` allowing to make function tool calls manually or approve mcp tool calls.

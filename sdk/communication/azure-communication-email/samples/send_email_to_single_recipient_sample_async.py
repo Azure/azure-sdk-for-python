@@ -30,9 +30,9 @@ sys.path.append("..")
 
 class EmailSingleRecipientSampleAsync(object):
 
-    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
-    sender_address = os.getenv("SENDER_ADDRESS")
-    recipient_address = os.getenv("RECIPIENT_ADDRESS")
+    connection_string = os.environ["COMMUNICATION_CONNECTION_STRING_EMAIL"]
+    sender_address = os.environ["SENDER_ADDRESS"]
+    recipient_address = os.environ["RECIPIENT_ADDRESS"]
 
     async def send_email_to_single_recipient_async(self):
         # creating the email client
