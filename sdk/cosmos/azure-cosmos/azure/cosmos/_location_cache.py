@@ -116,7 +116,7 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
     # Preserves the excluded locations at the end of the list, because for the metadata API calls, excluded locations
     # are not preferred, but all endpoints must be used.
     if base.IsMasterResource(resource_type):
-        applicable_regional_routing_contexts.extend(user_excluded_regional_routing_contexts)
+        final_applicable_contexts.extend(user_excluded_regional_routing_contexts)
 
     # If all preferred locations are excluded, use the fallback endpoint.
     if not final_applicable_contexts:
@@ -245,43 +245,28 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         use_preferred_locations = (
             request.use_preferred_locations if request.use_preferred_locations is not None else True
         )
-        is_write = documents._OperationType.IsWriteOperation(request.operation_type)
 
-        # For write operations on a single-write-location account, we MUST use the primary write region,
-        # regardless of any other preference.
-        if is_write and not self.can_use_multiple_write_locations_for_request(request):
-            primary_write_location = self.account_write_locations[0]
-            return self.account_write_regional_routing_contexts_by_location[primary_write_location].get_primary()
-
-        # This block handles any operation where the request explicitly disables preferred locations.
-        if not use_preferred_locations:
-            # When not using preferred locations, we use the full list of account locations,
-            # respecting their original order, while filtering out excluded locations for this request.
-            all_contexts_by_loc = (self.account_write_regional_routing_contexts_by_location if is_write
-                                   else self.account_read_regional_routing_contexts_by_location)
-            ordered_locations = self.account_write_locations if is_write else self.account_read_locations
-
-            excluded_locations = self._get_configured_excluded_locations(request)
-            circuit_breaker_excluded_locations = request.excluded_locations_circuit_breaker or []
-
-            applicable_contexts = []
-            for loc_name in ordered_locations:
-                if (loc_name not in excluded_locations
-                        and loc_name not in circuit_breaker_excluded_locations
-                        and loc_name in all_contexts_by_loc):
-                    applicable_contexts.append(all_contexts_by_loc[loc_name])
-
-            if self.connection_policy.EnableEndpointDiscovery and applicable_contexts:
-                effective_index = location_index % len(applicable_contexts)
-                return applicable_contexts[effective_index].get_primary()
-
-            # If no applicable regional endpoints are found, or discovery is off, use the global default.
+        if not use_preferred_locations or (
+            documents._OperationType.IsWriteOperation(request.operation_type)
+            and not self.can_use_multiple_write_locations_for_request(request)
+        ):
+            # For non-document resource types in case of client can use multiple write locations
+            # or when client cannot use multiple write locations, flip-flop between the
+            # first and the second writable region in DatabaseAccount (for manual failover)
+            if self.connection_policy.EnableEndpointDiscovery and self.account_write_locations:
+                location_index = min(location_index % 2, len(self.account_write_locations) - 1)
+                write_location = self.account_write_locations[location_index]
+                if (self.account_write_regional_routing_contexts_by_location
+                        and write_location in self.account_write_regional_routing_contexts_by_location):
+                    write_regional_routing_context = (
+                        self.account_write_regional_routing_contexts_by_location)[write_location]
+                    return write_regional_routing_context.get_primary()
+            # if endpoint discovery is off for reads it should use passed in endpoint
             return self.default_regional_routing_context.get_primary()
 
-        # This is the default path for multi-region accounts using preferred locations.
         regional_routing_contexts = (
             self._get_applicable_write_regional_routing_contexts(request)
-            if is_write
+            if documents._OperationType.IsWriteOperation(request.operation_type)
             else self._get_applicable_read_regional_routing_contexts(request)
         )
         regional_routing_context = regional_routing_contexts[location_index % len(regional_routing_contexts)]
