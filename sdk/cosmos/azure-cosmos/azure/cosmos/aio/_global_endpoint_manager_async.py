@@ -103,6 +103,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def _mark_endpoint_unavailable(self, endpoint: str, context: str):
         """Marks an endpoint as unavailable for the appropriate operations.
         :param str endpoint: The endpoint to mark as unavailable.
+        :param str context: The context or reason for marking the endpoint as unavailable.
         """
         write_endpoints = self.location_cache.get_all_write_endpoints()
         self.mark_endpoint_unavailable_for_read(endpoint, False, context)
