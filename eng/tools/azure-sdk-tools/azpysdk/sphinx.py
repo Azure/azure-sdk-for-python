@@ -244,8 +244,10 @@ class sphinx(Check):
                 # Only data-plane libraries run strict sphinx at the moment
                 fail_on_warning = not is_mgmt_package(package_name)
                 results.append(
+                    # doc_folder = source
+                    # site_folder  = output
                     self.sphinx_build(
-                        package_dir, doc_folder, site_folder, fail_on_warning, executable  # source  # output
+                        package_dir, doc_folder, site_folder, fail_on_warning, executable
                     )
                 )
 
