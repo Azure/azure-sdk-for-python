@@ -23,7 +23,6 @@
 """
 
 
-from typing import Dict
 from typing_extensions import Literal
 
 # cspell:ignore reranker
@@ -78,7 +77,7 @@ class _Constants:
     # -------------------------------------------------------------------------
 
     # Error code translations
-    ERROR_TRANSLATIONS: Dict[int, str] = {
+    ERROR_TRANSLATIONS: dict[int, str] = {
         400: "BAD_REQUEST - Request being sent is invalid.",
         401: "UNAUTHORIZED - The input authorization token can't serve the request.",
         403: "FORBIDDEN",

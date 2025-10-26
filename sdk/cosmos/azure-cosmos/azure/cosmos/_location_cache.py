@@ -24,8 +24,7 @@ DatabaseAccount with multiple writable and readable locations.
 """
 import collections
 import logging
-from typing import Set, Mapping, OrderedDict, Dict
-from typing import List
+from typing import Set, Mapping, OrderedDict
 from urllib.parse import urlparse
 
 from . import documents, _base as base
@@ -58,7 +57,7 @@ class RegionalRoutingContext(object):
     def __str__(self):
         return "Primary: " + self.primary_endpoint
 
-def get_regional_routing_contexts_by_loc(new_locations: List[Dict[str, str]]):
+def get_regional_routing_contexts_by_loc(new_locations: list[dict[str, str]]):
     # construct from previous object
     regional_routing_contexts_by_location: OrderedDict[str, RegionalRoutingContext] = collections.OrderedDict()
     parsed_locations = []
@@ -87,11 +86,11 @@ def _get_health_check_endpoints(regional_routing_contexts) -> Set[str]:
     preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}
     return preferred_endpoints
 
-def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[RegionalRoutingContext],
+def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[RegionalRoutingContext],
                                               location_name_by_endpoint: Mapping[str, str],
                                               fall_back_regional_routing_context: RegionalRoutingContext,
-                                              exclude_location_list: List[str],
-                                              resource_type: str) -> List[RegionalRoutingContext]:
+                                              exclude_location_list: list[str],
+                                              resource_type: str) -> list[RegionalRoutingContext]:
     # filter endpoints by excluded locations
     applicable_regional_routing_contexts = []
     excluded_regional_routing_contexts = []
@@ -106,7 +105,7 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[Re
     if base.IsMasterResource(resource_type):
         applicable_regional_routing_contexts.extend(excluded_regional_routing_contexts)
 
-    # If applicable_regional_routing_contexts is empty add fallback regional routing context
+    # If all preferred locations are excluded, use the fallback endpoint.
     if not applicable_regional_routing_contexts:
         applicable_regional_routing_contexts.append(fall_back_regional_routing_context)
 
@@ -120,18 +119,18 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         connection_policy: ConnectionPolicy,
     ):
         self.default_regional_routing_context: RegionalRoutingContext = RegionalRoutingContext(default_endpoint)
-        self.effective_preferred_locations: List[str] = []
+        self.effective_preferred_locations: list[str] = []
         self.enable_multiple_writable_locations: bool = False
-        self.write_regional_routing_contexts: List[RegionalRoutingContext] = [self.default_regional_routing_context]
-        self.read_regional_routing_contexts: List[RegionalRoutingContext] = [self.default_regional_routing_context]
-        self.location_unavailability_info_by_endpoint: Dict[str, Dict[str, Set[EndpointOperationType]]] = {}
+        self.write_regional_routing_contexts: list[RegionalRoutingContext] = [self.default_regional_routing_context]
+        self.read_regional_routing_contexts: list[RegionalRoutingContext] = [self.default_regional_routing_context]
+        self.location_unavailability_info_by_endpoint: dict[str, dict[str, Set[EndpointOperationType]]] = {}
         self.last_cache_update_time_stamp: int = 0
-        self.account_read_regional_routing_contexts_by_location: Dict[str, RegionalRoutingContext] = {} # pylint: disable=name-too-long
-        self.account_write_regional_routing_contexts_by_location: Dict[str, RegionalRoutingContext] = {} # pylint: disable=name-too-long
-        self.account_locations_by_read_endpoints: Dict[str, str] = {} # pylint: disable=name-too-long
-        self.account_locations_by_write_endpoints: Dict[str, str] = {} # pylint: disable=name-too-long
-        self.account_write_locations: List[str] = []
-        self.account_read_locations: List[str] = []
+        self.account_read_regional_routing_contexts_by_location: dict[str, RegionalRoutingContext] = {} # pylint: disable=name-too-long
+        self.account_write_regional_routing_contexts_by_location: dict[str, RegionalRoutingContext] = {} # pylint: disable=name-too-long
+        self.account_locations_by_read_endpoints: dict[str, str] = {} # pylint: disable=name-too-long
+        self.account_locations_by_write_endpoints: dict[str, str] = {} # pylint: disable=name-too-long
+        self.account_write_locations: list[str] = []
+        self.account_read_locations: list[str] = []
         self.connection_policy: ConnectionPolicy = connection_policy
 
     def get_write_regional_routing_contexts(self):
@@ -176,7 +175,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def get_ordered_read_locations(self):
         return self.account_read_locations
 
-    def _get_configured_excluded_locations(self, request: RequestObject) -> List[str]:
+    def _get_configured_excluded_locations(self, request: RequestObject) -> list[str]:
         # If excluded locations were configured on request, use request level excluded locations.
         excluded_locations = request.excluded_locations
         if excluded_locations is None:
@@ -191,7 +190,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 excluded_locations.append(excluded_location)
         return excluded_locations
 
-    def _get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+    def _get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]:
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -207,7 +206,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Else, return all regional endpoints
         return self.get_read_regional_routing_contexts()
 
-    def _get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+    def _get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]:
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -398,8 +397,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     # can use multiple write locations, preferred locations list should be
                     # used for determining both read and write endpoints order.
                     for location in self.effective_preferred_locations:
-                        regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
-                            else None
+                        regional_endpoint = endpoints_by_location.get(location)
                         if regional_endpoint:
                             if self.is_endpoint_unavailable(regional_endpoint.get_primary(),
                                                             expected_available_operation):
@@ -407,10 +405,14 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                             else:
                                 regional_endpoints.append(regional_endpoint)
 
+                # If all preferred locations are unavailable, honor the preferred list by trying them anyway.
+                if not regional_endpoints and unavailable_endpoints:
+                    regional_endpoints.extend(unavailable_endpoints)
+
+                # If there are no preferred locations or none of the preferred locations are in the account,
+                # add the fallback endpoint.
                 if not regional_endpoints:
                     regional_endpoints.append(fallback_endpoint)
-
-                regional_endpoints.extend(unavailable_endpoints)
             else:
                 for location in orderedLocations:
                     if location and location in endpoints_by_location:

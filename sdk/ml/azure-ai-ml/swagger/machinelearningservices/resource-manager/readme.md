@@ -1,6 +1,6 @@
 # MachineLearningServices
 
-> see <https://aka.ms/autorest>
+> see [https://aka.ms/autorest](https://aka.ms/autorest)
 
 This is an autorest configuration file for the SDK vNext effort. It is a modified
 version of the file used for AzureML's ARM APIs, which is defined [here](https://github.com/Azure/azure-rest-api-specs/blob/master/specification/machinelearningservices/resource-manager/readme.md).
@@ -11,6 +11,7 @@ version of the file used for AzureML's ARM APIs, which is defined [here](https:/
 
 For instructions for regenerating the _restclient using these arguments, see the `docs/dev_setup.md` in the AML CLI repo.
 For a quick example, Run this command from azure-sdk-for-python/sdk/ml/azure-ai-ml/:
+
 ```
 python ./scripts/regenerate_restclient.py -a v2022-01-01-preview
 ```
@@ -31,7 +32,7 @@ openapi-type: arm
 
 These settings apply only when `--tag=model-dataplane` is specified on the command line.
 
-```yaml $(tag) == 'model-dataplane'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/stable/model-dataplane/swagger.json
 output-folder: $(python-sdks-folder)/model_dataplane
@@ -41,7 +42,7 @@ output-folder: $(python-sdks-folder)/model_dataplane
 
 These settings apply only when `--tag=dataset-dataplane` is specified on the command line.
 
-```yaml $(tag) == 'dataset-dataplane'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/stable/dataset-dataplane/swagger.json
 output-folder: $(python-sdks-folder)/dataset_dataplane
@@ -51,7 +52,7 @@ output-folder: $(python-sdks-folder)/dataset_dataplane
 
 These settings apply only when `--tag=v2022-05-01` is specified on the command line.
 
-```yaml $(tag) == 'v2022-05-01'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/stable/2022-05-01/mfe.json
   - Microsoft.MachineLearningServices/stable/2022-05-01/machineLearningServices.json
@@ -63,7 +64,7 @@ output-folder: $(python-sdks-folder)/v2022_05_01
 
 These settings apply only when `--tag=v2022-02-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2022-02-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2022-02-01-preview/mfe.json
 output-folder: $(python-sdks-folder)/v2022_02_01_preview
@@ -73,7 +74,7 @@ output-folder: $(python-sdks-folder)/v2022_02_01_preview
 
 These settings apply only when `--tag=v2022-01-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2022-01-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2022-01-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2022-01-01-preview/workspaceFeatures.json
@@ -84,7 +85,7 @@ output-folder: $(python-sdks-folder)/v2022_01_01_preview
 
 These settings apply only when `--v2020-09-01-dataplanepreview` is specified on the command line.
 
-```yaml $(tag) == 'v2020-09-01-dataplanepreview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2020-09-01-dataplanepreview/mfe.json
 output-folder: $(python-sdks-folder)/v2020_09_01_dataplanepreview
@@ -94,7 +95,7 @@ output-folder: $(python-sdks-folder)/v2020_09_01_dataplanepreview
 
 These settings apply only when `--v2021-10-01-dataplanepreview` is specified on the command line.
 
-```yaml $(tag) == 'v2021-10-01-dataplanepreview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2021-10-01-dataplanepreview/mfe.json
 output-folder: $(python-sdks-folder)/v2021_10_01_dataplanepreview
@@ -104,7 +105,7 @@ output-folder: $(python-sdks-folder)/v2021_10_01_dataplanepreview
 
 These settings apply only when `--tag=runhistory` is specified on the command line.
 
-```yaml $(tag) == 'runhistory'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/runhistory/run-history.json
 output-folder: $(python-sdks-folder)/runhistory
@@ -114,7 +115,7 @@ output-folder: $(python-sdks-folder)/runhistory
 
 These settings apply only when `--tag=workspace-dataplane` is specified on the command line.
 
-```yaml $(tag) == 'workspace-dataplane'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/workspace-dataplane/swagger.json
 output-folder: $(python-sdks-folder)/workspace_dataplane
@@ -124,7 +125,7 @@ output-folder: $(python-sdks-folder)/workspace_dataplane
 
 These settings apply only when `--tag=registry-discovery` is specified on the command line.
 
-```yaml $(tag) == 'registry-discovery'
+```yaml
 input-file:
     - Microsoft.MachineLearningServices/preview/registry-discovery/registry-discovery.json
 output-folder: $(python-sdks-folder)/registry_discovery
@@ -134,7 +135,7 @@ output-folder: $(python-sdks-folder)/registry_discovery
 
 These settings apply only when `--tag=v2022-10-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2022-10-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2022-10-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2022-10-01-preview/registries.json
@@ -147,7 +148,7 @@ output-folder: $(python-sdks-folder)/v2022_10_01_preview
 
 These settings apply only when `--tag=v2023-0201-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2023-02-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2023-02-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2023-02-01-preview/registries.json
@@ -160,7 +161,7 @@ output-folder: $(python-sdks-folder)/v2023_02_01_preview
 
 These settings apply only when `--tag=v2022-12-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2022-12-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2022-12-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2022-12-01-preview/registries.json
@@ -173,7 +174,7 @@ output-folder: $(python-sdks-folder)/v2022_12_01_preview
 
 These settings apply only when `--tag=v2023-04-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2023-04-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2023-04-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2023-04-01-preview/registries.json
@@ -186,7 +187,7 @@ output-folder: $(python-sdks-folder)/v2023_04_01_preview
 
 These settings apply only when `--tag=v2023-04-01` is specified on the command line.
 
-```yaml $(tag) == 'v2023-04-01'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/stable/2023-04-01/machineLearningServices.json
   - Microsoft.MachineLearningServices/stable/2023-04-01/registries.json
@@ -199,7 +200,7 @@ output-folder: $(python-sdks-folder)/v2023_04_01
 
 These settings apply only when `--tag=v2023-06-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2023-06-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2023-06-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2023-06-01-preview/registries.json
@@ -213,7 +214,7 @@ output-folder: $(python-sdks-folder)/v2023_06_01_preview
 
 These settings apply only when `--tag=v2023-08-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2023-08-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2023-08-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2023-08-01-preview/registries.json
@@ -227,7 +228,7 @@ output-folder: $(python-sdks-folder)/v2023_08_01_preview
 
 These settings apply only when `--tag=v2023-10-01` is specified on the command line.
 
-```yaml $(tag) == 'v2023-10-01'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/stable/2023-10-01/machineLearningServices.json
   - Microsoft.MachineLearningServices/stable/2023-10-01/registries.json
@@ -240,7 +241,7 @@ output-folder: $(python-sdks-folder)/v2023_10_01
 
 These settings apply only when `--tag=v2024-01-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2024-01-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/registries.json
@@ -254,7 +255,7 @@ output-folder: $(python-sdks-folder)/v2024_01_01_preview
 
 These settings apply only when `--tag=v2024-04-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2024-04-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2024-04-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2024-04-01-preview/registries.json
@@ -268,7 +269,7 @@ output-folder: $(python-sdks-folder)/v2024_04_01_preview
 
 These settings apply only when `--tag=v2024-07-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2024-07-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2024-07-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2024-07-01-preview/registries.json
@@ -282,7 +283,7 @@ output-folder: $(python-sdks-folder)/v2024_07_01_preview
 
 These settings apply only when `--tag=v2024-10-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2024-10-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2024-10-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2024-10-01-preview/registries.json
@@ -296,7 +297,7 @@ output-folder: $(python-sdks-folder)/v2024_10_01_preview
 
 These settings apply only when `--tag=v2025-01-01-preview` is specified on the command line.
 
-```yaml $(tag) == 'v2025-01-01-preview'
+```yaml
 input-file:
   - Microsoft.MachineLearningServices/preview/2025-01-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2025-01-01-preview/registries.json
@@ -306,11 +307,21 @@ input-file:
 output-folder: $(python-sdks-folder)/v2025_01_01_preview
 ```
 
+### Tag: v2024-04-01-dataplanepreview
+
+These settings apply only when `--tag=v2024-04-01-dataplanepreview` is specified on the command line.
+
+```yaml $(tag) == 'v2024-04-01-dataplanepreview'
+input-file:
+  - Microsoft.MachineLearningServices/preview/2024-04-01-dataplanepreview/azure-ai-assets.json
+output-folder: $(python-sdks-folder)/v2024_04_01_dataplanepreview
+```
+
 ### Tag: multiapi
 
 These settings apply only when `--multiapi` is specified on the command line.
 
-```yaml $(multiapi)
+```yaml
 clear-output-folder: true
 batch:
   - tag: model-dataplane
@@ -340,7 +351,7 @@ batch:
 
 ### Multi API Script
 
-```yaml $(multiapiscript)
+```yaml
 clear-output-folder: false
 output-folder: $(python-sdks-folder)
 perform-load: false
@@ -355,7 +366,7 @@ perform-load: false
 This section describes what SDK should be generated by the automatic system.
 This is not used by Autorest itself.
 
-```yaml $(swagger-to-sdk)
+```yaml
 swagger-to-sdk:
   - repo: azure-sdk-for-net
   - repo: azure-sdk-for-go
@@ -370,7 +381,7 @@ swagger-to-sdk:
 These settings apply only when `--csharp` is specified on the command line.
 Please also specify `--csharp-sdks-folder=<path to "SDKs" directory of your azure-sdk-for-net clone>`.
 
-```yaml $(csharp)
+```yaml
 csharp:
   azure-arm: true
   license-header: MICROSOFT_MIT_NO_VERSION
@@ -384,7 +395,7 @@ csharp:
 These settings apply only when `--java` is specified on the command line.
 Please also specify `--azure-libraries-for-java-folder=<path to the root directory of your azure-libraries-for-java clone>`.
 
-```yaml $(java)
+```yaml
 azure-arm: true
 fluent: true
 namespace: com.microsoft.azure.management.machinelearning.services
@@ -395,7 +406,7 @@ output-folder: $(azure-libraries-for-java-folder)/azure-mgmt-machinelearning/ser
 
 #### Java multi-api
 
-```yaml $(java) && $(multiapi)
+```yaml
 batch:
   - tag: package-2020-06-01
 ```
@@ -405,7 +416,7 @@ batch:
 These settings apply only when `--tag=package-2020-06-01 --java` is specified on the command line.
 Please also specify `--azure-libraries-for-java=<path to the root directory of your azure-sdk-for-java clone>`.
 
-```yaml $(tag) == 'package-2020-06-01' && $(java) && $(multiapi)
+```yaml
 java:
   namespace: com.microsoft.azure.management.machinelearningservices.v2020_06_01
   output-folder: $(azure-libraries-for-java-folder)/sdk/machinelearningservices/mgmt-v2020_06_01
@@ -419,7 +430,7 @@ AutoRest V3 generators require the use of `--tag=all-api-versions` to select api
 
 This block is updated by an automatic script. Edits may be lost!
 
-```yaml $(tag) == 'all-api-versions' /* autogenerated */
+```yaml
 # include the azure profile definitions from the standard location
 require: $(this-folder)/../../../profiles/readme.md
 
@@ -442,7 +453,8 @@ input-file:
 If there are files that should not be in the `all-api-versions` set,
 uncomment the `exclude-file` section below and add the file paths.
 
-```yaml $(tag) == 'all-api-versions'
+```yaml
 #exclude-file:
 #  - $(this-folder)/Microsoft.Example/stable/2010-01-01/somefile.json
 ```
+

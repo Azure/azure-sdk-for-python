@@ -5,10 +5,12 @@ import inspect
 import contextlib
 import json
 import logging
+import math
 import os
 import re
 import tempfile
 import json
+import time
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
@@ -20,7 +22,6 @@ from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from .._constants import (
@@ -32,8 +33,10 @@ from .._constants import (
     _InternalEvaluationMetrics,
     BINARY_AGGREGATE_SUFFIX,
     DEFAULT_OAI_EVAL_RUN_NAME,
+    EVALUATION_EVENT_NAME,
+    _EvaluatorMetricMapping,
 )
-from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
+from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig, AppInsightsConfig
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
@@ -283,6 +286,51 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     return results
 
 
+def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
+    """Identify token count columns from known SDK metrics that should be excluded from aggregation.
+
+    Token counts from custom evaluators are not excluded, only those from EvaluationMetrics
+    and _InternalEvaluationMetrics.
+
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: List of column names to exclude from aggregation.
+    :rtype: List[str]
+    """
+    # Get all metric values from EvaluationMetrics class
+    evaluation_metrics_values = [
+        getattr(EvaluationMetrics, attr)
+        for attr in dir(EvaluationMetrics)
+        if not attr.startswith("_") and isinstance(getattr(EvaluationMetrics, attr), str)
+    ]
+
+    # Get all metric values from _InternalEvaluationMetrics class
+    internal_metrics_values = [
+        getattr(_InternalEvaluationMetrics, attr)
+        for attr in dir(_InternalEvaluationMetrics)
+        if not attr.startswith("_") and isinstance(getattr(_InternalEvaluationMetrics, attr), str)
+    ]
+
+    # Combine all known metrics
+    all_known_metrics = evaluation_metrics_values + internal_metrics_values
+
+    # Find token count columns that belong to known metrics
+    token_count_cols = [
+        col
+        for col in df.columns
+        if (
+            any(
+                col.endswith(f"{metric}_prompt_tokens")
+                or col.endswith(f"{metric}_completion_tokens")
+                or col.endswith(f"{metric}_total_tokens")
+                for metric in all_known_metrics
+            )
+        )
+    ]
+
+    return token_count_cols
+
+
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
@@ -314,6 +362,10 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     label_cols, label_defect_rates = _aggregate_label_defect_metrics(df)
     handled_columns.extend(label_cols)
     defect_rates.update(label_defect_rates)
+
+    # Exclude token count columns from aggregation for known SDK metrics
+    token_count_cols = _get_token_count_columns_to_exclude(df)
+    handled_columns.extend(token_count_cols)
 
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
@@ -793,7 +845,7 @@ def evaluate(
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
-            return _evaluate(
+            results = _evaluate(
                 evaluation_name=evaluation_name,
                 target=target,
                 data=data,
@@ -805,6 +857,7 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
+            return results
     except Exception as e:
         # Handle multiprocess bootstrap error
         bootstrap_error = (
@@ -900,6 +953,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     results_df = pd.DataFrame()
     metrics: Dict[str, float] = {}
     eval_run_info_list: List[OAIEvalRunCreationInfo] = []
+    eval_run_summary_dict = {}
 
     # Start OAI eval runs if any graders are present.
     need_oai_run = len(graders) > 0
@@ -934,6 +988,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             got_local_results = True
             # TODO figure out how to update this printing to include OAI results?
             _print_summary(per_evaluator_results)
+            eval_run_summary_dict = {name: result["run_summary"] for name, result in per_evaluator_results.items()}
+            LOGGER.info(f"run_summary: \r\n{json.dumps(eval_run_summary_dict, indent=4)}")
         except EvaluationException as e:
             if need_get_oai_results:
                 # If there are OAI graders, we only print a warning on local failures.
@@ -981,11 +1037,314 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     result_df_dict = results_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
+    # _add_aoai_structured_results_to_results(result, LOGGER, kwargs.get("eval_meta_data"))
+
+    eval_id: Optional[str] = kwargs.get("_eval_id")
+    eval_run_id: Optional[str] = kwargs.get("_eval_run_id")
+    eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("_eval_meta_data")
+    if kwargs.get("_convert_to_aoai_evaluation_result", False):
+        _convert_results_to_aoai_evaluation_results(
+            result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data
+        )
+        if app_insights_configuration := kwargs.get("_app_insights_configuration"):
+            emit_eval_result_events_to_app_insights(
+                app_insights_configuration, result["_evaluation_results_list"], evaluator_config
+            )
 
     if output_path:
         _write_output(output_path, result)
-
     return result
+
+
+def _build_internal_log_attributes(
+    event_data: Dict[str, Any],
+    metric_name: str,
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]],
+    internal_log_attributes: Dict[str, str],
+) -> Dict[str, str]:
+    """
+    Build internal log attributes for OpenTelemetry logging.
+
+    :param event_data: The event data containing threshold and name information
+    :type event_data: Dict[str, Any]
+    :param metric_name: The name of the metric being evaluated
+    :type metric_name: str
+    :param evaluator_config: Configuration for evaluators
+    :type evaluator_config: Optional[Dict[str, EvaluatorConfig]]
+    :return: Dictionary of internal log attributes
+    :rtype: Dict[str, str]
+    """
+    # Add threshold if present
+    if event_data.get("threshold"):
+        internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
+
+    # Add testing criteria details if present
+    testing_criteria_name = event_data.get("name")
+    if testing_criteria_name:
+        internal_log_attributes["gen_ai.evaluation.testing_criteria.name"] = testing_criteria_name
+
+        # Get evaluator definition details
+        if evaluator_config and testing_criteria_name in evaluator_config:
+            testing_criteria_config = evaluator_config[testing_criteria_name]
+
+            if evaluator_name := testing_criteria_config.get("_evaluator_name"):
+                internal_log_attributes["gen_ai.evaluator.name"] = str(evaluator_name)
+
+            if evaluator_version := testing_criteria_config.get("_evaluator_version"):
+                internal_log_attributes["gen_ai.evaluator.version"] = str(evaluator_version)
+
+            if evaluator_id := testing_criteria_config.get("_evaluator_id"):
+                internal_log_attributes["gen_ai.evaluator.id"] = str(evaluator_id)
+
+            if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
+                metric_config_detail = evaluator_definition.get("metrics").get(metric_name)
+
+                if metric_config_detail:
+                    if metric_config_detail.get("min_value") is not None:
+                        internal_log_attributes["gen_ai.evaluation.min_value"] = str(metric_config_detail["min_value"])
+                    if metric_config_detail.get("max_value") is not None:
+                        internal_log_attributes["gen_ai.evaluation.max_value"] = str(metric_config_detail["max_value"])
+
+    return internal_log_attributes
+
+
+def _log_events_to_app_insights(
+    otel_logger,
+    events: List[Dict[str, Any]],
+    log_attributes: Dict[str, Any],
+    data_source_item: Optional[Dict[str, Any]] = None,
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
+) -> None:
+    """
+    Log independent events directly to App Insights using OpenTelemetry logging.
+    No spans are created - events are sent as pure log records.
+
+    :param otel_logger: OpenTelemetry logger instance
+    :type otel_logger: Logger
+    :param events: List of event data dictionaries to log
+    :type events: List[Dict[str, Any]]
+    :param log_attributes: Attributes dict to use for each event (already includes extra_attributes if present)
+    :type log_attributes: Dict[str, Any]
+    :param data_source_item: Data source item containing trace, response, and agent information
+    :type data_source_item: Optional[Dict[str, Any]]
+    """
+
+    from opentelemetry import trace
+    from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
+
+    try:
+        # Get the trace_id and other context from data source item
+        trace_id = None
+        span_id = None
+        response_id = None
+        conversation_id = None
+        previous_response_id = None
+        agent_id = None
+        agent_version = None
+        agent_name = None
+        if data_source_item:
+            for key, value in data_source_item.items():
+                if key.endswith("trace_id") and value and isinstance(value, str):
+                    # Remove dashes if present
+                    trace_id_str = str(value).replace("-", "").lower()
+                    if len(trace_id_str) == 32:  # Valid trace_id length
+                        trace_id = int(trace_id_str, 16)
+                elif key == "previous_response_id" and value and isinstance(value, str):
+                    previous_response_id = value
+                elif key == "response_id" and value and isinstance(value, str):
+                    response_id = value
+                elif key == "conversation_id" and value and isinstance(value, str):
+                    conversation_id = value
+                elif key == "agent_id" and value and isinstance(value, str):
+                    agent_id = value
+                elif key.endswith("span_id") and value and isinstance(value, str):
+                    # Remove dashes if present and convert to int
+                    span_id_str = str(value).replace("-", "").lower()
+                    if len(span_id_str) == 16:  # Valid span_id length (64-bit = 16 hex chars)
+                        span_id = int(span_id_str, 16)
+                elif key == "agent_version" and value and isinstance(value, str):
+                    agent_version = value
+                elif key == "agent_name" and value and isinstance(value, str):
+                    agent_name = value
+
+        # Log each event as a separate log record
+        for i, event_data in enumerate(events):
+            try:
+                # Prepare log record attributes with specific mappings
+                # The standard attributes are already in https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md#event-eventgen_aievaluationresult
+                metric_name = event_data.get("metric")
+                standard_log_attributes = {}
+                standard_log_attributes["microsoft.custom_event.name"] = EVALUATION_EVENT_NAME
+                standard_log_attributes["gen_ai.evaluation.name"] = metric_name
+                if event_data.get("score") is not None:
+                    standard_log_attributes["gen_ai.evaluation.score.value"] = event_data.get("score")
+                if event_data.get("label") is not None:
+                    standard_log_attributes["gen_ai.evaluation.score.label"] = event_data.get("label")
+
+                # Internal proposed attributes
+                # Put it in internal property bag for now, will be expanded if we got sign-off to Otel standard later.
+                internal_log_attributes = _build_internal_log_attributes(
+                    event_data, metric_name, evaluator_config, log_attributes
+                )
+
+                # Optional field that may not always be present
+                if "reason" in event_data:
+                    standard_log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
+
+                # Handle error from sample if present
+                # Put the error message in error.type to follow OTel semantic conventions
+                error = event_data.get("sample", {}).get("error", {}).get("message", None)
+                if error:
+                    standard_log_attributes["error.type"] = error
+
+                # Handle redteam attack properties if present
+                if "properties" in event_data:
+                    properties = event_data["properties"]
+
+                    if "attack_success" in properties:
+                        internal_log_attributes["gen_ai.redteam.attack.success"] = str(properties["attack_success"])
+
+                    if "attack_technique" in properties:
+                        internal_log_attributes["gen_ai.redteam.attack.technique"] = str(properties["attack_technique"])
+
+                    if "attack_complexity" in properties:
+                        internal_log_attributes["gen_ai.redteam.attack.complexity"] = str(
+                            properties["attack_complexity"]
+                        )
+
+                    if "attack_success_threshold" in properties:
+                        internal_log_attributes["gen_ai.redteam.attack.success_threshold"] = str(
+                            properties["attack_success_threshold"]
+                        )
+
+                # Add data source item attributes if present
+                if response_id:
+                    standard_log_attributes["gen_ai.response.id"] = response_id
+                if conversation_id:
+                    standard_log_attributes["gen_ai.conversation.id"] = conversation_id
+                if previous_response_id:
+                    internal_log_attributes["gen_ai.previous.response.id"] = previous_response_id
+                if agent_id:
+                    standard_log_attributes["gen_ai.agent.id"] = agent_id
+                if agent_name:
+                    standard_log_attributes["gen_ai.agent.name"] = agent_name
+                if agent_version:
+                    internal_log_attributes["gen_ai.agent.version"] = agent_version
+
+                # Combine standard and internal attributes, put internal under the properties bag
+                standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
+                # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
+                standard_log_attributes["http.client_ip"] = "0.0.0.0"
+
+                # Create context with trace_id and span_id if present (for distributed tracing correlation)
+                ctx = None
+                if trace_id:
+                    span_context = SpanContext(
+                        trace_id=trace_id,
+                        span_id=span_id if span_id else 0,  # Use extracted span_id or 0 if not available
+                        is_remote=False,
+                        trace_flags=TraceFlags(0x01),
+                    )
+                    span = NonRecordingSpan(span_context)
+                    ctx = trace.set_span_in_context(span)
+
+                otel_logger.emit(
+                    timestamp=time.time_ns(),
+                    observed_timestamp=time.time_ns(),
+                    body=EVALUATION_EVENT_NAME,
+                    attributes=standard_log_attributes,
+                    context=ctx,
+                )
+
+            except Exception as e:
+                LOGGER.warning(f"Failed to log event {i}: {e}")
+
+    except Exception as e:
+        LOGGER.error(f"Failed to log events to App Insights: {e}")
+
+
+def emit_eval_result_events_to_app_insights(
+    app_insights_config: AppInsightsConfig,
+    results: List[Dict],
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
+) -> None:
+    """
+    Emit evaluation result events to App Insights using OpenTelemetry logging.
+    Each result is logged as an independent log record, potentially including trace context.
+
+    :param app_insights_config: App Insights configuration containing connection string
+    :type app_insights_config: AppInsightsConfig
+    :param results: List of evaluation results to log
+    :type results: List[Dict]
+    """
+
+    from opentelemetry import _logs
+    from opentelemetry.sdk._logs import LoggerProvider
+    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from opentelemetry.sdk.resources import Resource
+    from opentelemetry.semconv.resource import ResourceAttributes
+    from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+
+    if not results:
+        LOGGER.debug("No results to log to App Insights")
+        return
+
+    try:
+        # Configure OpenTelemetry logging with anonymized Resource attributes
+
+        # Create a resource with minimal attributes to prevent sensitive data collection
+        # SERVICE_INSTANCE_ID maps to cloud_RoleInstance in Azure Monitor and prevents
+        # Azure Monitor from auto-detecting the device hostname
+        anonymized_resource = Resource.create(
+            {
+                ResourceAttributes.SERVICE_NAME: "unknown",
+                ResourceAttributes.SERVICE_INSTANCE_ID: "unknown",
+            }
+        )
+
+        logger_provider = LoggerProvider(resource=anonymized_resource)
+        _logs.set_logger_provider(logger_provider)
+
+        # Create Azure Monitor log exporter
+        azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
+
+        # Add the Azure Monitor exporter to the logger provider
+        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
+
+        # Create a logger from OUR configured logger_provider (not the global one)
+        # This ensures the logger uses our anonymized resource
+        otel_logger = logger_provider.get_logger(__name__)
+
+        # Initialize base log attributes with extra_attributes if present, otherwise empty dict
+        base_log_attributes = app_insights_config.get("extra_attributes", {})
+
+        # Add AppInsights config attributes with proper semantic convention mappings
+        if "run_type" in app_insights_config:
+            base_log_attributes["gen_ai.evaluation.azure_ai_type"] = str(app_insights_config["run_type"])
+        if "schedule_type" in app_insights_config:
+            base_log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(app_insights_config["schedule_type"])
+        if "run_id" in app_insights_config:
+            base_log_attributes["gen_ai.evaluation.run.id"] = str(app_insights_config["run_id"])
+        if "project_id" in app_insights_config:
+            base_log_attributes["gen_ai.azure_ai_project.id"] = str(app_insights_config["project_id"])
+
+        for result in results:
+            # Create a copy of base attributes for this result's events
+            log_attributes = base_log_attributes.copy()
+
+            _log_events_to_app_insights(
+                otel_logger=otel_logger,
+                events=result["results"],
+                log_attributes=log_attributes,
+                data_source_item=result["datasource_item"] if "datasource_item" in result else None,
+                evaluator_config=evaluator_config,
+            )
+        # Force flush to ensure events are sent
+        logger_provider.force_flush()
+        LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+
+    except Exception as e:
+        LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")
 
 
 def _preprocess_data(
@@ -1070,7 +1429,7 @@ def _preprocess_data(
         batch_run_data = input_data_df
     elif client_type == "pf_client":
         batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
-        # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
+        # Ensure the absolute path is Re to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         batch_run_data = os.path.abspath(data)
     elif client_type == "code_client":
@@ -1406,3 +1765,634 @@ def _turn_error_logs_into_exception(log_path: str) -> None:
         category=ErrorCategory.FAILED_EXECUTION,
         blame=ErrorBlame.UNKNOWN,
     )
+
+
+def _convert_results_to_aoai_evaluation_results(
+    results: EvaluationResult,
+    logger: logging.Logger,
+    eval_id: Optional[str] = None,
+    eval_run_id: Optional[str] = None,
+    evaluators: Dict[str, Union[Callable, AzureOpenAIGrader]] = None,
+    eval_run_summary: Optional[Dict[str, Any]] = None,
+    eval_meta_data: Optional[Dict[str, Any]] = None,
+) -> None:
+    """
+    Convert evaluation results to AOAI evaluation results format.
+
+    Each row of input results.rows looks like:
+    {"inputs.query":"What is the capital of France?","inputs.context":"France is in Europe",
+     "inputs.generated_response":"Paris is the capital of France.","inputs.ground_truth":"Paris is the capital of France.",
+     "outputs.F1_score.f1_score":1.0,"outputs.F1_score.f1_result":"pass","outputs.F1_score.f1_threshold":0.5}
+
+    Convert each row into new RunOutputItem object with results array.
+
+    :param results: The evaluation results to convert
+    :type results: EvaluationResult
+    :param eval_meta_data: The evaluation metadata, containing eval_id, eval_run_id, and testing_criteria
+    :type eval_meta_data: Dict[str, Any]
+    :param logger: Logger instance
+    :type logger: logging.Logger
+    :return: EvaluationResult with converted evaluation results in AOAI format
+    :rtype: EvaluationResult
+    """
+
+    if evaluators is None:
+        return
+
+    # Get the testing_criteria_name and testing_criteria_type from evaluators
+    testing_criteria_name_types_metrics: Optional[Dict[str, Any]] = {}
+    criteria_name_types_from_meta: Optional[Dict[str, str]] = {}
+    if eval_meta_data and "testing_criteria" in eval_meta_data:
+        testing_criteria_list: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
+        if testing_criteria_list is not None:
+            for criteria in testing_criteria_list:
+                criteria_name = criteria.get("name")
+                criteria_type = criteria.get("type")
+                if criteria_name is not None and criteria_type is not None:
+                    criteria_name_types_from_meta[criteria_name] = criteria
+
+    for criteria_name, evaluator in evaluators.items():
+        criteria_type = None
+        metrics = []
+        if criteria_name in criteria_name_types_from_meta:
+            criteria_type = criteria_name_types_from_meta[criteria_name].get("type", None)
+            evaluator_name = criteria_name_types_from_meta[criteria_name].get("evaluator_name", None)
+            if evaluator_name:
+                if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+                    evaluator_name = evaluator_name.replace("builtin.", "")
+                metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
+                if metrics_mapped and len(metrics_mapped) > 0:
+                    metrics.extend(metrics_mapped)
+            else:
+                metrics.append(criteria_name)
+        elif isinstance(evaluator, AzureOpenAIGrader):
+            criteria_type = evaluator._type  # pylint: disable=protected-access
+            metrics.append(criteria_name)
+        elif isinstance(evaluator, EvaluatorBase):
+            criteria_type = "azure_ai_evaluator"
+            evaluator_class_name = evaluator.__class__.__name__
+            eval_name = _EvaluatorMetricMapping.EVAL_CLASS_NAME_MAP.get(evaluator_class_name, None)
+            if eval_name:
+                metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(eval_name, [])
+                if metrics_mapped and len(metrics_mapped) > 0:
+                    metrics.extend(metrics_mapped)
+            else:
+                metrics.append(criteria_name)
+        else:
+            criteria_type = "unknown"
+            metrics.append(criteria_name)
+        testing_criteria_name_types_metrics[criteria_name] = {"type": criteria_type, "metrics": metrics}
+
+    created_time = int(time.time())
+    converted_rows = []
+
+    for row_idx, row in enumerate(results.get("rows", [])):
+        # Group outputs by test criteria name
+        criteria_groups = {criteria: {} for criteria in testing_criteria_name_types_metrics.keys()}
+        input_groups = {}
+        top_sample = {}
+        for key, value in row.items():
+            if key.startswith("outputs."):
+                # Parse key: outputs.<test-criteria-name>.<metric>
+                parts = key.split(".", 2)  # Split into max 3 parts: ['outputs', '<criteria-name>', '<metric>']
+                if len(parts) >= 3:
+                    criteria_name = parts[1]
+                    metric_name = parts[2]
+
+                    if criteria_name not in criteria_groups:
+                        criteria_groups[criteria_name] = {}
+
+                    criteria_groups[criteria_name][metric_name] = value
+            elif key.startswith("inputs."):
+                input_key = key.replace("inputs.", "")
+                if input_key not in input_groups:
+                    input_groups[input_key] = value
+
+        # Convert each criteria group to RunOutputItem result
+        run_output_results = []
+        for criteria_name, metrics in criteria_groups.items():
+            # Extract metrics for this criteria
+            expected_metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
+            criteria_type = testing_criteria_name_types_metrics.get(criteria_name, {}).get("type", "unknown")
+            result_per_metric = {}
+            # Find score - look for various score patterns
+            for metric_key, metric_value in metrics.items():
+                if metric_key.endswith("_score") or metric_key == "score":
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"score": metric_value}
+                    else:
+                        result_per_metric[metric]["score"] = metric_value
+                    _append_indirect_attachments_to_results(result_per_metric, "score", metric, metric_value)
+                if metric_key == "passed":
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"passed": metric_value}
+                    else:
+                        result_per_metric[metric]["passed"] = metric_value
+                    _append_indirect_attachments_to_results(result_per_metric, "passed", metric, metric_value)
+                elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    label = metric_value
+                    passed = (
+                        True if (str(metric_value).lower() == "pass" or str(metric_value).lower() == "true") else False
+                    )
+                    if metric not in result_per_metric:
+                        if criteria_type == "azure_ai_evaluator":
+                            result_per_metric[metric] = {"label": label, "passed": passed}
+                        else:
+                            result_per_metric[metric] = {"label": label}
+                    else:
+                        result_per_metric[metric]["label"] = metric_value
+                        if criteria_type == "azure_ai_evaluator":
+                            result_per_metric[metric]["passed"] = passed
+                    _append_indirect_attachments_to_results(result_per_metric, "label", metric, label)
+                    if criteria_type == "azure_ai_evaluator":
+                        _append_indirect_attachments_to_results(result_per_metric, "passed", metric, passed)
+                elif (
+                    metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")
+                ) or metric_key == "reason":
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"reason": metric_value}
+                    else:
+                        result_per_metric[metric]["reason"] = metric_value
+                    _append_indirect_attachments_to_results(result_per_metric, "reason", metric, metric_value)
+                elif metric_key.endswith("_threshold") or metric_key == "threshold":
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"threshold": metric_value}
+                    else:
+                        result_per_metric[metric]["threshold"] = metric_value
+                    _append_indirect_attachments_to_results(result_per_metric, "threshold", metric, metric_value)
+                elif metric_key == "sample":
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": metric_value}
+                    else:
+                        result_per_metric[metric]["sample"] = metric_value
+                    _append_indirect_attachments_to_results(result_per_metric, "sample", metric, metric_value)
+                elif metric_key.endswith("_finish_reason"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": {"finish_reason": metric_value}}
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = {"finish_reason": metric_value}
+                    elif (
+                        metric in result_per_metric
+                        and "sample" in result_per_metric[metric]
+                        and "finish_reason" not in result_per_metric[metric]["sample"]
+                    ):
+                        result_per_metric[metric]["sample"]["finish_reason"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "finish_reason"
+                    )
+                elif metric_key.endswith("_model"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": {"model": metric_value}}
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = {"model": metric_value}
+                    elif (
+                        metric in result_per_metric
+                        and "sample" in result_per_metric[metric]
+                        and "model" not in result_per_metric[metric]["sample"]
+                    ):
+                        result_per_metric[metric]["sample"]["model"] = metric_value
+                    _append_indirect_attachments_to_results(result_per_metric, "sample", metric, metric_value, "model")
+                elif metric_key.endswith("_sample_input"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    input_metric_val_json: Optional[List[Dict[str, Any]]] = []
+                    try:
+                        input_metric_val_json = json.loads(metric_value)
+                    except Exception as e:
+                        logger.warning(f"Failed to parse _sample_input value as JSON: {e}")
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": {"input": input_metric_val_json}}
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = {"input": input_metric_val_json}
+                    elif (
+                        metric in result_per_metric
+                        and "sample" in result_per_metric[metric]
+                        and "input" not in result_per_metric[metric]["sample"]
+                    ):
+                        result_per_metric[metric]["sample"]["input"] = input_metric_val_json
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, input_metric_val_json, "input"
+                    )
+                elif metric_key.endswith("_sample_output"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    output_metric_val_json: Optional[List[Dict[str, Any]]] = []
+                    try:
+                        output_metric_val_json = json.loads(metric_value)
+                    except Exception as e:
+                        logger.warning(f"Failed to parse _sample_output value as JSON: {e}")
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": {"output": output_metric_val_json}}
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = {"output": output_metric_val_json}
+                    elif (
+                        metric in result_per_metric
+                        and "sample" in result_per_metric[metric]
+                        and "output" not in result_per_metric[metric]["sample"]
+                    ):
+                        result_per_metric[metric]["sample"]["output"] = output_metric_val_json
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, output_metric_val_json, "output"
+                    )
+                elif metric_key.endswith("_total_tokens"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": {"usage": {"total_tokens": metric_value}}}
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = {"usage": {"total_tokens": metric_value}}
+                    elif (
+                        metric in result_per_metric
+                        and "sample" in result_per_metric[metric]
+                        and "usage" not in result_per_metric[metric]["sample"]
+                    ):
+                        result_per_metric[metric]["sample"]["usage"] = {"total_tokens": metric_value}
+                    else:
+                        result_per_metric[metric]["sample"]["usage"]["total_tokens"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "usage", "total_tokens"
+                    )
+                elif metric_key.endswith("_prompt_tokens"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": {"usage": {"prompt_tokens": metric_value}}}
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = {"usage": {"prompt_tokens": metric_value}}
+                    elif (
+                        metric in result_per_metric
+                        and "sample" in result_per_metric[metric]
+                        and "usage" not in result_per_metric[metric]["sample"]
+                    ):
+                        result_per_metric[metric]["sample"]["usage"] = {"prompt_tokens": metric_value}
+                    else:
+                        result_per_metric[metric]["sample"]["usage"]["prompt_tokens"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "usage", "prompt_tokens"
+                    )
+                elif metric_key.endswith("_completion_tokens"):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    if metric not in result_per_metric:
+                        result_per_metric[metric] = {"sample": {"usage": {"completion_tokens": metric_value}}}
+                    elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
+                        result_per_metric[metric]["sample"] = {"usage": {"completion_tokens": metric_value}}
+                    elif (
+                        metric in result_per_metric
+                        and "sample" in result_per_metric[metric]
+                        and "usage" not in result_per_metric[metric]["sample"]
+                    ):
+                        result_per_metric[metric]["sample"]["usage"] = {"completion_tokens": metric_value}
+                    else:
+                        result_per_metric[metric]["sample"]["usage"]["completion_tokens"] = metric_value
+                    _append_indirect_attachments_to_results(
+                        result_per_metric, "sample", metric, metric_value, "usage", "completion_tokens"
+                    )
+                elif not any(
+                    metric_key.endswith(suffix)
+                    for suffix in [
+                        "_result",
+                        "_reason",
+                        "_threshold",
+                        "_label",
+                        "_score",
+                        "_model",
+                        "_finish_reason",
+                        "_sample_input",
+                        "_sample_output",
+                        "_total_tokens",
+                        "_prompt_tokens",
+                        "_completion_tokens",
+                    ]
+                ):
+                    metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    # If no score found yet and this doesn't match other patterns, use as score
+                    if metric_key == metric and metric not in result_per_metric:
+                        result_per_metric[metric] = {"score": metric_value}
+                    elif metric_key == metric and result_per_metric[metric].get("score", None) is None:
+                        result_per_metric[metric]["score"] = metric_value
+
+            for metric, metric_values in result_per_metric.items():
+                score = metric_values.get("score", None)
+                label = metric_values.get("label", None)
+                reason = metric_values.get("reason", None)
+                threshold = metric_values.get("threshold", None)
+                passed = metric_values.get("passed", None)
+                sample = metric_values.get("sample", None)
+
+                # Create result object for this criteria
+                result_obj = {
+                    "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
+                        "type", "azure_ai_evaluator"
+                    ),
+                    "name": criteria_name,  # Use criteria name as name
+                    "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
+                }
+                # Add optional fields
+                if (
+                    metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"]
+                ):
+                    copy_label = label
+                    if copy_label is not None and isinstance(copy_label, bool) and copy_label == True:
+                        label = "fail"
+                        score = 0.0
+                        passed = False
+                    else:
+                        label = "pass"
+                        score = 1.0
+                        passed = True
+                result_obj["score"] = (
+                    score if not (score is None or (isinstance(score, float) and math.isnan(score))) else None
+                )
+                result_obj["label"] = label
+                result_obj["reason"] = reason
+                result_obj["threshold"] = threshold
+                result_obj["passed"] = passed
+
+                if sample is not None:
+                    result_obj["sample"] = sample
+                    top_sample = sample  # Save top sample for the row
+                run_output_results.append(result_obj)
+
+            if (
+                eval_run_summary
+                and criteria_name in eval_run_summary
+                and isinstance(eval_run_summary[criteria_name], dict)
+                and "error_code" in eval_run_summary[criteria_name]
+            ) and eval_run_summary[criteria_name].get("error_code", None) is not None:
+                error_info = (
+                    {
+                        "code": eval_run_summary[criteria_name].get("error_code", None),
+                        "message": eval_run_summary[criteria_name].get("error_message", None),
+                    }
+                    if eval_run_summary[criteria_name].get("error_code", None) is not None
+                    else None
+                )
+                sample = {"error": error_info} if error_info is not None else None
+                # Create result object for this criteria
+                metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
+                for metric in metrics:
+                    result_obj = {
+                        "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
+                            "type", "azure_ai_evaluator"
+                        ),
+                        "name": criteria_name,  # Use criteria name as name
+                        "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
+                        "score": None,
+                        "label": None,
+                        "reason": None,
+                        "threshold": None,
+                        "passed": None,
+                        "sample": sample,
+                    }
+                    run_output_results.append(result_obj)
+
+        # Create RunOutputItem structure
+        run_output_item = {
+            "object": "eval.run.output_item",
+            "id": f"{row_idx+1}",
+            "run_id": eval_run_id,
+            "eval_id": eval_id,
+            "created_at": created_time,
+            "datasource_item_id": row_idx,
+            "datasource_item": input_groups,
+            "results": run_output_results,
+            "status": "completed" if len(run_output_results) > 0 else "error",
+        }
+
+        run_output_item["sample"] = top_sample
+
+        converted_rows.append(run_output_item)
+
+    # Create converted results maintaining the same structure
+    results["_evaluation_results_list"] = converted_rows
+    logger.info(
+        f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
+    )
+    # Calculate summary statistics
+    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
+    results["_evaluation_summary"] = evaluation_summary
+    logger.info(
+        f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
+    )
+
+
+def _append_indirect_attachments_to_results(
+    current_result_dict: Dict[str, Any],
+    result_name: str,
+    metric: str,
+    metric_value: Any,
+    nested_result_name: Optional[str] = None,
+    secondnested_result_name: Optional[str] = None,
+) -> None:
+    """
+    Append indirect attachments to the current result dictionary.
+
+    :param current_result_dict: The current result dictionary to update
+    :type current_result_dict: Dict[str, Any]
+    :param result_name: The result name
+    :type result_name: str
+    :param metric: The metric name
+    :type metric: str
+    :param metric_value: The value of the metric
+    :type metric_value: Any
+    """
+    if metric == "xpia" and result_name:
+        for metric_extended in ["xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]:
+            if nested_result_name is None:
+                if metric_extended not in current_result_dict:
+                    current_result_dict[metric_extended] = {result_name: metric_value}
+                else:
+                    current_result_dict[metric_extended][result_name] = metric_value
+            elif nested_result_name is not None and secondnested_result_name is None:
+                if metric_extended not in current_result_dict:
+                    current_result_dict[metric_extended] = {result_name: {nested_result_name: metric_value}}
+                elif metric_extended in current_result_dict and result_name not in current_result_dict[metric_extended]:
+                    current_result_dict[metric_extended][result_name] = {nested_result_name: metric_value}
+                elif (
+                    metric_extended in current_result_dict
+                    and result_name in current_result_dict[metric_extended]
+                    and nested_result_name not in current_result_dict[metric_extended][result_name]
+                ):
+                    current_result_dict[metric_extended][result_name][nested_result_name] = metric_value
+            elif nested_result_name is not None and secondnested_result_name is not None:
+                if metric_extended not in current_result_dict:
+                    current_result_dict[metric_extended] = {
+                        result_name: {nested_result_name: {secondnested_result_name: metric_value}}
+                    }
+                elif metric_extended in current_result_dict and result_name not in current_result_dict[metric_extended]:
+                    current_result_dict[metric_extended][result_name] = {
+                        nested_result_name: {secondnested_result_name: metric_value}
+                    }
+                elif (
+                    metric_extended in current_result_dict
+                    and result_name in current_result_dict[metric_extended]
+                    and nested_result_name not in current_result_dict[metric_extended][result_name]
+                ):
+                    current_result_dict[metric_extended][result_name][nested_result_name] = {
+                        secondnested_result_name: metric_value
+                    }
+                else:
+                    (
+                        current_result_dict[metric_extended][result_name][nested_result_name][secondnested_result_name]
+                    ) = metric_value
+
+
+def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metric_list: List[str]) -> str:
+    """
+    Get the metric name from the testing criteria and metric key.
+
+    :param testing_criteria_name: The name of the testing criteria
+    :type testing_criteria_name: str
+    :param metric_key: The metric key to look for
+    :type metric_key: str
+    :param metric_list: List of expected metrics for the testing criteria
+    :type metric_list: List[str]
+    :return: The metric name if found, otherwise the testing criteria name
+    :rtype: str
+    """
+    metric = None
+
+    if metric_key == "xpia_manipulated_content":
+        metric = "xpia_manipulated_content"
+        return metric
+    elif metric_key == "xpia_intrusion":
+        metric = "xpia_intrusion"
+        return metric
+    elif metric_key == "xpia_information_gathering":
+        metric = "xpia_information_gathering"
+        return metric
+    for expected_metric in metric_list:
+        if metric_key.startswith(expected_metric):
+            metric = expected_metric
+            break
+    if metric is None:
+        metric = testing_criteria_name
+    return metric
+
+
+def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logger) -> Dict[str, Any]:
+    """
+    Calculate summary statistics for AOAI evaluation results.
+
+    :param aoai_results: List of AOAI result objects (run_output_items)
+    :type aoai_results: list
+    :return: Summary statistics dictionary
+    :rtype: Dict[str, Any]
+    """
+    # Calculate result counts based on aoaiResults
+    result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0}
+
+    # Count results by status and calculate per model usage
+    model_usage_stats = {}  # Dictionary to aggregate usage by model
+    result_counts_stats = {}  # Dictionary to aggregate usage by model
+
+    for aoai_result in aoai_results:
+        logger.info(
+            f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}"
+        )
+        if isinstance(aoai_result, dict) and "results" in aoai_result:
+            logger.info(
+                f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
+            )
+            result_counts["total"] += len(aoai_result["results"])
+            for result_item in aoai_result["results"]:
+                if isinstance(result_item, dict):
+                    # Check if the result has a 'passed' field
+                    if "passed" in result_item and result_item["passed"] is not None:
+                        testing_criteria = result_item.get("name", "")
+                        if testing_criteria not in result_counts_stats:
+                            result_counts_stats[testing_criteria] = {
+                                "testing_criteria": testing_criteria,
+                                "failed": 0,
+                                "passed": 0,
+                            }
+                        if result_item["passed"] is True:
+                            result_counts["passed"] += 1
+                            result_counts_stats[testing_criteria]["passed"] += 1
+
+                        elif result_item["passed"] is False:
+                            result_counts["failed"] += 1
+                            result_counts_stats[testing_criteria]["failed"] += 1
+                    # Check if the result indicates an error status
+                    elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
+                        "sample" in result_item
+                        and isinstance(result_item["sample"], dict)
+                        and result_item["sample"].get("error", None) is not None
+                    ):
+                        result_counts["errored"] += 1
+        elif hasattr(aoai_result, "status") and aoai_result.status == "error":
+            result_counts["errored"] += 1
+        elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
+            result_counts["errored"] += 1
+
+        # Extract usage statistics from aoai_result.sample
+        sample_data_list = []
+        dup_usage_list = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"].copy()
+        dup_usage_list.remove("xpia")
+        if isinstance(aoai_result, dict) and aoai_result["results"] and isinstance(aoai_result["results"], list):
+            for result_item in aoai_result["results"]:
+                if (
+                    isinstance(result_item, dict)
+                    and "sample" in result_item
+                    and result_item["sample"]
+                    and result_item["metric"] not in dup_usage_list
+                ):
+                    sample_data_list.append(result_item["sample"])
+
+        for sample_data in sample_data_list:
+            if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
+                usage_data = sample_data["usage"]
+                model_name = sample_data.get("model", "unknown")
+                if model_name not in model_usage_stats:
+                    model_usage_stats[model_name] = {
+                        "invocation_count": 0,
+                        "total_tokens": 0,
+                        "prompt_tokens": 0,
+                        "completion_tokens": 0,
+                        "cached_tokens": 0,
+                    }
+                # Aggregate usage statistics
+                model_stats = model_usage_stats[model_name]
+                model_stats["invocation_count"] += 1
+                if isinstance(usage_data, dict):
+                    model_stats["total_tokens"] += usage_data.get("total_tokens", 0)
+                    model_stats["prompt_tokens"] += usage_data.get("prompt_tokens", 0)
+                    model_stats["completion_tokens"] += usage_data.get("completion_tokens", 0)
+                    model_stats["cached_tokens"] += usage_data.get("cached_tokens", 0)
+
+    # Convert model usage stats to list format matching EvaluationRunPerModelUsage
+    per_model_usage = []
+    for model_name, stats in model_usage_stats.items():
+        per_model_usage.append(
+            {
+                "model_name": model_name,
+                "invocation_count": stats["invocation_count"],
+                "total_tokens": stats["total_tokens"],
+                "prompt_tokens": stats["prompt_tokens"],
+                "completion_tokens": stats["completion_tokens"],
+                "cached_tokens": stats["cached_tokens"],
+            }
+        )
+    result_counts_stats_val = []
+    logger.info(f"\r\n Result counts stats: {result_counts_stats}")
+    for criteria_name, stats_val in result_counts_stats.items():
+        if isinstance(stats_val, dict):
+            logger.info(f"\r\n  Criteria: {criteria_name}, stats: {stats_val}")
+            result_counts_stats_val.append(
+                {
+                    "testing_criteria": criteria_name,
+                    "passed": stats_val.get("passed", 0),
+                    "failed": stats_val.get("failed", 0),
+                }
+            )
+    return {
+        "result_counts": result_counts,
+        "per_model_usage": per_model_usage,
+        "per_testing_criteria_results": result_counts_stats_val,
+    }

@@ -5,6 +5,7 @@
 import inspect
 from abc import ABC, abstractmethod
 import json
+import copy
 from typing import (
     Any,
     Callable,
@@ -38,6 +39,8 @@ from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
 
 from ._conversation_aggregators import GetAggregator, GetAggregatorType
+
+import copy
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -111,6 +114,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     _NOT_APPLICABLE_RESULT = "not applicable"
     _PASS_RESULT = "pass"
     _FAIL_RESULT = "fail"
+    _type = "azure_ai_evaluator"
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
@@ -488,13 +492,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         """
         tool_calls = []
         tool_results_map = {}
-        if isinstance(response, list):
-            for message in response:
+
+        # Work on a deep copy to avoid modifying the original object
+        response_copy = copy.deepcopy(response)
+
+        if isinstance(response_copy, list):
+            for message in response_copy:
                 # Extract tool calls from assistant messages
                 if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
                         if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
-                            tool_calls.append(content_item)
+                            tool_calls.append(copy.deepcopy(content_item))
 
                 # Extract tool results from tool messages
                 elif message.get("role") == "tool" and message.get("tool_call_id"):
@@ -582,7 +590,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         # Convert inputs into list of evaluable inputs.
-        eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        try:
+            eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
+        except Exception as e:
+            print(f"Error converting kwargs to eval_input_list: {e}")
+            raise e
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:

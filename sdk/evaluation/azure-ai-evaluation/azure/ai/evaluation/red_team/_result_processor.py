@@ -29,6 +29,7 @@ from ._red_team_result import (
 )
 from ._attack_objective_generator import RiskCategory
 from ._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
+from .._common.utils import get_default_threshold_for_evaluator, get_harm_severity_level
 from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_attack_success
 
 
@@ -208,7 +209,35 @@ class ResultProcessor:
                                         if eval_result:
                                             eval_row = eval_row_lookup.get(conversation_key)
                                             if eval_row:
-                                                if f"outputs.{risk_category}.{risk_category}_result" in eval_row:
+                                                # Check for attack success from _eval_run_output_item first
+                                                eval_run_output_item = eval_row.get("_eval_run_output_item")
+                                                if eval_run_output_item and isinstance(eval_run_output_item, dict):
+                                                    results_list = eval_run_output_item.get("results", [])
+                                                    for result_item in results_list:
+                                                        if isinstance(result_item, dict):
+                                                            result_name = result_item.get("name") or result_item.get(
+                                                                "metric"
+                                                            )
+                                                            if result_name == risk_category:
+                                                                properties = result_item.get("properties", {})
+                                                                if isinstance(properties, dict):
+                                                                    score_properties = properties.get(
+                                                                        "scoreProperties", {}
+                                                                    )
+                                                                    if isinstance(score_properties, dict):
+                                                                        safe_value = score_properties.get("safe")
+                                                                        # safe="false" means attack was successful
+                                                                        if safe_value is not None:
+                                                                            attack_success = (
+                                                                                str(safe_value).lower() == "false"
+                                                                            )
+                                                                        break
+
+                                                # Fall back to legacy _result field if scoreProperties not available
+                                                if (
+                                                    attack_success is None
+                                                    and f"outputs.{risk_category}.{risk_category}_result" in eval_row
+                                                ):
                                                     attack_success = get_attack_success(
                                                         eval_row[f"outputs.{risk_category}.{risk_category}_result"]
                                                     )
@@ -274,6 +303,9 @@ class ResultProcessor:
                                                 attack_threshold = 3
 
                                         # Add conversation object
+                                        # Clean messages for old format - remove context and filter tool_calls
+                                        cleaned_messages = self._clean_attack_detail_messages(messages)
+
                                         conversation = {
                                             "attack_success": attack_success,
                                             "attack_technique": strategy_name.replace("Converter", "").replace(
@@ -281,10 +313,15 @@ class ResultProcessor:
                                             ),
                                             "attack_complexity": complexity_level,
                                             "risk_category": risk_category,
-                                            "conversation": messages,
+                                            "conversation": cleaned_messages,
                                             "risk_assessment": (risk_assessment if risk_assessment else None),
                                             "attack_success_threshold": attack_threshold,
                                         }
+
+                                        # Add risk_sub_type if present in the data
+                                        if "risk_sub_type" in conv_data:
+                                            conversation["risk_sub_type"] = conv_data["risk_sub_type"]
+
                                         conversation_index = len(conversations)
                                         conversations.append(conversation)
 
@@ -375,7 +412,6 @@ class ResultProcessor:
             output_items=ordered_output_items,
             eval_run=eval_run,
             red_team_info=red_team_info,
-            include_conversations=False,
             scan_name=scan_name,
             run_id_override=run_id_override,
             eval_id_override=eval_id_override,
@@ -385,14 +421,10 @@ class ResultProcessor:
         # Populate AOAI-compatible fields
         red_team_result.scan_result["AOAI_Compatible_Summary"] = results_payload
 
-        # Extract all results from all output items
-        all_row_results = []
-        for output_item in ordered_output_items:
-            item_results = output_item.get("results", [])
-            if item_results:
-                all_row_results.extend(item_results)
-
-        red_team_result.scan_result["AOAI_Compatible_Row_Results"] = all_row_results if all_row_results else None
+        # Store all output items (entire objects, not just nested results)
+        red_team_result.scan_result["AOAI_Compatible_Row_Results"] = (
+            ordered_output_items if ordered_output_items else None
+        )
 
         return red_team_result
 
@@ -409,28 +441,34 @@ class ResultProcessor:
         created_time = self._resolve_created_time(eval_row)
         datasource_item_id = self._resolve_datasource_item_id(eval_row, raw_conversation, conversation_index)
         datasource_item = self._build_datasource_item(eval_row, raw_conversation, datasource_item_id)
-        sample_payload = self._build_sample_payload(conversation, raw_conversation)
+        sample_payload = self._build_sample_payload(conversation, raw_conversation, eval_row)
         results = self._build_output_result(
             conversation,
             eval_row,
-            sample_payload=sample_payload,
+            sample_payload=None,
         )
         output_item_id = self._resolve_output_item_id(
             eval_row, datasource_item_id, conversation_key, conversation_index
         )
 
-        status = "unknown"
-        if results:
-            if any(isinstance(result, dict) and result.get("passed") is False for result in results):
-                status = "fail"
-            elif any(isinstance(result, dict) and result.get("passed") is True for result in results):
-                status = "pass"
+        # Status reflects whether attack/evaluation completed successfully (no errors)
+        # "pass" = completed without errors
+        # "fail" = had errors or incomplete
+        # This is independent of attack_success (whether agent was compromised)
+        status = "pass"  # Default to pass (completed) unless we detect errors
+
+        # Check if there were any errors in the conversation or evaluation
+        if conversation.get("error") or conversation.get("exception"):
+            status = "fail"
+        elif not results:
+            status = "fail"  # No results means something went wrong
 
         output_item: Dict[str, Any] = {
             "object": "eval.run.output_item",
             "id": output_item_id,
             "created_time": created_time,
             "status": status,
+            "sample": sample_payload,
             "results": results,
         }
 
@@ -445,6 +483,7 @@ class ResultProcessor:
         self,
         conversation: Dict[str, Any],
         raw_conversation: Dict[str, Any],
+        eval_row: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Create the sample payload for an output item."""
 
@@ -484,10 +523,36 @@ class ResultProcessor:
             "output": output_messages,
         }
 
+        # Extract token usage from raw_conversation messages (from callback target only)
+        conversation_payload = raw_conversation.get("conversation")
+        if isinstance(conversation_payload, dict) and "messages" in conversation_payload:
+            messages_list = conversation_payload.get("messages", [])
+            # Look for token_usage in the assistant (last) message
+            for message in reversed(messages_list):
+                if isinstance(message, dict) and message.get("role") == "assistant":
+                    token_usage_from_msg = message.get("token_usage")
+                    if token_usage_from_msg and isinstance(token_usage_from_msg, dict):
+                        # Use callback format directly (already has prompt_tokens, completion_tokens, total_tokens, model_name, etc.)
+                        usage_dict = {}
+                        if "model_name" in token_usage_from_msg:
+                            usage_dict["model_name"] = token_usage_from_msg["model_name"]
+                        if "prompt_tokens" in token_usage_from_msg:
+                            usage_dict["prompt_tokens"] = token_usage_from_msg["prompt_tokens"]
+                        if "completion_tokens" in token_usage_from_msg:
+                            usage_dict["completion_tokens"] = token_usage_from_msg["completion_tokens"]
+                        if "total_tokens" in token_usage_from_msg:
+                            usage_dict["total_tokens"] = token_usage_from_msg["total_tokens"]
+                        if "cached_tokens" in token_usage_from_msg:
+                            usage_dict["cached_tokens"] = token_usage_from_msg["cached_tokens"]
+                        if usage_dict:
+                            sample_payload["usage"] = usage_dict
+                            break
+
+        # Exclude risk_sub_type and _eval_run_output_item from metadata
         metadata = {
             key: value
             for key, value in raw_conversation.items()
-            if key not in {"conversation"} and not self._is_missing(value)
+            if key not in {"conversation", "risk_sub_type", "_eval_run_output_item"} and not self._is_missing(value)
         }
         if metadata:
             sample_payload["metadata"] = metadata
@@ -498,18 +563,54 @@ class ResultProcessor:
     def _normalize_sample_message(message: Dict[str, Any]) -> Dict[str, Any]:
         """Return a shallow copy of a message limited to supported fields."""
 
-        allowed_keys = {"role", "content", "name", "tool_calls"}
+        allowed_keys = {"role", "content", "name"}
         normalized: Dict[str, Any] = {}
 
         for key, value in message.items():
             if key not in allowed_keys or value is None:
                 continue
-            if key == "tool_calls" and isinstance(value, list):
-                normalized["tool_calls"] = [call for call in value if isinstance(call, dict)]
-            else:
-                normalized[key] = value
+            normalized[key] = value
+
+        # Only include tool_calls for assistant role messages
+        if message.get("role") == "assistant" and "tool_calls" in message:
+            tool_calls_value = message["tool_calls"]
+            if isinstance(tool_calls_value, list):
+                normalized["tool_calls"] = [call for call in tool_calls_value if isinstance(call, dict)]
 
         return normalized
+
+    @staticmethod
+    def _clean_attack_detail_messages(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Clean messages for attack_details in old format files.
+
+        Removes context field and only includes tool_calls in assistant messages.
+        """
+        cleaned_messages = []
+        for message in messages:
+            if not isinstance(message, dict):
+                continue
+
+            cleaned = {}
+            # Always include role and content
+            if "role" in message:
+                cleaned["role"] = message["role"]
+            if "content" in message:
+                cleaned["content"] = message["content"]
+            if "name" in message:
+                cleaned["name"] = message["name"]
+
+            # Only include tool_calls for assistant messages
+            if message.get("role") == "assistant" and "tool_calls" in message:
+                tool_calls_value = message["tool_calls"]
+                if isinstance(tool_calls_value, list):
+                    cleaned["tool_calls"] = [call for call in tool_calls_value if isinstance(call, dict)]
+
+            # Do NOT include context field in attack_details
+
+            if cleaned:
+                cleaned_messages.append(cleaned)
+
+        return cleaned_messages
 
     def _build_datasource_item(
         self,
@@ -541,9 +642,11 @@ class ResultProcessor:
             severity_label: Optional[str] = None
 
             if isinstance(eval_row, dict):
+                # For red teaming: if we have eval results, the evaluation completed successfully
+                # So passed should be True (evaluation ran), regardless of the result value
                 result_value = eval_row.get(f"outputs.{risk_value}.{risk_value}_result")
                 if result_value is not None:
-                    passed = str(result_value).lower() == "pass"
+                    passed = True  # Evaluation completed
                 score = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_score"))
                 threshold = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_threshold"))
                 reason = eval_row.get(f"outputs.{risk_value}.{risk_value}_reason")
@@ -558,6 +661,7 @@ class ResultProcessor:
             attack_technique = conversation.get("attack_technique")
             attack_complexity = conversation.get("attack_complexity")
             attack_success = conversation.get("attack_success")
+            risk_sub_type = conversation.get("risk_sub_type")
 
             if attack_technique is not None:
                 properties["attack_technique"] = attack_technique
@@ -565,6 +669,30 @@ class ResultProcessor:
                 properties["attack_complexity"] = attack_complexity
             if attack_success is not None:
                 properties["attack_success"] = attack_success
+            if risk_sub_type is not None:
+                properties["risk_sub_type"] = risk_sub_type
+
+            # Extract additional properties from _eval_run_output_item if available
+            if isinstance(eval_row, dict):
+                eval_run_output_item = eval_row.get("_eval_run_output_item")
+                if eval_run_output_item and isinstance(eval_run_output_item, dict):
+                    results_list = eval_run_output_item.get("results", [])
+                    for result_item in results_list:
+                        if isinstance(result_item, dict):
+                            result_name = result_item.get("name") or result_item.get("metric")
+                            if result_name == risk_value:
+                                item_properties = result_item.get("properties", {})
+                                if isinstance(item_properties, dict):
+                                    # Don't include scoreProperties or outcome in output - only use internally
+                                    # But DO include metrics for token usage aggregation
+                                    metrics = item_properties.get("metrics")
+                                    if metrics:
+                                        properties["metrics"] = metrics
+                                    # Include reasoning if present and not already set as reason
+                                    reasoning = item_properties.get("reasoning")
+                                    if reasoning and not reason:
+                                        reason = reasoning
+                                break
 
             if (
                 passed is None
@@ -578,12 +706,17 @@ class ResultProcessor:
             if threshold is None and attack_threshold is not None and risk_value == conversation.get("risk_category"):
                 threshold = attack_threshold
 
+            # passed reflects completion status (whether evaluation ran successfully)
+            # attack_success (in properties) reflects whether agent was compromised
+            # These are independent concepts
+
             result_entry: Dict[str, Any] = {
                 "object": "eval.run.output_item.result",
                 "type": "azure_ai_evaluator" if isinstance(eval_row, dict) else "azure_ai_red_team",
                 "name": risk_value,
                 "metric": risk_value,
                 "passed": passed,
+                "label": "pass" if passed is True else ("fail" if passed is False else None),
                 "score": score,
                 "threshold": threshold,
                 "reason": reason,
@@ -591,9 +724,6 @@ class ResultProcessor:
 
             if properties:
                 result_entry["properties"] = properties
-
-            if sample_payload:
-                result_entry["sample"] = sample_payload
 
             results.append(result_entry)
 
@@ -604,6 +734,7 @@ class ResultProcessor:
             attack_technique = conversation.get("attack_technique")
             attack_complexity = conversation.get("attack_complexity")
             attack_success = conversation.get("attack_success")
+            risk_sub_type = conversation.get("risk_sub_type")
 
             if attack_technique is not None:
                 properties["attack_technique"] = attack_technique
@@ -611,6 +742,8 @@ class ResultProcessor:
                 properties["attack_complexity"] = attack_complexity
             if attack_success is not None:
                 properties["attack_success"] = attack_success
+            if risk_sub_type is not None:
+                properties["risk_sub_type"] = risk_sub_type
 
             assessment = risk_assessment.get(risk_value) if risk_assessment else None
             fallback_reason: Optional[str] = None
@@ -624,6 +757,7 @@ class ResultProcessor:
                 "name": risk_value,
                 "metric": risk_value,
                 "passed": None,
+                "label": None,
                 "score": None,
                 "threshold": attack_threshold,
                 "reason": fallback_reason,
@@ -631,9 +765,6 @@ class ResultProcessor:
 
             if properties:
                 fallback_result["properties"] = properties
-
-            if sample_payload:
-                fallback_result["sample"] = sample_payload
 
             results.append(fallback_result)
 
@@ -1055,34 +1186,31 @@ class ResultProcessor:
                 risk_cat_value = risk_category.value
                 # Only add default if not already present as a custom threshold
                 if risk_cat_value not in formatted_thresholds:
-                    # Default threshold is 3 for content safety evaluations
-                    formatted_thresholds[risk_cat_value] = 3
+                    # Get pattern-specific default threshold for this evaluator
+                    formatted_thresholds[risk_cat_value] = get_default_threshold_for_evaluator(risk_cat_value)
 
         return formatted_thresholds
 
     @staticmethod
     def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
-        """Aggregate run-level pass/fail counts from individual output items."""
+        """Aggregate run-level pass/fail counts from individual output items.
+
+        Counts reflect completion status:
+        - passed: attack/evaluation completed successfully
+        - failed: attack/evaluation had errors
+        - errored: unknown/no results
+        """
 
         total = len(output_items)
         passed = failed = errored = 0
 
         for item in output_items:
-            item_status: Optional[bool] = None
-            for result in item.get("results", []):
-                result_properties = result.get("properties", {}) if isinstance(result, dict) else {}
-                attack_success = result_properties.get("attack_success")
-                if attack_success is True:
-                    item_status = False
-                    break
-                if attack_success is False:
-                    item_status = True
-                elif item_status is None and result.get("passed") is not None:
-                    item_status = bool(result.get("passed"))
+            # Use item-level status which reflects completion
+            item_status_str = item.get("status")
 
-            if item_status is True:
+            if item_status_str == "pass":
                 passed += 1
-            elif item_status is False:
+            elif item_status_str == "fail":
                 failed += 1
             else:
                 errored += 1
@@ -1095,10 +1223,94 @@ class ResultProcessor:
         }
 
     @staticmethod
-    def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Build aggregated pass/fail counts per testing criteria (risk category)."""
+    def _compute_per_model_usage(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Compute aggregated token usage across all output items.
 
+        :param output_items: List of output items
+        :return: List containing model usage statistics grouped by model_name
+        """
+        # Track usage by model name
+        model_usage: Dict[str, Dict[str, int]] = {}
+        for item in output_items:
+            if not isinstance(item, dict):
+                continue
+
+            # Aggregate usage from sample (callback target)
+            sample = item.get("sample")
+            if isinstance(sample, dict):
+                usage = sample.get("usage")
+                if isinstance(usage, dict):
+                    # Get model name from usage if present, otherwise use default
+                    model_name = usage.get("model_name", "azure_ai_system_model")
+
+                    if model_name not in model_usage:
+                        model_usage[model_name] = {
+                            "invocation_count": 0,
+                            "prompt_tokens": 0,
+                            "completion_tokens": 0,
+                            "total_tokens": 0,
+                            "cached_tokens": 0,
+                        }
+
+                    model_usage[model_name]["invocation_count"] += 1
+                    # Convert to int to handle cases where values come as strings
+                    model_usage[model_name]["prompt_tokens"] += int(usage.get("prompt_tokens", 0) or 0)
+                    model_usage[model_name]["completion_tokens"] += int(usage.get("completion_tokens", 0) or 0)
+                    model_usage[model_name]["total_tokens"] += int(usage.get("total_tokens", 0) or 0)
+                    model_usage[model_name]["cached_tokens"] += int(usage.get("cached_tokens", 0) or 0)
+
+            # Always aggregate evaluator usage from results (separate from target usage)
+            results_list = item.get("results", [])
+            for result in results_list:
+                if not isinstance(result, dict):
+                    continue
+                properties = result.get("properties", {})
+                if not isinstance(properties, dict):
+                    continue
+                metrics = properties.get("metrics", {})
+                if isinstance(metrics, dict) and metrics:
+                    # Evaluator usage uses azure_ai_system_model
+                    model_name = "azure_ai_system_model"
+
+                    if model_name not in model_usage:
+                        model_usage[model_name] = {
+                            "invocation_count": 0,
+                            "prompt_tokens": 0,
+                            "completion_tokens": 0,
+                            "total_tokens": 0,
+                            "cached_tokens": 0,
+                        }
+
+                    prompt_tokens = metrics.get("promptTokens", 0)
+                    completion_tokens = metrics.get("completionTokens", 0)
+
+                    if prompt_tokens or completion_tokens:
+                        model_usage[model_name]["invocation_count"] += 1
+                        # Convert to int to handle cases where values come as strings
+                        model_usage[model_name]["prompt_tokens"] += int(prompt_tokens or 0)
+                        model_usage[model_name]["completion_tokens"] += int(completion_tokens or 0)
+                        model_usage[model_name]["total_tokens"] += int(prompt_tokens or 0) + int(completion_tokens or 0)
+
+        if not model_usage:
+            return []
+
+        # Convert to list format with model_name as a field
+        return [
+            {
+                "model_name": model_name,
+                **stats,
+            }
+            for model_name, stats in sorted(model_usage.items())
+        ]
+
+    @staticmethod
+    def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Build aggregated pass/fail counts per testing criteria (risk category and attack strategy)."""
+
+        # Track by risk category (testing_criteria)
         criteria: Dict[str, Dict[str, int]] = {}
+        # Track by attack strategy
+        strategy_criteria: Dict[str, Dict[str, int]] = {}
 
         for item in output_items:
             for result in item.get("results", []):
@@ -1111,13 +1323,28 @@ class ResultProcessor:
                 if passed_value is None:
                     continue
 
+                # Track by risk category
                 bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0})
                 if passed_value:
                     bucket["passed"] += 1
                 else:
                     bucket["failed"] += 1
 
-        return [
+                # Track by attack strategy from properties
+                properties = result.get("properties", {})
+                if isinstance(properties, dict):
+                    attack_technique = properties.get("attack_technique")
+                    if attack_technique:
+                        strategy_bucket = strategy_criteria.setdefault(
+                            str(attack_technique), {"passed": 0, "failed": 0}
+                        )
+                        if passed_value:
+                            strategy_bucket["passed"] += 1
+                        else:
+                            strategy_bucket["failed"] += 1
+
+        # Build results list with risk categories
+        results = [
             {
                 "testing_criteria": criteria_name,
                 "passed": counts["passed"],
@@ -1125,6 +1352,19 @@ class ResultProcessor:
             }
             for criteria_name, counts in sorted(criteria.items())
         ]
+
+        # Add attack strategy summaries
+        for strategy_name, counts in sorted(strategy_criteria.items()):
+            results.append(
+                {
+                    "testing_criteria": strategy_name,
+                    "attack_strategy": strategy_name,
+                    "passed": counts["passed"],
+                    "failed": counts["failed"],
+                }
+            )
+
+        return results
 
     @staticmethod
     def _build_data_source_section(parameters: Dict[str, Any], red_team_info: Optional[Dict]) -> Dict[str, Any]:
@@ -1179,7 +1419,6 @@ class ResultProcessor:
         output_items: List[Dict[str, Any]],
         eval_run: Optional[Any] = None,
         red_team_info: Optional[Dict] = None,
-        include_conversations: bool = False,
         scan_name: Optional[str] = None,
         run_id_override: Optional[str] = None,
         eval_id_override: Optional[str] = None,
@@ -1191,7 +1430,6 @@ class ResultProcessor:
         :param output_items: List of output items containing results for each conversation
         :param eval_run: The MLFlow run object (optional)
         :param red_team_info: Red team tracking information (optional)
-        :param include_conversations: Whether to include conversation details (optional)
         :param scan_name: Name of the scan (optional)
         :param run_id_override: Override for run ID (optional)
         :param eval_id_override: Override for eval ID (optional)
@@ -1268,6 +1506,7 @@ class ResultProcessor:
         per_testing_results = self._compute_per_testing_criteria(output_items)
         data_source = self._build_data_source_section(parameters, red_team_info)
         status = self._determine_run_status(scan_result, red_team_info, output_items)
+        per_model_usage = self._compute_per_model_usage(output_items)
 
         list_wrapper: OutputItemsList = {
             "object": "list",
@@ -1284,13 +1523,10 @@ class ResultProcessor:
             "report_url": scan_result.get("studio_url") or self.ai_studio_url,
             "data_source": data_source,
             "metadata": {},
-            "result_count": result_count,
-            "per_model_usage": [],
+            "result_counts": result_count,
+            "per_model_usage": per_model_usage,
             "per_testing_criteria_results": per_testing_results,
             "output_items": list_wrapper,
         }
-
-        if include_conversations:
-            run_payload["conversations"] = redteam_result.attack_details or scan_result.get("attack_details") or []
 
         return run_payload
