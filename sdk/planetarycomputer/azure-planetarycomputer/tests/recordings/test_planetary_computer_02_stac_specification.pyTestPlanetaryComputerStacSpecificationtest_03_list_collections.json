@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "44193",
+        "Content-Length": "43135",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -137,58 +137,6 @@
             "msft:_created": "2025-04-22T00:30:03.363303Z",
             "msft:_updated": "2025-04-22T00:30:03.363303Z",
             "msft:short_description": "An example collection"
-          },
-          {
-            "id": "test-collection-lifecycle",
-            "type": "Collection",
-            "links": [
-              {
-                "rel": "items",
-                "type": "application/geo+json",
-                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
-              },
-              {
-                "rel": "parent",
-                "type": "application/json",
-                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
-              },
-              {
-                "rel": "root",
-                "type": "application/json",
-                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
-              },
-              {
-                "rel": "self",
-                "type": "application/json",
-                "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
-              }
-            ],
-            "title": "Test Collection Lifecycle",
-            "extent": {
-              "spatial": {
-                "bbox": [
-                  [
-                    -180,
-                    -90,
-                    180,
-                    90
-                  ]
-                ]
-              },
-              "temporal": {
-                "interval": [
-                  [
-                    "2020-01-01T00:00:00Z",
-                    "2024-12-31T23:59:59Z"
-                  ]
-                ]
-              }
-            },
-            "license": "proprietary",
-            "description": "Test collection for lifecycle operations",
-            "stac_version": "1.0.0",
-            "msft:_created": "2025-10-26T17:49:59.2921591Z",
-            "msft:_updated": "2025-10-26T17:49:59.2921591Z"
           },
           {
             "id": "naip-sample-datasets",
@@ -2258,7 +2206,7 @@
             },
             "stac_version": "1.0.0",
             "msft:_created": "2025-10-22T11:14:31.811918Z",
-            "msft:_updated": "2025-10-26T17:45:32.115132Z",
+            "msft:_updated": "2025-10-26T18:01:51.594372Z",
             "stac_extensions": [
               "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
               "https://stac-extensions.github.io/table/v1.2.0/schema.json"

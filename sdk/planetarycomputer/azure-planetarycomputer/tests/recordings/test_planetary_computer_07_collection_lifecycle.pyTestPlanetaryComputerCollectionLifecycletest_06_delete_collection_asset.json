@@ -7,21 +7,21 @@
         "Accept": "application/json",
         "Connection": "keep-alive",
         "Content-Length": "449",
-        "Content-Type": "multipart/form-data; boundary=7c572062c538a12b313f594e6dc36fa4",
+        "Content-Type": "multipart/form-data; boundary=96f03214fef323f5e91fe0c025c0108c",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--7c572062c538a12b313f594e6dc36fa4\r\n",
+        "--96f03214fef323f5e91fe0c025c0108c\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "b64:eyJrZXkiOiAidGVzdC1hc3NldC10by1iZS1kZWxldGVkIiwgImhyZWYiOiAiaHR0cHM6Ly9leGFtcGxlLmNvbS90ZXN0LWFzc2V0LXRvLWRlbGV0ZS50eHQiLCAidHlwZSI6ICJ0ZXh0L3BsYWluIiwgInJvbGVzIjogWyJtZXRhZGF0YSJdLCAidGl0bGUiOiAiVGVzdCBBc3NldCBUbyBCZSBEZWxldGVkIn0=",
         "\r\n",
-        "--7c572062c538a12b313f594e6dc36fa4\r\n",
+        "--96f03214fef323f5e91fe0c025c0108c\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset-to-delete.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50IGZvciBkZWxldGlvbg==",
         "\r\n",
-        "--7c572062c538a12b313f594e6dc36fa4--\r\n"
+        "--96f03214fef323f5e91fe0c025c0108c--\r\n"
       ],
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -116,7 +116,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-26T18:01:51.347610Z",
+        "msft:_updated": "2025-10-26T18:44:23.551801Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
@@ -325,7 +325,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-26T18:01:51.594372Z",
+        "msft:_updated": "2025-10-26T18:44:23.916907Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
@@ -616,7 +616,7 @@
         },
         "stac_version": "1.0.0",
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-26T18:01:51.594372Z",
+        "msft:_updated": "2025-10-26T18:44:23.916907Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"

@@ -39,7 +39,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T17:54:43.3371039Z",
+        "creationTime": "2025-10-26T18:38:19.9599396Z",
         "importType": "StaticCatalog",
         "displayName": "Ingestion for Cancel Test",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -70,7 +70,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/00000000-0000-0000-0000-000000000000/runs/56533f8a-fd8d-440d-89a9-06b0ba35a096?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/00000000-0000-0000-0000-000000000000/runs/24f6b4de-9b8d-449a-be95-450244f45eeb?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -80,7 +80,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T17:54:44.1634521Z",
+        "creationTime": "2025-10-26T18:38:20.0151405Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -90,10 +90,10 @@
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-26T17:54:44.1540337Z"
+              "timestamp": "2025-10-26T18:38:20.007679Z"
             }
           ],
-          "creationTime": "2025-10-26T17:54:44.1540312Z",
+          "creationTime": "2025-10-26T18:38:20.0076777Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,

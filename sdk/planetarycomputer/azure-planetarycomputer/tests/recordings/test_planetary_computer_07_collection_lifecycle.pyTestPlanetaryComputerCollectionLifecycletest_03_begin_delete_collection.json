@@ -22,7 +22,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/3b0ae842-4b9d-4828-9be3-57dafb4c091d?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/06ae2ccf-0f15-4068-a81c-eb328e167ce2?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -37,11 +37,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T18:00:37.753419Z"
+            "timestamp": "2025-10-26T18:43:09.5962807Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-26T18:00:37.7534176Z",
+        "creationTime": "2025-10-26T18:43:09.5962792Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -79,11 +79,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T18:00:37.753419Z"
+            "timestamp": "2025-10-26T18:43:09.5962807Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-26T18:00:37.7534176Z",
+        "creationTime": "2025-10-26T18:43:09.5962792Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -121,19 +121,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T18:00:37.753419Z"
+            "timestamp": "2025-10-26T18:43:09.5962807Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-26T18:01:00.5510303Z"
+            "timestamp": "2025-10-26T18:43:32.3182431Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-26T18:01:00.6681025Z"
+            "timestamp": "2025-10-26T18:43:32.4459194Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-26T18:00:37.7534176Z",
+        "creationTime": "2025-10-26T18:43:09.5962792Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -154,7 +154,7 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
-        "Connection": "keep-alive",
+        "Connection": "close",
         "Content-Length": "146",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",

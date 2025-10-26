@@ -114,7 +114,7 @@
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
         "Connection": "keep-alive",
-        "Content-Length": "1260",
+        "Content-Length": "1261",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Server-Timing": "total;dur=0.0",
@@ -169,8 +169,8 @@
           },
           "_where": "(collection = 'naip-atl' AND datetime >= '2021-01-01T00:00:00Z' AND datetime <= '2022-12-31T23:59:59Z')",
           "orderby": "datetime DESC, id DESC",
-          "lastused": "2025-10-26T17:57:53.116093Z",
-          "usecount": 97,
+          "lastused": "2025-10-26T18:41:25.927171Z",
+          "usecount": 104,
           "metadata": {
             "type": "mosaic"
           }

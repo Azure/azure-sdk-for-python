@@ -71,7 +71,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-26T17:40:09.642891Z",
+        "_msft:ts": "2025-10-26T17:55:29.716541Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -99,7 +99,7 @@
             ]
           ]
         },
-        "_msft:etag": "83b45261-fdaa-4034-93f7-982a1262aa3c",
+        "_msft:etag": "46898d13-a41a-4145-8a6f-8b17f77b766c",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -186,7 +186,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-26T17:40:09.642891Z",
+        "_msft:ts": "2025-10-26T17:55:29.716541Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -214,7 +214,7 @@
             ]
           ]
         },
-        "_msft:etag": "83b45261-fdaa-4034-93f7-982a1262aa3c",
+        "_msft:etag": "46898d13-a41a-4145-8a6f-8b17f77b766c",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -262,7 +262,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/44b82a07-8e65-4f20-8911-32155cc2325a?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/f7b645fb-865c-45ad-9869-aabb12864b67?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -277,11 +277,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:56:05.5806538Z"
+            "timestamp": "2025-10-26T18:39:37.634546Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-26T17:56:05.580651Z",
+        "creationTime": "2025-10-26T18:39:37.6345441Z",
         "collectionId": "naip-atl"
       }
     },
@@ -319,11 +319,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:56:05.5806538Z"
+            "timestamp": "2025-10-26T18:39:37.634546Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-26T17:56:05.580651Z",
+        "creationTime": "2025-10-26T18:39:37.6345441Z",
         "collectionId": "naip-atl"
       }
     },
@@ -345,7 +345,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
+        "Connection": "close",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
@@ -361,23 +361,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:56:05.580651Z"
+            "timestamp": "2025-10-26T18:39:37.634544Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-26T17:56:05.945126Z"
+            "timestamp": "2025-10-26T18:39:37.96202Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-26T17:56:06.679103Z",
+            "timestamp": "2025-10-26T18:39:38.703618Z",
             "errorCode": "PublicAccessRestricted",
             "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-26T17:56:05.580651Z",
-        "startTime": "2025-10-26T17:56:05.580651Z",
-        "finishTime": "2025-10-26T17:56:06.679103Z",
+        "creationTime": "2025-10-26T18:39:37.634544Z",
+        "startTime": "2025-10-26T18:39:37.634544Z",
+        "finishTime": "2025-10-26T18:39:38.703618Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "1",
