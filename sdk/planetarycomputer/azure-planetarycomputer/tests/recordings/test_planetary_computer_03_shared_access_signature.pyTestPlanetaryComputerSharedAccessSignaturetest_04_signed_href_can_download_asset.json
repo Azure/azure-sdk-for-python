@@ -5,7 +5,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -195,7 +194,7 @@
         },
         "stac_version": "1.0.0",
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-22T21:01:12.281628Z",
+        "msft:_updated": "2025-10-26T17:09:00.106777Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"
@@ -207,7 +206,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -231,8 +229,8 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-24T06:57:33Z",
-        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-23T06%3A57%3A28Z&ske=2025-10-30T06%3A56%3A28Z&sks=b&skv=2025-01-05&sig=Sanitized"
+        "msft:expiry": "2025-10-27T17:13:56Z",
+        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-26T17%3A13%3A51Z&ske=2025-11-02T17%3A12%3A51Z&sks=b&skv=2025-01-05&sig=Sanitized"
       }
     }
   ],

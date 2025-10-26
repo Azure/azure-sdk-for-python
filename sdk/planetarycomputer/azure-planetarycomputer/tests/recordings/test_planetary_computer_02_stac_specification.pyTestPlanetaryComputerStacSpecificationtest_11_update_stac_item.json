@@ -5,7 +5,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -72,7 +71,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-22T20:56:38.269567Z",
+        "_msft:ts": "2025-10-26T17:03:36.142025Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -100,7 +99,7 @@
             ]
           ]
         },
-        "_msft:etag": "be547045-aa91-484e-a6a4-ea3f151f8937",
+        "_msft:etag": "480480cc-a549-43b1-ad67-b02f3eaa884b",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -141,7 +140,6 @@
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "1807",
         "Content-Type": "application/merge-patch+json",
@@ -188,7 +186,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-22T20:56:38.269567Z",
+        "_msft:ts": "2025-10-26T17:03:36.142025Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -216,7 +214,7 @@
             ]
           ]
         },
-        "_msft:etag": "be547045-aa91-484e-a6a4-ea3f151f8937",
+        "_msft:etag": "480480cc-a549-43b1-ad67-b02f3eaa884b",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -264,7 +262,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/30f681a7-0912-4192-b93e-92b725d8f8f1?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/87552818-b741-4480-baa1-e427ee4c057f?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -279,11 +277,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:56:52.1512378Z"
+            "timestamp": "2025-10-26T17:13:15.1258971Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-23T06:56:52.1512362Z",
+        "creationTime": "2025-10-26T17:13:15.1258953Z",
         "collectionId": "naip-atl"
       }
     },
@@ -292,7 +290,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -322,11 +319,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:56:52.1512378Z"
+            "timestamp": "2025-10-26T17:13:15.1258971Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-23T06:56:52.1512362Z",
+        "creationTime": "2025-10-26T17:13:15.1258953Z",
         "collectionId": "naip-atl"
       }
     },
@@ -335,7 +332,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -349,7 +345,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
+        "Connection": "close",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
@@ -365,23 +361,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:56:52.151236Z"
+            "timestamp": "2025-10-26T17:13:15.125895Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-23T06:56:52.50711Z"
+            "timestamp": "2025-10-26T17:13:15.604222Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-23T06:56:53.768722Z",
+            "timestamp": "2025-10-26T17:13:16.465125Z",
             "errorCode": "PublicAccessRestricted",
             "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-23T06:56:52.151236Z",
-        "startTime": "2025-10-23T06:56:52.151236Z",
-        "finishTime": "2025-10-23T06:56:53.768722Z",
+        "creationTime": "2025-10-26T17:13:15.125895Z",
+        "startTime": "2025-10-26T17:13:15.125895Z",
+        "finishTime": "2025-10-26T17:13:16.465125Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "1",

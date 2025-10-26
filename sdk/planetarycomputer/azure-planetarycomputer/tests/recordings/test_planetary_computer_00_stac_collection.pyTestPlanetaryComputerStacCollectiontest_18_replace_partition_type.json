@@ -5,7 +5,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -41,7 +40,6 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "370",
         "Content-Type": "application/json",
@@ -88,7 +86,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/7d7927b7-af6b-480a-a09f-918713ea9458?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/830bb465-7c56-4494-b15a-2060e4a953b2?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -103,11 +101,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:53:58.1551115Z"
+            "timestamp": "2025-10-26T17:10:20.4535104Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-23T06:53:58.1551071Z",
+        "creationTime": "2025-10-26T17:10:20.4535085Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -116,7 +114,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -146,11 +143,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:53:58.1551115Z"
+            "timestamp": "2025-10-26T17:10:20.4535104Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-23T06:53:58.1551071Z",
+        "creationTime": "2025-10-26T17:10:20.4535085Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -159,7 +156,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -189,19 +185,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:53:58.1551115Z"
+            "timestamp": "2025-10-26T17:10:20.4535104Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-23T06:54:23.2025428Z"
+            "timestamp": "2025-10-26T17:10:24.7555817Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-23T06:54:23.546536Z"
+            "timestamp": "2025-10-26T17:10:24.9468007Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-23T06:53:58.1551071Z",
+        "creationTime": "2025-10-26T17:10:20.4535085Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -210,7 +206,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -240,19 +235,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:53:58.1551115Z"
+            "timestamp": "2025-10-26T17:10:20.4535104Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-23T06:54:23.2025428Z"
+            "timestamp": "2025-10-26T17:10:24.7555817Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-23T06:54:23.546536Z"
+            "timestamp": "2025-10-26T17:10:24.9468007Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-23T06:53:58.1551071Z",
+        "creationTime": "2025-10-26T17:10:20.4535085Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -261,7 +256,6 @@
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "18",
         "Content-Type": "application/json",
@@ -294,7 +288,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -326,7 +319,6 @@
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
@@ -344,7 +336,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/391f103a-c4fa-478f-96cb-2525ef11a9a6?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/5f8b5f79-a57f-4a72-8777-b833dff115c6?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -359,11 +351,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:54:29.5224635Z"
+            "timestamp": "2025-10-26T17:10:51.1204724Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-23T06:54:29.5224622Z",
+        "creationTime": "2025-10-26T17:10:51.1204711Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -372,7 +364,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -402,11 +393,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:54:29.5224635Z"
+            "timestamp": "2025-10-26T17:10:51.1204724Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-23T06:54:29.5224622Z",
+        "creationTime": "2025-10-26T17:10:51.1204711Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -415,7 +406,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -445,19 +435,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:54:29.5224635Z"
+            "timestamp": "2025-10-26T17:10:51.1204724Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-23T06:54:53.5979578Z"
+            "timestamp": "2025-10-26T17:10:54.9728931Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-23T06:54:53.7166546Z"
+            "timestamp": "2025-10-26T17:10:55.1935623Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-23T06:54:29.5224622Z",
+        "creationTime": "2025-10-26T17:10:51.1204711Z",
         "collectionId": "test-partition-type-collection"
       }
     }

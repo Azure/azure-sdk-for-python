@@ -5,7 +5,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -1684,7 +1683,6 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "1137",
         "Content-Type": "application/json",
@@ -1789,7 +1787,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/2a9f016b-fe2d-4ce5-ab4f-74ba64df73f2?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/52cff39a-fadf-4d7f-b400-895f890a5818?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1804,11 +1802,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:56:19.4711867Z"
+            "timestamp": "2025-10-26T17:12:41.8856162Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-23T06:56:19.4711849Z",
+        "creationTime": "2025-10-26T17:12:41.8856132Z",
         "collectionId": "naip-atl"
       }
     },
@@ -1817,7 +1815,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -1847,11 +1844,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:56:19.4711867Z"
+            "timestamp": "2025-10-26T17:12:41.8856162Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-23T06:56:19.4711849Z",
+        "creationTime": "2025-10-26T17:12:41.8856132Z",
         "collectionId": "naip-atl"
       }
     },
@@ -1860,7 +1857,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -1890,23 +1886,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T06:56:19.471184Z"
+            "timestamp": "2025-10-26T17:12:41.885613Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-23T06:56:20.267608Z"
+            "timestamp": "2025-10-26T17:12:42.504736Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-23T06:56:20.741609Z",
+            "timestamp": "2025-10-26T17:12:43.122456Z",
             "errorCode": "ItemAlreadyExistsInCollection",
             "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-23T06:56:19.471184Z",
-        "startTime": "2025-10-23T06:56:19.471184Z",
-        "finishTime": "2025-10-23T06:56:20.741609Z",
+        "creationTime": "2025-10-26T17:12:41.885613Z",
+        "startTime": "2025-10-26T17:12:41.885613Z",
+        "finishTime": "2025-10-26T17:12:43.122456Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "1",

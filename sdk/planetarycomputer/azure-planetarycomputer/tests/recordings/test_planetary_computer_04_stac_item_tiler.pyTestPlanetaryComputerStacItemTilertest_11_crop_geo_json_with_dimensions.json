@@ -5,7 +5,6 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "194",
         "Content-Type": "application/json",

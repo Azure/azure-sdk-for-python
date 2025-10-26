@@ -5,7 +5,6 @@
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
@@ -23,7 +22,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/5685b027-2cec-44f8-8319-c8918d91dd5f?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/9c04aed5-1963-4844-ab6b-653f2b394dde?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -38,11 +37,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T07:00:35.8651887Z"
+            "timestamp": "2025-10-26T17:16:52.6933966Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-23T07:00:35.8651864Z",
+        "creationTime": "2025-10-26T17:16:52.6933955Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -51,7 +50,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -81,11 +79,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T07:00:35.8651887Z"
+            "timestamp": "2025-10-26T17:16:52.6933966Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-23T07:00:35.8651864Z",
+        "creationTime": "2025-10-26T17:16:52.6933955Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -94,7 +92,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -124,19 +121,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-23T07:00:35.8651887Z"
+            "timestamp": "2025-10-26T17:16:52.6933966Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-23T07:00:54.4884609Z"
+            "timestamp": "2025-10-26T17:16:56.0208053Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-23T07:00:54.6080279Z"
+            "timestamp": "2025-10-26T17:16:56.2111243Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-23T07:00:35.8651864Z",
+        "creationTime": "2025-10-26T17:16:52.6933955Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -145,7 +142,6 @@
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -158,7 +154,7 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
-        "Connection": "keep-alive",
+        "Connection": "close",
         "Content-Length": "146",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",

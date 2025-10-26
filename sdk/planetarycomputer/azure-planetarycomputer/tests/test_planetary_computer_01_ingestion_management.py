@@ -9,6 +9,7 @@ Unit tests for Planetary Computer ingestion management operations.
 import logging
 import os
 import uuid
+from datetime import datetime, timedelta, UTC
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
@@ -681,7 +682,6 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info("TEST: Create or Replace Source")
         logger.info("="*80)
 
-        from datetime import datetime, timedelta
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Generate test SAS token data
@@ -689,8 +689,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         sas_container_uri = f"https://test.blob.core.windows.net/test-container-{test_container_id}"
         
         # Generate a valid SAS token format with required fields
-        start_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-        expiry_time = (datetime.utcnow() + timedelta(days=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        start_time = datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
+        expiry_time = (datetime.now(UTC) + timedelta(days=7)).strftime('%Y-%m-%dT%H:%M:%SZ')
         sas_token = f"sp=rl&st={start_time}&se={expiry_time}&sv=2023-01-03&sr=c&sig=InitialRandomSignature123456"
         
         # Step 1: Create initial source using create_source (like create_sas_token_ingestion_source in sample)

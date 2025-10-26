@@ -5,7 +5,6 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "99",
         "Content-Type": "application/json",
@@ -877,7 +876,7 @@
                 "title": "RGBIR COG tile"
               }
             },
-            "_msft:ts": "2025-10-22T20:26:34.420257Z",
+            "_msft:ts": "2025-10-26T16:52:27.923698Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -905,7 +904,7 @@
                 ]
               ]
             },
-            "_msft:etag": "b94fae54-5066-47be-b579-5e3a1f114d98",
+            "_msft:etag": "329ec5c6-0cc7-4968-9e26-fa01326a4a5b",
             "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,

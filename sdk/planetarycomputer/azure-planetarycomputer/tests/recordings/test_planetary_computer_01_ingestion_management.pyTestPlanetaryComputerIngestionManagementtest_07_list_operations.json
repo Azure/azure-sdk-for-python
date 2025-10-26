@@ -1,56 +1,10 @@
 {
   "Entries": [
     {
-      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 400,
-      "ResponseHeaders": {
-        "Content-Length": "88",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Server": "IMDS/150.870.65.1854"
-      },
-      "ResponseBody": {
-        "error": "invalid_request",
-        "error_description": "Required metadata header not specified"
-      }
-    },
-    {
-      "RequestUri": "http://Sanitized.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://Sanitized.spatio.azure.com",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Metadata": "true",
-        "User-Agent": "azsdk-python-identity/1.25.1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 400,
-      "ResponseHeaders": {
-        "Content-Length": "68",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Server": "IMDS/150.870.65.1854"
-      },
-      "ResponseBody": {
-        "error": "invalid_request",
-        "error_description": "Identity not found"
-      }
-    },
-    {
       "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -82,12 +36,36 @@
             "statusHistory": [
               {
                 "status": "Pending",
-                "timestamp": "2025-10-23T06:55:27.5440396Z"
+                "timestamp": "2025-10-26T17:11:50.3833272Z"
               }
             ],
             "type": "IngestionStaticCatalog",
-            "creationTime": "2025-10-23T06:55:27.5440385Z",
+            "creationTime": "2025-10-26T17:11:50.3833221Z",
             "collectionId": "naip-atl"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Running",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:48.256358Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:11:48.563681Z"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T17:11:48.256358Z",
+            "startTime": "2025-10-26T17:11:48.256358Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
@@ -95,12 +73,1451 @@
             "statusHistory": [
               {
                 "status": "Pending",
-                "timestamp": "2025-10-23T06:55:25.2036128Z"
+                "timestamp": "2025-10-26T17:11:43.7616114Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.7616106Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "5fd9bd23-40ac-4403-b9ed-55a15ad75925"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.6927554Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.6927527Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "d6aa1774-3bf6-4021-bf3d-3948891a6ad4"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.6221851Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.6221831Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "c83bcd98-8d35-4bdb-988b-30d4bbd541bc"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.5262706Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.5262692Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "fc90d654-c84d-4fad-8732-d69b3ee62dff"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.4563212Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.4563204Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "1cc9f998-c6e6-48f4-ad9d-3159e2198b3f"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.390135Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.3901339Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "f419596a-51d3-4ac2-ada8-2581e4da64a5"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.3160554Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.3160542Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "d1695cc7-5655-4340-bf59-77b17f1328f3"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.2151419Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.2151404Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "1fd9b30d-9503-437e-bad5-5017fd1ce8d6"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Pending",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:11:43.0762728Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:11:43.0762712Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "d80057d5-42e4-4279-91da-3978eac55b7b"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:10:51.1204724Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:10:54.9728931Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:10:55.1935623Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-26T17:10:51.1204711Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:10:20.4535104Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:10:24.7555817Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:10:24.9468007Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-26T17:10:20.4535085Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:07:46.138197Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:07:54.5173979Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:07:54.6545841Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-26T17:07:46.1381953Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:06:44.9653129Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:06:54.2655706Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:06:54.4789111Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-26T17:06:44.9653113Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:04:08.18296Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:04:10.377052Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-26T17:04:11.670937Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-26T17:04:08.18296Z",
+            "startTime": "2025-10-26T17:04:08.18296Z",
+            "finishTime": "2025-10-26T17:04:11.670937Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:03:34.127795Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:03:35.47693Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-26T17:03:35.885358Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-26T17:03:34.127795Z",
+            "startTime": "2025-10-26T17:03:34.127795Z",
+            "finishTime": "2025-10-26T17:03:35.885358Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:03:06.084098Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:03:06.193193Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T17:03:11.941867Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '598bb031-2911-440b-9d99-0b74b6e3552a' for collection 'naip-atl' has been cancelled"
               }
             ],
             "type": "IngestionStaticCatalog",
-            "creationTime": "2025-10-23T06:55:25.2036119Z",
-            "collectionId": "naip-atl"
+            "creationTime": "2025-10-26T17:03:06.084098Z",
+            "startTime": "2025-10-26T17:03:06.084098Z",
+            "finishTime": "2025-10-26T17:03:11.941867Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T17:03:02.101636Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '1121a019-f1ef-4c21-9935-b3abd2f0c752' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T17:02:46.749928Z",
+            "finishTime": "2025-10-26T17:03:02.101636Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T17:03:01.909547Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '2d373b2f-e842-4ba5-924a-85afc27fe124' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T17:02:41.59719Z",
+            "finishTime": "2025-10-26T17:03:01.909547Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:36.260339Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:37.407615Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T17:02:49.488127Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '38fc2a9e-df10-4d08-9144-e48d6d9f01a9' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T17:02:36.260339Z",
+            "startTime": "2025-10-26T17:02:36.260339Z",
+            "finishTime": "2025-10-26T17:02:49.488127Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:33.694702Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:34.05874Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T17:02:49.565564Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'c128f398-4dc2-4675-be35-27d2d69545ad' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T17:02:33.694702Z",
+            "startTime": "2025-10-26T17:02:33.694702Z",
+            "finishTime": "2025-10-26T17:02:49.565564Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:29.397277Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.7775619Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.8025574Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:29.3972763Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "a17101eb-5bcb-426c-a50d-525c17ccafd6"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:29.3273757Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.7431562Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.762573Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:29.3273743Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "8efd0c68-dd22-4b4f-b384-911cb440b025"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:29.2626364Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.7047057Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.7276018Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:29.2626287Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "4e2070eb-a59d-4fc5-8664-3865a929fe34"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:29.1843657Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.6615048Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.6886709Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:29.1843649Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "28d57c1a-aff7-4d03-b7d1-492215a6676a"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:29.0717053Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.6186724Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.6455932Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:29.0717041Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "e0491570-eae4-44a2-b793-b17df40d40fd"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:28.0287714Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.5767332Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.6046594Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:28.0287703Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "1b70e457-0459-454f-8ab8-de45fb753e2f"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:27.9028272Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.5337801Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.5605697Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:27.9028262Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "05f8dcd9-8b05-4bd6-84fd-8342b4f96ea8"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:27.7828023Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.4688826Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.5162952Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:27.7828008Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "60d2108a-a1b4-4693-a034-054187aa345f"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:02:27.6478553Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:02:35.3991836Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:02:35.43274Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T17:02:27.6478539Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "349fce3b-70c7-4bb4-8b44-60ff712b218b"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:01:38.0078901Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:01:53.9823921Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:01:54.146083Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-26T17:01:38.0078891Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T17:01:07.3468773Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T17:01:23.4856277Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T17:01:23.9544074Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-26T17:01:07.3468755Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:55:38.258756Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:55:52.6945455Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:55:53.3421446Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-26T16:55:38.2587541Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:52:58.917304Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:52:59.297653Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-26T16:53:00.589087Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-26T16:52:58.917304Z",
+            "startTime": "2025-10-26T16:52:58.917304Z",
+            "finishTime": "2025-10-26T16:53:00.589087Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:52:24.576084Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:52:26.094044Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-26T16:52:27.008218Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-26T16:52:24.576084Z",
+            "startTime": "2025-10-26T16:52:24.576084Z",
+            "finishTime": "2025-10-26T16:52:27.008218Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T16:52:06.107387Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'e1a4ad28-295f-4202-9c58-89cf3a80a241' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T16:51:57.737724Z",
+            "finishTime": "2025-10-26T16:52:06.107387Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T16:52:06.042606Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '0a285087-0e0d-498b-a738-8476785c46ad' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T16:51:41.186872Z",
+            "finishTime": "2025-10-26T16:52:06.042606Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T16:52:05.802973Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '82a88934-e574-4399-a0fa-2239f5768e2a' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T16:51:35.40932Z",
+            "finishTime": "2025-10-26T16:52:05.802973Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:29.64838Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:30.467734Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T16:51:44.206134Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '3dd9ff89-aa3f-4899-a147-5be736375f68' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T16:51:29.64838Z",
+            "startTime": "2025-10-26T16:51:29.64838Z",
+            "finishTime": "2025-10-26T16:51:44.206134Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:26.289476Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:27.265574Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T16:51:43.905234Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '7cf4021f-4f83-4177-ba0e-7aef0cf27d51' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T16:51:26.289476Z",
+            "startTime": "2025-10-26T16:51:26.289476Z",
+            "finishTime": "2025-10-26T16:51:43.905234Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:21.1043313Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:35.068613Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:35.1426835Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:21.1043306Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "ac5183b5-3e4c-4bfe-935d-baeac6b7b446"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:21.0291758Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:34.9179978Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:35.0500735Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:21.0291743Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "961cb14e-006f-4f2d-886f-2eea21074b40"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:20.9499998Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:22.5617106Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:22.5804209Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:20.9499978Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "fc0835a3-8555-4eab-beeb-cce7c12f96a8"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:20.8379739Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:22.5186925Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:22.5465681Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:20.8379732Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "bf20b80e-990d-46c9-b9be-025198e255bb"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:20.7293997Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:22.4081228Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:22.4912452Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:20.7293985Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "e99dc557-6c45-4b00-8471-1f3a51799feb"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:20.3860171Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:22.366635Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:22.3930574Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:20.3857741Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "df392e08-7709-4559-811b-dc65ce37e68f"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:19.8066441Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:22.2756505Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:22.3324846Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:19.8066433Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "4fc8b0ba-7d77-40d5-bf56-fef18f29297d"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:19.5945466Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:22.2155805Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:22.2577093Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:19.5945392Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "0bd5a17d-60b8-423a-b45d-b827373ab147"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:51:18.772907Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:51:21.8430182Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:51:22.1364752Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-26T16:51:18.7729023Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "1594441d-7a16-46dd-9b2e-84cc2085409d"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:50:26.3245956Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:50:34.4404075Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:50:34.8529119Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-26T16:50:26.3243741Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:49:54.1481329Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:50:04.1406385Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:50:04.389413Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-26T16:49:54.1481313Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T16:46:51.6538309Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T16:47:03.1214152Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T16:47:03.9784168Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-26T16:46:51.6536023Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-23T07:00:35.8651887Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-23T07:00:54.4884609Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-23T07:00:54.6080279Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-23T07:00:35.8651864Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-23T06:59:31.4270384Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-23T06:59:54.1997253Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-23T06:59:54.4551224Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-23T06:59:31.4270373Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-23T06:56:52.151236Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-23T06:56:52.50711Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-23T06:56:53.768722Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-23T06:56:52.151236Z",
+            "startTime": "2025-10-23T06:56:52.151236Z",
+            "finishTime": "2025-10-23T06:56:53.768722Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-23T06:56:19.471184Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-23T06:56:20.267608Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-23T06:56:20.741609Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-23T06:56:19.471184Z",
+            "startTime": "2025-10-23T06:56:19.471184Z",
+            "finishTime": "2025-10-23T06:56:20.741609Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-23T06:55:53.401283Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-23T06:55:56.329284Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-23T06:55:59.748378Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '1c506c69-62ba-4654-82b5-b0781405d083' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-23T06:55:53.401283Z",
+            "startTime": "2025-10-23T06:55:53.401283Z",
+            "finishTime": "2025-10-23T06:55:59.748378Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-23T06:55:56.217973Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '4622f4a0-23f4-4e2d-bee7-13f972bed0c2' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-23T06:55:37.453986Z",
+            "finishTime": "2025-10-23T06:55:56.217973Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-23T06:55:48.743076Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'b15dba1b-bf37-46a4-a912-c72b8832f924' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-23T06:55:32.857747Z",
+            "finishTime": "2025-10-23T06:55:48.743076Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-23T06:55:27.544038Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-23T06:55:28.524577Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-23T06:55:41.406745Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '0a82b4b4-254d-45e3-8272-71425949ac2b' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-23T06:55:27.544038Z",
+            "startTime": "2025-10-23T06:55:27.544038Z",
+            "finishTime": "2025-10-23T06:55:41.406745Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-23T06:55:25.203611Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-23T06:55:26.26508Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-23T06:55:40.583345Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '4d111585-475e-4ae7-b1d3-2a58a3727183' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-23T06:55:25.203611Z",
+            "startTime": "2025-10-23T06:55:25.203611Z",
+            "finishTime": "2025-10-23T06:55:40.583345Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
@@ -1033,7 +2450,41 @@
                 "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Failed",
@@ -2566,42 +4017,7 @@
                 "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Failed",
@@ -3597,7 +5013,41 @@
                 "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -5267,42 +6717,7 @@
                 "message": "Internal error"
               }
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Failed",
@@ -6311,7 +7726,41 @@
               "TotalPendingItems": "0",
               "TotalSuccessfulItems": "0"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Canceled",
@@ -7927,42 +9376,7 @@
               "TotalPendingItems": "0",
               "TotalSuccessfulItems": "0"
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Canceled",
@@ -9042,7 +10456,41 @@
             "additionalInformation": {
               "IngestionId": "03899538-4905-4412-963e-c3af32fbf5ad"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -10738,42 +12186,7 @@
             "additionalInformation": {
               "IngestionId": "d7fd0247-0d9d-42c7-9d3b-879dc1765b65"
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Failed",
@@ -11919,7 +13332,41 @@
               "TotalPendingItems": "0",
               "TotalSuccessfulItems": "5"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=500&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=500&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
