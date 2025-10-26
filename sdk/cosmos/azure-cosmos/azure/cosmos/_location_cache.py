@@ -138,16 +138,15 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
         else:
             final_applicable_contexts.append(regional_routing_context)
 
-    # Add circuit breaker excluded locations as a last resort
-    final_applicable_contexts.extend(circuit_breaker_excluded_contexts)
-
-    # Preserves the excluded locations at the end of the list, because for the metadata API calls, excluded locations
-    # are not preferred, but all endpoints must be used.
+    # For metadata requests, add user-excluded locations BEFORE fallback
     if base.IsMasterResource(resource_type):
         final_applicable_contexts.extend(user_excluded_regional_routing_contexts)
 
-    # If all preferred locations are excluded, use the fallback endpoint.
-    if not final_applicable_contexts:
+    # If no healthy regions, try circuit-breaker excluded ones BEFORE global fallback
+    if not final_applicable_contexts and circuit_breaker_excluded_contexts:
+        final_applicable_contexts = circuit_breaker_excluded_contexts
+    elif not final_applicable_contexts:
+        # Only use global fallback if there are no other options
         final_applicable_contexts.append(fall_back_regional_routing_context)
 
     return final_applicable_contexts
@@ -242,7 +241,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 self.account_locations_by_read_endpoints,
                 self.get_write_regional_routing_contexts()[0],
                 excluded_locations,
-                request.excluded_locations_circuit_breaker,
+                request.excluded_locations_circuit_breaker or [],
                 request.resource_type)
 
         # Else, return all regional endpoints
@@ -259,7 +258,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 self.account_locations_by_write_endpoints,
                 self.default_regional_routing_context,
                 excluded_locations,
-                request.excluded_locations_circuit_breaker,
+                request.excluded_locations_circuit_breaker or [],
                 request.resource_type)
 
         # Else, return all regional endpoints
@@ -313,8 +312,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 else:
                     applicable_contexts.append(context)
 
-        # Add circuit breaker excluded locations as a last resort
-        applicable_contexts.extend(circuit_breaker_contexts)
+        # Only add circuit breaker excluded locations if no healthy regions exist
+        if not applicable_contexts and circuit_breaker_contexts:
+            applicable_contexts = circuit_breaker_contexts
 
         if applicable_contexts:
             effective_index = location_index % len(applicable_contexts)
