@@ -9,8 +9,9 @@
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 404,
+      "StatusCode": 200,
       "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
         "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
@@ -18,21 +19,209 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "146",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1057",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "traceparent": "00-00000000000000000000000000000000-0000000000000000-00",
+        "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Ms-Error-Code": "ResourceNotFound",
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "error": {
-          "code": "ResourceNotFound",
-          "message": "Collection 'test-collection-lifecycle' not found. Please verify the collection ID and try again."
-        }
+        "id": "test-collection-lifecycle",
+        "type": "Collection",
+        "links": [
+          {
+            "rel": "items",
+            "type": "application/geo+json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
+          },
+          {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "self",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
+          }
+        ],
+        "title": "Test Collection Lifecycle",
+        "extent": {
+          "spatial": {
+            "bbox": [
+              [
+                -180,
+                -90,
+                180,
+                90
+              ]
+            ]
+          },
+          "temporal": {
+            "interval": [
+              [
+                "2020-01-01T00:00:00Z",
+                "2024-12-31T23:59:59Z"
+              ]
+            ]
+          }
+        },
+        "license": "proprietary",
+        "description": "Test collection for lifecycle operations",
+        "stac_version": "1.0.0",
+        "msft:_created": "2025-10-26T17:49:59.2921591Z",
+        "msft:_updated": "2025-10-26T17:49:59.2921591Z"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle?api-version=2025-04-30-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/f9eac221-7165-4464-8b6e-98ea038ce0c0?api-version=2025-04-30-preview",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Pending",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-26T17:58:36.3105199Z"
+          }
+        ],
+        "type": "DeleteCollection",
+        "creationTime": "2025-10-26T17:58:36.310518Z",
+        "collectionId": "test-collection-lifecycle"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Running",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-26T17:58:36.3105199Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-26T17:58:37.1501251Z"
+          }
+        ],
+        "type": "DeleteCollection",
+        "creationTime": "2025-10-26T17:58:36.310518Z",
+        "collectionId": "test-collection-lifecycle"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-26T17:58:36.3105199Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-26T17:58:37.1501251Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-26T17:58:37.3722075Z"
+          }
+        ],
+        "type": "DeleteCollection",
+        "creationTime": "2025-10-26T17:58:36.310518Z",
+        "collectionId": "test-collection-lifecycle"
       }
     },
     {
@@ -86,7 +275,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/6ed41f6b-cd68-4266-9483-a6cee3dae4b6?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/1db8ee7a-2839-417a-a000-0e379930f0ee?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -101,11 +290,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:43:15.4500582Z"
+            "timestamp": "2025-10-26T17:59:37.3826084Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-26T17:43:15.4500545Z",
+        "creationTime": "2025-10-26T17:59:37.3825999Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -143,11 +332,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:43:15.4500582Z"
+            "timestamp": "2025-10-26T17:59:37.3826084Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-26T17:43:15.4500545Z",
+        "creationTime": "2025-10-26T17:59:37.3825999Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -185,19 +374,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:43:15.4500582Z"
+            "timestamp": "2025-10-26T17:59:37.3826084Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-26T17:43:28.6549567Z"
+            "timestamp": "2025-10-26T18:00:00.0484711Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-26T17:43:28.8626611Z"
+            "timestamp": "2025-10-26T18:00:00.4939609Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-26T17:43:15.4500545Z",
+        "creationTime": "2025-10-26T17:59:37.3825999Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -235,19 +424,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:43:15.4500582Z"
+            "timestamp": "2025-10-26T17:59:37.3826084Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-26T17:43:28.6549567Z"
+            "timestamp": "2025-10-26T18:00:00.0484711Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-26T17:43:28.8626611Z"
+            "timestamp": "2025-10-26T18:00:00.4939609Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-26T17:43:15.4500545Z",
+        "creationTime": "2025-10-26T17:59:37.3825999Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -330,8 +519,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-26T17:43:28.7318694Z",
-        "msft:_updated": "2025-10-26T17:43:28.7318694Z"
+        "msft:_created": "2025-10-26T18:00:00.1445413Z",
+        "msft:_updated": "2025-10-26T18:00:00.1445413Z"
       }
     }
   ],

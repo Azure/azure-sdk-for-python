@@ -229,7 +229,7 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-27T17:46:40Z",
+        "msft:expiry": "2025-10-27T17:56:47Z",
         "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-26T17%3A46%3A39Z&ske=2025-11-02T17%3A45%3A39Z&sks=b&skv=2025-01-05&sig=Sanitized"
       }
     }

@@ -32,7 +32,7 @@
         "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:25:39.5659289Z",
+            "creationTime": "2025-10-26T17:39:11.101219Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -42,7 +42,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:25:41.6801551Z",
+            "creationTime": "2025-10-26T17:39:13.2298194Z",
             "importType": "StaticCatalog",
             "displayName": "Updated Ingestion Name",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -52,7 +52,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:25:43.9524879Z",
+            "creationTime": "2025-10-26T17:39:15.4437597Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Run",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -62,7 +62,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:25:46.0924346Z",
+            "creationTime": "2025-10-26T17:39:17.5948624Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Status Check",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -72,7 +72,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:25:53.1342047Z",
+            "creationTime": "2025-10-26T17:39:23.0423843Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Operation",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -82,7 +82,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:25:57.4262905Z",
+            "creationTime": "2025-10-26T17:39:27.5029955Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Cancel Test",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -92,7 +92,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:26:08.12824Z",
+            "creationTime": "2025-10-26T17:39:36.3358427Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Lists Test",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -102,7 +102,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:26:10.3937736Z",
+            "creationTime": "2025-10-26T17:39:38.5808283Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Get Test",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -112,7 +112,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-26T17:26:12.5498197Z",
+            "creationTime": "2025-10-26T17:39:40.7211385Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for List Runs Test",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -145,7 +145,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/f1b67d68-7862-4a30-bb5e-aeea7cb2c351?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/531bbd09-330c-4b61-919f-cb9fcc6fc8be?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -160,14 +160,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.3639489Z"
+            "timestamp": "2025-10-26T17:54:24.6797249Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.3639442Z",
+        "creationTime": "2025-10-26T17:54:24.6797236Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "c9c58661-6e8a-4e5a-90a3-b9e0064ebb7a"
+          "IngestionId": "2890f31c-8f43-4185-8146-0295138fd3af"
         }
       }
     },
@@ -205,14 +205,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.3639489Z"
+            "timestamp": "2025-10-26T17:54:24.6797249Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.3639442Z",
+        "creationTime": "2025-10-26T17:54:24.6797236Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "c9c58661-6e8a-4e5a-90a3-b9e0064ebb7a"
+          "IngestionId": "2890f31c-8f43-4185-8146-0295138fd3af"
         }
       }
     },
@@ -238,7 +238,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/04b156b9-d99d-4f02-84db-fdffff3252ae?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/ef6bb7bb-910d-4a0b-b136-a822f58db931?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -253,14 +253,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.4657608Z"
+            "timestamp": "2025-10-26T17:54:24.7936628Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.4657547Z",
+        "creationTime": "2025-10-26T17:54:24.7936594Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "2d3c913a-80c1-44cd-abb6-ff67d67f6949"
+          "IngestionId": "592752fd-a21f-43dd-8fb9-239092f125ef"
         }
       }
     },
@@ -298,14 +298,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.4657608Z"
+            "timestamp": "2025-10-26T17:54:24.7936628Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.4657547Z",
+        "creationTime": "2025-10-26T17:54:24.7936594Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "2d3c913a-80c1-44cd-abb6-ff67d67f6949"
+          "IngestionId": "592752fd-a21f-43dd-8fb9-239092f125ef"
         }
       }
     },
@@ -331,7 +331,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/d2289e74-6cdf-469d-b9fc-6599a767a0fe?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/889066ac-e2dc-428e-9d44-9c3e940d6d44?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -346,14 +346,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.5780572Z"
+            "timestamp": "2025-10-26T17:54:24.8955206Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.5780555Z",
+        "creationTime": "2025-10-26T17:54:24.8955199Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "8568e185-6d72-4816-bb31-9f76f2e484fd"
+          "IngestionId": "529b292d-37a7-485f-b55c-943974754c4c"
         }
       }
     },
@@ -391,14 +391,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.5780572Z"
+            "timestamp": "2025-10-26T17:54:24.8955206Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.5780555Z",
+        "creationTime": "2025-10-26T17:54:24.8955199Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "8568e185-6d72-4816-bb31-9f76f2e484fd"
+          "IngestionId": "529b292d-37a7-485f-b55c-943974754c4c"
         }
       }
     },
@@ -424,7 +424,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/eeea1eb2-10e3-47b8-a90d-74144a86d793?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/86446694-dffd-498a-89bb-e9a79746fa74?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -439,14 +439,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.6977776Z"
+            "timestamp": "2025-10-26T17:54:24.9580208Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.6977759Z",
+        "creationTime": "2025-10-26T17:54:24.9580201Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "706fefe6-7417-4377-8998-b9e0fa475170"
+          "IngestionId": "982e2315-5819-4a74-b632-490cee428e19"
         }
       }
     },
@@ -484,14 +484,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.6977776Z"
+            "timestamp": "2025-10-26T17:54:24.9580208Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.6977759Z",
+        "creationTime": "2025-10-26T17:54:24.9580201Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "706fefe6-7417-4377-8998-b9e0fa475170"
+          "IngestionId": "982e2315-5819-4a74-b632-490cee428e19"
         }
       }
     },
@@ -517,7 +517,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/0bdc0af7-6c9a-46eb-a1fb-5dd5da2a9d32?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/92b69b64-ada3-481f-9ee9-b086c8ae97d8?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -532,14 +532,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.7667591Z"
+            "timestamp": "2025-10-26T17:54:25.608207Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.7667575Z",
+        "creationTime": "2025-10-26T17:54:25.6082048Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "6f7727f1-f26a-40fa-be7a-840646225126"
+          "IngestionId": "08ac7c1e-e0b6-425d-bc13-07c8f4446cd4"
         }
       }
     },
@@ -577,14 +577,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.7667591Z"
+            "timestamp": "2025-10-26T17:54:25.608207Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.7667575Z",
+        "creationTime": "2025-10-26T17:54:25.6082048Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "6f7727f1-f26a-40fa-be7a-840646225126"
+          "IngestionId": "08ac7c1e-e0b6-425d-bc13-07c8f4446cd4"
         }
       }
     },
@@ -610,7 +610,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/90e09a39-3971-4649-bf93-d6f6c08a0198?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/4e962df1-d88e-43c5-9503-e3572ed105a2?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -625,14 +625,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.834625Z"
+            "timestamp": "2025-10-26T17:54:25.6805035Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.8346228Z",
+        "creationTime": "2025-10-26T17:54:25.6804976Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "773b821d-b6f2-435b-bd15-d4aa55b5ae7c"
+          "IngestionId": "8d5ff705-9960-4378-bf40-68fe1fb20c64"
         }
       }
     },
@@ -670,14 +670,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.834625Z"
+            "timestamp": "2025-10-26T17:54:25.6805035Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.8346228Z",
+        "creationTime": "2025-10-26T17:54:25.6804976Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "773b821d-b6f2-435b-bd15-d4aa55b5ae7c"
+          "IngestionId": "8d5ff705-9960-4378-bf40-68fe1fb20c64"
         }
       }
     },
@@ -703,7 +703,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/aa41fd05-992e-4bfd-a278-93a6c4aa8dbd?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/e6535dbf-f0cb-491b-bc02-66b9f73d06d9?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -718,14 +718,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.9022272Z"
+            "timestamp": "2025-10-26T17:54:25.8126935Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.9022247Z",
+        "creationTime": "2025-10-26T17:54:25.8126905Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "05b07d20-e008-41fd-938f-75feff9a3d03"
+          "IngestionId": "da55a6ec-0014-480d-aaca-e4e5bf3fa885"
         }
       }
     },
@@ -763,14 +763,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.9022272Z"
+            "timestamp": "2025-10-26T17:54:25.8126935Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.9022247Z",
+        "creationTime": "2025-10-26T17:54:25.8126905Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "05b07d20-e008-41fd-938f-75feff9a3d03"
+          "IngestionId": "da55a6ec-0014-480d-aaca-e4e5bf3fa885"
         }
       }
     },
@@ -796,7 +796,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/8f3aa33f-01fa-4943-800b-cd2e19ac8c40?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/631ebeaa-a4c6-4bff-aca3-f34af35c2465?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -811,14 +811,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.9677177Z"
+            "timestamp": "2025-10-26T17:54:25.8758119Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.9677144Z",
+        "creationTime": "2025-10-26T17:54:25.8758096Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "ada49fbf-63f1-453f-8cc7-d698d888f8ad"
+          "IngestionId": "88b3ae3b-542a-4548-9e10-0b7a542d8d83"
         }
       }
     },
@@ -856,14 +856,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:10.9677177Z"
+            "timestamp": "2025-10-26T17:54:25.8758119Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:10.9677144Z",
+        "creationTime": "2025-10-26T17:54:25.8758096Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "ada49fbf-63f1-453f-8cc7-d698d888f8ad"
+          "IngestionId": "88b3ae3b-542a-4548-9e10-0b7a542d8d83"
         }
       }
     },
@@ -889,7 +889,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/5eb5090d-898b-4d60-9a65-139a6847820f?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/ecd60857-168e-4316-958f-1d7255e0c39b?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -904,14 +904,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:11.0431162Z"
+            "timestamp": "2025-10-26T17:54:25.9420884Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:11.0431143Z",
+        "creationTime": "2025-10-26T17:54:25.9420877Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "4bdd3c39-8de3-49ea-869c-66f48869cf28"
+          "IngestionId": "805f34e8-0329-402e-8f04-8f314af09ba7"
         }
       }
     },
@@ -949,14 +949,14 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:39:11.0431162Z"
+            "timestamp": "2025-10-26T17:54:25.9420884Z"
           }
         ],
         "type": "DeleteIngestion",
-        "creationTime": "2025-10-26T17:39:11.0431143Z",
+        "creationTime": "2025-10-26T17:54:25.9420877Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
-          "IngestionId": "4bdd3c39-8de3-49ea-869c-66f48869cf28"
+          "IngestionId": "805f34e8-0329-402e-8f04-8f314af09ba7"
         }
       }
     },
@@ -999,7 +999,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T17:39:11.101219Z",
+        "creationTime": "2025-10-26T17:54:25.9970902Z",
         "importType": "StaticCatalog",
         "displayName": "Ingestion",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",

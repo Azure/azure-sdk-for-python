@@ -78,7 +78,7 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-26T17:39:25.2173286Z",
+        "created": "2025-10-26T17:54:41.2464597Z",
         "connectionInfo": {
           "containerUrl": "Sanitized",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
@@ -147,7 +147,7 @@
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "kind": "BlobManagedIdentity",
-            "created": "2025-10-26T17:39:05.324744Z"
+            "created": "2025-10-26T17:54:20.2242554Z"
           }
         ]
       }
