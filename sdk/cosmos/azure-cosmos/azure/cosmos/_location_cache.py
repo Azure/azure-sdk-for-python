@@ -92,14 +92,33 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
                                               exclude_location_list: list[str],
                                               circuit_breaker_exclude_list: list[str],
                                               resource_type: str) -> list[RegionalRoutingContext]:
-    """
-    this method separates the initial list of endpoints into two groups: those the user has explicitly excluded and those they have not.
-    It then takes the list of non-excluded endpoints and moves any that are currently marked as unavailable by the circuit breaker to the
-    end of that list. This ensures healthy endpoints are tried before unhealthy ones.
-    For special metadata requests (which must succeed), it adds the user-excluded locations back to the very end of the list. This
-    allows the SDK to try every possible endpoint as a last resort for critical operations.
-    If all available endpoints are filtered out, it adds a default fallback endpoint to the list to ensure there is always at least one endpoint
-    to attempt a connection to
+    """Filters and reorders regional endpoints based on exclusion lists and health.
+
+    This method separates the initial list of endpoints into two groups: those the user has explicitly excluded
+    and those they have not. It then takes the list of non-excluded endpoints and moves any that are currently
+    marked as unavailable by the circuit breaker to the end of that list. This ensures healthy endpoints are
+    tried before unhealthy ones.
+
+    For special metadata requests (which must succeed), it adds the user-excluded locations back to the very
+    end of the list. This allows the SDK to try every possible endpoint as a last resort for critical operations.
+
+    If all available endpoints are filtered out, it adds a default fallback endpoint to the list to ensure
+    there is always at least one endpoint to attempt a connection to.
+
+    :param regional_routing_contexts: The initial list of regional contexts to filter.
+    :type regional_routing_contexts: list[RegionalRoutingContext]
+    :param location_name_by_endpoint: A mapping from endpoint URL to location name.
+    :type location_name_by_endpoint: Mapping[str, str]
+    :param fall_back_regional_routing_context: The context to use as a fallback if all others are filtered out.
+    :type fall_back_regional_routing_context: RegionalRoutingContext
+    :param exclude_location_list: A list of location names to exclude, based on user configuration.
+    :type exclude_location_list: list[str]
+    :param circuit_breaker_exclude_list: A list of location names to temporarily exclude due to circuit breaker logic.
+    :type circuit_breaker_exclude_list: list[str]
+    :param resource_type: The type of resource for the request, used to determine if it's a metadata request.
+    :type resource_type: str
+    :return: A filtered and reordered list of regional routing contexts.
+    :rtype: list[RegionalRoutingContext]
     """
     # filter endpoints by excluded locations
     applicable_regional_routing_contexts = []
@@ -247,7 +266,21 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.get_write_regional_routing_contexts()
 
     def _resolve_endpoint_without_preferred_locations(self, request, is_write, location_index):
-        """Resolves an endpoint when not using preferred locations."""
+        """Resolves an endpoint when not using preferred locations or for single-write failover.
+
+        This helper method is called when `use_preferred_locations` is False or for write operations on single-write
+        accounts. It determines the appropriate endpoint by cycling through available locations while respecting
+        user-configured and circuit-breaker-based exclusion lists.
+
+        :param request: The request object for the current operation.
+        :type request: azure.cosmos._request_object.RequestObject
+        :param is_write: A boolean indicating if the operation is a write.
+        :type is_write: bool
+        :param location_index: The index used to select an endpoint from the list of available locations.
+        :type location_index: int
+        :return: The resolved endpoint URL as a string.
+        :rtype: str
+        """
         ordered_locations = self.account_write_locations if is_write else self.account_read_locations
         all_contexts_by_loc = (self.account_write_regional_routing_contexts_by_location if is_write
                                else self.account_read_regional_routing_contexts_by_location)
@@ -291,23 +324,22 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.default_regional_routing_context.get_primary()
 
     def resolve_service_endpoint(self, request):
-        """
-        this method determines the appropriate service endpoint for a request by following this logic:
-        Direct Override: If a specific endpoint is provided in request.location_endpoint_to_route, it is used immediately.
-        Main Logic Branching: It checks if use_preferred_locations is False or if the request is a write operation on a single-write account.
-        If True (No Preferred Locations or Single-Write Failover):
-             For single-write accounts: It alternates between the first two available write locations for failover, ignoring any exclusion lists.
-             For reads or multi-write accounts: It uses the full list of account locations, filters out any user-configured excluded
-             locations, and moves any circuit-breaker-excluded locations to the end of the list to be used as a last resort.
-             It then selects an endpoint from this filtered list.
-             It falls back to the default account endpoint if endpoint discovery is disabled or no locations are available.
-        If False (Default path for multi-region accounts using preferred locations):
-             It gets the list of applicable read or write locations, which is already filtered to respect preferred locations, user
-             exclusions, and circuit-breaker status.
-             It selects an endpoint from this list based on the request's location index.
-             In essence, the method intelligently routes requests by prioritizing explicit overrides, then handling specific failover
-             and non-preferred location scenarios, and finally defaulting to using the ordered list of preferred locations, all while
-             respecting various exclusion rules.
+        """Determines the appropriate service endpoint for a given request.
+
+        This method intelligently routes requests by following a specific logic:
+        1.  If `request.location_endpoint_to_route` is set, it is used immediately.
+        2.  No Preferred Locations or Single-Write Failover: If `use_preferred_locations` is False or it's a
+            write operation on a single-write account, it calls a helper to resolve the endpoint.
+            - For single-write accounts, it fails over between the first two write locations.
+            - For other cases, it filters locations based on user and circuit-breaker exclusions.
+        3.  Preferred Locations (Default): It uses the pre-filtered list of applicable read or write locations,
+            respecting preferred locations, user exclusions, and circuit-breaker status, and selects an endpoint
+            based on the request's location index.
+
+        :param request: The request object for the current operation.
+        :type request: azure.cosmos._request_object.RequestObject
+        :return: The resolved endpoint URL as a string.
+        :rtype: str
         """
 
         if request.location_endpoint_to_route:
