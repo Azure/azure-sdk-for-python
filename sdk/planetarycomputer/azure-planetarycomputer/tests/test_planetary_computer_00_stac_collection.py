@@ -7,9 +7,10 @@
 Unit tests for STAC Collection operations.
 """
 import logging
+import time
 import pytest
 from pathlib import Path
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import (
     PartitionTypeScheme,
@@ -804,8 +805,8 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
                 delete_poller = client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
                 delete_poller.result()
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
-                import time
-                time.sleep(5)  # Wait for deletion to complete
+                if is_live():
+                    time.sleep(5)  # Wait for deletion to complete
         except Exception:
             test_logger.info(f"Collection '{test_collection_id}' does not exist, proceeding with creation")
         

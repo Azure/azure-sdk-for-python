@@ -162,6 +162,19 @@ def add_sanitizers(test_proxy):
         value="/operations/00000000-0000-0000-0000-000000000000"
     )
     
+    # Sanitize Location header for resource creation
+    # This header contains the created resource URL with UUID that needs to be sanitized
+    add_header_regex_sanitizer(
+        key="Location",
+        regex=r"/ingestion-sources/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        value="/ingestion-sources/00000000-0000-0000-0000-000000000000"
+    )
+    add_header_regex_sanitizer(
+        key="Location",
+        regex=r"/ingestions/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+        value="/ingestions/00000000-0000-0000-0000-000000000000"
+    )
+    
     # Sanitize collection IDs with random hash suffixes
     # Pattern: naip-atl-bde3e846 -> naip-atl-00000000
     # The service appends a random 8-character hex hash to collection IDs at runtime

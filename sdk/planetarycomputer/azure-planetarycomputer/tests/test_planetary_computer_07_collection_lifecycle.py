@@ -8,9 +8,10 @@ Unit tests for STAC Collection lifecycle operations (create, update, delete).
 Note: These tests are marked with pytest.mark.live_test_only as they modify collections.
 """
 import logging
+import time
 import pytest
 from pathlib import Path
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import (
     StacExtensionSpatialExtent,
@@ -60,8 +61,8 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
                 delete_poller = client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
                 delete_poller.result()
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
-                import time
-                time.sleep(30)  # Wait for deletion to complete
+                if is_live():
+                    time.sleep(30)  # Wait for deletion to complete
         except Exception:
             test_logger.info(f"Collection '{test_collection_id}' does not exist, proceeding with creation")
         
@@ -93,8 +94,8 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
         test_logger.info(f"Collection created: {result}")
         
         # Verify creation
-        import time
-        time.sleep(15)  # Wait for collection to be available
+        if is_live():
+            time.sleep(15)  # Wait for collection to be available
         created_collection = client.stac.get_collection(collection_id=test_collection_id)
         assert created_collection is not None
         assert created_collection.id == test_collection_id
@@ -133,8 +134,8 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
         test_logger.info(f"Collection updated: {result}")
         
         # Verify update
-        import time
-        time.sleep(10)
+        if is_live():
+            time.sleep(10)
         updated_collection = client.stac.get_collection(collection_id=test_collection_id)
         assert updated_collection.description == "Test collection for lifecycle operations - UPDATED"
         
@@ -161,8 +162,8 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
         test_logger.info(f"Delete operation completed: {result}")
         
         # Verify deletion
-        import time
-        time.sleep(30)
+        if is_live():
+            time.sleep(30)
         
         try:
             client.stac.get_collection(collection_id=test_collection_id)
@@ -197,8 +198,8 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
                 asset_id="test-asset"
             )
             test_logger.info("Deleted existing 'test-asset'")
-            import time
-            time.sleep(5)  # Wait for deletion to complete
+            if is_live():
+                time.sleep(5)  # Wait for deletion to complete
         except Exception as e:
             if "404" in str(e) or "Not Found" in str(e) or "not found" in str(e).lower():
                 test_logger.info("Asset 'test-asset' does not exist, proceeding with creation")

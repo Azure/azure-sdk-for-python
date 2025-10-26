@@ -22,7 +22,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/9c04aed5-1963-4844-ab6b-653f2b394dde?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/d9b84aad-df1c-47dd-8d01-2297c57d10c2?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -37,11 +37,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:16:52.6933966Z"
+            "timestamp": "2025-10-26T17:44:18.5987827Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-26T17:16:52.6933955Z",
+        "creationTime": "2025-10-26T17:44:18.5987814Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -79,11 +79,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:16:52.6933966Z"
+            "timestamp": "2025-10-26T17:44:18.5987827Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-26T17:16:52.6933955Z",
+        "creationTime": "2025-10-26T17:44:18.5987814Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -121,19 +121,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T17:16:52.6933966Z"
+            "timestamp": "2025-10-26T17:44:18.5987827Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-26T17:16:56.0208053Z"
+            "timestamp": "2025-10-26T17:44:28.8955753Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-26T17:16:56.2111243Z"
+            "timestamp": "2025-10-26T17:44:29.0243457Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-26T17:16:52.6933955Z",
+        "creationTime": "2025-10-26T17:44:18.5987814Z",
         "collectionId": "test-collection-lifecycle"
       }
     },

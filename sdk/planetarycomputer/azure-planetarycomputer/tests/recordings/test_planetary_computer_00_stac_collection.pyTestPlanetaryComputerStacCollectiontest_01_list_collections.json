@@ -2206,7 +2206,7 @@
             },
             "stac_version": "1.0.0",
             "msft:_created": "2025-10-22T11:14:31.811918Z",
-            "msft:_updated": "2025-10-26T17:09:00.106777Z",
+            "msft:_updated": "2025-10-26T17:32:04.755706Z",
             "stac_extensions": [
               "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
               "https://stac-extensions.github.io/table/v1.2.0/schema.json"
