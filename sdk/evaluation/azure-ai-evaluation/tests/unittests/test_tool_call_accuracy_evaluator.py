@@ -47,9 +47,11 @@ async def flow_side_effect(timeout, **kwargs):
     if invalid_calls > 0:
         # Return a non-numeric score to trigger an exception in the evaluator's check_score_is_valid
         return {
-            "chain_of_thought": "The tool calls were very correct that I returned a huge number!",
-            "tool_calls_success_level": 25,
-            "additional_details": {},
+            "llm_output": {
+                "chain_of_thought": "The tool calls were very correct that I returned a huge number!",
+                "tool_calls_success_level": 25,
+                "details": {},
+            }
         }
 
     score = 1  # Default score for "all bad"
@@ -60,12 +62,14 @@ async def flow_side_effect(timeout, **kwargs):
             score = 3  # Mixed good and bad
 
     return {
-        "chain_of_thought": f"Evaluated {total_calls} tool calls with {total_good_calls} correct calls.",
-        "tool_calls_success_level": score,
-        "additional_details": {
-            "tool_calls_made_by_agent": total_calls,
-            "correct_tool_calls_made_by_agent": total_good_calls,
-        },
+        "llm_output": {
+            "chain_of_thought": f"Evaluated {total_calls} tool calls with {total_good_calls} correct calls.",
+            "tool_calls_success_level": score,
+            "details": {
+                "tool_calls_made_by_agent": total_calls,
+                "correct_tool_calls_made_by_agent": total_good_calls,
+            },
+        }
     }
 
 

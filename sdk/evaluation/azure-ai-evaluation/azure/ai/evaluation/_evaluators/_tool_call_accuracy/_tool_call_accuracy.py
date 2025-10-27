@@ -127,6 +127,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
+        self._threshold = threshold
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -235,8 +236,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict
         """
         # Single LLM call for all tool calls
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = prompty_output_dict.get("llm_output", "")
         if isinstance(llm_output, dict):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
@@ -257,10 +258,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score_result = "pass" if score >= self.threshold else "fail"
             response_dict = {
                 self._result_key: score,
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
                 "details": llm_output.get("details", {}),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
             return response_dict
 
@@ -300,6 +309,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # If no tool calls were made or tool call type is not supported, return not applicable result
         return {
             self._result_key: self._NOT_APPLICABLE_RESULT,
+            f"gpt_{self._result_key}": self._NOT_APPLICABLE_RESULT,
             f"{self._result_key}_result": "pass",
             f"{self._result_key}_threshold": self.threshold,
             f"{self._result_key}_reason": error_message,
