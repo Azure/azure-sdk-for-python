@@ -27,7 +27,7 @@ class TestCognitiveServicesManagementLocationBasedModelCapacitiesOperationsAsync
             model_format="str",
             model_name="str",
             model_version="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

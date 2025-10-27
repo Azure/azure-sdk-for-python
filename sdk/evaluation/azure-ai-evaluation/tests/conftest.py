@@ -362,7 +362,7 @@ def mock_project_scope() -> Dict[str, str]:
 
 
 @pytest.fixture(scope="session")
-def mock_onedp_project_scope() -> Dict[str, str]:
+def mock_onedp_project_scope() -> str:
     return "https://Sanitized.services.ai.azure.com/api/projects/00000"
 
 

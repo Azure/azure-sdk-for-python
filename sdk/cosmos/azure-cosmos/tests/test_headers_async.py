@@ -12,6 +12,7 @@ import test_config
 from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
+from test_headers import partition_merge_support_response_hook
 
 client_throughput_bucket_number = 2
 request_throughput_bucket_number = 3
@@ -230,6 +231,10 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
 
+    async def test_partition_merge_support_header(self):
+        # This test only runs read API to verify if the header was set correctly, because all APIs are using the same
+        # base method to set the header(GetHeaders).
+        await self.container.read(raw_response_hook=partition_merge_support_response_hook)
 
 if __name__ == "__main__":
     unittest.main()

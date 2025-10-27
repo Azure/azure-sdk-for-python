@@ -266,7 +266,7 @@ class AsyncPrompty:
     async def __call__(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self,
         **kwargs: Any,
-    ) -> Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]]:
+    ) -> dict:
         """Calling prompty as a function in async, the inputs should be provided with key word arguments.
         Returns the output of the prompty.
 
@@ -330,6 +330,7 @@ class AsyncPrompty:
             is_first_choice=self._data.get("model", {}).get("response", "first").lower() == "first",
             response_format=params.get("response_format", {}),
             outputs=self._outputs,
+            inputs=inputs,
         )
 
     def render(  # pylint: disable=docstring-keyword-should-match-keyword-only
