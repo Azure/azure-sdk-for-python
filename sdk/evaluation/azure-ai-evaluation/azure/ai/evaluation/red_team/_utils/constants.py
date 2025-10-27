@@ -47,6 +47,12 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
 # Task timeouts and status codes
 INTERNAL_TASK_TIMEOUT = 120
 
+# Sampling constants
+# Multiplier for the maximum number of sampling iterations when round-robin sampling from risk subtypes.
+# This prevents infinite loops while allowing sufficient attempts to find unique objectives.
+# With N subtypes, this allows up to N * MAX_SAMPLING_ITERATIONS_MULTIPLIER total iterations.
+MAX_SAMPLING_ITERATIONS_MULTIPLIER = 100
+
 # Task status definitions
 TASK_STATUS = {
     "PENDING": "pending",

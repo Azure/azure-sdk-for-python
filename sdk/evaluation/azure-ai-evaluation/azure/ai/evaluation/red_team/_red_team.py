@@ -59,7 +59,7 @@ from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import PromptChatTarget
 
 # Local imports - constants and utilities
-from ._utils.constants import TASK_STATUS
+from ._utils.constants import TASK_STATUS, MAX_SAMPLING_ITERATIONS_MULTIPLIER
 from ._utils.logging_utils import (
     setup_logger,
     log_section_header,
@@ -319,6 +319,27 @@ class RedTeam:
             mlflow_integration=self.mlflow_integration,
         )
 
+    @staticmethod
+    def _extract_risk_subtype(objective: Dict) -> Optional[str]:
+        """Extract risk-subtype from an objective's target_harms metadata.
+
+        Searches through the target_harms list in the objective's metadata to find
+        the first non-empty risk-subtype value.
+
+        :param objective: The objective dictionary containing metadata with target_harms
+        :type objective: Dict
+        :return: The risk-subtype value if found, None otherwise
+        :rtype: Optional[str]
+        """
+        target_harms = objective.get("metadata", {}).get("target_harms", [])
+        if target_harms and isinstance(target_harms, list):
+            for harm in target_harms:
+                if isinstance(harm, dict) and "risk-subtype" in harm:
+                    subtype_value = harm.get("risk-subtype")
+                    if subtype_value:
+                        return subtype_value
+        return None
+
     async def _get_attack_objectives(
         self,
         risk_category: Optional[RiskCategory] = None,
@@ -435,17 +456,7 @@ class RedTeam:
         objectives_without_subtype = []
 
         for obj in custom_objectives:
-            target_harms = obj.get("metadata", {}).get("target_harms", [])
-            risk_subtype = None
-
-            # Extract risk-subtype from target_harms
-            if target_harms and isinstance(target_harms, list):
-                for harm in target_harms:
-                    if isinstance(harm, dict) and "risk-subtype" in harm:
-                        subtype_value = harm.get("risk-subtype")
-                        if subtype_value:
-                            risk_subtype = subtype_value
-                            break
+            risk_subtype = self._extract_risk_subtype(obj)
 
             if risk_subtype:
                 if risk_subtype not in objectives_by_subtype:
@@ -486,16 +497,20 @@ class RedTeam:
             if len(selected_cat_objectives) < num_objectives:
                 remaining = num_objectives - len(selected_cat_objectives)
                 subtype_list = list(objectives_by_subtype.keys())
+                # Track selected objective IDs in a set for O(1) membership checks
+                selected_ids = {id(obj) for obj in selected_cat_objectives}
                 idx = 0
                 while remaining > 0 and subtype_list:
                     subtype = subtype_list[idx % len(subtype_list)]
-                    available = [obj for obj in objectives_by_subtype[subtype] if obj not in selected_cat_objectives]
+                    available = [obj for obj in objectives_by_subtype[subtype] if id(obj) not in selected_ids]
                     if available:
-                        selected_cat_objectives.append(random.choice(available))
+                        selected_obj = random.choice(available)
+                        selected_cat_objectives.append(selected_obj)
+                        selected_ids.add(id(selected_obj))
                         remaining -= 1
                     idx += 1
                     # Prevent infinite loop if we run out of unique objectives
-                    if idx > len(subtype_list) * 100:
+                    if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
                         break
 
             self.logger.info(f"Sampled {len(selected_cat_objectives)} objectives across {num_subtypes} risk subtypes")
@@ -769,16 +784,7 @@ class RedTeam:
         """Extract content from selected objectives and build prompt-to-context mapping."""
         selected_prompts = []
         for obj in selected_objectives:
-            risk_subtype = None
-            # Extract risk-subtype from target_harms if present
-            target_harms = obj.get("metadata", {}).get("target_harms", [])
-            if target_harms and isinstance(target_harms, list):
-                for harm in target_harms:
-                    if isinstance(harm, dict) and "risk-subtype" in harm:
-                        subtype_value = harm.get("risk-subtype")
-                        if subtype_value:
-                            risk_subtype = subtype_value
-                            break
+            risk_subtype = self._extract_risk_subtype(obj)
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
@@ -863,20 +869,9 @@ class RedTeam:
         # Process list format and organize by category for caching
         for obj in selected_objectives:
             obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
-            target_harms = obj.get("metadata", {}).get("target_harms", [])
             content = ""
             context = ""
-            risk_subtype = None
-
-            # Extract risk-subtype from target_harms if present
-            if target_harms and isinstance(target_harms, list):
-                for harm in target_harms:
-                    if isinstance(harm, dict) and "risk-subtype" in harm:
-                        subtype_value = harm.get("risk-subtype")
-                        # Only store non-empty risk-subtype values
-                        if subtype_value:
-                            risk_subtype = subtype_value
-                            break  # Use the first non-empty risk-subtype found
+            risk_subtype = self._extract_risk_subtype(obj)
 
             if "messages" in obj and len(obj["messages"]) > 0:
 
