@@ -31,13 +31,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    client.http_route_config.delete(
+    client.http_route_config.begin_delete(
         resource_group_name="examplerg",
         environment_name="testcontainerenv",
         http_route_name="httproutefriendlyname",
-    )
+    ).result()
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/HttpRouteConfig_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/HttpRouteConfig_Delete.json
 if __name__ == "__main__":
     main()
