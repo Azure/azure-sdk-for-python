@@ -14,7 +14,7 @@
 - Unpinned fixedint dependency
   ([#43475](https://github.com/Azure/azure-sdk-for-python/pull/43475))
 - Remove fixedint dependency
-  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
+  ([#43659](https://github.com/Azure/azure-sdk-for-python/pull/43659))
 
 ## 1.0.0b44 (2025-10-14)
 
