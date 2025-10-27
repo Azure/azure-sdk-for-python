@@ -562,7 +562,7 @@ class ShareProperties(DictMixin):
         self.provisioned_bandwidth = kwargs.get('x-ms-share-provisioned-bandwidth-mibps')
         self.lease = LeaseProperties(**kwargs)
         enabled_protocols = kwargs.get("x-ms-enabled-protocols", None)
-        if enabled_protocols:
+        if enabled_protocols is not None:
             self.protocols = [protocol.strip() for protocol in enabled_protocols.split(',')]
         else:
             self.protocols = None
