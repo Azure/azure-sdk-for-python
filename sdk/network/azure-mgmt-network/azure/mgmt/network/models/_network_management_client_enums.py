@@ -398,6 +398,34 @@ class AzureFirewallPacketCaptureFlagsType(str, Enum, metaclass=CaseInsensitiveEn
     URG = "urg"
 
 
+class AzureFirewallPacketCaptureOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packet capture operation to perform. If the Start operation is selected, please provide all
+    the fields in the firewallPacketCaptureParameters to successfully initiate the packet capture.
+    If the Status or Stop operation is selected, only the operation field is required; all other
+    fields in the firewallPacketCaptureParameters can be omitted to successfully retrieve the
+    capture status or stop the capture.
+    """
+
+    START = "Start"
+    STATUS = "Status"
+    STOP = "Stop"
+
+
+class AzureFirewallPacketCaptureResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packet capture operation response codes."""
+
+    NOT_IMPLEMENTED = "NotImplemented"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_SUCCEEDED = "AzureFirewallPacketCaptureStartSucceeded"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_FAILED = "AzureFirewallPacketCaptureStartFailed"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_FAILED_TO_UPLOAD = "AzureFirewallPacketCaptureStartFailedToUpload"
+    AZURE_FIREWALL_PACKET_CAPTURE_START_FAILURE = "AzureFirewallPacketCaptureStartFailure"
+    AZURE_FIREWALL_PACKET_CAPTURE_IN_PROGRESS = "AzureFirewallPacketCaptureInProgress"
+    AZURE_FIREWALL_PACKET_CAPTURE_NOT_IN_PROGRESS = "AzureFirewallPacketCaptureNotInProgress"
+    AZURE_FIREWALL_PACKET_CAPTURE_STOP_SUCCEEDED = "AzureFirewallPacketCaptureStopSucceeded"
+    AZURE_FIREWALL_PACKET_CAPTURE_FAILED = "AzureFirewallPacketCaptureFailed"
+    AZURE_FIREWALL_PACKET_CAPTURE_COMPLETED = "AzureFirewallPacketCaptureCompleted"
+
+
 class AzureFirewallRCActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action type of a rule collection."""
 
@@ -1370,7 +1398,9 @@ class NicTypeInRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class NicTypeInResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NIC type - PublicNic, PrivateNic, or AdditionalNic."""
+    """NIC type - PublicNic, PrivateNic, or AdditionalNic; AdditionalPrivateNic and
+    AdditionalPublicNic are only supported for NVAs deployed in VNets.
+    """
 
     PUBLIC_NIC = "PublicNic"
     PRIVATE_NIC = "PrivateNic"
@@ -1407,6 +1437,19 @@ class NspProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
     ACCEPTED = "Accepted"
     FAILED = "Failed"
+
+
+class NvaNicType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NvaNicType."""
+
+    PRIVATE_NIC = "PrivateNic"
+    """The private NIC type"""
+    PUBLIC_NIC = "PublicNic"
+    """The public NIC type"""
+    ADDITIONAL_PRIVATE_NIC = "AdditionalPrivateNic"
+    """An additional private NIC type"""
+    ADDITIONAL_PUBLIC_NIC = "AdditionalPublicNic"
+    """An additional public NIC type"""
 
 
 class OfficeTrafficCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1913,6 +1956,7 @@ class TransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UDP = "Udp"
     TCP = "Tcp"
     ALL = "All"
+    QUIC = "Quic"
 
 
 class TunnelConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
