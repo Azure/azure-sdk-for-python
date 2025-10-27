@@ -430,15 +430,85 @@ class RedTeam:
 
         self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
 
-        # Sample if we have more than needed
-        if len(custom_objectives) > num_objectives:
-            selected_cat_objectives = random.sample(custom_objectives, num_objectives)
+        # Group objectives by risk_subtype if present
+        objectives_by_subtype = {}
+        objectives_without_subtype = []
+
+        for obj in custom_objectives:
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
+            risk_subtype = None
+
+            # Extract risk-subtype from target_harms
+            if target_harms and isinstance(target_harms, list):
+                for harm in target_harms:
+                    if isinstance(harm, dict) and "risk-subtype" in harm:
+                        subtype_value = harm.get("risk-subtype")
+                        if subtype_value:
+                            risk_subtype = subtype_value
+                            break
+
+            if risk_subtype:
+                if risk_subtype not in objectives_by_subtype:
+                    objectives_by_subtype[risk_subtype] = []
+                objectives_by_subtype[risk_subtype].append(obj)
+            else:
+                objectives_without_subtype.append(obj)
+
+        # Determine sampling strategy based on risk_subtype presence
+        if objectives_by_subtype:
+            # We have risk subtypes - sample evenly across them
+            num_subtypes = len(objectives_by_subtype)
+            objectives_per_subtype = max(1, num_objectives // num_subtypes)
+
             self.logger.info(
-                f"Sampled {num_objectives} objectives from {len(custom_objectives)} available for {risk_cat_value}"
+                f"Found {num_subtypes} risk subtypes in custom objectives. "
+                f"Sampling {objectives_per_subtype} objectives per subtype to reach ~{num_objectives} total."
             )
+
+            selected_cat_objectives = []
+            for subtype, subtype_objectives in objectives_by_subtype.items():
+                num_to_sample = min(objectives_per_subtype, len(subtype_objectives))
+                sampled = random.sample(subtype_objectives, num_to_sample)
+                selected_cat_objectives.extend(sampled)
+                self.logger.debug(
+                    f"Sampled {num_to_sample} objectives from risk_subtype '{subtype}' "
+                    f"({len(subtype_objectives)} available)"
+                )
+
+            # If we need more objectives to reach num_objectives, sample from objectives without subtype
+            if len(selected_cat_objectives) < num_objectives and objectives_without_subtype:
+                remaining = num_objectives - len(selected_cat_objectives)
+                num_to_sample = min(remaining, len(objectives_without_subtype))
+                selected_cat_objectives.extend(random.sample(objectives_without_subtype, num_to_sample))
+                self.logger.debug(f"Added {num_to_sample} objectives without risk_subtype to reach target count")
+
+            # If we still need more, round-robin through subtypes again
+            if len(selected_cat_objectives) < num_objectives:
+                remaining = num_objectives - len(selected_cat_objectives)
+                subtype_list = list(objectives_by_subtype.keys())
+                idx = 0
+                while remaining > 0 and subtype_list:
+                    subtype = subtype_list[idx % len(subtype_list)]
+                    available = [obj for obj in objectives_by_subtype[subtype] if obj not in selected_cat_objectives]
+                    if available:
+                        selected_cat_objectives.append(random.choice(available))
+                        remaining -= 1
+                    idx += 1
+                    # Prevent infinite loop if we run out of unique objectives
+                    if idx > len(subtype_list) * 100:
+                        break
+
+            self.logger.info(f"Sampled {len(selected_cat_objectives)} objectives across {num_subtypes} risk subtypes")
         else:
-            selected_cat_objectives = custom_objectives
-            self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
+            # No risk subtypes - use original sampling logic
+            if len(custom_objectives) > num_objectives:
+                selected_cat_objectives = random.sample(custom_objectives, num_objectives)
+                self.logger.info(
+                    f"Sampled {num_objectives} objectives from {len(custom_objectives)} available for {risk_cat_value}"
+                )
+            else:
+                selected_cat_objectives = custom_objectives
+                self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
 
         # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
         if strategy == "jailbreak":
