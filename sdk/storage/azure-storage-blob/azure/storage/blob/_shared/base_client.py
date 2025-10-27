@@ -35,8 +35,16 @@ from azure.core.pipeline.policies import (
 )
 
 from .authentication import SharedKeyCredentialPolicy
-from .constants import CONNECTION_TIMEOUT, DEFAULT_OAUTH_SCOPE, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
+from .constants import (
+    CONNECTION_TIMEOUT,
+    DEVSTORE_ACCOUNT_KEY,
+    DEFAULT_OAUTH_SCOPE,
+    READ_TIMEOUT,
+    SERVICE_HOST_BASE,
+    STORAGE_OAUTH_SCOPE
+)
 from .models import LocationMode, StorageConfiguration
+from .parser import _get_development_storage_endpoint
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
@@ -393,20 +401,6 @@ def _format_shared_key_credential(
     return credential
 
 
-def _parse_development_storage(service: str) -> Tuple[
-    str,
-    Optional[str],
-    Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
-]:
-    devstore_protocol = "http"
-    devstore_endpoint = "127.0.0.1"
-    devstore_account_name = "devstoreaccount1"
-    devstore_account_key = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
-    port_numbers = {"blob": 10000, "dfs": 10000, "queue": 10001}
-    primary = f"{devstore_protocol}://{devstore_endpoint}:{port_numbers[service]}/{devstore_account_name}"
-    return primary, None, devstore_account_key
-
-
 def parse_connection_str(
     conn_str: str,
     credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
@@ -422,7 +416,7 @@ def parse_connection_str(
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
     if conn_settings.get('USEDEVELOPMENTSTORAGE') == 'true':
-        return _parse_development_storage(service)
+        return _get_development_storage_endpoint(service), None, DEVSTORE_ACCOUNT_KEY
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None

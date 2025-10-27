@@ -7,9 +7,16 @@
 from datetime import datetime, timezone
 from typing import Optional
 
+from .constants import DEVSTORE_ACCOUNT_NAME
+
 EPOCH_AS_FILETIME = 116444736000000000  # January 1, 1970 as MS filetime
 HUNDREDS_OF_NANOSECONDS = 10000000
 
+SERVICE_PORT_NUMBERS = {
+    "blob": 10000,
+    "dfs": 10000,
+    "queue": 10001,
+}
 
 def _to_utc_datetime(value: datetime) -> str:
     return value.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -51,3 +58,14 @@ def _filetime_to_datetime(filetime: str) -> Optional[datetime]:
 
     # Try RFC 1123 as backup
     return _rfc_1123_to_datetime(filetime)
+
+def _get_development_storage_endpoint(service: str) -> str:
+    """Creates a development storage endpoint for Azurite Storage Emulator.
+
+    :param str service: The service name.
+    :return: The development storage endpoint.
+    :rtype: str
+    """
+    if service.lower() not in SERVICE_PORT_NUMBERS:
+        raise ValueError(f"Unsupported service name: {service}")
+    return f"http://127.0.0.1:{SERVICE_PORT_NUMBERS[service]}/{DEVSTORE_ACCOUNT_NAME}"
