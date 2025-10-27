@@ -177,7 +177,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         if not isinstance(eval_input["response"], str):
             eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = result["llm_output"]
         score = math.nan
 
         if isinstance(llm_output, dict):
@@ -191,6 +192,13 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
+                f"{self._result_key}_model": result.get("model_id", ""),
+                f"{self._result_key}_sample_input": result.get("sample_input", ""),
+                f"{self._result_key}_sample_output": result.get("sample_output", ""),
             }
 
         binary_result = self._get_binary_result(score)
