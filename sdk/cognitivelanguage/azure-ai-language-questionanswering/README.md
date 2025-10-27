@@ -340,5 +340,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package
 [register_aad_app]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
-[questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/language/question-answering?view=rest-language-2025-05-15-preview
+[questionanswering_rest_docs]: https://learn.microsoft.com/en-us/rest/api/language/question-answering/operation-groups?view=rest-language-question-answering-2025-05-15-preview
 [questionanswering_docs_demos]: https://learn.microsoft.com/azure/ai-services/language-service/question-answering/overview#try-it

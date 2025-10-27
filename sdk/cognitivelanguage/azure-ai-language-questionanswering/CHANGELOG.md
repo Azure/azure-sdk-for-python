@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1
+## 2.0.0b1 (2025-10-27)
 
 ### Breaking Changes
 * Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, and related authoring operations have been eliminated from the runtime client distribution.
