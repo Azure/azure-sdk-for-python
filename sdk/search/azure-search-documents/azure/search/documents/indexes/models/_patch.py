@@ -506,7 +506,7 @@ def ComplexField(
     :return: The search field object.
     :rtype:  SearchField
     """
-    typ = Collection(SearchFieldDataType.ComplexType) if collection else SearchFieldDataType.ComplexType
+    typ = Collection(SearchFieldDataType.COMPLEX) if collection else SearchFieldDataType.COMPLEX
     result: Dict[str, Any] = {"name": name, "type": typ, "fields": fields}
     return _SearchField(**result)
 
