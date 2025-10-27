@@ -10,6 +10,7 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -22,6 +23,7 @@ from azure.core.exceptions import (
     StreamConsumedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
@@ -1468,7 +1470,7 @@ class _SearchClientOperationsMixin(
         top: Optional[int] = None,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> _models1.SuggestDocumentsResult:
+    ) -> ItemPaged["_models1.SuggestResult"]:
         """Suggests documents in the index that match the given partial query text.
 
         :keyword search_text: The search text to use to suggest documents. Must be at least 1
@@ -1519,10 +1521,15 @@ class _SearchClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
-        :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SuggestDocumentsResult
+        :return: An iterator like instance of SuggestResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.models.SuggestResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models1.SuggestResult]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1531,60 +1538,80 @@ class _SearchClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models1.SuggestDocumentsResult] = kwargs.pop("cls", None)
+                _request = build_search_suggest_get_request(
+                    index_name=self._config.index_name,
+                    search_text=search_text,
+                    suggester_name=suggester_name,
+                    filter=filter,
+                    use_fuzzy_matching=use_fuzzy_matching,
+                    highlight_post_tag=highlight_post_tag,
+                    highlight_pre_tag=highlight_pre_tag,
+                    minimum_coverage=minimum_coverage,
+                    order_by=order_by,
+                    search_fields=search_fields,
+                    select=select,
+                    top=top,
+                    query_source_authorization=query_source_authorization,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_search_suggest_get_request(
-            index_name=self._config.index_name,
-            search_text=search_text,
-            suggester_name=suggester_name,
-            filter=filter,
-            use_fuzzy_matching=use_fuzzy_matching,
-            highlight_post_tag=highlight_post_tag,
-            highlight_pre_tag=highlight_pre_tag,
-            minimum_coverage=minimum_coverage,
-            order_by=order_by,
-            search_fields=search_fields,
-            select=select,
-            top=top,
-            query_source_authorization=query_source_authorization,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models1.SuggestResult], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models1.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models1.SuggestDocumentsResult, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models1.ErrorResponse, response)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def suggest(
@@ -1877,7 +1904,7 @@ class _SearchClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models1.IndexDocumentsResult:
+    ) -> ItemPaged["_models1.IndexingResult"]:
         """Sends a batch of document write actions to the index.
 
         :param batch: The batch of index actions. Required.
@@ -1889,8 +1916,8 @@ class _SearchClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.IndexDocumentsResult
+        :return: An iterator like instance of IndexingResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.models.IndexingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1902,7 +1929,7 @@ class _SearchClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models1.IndexDocumentsResult:
+    ) -> ItemPaged["_models1.IndexingResult"]:
         """Sends a batch of document write actions to the index.
 
         :param batch: The batch of index actions. Required.
@@ -1914,8 +1941,8 @@ class _SearchClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.IndexDocumentsResult
+        :return: An iterator like instance of IndexingResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.models.IndexingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1927,7 +1954,7 @@ class _SearchClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models1.IndexDocumentsResult:
+    ) -> ItemPaged["_models1.IndexingResult"]:
         """Sends a batch of document write actions to the index.
 
         :param batch: The batch of index actions. Required.
@@ -1939,8 +1966,8 @@ class _SearchClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.IndexDocumentsResult
+        :return: An iterator like instance of IndexingResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.models.IndexingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1951,7 +1978,7 @@ class _SearchClientOperationsMixin(
         *,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> _models1.IndexDocumentsResult:
+    ) -> ItemPaged["_models1.IndexingResult"]:
         """Sends a batch of document write actions to the index.
 
         :param batch: The batch of index actions. Is one of the following types: IndexDocumentsBatch,
@@ -1961,10 +1988,16 @@ class _SearchClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
-        :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.IndexDocumentsResult
+        :return: An iterator like instance of IndexingResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.models.IndexingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[list[_models1.IndexingResult]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1972,13 +2005,6 @@ class _SearchClientOperationsMixin(
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models1.IndexDocumentsResult] = kwargs.pop("cls", None)
-
         content_type = content_type or "application/json"
         _content = None
         if isinstance(batch, (IOBase, bytes)):
@@ -1986,46 +2012,71 @@ class _SearchClientOperationsMixin(
         else:
             _content = json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_index_documents_request(
-            index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+                _request = build_search_index_documents_request(
+                    index_name=self._config.index_name,
+                    query_source_authorization=query_source_authorization,
+                    content_type=content_type,
+                    api_version=self._config.api_version,
+                    content=_content,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        response = pipeline_response.http_response
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        if response.status_code not in [200, 207]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models1.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+            return _request
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models1.IndexDocumentsResult, response.json())
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models1.IndexingResult], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, iter(list_of_elem)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        return deserialized  # type: ignore
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200, 207]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models1.ErrorResponse, response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def _autocomplete_get(
@@ -2043,7 +2094,7 @@ class _SearchClientOperationsMixin(
         top: Optional[int] = None,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> _models1.AutocompleteResult:
+    ) -> ItemPaged["_models1.AutocompleteItem"]:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
         :keyword search_text: The incomplete term which should be auto-completed. Required.
@@ -2086,10 +2137,15 @@ class _SearchClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
-        :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.AutocompleteResult
+        :return: An iterator like instance of AutocompleteItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.models.AutocompleteItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models1.AutocompleteItem]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2098,59 +2154,79 @@ class _SearchClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models1.AutocompleteResult] = kwargs.pop("cls", None)
+                _request = build_search_autocomplete_get_request(
+                    index_name=self._config.index_name,
+                    search_text=search_text,
+                    suggester_name=suggester_name,
+                    autocomplete_mode=autocomplete_mode,
+                    filter=filter,
+                    use_fuzzy_matching=use_fuzzy_matching,
+                    highlight_post_tag=highlight_post_tag,
+                    highlight_pre_tag=highlight_pre_tag,
+                    minimum_coverage=minimum_coverage,
+                    search_fields=search_fields,
+                    top=top,
+                    query_source_authorization=query_source_authorization,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_search_autocomplete_get_request(
-            index_name=self._config.index_name,
-            search_text=search_text,
-            suggester_name=suggester_name,
-            autocomplete_mode=autocomplete_mode,
-            filter=filter,
-            use_fuzzy_matching=use_fuzzy_matching,
-            highlight_post_tag=highlight_post_tag,
-            highlight_pre_tag=highlight_pre_tag,
-            minimum_coverage=minimum_coverage,
-            search_fields=search_fields,
-            top=top,
-            query_source_authorization=query_source_authorization,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models1.AutocompleteItem], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models1.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models1.AutocompleteResult, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models1.ErrorResponse, response)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def autocomplete(
