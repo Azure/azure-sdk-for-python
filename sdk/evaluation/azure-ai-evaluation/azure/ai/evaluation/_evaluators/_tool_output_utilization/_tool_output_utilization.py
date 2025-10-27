@@ -66,7 +66,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "tool_output_utilization"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
-    _DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE = 3
+    _DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE = 1
 
     id = "azureai://built-in/evaluators/tool_output_utilization"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
@@ -82,12 +82,13 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        self.threshold = threshold
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            threshold=threshold,
             credential=credential,
+            _higher_is_better=True,
             **kwargs,
         )
 
@@ -176,7 +177,8 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
 
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = prompty_output_dict.get("llm_output", "")
         if isinstance(llm_output, dict):
             output_label = llm_output.get("label", None)
             if output_label is None:
@@ -198,12 +200,29 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             faulty_details = llm_output.get("faulty_details", [])
             if faulty_details:
                 reason += " Issues found: " + "; ".join(faulty_details)
-
+            
             return {
                 f"{self._result_key}": score,
-                f"{self._result_key}_result": score_result,
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_reason": reason,
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-        return {self._result_key: math.nan}
+        
+        score = math.nan
+        binary_result = self._get_binary_result(score)
+        return {
+            self._result_key: float(score),
+            f"gpt_{self._result_key}": float(score),
+            f"{self._result_key}_result": binary_result,
+            f"{self._result_key}_threshold": self._threshold,
+        }
