@@ -184,9 +184,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :return: The parsed result in the expected format.
         :rtype: Dict[str, T]
         """
-        import pdb
-
-        pdb.set_trace()
         # Handle EvalRunOutputItem structure
         if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
             results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])

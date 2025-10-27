@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import asyncio
 import importlib.metadata
+import logging
 import math
 import re
 import time
@@ -38,6 +39,8 @@ from .constants import (
 )
 from .utils import get_harm_severity_level, retrieve_content_type
 
+
+LOGGER = logging.getLogger(__name__)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
@@ -253,7 +256,7 @@ async def submit_request(
         http_response = await client.post(url, json=payload, headers=headers)
 
     if http_response.status_code != 202:
-        print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], http_response.text()))
+        LOGGER.error("Fail evaluating '%s' with error message: %s", payload["UserTextList"], http_response.text())
         http_response.raise_for_status()
     result = http_response.json()
     operation_id = result["location"].split("/")[-1]
@@ -1092,7 +1095,7 @@ async def evaluate_with_rai_service_sync(
             http_response = client.post(url, json=sync_eval_payload_json, headers=headers)
 
         if http_response.status_code != 200:
-            print("Fail evaluating with error message: %s" % (http_response.text()))
+            LOGGER.error("Fail evaluating with error message: %s", http_response.text())
             http_response.raise_for_status()
         result = http_response.json()
 
