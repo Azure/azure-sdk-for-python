@@ -176,10 +176,11 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._timeout, 10)
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
-        subdirectory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
+        storage_directory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
+        print(storage_directory)
         self.assertEqual(
             base._storage_directory,
-            subdirectory
+            storage_directory
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")

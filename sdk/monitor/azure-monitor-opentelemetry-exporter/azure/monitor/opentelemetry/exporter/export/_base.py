@@ -609,21 +609,36 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
     return None
 
 def _get_storage_directory(instrumentation_key: str) -> str:
+    """Return the deterministic local storage path for a given instrumentation key.
+
+    On shared Linux hosts the first user to create ``/tmp/Microsoft/AzureMonitor`` can
+    block others because the directory inherits that user's ``umask``. This is avoided by
+    inserting a hash of the instrumentation key, user name, process name, and
+    application directory, giving each publisher its own stable subdirectory, e.g.
+    ``/tmp/1a2b3c.../Microsoft/AzureMonitor/opentelemetry-python-<ikey>``.
+
+    :param str instrumentation_key: Application Insights instrumentation key.
+    :return: Absolute path to the storage directory.
+    :rtype: str
+    """
+
     process = psutil.Process()
     process_name = process.name()
     application_directory = Path(process.cwd() or sys.argv[0]).resolve()
     shared_root = tempfile.gettempdir()
     user_segment = getpass.getuser()
-    hash_input = ";".join(
-        [
-            instrumentation_key,
-            user_segment,
-            process_name,
-            os.fspath(application_directory), # cspell:disable-line
-        ]
-    )
-    subdirectory = _get_sha256_hash(hash_input)
+    hash_components = [
+        str(instrumentation_key or ""),
+        str(user_segment or ""),
+        str(process_name or ""),
+        os.fspath(application_directory),  # cspell:disable-line
+    ]
+    try:
+        subdirectory = _get_sha256_hash(";".join(hash_components))
+    except:  # pylint: disable=broad-except
+        subdirectory = ""
     storage_directory = os.path.join(
+        # Fallback to original method of storage directory path
         shared_root, subdirectory, _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + instrumentation_key
     )
     return storage_directory
