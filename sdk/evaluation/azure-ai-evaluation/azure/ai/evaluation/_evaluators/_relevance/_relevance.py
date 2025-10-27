@@ -189,9 +189,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             return {
                 self._result_key: float(score),
                 f"gpt_{self._result_key}": float(score),
-                f"{self._result_key}_reason": reason,
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_reason": reason,
                 f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
                 f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
                 f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
