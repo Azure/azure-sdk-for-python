@@ -283,9 +283,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
-        :keyword kwargs: The inputs to evaluate.
+        :keyword kwargs: The inputs to evaluate
         :type kwargs: Dict
-        :return: The evaluation result.
+        :return: The evaluation result
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         # Convert inputs into list of evaluable inputs.
