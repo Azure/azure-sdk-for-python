@@ -104,7 +104,6 @@ class verifytypes(Check):
                     f"verifytypes reported issues: {e.stdout}"
                 )  # we don't fail on verifytypes, only if type completeness score worsens from main
 
-
             if in_ci():
                 # get type completeness score from main
                 logger.info("Getting the type completeness score from the code in main...")
