@@ -162,7 +162,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         score = math.nan
         if isinstance(llm_output, dict):
             score = float(llm_output.get("score", math.nan))
-            score_result = "pass" if score >= self.threshold else "fail"
+            score_result = "pass" if score >= self._threshold else "fail"
             reason = llm_output.get("explanation", "")
             return {
                 f"{self._result_key}": score,
