@@ -1,6 +1,6 @@
 # Release History
 
-## 1.29.0 (unreleased)
+## 1.29.0 (2025-10-29)
 
 ### Features Added
 
@@ -12,9 +12,18 @@
   - `ml_client.deployment_templates.archive()`
   - `ml_client.deployment_templates.restore()`
 
+## 1.29.0 (2025-09-01)
+
+### Features Added
+
+- Removed the dependencies - msrest and six
+
 ### Bugs Fixed
 - Fix for registry resource group passed to OnlineEndpointOperations when model is in registry in different resource group compared to workspace.
 - Set defaults for min_instances, max_instances, idle_time_before_scale_down in AmlCompute
+
+### Other Changes
+- v2 component types are now case insensitive
 
 ### Other Changes
 - v2 component types are now case insensitive
