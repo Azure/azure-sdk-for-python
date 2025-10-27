@@ -136,7 +136,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
-        assert "details" in result
+        assert f"{key}_details" in result
 
     def test_evaluate_tools_valid2(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -198,7 +198,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 0 correct calls."
-        assert "details" in result
+        assert f"{key}_details" in result
 
     def test_evaluate_tools_valid3(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -260,7 +260,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 2 correct calls."
-        assert "details" in result
+        assert f"{key}_details" in result
 
     def test_evaluate_tools_one_eval_fails(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
@@ -355,7 +355,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result["details"] == {}
+        assert result[f"{key}_details"] == {}
 
     def test_evaluate_tools_all_not_applicable(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -395,7 +395,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result["details"] == {}
+        assert result[f"{key}_details"] == {}
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -428,7 +428,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
-        assert result["details"] == {}
+        assert result[f"{key}_details"] == {}
 
     def test_evaluate_bing_custom_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
