@@ -194,7 +194,7 @@ basic_voice_assistant_async.py
 
 ## Next Steps
 
-- Explore `agent_voice_assistant_async.py` for Foundry agent integation and conversation logging capabilities
+- Explore `agent_voice_assistant_async.py` for Foundry agent integration and conversation logging capabilities
 - Explore `async_function_calling_sample.py` for function calling capabilities
 - Check out other samples in the `samples/` directory
 - Read the main SDK documentation in `README.md`
