@@ -32,8 +32,8 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         - No unexpected parameters: Only defined parameters are allowed
 
     The evaluator uses strict binary evaluation:
-        - PASS: Only when ALL criteria are satisfied perfectly for ALL parameters
-        - FAIL: When ANY criterion fails for ANY parameter
+        - 1: Only when ALL criteria are satisfied perfectly for ALL parameters
+        - 0: When ANY criterion fails for ANY parameter
 
     This evaluation focuses on ensuring tool call parameters are completely correct without any tolerance
     for partial correctness.
