@@ -284,6 +284,9 @@ class OrchestratorManager:
                     else None
                 )
 
+                # Initialize processed_prompt with the original prompt as default
+                processed_prompt = prompt
+
                 # Determine how to handle the prompt based on target type and context fields
                 if isinstance(chat_target, _CallbackChatTarget):
                     # CallbackChatTarget: Always pass contexts via context_dict, embed in prompt content
@@ -510,6 +513,9 @@ class OrchestratorManager:
                 context_string = "\n".join(
                     ctx.get("content", "") if isinstance(ctx, dict) else str(ctx) for ctx in contexts
                 )
+
+            # Initialize processed_prompt with the original prompt as default
+            processed_prompt = prompt
 
             # Determine how to handle the prompt based on target type and context fields
             if isinstance(chat_target, _CallbackChatTarget):
@@ -755,6 +761,9 @@ class OrchestratorManager:
                 context_string = "\n".join(
                     ctx.get("content", "") if isinstance(ctx, dict) else str(ctx) for ctx in contexts
                 )
+
+            # Initialize processed_prompt with the original prompt as default
+            processed_prompt = prompt
 
             # Determine how to handle the prompt based on target type and context fields
             if isinstance(chat_target, _CallbackChatTarget):
