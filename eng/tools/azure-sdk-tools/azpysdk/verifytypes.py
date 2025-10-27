@@ -98,7 +98,8 @@ class verifytypes(Check):
 
             # show output
             try:
-                self.run_venv_command(executable, commands[1:-1], package_dir, check=True)
+                response = self.run_venv_command(executable, commands[1:-1], package_dir, check=True)
+                logger.info(response.stdout)
             except subprocess.CalledProcessError as e:
                 logger.warning(
                     f"verifytypes reported issues: {e.stdout}"
