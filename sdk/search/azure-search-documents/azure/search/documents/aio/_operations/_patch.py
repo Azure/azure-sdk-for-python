@@ -15,17 +15,24 @@ from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import _SearchClientOperationsMixin as _SearchClientOperationsMixinGenerated
-from ..._operations._patch import _build_search_request, _convert_search_result, _pack_continuation_token, _unpack_continuation_token
+from ..._operations._patch import (
+    _build_search_request,
+    _convert_search_result,
+    _pack_continuation_token,
+    _unpack_continuation_token,
+)
 from ... import models as _models
 
 
 def _ensure_response(f):
     """Decorator to ensure response is fetched before accessing metadata."""
+
     async def wrapper(self, *args, **kw):
         if self._current_page is None:
             self._response = await self._get_next(self.continuation_token)
             self.continuation_token, self._current_page = await self._extract_data(self._response)
         return await f(self, *args, **kw)
+
     return wrapper
 
 
@@ -47,7 +54,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
             return await self._client.search_post(body=self._initial_request, **self._kwargs)
-        
+
         _next_link, next_page_request = _unpack_continuation_token(continuation_token)
         return await self._client.search_post(body=next_page_request, **self._kwargs)
 
@@ -61,8 +68,9 @@ class AsyncSearchPageIterator(AsyncPageIterator):
         self.continuation_token = None
         response = cast(_models.SearchDocumentsResult, self._response)
         if response.facets is not None and self._facets is None:
-            self._facets = {k: [x.as_dict() if hasattr(x, 'as_dict') else dict(x) for x in v] 
-                           for k, v in response.facets.items()}
+            self._facets = {
+                k: [x.as_dict() if hasattr(x, "as_dict") else dict(x) for x in v] for k, v in response.facets.items()
+            }
         return self._facets
 
     @_ensure_response
@@ -99,10 +107,10 @@ class AsyncSearchItemPaged(AsyncItemPaged[Dict]):
         self._first_page_iterator_instance: Optional[AsyncSearchPageIterator] = None
         self._page_iterator = None
         self._page = None
-    
+
     def by_page(self, continuation_token=None):
         """Get an async iterator of pages of results.
-        
+
         :param continuation_token: Token to retrieve the next page of results
         :type continuation_token: str or None
         :return: An async iterator of pages
@@ -524,19 +532,16 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             debug=debug,
             hybrid_search=hybrid_search,
         )
-        
+
         # Create kwargs for the search_post call
         search_kwargs = dict(kwargs)
-        
+
         # Create a factory function that returns an async page iterator
         def page_iterator_factory(continuation_token=None):
             return AsyncSearchPageIterator(
-                client=self,
-                initial_request=search_request,
-                kwargs=search_kwargs,
-                continuation_token=continuation_token
+                client=self, initial_request=search_request, kwargs=search_kwargs, continuation_token=continuation_token
             )
-        
+
         # Return AsyncSearchItemPaged with the factory function
         return AsyncSearchItemPaged(page_iterator_factory)
 

@@ -60,11 +60,13 @@ def _unpack_continuation_token(token: bytes) -> tuple:
 
 def _ensure_response(f):
     """Decorator to ensure response is fetched before accessing metadata."""
+
     def wrapper(self, *args, **kw):
         if self._current_page is None:
             self._response = self._get_next(self.continuation_token)
             self.continuation_token, self._current_page = self._extract_data(self._response)
         return f(self, *args, **kw)
+
     return wrapper
 
 
@@ -109,7 +111,7 @@ def _build_search_request(
     hybrid_search: Optional[_models.HybridSearch] = None,
 ) -> _models.SearchRequest:
     """Build a SearchRequest from search parameters.
-    
+
     This is a shared helper function used by both sync and async search methods.
     """
     # Convert list parameters to comma-separated strings if needed
@@ -121,7 +123,7 @@ def _build_search_request(
         order_by = ",".join(order_by)
     if isinstance(semantic_fields, list):
         semantic_fields = ",".join(semantic_fields)
-    
+
     # Build complex query parameters
     answers = None
     if query_answer:
@@ -130,19 +132,19 @@ def _build_search_request(
             answers = f"{answers}|count-{query_answer_count}"
         if query_answer_threshold is not None:
             answers = f"{answers},threshold-{query_answer_threshold}"
-    
+
     captions = None
     if query_caption:
         captions = str(query_caption)
         if query_caption_highlight_enabled is not None:
             captions = f"{captions}|highlight-{str(query_caption_highlight_enabled).lower()}"
-    
+
     rewrites = None
     if query_rewrites:
         rewrites = str(query_rewrites)
         if query_rewrites_count is not None:
             rewrites = f"{rewrites}|count-{query_rewrites_count}"
-    
+
     # Build and return the search request
     return _models.SearchRequest(
         search_text=search_text,
@@ -199,7 +201,7 @@ class SearchPageIterator(PageIterator):
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
             return self._client.search_post(body=self._initial_request, **self._kwargs)
-        
+
         _next_link, next_page_request = _unpack_continuation_token(continuation_token)
         return self._client.search_post(body=next_page_request, **self._kwargs)
 
@@ -213,8 +215,9 @@ class SearchPageIterator(PageIterator):
         self.continuation_token = None
         response = cast(_models.SearchDocumentsResult, self._response)
         if response.facets is not None and self._facets is None:
-            self._facets = {k: [x.as_dict() if hasattr(x, 'as_dict') else dict(x) for x in v] 
-                           for k, v in response.facets.items()}
+            self._facets = {
+                k: [x.as_dict() if hasattr(x, "as_dict") else dict(x) for x in v] for k, v in response.facets.items()
+            }
         return self._facets
 
     @_ensure_response
@@ -251,10 +254,10 @@ class SearchItemPaged(ItemPaged[Dict]):
         self._first_page_iterator_instance: Optional[SearchPageIterator] = None
         # Initialize the parent without arguments - we'll override by_page()
         self._page_iterator = None
-    
+
     def by_page(self, continuation_token=None):
         """Get an iterator of pages of results.
-        
+
         :param continuation_token: Token to retrieve the next page of results
         :type continuation_token: str or None
         :return: An iterator of pages
@@ -471,7 +474,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
         hybrid_search: Optional[_models.HybridSearch] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> SearchItemPaged[Dict]:
         """Search the Azure search index for documents.
 
@@ -640,7 +643,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             order_by = ",".join(order_by)
         if isinstance(semantic_fields, list):
             semantic_fields = ",".join(semantic_fields)
-        
+
         # Build complex query parameters
         answers = None
         if query_answer:
@@ -649,19 +652,19 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 answers = f"{answers}|count-{query_answer_count}"
             if query_answer_threshold is not None:
                 answers = f"{answers},threshold-{query_answer_threshold}"
-        
+
         captions = None
         if query_caption:
             captions = str(query_caption)
             if query_caption_highlight_enabled is not None:
                 captions = f"{captions}|highlight-{str(query_caption_highlight_enabled).lower()}"
-        
+
         rewrites = None
         if query_rewrites:
             rewrites = str(query_rewrites)
             if query_rewrites_count is not None:
                 rewrites = f"{rewrites}|count-{query_rewrites_count}"
-        
+
         # Build the search request
         search_request = _models.SearchRequest(
             search_text=search_text,
@@ -698,7 +701,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             debug=debug,
             hybrid_search=hybrid_search,
         )
-        
+
         # Build the search request using shared helper
         search_request = _build_search_request(
             search_text=search_text,
@@ -739,20 +742,17 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             debug=debug,
             hybrid_search=hybrid_search,
         )
-        
+
         # Create kwargs for the search_post call
         search_kwargs = dict(kwargs)
-        
+
         # Create a factory function that returns a page iterator
         # This is compatible with ItemPaged's by_page() pattern
         def page_iterator_factory(continuation_token=None):
             return SearchPageIterator(
-                client=self,
-                initial_request=search_request,
-                kwargs=search_kwargs,
-                continuation_token=continuation_token
+                client=self, initial_request=search_request, kwargs=search_kwargs, continuation_token=continuation_token
             )
-        
+
         # Return SearchItemPaged with the factory function
         return SearchItemPaged(page_iterator_factory)
 
