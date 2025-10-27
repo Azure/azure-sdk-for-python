@@ -200,7 +200,7 @@ def build_search_search_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_search_request(
+def build_search_search_post_request(
     index_name: str, *, query_source_authorization: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -843,7 +843,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    def search(
+    def search_post(
         self,
         *,
         query_source_authorization: Optional[str] = None,
@@ -1035,7 +1035,7 @@ class _SearchClientOperationsMixin(
         """
 
     @overload
-    def search(
+    def search_post(
         self,
         body: JSON,
         *,
@@ -1060,7 +1060,7 @@ class _SearchClientOperationsMixin(
         """
 
     @overload
-    def search(
+    def search_post(
         self,
         body: IO[bytes],
         *,
@@ -1085,7 +1085,7 @@ class _SearchClientOperationsMixin(
         """
 
     @distributed_trace
-    def search(
+    def search_post(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1332,7 +1332,7 @@ class _SearchClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_search_request(
+        _request = build_search_search_post_request(
             index_name=self._config.index_name,
             query_source_authorization=query_source_authorization,
             content_type=content_type,

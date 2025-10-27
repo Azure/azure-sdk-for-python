@@ -35,7 +35,7 @@ from ..._operations._operations import (
     build_search_get_document_request,
     build_search_index_documents_request,
     build_search_search_get_request,
-    build_search_search_request,
+    build_search_search_post_request,
     build_search_suggest_get_request,
     build_search_suggest_request,
 )
@@ -398,7 +398,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def search(
+    async def search_post(
         self,
         *,
         query_source_authorization: Optional[str] = None,
@@ -590,7 +590,7 @@ class _SearchClientOperationsMixin(
         """
 
     @overload
-    async def search(
+    async def search_post(
         self,
         body: JSON,
         *,
@@ -615,7 +615,7 @@ class _SearchClientOperationsMixin(
         """
 
     @overload
-    async def search(
+    async def search_post(
         self,
         body: IO[bytes],
         *,
@@ -640,7 +640,7 @@ class _SearchClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def search(
+    async def search_post(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -887,7 +887,7 @@ class _SearchClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_search_request(
+        _request = build_search_search_post_request(
             index_name=self._config.index_name,
             query_source_authorization=query_source_authorization,
             content_type=content_type,
