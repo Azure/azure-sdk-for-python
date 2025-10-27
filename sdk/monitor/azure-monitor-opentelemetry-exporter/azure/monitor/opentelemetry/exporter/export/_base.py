@@ -142,7 +142,7 @@ class BaseExporter:
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
-            self._storage_directory = _get_storage_directory(temp_suffix)
+            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
         else:
             self._storage_directory = None
         self._storage_retention_period = kwargs.get(
