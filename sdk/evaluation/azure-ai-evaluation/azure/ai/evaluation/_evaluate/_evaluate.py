@@ -1817,7 +1817,10 @@ def _convert_results_to_aoai_evaluation_results(
         if criteria_name in criteria_name_types_from_meta:
             criteria_type = criteria_name_types_from_meta[criteria_name].get("type", None)
             evaluator_name = criteria_name_types_from_meta[criteria_name].get("evaluator_name", None)
-            if evaluator_name:
+            cur_evaluator_metrics = criteria_name_types_from_meta[criteria_name].get("metrics", None)
+            if cur_evaluator_metrics is not None and len(cur_evaluator_metrics) > 0:
+                metrics.extend(cur_evaluator_metrics)
+            elif evaluator_name:
                 if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
                     evaluator_name = evaluator_name.replace("builtin.", "")
                 metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
