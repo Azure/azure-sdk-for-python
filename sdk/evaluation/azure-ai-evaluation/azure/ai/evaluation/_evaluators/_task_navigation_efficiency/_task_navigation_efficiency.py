@@ -64,7 +64,7 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
 
         .. code-block:: python
 
-            from azure.ai.evaluation import TaskNavigationEfficiencyEvaluator
+            from azure.ai.evaluation._evaluators._task_navigation_efficiency import TaskNavigationEfficiencyEvaluator
 
             task_navigation_efficiency_eval = TaskNavigationEfficiencyEvaluator(
                 matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
@@ -320,8 +320,9 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             )
 
             return {
+                "task_navigation_efficiency_label": match_result,
                 "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
-                "properties": additional_properties_metrics,
+                "task_navigation_efficiency_details": additional_properties_metrics,
             }
         else:
             raise EvaluationException(
