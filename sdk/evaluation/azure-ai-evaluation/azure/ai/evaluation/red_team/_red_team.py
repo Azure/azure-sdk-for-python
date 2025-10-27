@@ -356,8 +356,7 @@ class RedTeam:
         obj_id = objective.get("id")
         if obj_id is not None:
             return str(obj_id)
-        # Generate a UUID-based identifier if no 'id' field exists
-        # Use a deterministic approach based on objective content for consistency
+        # Generate a random UUID-based identifier if no 'id' field exists
         return f"generated-{uuid.uuid4()}"
 
     async def _get_attack_objectives(
