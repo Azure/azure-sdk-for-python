@@ -7,6 +7,7 @@ from azure.mgmt.netapp.models import (
     DailySchedule,
     VolumeSnapshotProperties,
     VolumePatchPropertiesDataProtection,
+    VolumePatchProperties,
     VolumePatch,
 )
 from test_account import create_account, delete_account
@@ -191,7 +192,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         # assign the snapshot policy to the volume
         snapshot = VolumeSnapshotProperties(snapshot_policy_id=snapshot_policy.id)
         data_protection = VolumePatchPropertiesDataProtection(snapshot=snapshot)
-        volume_patch = VolumePatch(data_protection=data_protection)
+        volume_patch_properties = VolumePatchProperties(data_protection=data_protection)
+        volume_patch = VolumePatch(properties=volume_patch_properties)
         volume = self.client.volumes.begin_update(
             setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1, volume_patch
         ).result()
