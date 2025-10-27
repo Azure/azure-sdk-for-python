@@ -124,7 +124,6 @@ class ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        print("This is a new Updateeeeeee")
         if "response" not in eval_input:
             raise EvaluationException(
                 message="response, is a required inputs to the Tool Success evaluator.",
