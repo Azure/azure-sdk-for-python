@@ -498,15 +498,18 @@ class RedTeam:
                 remaining = num_objectives - len(selected_cat_objectives)
                 subtype_list = list(objectives_by_subtype.keys())
                 # Track selected objective IDs in a set for O(1) membership checks
-                selected_ids = {id(obj) for obj in selected_cat_objectives}
+                # Use the objective's 'id' field if available, fallback to object identity
+                selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
                 idx = 0
                 while remaining > 0 and subtype_list:
                     subtype = subtype_list[idx % len(subtype_list)]
-                    available = [obj for obj in objectives_by_subtype[subtype] if id(obj) not in selected_ids]
+                    available = [
+                        obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids
+                    ]
                     if available:
                         selected_obj = random.choice(available)
                         selected_cat_objectives.append(selected_obj)
-                        selected_ids.add(id(selected_obj))
+                        selected_ids.add(selected_obj.get("id", id(selected_obj)))
                         remaining -= 1
                     idx += 1
                     # Prevent infinite loop if we run out of unique objectives

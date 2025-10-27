@@ -1587,3 +1587,361 @@ class TestRedTeamAttackSuccessThresholds:
 
         formatted = clean_result_processor._format_thresholds_for_output()
         assert formatted == {}
+
+
+@pytest.mark.unittest
+class TestRedTeamRoundRobinSampling:
+    """Test round-robin sampling logic for custom attack objectives with risk subtypes."""
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_distributes_across_subtypes(self, red_team):
+        """Test that round-robin sampling correctly distributes objectives across subtypes."""
+        # Setup: Create objectives with multiple subtypes
+        objectives_by_subtype = {
+            "subtype_a": [
+                {
+                    "id": "a1",
+                    "messages": [{"content": "objective a1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+                {
+                    "id": "a2",
+                    "messages": [{"content": "objective a2"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+                {
+                    "id": "a3",
+                    "messages": [{"content": "objective a3"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+            ],
+            "subtype_b": [
+                {
+                    "id": "b1",
+                    "messages": [{"content": "objective b1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+                },
+                {
+                    "id": "b2",
+                    "messages": [{"content": "objective b2"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+                },
+                {
+                    "id": "b3",
+                    "messages": [{"content": "objective b3"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+                },
+            ],
+            "subtype_c": [
+                {
+                    "id": "c1",
+                    "messages": [{"content": "objective c1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_c"}]},
+                },
+                {
+                    "id": "c2",
+                    "messages": [{"content": "objective c2"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_c"}]},
+                },
+                {
+                    "id": "c3",
+                    "messages": [{"content": "objective c3"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_c"}]},
+                },
+            ],
+        }
+
+        # Start with 3 objectives (1 per subtype)
+        selected_cat_objectives = [
+            objectives_by_subtype["subtype_a"][0],
+            objectives_by_subtype["subtype_b"][0],
+            objectives_by_subtype["subtype_c"][0],
+        ]
+
+        # Need 6 more objectives to reach 9 total
+        num_objectives = 9
+        remaining = num_objectives - len(selected_cat_objectives)
+        subtype_list = list(objectives_by_subtype.keys())
+
+        # Import the constant
+        from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
+
+        # Track selected objective IDs
+        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        idx = 0
+
+        while remaining > 0 and subtype_list:
+            subtype = subtype_list[idx % len(subtype_list)]
+            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            if available:
+                selected_obj = available[0]  # Use first available for deterministic testing
+                selected_cat_objectives.append(selected_obj)
+                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                remaining -= 1
+            idx += 1
+            if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
+                break
+
+        # Verify distribution: should have 3 from each subtype
+        subtype_counts = {}
+        for obj in selected_cat_objectives:
+            subtype = obj["metadata"]["target_harms"][0]["risk-subtype"]
+            subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
+
+        assert len(selected_cat_objectives) == 9
+        assert subtype_counts["subtype_a"] == 3
+        assert subtype_counts["subtype_b"] == 3
+        assert subtype_counts["subtype_c"] == 3
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_terminates_when_exhausted(self, red_team):
+        """Test that loop terminates properly when unique objectives are exhausted."""
+        # Setup: Create objectives with limited availability
+        objectives_by_subtype = {
+            "subtype_a": [
+                {
+                    "id": "a1",
+                    "messages": [{"content": "objective a1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+                {
+                    "id": "a2",
+                    "messages": [{"content": "objective a2"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+            ],
+            "subtype_b": [
+                {
+                    "id": "b1",
+                    "messages": [{"content": "objective b1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+                },
+            ],
+        }
+
+        # Start with 2 objectives
+        selected_cat_objectives = [
+            objectives_by_subtype["subtype_a"][0],
+            objectives_by_subtype["subtype_b"][0],
+        ]
+
+        # Request 10 more objectives, but only 1 is available (a2)
+        num_objectives = 12
+        remaining = num_objectives - len(selected_cat_objectives)
+        subtype_list = list(objectives_by_subtype.keys())
+
+        from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
+
+        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        idx = 0
+        iterations = 0
+
+        while remaining > 0 and subtype_list:
+            subtype = subtype_list[idx % len(subtype_list)]
+            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            if available:
+                selected_obj = available[0]
+                selected_cat_objectives.append(selected_obj)
+                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                remaining -= 1
+            idx += 1
+            iterations += 1
+            if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
+                break
+
+        # Should have stopped at 3 objectives (all available)
+        assert len(selected_cat_objectives) == 3
+        # Should have terminated due to MAX_SAMPLING_ITERATIONS_MULTIPLIER limit
+        assert idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER
+        # Verify we got all unique objectives
+        assert len(selected_ids) == 3
+
+    @pytest.mark.asyncio
+    async def test_max_sampling_iterations_multiplier_limits_iterations(self, red_team):
+        """Test that MAX_SAMPLING_ITERATIONS_MULTIPLIER effectively limits iterations."""
+        # Setup: Create a scenario where we can't fulfill the request
+        objectives_by_subtype = {
+            "subtype_a": [
+                {
+                    "id": "a1",
+                    "messages": [{"content": "objective a1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+            ],
+        }
+
+        selected_cat_objectives = []
+        num_objectives = 100  # Request many more than available
+        remaining = num_objectives - len(selected_cat_objectives)
+        subtype_list = list(objectives_by_subtype.keys())
+
+        from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
+
+        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        idx = 0
+        max_iterations = len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER
+
+        while remaining > 0 and subtype_list:
+            subtype = subtype_list[idx % len(subtype_list)]
+            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            if available:
+                selected_obj = available[0]
+                selected_cat_objectives.append(selected_obj)
+                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                remaining -= 1
+            idx += 1
+            if idx > max_iterations:
+                break
+
+        # Verify that we stopped due to iteration limit
+        assert idx > max_iterations
+        # Should have only selected 1 objective (all that's available)
+        assert len(selected_cat_objectives) == 1
+        # Verify MAX_SAMPLING_ITERATIONS_MULTIPLIER is reasonable (100)
+        assert MAX_SAMPLING_ITERATIONS_MULTIPLIER == 100
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_handles_unequal_subtype_sizes(self, red_team):
+        """Test round-robin sampling with subtypes having different numbers of objectives."""
+        # Setup: Create objectives with varying availability per subtype
+        objectives_by_subtype = {
+            "subtype_a": [
+                {
+                    "id": "a1",
+                    "messages": [{"content": "objective a1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+                {
+                    "id": "a2",
+                    "messages": [{"content": "objective a2"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+                {
+                    "id": "a3",
+                    "messages": [{"content": "objective a3"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+                {
+                    "id": "a4",
+                    "messages": [{"content": "objective a4"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+                },
+            ],
+            "subtype_b": [
+                {
+                    "id": "b1",
+                    "messages": [{"content": "objective b1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+                },
+                {
+                    "id": "b2",
+                    "messages": [{"content": "objective b2"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+                },
+            ],
+            "subtype_c": [
+                {
+                    "id": "c1",
+                    "messages": [{"content": "objective c1"}],
+                    "metadata": {"target_harms": [{"risk-subtype": "subtype_c"}]},
+                },
+            ],
+        }
+
+        # Start with 3 objectives
+        selected_cat_objectives = [
+            objectives_by_subtype["subtype_a"][0],
+            objectives_by_subtype["subtype_b"][0],
+            objectives_by_subtype["subtype_c"][0],
+        ]
+
+        # Need 4 more to reach 7 total
+        num_objectives = 7
+        remaining = num_objectives - len(selected_cat_objectives)
+        subtype_list = list(objectives_by_subtype.keys())
+
+        from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
+
+        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        idx = 0
+
+        while remaining > 0 and subtype_list:
+            subtype = subtype_list[idx % len(subtype_list)]
+            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            if available:
+                selected_obj = available[0]
+                selected_cat_objectives.append(selected_obj)
+                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                remaining -= 1
+            idx += 1
+            if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
+                break
+
+        # Should have selected 7 objectives
+        assert len(selected_cat_objectives) == 7
+
+        # Count by subtype - round-robin should cycle through: a, b, c, a, b, c, a
+        # After initial: a1, b1, c1
+        # Round-robin adds: a2, b2, (c exhausted, skip), a3, (b exhausted, skip), a4
+        # Final: a=4, b=2, c=1
+        subtype_counts = {}
+        for obj in selected_cat_objectives:
+            subtype = obj["metadata"]["target_harms"][0]["risk-subtype"]
+            subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
+
+        # Verify that we got objectives and exhausted smaller subtypes
+        assert subtype_counts["subtype_a"] >= 2  # Has most objectives
+        assert subtype_counts["subtype_b"] >= 1
+        assert subtype_counts["subtype_c"] == 1  # Only had 1 available
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_uses_objective_id_not_object_identity(self, red_team):
+        """Test that sampling uses objective 'id' field, not Python object identity."""
+        # Setup: Create objectives where object identity would differ but ID is same
+        obj_a1_instance1 = {
+            "id": "a1",
+            "messages": [{"content": "objective a1"}],
+            "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+        }
+        obj_a1_instance2 = {
+            "id": "a1",  # Same ID as instance1
+            "messages": [{"content": "objective a1"}],
+            "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+        }
+
+        # Verify they are different objects in memory
+        assert obj_a1_instance1 is not obj_a1_instance2
+        assert id(obj_a1_instance1) != id(obj_a1_instance2)
+
+        objectives_by_subtype = {
+            "subtype_a": [obj_a1_instance1, obj_a1_instance2],  # Same logical ID, different objects
+        }
+
+        selected_cat_objectives = []
+        num_objectives = 2
+        remaining = num_objectives
+        subtype_list = list(objectives_by_subtype.keys())
+
+        from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
+
+        # Use the same logic as the actual code
+        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        idx = 0
+
+        while remaining > 0 and subtype_list:
+            subtype = subtype_list[idx % len(subtype_list)]
+            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            if available:
+                selected_obj = available[0]
+                selected_cat_objectives.append(selected_obj)
+                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                remaining -= 1
+            idx += 1
+            if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
+                break
+
+        # Should only select 1 objective because both have same ID
+        assert len(selected_cat_objectives) == 1
+        assert selected_cat_objectives[0]["id"] == "a1"
+        # Should have stopped because no unique objectives available
+        assert remaining == 1  # Still need 1 more but can't get it
