@@ -724,52 +724,42 @@ class SearchDocumentsResult(_Model):
      ~azure.search.documents.models.SemanticQueryRewritesResultType
     """
 
-    count: Optional[int] = rest_field(name="@odata.count", visibility=["read", "create", "update", "delete", "query"])
+    count: Optional[int] = rest_field(name="@odata.count", visibility=["read"])
     """The total count of results found by the search operation, or null if the count was not
      requested. If present, the count may be greater than the number of results in this response.
      This can happen if you use the $top or $skip parameters, or if the query can't return all the
      requested documents in a single response."""
-    coverage: Optional[float] = rest_field(
-        name="@search.coverage", visibility=["read", "create", "update", "delete", "query"]
-    )
+    coverage: Optional[float] = rest_field(name="@search.coverage", visibility=["read"])
     """A value indicating the percentage of the index that was included in the query, or null if
      minimumCoverage was not specified in the request."""
-    facets: Optional[dict[str, list["_models.FacetResult"]]] = rest_field(
-        name="@search.facets", visibility=["read", "create", "update", "delete", "query"]
-    )
+    facets: Optional[dict[str, list["_models.FacetResult"]]] = rest_field(name="@search.facets", visibility=["read"])
     """The facet query results for the search operation, organized as a collection of buckets for each
      faceted field; null if the query did not include any facet expressions."""
-    answers: Optional[list["_models.QueryAnswerResult"]] = rest_field(
-        name="@search.answers", visibility=["read", "create", "update", "delete", "query"]
-    )
+    answers: Optional[list["_models.QueryAnswerResult"]] = rest_field(name="@search.answers", visibility=["read"])
     """The answers query results for the search operation; null if the answers query parameter was not
      specified or set to 'none'."""
     debug_info: Optional["_models.DebugInfo"] = rest_field(name="@search.debug", visibility=["read"])
     """Debug information that applies to the search results as a whole."""
     next_page_parameters: Optional["_models.SearchRequest"] = rest_field(
-        name="@search.nextPageParameters", visibility=["read", "create", "update", "delete", "query"]
+        name="@search.nextPageParameters", visibility=["read"]
     )
     """Continuation JSON payload returned when the query can't return all the requested results in a
      single response. You can use this JSON along with @odata.nextLink to formulate another POST
      Search request to get the next part of the search response."""
-    results: list["_models.SearchResult"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
-    )
+    results: list["_models.SearchResult"] = rest_field(name="value", visibility=["read"])
     """The sequence of results returned by the query. Required."""
-    next_link: Optional[str] = rest_field(
-        name="@odata.nextLink", visibility=["read", "create", "update", "delete", "query"]
-    )
+    next_link: Optional[str] = rest_field(name="@odata.nextLink", visibility=["read"])
     """Continuation URL returned when the query can't return all the requested results in a single
      response. You can use this URL to formulate another GET or POST Search request to get the next
      part of the search response. Make sure to use the same verb (GET or POST) as the request that
      produced this response."""
     semantic_partial_response_reason: Optional[Union[str, "_models.SemanticErrorReason"]] = rest_field(
-        name="@search.semanticPartialResponseReason", visibility=["read", "create", "update", "delete", "query"]
+        name="@search.semanticPartialResponseReason", visibility=["read"]
     )
     """Reason that a partial response was returned for a semantic ranking request. Known values are:
      \"maxWaitExceeded\", \"capacityOverloaded\", and \"transient\"."""
     semantic_partial_response_type: Optional[Union[str, "_models.SemanticSearchResultsType"]] = rest_field(
-        name="@search.semanticPartialResponseType", visibility=["read", "create", "update", "delete", "query"]
+        name="@search.semanticPartialResponseType", visibility=["read"]
     )
     """Type of partial response that was returned for a semantic ranking request. Known values are:
      \"baseResults\" and \"rerankedResults\"."""
@@ -777,31 +767,6 @@ class SearchDocumentsResult(_Model):
         name="@search.semanticQueryRewritesResultType", visibility=["read"]
     )
     """Type of query rewrite that was used to retrieve documents. \"originalQueryOnly\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        results: list["_models.SearchResult"],
-        count: Optional[int] = None,
-        coverage: Optional[float] = None,
-        facets: Optional[dict[str, list["_models.FacetResult"]]] = None,
-        answers: Optional[list["_models.QueryAnswerResult"]] = None,
-        next_page_parameters: Optional["_models.SearchRequest"] = None,
-        next_link: Optional[str] = None,
-        semantic_partial_response_reason: Optional[Union[str, "_models.SemanticErrorReason"]] = None,
-        semantic_partial_response_type: Optional[Union[str, "_models.SemanticSearchResultsType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SearchRequest(_Model):
