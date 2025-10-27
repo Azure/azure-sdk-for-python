@@ -127,12 +127,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        self._threshold = threshold
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             credential=credential,
+            threshold=threshold,
             **kwargs,
         )
 
