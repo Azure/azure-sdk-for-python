@@ -7,7 +7,8 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, NamedTuple, Optional, Union, cast
+import time
+from typing import Any, Dict, List, NamedTuple, Optional, Union, cast
 import uuid
 import base64
 import math
@@ -25,7 +26,7 @@ from azure.ai.evaluation._constants import (
     Prefixes,
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._azure._clients import LiteMLClient

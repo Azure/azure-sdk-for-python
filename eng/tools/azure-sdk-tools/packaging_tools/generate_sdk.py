@@ -99,10 +99,7 @@ def generate(
             if readme_python_md.exists():
                 with open(readme_python_md, "r", encoding="utf-8") as f:
                     content = f.read()
-                if (
-                    "rdbms/azure-mgmt-rdbms/" in content
-                    or "recoveryservices/azure-mgmt-recoveryservicesbackup/" in content
-                ):
+                if "rdbms/azure-mgmt-rdbms/" in content:
                     global_conf["autorest_options"].pop("generate-test", None)
 
             build_project(
