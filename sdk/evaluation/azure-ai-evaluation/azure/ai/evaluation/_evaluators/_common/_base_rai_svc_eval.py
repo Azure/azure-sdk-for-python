@@ -11,7 +11,7 @@ from azure.ai.evaluation._common.constants import (
     Tasks,
     _InternalAnnotationTasks,
 )
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync, evaluate_with_rai_service_multimodal
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
@@ -165,7 +165,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 )
             input_data["context"] = context
 
-        return await evaluate_with_rai_service(  # type: ignore
+        eval_result = await evaluate_with_rai_service_sync(  # type: ignore
             metric_name=self._eval_metric,
             data=input_data,
             project_scope=self._azure_ai_project,
@@ -173,6 +173,46 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             annotation_task=self._get_task(),
             evaluator_name=self.__class__.__name__,
         )
+
+        # Parse the EvalRunOutputItem format to the expected dict format
+        return self._parse_eval_result(eval_result)
+
+    def _parse_eval_result(self, eval_result) -> Dict[str, T]:
+        """Parse the EvalRunOutputItem format into the expected dict format.
+
+        :param eval_result: The result from evaluate_with_rai_service_sync (EvalRunOutputItem).
+        :return: The parsed result in the expected format.
+        :rtype: Dict[str, T]
+        """
+        import pdb; pdb.set_trace()
+        # Handle EvalRunOutputItem structure
+        if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
+            results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+
+            # Find the result matching our metric
+            for result_item in results:
+                result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+                if result_dict.get("name") == self._eval_metric or result_dict.get("metric") == self._eval_metric:
+                    # Extract values from EvalRunOutputItem result format
+                    score = result_dict.get("score", 0)
+                    reason = result_dict.get("reason", "")
+
+                    # Convert score to severity label if needed
+                    severity_label = result_dict.get("label")
+                    if severity_label is None:
+                        # Calculate severity from score
+                        from azure.ai.evaluation._common.utils import get_harm_severity_level
+                        severity_label = get_harm_severity_level(score)
+
+                    # Return in the expected format matching parse_response output
+                    return {
+                        self._eval_metric.value: severity_label,
+                        f"{self._eval_metric.value}_score": score,
+                        f"{self._eval_metric.value}_reason": reason,
+                    }
+
+        # If we can't parse as EvalRunOutputItem, return as-is (might be legacy format)
+        return eval_result if isinstance(eval_result, dict) else {}
 
     def _get_task(self):
         """Get the annotation task for the current evaluation metric.

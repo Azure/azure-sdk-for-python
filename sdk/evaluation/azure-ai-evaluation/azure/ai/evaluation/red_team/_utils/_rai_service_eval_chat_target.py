@@ -10,7 +10,7 @@ import traceback
 import asyncio
 import re
 from typing import Dict, Optional, Any, Tuple, List
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
     GeneratedRAIClient,
 )
@@ -63,20 +63,39 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
 
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
-        evaluation_result = await evaluate_with_rai_service(
+        eval_result = await evaluate_with_rai_service_sync(
             thing_to_eval_qr,
             metric_name=metric_name,
             project_scope=self.azure_ai_project,
             credential=self.credential,
             annotation_task=annotation_task,
         )
-        self.logger.info(f"Evaluation result: {evaluation_result}")
+        self.logger.info(f"Evaluation result: {eval_result}")
 
-        # Extract the relevant data from evaluation_result
-        score = evaluation_result.get(f"{metric_name}_score", 0)
-        reason = evaluation_result.get(f"{metric_name}_reason", "")
-        threshold = evaluation_result.get(f"{metric_name}_threshold", 3)
-        result = evaluation_result.get(metric_name, "")
+        # Parse the EvalRunOutputItem format
+        score = 0
+        reason = ""
+        threshold = 3
+        result = ""
+
+        # Handle EvalRunOutputItem structure
+        if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
+            results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+
+            # Find the result matching our metric
+            for result_item in results:
+                result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+                if result_dict.get("name") == metric_name or result_dict.get("metric") == metric_name:
+                    score = result_dict.get("score", 0)
+                    reason = result_dict.get("reason", "")
+                    threshold = result_dict.get("threshold", 3)
+                    
+                    # Convert score to severity label if needed
+                    result = result_dict.get("label")
+                    if result is None:
+                        from azure.ai.evaluation._common.utils import get_harm_severity_level
+                        result = get_harm_severity_level(score)
+                    break
 
         # Calculate pass/fail using the same logic as in _evaluate_conversation
         # Convert to boolean then to string for PyRIT's true/false score
