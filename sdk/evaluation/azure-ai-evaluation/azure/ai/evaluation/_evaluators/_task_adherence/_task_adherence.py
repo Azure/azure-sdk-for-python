@@ -73,7 +73,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        self._threshold = threshold
+        self.threshold = threshold # to be removed in favor of _threshold
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
