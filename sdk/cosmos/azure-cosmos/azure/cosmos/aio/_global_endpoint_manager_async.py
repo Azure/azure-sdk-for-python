@@ -198,7 +198,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         start = time.perf_counter()
         self.location_cache.update_location_cache()
         end = time.perf_counter()
-        logger.info(f"client_id={self.client.client_id} asyncio gather e2e_ms={(end - start) * 1000:.2f}")
+        logger.info(f"client_id={self.client.client_id} update location cache e2e_ms={(end - start) * 1000:.2f}")
 
     async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.
