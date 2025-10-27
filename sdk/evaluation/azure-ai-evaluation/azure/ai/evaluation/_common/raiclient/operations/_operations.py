@@ -149,6 +149,7 @@ def build_rai_svc_get_attack_objectives_request(  # pylint: disable=name-too-lon
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
+
 def build_rai_svc_get_jail_break_dataset_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})

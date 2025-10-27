@@ -378,12 +378,12 @@ class EvaluationProcessor:
         try:
             # Get the appropriate metric for this risk category
             metric_name = get_metric_from_risk_category(risk_category)
-            
+
             # For hate_unfairness, always use "hate_unfairness" metric name for Sync API
             if risk_category == RiskCategory.HateUnfairness:
                 metric_name = "hate_unfairness"
                 self.logger.debug(f"Using metric 'hate_unfairness' for Sync API")
-            
+
             self.logger.debug(f"Using metric '{metric_name}' for risk category '{risk_category.value}'")
 
             # Load all conversations from the data file

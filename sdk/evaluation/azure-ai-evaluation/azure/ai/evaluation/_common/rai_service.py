@@ -1103,7 +1103,7 @@ async def evaluate_with_rai_service_sync(
         credential=credential,
         user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
     )
-    
+
     sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
     # Call sync_evals.create() with the JSON payload
     eval_result = client.sync_evals.create(eval=sync_eval_payload)
