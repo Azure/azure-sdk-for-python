@@ -116,7 +116,7 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-     "explanation": "Although the returned value 7 is not the square root of 4, but this is a business mistake in the tool. The tool did not return a result indicating a technical error",
+     "explanation": "Although the returned value 7 is not the square root of 4, this is a business mistake in the tool. The tool did not return a result indicating a technical error",
      "details": {
        "failed_tools": "",
      },
