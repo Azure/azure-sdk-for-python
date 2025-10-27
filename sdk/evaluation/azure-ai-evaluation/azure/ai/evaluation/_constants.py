@@ -151,7 +151,7 @@ class _EvaluatorMetricMapping:
         "sensitive_data_leakage": ["prohibited_actions"],
         "score_model": ["score_model"],
         "label_model": ["label_model"],
-        "prohibited_actions": ["prohibited_actions"]
+        "prohibited_actions": ["prohibited_actions"],
     }
 
     EVAL_CLASS_NAME_MAP = {
