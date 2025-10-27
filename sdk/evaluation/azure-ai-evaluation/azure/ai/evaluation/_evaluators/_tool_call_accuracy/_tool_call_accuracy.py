@@ -258,7 +258,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score_result = "pass" if score >= self.threshold else "fail"
             response_dict = {
                 self._result_key: score,
-                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
@@ -309,7 +308,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # If no tool calls were made or tool call type is not supported, return not applicable result
         return {
             self._result_key: self._NOT_APPLICABLE_RESULT,
-            f"gpt_{self._result_key}": self._NOT_APPLICABLE_RESULT,
             f"{self._result_key}_result": "pass",
             f"{self._result_key}_threshold": self.threshold,
             f"{self._result_key}_reason": error_message,
