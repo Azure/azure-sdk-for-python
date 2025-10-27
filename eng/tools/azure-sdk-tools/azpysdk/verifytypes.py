@@ -21,6 +21,7 @@ from ci_tools.logging import logger
 PYRIGHT_VERSION = "1.1.287"
 REPO_ROOT = discover_repo_root()
 
+
 class verifytypes(Check):
     def __init__(self) -> None:
         super().__init__()
@@ -59,7 +60,7 @@ class verifytypes(Check):
             except CalledProcessError as e:
                 logger.error(f"Failed to install pyright: {e}")
                 return e.returncode
-            
+
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
@@ -127,7 +128,6 @@ class verifytypes(Check):
                     )
                     results.append(1)
         return max(results) if results else 0
-    
 
     def install_from_main(self, setup_path: str, python_executable: Optional[str] = None) -> int:
         path = pathlib.Path(setup_path)
@@ -139,7 +139,14 @@ class verifytypes(Check):
             try:
                 subprocess.check_call(["git", "init"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                 subprocess.check_call(
-                    ["git", "clone", "--no-checkout", "https://github.com/Azure/azure-sdk-for-python.git", "--depth", "1"],
+                    [
+                        "git",
+                        "clone",
+                        "--no-checkout",
+                        "https://github.com/Azure/azure-sdk-for-python.git",
+                        "--depth",
+                        "1",
+                    ],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.STDOUT,
                 )
@@ -166,8 +173,9 @@ class verifytypes(Check):
                 os.chdir(cwd)  # allow temp dir to be deleted
             return 0
 
-
-    def get_type_complete_score(self, executable, commands: typing.List[str], cwd: str, check_pytyped: bool = False) -> float:
+    def get_type_complete_score(
+        self, executable, commands: typing.List[str], cwd: str, check_pytyped: bool = False
+    ) -> float:
         try:
             response = self.run_venv_command(executable, commands[1:], cwd, check=True)
         except subprocess.CalledProcessError as e:

@@ -113,7 +113,13 @@ class Check(abc.ABC):
             raise RuntimeError(f"Unable to find parent venv for executable {executable}")
 
         result = subprocess.run(
-            [executable, *command], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=check, env=env
+            [executable, *command],
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=check,
+            env=env,
         )
 
         return result
