@@ -588,16 +588,20 @@ class EvaluationEvaluateSamples(object):
 
         tool_success_evaluator = ToolSuccessEvaluator(model_config=model_config)
         tool_success_evaluator(
-            response=json.loads( """[{"createdAt": "2025-08-16T08:39:47Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_id557", "name": "get_date", "arguments": {}}]}, {"createdAt": "2025-08-16T08:39:49Z", "run_id": "run_id22", "tool_call_id": "call_id557", "role": "tool", "content": [{"type": "tool_result", "tool_result": {"date_and_time": "2019-09-07 23:59:59"}}]}, {"createdAt": "2025-08-16T08:39:51Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_Run1", "name": "get_spending_by_day", "arguments": {"start_date": "2019-10-01", "end_date": "2019-10-31"}}]}, {"createdAt": "2025-08-16T08:39:53Z", "run_id": "run_id22", "tool_call_id": "call_Run1", "role": "tool", "content": [{"type": "tool_result", "tool_result": {"spending": {}}}]}, {"createdAt": "2025-08-16T08:39:54Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "text", "text": "There are no spending records for October."}]}]"""),
-            tool_definitions=json.loads( """[{"name": "get_categories", "type": "function", "description": "Retrieve of a spending line id from your spending records."}]""")
+            response=json.loads(
+                """[{"createdAt": "2025-08-16T08:39:47Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_id557", "name": "get_date", "arguments": {}}]}, {"createdAt": "2025-08-16T08:39:49Z", "run_id": "run_id22", "tool_call_id": "call_id557", "role": "tool", "content": [{"type": "tool_result", "tool_result": {"date_and_time": "2019-09-07 23:59:59"}}]}, {"createdAt": "2025-08-16T08:39:51Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_Run1", "name": "get_spending_by_day", "arguments": {"start_date": "2019-10-01", "end_date": "2019-10-31"}}]}, {"createdAt": "2025-08-16T08:39:53Z", "run_id": "run_id22", "tool_call_id": "call_Run1", "role": "tool", "content": [{"type": "tool_result", "tool_result": {"spending": {}}}]}, {"createdAt": "2025-08-16T08:39:54Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "text", "text": "There are no spending records for October."}]}]"""
+            ),
+            tool_definitions=json.loads(
+                """[{"name": "get_categories", "type": "function", "description": "Retrieve of a spending line id from your spending records."}]"""
+            ),
         )
-        
+
         tool_success_evaluator(
             response="the agent called get_categories and the call returned the value Electronics",
-            tool_definitions="We have a tool named get_categories that takes the spending line id as a input and outputs the category of this spending line"
+            tool_definitions="We have a tool named get_categories that takes the spending line id as a input and outputs the category of this spending line",
         )
         # [END tool_success_evaluator]
-        
+
         # [START task_navigation_efficiency_evaluator]
         from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
             TaskNavigationEfficiencyEvaluator,
