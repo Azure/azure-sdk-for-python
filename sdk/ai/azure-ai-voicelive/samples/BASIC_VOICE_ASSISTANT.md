@@ -30,8 +30,8 @@ Create a `.env` file with your credentials:
 ```bash
 AZURE_VOICELIVE_API_KEY=your-api-key
 AZURE_VOICELIVE_ENDPOINT=your-endpoint
-AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
-AZURE_VOICELIVE_VOICE=en-US-AvaNeural
+AZURE_VOICELIVE_MODEL=gpt-realtime
+AZURE_VOICELIVE_VOICE=en-US-Ava:DragonHDLatestNeural
 AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally and conversationally.
 ```
 
@@ -45,8 +45,8 @@ Optional command-line arguments:
 
 ```bash
 python basic_voice_assistant_async.py \
-    --model gpt-4o-realtime-preview \
-    --voice en-US-AvaNeural \
+    --model gpt-realtime \
+    --voice en-US-Ava:DragonHDLatestNeural \
     --instructions "You are a helpful assistant" \
     --verbose
 ```
@@ -194,6 +194,7 @@ basic_voice_assistant_async.py
 
 ## Next Steps
 
+- Explore `agent_voice_assistant_async.py` for Foundry agent integation and conversation logging capabilities
 - Explore `async_function_calling_sample.py` for function calling capabilities
 - Check out other samples in the `samples/` directory
 - Read the main SDK documentation in `README.md`
