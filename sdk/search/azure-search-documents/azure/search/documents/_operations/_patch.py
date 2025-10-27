@@ -7,10 +7,314 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, List, Optional, Union, cast
+import base64
+import itertools
+import json
+
+from azure.core.paging import ItemPaged, PageIterator
+from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import _SearchClientOperationsMixin as _SearchClientOperationsMixinGenerated
 from .. import models as _models
+
+
+def _convert_search_result(result: _models.SearchResult) -> Dict[str, Any]:
+    """Convert SearchResult model to dictionary with @search.* metadata."""
+    ret = dict(result.additional_properties) if result.additional_properties else {}
+    if result.score is not None:
+        ret["@search.score"] = result.score
+    if result.reranker_score is not None:
+        ret["@search.reranker_score"] = result.reranker_score
+    if result.highlights is not None:
+        ret["@search.highlights"] = result.highlights
+    if result.captions is not None:
+        ret["@search.captions"] = result.captions
+    if result.document_debug_info is not None:
+        ret["@search.document_debug_info"] = result.document_debug_info
+    if result.reranker_boosted_score is not None:
+        ret["@search.reranker_boosted_score"] = result.reranker_boosted_score
+    return ret
+
+
+def _pack_continuation_token(response: _models.SearchDocumentsResult, api_version: str) -> Optional[bytes]:
+    """Pack continuation token from search response."""
+    if response.next_page_parameters is not None:
+        token = {
+            "apiVersion": api_version,
+            "nextLink": response.next_link,
+            "nextPageParameters": response.next_page_parameters.as_dict(),
+        }
+        return base64.b64encode(json.dumps(token).encode("utf-8"))
+    return None
+
+
+def _unpack_continuation_token(token: bytes) -> tuple:
+    """Unpack continuation token to get next link and request."""
+    unpacked_token = json.loads(base64.b64decode(token))
+    next_link = unpacked_token["nextLink"]
+    next_page_parameters = unpacked_token["nextPageParameters"]
+    next_page_request = _models.SearchRequest(**next_page_parameters)
+    return next_link, next_page_request
+
+
+def _ensure_response(f):
+    """Decorator to ensure response is fetched before accessing metadata."""
+    def wrapper(self, *args, **kw):
+        if self._current_page is None:
+            self._response = self._get_next(self.continuation_token)
+            self.continuation_token, self._current_page = self._extract_data(self._response)
+        return f(self, *args, **kw)
+    return wrapper
+
+
+def _build_search_request(
+    search_text: Optional[str] = None,
+    *,
+    include_total_count: Optional[bool] = None,
+    facets: Optional[List[str]] = None,
+    filter: Optional[str] = None,
+    highlight_fields: Optional[str] = None,
+    highlight_post_tag: Optional[str] = None,
+    highlight_pre_tag: Optional[str] = None,
+    minimum_coverage: Optional[float] = None,
+    order_by: Optional[Union[List[str], str]] = None,
+    query_type: Optional[Union[str, _models.QueryType]] = None,
+    scoring_parameters: Optional[List[str]] = None,
+    scoring_profile: Optional[str] = None,
+    semantic_query: Optional[str] = None,
+    search_fields: Optional[Union[List[str], str]] = None,
+    search_mode: Optional[Union[str, _models.SearchMode]] = None,
+    query_language: Optional[Union[str, _models.QueryLanguage]] = None,
+    query_speller: Optional[Union[str, _models.QuerySpellerType]] = None,
+    query_answer: Optional[Union[str, _models.QueryAnswerType]] = None,
+    query_answer_count: Optional[int] = None,
+    query_answer_threshold: Optional[float] = None,
+    query_caption: Optional[Union[str, _models.QueryCaptionType]] = None,
+    query_caption_highlight_enabled: Optional[bool] = None,
+    semantic_fields: Optional[Union[List[str], str]] = None,
+    semantic_configuration_name: Optional[str] = None,
+    select: Optional[Union[List[str], str]] = None,
+    skip: Optional[int] = None,
+    top: Optional[int] = None,
+    scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
+    session_id: Optional[str] = None,
+    vector_queries: Optional[List[_models.VectorQuery]] = None,
+    vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
+    semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
+    semantic_max_wait_in_milliseconds: Optional[int] = None,
+    query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
+    query_rewrites_count: Optional[int] = None,
+    debug: Optional[Union[str, _models.QueryDebugMode]] = None,
+    hybrid_search: Optional[_models.HybridSearch] = None,
+) -> _models.SearchRequest:
+    """Build a SearchRequest from search parameters.
+    
+    This is a shared helper function used by both sync and async search methods.
+    """
+    # Convert list parameters to comma-separated strings if needed
+    if isinstance(search_fields, list):
+        search_fields = ",".join(search_fields)
+    if isinstance(select, list):
+        select = ",".join(select)
+    if isinstance(order_by, list):
+        order_by = ",".join(order_by)
+    if isinstance(semantic_fields, list):
+        semantic_fields = ",".join(semantic_fields)
+    
+    # Build complex query parameters
+    answers = None
+    if query_answer:
+        answers = str(query_answer)
+        if query_answer_count is not None:
+            answers = f"{answers}|count-{query_answer_count}"
+        if query_answer_threshold is not None:
+            answers = f"{answers},threshold-{query_answer_threshold}"
+    
+    captions = None
+    if query_caption:
+        captions = str(query_caption)
+        if query_caption_highlight_enabled is not None:
+            captions = f"{captions}|highlight-{str(query_caption_highlight_enabled).lower()}"
+    
+    rewrites = None
+    if query_rewrites:
+        rewrites = str(query_rewrites)
+        if query_rewrites_count is not None:
+            rewrites = f"{rewrites}|count-{query_rewrites_count}"
+    
+    # Build and return the search request
+    return _models.SearchRequest(
+        search_text=search_text,
+        include_total_count=include_total_count,
+        facets=facets,
+        filter=filter,
+        highlight_fields=highlight_fields,
+        highlight_post_tag=highlight_post_tag,
+        highlight_pre_tag=highlight_pre_tag,
+        minimum_coverage=minimum_coverage,
+        order_by=order_by,
+        query_type=query_type,
+        scoring_parameters=scoring_parameters,
+        scoring_profile=scoring_profile,
+        semantic_query=semantic_query,
+        search_fields=search_fields,
+        search_mode=search_mode,
+        query_language=query_language,
+        query_speller=query_speller,
+        answers=answers,
+        captions=captions,
+        semantic_fields=semantic_fields,
+        semantic_configuration_name=semantic_configuration_name,
+        select=select,
+        skip=skip,
+        top=top,
+        session_id=session_id,
+        scoring_statistics=scoring_statistics,
+        vector_queries=vector_queries,
+        vector_filter_mode=vector_filter_mode,
+        semantic_error_handling=semantic_error_mode,
+        semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
+        query_rewrites=rewrites,
+        debug=debug,
+        hybrid_search=hybrid_search,
+    )
+
+
+class SearchPageIterator(PageIterator):
+    """An iterator over search result pages."""
+
+    def __init__(self, client, initial_request: _models.SearchRequest, kwargs, continuation_token=None) -> None:
+        super(SearchPageIterator, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token,
+        )
+        self._client = client
+        self._initial_request = initial_request
+        self._kwargs = kwargs
+        self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
+        self._api_version = kwargs.get("api_version", "2025-11-01-preview")
+
+    def _get_next_cb(self, continuation_token):
+        if continuation_token is None:
+            return self._client.search_post(body=self._initial_request, **self._kwargs)
+        
+        _next_link, next_page_request = _unpack_continuation_token(continuation_token)
+        return self._client.search_post(body=next_page_request, **self._kwargs)
+
+    def _extract_data_cb(self, response: _models.SearchDocumentsResult):
+        continuation_token = _pack_continuation_token(response, api_version=self._api_version)
+        results = [_convert_search_result(r) for r in response.results]
+        return continuation_token, results
+
+    @_ensure_response
+    def get_facets(self) -> Optional[Dict[str, Any]]:
+        self.continuation_token = None
+        response = cast(_models.SearchDocumentsResult, self._response)
+        if response.facets is not None and self._facets is None:
+            self._facets = {k: [x.as_dict() if hasattr(x, 'as_dict') else dict(x) for x in v] 
+                           for k, v in response.facets.items()}
+        return self._facets
+
+    @_ensure_response
+    def get_coverage(self) -> Optional[float]:
+        self.continuation_token = None
+        response = cast(_models.SearchDocumentsResult, self._response)
+        return response.coverage
+
+    @_ensure_response
+    def get_count(self) -> Optional[int]:
+        self.continuation_token = None
+        response = cast(_models.SearchDocumentsResult, self._response)
+        return response.count
+
+    @_ensure_response
+    def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
+        self.continuation_token = None
+        response = cast(_models.SearchDocumentsResult, self._response)
+        return response.answers
+
+    @_ensure_response
+    def get_debug_info(self) -> Optional[_models.DebugInfo]:
+        self.continuation_token = None
+        response = cast(_models.SearchDocumentsResult, self._response)
+        return response.debug_info
+
+
+class SearchItemPaged(ItemPaged[Dict]):
+    """A pageable list of search results with metadata accessors."""
+
+    def __init__(self, page_iterator_factory_func) -> None:
+        # Store the factory function that creates SearchPageIterator instances
+        self._page_iterator_factory = page_iterator_factory_func
+        self._first_page_iterator_instance: Optional[SearchPageIterator] = None
+        # Initialize the parent without arguments - we'll override by_page()
+        self._page_iterator = None
+    
+    def by_page(self, continuation_token=None):
+        """Get an iterator of pages of results.
+        
+        :param continuation_token: Token to retrieve the next page of results
+        :type continuation_token: str or None
+        :return: An iterator of pages
+        :rtype: SearchPageIterator
+        """
+        return self._page_iterator_factory(continuation_token)
+
+    def __next__(self) -> Dict:
+        if self._page_iterator is None:
+            first_iterator = self._first_iterator_instance()
+            self._page_iterator = itertools.chain.from_iterable(first_iterator)
+        return next(self._page_iterator)
+
+    def _first_iterator_instance(self) -> SearchPageIterator:
+        if self._first_page_iterator_instance is None:
+            self._first_page_iterator_instance = cast(SearchPageIterator, self.by_page())
+        return self._first_page_iterator_instance
+
+    def get_facets(self) -> Optional[Dict]:
+        """Return any facet results if faceting was requested.
+
+        :return: facet results
+        :rtype: dict or None
+        """
+        return self._first_iterator_instance().get_facets()
+
+    def get_coverage(self) -> Optional[float]:
+        """Return the coverage percentage, if `minimum_coverage` was
+        specified for the query.
+
+        :return: coverage percentage
+        :rtype: float or None
+        """
+        return self._first_iterator_instance().get_coverage()
+
+    def get_count(self) -> Optional[int]:
+        """Return the count of results if `include_total_count` was
+        set for the query.
+
+        :return: count of results
+        :rtype: int or None
+        """
+        return self._first_iterator_instance().get_count()
+
+    def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
+        """Return semantic answers. Only included if the semantic ranker is used
+        and answers are requested in the search query via the query_answer parameter.
+
+        :return: answers
+        :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
+        """
+        return self._first_iterator_instance().get_answers()
+
+    def get_debug_info(self) -> Optional[_models.DebugInfo]:
+        """Return the debug information for the query.
+
+        :return: the debug information for the query
+        :rtype: ~azure.search.documents.models.DebugInfo or None
+        """
+        return self._first_iterator_instance().get_debug_info()
 
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
@@ -126,9 +430,336 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         result = self.index_documents(batch, **kwargs)
         return cast(List[_models.IndexingResult], result.results)
 
+    @distributed_trace
+    def search(
+        self,
+        search_text: Optional[str] = None,
+        *,
+        include_total_count: Optional[bool] = None,
+        facets: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        highlight_fields: Optional[str] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[Union[List[str], str]] = None,
+        query_type: Optional[Union[str, _models.QueryType]] = None,
+        scoring_parameters: Optional[List[str]] = None,
+        scoring_profile: Optional[str] = None,
+        semantic_query: Optional[str] = None,
+        search_fields: Optional[Union[List[str], str]] = None,
+        search_mode: Optional[Union[str, _models.SearchMode]] = None,
+        query_language: Optional[Union[str, _models.QueryLanguage]] = None,
+        query_speller: Optional[Union[str, _models.QuerySpellerType]] = None,
+        query_answer: Optional[Union[str, _models.QueryAnswerType]] = None,
+        query_answer_count: Optional[int] = None,
+        query_answer_threshold: Optional[float] = None,
+        query_caption: Optional[Union[str, _models.QueryCaptionType]] = None,
+        query_caption_highlight_enabled: Optional[bool] = None,
+        semantic_fields: Optional[Union[List[str], str]] = None,
+        semantic_configuration_name: Optional[str] = None,
+        select: Optional[Union[List[str], str]] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
+        session_id: Optional[str] = None,
+        vector_queries: Optional[List[_models.VectorQuery]] = None,
+        vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
+        semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
+        semantic_max_wait_in_milliseconds: Optional[int] = None,
+        query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
+        query_rewrites_count: Optional[int] = None,
+        debug: Optional[Union[str, _models.QueryDebugMode]] = None,
+        hybrid_search: Optional[_models.HybridSearch] = None,
+        **kwargs: Any
+    ) -> SearchItemPaged[Dict]:
+        """Search the Azure search index for documents.
+
+        :param str search_text: A full-text search query expression; Use "*" or omit this parameter to
+            match all documents.
+        :keyword bool include_total_count: A value that specifies whether to fetch the total count of
+            results. Default is false. Setting this value to true may have a performance impact. Note that
+            the count returned is an approximation.
+        :keyword list[str] facets: The list of facet expressions to apply to the search query. Each facet
+            expression contains a field name, optionally followed by a comma-separated list of name:value
+            pairs.
+        :keyword str filter: The OData $filter expression to apply to the search query.
+        :keyword str highlight_fields: The comma-separated list of field names to use for hit highlights.
+            Only searchable fields can be used for hit highlighting.
+        :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+            highlightPreTag. Default is </em>.
+        :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+            highlightPostTag. Default is <em>.
+        :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+            must be covered by a search query in order for the query to be reported as a success. This
+            parameter can be useful for ensuring search availability even for services with only one
+            replica. The default is 100.
+        :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
+            expression can be either a field name or a call to either the geo.distance() or the
+            search.score() functions. Each expression can be followed by asc to indicate ascending, and
+            desc to indicate descending. The default is ascending order. Ties will be broken by the match
+            scores of documents. If no OrderBy is specified, the default sort order is descending by
+            document match score. There can be at most 32 $orderby clauses.
+        :paramtype order_by: list[str] or str
+        :keyword query_type: A value that specifies the syntax of the search query. The default is
+            'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
+            'simple', 'full', "semantic".
+        :paramtype query_type: str or ~azure.search.documents.models.QueryType
+        :keyword list[str] scoring_parameters: The list of parameter values to be used in scoring functions (for
+            example, referencePointParameter) using the format name-values. For example, if the scoring
+            profile defines a function with a parameter called 'mylocation' the parameter string would be
+            "mylocation--122.2,44.8" (without the quotes).
+        :keyword str scoring_profile: The name of a scoring profile to evaluate match scores for matching
+            documents in order to sort the results.
+        :keyword str semantic_query: Allows setting a separate search query that will be solely used for
+            semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+            is a need to use different queries between the base retrieval and ranking phase, and the L2
+            semantic phase.
+        :keyword search_fields: The list of field names to which to scope the full-text search. When
+            using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
+            each fielded search expression take precedence over any field names listed in this parameter.
+        :paramtype search_fields: list[str] or str
+        :keyword search_mode: A value that specifies whether any or all of the search terms must be
+            matched in order to count the document as a match. Possible values include: 'any', 'all'.
+        :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
+        :keyword query_language: The language of the search query. Possible values include: "none", "en-us",
+            "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn",
+            "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl",
+            "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo",
+            "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn",
+            "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es",
+            "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es",
+            "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", "ur-pk".
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
+            individual search query terms. Possible values include: "none", "lexicon".
+        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
+        :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
+            the query returns answers extracted from key passages in the highest ranked documents.
+            Possible values include: "none", "extractive".
+        :paramtype query_answer: str or ~azure.search.documents.models.QueryAnswerType
+        :keyword int query_answer_count: This parameter is only valid if the query type is 'semantic' and
+            query answer is 'extractive'. Configures the number of answers returned. Default count is 1.
+        :keyword float query_answer_threshold: This parameter is only valid if the query type is 'semantic' and
+            query answer is 'extractive'. Configures the number of confidence threshold. Default count is 0.7.
+        :keyword query_caption: This parameter is only valid if the query type is 'semantic'. If set, the
+            query returns captions extracted from key passages in the highest ranked documents.
+            Defaults to 'None'. Possible values include: "none", "extractive".
+        :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
+        :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
+            query caption is set to 'extractive'. Determines whether highlighting is enabled.
+            Defaults to 'true'.
+        :keyword semantic_fields: The list of field names used for semantic search.
+        :paramtype semantic_fields: list[str] or str
+        :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
+            processing documents for queries of type semantic.
+        :paramtype semantic_configuration_name: str
+        :keyword select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
+            in the schema are included.
+        :paramtype select: list[str] or str
+        :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
+            If you need to scan documents in sequence, but cannot use $skip due to this limitation,
+            consider using $orderby on a totally-ordered key and $filter with a range query instead.
+        :keyword int top: The number of search results to retrieve. This can be used in conjunction with
+            $skip to implement client-side paging of search results. If results are truncated due to
+            server-side paging, the response will include a continuation token that can be used to issue
+            another Search request for the next page of results.
+        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
+            statistics (such as document frequency) globally for more consistent scoring, or locally, for
+            lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+            before scoring. Using global scoring statistics can increase latency of search queries.
+            Possible values include: "local", "global".
+        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+        :keyword str session_id: A value to be used to create a sticky session, which can help getting more
+            consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+            to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+            interfere with the load balancing of the requests across replicas and adversely affect the
+            performance of the search service. The value used as sessionId cannot start with a '_'
+            character.
+        :keyword semantic_error_mode: Allows the user to choose whether a semantic call should fail
+            completely (default / current behavior), or to return partial results. Known values are:
+            "partial" and "fail".
+        :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
+        :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
+            time it takes for semantic enrichment to finish processing before the request fails.
+        :keyword query_rewrites: When QueryRewrites is set to ``generative``\\ , the query terms are sent
+            to a generate model which will produce 10 (default) rewrites to help increase the recall of the
+            request. The requested count can be configured by appending the pipe character ``|`` followed
+            by the ``count-<number of rewrites>`` option, such as ``generative|count-3``. Defaults to
+            ``None``. This parameter is only valid if the query type is ``semantic``. Known values are:
+            "none" and "generative".
+        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
+        :keyword int query_rewrites_count: This parameter is only valid if the query rewrites type is 'generative'.
+            Configures the number of rewrites returned. Default count is 10.
+        :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
+            results. Known values are: "disabled", "speller", "semantic", and "all".
+        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
+        :keyword vector_queries: The query parameters for vector and hybrid search queries.
+        :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
+        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
+            vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+        :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
+        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :return: List of search results.
+        :rtype: SearchItemPaged[dict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_simple_query.py
+                :start-after: [START simple_query]
+                :end-before: [END simple_query]
+                :language: python
+                :dedent: 4
+                :caption: Search on a simple text term.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_filter_query.py
+                :start-after: [START filter_query]
+                :end-before: [END filter_query]
+                :language: python
+                :dedent: 4
+                :caption: Filter and sort search results.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_facet_query.py
+                :start-after: [START facet_query]
+                :end-before: [END facet_query]
+                :language: python
+                :dedent: 4
+                :caption: Get search result facets.
+        """
+        # Convert list parameters to comma-separated strings if needed
+        if isinstance(search_fields, list):
+            search_fields = ",".join(search_fields)
+        if isinstance(select, list):
+            select = ",".join(select)
+        if isinstance(order_by, list):
+            order_by = ",".join(order_by)
+        if isinstance(semantic_fields, list):
+            semantic_fields = ",".join(semantic_fields)
+        
+        # Build complex query parameters
+        answers = None
+        if query_answer:
+            answers = str(query_answer)
+            if query_answer_count is not None:
+                answers = f"{answers}|count-{query_answer_count}"
+            if query_answer_threshold is not None:
+                answers = f"{answers},threshold-{query_answer_threshold}"
+        
+        captions = None
+        if query_caption:
+            captions = str(query_caption)
+            if query_caption_highlight_enabled is not None:
+                captions = f"{captions}|highlight-{str(query_caption_highlight_enabled).lower()}"
+        
+        rewrites = None
+        if query_rewrites:
+            rewrites = str(query_rewrites)
+            if query_rewrites_count is not None:
+                rewrites = f"{rewrites}|count-{query_rewrites_count}"
+        
+        # Build the search request
+        search_request = _models.SearchRequest(
+            search_text=search_text,
+            include_total_count=include_total_count,
+            facets=facets,
+            filter=filter,
+            highlight_fields=highlight_fields,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            query_type=query_type,
+            scoring_parameters=scoring_parameters,
+            scoring_profile=scoring_profile,
+            semantic_query=semantic_query,
+            search_fields=search_fields,
+            search_mode=search_mode,
+            query_language=query_language,
+            query_speller=query_speller,
+            answers=answers,
+            captions=captions,
+            semantic_fields=semantic_fields,
+            semantic_configuration_name=semantic_configuration_name,
+            select=select,
+            skip=skip,
+            top=top,
+            session_id=session_id,
+            scoring_statistics=scoring_statistics,
+            vector_queries=vector_queries,
+            vector_filter_mode=vector_filter_mode,
+            semantic_error_handling=semantic_error_mode,
+            semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
+            query_rewrites=rewrites,
+            debug=debug,
+            hybrid_search=hybrid_search,
+        )
+        
+        # Build the search request using shared helper
+        search_request = _build_search_request(
+            search_text=search_text,
+            include_total_count=include_total_count,
+            facets=facets,
+            filter=filter,
+            highlight_fields=highlight_fields,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            query_type=query_type,
+            scoring_parameters=scoring_parameters,
+            scoring_profile=scoring_profile,
+            semantic_query=semantic_query,
+            search_fields=search_fields,
+            search_mode=search_mode,
+            query_language=query_language,
+            query_speller=query_speller,
+            query_answer=query_answer,
+            query_answer_count=query_answer_count,
+            query_answer_threshold=query_answer_threshold,
+            query_caption=query_caption,
+            query_caption_highlight_enabled=query_caption_highlight_enabled,
+            semantic_fields=semantic_fields,
+            semantic_configuration_name=semantic_configuration_name,
+            select=select,
+            skip=skip,
+            top=top,
+            scoring_statistics=scoring_statistics,
+            session_id=session_id,
+            vector_queries=vector_queries,
+            vector_filter_mode=vector_filter_mode,
+            semantic_error_mode=semantic_error_mode,
+            semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
+            query_rewrites=query_rewrites,
+            query_rewrites_count=query_rewrites_count,
+            debug=debug,
+            hybrid_search=hybrid_search,
+        )
+        
+        # Create kwargs for the search_post call
+        search_kwargs = dict(kwargs)
+        
+        # Create a factory function that returns a page iterator
+        # This is compatible with ItemPaged's by_page() pattern
+        def page_iterator_factory(continuation_token=None):
+            return SearchPageIterator(
+                client=self,
+                initial_request=search_request,
+                kwargs=search_kwargs,
+                continuation_token=continuation_token
+            )
+        
+        # Return SearchItemPaged with the factory function
+        return SearchItemPaged(page_iterator_factory)
+
 
 __all__: list[str] = [
     "_SearchClientOperationsMixin",
+    "SearchItemPaged",
 ]  # Add all objects you want publicly available to users at this package level
 
 

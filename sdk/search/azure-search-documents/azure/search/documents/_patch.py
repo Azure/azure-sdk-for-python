@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from ._client import SearchClient as _SearchClient
+from ._operations._patch import SearchItemPaged
 
 
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -31,6 +32,7 @@ class SearchClient(_SearchClient):
 
 __all__: list[str] = [
     "SearchClient",
+    "SearchItemPaged",
     "ApiVersion",
     "DEFAULT_VERSION",
 ]  # Add all objects you want publicly available to users at this package level
