@@ -35,16 +35,9 @@ from azure.core.pipeline.policies import (
 )
 
 from .authentication import SharedKeyCredentialPolicy
-from .constants import (
-    CONNECTION_TIMEOUT,
-    DEVSTORE_ACCOUNT_KEY,
-    DEFAULT_OAUTH_SCOPE,
-    READ_TIMEOUT,
-    SERVICE_HOST_BASE,
-    STORAGE_OAUTH_SCOPE
-)
+from .constants import CONNECTION_TIMEOUT, DEFAULT_OAUTH_SCOPE, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode, StorageConfiguration
-from .parser import _get_development_storage_endpoint
+from .parser import  DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,

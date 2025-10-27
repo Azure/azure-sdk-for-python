@@ -37,8 +37,8 @@ from azure.core.pipeline.policies import (
 from .authentication import SharedKeyCredentialPolicy
 from .constants import (
     CONNECTION_TIMEOUT,
-    DEVSTORE_ACCOUNT_KEY,
     DEFAULT_OAUTH_SCOPE,
+    DEVSTORE_ACCOUNT_KEY,
     READ_TIMEOUT,
     SERVICE_HOST_BASE,
     STORAGE_OAUTH_SCOPE

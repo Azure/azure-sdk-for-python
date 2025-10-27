@@ -7,8 +7,6 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from .constants import DEVSTORE_ACCOUNT_NAME
-
 EPOCH_AS_FILETIME = 116444736000000000  # January 1, 1970 as MS filetime
 HUNDREDS_OF_NANOSECONDS = 10000000
 
@@ -17,6 +15,8 @@ SERVICE_PORT_NUMBERS = {
     "dfs": 10000,
     "queue": 10001,
 }
+DEVSTORE_ACCOUNT_NAME = "devstoreaccount1"
+DEVSTORE_ACCOUNT_KEY = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
 
 
 def _to_utc_datetime(value: datetime) -> str:
