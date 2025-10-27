@@ -225,9 +225,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 excluded_locations = list(self.connection_policy.ExcludedLocations)
             else:
                 excluded_locations = []
-        #for excluded_location in request.excluded_locations_circuit_breaker:
-            #if excluded_location not in excluded_locations:
-                #excluded_locations.append(excluded_location)
+
         return excluded_locations
 
     def _get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]:
