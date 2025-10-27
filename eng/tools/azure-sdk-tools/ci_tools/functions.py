@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import stat
 from ast import Not
+from packaging import tags
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from packaging.requirements import Requirement
@@ -13,6 +14,7 @@ import io
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
 from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
+from ci_tools.logging import logger
 
 import os, sys, platform, glob, re, logging
 from typing import List, Any, Optional, Tuple
@@ -42,7 +44,18 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
-TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
+# In very rare situations, we need to actively transition a package from one part of the code base to another
+# in a multi-stage process. For example, migrating "azure-ai-textanalytics" from "sdk/textanalytics" to "sdk/ai".
+# Both need to simultaneously exist for a short period of time, but we need to prevent discovery of the package
+# so that downstream checks aren't broken by this.
+# We need to actively prevent ourselves from discovering the package in its old location. To do that we:
+#  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
+#  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
+PATHS_EXCLUDED_FROM_DISCOVERY = [
+    "sdk/textanalytics/azure-ai-textanalytics",
+]
+
+TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
     "azure-storage-queue": "pypy",
@@ -182,6 +195,15 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
         p for p in collected_top_level_directories if not any(part in ("test", "tests") for part in p.split(os.sep))
     ]
 
+    # remove any packages that might exist in the PATHS_EXCLUDED_FROM_DISCOVERY path list (relative from repo root)
+    excluded = set(PATHS_EXCLUDED_FROM_DISCOVERY)
+    filtered = []
+    for pkg_path in collected_top_level_directories:
+        rel = os.path.relpath(pkg_path, target_root_dir).replace(os.sep, "/")
+        if not any(rel == excl or rel.startswith(excl + "/") for excl in excluded):
+            filtered.append(pkg_path)
+    collected_top_level_directories = filtered
+
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
@@ -222,25 +244,25 @@ def discover_targeted_packages(
 
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
-    logging.info(
+    logger.debug(
         f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
     )
 
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
-    logging.info(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
+    logger.debug(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
-        logging.info(f"Results after compatibility filter: {collected_packages}")
+        logger.debug(f"Results after compatibility filter: {collected_packages}")
 
     if not include_inactive:
         collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
-    logging.info(f"Results after business filter: {collected_packages}")
+    logger.debug(f"Results after business filter: {collected_packages}")
 
     return sorted(collected_packages)
 
@@ -295,15 +317,17 @@ def is_required_version_on_pypi(package_name, spec):
 def get_package_from_repo(pkg_name: str, repo_root: Optional[str] = None) -> Optional[ParsedSetup]:
     root_dir = discover_repo_root(repo_root)
 
-    glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
-    paths = glob.glob(glob_path)
+    paths = discover_targeted_packages(pkg_name, root_dir, filter_type="Build", include_inactive=True)
 
-    if paths:
-        setup_py_path = paths[0]
-        parsed_setup = ParsedSetup.from_path(setup_py_path)
-        return parsed_setup
+    if len(paths) >= 2:
+        raise RuntimeError(
+            f"Multiple packages found for {pkg_name} within {root_dir}, please specify a more specific glob."
+        )
 
-    return None
+    if paths and len(paths) == 1:
+        return ParsedSetup.from_path(paths[0])
+
+    raise RuntimeError(f"Package {pkg_name} not found in repo {root_dir}.")
 
 
 def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: Optional[str] = None) -> Optional[str]:
@@ -341,26 +365,21 @@ def get_version_from_repo(pkg_name: str, repo_root: Optional[str] = None) -> str
         if version_obj.pre:
             if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
                 return version_obj.base_version
-
         return str(version_obj)
     else:
-        logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
-        exit(1)
+        raise RuntimeError(f"setup.py is not found for package {pkg_name} to identify current version")
 
 
 def get_base_version(pkg_name: str) -> str:
     root_dir = discover_repo_root()
-    # find version for the package from source. This logic should be revisited to find version from devops feed
-    glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
-    paths = glob.glob(glob_path)
-    if paths:
-        setup_py_path = paths[0]
-        parsed_setup = ParsedSetup.from_path(setup_py_path)
+
+    parsed_setup = get_package_from_repo(pkg_name, root_dir)
+
+    if parsed_setup:
         version_obj = Version(parsed_setup.version)
         return version_obj.base_version
     else:
-        logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
-        exit(1)
+        raise RuntimeError("setup.py is not found for package {} to identify current version".format(pkg_name))
 
 
 def process_requires(setup_py_path: str, is_dev_build: bool = False):
@@ -504,14 +523,13 @@ def get_venv_python(venv_path: str) -> str:
 
     # cross-platform python in a venv
     bin_dir = "Scripts" if os.name == "nt" else "bin"
-    return os.path.join(venv_path, bin_dir, "python")
+    python_exe = "python.exe" if os.name == "nt" else "python"
+    return os.path.join(venv_path, bin_dir, python_exe)
 
 
-def install_into_venv(
-    venv_path_or_executable: str, installation_target: str, editable: bool = True, extras: Optional[str] = None
-) -> None:
+def install_into_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
     """
-    Install the package into an existing venv (venv_path) without activating it.
+    Install the requirements into an existing venv (venv_path) without activating it.
 
     - Uses get_pip_command(get_venv_python) per request.
     - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
@@ -520,20 +538,13 @@ def install_into_venv(
     py = get_venv_python(venv_path_or_executable)
     pip_cmd = get_pip_command(py)
 
-    install_target = installation_target
-    if extras:
-        install_target = f"{installation_target}[{extras}]"
-
-    if editable:
-        cmd = pip_cmd + ["install", "-e", install_target]
-    else:
-        cmd = pip_cmd + ["install", install_target]
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["install"] + install_targets
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
-
     # todo: clean this up so that we're using run_logged from #42862
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, cwd=working_directory)
 
 
 def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
@@ -597,24 +608,7 @@ def get_interpreter_compatible_tags() -> List[str]:
     This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
     """
 
-    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
-
-    output = subprocess.run(
-        commands,
-        check=True,
-        capture_output=True,
-    ).stdout.decode(encoding="utf-8")
-
-    tag_strings = output.split(os.linesep)
-
-    index = 0
-    for index, value in enumerate(tag_strings):
-        if "Compatible tags" in value:
-            break
-
-    tags = tag_strings[index + 1 :]
-
-    return [tag.strip() for tag in tags if tag]
+    return [str(t) for t in tags.sys_tags()]
 
 
 def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:

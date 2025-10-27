@@ -35,9 +35,10 @@ USAGE:
 
 import os, time, base64
 from typing import List
-from azure.ai.agents.models._models import ComputerScreenshot, TypeAction
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
+    ComputerScreenshot,
+    TypeAction,
     MessageRole,
     RunStepToolCallDetails,
     RunStepComputerUseToolCall,
@@ -48,9 +49,12 @@ from azure.ai.agents.models import (
     MessageInputTextBlock,
     MessageInputImageUrlBlock,
     RequiredComputerUseToolCall,
+    ScreenshotAction,
     SubmitToolOutputsAction,
+    ListSortOrder,
 )
 from azure.identity import DefaultAzureCredential
+
 
 def image_to_base64(image_path: str) -> str:
     """
@@ -70,6 +74,7 @@ def image_to_base64(image_path: str) -> str:
         return base64.b64encode(file_data).decode("utf-8")
     except Exception as exc:
         raise OSError(f"Error reading file '{image_path}'") from exc
+
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot.jpg"))
 action_result_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/cua_screenshot_next.jpg"))
@@ -144,12 +149,12 @@ with project_client:
                         print(f"Executing computer use action: {action.type}")
                         if isinstance(action, TypeAction):
                             print(f"  Text to type: {action.text}")
-                            #(add hook to input text in managed environment API here)
+                            # (add hook to input text in managed environment API here)
 
                             tool_outputs.append(
                                 ComputerToolOutput(tool_call_id=tool_call.id, output=computer_screenshot)
                             )
-                        if isinstance(action, ComputerScreenshot):
+                        if isinstance(action, ScreenshotAction):
                             print(f"  Screenshot requested")
                             # (add hook to take screenshot in managed environment API here)
 
@@ -190,6 +195,12 @@ with project_client:
                 print()  # extra newline between tool calls
 
         print()  # extra newline between run steps
+
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    for msg in messages:
+        if msg.text_messages:
+            last_text = msg.text_messages[-1]
+            print(f"{msg.role}: {last_text.text.value}")
 
     # Optional: Delete the agent once the run is finished.
     agents_client.delete_agent(agent.id)

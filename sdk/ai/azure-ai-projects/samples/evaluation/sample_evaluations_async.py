@@ -14,24 +14,24 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity aiohttp
+    pip install azure-ai-projects azure-identity aiohttp python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) CONNECTION_NAME - Required. The name of the connection of type Azure Storage Account, to use for the dataset upload.
     3) MODEL_ENDPOINT - Required. The Azure OpenAI endpoint associated with your Foundry project.
        It can be found in the Foundry overview page. It has the form https://<account_name>.openai.azure.com.
     4) MODEL_API_KEY - Required. The API key for the model endpoint. Can be found under "key" in the model details page
        (click "Models + endpoints" and select your model to get to the model details page).
-    5) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    5) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
     6) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     7) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     8) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
 """
 import asyncio
 import os
-
+from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -42,6 +42,8 @@ from azure.ai.projects.models import (
     DatasetVersion,
 )
 
+load_dotenv()
+
 # Construct the paths to the data folder and data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
@@ -51,12 +53,12 @@ data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 async def main() -> None:
 
     endpoint = os.environ[
-        "PROJECT_ENDPOINT"
+        "AZURE_AI_PROJECT_ENDPOINT"
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
     connection_name = os.environ["CONNECTION_NAME"]
     model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample: https://<account_name>.openai.azure.com.
     model_api_key = os.environ["MODEL_API_KEY"]
-    model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+    model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
     dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
     dataset_version = os.environ.get("DATASET_VERSION", "1.0")
 

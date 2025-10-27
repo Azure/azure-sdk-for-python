@@ -4,10 +4,11 @@ import argparse
 import traceback
 import sys
 import shutil
+import tempfile
+import pathlib
 
 from typing import Sequence, Optional, List, Any, Tuple
-from subprocess import check_call
-
+import subprocess
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages, get_venv_call, install_into_venv, get_venv_python
@@ -61,11 +62,11 @@ class Check(abc.ABC):
             else:
                 shutil.rmtree(venv_location, ignore_errors=True)
 
-            check_call(venv_cmd + [venv_location])
+            subprocess.check_call(venv_cmd + [venv_location])
 
             # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
             # venv
-            install_into_venv(venv_location, os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools"), False, "build")
+            install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT)
             venv_python_exe = get_venv_python(venv_location)
 
             return venv_python_exe
@@ -83,6 +84,39 @@ class Check(abc.ABC):
         staging_directory = os.path.join(venv_location, ".staging")
         os.makedirs(staging_directory, exist_ok=True)
         return executable, staging_directory
+
+    def run_venv_command(
+        self, executable: str, command: Sequence[str], cwd: str, check: bool = False
+    ) -> subprocess.CompletedProcess[str]:
+        """Run a command in the given virtual environment.
+        - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
+        - Uses the provided Python executable to run the command.
+        - Collects the output.
+        - If check is True, raise CalledProcessError on failure."""
+
+        if command[0].endswith("python") or command[0].endswith("python.exe"):
+            raise ValueError(
+                "The command array should not include the python executable, it is provided by the 'executable' argument"
+            )
+
+        env = os.environ.copy()
+
+        python_exec = pathlib.Path(executable)
+        if python_exec.exists():
+            venv_bin = str(python_exec.parent)
+            venv_root = str(python_exec.parent.parent)
+            env["VIRTUAL_ENV"] = venv_root
+            env["PATH"] = venv_bin + os.pathsep + env.get("PATH", "")
+            env.pop("PYTHONPATH", None)
+            env.pop("PYTHONHOME", None)
+        else:
+            raise RuntimeError(f"Unable to find parent venv for executable {executable}")
+
+        result = subprocess.run(
+            [executable, *command], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=check
+        )
+
+        return result
 
     def get_targeted_directories(self, args: argparse.Namespace) -> List[ParsedSetup]:
         """
@@ -111,3 +145,38 @@ class Check(abc.ABC):
                     logger.error(traceback.format_exc())
 
         return targeted
+
+    def install_dev_reqs(self, executable: str, args: argparse.Namespace, package_dir: str) -> None:
+        """Install dev requirements for the given package."""
+        dev_requirements = os.path.join(package_dir, "dev_requirements.txt")
+
+        requirements = []
+        if os.path.exists(dev_requirements):
+            requirements += ["-r", dev_requirements]
+        else:
+            logger.warning(
+                f"No dev_requirements.txt found for {package_dir}, skipping installation of dev requirements."
+            )
+            return
+
+        temp_req_file = None
+        if not getattr(args, "isolate", False):
+            # don't install azure-sdk-tools when not isolated
+            with open(dev_requirements, "r") as f:
+                filtered_req_lines = [line.strip() for line in f if "eng/tools/azure-sdk-tools" not in line]
+            with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp_req_file:
+                temp_req_file.write("\n".join(filtered_req_lines))
+            if temp_req_file.name:
+                requirements = ["-r", temp_req_file.name]
+        try:
+            logger.info(f"Installing dev requirements for {package_dir}")
+            install_into_venv(executable, requirements, package_dir)
+        except subprocess.CalledProcessError as e:
+            logger.error("Failed to install dev requirements:", e)
+            raise e
+        finally:
+            if temp_req_file and temp_req_file.name:
+                try:
+                    os.remove(temp_req_file.name)
+                except Exception as cleanup_error:
+                    logger.warning(f"Failed to remove temporary requirements file: {cleanup_error}")
