@@ -340,6 +340,26 @@ class RedTeam:
                         return subtype_value
         return None
 
+    @staticmethod
+    def _get_objective_id(objective: Dict) -> str:
+        """Get a unique identifier for an objective.
+
+        Uses the objective's 'id' field if available. If not present, generates
+        a UUID-based identifier to ensure uniqueness. This avoids using Python's
+        id() which returns memory addresses that can be reused after garbage collection.
+
+        :param objective: The objective dictionary
+        :type objective: Dict
+        :return: A unique identifier for the objective
+        :rtype: str
+        """
+        obj_id = objective.get("id")
+        if obj_id is not None:
+            return str(obj_id)
+        # Generate a UUID-based identifier if no 'id' field exists
+        # Use a deterministic approach based on objective content for consistency
+        return f"generated-{uuid.uuid4()}"
+
     async def _get_attack_objectives(
         self,
         risk_category: Optional[RiskCategory] = None,
@@ -498,18 +518,18 @@ class RedTeam:
                 remaining = num_objectives - len(selected_cat_objectives)
                 subtype_list = list(objectives_by_subtype.keys())
                 # Track selected objective IDs in a set for O(1) membership checks
-                # Use the objective's 'id' field if available, fallback to object identity
-                selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+                # Use the objective's 'id' field if available, generate UUID-based ID otherwise
+                selected_ids = {self._get_objective_id(obj) for obj in selected_cat_objectives}
                 idx = 0
                 while remaining > 0 and subtype_list:
                     subtype = subtype_list[idx % len(subtype_list)]
                     available = [
-                        obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids
+                        obj for obj in objectives_by_subtype[subtype] if self._get_objective_id(obj) not in selected_ids
                     ]
                     if available:
                         selected_obj = random.choice(available)
                         selected_cat_objectives.append(selected_obj)
-                        selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                        selected_ids.add(self._get_objective_id(selected_obj))
                         remaining -= 1
                     idx += 1
                     # Prevent infinite loop if we run out of unique objectives

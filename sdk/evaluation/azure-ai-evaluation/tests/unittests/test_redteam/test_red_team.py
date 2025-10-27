@@ -1666,17 +1666,19 @@ class TestRedTeamRoundRobinSampling:
         # Import the constant
         from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
 
-        # Track selected objective IDs
-        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        # Track selected objective IDs using the helper method
+        selected_ids = {RedTeam._get_objective_id(obj) for obj in selected_cat_objectives}
         idx = 0
 
         while remaining > 0 and subtype_list:
             subtype = subtype_list[idx % len(subtype_list)]
-            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            available = [
+                obj for obj in objectives_by_subtype[subtype] if RedTeam._get_objective_id(obj) not in selected_ids
+            ]
             if available:
                 selected_obj = available[0]  # Use first available for deterministic testing
                 selected_cat_objectives.append(selected_obj)
-                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                selected_ids.add(RedTeam._get_objective_id(selected_obj))
                 remaining -= 1
             idx += 1
             if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
@@ -1732,17 +1734,19 @@ class TestRedTeamRoundRobinSampling:
 
         from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
 
-        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        selected_ids = {RedTeam._get_objective_id(obj) for obj in selected_cat_objectives}
         idx = 0
         iterations = 0
 
         while remaining > 0 and subtype_list:
             subtype = subtype_list[idx % len(subtype_list)]
-            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            available = [
+                obj for obj in objectives_by_subtype[subtype] if RedTeam._get_objective_id(obj) not in selected_ids
+            ]
             if available:
                 selected_obj = available[0]
                 selected_cat_objectives.append(selected_obj)
-                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                selected_ids.add(RedTeam._get_objective_id(selected_obj))
                 remaining -= 1
             idx += 1
             iterations += 1
@@ -1777,17 +1781,19 @@ class TestRedTeamRoundRobinSampling:
 
         from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
 
-        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        selected_ids = {RedTeam._get_objective_id(obj) for obj in selected_cat_objectives}
         idx = 0
         max_iterations = len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER
 
         while remaining > 0 and subtype_list:
             subtype = subtype_list[idx % len(subtype_list)]
-            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            available = [
+                obj for obj in objectives_by_subtype[subtype] if RedTeam._get_objective_id(obj) not in selected_ids
+            ]
             if available:
                 selected_obj = available[0]
                 selected_cat_objectives.append(selected_obj)
-                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                selected_ids.add(RedTeam._get_objective_id(selected_obj))
                 remaining -= 1
             idx += 1
             if idx > max_iterations:
@@ -1862,16 +1868,18 @@ class TestRedTeamRoundRobinSampling:
 
         from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
 
-        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        selected_ids = {RedTeam._get_objective_id(obj) for obj in selected_cat_objectives}
         idx = 0
 
         while remaining > 0 and subtype_list:
             subtype = subtype_list[idx % len(subtype_list)]
-            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            available = [
+                obj for obj in objectives_by_subtype[subtype] if RedTeam._get_objective_id(obj) not in selected_ids
+            ]
             if available:
                 selected_obj = available[0]
                 selected_cat_objectives.append(selected_obj)
-                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                selected_ids.add(RedTeam._get_objective_id(selected_obj))
                 remaining -= 1
             idx += 1
             if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
@@ -1925,16 +1933,18 @@ class TestRedTeamRoundRobinSampling:
         from azure.ai.evaluation.red_team._utils.constants import MAX_SAMPLING_ITERATIONS_MULTIPLIER
 
         # Use the same logic as the actual code
-        selected_ids = {obj.get("id", id(obj)) for obj in selected_cat_objectives}
+        selected_ids = {RedTeam._get_objective_id(obj) for obj in selected_cat_objectives}
         idx = 0
 
         while remaining > 0 and subtype_list:
             subtype = subtype_list[idx % len(subtype_list)]
-            available = [obj for obj in objectives_by_subtype[subtype] if obj.get("id", id(obj)) not in selected_ids]
+            available = [
+                obj for obj in objectives_by_subtype[subtype] if RedTeam._get_objective_id(obj) not in selected_ids
+            ]
             if available:
                 selected_obj = available[0]
                 selected_cat_objectives.append(selected_obj)
-                selected_ids.add(selected_obj.get("id", id(selected_obj)))
+                selected_ids.add(RedTeam._get_objective_id(selected_obj))
                 remaining -= 1
             idx += 1
             if idx > len(subtype_list) * MAX_SAMPLING_ITERATIONS_MULTIPLIER:
