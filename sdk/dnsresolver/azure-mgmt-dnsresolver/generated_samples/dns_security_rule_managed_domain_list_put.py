@@ -15,7 +15,7 @@ from azure.mgmt.dnsresolver import DnsResolverManagementClient
     pip install azure-identity
     pip install azure-mgmt-dnsresolver
 # USAGE
-    python dns_security_rule_get.py
+    python dns_security_rule_managed_domain_list_put.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,24 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.dns_security_rules.get(
+    response = client.dns_security_rules.begin_create_or_update(
         resource_group_name="sampleResourceGroup",
         dns_resolver_policy_name="sampleDnsResolverPolicy",
         dns_security_rule_name="sampleDnsSecurityRule",
-    )
+        parameters={
+            "location": "westus2",
+            "properties": {
+                "action": {"actionType": "Block"},
+                "dnsSecurityRuleState": "Enabled",
+                "managedDomainLists": ["AzureDnsThreatIntel"],
+                "priority": 100,
+            },
+            "tags": {"key1": "value1"},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-10-01-preview/DnsSecurityRule_Get.json
+# x-ms-original-file: 2025-10-01-preview/DnsSecurityRule_ManagedDomainList_Put.json
 if __name__ == "__main__":
     main()
