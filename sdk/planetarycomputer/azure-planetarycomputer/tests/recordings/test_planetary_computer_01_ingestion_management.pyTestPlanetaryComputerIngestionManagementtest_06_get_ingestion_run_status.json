@@ -39,7 +39,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T18:38:08.9052774Z",
+        "creationTime": "2025-10-27T17:53:23.8788842Z",
         "importType": "StaticCatalog",
         "displayName": "Ingestion for Status Check",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -70,7 +70,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/00000000-0000-0000-0000-000000000000/runs/2fee5729-2a68-4e1e-9617-a16d9531c4fa?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/00000000-0000-0000-0000-000000000000/runs/f6bac309-5820-458f-9c67-4a9a17739f9f?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -80,7 +80,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T18:38:08.9564815Z",
+        "creationTime": "2025-10-27T17:53:23.9328405Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -90,10 +90,10 @@
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-26T18:38:08.9486927Z"
+              "timestamp": "2025-10-27T17:53:23.9241567Z"
             }
           ],
-          "creationTime": "2025-10-26T18:38:08.9486895Z",
+          "creationTime": "2025-10-27T17:53:23.9241544Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,
@@ -131,7 +131,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T18:38:08.9564815Z",
+        "creationTime": "2025-10-27T17:53:23.9328405Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -141,10 +141,10 @@
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-26T18:38:08.9486927Z"
+              "timestamp": "2025-10-27T17:53:23.9241567Z"
             }
           ],
-          "creationTime": "2025-10-26T18:38:08.9486895Z",
+          "creationTime": "2025-10-27T17:53:23.9241544Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,

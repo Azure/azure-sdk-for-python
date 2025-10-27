@@ -102,13 +102,19 @@ def add_sanitizers(test_proxy):
         value="SANITIZED_STORAGE.blob.core.windows.net"
     )
     
-    # Sanitize storage account URLs in response bodies
+    # Sanitize storage account URLs in response bodies ONLY (not request bodies)
     # Use body regex sanitizer to replace storage account URLs in JSON response bodies
+    # NOTE: This sanitizer applies to both request and response bodies during recording,
+    # but we need it to avoid double-sanitization issues. The test proxy will apply
+    # URI sanitizers to request bodies automatically, so we rely on those instead.
+    # This body sanitizer is primarily for response bodies that aren't caught by URI sanitizers.
     from devtools_testutils import add_body_regex_sanitizer
-    add_body_regex_sanitizer(
-        regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
-        value="SANITIZED_STORAGE.blob.core.windows.net"
-    )
+    # Commenting out to prevent double-sanitization in request bodies
+    # add_body_regex_sanitizer(
+    #     regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
+    #     value="SANITIZED_STORAGE.blob.core.windows.net"
+    # )
+
     
     # Prevent double-sanitization of already-sanitized storage URLs in query parameters
     # When playback mode re-applies sanitizers, this ensures SANITIZED_STORAGE stays as-is

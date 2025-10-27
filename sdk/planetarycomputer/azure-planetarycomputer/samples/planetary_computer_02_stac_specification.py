@@ -16,6 +16,7 @@ DESCRIPTION:
     - Working with queryables
     - Creating, updating, and deleting STAC items
     - Creating or replacing STAC items (idempotent operations)
+    - Deleting STAC items
 
 USAGE:
     python planetarycomputer_stac_specification.py
@@ -204,6 +205,7 @@ def create_stac_item(client, collection_id, item_id):
     for item in stac_item_get_items_response.features:
         logging.error(item.id)
 
+    # TODO yochahib: List items doesn't return all items and is not reliable
     if any(item.id == stac_item.id for item in stac_item_get_items_response.features):
         logging.info(f"Item {stac_item.id} already exists. Deleting it before creating a new one.")
         client.stac.begin_delete_item(collection_id=collection_id, item_id=stac_item.id, polling=True).result()
@@ -281,6 +283,47 @@ def create_or_replace_stac_item(client, collection_id, item_id):
     logging.info(f"Verified replaced item, platform: {replaced_item.properties.get('platform', 'N/A')}")
 
 
+def delete_stac_item(client, collection_id, item_id):
+    """Delete a STAC item.
+    
+    This demonstrates using begin_delete_item to remove an item from a collection.
+    The operation is asynchronous and returns a poller that can be used to track completion.
+    """
+    try:
+        # Check if item exists before attempting deletion
+        existing_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        logging.info(f"Found item {existing_item.id} to delete")
+        
+        # Delete the item using begin_delete_item
+        delete_poller = client.stac.begin_delete_item(
+            collection_id=collection_id,
+            item_id=item_id,
+            polling=True
+        )
+        delete_poller.result()
+        logging.info(f"Successfully deleted item {item_id}")
+        
+        # Wait a moment for deletion to complete
+        time.sleep(2)
+        
+        # Verify deletion by attempting to retrieve the item
+        try:
+            client.stac.get_item(collection_id=collection_id, item_id=item_id)
+            logging.warning(f"Item {item_id} still exists after deletion (may take time to propagate)")
+        except HttpResponseError as e:
+            if "not found" in str(e).lower() or e.status_code == 404:
+                logging.info(f"Verified item {item_id} was successfully deleted")
+            else:
+                raise
+                
+    except HttpResponseError as e:
+        if "not found" in str(e).lower() or e.status_code == 404:
+            logging.info(f"Item {item_id} does not exist, nothing to delete")
+        else:
+            logging.error(f"Failed to delete item {item_id}: {e.message}")
+            raise
+
+
 def get_collection(client, collection_id):
     """Get a STAC collection."""
     collection = client.stac.get_collection(collection_id=collection_id)
@@ -352,6 +395,7 @@ def main():
     create_stac_item(client, collection_id, item_id)
     update_stac_item(client, collection_id, item_id)
     create_or_replace_stac_item(client, collection_id, f"{item_id}_replace_demo")
+    delete_stac_item(client, collection_id, f"{item_id}_replace_demo")  # Clean up the item created above
     get_collection(client, collection_id)
 
 

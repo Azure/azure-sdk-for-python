@@ -36,11 +36,11 @@
             "statusHistory": [
               {
                 "status": "Pending",
-                "timestamp": "2025-10-26T18:38:08.9486927Z"
+                "timestamp": "2025-10-27T17:53:23.9241567Z"
               }
             ],
             "type": "IngestionStaticCatalog",
-            "creationTime": "2025-10-26T18:38:08.9486895Z",
+            "creationTime": "2025-10-27T17:53:23.9241544Z",
             "collectionId": "naip-atl"
           },
           {
@@ -49,12 +49,1374 @@
             "statusHistory": [
               {
                 "status": "Pending",
-                "timestamp": "2025-10-26T18:38:06.8243744Z"
+                "timestamp": "2025-10-27T17:53:21.3097365Z"
               }
             ],
             "type": "IngestionStaticCatalog",
-            "creationTime": "2025-10-26T18:38:06.8243726Z",
+            "creationTime": "2025-10-27T17:53:21.3097351Z",
             "collectionId": "naip-atl"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:14.9696524Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.4951931Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.5195323Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:14.9696509Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "e87efe00-8baf-415c-b9c6-a175e950494f"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:14.8930693Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.4586636Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.4791245Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:14.8930679Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "5575a41b-ee94-4cee-9399-ccf33f117fea"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:14.8244136Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.4235038Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.4436107Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:14.8244117Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "7ceb3b5c-e9ef-4373-a2ad-006cc4d8f29c"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:14.7353714Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.3842208Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.4079858Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:14.7353688Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "50d383d3-8c10-4358-8414-dbeb661b7ed5"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:14.6379495Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.3459824Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.3684555Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:14.637949Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "a569a8b7-f735-4cd5-b353-86a70be501b0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:13.0026342Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.3062175Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.3305929Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:13.0026333Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "3dd7a45e-92b0-4ab0-87d6-270346704486"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:12.8245075Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.2687879Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.2915718Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:12.8245071Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "0fbdc60a-4673-42e5-b117-d71cee1f93ec"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:53:12.6930297Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:53:26.2042751Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:53:26.2515404Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:53:12.6930282Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "03e6718f-cc27-474a-8443-30591d662921"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:52:21.3490966Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:52:26.0501437Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:52:26.175935Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-27T17:52:21.3490952Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:51:50.6068626Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:51:55.8323867Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:51:56.0282583Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-27T17:51:50.6068613Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:48:56.4384516Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:49:05.3874973Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:49:05.6757661Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-27T17:48:56.4384502Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:47:54.5307334Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:47:55.3499007Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:47:55.690145Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-27T17:47:54.5307317Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:44:57.788951Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:44:57.921111Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:44:58.495297Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-27T17:44:57.788951Z",
+            "startTime": "2025-10-27T17:44:57.788951Z",
+            "finishTime": "2025-10-27T17:44:58.495297Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:44:24.930571Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:44:25.258458Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:44:29.835751Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-27T17:44:24.930571Z",
+            "startTime": "2025-10-27T17:44:24.930571Z",
+            "finishTime": "2025-10-27T17:44:29.835751Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:43:51.577095Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:43:51.95964Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:43:53.130621Z"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-27T17:43:51.577095Z",
+            "startTime": "2025-10-27T17:43:51.577095Z",
+            "finishTime": "2025-10-27T17:43:53.130621Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:43:19.106756Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:43:19.569412Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-27T17:43:20.097095Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_replace_test' already exists in collection 'naip-atl'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-27T17:43:19.106756Z",
+            "startTime": "2025-10-27T17:43:19.106756Z",
+            "finishTime": "2025-10-27T17:43:20.097095Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_replace_test' already exists in collection 'naip-atl'"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:42:42.725984Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:42:43.080185Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-27T17:42:44.696974Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-27T17:42:42.725984Z",
+            "startTime": "2025-10-27T17:42:42.725984Z",
+            "finishTime": "2025-10-27T17:42:44.696974Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:42:09.889156Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:42:10.603984Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-27T17:42:11.201686Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-27T17:42:09.889156Z",
+            "startTime": "2025-10-27T17:42:09.889156Z",
+            "finishTime": "2025-10-27T17:42:11.201686Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:41:38.774389Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:41:38.918217Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-27T17:41:45.539221Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'debe6654-b1d3-4266-8785-7c23f802af19' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-27T17:41:38.774389Z",
+            "startTime": "2025-10-27T17:41:38.774389Z",
+            "finishTime": "2025-10-27T17:41:45.539221Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-27T17:41:33.128774Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'dceceb7b-95d8-4df1-91c3-173ca8a90007' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-27T17:41:19.932114Z",
+            "finishTime": "2025-10-27T17:41:33.128774Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-27T17:41:33.002158Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '4143f0d6-9bfb-4b7d-a8be-902b53e39188' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-27T17:41:14.131439Z",
+            "finishTime": "2025-10-27T17:41:33.002158Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:41:05.62499Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:41:06.714125Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-27T17:41:23.479048Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '5f57df51-2041-4530-ac6c-fa1f2385fe63' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-27T17:41:05.62499Z",
+            "startTime": "2025-10-27T17:41:05.62499Z",
+            "finishTime": "2025-10-27T17:41:23.479048Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:41:01.862009Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:41:02.464147Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-27T17:41:23.267314Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'cc37bbb8-2069-4def-b0f3-5372b93a2774' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-27T17:41:01.862009Z",
+            "startTime": "2025-10-27T17:41:01.862009Z",
+            "finishTime": "2025-10-27T17:41:23.267314Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.7095698Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:55.159531Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:55.1853224Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.709569Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "4b648071-792e-44da-9826-302cccf590bf"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.6243343Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:55.1265007Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:55.1451447Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.624333Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "aaaf37ec-2d4e-4878-a7ad-4da28a5b1fd8"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.5451495Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:55.0916493Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:55.1112451Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.5451472Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "8e53fc86-556b-46df-8417-5b8d921e9f33"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.4580296Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:55.0509022Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:55.0754876Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.458012Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "f1576db5-5428-4cbb-abd7-a53496436b14"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.3840333Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:55.0105854Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:55.0355693Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.3840326Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "8a681f03-7025-458b-b794-dc8b717cc829"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.2803404Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:54.9700773Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:54.9947613Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.2803388Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "ca38edd5-dc85-4f94-9d7c-aaa13477fe14"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.1252183Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:54.9271731Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:54.955212Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.1252158Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "bc77ed7a-c63a-40ef-95f7-b75ff0b0065c"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:43.0019047Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:54.8884207Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:54.9104083Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:43.0019031Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "5aa20990-1d44-4821-9d68-f4f239892f00"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:40:42.8565615Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:40:54.8443778Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:40:54.873115Z"
+              }
+            ],
+            "type": "DeleteIngestion",
+            "creationTime": "2025-10-27T17:40:42.8565526Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "IngestionId": "0a70ddce-0739-4f11-bfef-04da5bb42581"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:39:30.1912505Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:39:35.0269408Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:39:35.1544935Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-27T17:39:30.1912465Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:38:58.9438054Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:39:04.4976987Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:39:04.9840847Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-27T17:38:58.9438002Z",
+            "collectionId": "test-partition-type-collection"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:35:08.044938Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:35:08.52707Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:35:10.171162Z"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-27T17:35:08.044938Z",
+            "startTime": "2025-10-27T17:35:08.044938Z",
+            "finishTime": "2025-10-27T17:35:10.171162Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:34:34.308167Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:34:35.737683Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-27T17:34:36.150795Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_replace_test' already exists in collection 'naip-atl'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-27T17:34:34.308167Z",
+            "startTime": "2025-10-27T17:34:34.308167Z",
+            "finishTime": "2025-10-27T17:34:36.150795Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_replace_test' already exists in collection 'naip-atl'"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:32:41.870989Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:32:42.092164Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:32:42.686798Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-27T17:32:41.870989Z",
+            "startTime": "2025-10-27T17:32:41.870989Z",
+            "finishTime": "2025-10-27T17:32:42.686798Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:32:07.572898Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:32:08.802963Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:32:13.822788Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-27T17:32:07.572898Z",
+            "startTime": "2025-10-27T17:32:07.572898Z",
+            "finishTime": "2025-10-27T17:32:13.822788Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:24:41.487851Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:24:41.8738Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:24:42.948301Z"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-27T17:24:41.487851Z",
+            "startTime": "2025-10-27T17:24:41.487851Z",
+            "finishTime": "2025-10-27T17:24:42.948301Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:24:06.936854Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:24:07.589249Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:24:13.410634Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-27T17:24:06.936854Z",
+            "startTime": "2025-10-27T17:24:06.936854Z",
+            "finishTime": "2025-10-27T17:24:13.410634Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:16:02.807966Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:16:03.285725Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:16:03.794605Z"
+              }
+            ],
+            "type": "DeleteItem",
+            "creationTime": "2025-10-27T17:16:02.807966Z",
+            "startTime": "2025-10-27T17:16:02.807966Z",
+            "finishTime": "2025-10-27T17:16:03.794605Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-27T17:15:25.546567Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-27T17:15:26.267491Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-27T17:15:31.656617Z"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-27T17:15:25.546567Z",
+            "startTime": "2025-10-27T17:15:25.546567Z",
+            "finishTime": "2025-10-27T17:15:31.656617Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "1"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T18:43:09.5962807Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T18:43:32.3182431Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T18:43:32.4459194Z"
+              }
+            ],
+            "type": "DeleteCollection",
+            "creationTime": "2025-10-26T18:43:09.5962792Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Succeeded",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T18:42:09.7078722Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T18:42:32.0703697Z"
+              },
+              {
+                "status": "Finished",
+                "timestamp": "2025-10-26T18:42:32.2949454Z"
+              }
+            ],
+            "type": "AddCollection",
+            "creationTime": "2025-10-26T18:42:09.7078693Z",
+            "collectionId": "test-collection-lifecycle"
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T18:39:37.634544Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T18:39:37.96202Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-26T18:39:38.703618Z",
+                "errorCode": "PublicAccessRestricted",
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            ],
+            "type": "UpdateItem",
+            "creationTime": "2025-10-26T18:39:37.634544Z",
+            "startTime": "2025-10-26T18:39:37.634544Z",
+            "finishTime": "2025-10-26T18:39:38.703618Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "PublicAccessRestricted",
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Failed",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T18:39:01.857147Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T18:39:03.434638Z"
+              },
+              {
+                "status": "Failed",
+                "timestamp": "2025-10-26T18:39:03.869478Z",
+                "errorCode": "ItemAlreadyExistsInCollection",
+                "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            ],
+            "type": "AddItem",
+            "creationTime": "2025-10-26T18:39:01.857147Z",
+            "startTime": "2025-10-26T18:39:01.857147Z",
+            "finishTime": "2025-10-26T18:39:03.869478Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "1",
+              "TotalItems": "1",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            },
+            "error": {
+              "error": {
+                "code": "ItemAlreadyExistsInCollection",
+                "message": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
+              }
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T18:38:35.091325Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T18:38:36.208928Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T18:38:42.493158Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '8b850e96-db63-43fa-9a83-a4947e9ef1d7' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T18:38:35.091325Z",
+            "startTime": "2025-10-26T18:38:35.091325Z",
+            "finishTime": "2025-10-26T18:38:42.493158Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T18:38:36.089229Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '24f6b4de-9b8d-449a-be95-450244f45eeb' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T18:38:20.007677Z",
+            "finishTime": "2025-10-26T18:38:36.089229Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T18:38:35.243748Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'de38c40c-b29b-4150-8ef7-aa2348364ef2' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T18:38:14.193973Z",
+            "finishTime": "2025-10-26T18:38:35.243748Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "0",
+              "TotalPendingItems": "0",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T18:38:08.948689Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T18:38:09.775943Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T18:38:23.49804Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation '2fee5729-2a68-4e1e-9617-a16d9531c4fa' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T18:38:08.948689Z",
+            "startTime": "2025-10-26T18:38:08.948689Z",
+            "finishTime": "2025-10-26T18:38:23.49804Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
+          },
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "status": "Canceled",
+            "statusHistory": [
+              {
+                "status": "Pending",
+                "timestamp": "2025-10-26T18:38:06.824372Z"
+              },
+              {
+                "status": "Running",
+                "timestamp": "2025-10-26T18:38:07.642426Z"
+              },
+              {
+                "status": "Canceled",
+                "timestamp": "2025-10-26T18:38:22.977439Z",
+                "errorCode": "CanceledOperation",
+                "errorMessage": "Operation 'd82b30bc-dd3e-466a-bafb-e0a4bdeb6014' for collection 'naip-atl' has been cancelled"
+              }
+            ],
+            "type": "IngestionStaticCatalog",
+            "creationTime": "2025-10-26T18:38:06.824372Z",
+            "startTime": "2025-10-26T18:38:06.824372Z",
+            "finishTime": "2025-10-26T18:38:22.977439Z",
+            "collectionId": "naip-atl",
+            "additionalInformation": {
+              "TotalFailedItems": "0",
+              "TotalItems": "1050",
+              "TotalPendingItems": "1050",
+              "TotalSuccessfulItems": "0"
+            }
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
@@ -393,7 +1755,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-26T17:56:06.679103Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -410,7 +1772,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -925,7 +2287,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-26T17:40:41.453834Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -942,7 +2304,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -1239,7 +2601,41 @@
             "additionalInformation": {
               "IngestionId": "6f7727f1-f26a-40fa-be7a-840646225126"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -1436,7 +2832,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-26T17:27:17.534298Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -1453,7 +2849,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -1947,7 +3343,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-26T17:13:16.465125Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -1964,7 +3360,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -2458,7 +3854,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-26T17:04:11.670937Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -2475,7 +3871,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -2546,41 +3942,7 @@
               "TotalPendingItems": "1050",
               "TotalSuccessfulItems": "0"
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=100&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Canceled",
@@ -2982,7 +4344,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-26T16:53:00.589087Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -2999,7 +4361,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -3505,7 +4867,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-23T06:56:53.768722Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -3522,7 +4884,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -3819,7 +5181,41 @@
             "additionalInformation": {
               "IngestionId": "97049f87-70bb-4919-af2e-e4c71bc9082a"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -3995,7 +5391,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-22T20:57:11.854007Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -4012,7 +5408,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -4611,7 +6007,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-22T20:27:06.697692Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -4628,7 +6024,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -5084,41 +6480,7 @@
             "type": "DeleteCollection",
             "creationTime": "2025-10-22T17:09:21.676669Z",
             "collectionId": "test-collection-lifecycle"
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=200&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -5156,7 +6518,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-22T17:05:48.062042Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -5173,7 +6535,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -5667,7 +7029,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-22T15:57:55.561268Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -5684,7 +7046,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -6178,7 +7540,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-22T15:28:23.365433Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -6195,7 +7557,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -6387,7 +7749,41 @@
             "additionalInformation": {
               "IngestionId": "fd8c6729-f379-4ec3-840d-65960a5cb266"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -6680,7 +8076,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-22T13:22:48.303513Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -6697,7 +8093,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -7174,7 +8570,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-22T12:58:23.478519Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -7191,7 +8587,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -7647,41 +9043,7 @@
             "type": "AddCollection",
             "creationTime": "2025-10-22T12:50:57.3506595Z",
             "collectionId": "test-partition-type-collection"
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=300&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Canceled",
@@ -9093,7 +10455,41 @@
               "TotalPendingItems": "0",
               "TotalSuccessfulItems": "1"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Failed",
@@ -9828,7 +11224,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-20T14:19:01.405475Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -9845,7 +11241,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -10152,7 +11548,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-20T13:34:21.681783Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -10169,7 +11565,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -10375,41 +11771,7 @@
             "additionalInformation": {
               "IngestionId": "65c6eceb-896a-4638-8688-fe79a4ceca8d"
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=400&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -10506,7 +11868,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-20T12:00:22.396871Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -10523,7 +11885,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -10830,7 +12192,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-20T10:53:23.858059Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -10847,7 +12209,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -11154,7 +12516,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-20T10:03:08.961035Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -11171,7 +12533,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -11478,7 +12840,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-20T09:56:32.453651Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -11495,7 +12857,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -11737,7 +13099,41 @@
             "additionalInformation": {
               "IngestionId": "92f5d1c9-d48a-494a-97b6-e34187b1fe46"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=500&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=500&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -11802,7 +13198,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T02:50:15.376494Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -11819,7 +13215,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -12126,7 +13522,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T02:35:14.318444Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -12143,7 +13539,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -12450,7 +13846,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T02:04:29.552024Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -12467,7 +13863,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -12774,7 +14170,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T01:57:30.726474Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -12791,7 +14187,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -13103,41 +14499,7 @@
               "TotalPendingItems": "0",
               "TotalSuccessfulItems": "0"
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=500&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=500&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Canceled",
@@ -13623,7 +14985,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T01:47:16.849118Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -13640,7 +15002,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -13827,7 +15189,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T01:31:13.182138Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -13844,7 +15206,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -13901,7 +15263,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T01:26:17.920155Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -13918,7 +15280,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -13975,7 +15337,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T01:19:01.188162Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -13992,7 +15354,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -14049,7 +15411,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-18T01:09:18.446395Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             ],
             "type": "UpdateItem",
@@ -14066,7 +15428,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
               }
             }
           },
@@ -14576,7 +15938,41 @@
               "TotalPendingItems": "0",
               "TotalSuccessfulItems": "0"
             }
-          },
+          }
+        ],
+        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=600&api-version=2025-04-30-preview"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=600&api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -14809,7 +16205,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-15T21:46:03.50365Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
               }
             ],
             "type": "UpdateItem",
@@ -14826,7 +16222,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
               }
             }
           },
@@ -15356,7 +16752,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-14T15:27:39.466234Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -15373,7 +16769,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             }
           },
@@ -15393,7 +16789,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-14T15:27:38.823558Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -15410,7 +16806,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             }
           },
@@ -15659,7 +17055,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-09T18:18:39.58799Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -15676,7 +17072,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             }
           },
@@ -15696,7 +17092,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-09T18:18:38.831843Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -15713,7 +17109,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             }
           },
@@ -15804,7 +17200,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-09T17:59:07.946648Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
               }
             ],
             "type": "UpdateItem",
@@ -15821,7 +17217,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
               }
             }
           },
@@ -15841,7 +17237,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-09T17:59:07.805248Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -15858,7 +17254,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             }
           },
@@ -15978,7 +17374,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-03T12:33:28.989671Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -15995,7 +17391,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_10m.tif"
               }
             }
           },
@@ -16015,7 +17411,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-03T12:33:24.610426Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
               }
             ],
             "type": "UpdateItem",
@@ -16032,44 +17428,10 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot.tif"
               }
             }
-          }
-        ],
-        "nextLink": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=600&api-version=2025-04-30-preview"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations?$top=100&$skip=600&api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "value": [
+          },
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "status": "Succeeded",
@@ -16385,7 +17747,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-02T17:37:55.7321Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -16402,7 +17764,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/aot_60m.tif"
               }
             }
           },
@@ -16422,7 +17784,7 @@
                 "status": "Failed",
                 "timestamp": "2025-10-02T17:36:51.678089Z",
                 "errorCode": "PublicAccessRestricted",
-                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif"
+                "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif"
               }
             ],
             "type": "UpdateItem",
@@ -16439,7 +17801,7 @@
             "error": {
               "error": {
                 "code": "PublicAccessRestricted",
-                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif"
+                "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif. Source: https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-2-5f761ede/ef3/S2A_MSIL2A_20230816T105631_R094_T30TUK_20230816T171602/blue_20m.tif"
               }
             }
           },
@@ -16818,48 +18180,6 @@
             "type": "DeleteCollection",
             "creationTime": "2025-09-30T15:21:22.86444Z",
             "collectionId": "nexos-iow-and-hants-rgb-10cm-5"
-          },
-          {
-            "id": "00000000-0000-0000-0000-000000000000",
-            "status": "Succeeded",
-            "statusHistory": [
-              {
-                "status": "Pending",
-                "timestamp": "2025-09-26T11:25:34.3603869Z"
-              },
-              {
-                "status": "Running",
-                "timestamp": "2025-09-26T11:25:39.2121195Z"
-              },
-              {
-                "status": "Finished",
-                "timestamp": "2025-09-26T11:25:39.9916524Z"
-              }
-            ],
-            "type": "AddCollection",
-            "creationTime": "2025-09-26T11:25:34.3603813Z",
-            "collectionId": "nexos-iow-and-hants-rgb-10cm-5"
-          },
-          {
-            "id": "00000000-0000-0000-0000-000000000000",
-            "status": "Succeeded",
-            "statusHistory": [
-              {
-                "status": "Pending",
-                "timestamp": "2025-09-26T11:21:04.4339801Z"
-              },
-              {
-                "status": "Running",
-                "timestamp": "2025-09-26T11:21:07.957481Z"
-              },
-              {
-                "status": "Finished",
-                "timestamp": "2025-09-26T11:21:09.045264Z"
-              }
-            ],
-            "type": "DeleteCollection",
-            "creationTime": "2025-09-26T11:21:04.4337585Z",
-            "collectionId": "python-sdk-sentinel-2-take-2"
           }
         ]
       }

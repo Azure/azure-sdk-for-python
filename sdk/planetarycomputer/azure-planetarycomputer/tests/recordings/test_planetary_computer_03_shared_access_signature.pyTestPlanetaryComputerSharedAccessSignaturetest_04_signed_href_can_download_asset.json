@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2882",
+        "Content-Length": "2872",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -58,7 +58,7 @@
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "assets": {
           "thumbnail": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "roles": [
               "thumbnail"
@@ -66,7 +66,7 @@
             "title": "NAIP thumbnail"
           },
           "test-asset": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
+            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
             "type": "text/plain",
             "roles": [
               "metadata"
@@ -194,7 +194,7 @@
         },
         "stac_version": "1.0.0",
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-26T18:01:51.594372Z",
+        "msft:_updated": "2025-10-27T17:50:13.216550Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"
@@ -220,7 +220,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "384",
+        "Content-Length": "379",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -229,8 +229,8 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-27T18:40:19Z",
-        "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-26T18%3A40%3A14Z&ske=2025-11-02T18%3A39%3A14Z&sks=b&skv=2025-01-05&sig=Sanitized"
+        "msft:expiry": "2025-10-28T17:58:04Z",
+        "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-27T17%3A57%3A57Z&ske=2025-11-03T17%3A56%3A57Z&sks=b&skv=2025-01-05&sig=Sanitized"
       }
     }
   ],

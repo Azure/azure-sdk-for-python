@@ -7,21 +7,21 @@
         "Accept": "application/json",
         "Connection": "keep-alive",
         "Content-Length": "416",
-        "Content-Type": "multipart/form-data; boundary=c95f9888b26bed1b6eed322635687cde",
+        "Content-Type": "multipart/form-data; boundary=c84c02ba499c955e0a57f94be9c8c3ae",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--c95f9888b26bed1b6eed322635687cde\r\n",
+        "--c84c02ba499c955e0a57f94be9c8c3ae\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "b64:eyJrZXkiOiAidGVzdC1hc3NldCIsICJocmVmIjogImh0dHBzOi8vZXhhbXBsZS5jb20vdGVzdC1hc3NldC11cGRhdGVkLnR4dCIsICJ0eXBlIjogInRleHQvcGxhaW4iLCAicm9sZXMiOiBbIm1ldGFkYXRhIl0sICJ0aXRsZSI6ICJUZXN0IEFzc2V0IC0gVXBkYXRlZCJ9",
         "\r\n",
-        "--c95f9888b26bed1b6eed322635687cde\r\n",
+        "--c84c02ba499c955e0a57f94be9c8c3ae\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50IC0gdXBkYXRlZA==",
         "\r\n",
-        "--c95f9888b26bed1b6eed322635687cde--\r\n"
+        "--c84c02ba499c955e0a57f94be9c8c3ae--\r\n"
       ],
       "StatusCode": 200,
       "ResponseHeaders": {
@@ -34,7 +34,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2882",
+        "Content-Length": "2872",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -117,7 +117,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-26T18:44:21.262893Z",
+        "msft:_updated": "2025-10-27T18:02:27.147543Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
@@ -196,7 +196,7 @@
         },
         "assets": {
           "thumbnail": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "title": "NAIP thumbnail",
             "roles": [
@@ -204,7 +204,7 @@
             ]
           },
           "test-asset": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
+            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
             "type": "text/plain",
             "title": "Test Asset - Updated",
             "roles": [

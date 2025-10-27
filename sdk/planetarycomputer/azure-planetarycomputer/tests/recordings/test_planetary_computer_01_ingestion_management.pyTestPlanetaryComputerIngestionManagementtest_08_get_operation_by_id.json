@@ -39,7 +39,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T18:38:14.1355127Z",
+        "creationTime": "2025-10-27T17:53:30.3939754Z",
         "importType": "StaticCatalog",
         "displayName": "Ingestion for Operation",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -70,7 +70,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/00000000-0000-0000-0000-000000000000/runs/de38c40c-b29b-4150-8ef7-aa2348364ef2?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/collections/naip-atl/ingestions/00000000-0000-0000-0000-000000000000/runs/91ec9342-9e9e-4928-af72-a73445253b6c?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -80,7 +80,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-26T18:38:14.2013285Z",
+        "creationTime": "2025-10-27T17:53:30.4584256Z",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
         "skipExistingItems": true,
         "keepOriginalAssets": true,
@@ -90,10 +90,10 @@
           "statusHistory": [
             {
               "status": "Pending",
-              "timestamp": "2025-10-26T18:38:14.1939752Z"
+              "timestamp": "2025-10-27T17:53:30.4457675Z"
             }
           ],
-          "creationTime": "2025-10-26T18:38:14.1939736Z",
+          "creationTime": "2025-10-27T17:53:30.4457657Z",
           "totalItems": 0,
           "totalPendingItems": 0,
           "totalSuccessfulItems": 0,
@@ -135,11 +135,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T18:38:14.1939752Z"
+            "timestamp": "2025-10-27T17:53:30.4457675Z"
           }
         ],
         "type": "IngestionStaticCatalog",
-        "creationTime": "2025-10-26T18:38:14.1939736Z",
+        "creationTime": "2025-10-27T17:53:30.4457657Z",
         "collectionId": "naip-atl"
       }
     }

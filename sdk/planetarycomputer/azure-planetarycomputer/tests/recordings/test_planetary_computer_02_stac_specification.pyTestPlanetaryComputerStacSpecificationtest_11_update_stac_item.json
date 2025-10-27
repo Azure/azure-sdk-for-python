@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1688",
+        "Content-Length": "1683",
         "Content-Type": "application/geo+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -63,7 +63,7 @@
         ],
         "assets": {
           "image": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif",
+            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif",
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
               "data"
@@ -71,7 +71,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-26T17:55:29.716541Z",
+        "_msft:ts": "2025-10-27T17:42:11.600060Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -99,7 +99,7 @@
             ]
           ]
         },
-        "_msft:etag": "46898d13-a41a-4145-8a6f-8b17f77b766c",
+        "_msft:etag": "e6e203e1-e622-49ff-b749-840e8519601c",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -141,7 +141,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "1807",
+        "Content-Length": "1802",
         "Content-Type": "application/merge-patch+json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -178,7 +178,7 @@
         ],
         "assets": {
           "image": {
-            "href": "https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif",
+            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif",
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
               "data"
@@ -186,7 +186,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-26T17:55:29.716541Z",
+        "_msft:ts": "2025-10-27T17:42:11.600060Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -214,7 +214,7 @@
             ]
           ]
         },
-        "_msft:etag": "46898d13-a41a-4145-8a6f-8b17f77b766c",
+        "_msft:etag": "e6e203e1-e622-49ff-b749-840e8519601c",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -262,7 +262,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/f7b645fb-865c-45ad-9869-aabb12864b67?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/7515d4c5-4239-40b0-80e0-f94e9ac69bbc?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -277,11 +277,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T18:39:37.634546Z"
+            "timestamp": "2025-10-27T17:55:00.1182195Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-26T18:39:37.6345441Z",
+        "creationTime": "2025-10-27T17:55:00.1182176Z",
         "collectionId": "naip-atl"
       }
     },
@@ -319,11 +319,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T18:39:37.634546Z"
+            "timestamp": "2025-10-27T17:55:00.1182195Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-26T18:39:37.6345441Z",
+        "creationTime": "2025-10-27T17:55:00.1182176Z",
         "collectionId": "naip-atl"
       }
     },
@@ -345,7 +345,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "close",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
@@ -361,23 +361,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-26T18:39:37.634544Z"
+            "timestamp": "2025-10-27T17:55:00.118217Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-26T18:39:37.96202Z"
+            "timestamp": "2025-10-27T17:55:01.347143Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-26T18:39:38.703618Z",
+            "timestamp": "2025-10-27T17:55:02.614351Z",
             "errorCode": "PublicAccessRestricted",
-            "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+            "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-26T18:39:37.634544Z",
-        "startTime": "2025-10-26T18:39:37.634544Z",
-        "finishTime": "2025-10-26T18:39:38.703618Z",
+        "creationTime": "2025-10-27T17:55:00.118217Z",
+        "startTime": "2025-10-27T17:55:00.118217Z",
+        "finishTime": "2025-10-27T17:55:02.614351Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "1",
@@ -388,7 +388,7 @@
         "error": {
           "error": {
             "code": "PublicAccessRestricted",
-            "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://SANITIZED_STORAGE.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
+            "message": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
           }
         }
       }

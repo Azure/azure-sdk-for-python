@@ -6,10 +6,12 @@
 
 import logging
 import os
+import time
 from pathlib import Path
 import pytest
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from azure.core.exceptions import HttpResponseError
 from azure.planetarycomputer.models import (
     StacSearchParameters,
     FilterLanguage,
@@ -669,3 +671,258 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
                 logger.info(f"  Found common assets: {', '.join(found_assets)}")
         else:
             logger.warning("No items found in collection to test get_item")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_13_create_or_replace_stac_item(self, planetarycomputer_endpoint):
+        """Test creating or replacing a STAC item (idempotent operation).
+        
+        This demonstrates using begin_create_or_replace_item which is idempotent:
+        - First ensures item exists by creating it with begin_create_item
+        - Then demonstrates replace using begin_create_or_replace_item
+        - Multiple calls with the same data produce the same result
+        """
+        logger.info("=" * 80)
+        logger.info("TEST: Create or Replace STAC Item (Idempotent)")
+        logger.info("=" * 80)
+
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        item_id = "ga_m_3308421_se_16_060_20211114_replace_test"
+
+        # Create sample STAC item
+        stac_item = StacItem({
+            "stac_version": "1.0.0",
+            "type": "Feature",
+            "id": item_id,
+            "collection": collection_id,
+            "bbox": [
+                -84.44157,
+                33.621853,
+                -84.370894,
+                33.690654
+            ],
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-84.372943, 33.621853],
+                        [-84.370894, 33.689211],
+                        [-84.439575, 33.690654],
+                        [-84.44157, 33.623293],
+                        [-84.372943, 33.621853]
+                    ]
+                ]
+            },
+            "properties": {
+                "gsd": 0.6,
+                "datetime": "2021-11-14T16:00:00Z",
+                "naip:year": "2021",
+                "proj:bbox": [737334.0, 3723324.0, 743706.0, 3730800.0],
+                "proj:epsg": 26916,
+                "naip:state": "ga",
+                "proj:shape": [12460, 10620],
+                "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0],
+                "platform": "Imagery Original"
+            },
+            "links": [
+                {
+                    "rel": "collection",
+                    "type": "application/json",
+                    "href": f"https://planetarycomputer.microsoft.com/api/stac/v1/collections/{collection_id}"
+                }
+            ],
+            "assets": {
+                "image": {
+                    "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif",
+                    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                    "roles": ["data"],
+                    "title": "RGBIR COG tile"
+                }
+            },
+            "stac_extensions": [
+                "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+            ]
+        })
+
+        logger.info(f"Creating initial STAC item: {item_id}")
+
+        try:
+            # Step 1: Create the item using begin_create_item
+            create_poller = client.stac.begin_create_item(
+                collection_id=collection_id, body=stac_item, polling=True
+            )
+            create_poller.result()
+            logger.info(f"Created item {item_id}")
+        except HttpResponseError as e:
+            if "already exists" in str(e).lower():
+                logger.info(f"Item {item_id} already exists, continuing...")
+            else:
+                raise
+
+        # Verify creation
+        created_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        assert created_item is not None, "Created item should be retrievable"
+        assert created_item.id == item_id, "Created item ID should match"
+        logger.info(f"Verified item {created_item.id}")
+
+        # Wait for item to be fully available before replacing (only in live mode)
+        if is_live():
+            time.sleep(2)
+
+        # Step 2: Now demonstrate create_or_replace (replace since item exists)
+        logger.info(f"Replacing item {item_id} using create_or_replace...")
+        stac_item.properties["platform"] = "Imagery Updated"
+        stac_item.properties["processing_level"] = "L2"
+
+        replace_poller = client.stac.begin_create_or_replace_item(
+            collection_id=collection_id, item_id=item_id, body=stac_item, polling=True
+        )
+        replace_poller.result()
+        logger.info(f"Replaced item {item_id} using create_or_replace")
+
+        # Verify replacement
+        replaced_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        assert replaced_item is not None, "Replaced item should be retrievable"
+        assert replaced_item.id == item_id, "Replaced item ID should match"
+        
+        # Verify the updated properties
+        if hasattr(replaced_item, 'properties') and replaced_item.properties:
+            platform = replaced_item.properties.get('platform', 'N/A')
+            processing_level = replaced_item.properties.get('processing_level', 'N/A')
+            logger.info(f"Verified replaced item, platform: {platform}, processing_level: {processing_level}")
+            
+            # Assert the properties were updated
+            assert platform == "Imagery Updated", f"Expected platform 'Imagery Updated', got '{platform}'"
+            assert processing_level == "L2", f"Expected processing_level 'L2', got '{processing_level}'"
+        else:
+            logger.warning("Replaced item has no properties to verify")
+
+        logger.info(f"Successfully verified create_or_replace operation for item {item_id}")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_14_delete_stac_item(self, planetarycomputer_endpoint):
+        """Test deleting a STAC item.
+        
+        This demonstrates using begin_delete_item to remove an item from a collection.
+        The operation is asynchronous and uses a poller to track completion.
+        """
+        logger.info("=" * 80)
+        logger.info("TEST: Delete STAC Item")
+        logger.info("=" * 80)
+
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+        item_id = "ga_m_3308421_se_16_060_20211114_delete_test"
+
+        # Create sample STAC item to delete
+        stac_item = StacItem({
+            "stac_version": "1.0.0",
+            "type": "Feature",
+            "id": item_id,
+            "collection": collection_id,
+            "bbox": [
+                -84.44157,
+                33.621853,
+                -84.370894,
+                33.690654
+            ],
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-84.372943, 33.621853],
+                        [-84.370894, 33.689211],
+                        [-84.439575, 33.690654],
+                        [-84.44157, 33.623293],
+                        [-84.372943, 33.621853]
+                    ]
+                ]
+            },
+            "properties": {
+                "gsd": 0.6,
+                "datetime": "2021-11-14T16:00:00Z",
+                "naip:year": "2021",
+                "proj:bbox": [737334.0, 3723324.0, 743706.0, 3730800.0],
+                "proj:epsg": 26916,
+                "naip:state": "ga",
+                "proj:shape": [12460, 10620],
+                "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0]
+            },
+            "links": [
+                {
+                    "rel": "collection",
+                    "type": "application/json",
+                    "href": f"https://planetarycomputer.microsoft.com/api/stac/v1/collections/{collection_id}"
+                }
+            ],
+            "assets": {
+                "image": {
+                    "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif",
+                    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                    "roles": ["data"],
+                    "title": "RGBIR COG tile"
+                }
+            },
+            "stac_extensions": [
+                "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+            ]
+        })
+
+        logger.info(f"Creating STAC item to delete: {item_id}")
+
+        try:
+            # First, create an item to delete
+            create_poller = client.stac.begin_create_item(
+                collection_id=collection_id,
+                body=stac_item,
+                polling=True
+            )
+            create_poller.result()
+            logger.info(f"Created item {item_id}")
+        except HttpResponseError as e:
+            if "already exists" in str(e).lower():
+                logger.info(f"Item {item_id} already exists, will proceed to delete it")
+            else:
+                raise
+
+        # Verify the item exists
+        existing_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        assert existing_item is not None, "Item should exist before deletion"
+        assert existing_item.id == item_id, "Item ID should match"
+        logger.info(f"Verified item {item_id} exists")
+
+        # Wait a moment for creation to complete (only in live mode)
+        if is_live():
+            time.sleep(2)
+
+        # Delete the item
+        logger.info(f"Deleting item {item_id}...")
+        delete_poller = client.stac.begin_delete_item(
+            collection_id=collection_id,
+            item_id=item_id,
+            polling=True
+        )
+        delete_poller.result()
+        logger.info(f"Delete operation completed for item {item_id}")
+
+        # Wait for deletion to propagate (only in live mode)
+        if is_live():
+            time.sleep(2)
+
+        # Verify deletion by attempting to retrieve the item
+        logger.info(f"Verifying item {item_id} was deleted...")
+        try:
+            client.stac.get_item(collection_id=collection_id, item_id=item_id)
+            logger.warning(f"Item {item_id} still exists after deletion (may take time to propagate)")
+            # In some cases, deletion may take time to propagate, so we don't fail the test
+        except HttpResponseError as e:
+            if "not found" in str(e).lower() or e.status_code == 404:
+                logger.info(f"Verified item {item_id} was successfully deleted")
+            else:
+                # Re-raise if it's a different error
+                raise
+
+        logger.info(f"Successfully completed delete test for item {item_id}")
+

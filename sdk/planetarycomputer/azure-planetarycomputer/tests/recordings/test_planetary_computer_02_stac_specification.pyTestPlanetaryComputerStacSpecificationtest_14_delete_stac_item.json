@@ -1,78 +1,101 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection?api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 404,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "Connection": "keep-alive",
-        "Content-Length": "151",
-        "Content-Type": "application/json",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "traceparent": "00-00000000000000000000000000000000-0000000000000000-00",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Ms-Error-Code": "ResourceNotFound",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "error": {
-          "code": "ResourceNotFound",
-          "message": "Collection 'test-partition-type-collection' not found. Please verify the collection ID and try again."
-        }
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items?api-version=2025-04-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "370",
+        "Content-Length": "1137",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
-        "id": "test-partition-type-collection",
-        "description": "Temporary collection for partition type testing",
-        "extent": {
-          "spatial": {
-            "bbox": [
+        "stac_version": "1.0.0",
+        "type": "Feature",
+        "id": "ga_m_3308421_se_16_060_20211114_delete_test",
+        "collection": "naip-atl",
+        "bbox": [
+          -84.44157,
+          33.621853,
+          -84.370894,
+          33.690654
+        ],
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
               [
-                -180,
-                -90,
-                180,
-                90
+                -84.372943,
+                33.621853
+              ],
+              [
+                -84.370894,
+                33.689211
+              ],
+              [
+                -84.439575,
+                33.690654
+              ],
+              [
+                -84.44157,
+                33.623293
+              ],
+              [
+                -84.372943,
+                33.621853
               ]
             ]
-          },
-          "temporal": {
-            "interval": [
-              [
-                "2020-01-01T00:00:00Z",
-                "2099-12-31T23:59:59Z"
-              ]
-            ]
+          ]
+        },
+        "properties": {
+          "gsd": 0.6,
+          "datetime": "2021-11-14T16:00:00Z",
+          "naip:year": "2021",
+          "proj:bbox": [
+            737334.0,
+            3723324.0,
+            743706.0,
+            3730800.0
+          ],
+          "proj:epsg": 26916,
+          "naip:state": "ga",
+          "proj:shape": [
+            12460,
+            10620
+          ],
+          "proj:transform": [
+            0.6,
+            0.0,
+            737334.0,
+            0.0,
+            -0.6,
+            3730800.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "links": [
+          {
+            "rel": "collection",
+            "type": "application/json",
+            "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip-atl"
+          }
+        ],
+        "assets": {
+          "image": {
+            "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "RGBIR COG tile"
           }
         },
-        "license": "proprietary",
-        "links": [],
-        "stac_version": "1.0.0",
-        "title": "Test Partition Type Collection",
-        "type": "Collection"
+        "stac_extensions": [
+          "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+        ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
@@ -86,7 +109,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/bc4c1250-0cf2-4cec-802d-2c79313b7c61?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/23c434cc-b3a0-4128-aefb-2df677cb1514?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -101,12 +124,12 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:51:50.6068626Z"
+            "timestamp": "2025-10-27T17:56:47.1305957Z"
           }
         ],
-        "type": "AddCollection",
-        "creationTime": "2025-10-27T17:51:50.6068613Z",
-        "collectionId": "test-partition-type-collection"
+        "type": "AddItem",
+        "creationTime": "2025-10-27T17:56:47.1305945Z",
+        "collectionId": "naip-atl"
       }
     },
     {
@@ -143,12 +166,70 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:51:50.6068626Z"
+            "timestamp": "2025-10-27T17:56:47.1305957Z"
           }
         ],
-        "type": "AddCollection",
-        "creationTime": "2025-10-27T17:51:50.6068613Z",
-        "collectionId": "test-partition-type-collection"
+        "type": "AddItem",
+        "creationTime": "2025-10-27T17:56:47.1305945Z",
+        "collectionId": "naip-atl"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "close",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-10-27T17:56:47.130594Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-10-27T17:56:49.463082Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-10-27T17:56:54.016281Z"
+          }
+        ],
+        "type": "AddItem",
+        "creationTime": "2025-10-27T17:56:47.130594Z",
+        "startTime": "2025-10-27T17:56:47.130594Z",
+        "finishTime": "2025-10-27T17:56:54.016281Z",
+        "collectionId": "naip-atl",
+        "additionalInformation": {
+          "TotalFailedItems": "0",
+          "TotalItems": "1",
+          "TotalPendingItems": "0",
+          "TotalSuccessfulItems": "1"
+        }
       }
     },
     {
@@ -185,106 +266,32 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:51:50.6068626Z"
+            "timestamp": "2025-10-27T17:56:47.130594Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-27T17:51:55.8323867Z"
+            "timestamp": "2025-10-27T17:56:49.463082Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-27T17:51:56.0282583Z"
+            "timestamp": "2025-10-27T17:56:54.016281Z"
           }
         ],
-        "type": "AddCollection",
-        "creationTime": "2025-10-27T17:51:50.6068613Z",
-        "collectionId": "test-partition-type-collection"
+        "type": "AddItem",
+        "creationTime": "2025-10-27T17:56:47.130594Z",
+        "startTime": "2025-10-27T17:56:47.130594Z",
+        "finishTime": "2025-10-27T17:56:54.016281Z",
+        "collectionId": "naip-atl",
+        "additionalInformation": {
+          "TotalFailedItems": "0",
+          "TotalItems": "1",
+          "TotalPendingItems": "0",
+          "TotalSuccessfulItems": "1"
+        }
       }
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Succeeded",
-        "statusHistory": [
-          {
-            "status": "Pending",
-            "timestamp": "2025-10-27T17:51:50.6068626Z"
-          },
-          {
-            "status": "Running",
-            "timestamp": "2025-10-27T17:51:55.8323867Z"
-          },
-          {
-            "status": "Finished",
-            "timestamp": "2025-10-27T17:51:56.0282583Z"
-          }
-        ],
-        "type": "AddCollection",
-        "creationTime": "2025-10-27T17:51:50.6068613Z",
-        "collectionId": "test-partition-type-collection"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection/configurations/partition-type?api-version=2025-04-30-preview",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "Content-Length": "18",
-        "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": {
-        "scheme": "year"
-      },
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Accept-Ranges": "bytes",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection/configurations/partition-type?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114_delete_test?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -302,20 +309,124 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "17",
-        "Content-Type": "application/json",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1704",
+        "Content-Type": "application/geo+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "traceparent": "00-00000000000000000000000000000000-0000000000000000-00",
+        "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "scheme": "year"
+        "id": "ga_m_3308421_se_16_060_20211114_delete_test",
+        "bbox": [
+          -84.44157,
+          33.621853,
+          -84.370894,
+          33.690654
+        ],
+        "type": "Feature",
+        "links": [
+          {
+            "rel": "collection",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
+          },
+          {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
+          },
+          {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "self",
+            "type": "application/geo+json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114_delete_test"
+          }
+        ],
+        "assets": {
+          "image": {
+            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/10a/ga_m_3308421_se_16_060_20211114_delete_test/image.tif",
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "roles": [
+              "data"
+            ],
+            "title": "RGBIR COG tile"
+          }
+        },
+        "_msft:ts": "2025-10-27T17:56:54.016320Z",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -84.372943,
+                33.621853
+              ],
+              [
+                -84.370894,
+                33.689211
+              ],
+              [
+                -84.439575,
+                33.690654
+              ],
+              [
+                -84.44157,
+                33.623293
+              ],
+              [
+                -84.372943,
+                33.621853
+              ]
+            ]
+          ]
+        },
+        "_msft:etag": "bd69c449-cae1-4b7d-8674-dd3d45818d11",
+        "collection": "naip-atl",
+        "properties": {
+          "gsd": 0.6,
+          "datetime": "2021-11-14T16:00:00Z",
+          "naip:year": "2021",
+          "proj:bbox": [
+            737334.0,
+            3723324.0,
+            743706.0,
+            3730800.0
+          ],
+          "proj:epsg": 26916,
+          "naip:state": "ga",
+          "proj:shape": [
+            12460,
+            10620
+          ],
+          "proj:transform": [
+            0.6,
+            0.0,
+            737334.0,
+            0.0,
+            -0.6,
+            3730800.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "stac_extensions": [
+          "https://stac-extensions.github.io/projection/v1.1.0/schema.json"
+        ],
+        "stac_version": "1.0.0"
       }
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114_delete_test?api-version=2025-04-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -336,7 +447,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/7aa3fc51-137f-4f21-951f-9d7e551d4bfc?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/7129a439-85fc-4fa4-80eb-9633fc3b90f8?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -351,12 +462,12 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:52:21.3490966Z"
+            "timestamp": "2025-10-27T17:57:21.533536Z"
           }
         ],
-        "type": "DeleteCollection",
-        "creationTime": "2025-10-27T17:52:21.3490952Z",
-        "collectionId": "test-partition-type-collection"
+        "type": "DeleteItem",
+        "creationTime": "2025-10-27T17:57:21.5335347Z",
+        "collectionId": "naip-atl"
       }
     },
     {
@@ -393,12 +504,12 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:52:21.3490966Z"
+            "timestamp": "2025-10-27T17:57:21.533536Z"
           }
         ],
-        "type": "DeleteCollection",
-        "creationTime": "2025-10-27T17:52:21.3490952Z",
-        "collectionId": "test-partition-type-collection"
+        "type": "DeleteItem",
+        "creationTime": "2025-10-27T17:57:21.5335347Z",
+        "collectionId": "naip-atl"
       }
     },
     {
@@ -435,20 +546,63 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:52:21.3490966Z"
+            "timestamp": "2025-10-27T17:57:21.533534Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-27T17:52:26.0501437Z"
+            "timestamp": "2025-10-27T17:57:21.805596Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-27T17:52:26.175935Z"
+            "timestamp": "2025-10-27T17:57:22.319385Z"
           }
         ],
-        "type": "DeleteCollection",
-        "creationTime": "2025-10-27T17:52:21.3490952Z",
-        "collectionId": "test-partition-type-collection"
+        "type": "DeleteItem",
+        "creationTime": "2025-10-27T17:57:21.533534Z",
+        "startTime": "2025-10-27T17:57:21.533534Z",
+        "finishTime": "2025-10-27T17:57:22.319385Z",
+        "collectionId": "naip-atl",
+        "additionalInformation": {
+          "TotalFailedItems": "0",
+          "TotalItems": "1",
+          "TotalPendingItems": "0",
+          "TotalSuccessfulItems": "1"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114_delete_test?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "Connection": "keep-alive",
+        "Content-Length": "291",
+        "Content-Type": "application/json",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "traceparent": "00-00000000000000000000000000000000-0000000000000000-00",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Ms-Error-Code": "ResourceNotFound",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "Resource not found at '/stac/collections/naip-atl/items/ga_m_3308421_se_16_060_20211114_delete_test' with parameters {'collection_id': 'naip-atl', 'item_id': 'ga_m_3308421_se_16_060_20211114_delete_test'}. Check the parameters and try again."
+        }
       }
     }
   ],
