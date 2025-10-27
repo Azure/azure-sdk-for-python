@@ -25,8 +25,8 @@ from tenacity import retry
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import is_onedp_project, get_default_threshold_for_evaluator
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -145,25 +145,15 @@ class EvaluationProcessor:
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        # Use sync_evals endpoint for OneDP projects, legacy endpoint for others
-                        if is_onedp_project(self.azure_ai_project):
-                            return await evaluate_with_rai_service_sync(
-                                data=query_response,
-                                metric_name=metric_name,
-                                project_scope=self.azure_ai_project,
-                                credential=self.credential,
-                                annotation_task=annotation_task,
-                                scan_session_id=self.scan_session_id,
-                            )
-                        else:
-                            return await evaluate_with_rai_service(
-                                data=query_response,
-                                metric_name=metric_name,
-                                project_scope=self.azure_ai_project,
-                                credential=self.credential,
-                                annotation_task=annotation_task,
-                                scan_session_id=self.scan_session_id,
-                            )
+                        # Always use sync_evals endpoint for all projects
+                        return await evaluate_with_rai_service_sync(
+                            data=query_response,
+                            metric_name=metric_name,
+                            project_scope=self.azure_ai_project,
+                            credential=self.credential,
+                            annotation_task=annotation_task,
+                            scan_session_id=self.scan_session_id,
+                        )
                     except (
                         httpx.ConnectTimeout,
                         httpx.ReadTimeout,
@@ -388,6 +378,12 @@ class EvaluationProcessor:
         try:
             # Get the appropriate metric for this risk category
             metric_name = get_metric_from_risk_category(risk_category)
+            
+            # For hate_unfairness, always use "hate_unfairness" metric name for Sync API
+            if risk_category == RiskCategory.HateUnfairness:
+                metric_name = "hate_unfairness"
+                self.logger.debug(f"Using metric 'hate_unfairness' for Sync API")
+            
             self.logger.debug(f"Using metric '{metric_name}' for risk category '{risk_category.value}'")
 
             # Load all conversations from the data file

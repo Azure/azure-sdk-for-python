@@ -14,13 +14,14 @@ from urllib.parse import urlparse
 from string import Template
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage
+from azure.ai.evaluation._common.onedp._utils.model_base import SdkJSONEncoder
 from azure.core.exceptions import HttpResponseError
 
 import jwt
 
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._common.utils import is_onedp_project
@@ -1074,23 +1075,35 @@ async def evaluate_with_rai_service_sync(
     :rtype: EvalRunOutputItem
     :raises: EvaluationException if project_scope is not a OneDP project
     """
+    api_version = "2025-10-15-preview"
     if not is_onedp_project(project_scope):
-        msg = "evaluate_with_rai_service_sync only supports OneDP projects. Use evaluate_with_rai_service for legacy projects."
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.INVALID_VALUE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        # Get RAI service URL from discovery service and check service availability
+        token = await fetch_or_reuse_token(credential)
+        rai_svc_url = await get_rai_svc_url(project_scope, token)
+        await ensure_service_availability(rai_svc_url, token, annotation_task)
+
+        # Submit annotation request and fetch result
+        url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
+        headers = {"aml-user-token": token, "Authorization": "Bearer " + token}
+        sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
+        sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
+
+        with get_http_client() as client:
+            http_response = client.post(url, json=sync_eval_payload_json, headers=headers)
+
+        if http_response.status_code != 200:
+            print("Fail evaluating with error message: %s" % (http_response.text()))
+            http_response.raise_for_status()
+        result = http_response.json()
+
+        return result
 
     client = AIProjectClient(
         endpoint=project_scope,
         credential=credential,
         user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
     )
-
-    # Build the sync eval payload
+    
     sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
     # Call sync_evals.create() with the JSON payload
     eval_result = client.sync_evals.create(eval=sync_eval_payload)
