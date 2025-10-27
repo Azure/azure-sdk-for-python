@@ -133,7 +133,7 @@ EXPECTED OUTPUT
 
 EXPECTED OUTPUT
 {
-     "explanation": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool , not a technical failure. The tool did not return an error",
+     "explanation": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool, not a technical failure. The tool did not return an error",
      "details": {
        "failed_tools": "",
      },
