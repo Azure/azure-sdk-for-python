@@ -627,7 +627,7 @@ def _get_storage_directory(instrumentation_key: str) -> str:
     shared_root = tempfile.gettempdir()
     try:
         user_segment = getpass.getuser()
-    except:
+    except Exception:
         user_segment = ""
     hash_input = ";".join(
         [
