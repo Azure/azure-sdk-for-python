@@ -45,14 +45,14 @@ from ..._operations._operations import (
     build_question_answering_authoring_get_export_status_request,
     build_question_answering_authoring_get_import_status_request,
     build_question_answering_authoring_get_project_details_request,
-    build_question_answering_authoring_get_qnas_request,
-    build_question_answering_authoring_get_sources_request,
-    build_question_answering_authoring_get_synonyms_request,
     build_question_answering_authoring_get_update_qnas_status_request,
     build_question_answering_authoring_get_update_sources_status_request,
     build_question_answering_authoring_import_from_files_request,
     build_question_answering_authoring_list_deployments_request,
     build_question_answering_authoring_list_projects_request,
+    build_question_answering_authoring_list_qnas_request,
+    build_question_answering_authoring_list_sources_request,
+    build_question_answering_authoring_list_synonyms_request,
     build_question_answering_authoring_update_qnas_request,
     build_question_answering_authoring_update_sources_from_files_request,
     build_question_answering_authoring_update_sources_request,
@@ -1523,7 +1523,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_synonyms(
+    def list_synonyms(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.WordAlterations"]:
         """Gets all the synonyms of a project.
@@ -1558,7 +1558,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_question_answering_authoring_get_synonyms_request(
+                _request = build_question_answering_authoring_list_synonyms_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -1741,7 +1741,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_sources(
+    def list_sources(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.QnaSourceRecord"]:
         """Gets all the sources of a project.
@@ -1776,7 +1776,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_question_answering_authoring_get_sources_request(
+                _request = build_question_answering_authoring_list_sources_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2230,7 +2230,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_qnas(
+    def list_qnas(
         self,
         project_name: str,
         *,
@@ -2273,7 +2273,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_question_answering_authoring_get_qnas_request(
+                _request = build_question_answering_authoring_list_qnas_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,

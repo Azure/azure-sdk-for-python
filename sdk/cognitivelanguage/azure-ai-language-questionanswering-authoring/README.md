@@ -86,14 +86,14 @@ for proj in client.list_projects():
 
 ### Add / update a knowledge source
 ```python
-from azure.ai.language.questionanswering.authoring import models as qa_models
+from azure.ai.language.questionanswering.authoring.models import UpdateSourceRecord,UpdateQnaSourceRecord 
 
 poller = client.begin_update_sources(
     project_name="FAQ",
     body=[
-        qa_models.UpdateSourceRecord(
+        UpdateSourceRecord(
             op="add",
-            value=qa_models.UpdateQnaSourceRecord(
+            value=UpdateQnaSourceRecord(
                 display_name="ContosoFAQ",
                 source="https://contoso.com/faq",
                 source_uri="https://contoso.com/faq",
@@ -109,14 +109,14 @@ poller.result()
 
 ### Add a QnA pair
 ```python
-from azure.ai.language.questionanswering.authoring import models as qa_models
+from azure.ai.language.questionanswering.authoring.models import UpdateQnaRecord,QnaRecord
 
 poller = client.begin_update_qnas(
     project_name="FAQ",
     body=[
-        qa_models.UpdateQnaRecord(
+        UpdateQnaRecord(
             op="add",
-            value=qa_models.QnaRecord(
+            value=QnaRecord(
                 id=1,
                 answer="Use the Azure SDKs.",
                 source="manual",
@@ -130,14 +130,14 @@ poller.result()
 
 ### Set synonyms
 ```python
-from azure.ai.language.questionanswering.authoring import models as qa_models
+from azure.ai.language.questionanswering.authoring.models import SynonymAssets,WordAlterations
 
 client.update_synonyms(
     project_name="FAQ",
-    body=qa_models.SynonymAssets(
+    body=SynonymAssets(
         value=[
-            qa_models.WordAlterations(alterations=["qnamaker", "qna maker"]),
-            qa_models.WordAlterations(alterations=["qna", "question and answer"]),
+            WordAlterations(alterations=["qnamaker", "qna maker"]),
+            WordAlterations(alterations=["qna", "question and answer"]),
         ]
     ),
 )
@@ -153,11 +153,11 @@ client.begin_deploy_project(project_name="FAQ", deployment_name="production").re
 export_poller = client.begin_export(project_name="FAQ", format="json")
 export_poller.result()  # current preview returns None
 
-from azure.ai.language.questionanswering.authoring import models as qa_models
-assets = qa_models.ImportJobOptions(
-    assets=qa_models.Assets(
+from azure.ai.language.questionanswering.authoring.models import ImportJobOptions,Assets,ImportQnaRecord
+assets = ImportJobOptions(
+    assets=Assets(
         qnas=[
-            qa_models.ImportQnaRecord(
+            ImportQnaRecord(
                 id=1,
                 answer="Example answer",
                 source="https://contoso.com/faq",
