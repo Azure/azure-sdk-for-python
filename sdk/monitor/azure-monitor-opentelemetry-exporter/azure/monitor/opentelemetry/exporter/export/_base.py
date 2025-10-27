@@ -613,7 +613,7 @@ def _get_storage_directory(instrumentation_key: str) -> str:
     On shared Linux hosts the first user to create ``/tmp/Microsoft/AzureMonitor`` can
     block others because the directory inherits that user's ``umask``. This is avoided by
     inserting a hash of the instrumentation key, user name, process name, and
-    application directory, giving each publisher its own stable subdirectory, e.g.
+    application directory, giving each user their own subdirectory, e.g.
     ``/tmp/1a2b3c.../Microsoft/AzureMonitor/opentelemetry-python-<ikey>``.
 
     :param str instrumentation_key: Application Insights instrumentation key.
