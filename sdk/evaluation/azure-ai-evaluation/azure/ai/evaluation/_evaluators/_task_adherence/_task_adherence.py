@@ -10,7 +10,11 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions, parse_quality_evaluator_reason_score
+from ..._common.utils import (
+    reformat_conversation_history,
+    reformat_agent_response,
+    reformat_tool_definitions,
+)
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -73,7 +77,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        self.threshold = threshold # to be removed in favor of _threshold
+        self.threshold = threshold  # to be removed in favor of _threshold
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -156,7 +160,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
         if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
             eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
-        
+
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict["llm_output"]
 
@@ -183,7 +187,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-        
+
         binary_result = self._get_binary_result(score)
         return {
             self._result_key: float(score),

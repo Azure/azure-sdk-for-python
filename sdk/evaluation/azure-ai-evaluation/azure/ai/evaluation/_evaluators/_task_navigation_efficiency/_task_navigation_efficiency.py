@@ -137,10 +137,7 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         ground_truth: List[str],
         ground_truth_params: Dict[str, Dict[str, Any]],
         use_parameter_matching: bool,
-    ) -> Tuple[
-        List[Union[str, Tuple[str, Tuple]]],
-        List[Union[str, Tuple[str, Tuple]]],
-    ]:
+    ) -> Tuple[List[Union[str, Tuple[str, Tuple]]], List[Union[str, Tuple[str, Tuple]]],]:
         """Prepare agent and ground truth steps for comparison based on parameter matching mode."""
         agent_steps: List[Union[str, Tuple[str, Tuple]]] = []
         ground_truth_steps: List[Union[str, Tuple[str, Tuple]]] = []
