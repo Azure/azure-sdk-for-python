@@ -116,7 +116,9 @@ class verifytypes(Check):
                     results.append(1)
                     continue
 
-                score_from_main_rounded = round(score_from_main * 100, 1)
+                # score_from_main_rounded = round(score_from_main * 100, 1)
+                score_from_main_rounded = 100 # TODO : TESTING CI ONLY
+
                 score_from_current_rounded = round(score_from_current * 100, 1)
                 logger.info("\n-----Type completeness score comparison-----\n")
                 logger.info(f"Score in main: {score_from_main_rounded}%")
