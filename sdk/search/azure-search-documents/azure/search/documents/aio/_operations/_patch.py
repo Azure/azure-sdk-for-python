@@ -46,7 +46,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
     async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Delete documents from the Azure search index.
 
-        Delete removes the specified documents from the index. Any field you 
+        Delete removes the specified documents from the index. Any field you
         specify in a delete operation, other than the key field, will be ignored.
         If you want to remove a field from a document, use merge instead and
         set the field explicitly to None.
@@ -139,4 +139,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-

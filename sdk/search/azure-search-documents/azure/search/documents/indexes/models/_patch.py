@@ -30,29 +30,32 @@ from ._enums import (
 # Re-export SearchFieldDataType and add Collection helper
 SearchFieldDataType = _SearchFieldDataType
 
+
 # Add Collection method to SearchFieldDataType enum
 def _collection_helper(typ) -> str:
     """Helper function to create a collection type string.
-    
+
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
     :return: A collection type string.
     """
     # If typ is an enum, get its value; otherwise use it as-is
-    if hasattr(typ, 'value'):
+    if hasattr(typ, "value"):
         typ = typ.value
     return "Collection({})".format(typ)
+
 
 # Monkey-patch the Collection method onto the enum class
 SearchFieldDataType.Collection = staticmethod(_collection_helper)
 
+
 def Collection(typ) -> str:
     """Helper function to create a collection type string.
-    
+
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
     :return: A collection type string.
     """
     # If typ is an enum, get its value; otherwise use it as-is
-    if hasattr(typ, 'value'):
+    if hasattr(typ, "value"):
         typ = typ.value
     return "Collection({})".format(typ)
 
