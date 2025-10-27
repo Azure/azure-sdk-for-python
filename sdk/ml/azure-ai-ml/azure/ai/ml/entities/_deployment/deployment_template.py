@@ -434,7 +434,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             liveness_probe=liveness_probe_obj,  # Use proper ProbeSettings object or None
             readiness_probe=readiness_probe_obj,  # Use proper ProbeSettings object or None
             instance_count=instance_count,
-            instance_type=default_instance_type,  # Use default instance type
+            default_instance_type=default_instance_type,  # Use default instance type
             model=get_value(obj, "model"),  # May not be present in this API format
             code_configuration=get_value(obj, "code_configuration"),  # May not be present in this API format
             environment_variables=environment_variables,
@@ -544,7 +544,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 result["readinessProbe"] = readiness_dict  # type: ignore[assignment]
 
         # Add instance configuration
-        if hasattr(self, "instance_type") and self.instance_type:
+        if hasattr(self, "default_instance_type") and self.default_instance_type:
+            result["defaultInstanceType"] = self.default_instance_type
+        elif hasattr(self, "instance_type") and self.instance_type:
             result["defaultInstanceType"] = self.instance_type
 
         if hasattr(self, "instance_count") and self.instance_count is not None:
@@ -646,7 +648,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Add instance configuration
         if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
             result["allowedInstanceType"] = self.allowed_instance_type  # type: ignore[assignment]
-        if self.instance_type:
+        if self.default_instance_type:
+            result["defaultInstanceType"] = self.default_instance_type
+        elif self.instance_type:
             result["defaultInstanceType"] = self.instance_type
         if self.instance_count is not None:
             result["instanceCount"] = self.instance_count  # type: ignore[assignment]
