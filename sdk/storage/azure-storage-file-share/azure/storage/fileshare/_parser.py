@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import Any, cast, Dict, Optional, Union
 
 from ._generated._utils.serialization import Serializer
@@ -38,8 +38,6 @@ def _parse_datetime_from_str(string_datetime):
     dt = datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
     us = int(us[:-2])  # microseconds
     datetime_obj = dt + timedelta(microseconds=us)
-    if not datetime_obj.tzinfo:
-        datetime_obj = datetime_obj.replace(tzinfo=timezone.utc)
     return datetime_obj
 
 
