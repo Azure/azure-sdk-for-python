@@ -95,12 +95,14 @@ class verifytypes(Check):
                 results.append(1)
                 continue
 
+            # show output
             try:
-                self.run_venv_command(executable, commands[1:], package_dir, check=True)
-            except subprocess.CalledProcessError:
+                self.run_venv_command(executable, commands[1:-1], package_dir, check=True)
+            except subprocess.CalledProcessError as e:
                 logger.warning(
-                    "verifytypes reported issues."
+                    f"verifytypes reported issues: {e.stdout}"
                 )  # we don't fail on verifytypes, only if type completeness score worsens from main
+
 
             if in_ci():
                 # get type completeness score from main
@@ -174,7 +176,6 @@ class verifytypes(Check):
                     f"Running verifytypes failed: {e.stderr}. See https://aka.ms/python/typing-guide for information."
                 )
                 return -1.0
-
             report = json.loads(e.output)
             if check_pytyped:
                 pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
