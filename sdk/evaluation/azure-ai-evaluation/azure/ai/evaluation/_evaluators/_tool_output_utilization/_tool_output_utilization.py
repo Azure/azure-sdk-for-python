@@ -200,7 +200,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             faulty_details = llm_output.get("faulty_details", [])
             if faulty_details:
                 reason += " Issues found: " + "; ".join(faulty_details)
-            
+
             return {
                 f"{self._result_key}": score,
                 f"gpt_{self._result_key}": score,
@@ -217,7 +217,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-        
+
         score = math.nan
         binary_result = self._get_binary_result(score)
         return {
