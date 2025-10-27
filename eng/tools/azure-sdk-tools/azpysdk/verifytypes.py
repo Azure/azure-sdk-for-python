@@ -179,7 +179,6 @@ class verifytypes(Check):
             if check_pytyped:
                 pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
                 if not pytyped_present:
-                    breakpoint()
                     logger.error(f"No py.typed file was found. See https://aka.ms/python/typing-guide for information.")
                     return -1.0
             return report["typeCompleteness"]["completenessScore"]
