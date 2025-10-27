@@ -2,9 +2,7 @@
 
 ## 1.1.0b5 (Unreleased)
 
-### Other
-
-* Rename EvaluatorIds.TOOL_CALL_ACCURACY to EvaluatorIds.TOOL_CALL_QUALITY, to align with similar update in [azure-ai-evaluation](https://pypi.org/project/azure-ai-evaluation/) package.
+### Features added
 
 ## 1.1.0b4 (2025-09-12)
 
