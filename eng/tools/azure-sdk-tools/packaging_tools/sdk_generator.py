@@ -1,6 +1,6 @@
 import sys
 import time
-from typing import List, Dict, Any
+from typing import List, Any
 import argparse
 import json
 import logging
@@ -33,8 +33,6 @@ from .generate_utils import (
     gen_dpg,
     dpg_relative_folder,
     gen_typespec,
-    return_origin_path,
-    call_build_config,
     del_outdated_generated_files,
 )
 from .conf import CONF_NAME
