@@ -46,14 +46,10 @@ async def sample_detect_language_async():
 
     async with TextAnalysisClient(endpoint, credential=credential) as client:
         # Build input
-        text_a = (
-            "Sentences in different languages."
-        )
+        text_a = "Sentences in different languages."
 
         body = TextLanguageDetectionInput(
-            text_input=LanguageDetectionTextInput(
-                language_inputs=[LanguageInput(id="A", text=text_a)]
-            )
+            text_input=LanguageDetectionTextInput(language_inputs=[LanguageInput(id="A", text=text_a)])
         )
 
         # Async (non-LRO) call
@@ -76,6 +72,8 @@ async def sample_detect_language_async():
                 print(f"Confidence score: {dl.confidence_score}")
             else:
                 print("No detected language returned for this document.")
+
+
 # [END detect_language_async]
 
 

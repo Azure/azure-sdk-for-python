@@ -83,6 +83,7 @@ async def sample_recognize_entities_async():
     else:
         print("No documents in the response or unexpected result type.")
 
+
 # [END recognize_entities_async]
 
 

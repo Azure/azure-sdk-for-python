@@ -59,6 +59,7 @@ async def sample_authentication_with_azure_active_directory():
     text_client = TextAnalysisClient(endpoint, credential=credential)
     # [END create_ta_client_with_aad_async]
 
+
 async def main():
     await sample_authentication_api_key_async()
     await sample_authentication_with_azure_active_directory()

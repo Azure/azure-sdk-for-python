@@ -84,13 +84,9 @@ def sample_text_extractive_summarization():
         "the quality of life in the communities.”"
     )
 
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
-    action = ExtractiveSummarizationOperationAction(
-        name="Extractive Summarization"
-    )
+    action = ExtractiveSummarizationOperationAction(name="Extractive Summarization")
 
     # Start long-running operation (sync)
     poller = client.begin_analyze_text_job(
@@ -133,9 +129,9 @@ def sample_text_extractive_summarization():
                 print(f"Kind: {op_result.kind}")
 
                 result = op_result.results
-                for doc in (result.documents or []):
+                for doc in result.documents or []:
                     print(f"\nDocument ID: {doc.id}")
-                    for sent in (doc.sentences or []):
+                    for sent in doc.sentences or []:
                         # Each sentence is part of the extractive summary
                         print(f"  Sentence: {sent.text}")
                         print(f"    Rank score: {sent.rank_score}")
@@ -150,6 +146,7 @@ def sample_text_extractive_summarization():
                     )
                 except Exception:
                     print("\n[Non-extractive action present]")
+
 
 # [END text_extractive_summarization]
 
