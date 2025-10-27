@@ -138,7 +138,6 @@ class BaseExporter:
         self._storage_min_retry_interval = kwargs.get(
             "storage_min_retry_interval", 60
         )  # minimum retry interval in seconds
-        temp_suffix = self._instrumentation_key or ""
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
@@ -626,19 +625,20 @@ def _get_storage_directory(instrumentation_key: str) -> str:
     process_name = process.name()
     application_directory = Path(process.cwd() or sys.argv[0]).resolve()
     shared_root = tempfile.gettempdir()
-    user_segment = getpass.getuser()
-    hash_components = [
-        str(instrumentation_key or ""),
-        str(user_segment or ""),
-        str(process_name or ""),
-        os.fspath(application_directory),  # cspell:disable-line
-    ]
     try:
-        subdirectory = _get_sha256_hash(";".join(hash_components))
-    except:  # pylint: disable=broad-except
-        subdirectory = ""
+        user_segment = getpass.getuser()
+    except:
+        user_segment = ""
+    hash_input = ";".join(
+        [
+            instrumentation_key,
+            user_segment,
+            process_name,
+            os.fspath(application_directory), # cspell:disable-line
+        ]
+    )
+    subdirectory = _get_sha256_hash(hash_input)
     storage_directory = os.path.join(
-        # Fallback to original method of storage directory path
         shared_root, subdirectory, _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + instrumentation_key
     )
     return storage_directory
