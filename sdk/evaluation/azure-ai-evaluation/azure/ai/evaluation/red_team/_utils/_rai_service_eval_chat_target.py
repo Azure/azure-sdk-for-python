@@ -89,11 +89,12 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
                     score = result_dict.get("score", 0)
                     reason = result_dict.get("reason", "")
                     threshold = result_dict.get("threshold", 3)
-                    
+
                     # Convert score to severity label if needed
                     result = result_dict.get("label")
                     if result is None:
                         from azure.ai.evaluation._common.utils import get_harm_severity_level
+
                         result = get_harm_severity_level(score)
                     break
 
