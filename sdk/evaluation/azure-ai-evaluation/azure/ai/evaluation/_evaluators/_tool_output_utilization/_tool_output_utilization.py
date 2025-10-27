@@ -76,7 +76,6 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self,
         model_config,
         *,
-        threshold=_DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE,
         credential=None,
         **kwargs,
     ):
@@ -86,7 +85,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
-            threshold=threshold,
+            threshold=self._DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE,
             credential=credential,
             _higher_is_better=True,
             **kwargs,
