@@ -88,16 +88,7 @@ class HelloWorldSamplesAsync(object):
                 file = ShareFileClient.from_connection_string(
                     self.connection_string,
                     share_name='helloworld2async',
-                    file_path="myfile"
-                )
-                file.share_name
-                file.file_name
-                file.file_path
-                file.directory_path
-                file.snapshot
-                file.allow_trailing_dot
-                file.allow_source_trailing_dot
-                file.file_request_intent
+                    file_path="myfile")
                 # [END create_file_client]
 
                 # Upload a file

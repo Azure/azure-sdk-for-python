@@ -58,7 +58,6 @@ class QueueHelloWorldSamples(object):
         from azure.storage.queue import QueueClient
 
         queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
-        queue.queue_name
 
         # Create the queue
         # [START create_queue]

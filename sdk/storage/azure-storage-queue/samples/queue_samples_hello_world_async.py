@@ -61,7 +61,6 @@ class QueueHelloWorldSamplesAsync(object):
         from azure.storage.queue.aio import QueueClient
 
         queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="asyncmyqueue")
-        queue.queue_name
 
         async with queue:
             # Create the queue

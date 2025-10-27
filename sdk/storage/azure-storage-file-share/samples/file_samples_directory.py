@@ -48,12 +48,6 @@ class DirectorySamples(object):
         try:
             # Get the directory client
             my_directory = share.get_directory_client(directory_path="mydirectory")
-            my_directory.share_name
-            my_directory.directory_path
-            my_directory.snapshot
-            my_directory.allow_trailing_dot
-            my_directory.allow_source_trailing_dot
-            my_directory.file_request_intent
 
             # [START create_directory]
             my_directory.create_directory()
