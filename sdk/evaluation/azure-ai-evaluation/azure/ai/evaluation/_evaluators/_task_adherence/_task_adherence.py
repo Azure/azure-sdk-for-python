@@ -80,6 +80,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             result_key=self._RESULT_KEY,
             threshold=threshold,
             credential=credential,
+            _higher_is_better=True,
             **kwargs,
         )
 
@@ -166,6 +167,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             reason = llm_output.get("explanation", "")
             return {
                 f"{self._result_key}": score,
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
