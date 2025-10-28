@@ -1,4 +1,4 @@
-﻿---
+---
 name: Tool Input Accuracy
 description: Evaluates the accuracy of all inputs/parameters passed to the tools by the agent
 model:
