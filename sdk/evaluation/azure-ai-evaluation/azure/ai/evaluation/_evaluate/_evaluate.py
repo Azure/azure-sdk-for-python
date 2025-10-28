@@ -1114,7 +1114,7 @@ def _log_events_to_app_insights(
     log_attributes: Dict[str, Any],
     app_insights_config: AppInsightsConfig,
     data_source_item: Optional[Dict[str, Any]] = None,
-    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None
+    evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
     """
     Log independent events directly to App Insights using OpenTelemetry logging.
