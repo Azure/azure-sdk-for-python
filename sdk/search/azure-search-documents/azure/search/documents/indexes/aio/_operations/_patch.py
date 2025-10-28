@@ -420,7 +420,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """
         result = await self._get_synonym_maps(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
-        return [x.name for x in result.synonym_maps]
+        return [x.name for x in result]
 
     @distributed_trace
     def list_alias_names(self, **kwargs) -> AsyncItemPaged[str]:
@@ -777,7 +777,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = await self.get_data_source_connections(**kwargs)
-        return [x.get("name") for x in result]
+        return [x.name for x in result]
 
     @distributed_trace_async
     async def get_skillset_names(self, **kwargs) -> Sequence[str]:
@@ -789,7 +789,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = await self.get_skillsets(**kwargs)
-        return [x.get("name") for x in result]
+        return [x.name for x in result]
 
 
 __all__: list[str] = [

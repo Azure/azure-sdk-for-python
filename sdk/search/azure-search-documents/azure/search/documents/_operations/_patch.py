@@ -201,10 +201,10 @@ class SearchPageIterator(PageIterator):
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return self._client.search_post(body=self._initial_request, **self._kwargs)
+            return self._client._search_post(body=self._initial_request, **self._kwargs)
 
         _next_link, next_page_request = _unpack_continuation_token(continuation_token)
-        return self._client.search_post(body=next_page_request, **self._kwargs)
+        return self._client._search_post(body=next_page_request, **self._kwargs)
 
     def _extract_data_cb(self, response: _models.SearchDocumentsResult):
         continuation_token = _pack_continuation_token(response, api_version=self._api_version)
@@ -339,7 +339,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
     def _index_documents_actions(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
         try:
-            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = self._index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[_models.IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(batch.actions) == 1:

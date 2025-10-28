@@ -419,7 +419,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """
         result = self._get_synonym_maps(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
-        return [x.name for x in result.synonym_maps]
+        return [x.name for x in result]
 
     @distributed_trace
     def list_alias_names(self, **kwargs: Any) -> ItemPaged[str]:
@@ -785,7 +785,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[str]
 
         """
-        return self.get_data_source_connections(cls=lambda objs: [x.get("name") for x in objs], **kwargs)
+        result = self.get_data_source_connections(**kwargs)
+        return [x.name for x in result]
 
     @distributed_trace
     def get_skillset_names(self, **kwargs: Any) -> List[str]:
@@ -797,7 +798,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = self.get_skillsets(**kwargs)
-        return [x.get("name") for x in result]
+        return [x.name for x in result]
 
 
 __all__: list[str] = [
