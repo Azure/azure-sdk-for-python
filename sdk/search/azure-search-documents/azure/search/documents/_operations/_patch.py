@@ -792,6 +792,161 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         return SearchItemPaged(page_iterator_factory)
 
 
+    @distributed_trace
+    def autocomplete(
+        self,
+        search_text: str,
+        suggester_name: str,
+        *,
+        autocomplete_mode: Optional[Union[str, _models.AutocompleteMode]] = None,
+        filter: Optional[str] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        search_fields: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List[Dict[str, Any]]:
+        """Autocomplete incomplete search terms based on input text and matching terms in the index.
+
+        :param str search_text: The search text on which to base autocomplete results.
+        :param str suggester_name: The name of the suggester as specified in the suggesters
+            collection that's part of the index definition.
+        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'.
+            Use 'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while
+            producing auto-completed terms. Known values are: "oneTerm", "twoTerms", and
+            "oneTermWithContext".
+        :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
+        :keyword str filter: An OData expression that filters the documents used to produce completed
+            terms for the Autocomplete result.
+        :keyword bool use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+            autocomplete query. Default is false. When set to true, the query will find terms even if
+            there's a substituted or missing character in the search text. While this provides a better
+            experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
+            slower and consume more resources.
+        :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+            highlightPreTag. If omitted, hit highlighting is disabled.
+        :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+            highlightPostTag. If omitted, hit highlighting is disabled.
+        :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+            that must be covered by an autocomplete query in order for the query to be reported as a
+            success. This parameter can be useful for ensuring search availability even for services with
+            only one replica. The default is 80.
+        :keyword str search_fields: The comma-separated list of field names to consider when querying for
+            auto-completed terms. Target fields must be included in the specified suggester.
+        :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1
+            and 100. The default is 5.
+        :return: List of autocomplete results.
+        :rtype: list[dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_autocomplete.py
+                :start-after: [START autocomplete_query]
+                :end-before: [END autocomplete_query]
+                :language: python
+                :dedent: 4
+                :caption: Get autocomplete suggestions.
+        """
+        # Call the generated _autocomplete_post method
+        response = self._autocomplete_post(
+            search_text=search_text,
+            suggester_name=suggester_name,
+            autocomplete_mode=autocomplete_mode,
+            filter=filter,
+            use_fuzzy_matching=use_fuzzy_matching,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            search_fields=search_fields,
+            top=top,
+            **kwargs,
+        )
+
+        assert response.results is not None  # Hint for mypy
+        return response.results
+
+    @distributed_trace
+    def suggest(
+        self,
+        search_text: str,
+        suggester_name: str,
+        *,
+        filter: Optional[str] = None,
+        use_fuzzy_matching: Optional[bool] = None,
+        highlight_post_tag: Optional[str] = None,
+        highlight_pre_tag: Optional[str] = None,
+        minimum_coverage: Optional[float] = None,
+        order_by: Optional[str] = None,
+        search_fields: Optional[str] = None,
+        select: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List[Dict[str, Any]]:
+        """Get search suggestions for documents in the Azure search index.
+
+        :param str search_text: The search text to use to suggest documents. Must be at least 1
+            character, and no more than 100 characters.
+        :param str suggester_name: The name of the suggester as specified in the suggesters
+            collection that's part of the index definition.
+        :keyword str filter: An OData expression that filters the documents considered for suggestions.
+        :keyword bool use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+            suggestion query. Default is false. When set to true, the query will find suggestions even if
+            there's a substituted or missing character in the search text. While this provides a better
+            experience in some scenarios, it comes at a performance cost as fuzzy suggestion searches are
+            slower and consume more resources.
+        :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+            highlightPreTag. If omitted, hit highlighting of suggestions is disabled.
+        :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+            highlightPostTag. If omitted, hit highlighting of suggestions is disabled.
+        :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index
+            that must be covered by a suggestion query in order for the query to be reported as a success.
+            This parameter can be useful for ensuring search availability even for services with only one
+            replica. The default is 80.
+        :keyword str order_by: The comma-separated list of OData $orderby expressions by which to sort the
+            results. Each expression can be either a field name or a call to either the geo.distance() or
+            the search.score() functions. Each expression can be followed by asc to indicate ascending, or
+            desc to indicate descending. The default is ascending order. Ties will be broken by the match
+            scores of documents. If no $orderby is specified, the default sort order is descending by
+            document match score. There can be at most 32 $orderby clauses.
+        :keyword str search_fields: The comma-separated list of field names to search for the specified
+            search text. Target fields must be included in the specified suggester.
+        :keyword str select: The comma-separated list of fields to retrieve. If unspecified, only the key
+            field will be included in the results.
+        :keyword int top: The number of suggestions to retrieve. This must be a value between 1 and 100.
+            The default is 5.
+        :return: List of suggestion results.
+        :rtype: list[dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_suggestions.py
+                :start-after: [START suggest]
+                :end-before: [END suggest]
+                :language: python
+                :dedent: 4
+                :caption: Get search suggestions.
+        """
+        # Call the generated _suggest_post method
+        response = self._suggest_post(
+            search_text=search_text,
+            suggester_name=suggester_name,
+            filter=filter,
+            use_fuzzy_matching=use_fuzzy_matching,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            search_fields=search_fields,
+            select=select,
+            top=top,
+            **kwargs,
+        )
+
+        assert response.results is not None  # Hint for mypy
+        return response.results
+
 __all__: list[str] = [
     "_SearchClientOperationsMixin",
     "SearchItemPaged",
