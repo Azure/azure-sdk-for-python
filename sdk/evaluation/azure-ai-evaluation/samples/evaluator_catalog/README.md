@@ -28,19 +28,7 @@ List of evaluators can be found at [here](https://github.com/Azure/azure-sdk-for
 
 ## Step 2: Provide your evaluator
 
-Please use this excel file. Please include new evaluators details. It contains PR links (SDK, Asset) and timelines. 
-[New Evaluators List](https://microsoft-my.sharepoint.com/:x:/p/waqasjaved/EW0nhGi9D09ErARvd-xTnc4BW_p2wrtQ3VJV_BaDFsvgiA?wdOrigin=TEAMS-MAGLEV.p2p_ns.rwc&wdExp=TEAMS-TREATMENT&wdhostclicktime=1760366435725&web=1)
-
-
-We are storing all the builtin evaluators in Azureml-asset Repo. 
-
-Please provide your evaluators files by creating a PR in this repo. 
-
-Note: These assets should be Prod Ready. These are immutable. Please provide them when they well tested and prod ready. 
-1. No fork PRs are allowed. Please get write permissions from [Asset Team](htps://github.com/orgs/Azure/teams/aml-assets). 
-2. Please fix flake8 lint issue if found in the PR. 
-
-Please follow the steps to create a PR.
+We are storing all the builtin evaluators in Azureml-asset Repo. Please provide your evaluators files by creating a PR in this repo. Please follow the steps.
 
 1. Add a new folder with name as the Evaluator name. 
 
@@ -123,24 +111,52 @@ path: ./evaluator
 
 ## Step 3: Test in RAI Service ACA Code.
 
-Once PR is reviewed and merged, Evaluation Team will use your evaluator files to run them in ACA to make sure no errors found. You also need to provide jsonl dataset files for testing.
+Once PR is ready to be reviewed. Before merging, please verify your code in ACA. 
+Please follow instructions given on this PR
+[https://dev.azure.com/msdata/Vienna/_git/vienna/pullrequest/1837536?_a=files&path=/src/azureml-api/src/RAISvc/aca/README.md](https://dev.azure.com/msdata/Vienna/_git/vienna/pullrequest/1837536?_a=files&path=/src/azureml-api/src/RAISvc/aca/README.md)
 
-## Step 4: Publish on Dev Registry (Azureml-dev)
-Evaluation Team will kick off the CI Pipeline to publish evaluator in the Evaluator Catalog in azureml-dev (dev) registry.
+## Step 4: Create a PR to add assets
+Please create a PR to add an evaluator asset in Built-In registries.
+This is a Step 1 in [Build & Release Process](https://eng.ms/docs/cloud-ai-platform/ai-platform/ai-platform-ml-platform/project-vienna-services/azure-machine-learning-runbook/operational/assets/registry/azureml/sop/adding-assets-to-builtin-registry/build-and-release-process) provided by asset team. 
 
-## Step 5: Test is INT Environment
-Team will verify following:
+## Step 5: Update Deployment Config
+Please update the deployment config file for following registries.
 
-1. Verify if new evaluator is available in Evaluator REST APIs.
+Please find evaluator: section.
+
+[azureml-dev](https://msdata.visualstudio.com/Vienna/_git/azureml-asset?path=/registry/deploy_configs/azureml-dev.yml)
+[azureml-staging](https://msdata.visualstudio.com/Vienna/_git/azureml-asset?path=/registry/deploy_configs/azureml-staging.yml)
+[azureml](https://msdata.visualstudio.com/Vienna/_git/azureml-asset?path=/registry/deploy_configs/azureml.yml)
+
+This is a Step 2 in [Build & Release Process](https://eng.ms/docs/cloud-ai-platform/ai-platform/ai-platform-ml-platform/project-vienna-services/azure-machine-learning-runbook/operational/assets/registry/azureml/sop/adding-assets-to-builtin-registry/build-and-release-process).
+
+## Step 6: Post your PR(s) in the [System Registry Content](https://teams.microsoft.com/l/channel/19%3Abe5ce76d1cba4418a81829e32ee7cf2b%40thread.skype/System%20Registry%20Content?groupId=88aa174e-6310-4634-bfcb-5761e1a1190a&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) channel
+
+Please get the approval from Asset Team and merge the PR. This is Step 3 in [Build & Release Process](https://eng.ms/docs/cloud-ai-platform/ai-platform/ai-platform-ml-platform/project-vienna-services/azure-machine-learning-runbook/operational/assets/registry/azureml/sop/adding-assets-to-builtin-registry/build-and-release-process)
+
+## Step 7: Build & Release the pipeline
+Please follow steps 4 & 5 in [Build & Release Process](https://eng.ms/docs/cloud-ai-platform/ai-platform/ai-platform-ml-platform/project-vienna-services/azure-machine-learning-runbook/operational/assets/registry/azureml/sop/adding-assets-to-builtin-registry/build-and-release-process).
+
+This will deploy evaluator assets in azureml-dev, azureml-staging and azureml (prod) registries. 
+You can choose to first deploy in dev and test it INT region and proceed with other registries. 
+
+## Step 8a: Test is INT Environment
+Please verify following:
+
+1. Verify if new evaluator is available in Evaluator REST APIs (https://int.api.azureml-test.ms)
 2. Verify if there are rendered correctly in NextGen UI. 
 3. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA. 
 
-## Step 6: Publish on Prod Registry (Azureml)
-Evaluation Team will be able to kick off the CI Pipeline again to publish evaluator in the Evaluator Catalog in azureml (prod) registry.
+## Step 8b: Test is Canary Environment
+Please verify following:
 
-## Step 7: Test is Prod Environment
-Team will verify following items:
+1. Verify if new evaluator is available in Evaluator REST APIs (https://eastus2euap.api.azureml.ms)
+2. Verify if there are rendered correctly in NextGen UI. 
+3. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA. 
 
-1. Verify if new evaluator is available in Evaluator REST APIs. 
+## Step 8c: Test is Prod Environment
+Please verify following:
+
+1. Verify if new evaluator is available in Evaluator REST APIs (https://eastus2.api.azureml.ms)
 2. Verify if there are rendered correctly in NextGen UI. 
 3. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA.
