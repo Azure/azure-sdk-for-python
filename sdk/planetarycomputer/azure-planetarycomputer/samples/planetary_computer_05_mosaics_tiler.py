@@ -44,8 +44,8 @@ def register_mosaics_search(client, collection_id):
             "args": [
                 {"op": "=", "args": [{"property": "collection"}, collection_id]},
                 {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]}
-            ]
+                {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+            ],
         },
         filter_lang=FilterLanguage.CQL2_JSON,
         sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
@@ -92,7 +92,7 @@ def get_mosaics_tile(client, search_id, collection_id):
         collection=collection_id,
     )
     mosaics_tile_matrix_sets_bytes = b"".join(mosaics_tile_matrix_sets_response)
-    
+
     # Save tile locally
     filename = f"mosaic_tile_{search_id}_z13_x2174_y3282.png"
     with open(filename, "wb") as f:
@@ -114,7 +114,7 @@ def get_mosaics_wmts_capabilities(client, search_id):
     )
     xml_bytes = b"".join(get_capabilities_xml_response)
     xml_string = xml_bytes.decode("utf-8")
-    
+
     # Save WMTS capabilities locally
     filename = f"wmts_capabilities_{search_id}.xml"
     with open(filename, "w", encoding="utf-8") as f:
@@ -154,7 +154,7 @@ def get_mosaics_assets_for_tile(client, search_id, collection_id):
 
 def create_static_image(client, collection_id):
     """Create a static image from a STAC item.
-    
+
     This demonstrates creating a static image tile with specific rendering parameters.
     The image is created asynchronously and can be retrieved using the returned image ID.
     """
@@ -165,23 +165,24 @@ def create_static_image(client, collection_id):
             {"op": "=", "args": [{"property": "collection"}, collection_id]},
             {
                 "op": "anyinteracts",
-                "args": [
-                    {"property": "datetime"},
-                    {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]}
-                ]
-            }
-        ]
+                "args": [{"property": "datetime"}, {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]}],
+            },
+        ],
     }
-    
+
     # Define geometry for the image (within dataset bounds)
-    geometry = Polygon(coordinates=[[
-        [-84.45378097481053, 33.6567321707079],
-        [-84.39805886744838, 33.6567321707079],
-        [-84.39805886744838, 33.61945681366625],
-        [-84.45378097481053, 33.61945681366625],
-        [-84.45378097481053, 33.6567321707079]
-    ]])
-    
+    geometry = Polygon(
+        coordinates=[
+            [
+                [-84.45378097481053, 33.6567321707079],
+                [-84.39805886744838, 33.6567321707079],
+                [-84.39805886744838, 33.61945681366625],
+                [-84.45378097481053, 33.61945681366625],
+                [-84.45378097481053, 33.6567321707079],
+            ]
+        ]
+    )
+
     # Create image request with rendering parameters
     image_request = ImageRequest(
         cql=cql_filter,
@@ -193,35 +194,35 @@ def create_static_image(client, collection_id):
         image_size="1080x1080",
         show_branding=False,
     )
-    
+
     # Create static image
     image_response = client.tiler.create_static_image(collection_id=collection_id, body=image_request)
-    
+
     # Extract image ID from the response URL
     image_id = image_response.url.split("?")[0].split("/")[-1]
     logging.info(f"Created static image with ID: {image_id}")
     logging.info(f"Image URL: {image_response.url}")
-    
+
     return image_id
 
 
 def get_static_image(client, collection_id, image_id):
     """Retrieve a static image by its ID.
-    
+
     This demonstrates fetching the actual image data from a previously created static image.
     The image data is returned as an iterator of bytes.
     """
     # Get static image data
     image_data = client.tiler.get_static_image(collection_id=collection_id, id=image_id)
-    
+
     # Join the generator to get bytes
     image_bytes = b"".join(image_data)
-    
+
     # Save the image locally
     filename = f"static_image_{image_id}"
     with open(filename, "wb") as f:
         f.write(image_bytes)
-    
+
     logging.info(f"Static image saved as: {filename} ({len(image_bytes)} bytes)")
 
 
@@ -244,7 +245,7 @@ def main():
     get_mosaics_wmts_capabilities(client, search_id)
     get_mosaics_assets_for_point(client, search_id)
     get_mosaics_assets_for_tile(client, search_id, collection_id)
-    
+
     # Execute static image operations
     image_id = create_static_image(client, collection_id)
     get_static_image(client, collection_id, image_id)

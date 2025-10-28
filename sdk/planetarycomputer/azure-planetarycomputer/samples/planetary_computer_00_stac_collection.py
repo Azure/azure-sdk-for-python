@@ -68,11 +68,7 @@ def create_collection(client, collection_id):
         time.sleep(60)
 
     # Define collection spatial and temporal extents (Georgia state bounds)
-    spatial_extent = StacExtensionSpatialExtent(
-        bounding_box=[
-            [-85.605165, 30.357851, -80.839729, 35.000659]
-        ]
-    )
+    spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-85.605165, 30.357851, -80.839729, 35.000659]])
     temporal_extent = StacCollectionTemporalExtent(interval=[["2010-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]])
     extent = StacExtensionExtent(spatial=spatial_extent, temporal=temporal_extent)
 
@@ -395,6 +391,7 @@ def manage_collection_assets(client, collection_id):
     thumbnail_bytes_result = b"".join(thumbnail_response)
 
     assert len(thumbnail_bytes_result) > 0
+
 
 def main():
     # Get configuration from environment

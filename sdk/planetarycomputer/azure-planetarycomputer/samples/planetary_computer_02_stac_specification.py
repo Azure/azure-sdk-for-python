@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -78,19 +79,21 @@ def search_items(client, collection_id):
                 {"property": "geometry"},
                 {
                     "type": "Polygon",
-                    "coordinates": [[
-                        [-84.46416308610219, 33.6033686729869],
-                        [-84.38815071170247, 33.6033686729869],
-                        [-84.38815071170247, 33.6713179813099],
-                        [-84.46416308610219, 33.6713179813099],
-                        [-84.46416308610219, 33.6033686729869]
-                    ]]
-                }
-            ]
+                    "coordinates": [
+                        [
+                            [-84.46416308610219, 33.6033686729869],
+                            [-84.38815071170247, 33.6033686729869],
+                            [-84.38815071170247, 33.6713179813099],
+                            [-84.46416308610219, 33.6713179813099],
+                            [-84.46416308610219, 33.6033686729869],
+                        ]
+                    ],
+                },
+            ],
         },
         date_time="2021-01-01T00:00:00Z/2022-12-31T00:00:00Z",
         sort_by=[StacSortExtension(field="datetime", direction=StacSearchSortingDirection.DESC)],
-        limit=50
+        limit=50,
     )
 
     # Create Search
@@ -98,106 +101,105 @@ def search_items(client, collection_id):
     logging.info(f"Search returned {len(search_post_response.features)} items")
     logging.info(json.dumps(search_post_response.as_dict()))
 
+
 def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
     """Create a sample STAC item."""
-    return StacItem({
-        "stac_version": "1.0.0",
-        "type": "Feature",
-        "id": item_id,
-        "collection": collection_id,
-        "bbox": [
-            -84.44157,
-            33.621853,
-            -84.370894,
-            33.690654
-        ],
-        "geometry": {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [-84.372943, 33.621853],
-                    [-84.370894, 33.689211],
-                    [-84.439575, 33.690654],
-                    [-84.44157, 33.623293],
-                    [-84.372943, 33.621853]
-                ]
-            ]
-        },
-        "properties": {
-            "gsd": 0.6,
-            "datetime": "2021-11-14T16:00:00Z",
-            "naip:year": "2021",
-            "proj:bbox": [737334.0, 3723324.0, 743706.0, 3730800.0],
-            "proj:epsg": 26916,
-            "providers": [
+    return StacItem(
+        {
+            "stac_version": "1.0.0",
+            "type": "Feature",
+            "id": item_id,
+            "collection": collection_id,
+            "bbox": [-84.44157, 33.621853, -84.370894, 33.690654],
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [-84.372943, 33.621853],
+                        [-84.370894, 33.689211],
+                        [-84.439575, 33.690654],
+                        [-84.44157, 33.623293],
+                        [-84.372943, 33.621853],
+                    ]
+                ],
+            },
+            "properties": {
+                "gsd": 0.6,
+                "datetime": "2021-11-14T16:00:00Z",
+                "naip:year": "2021",
+                "proj:bbox": [737334.0, 3723324.0, 743706.0, 3730800.0],
+                "proj:epsg": 26916,
+                "providers": [
+                    {
+                        "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
+                        "name": "USDA Farm Service Agency",
+                        "roles": ["producer", "licensor"],
+                    }
+                ],
+                "naip:state": "ga",
+                "proj:shape": [12460, 10620],
+                "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0],
+            },
+            "links": [
                 {
-                    "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/",
-                    "name": "USDA Farm Service Agency",
-                    "roles": ["producer", "licensor"]
-                }
+                    "rel": "collection",
+                    "type": "application/json",
+                    "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip",
+                },
+                {
+                    "rel": "root",
+                    "href": "./catalog.json",
+                    "type": "application/json",
+                    "title": "NAIP: National Agriculture Imagery Program",
+                },
+                {
+                    "rel": "parent",
+                    "href": "./catalog.json",
+                    "type": "application/json",
+                    "title": "NAIP: National Agriculture Imagery Program",
+                },
             ],
-            "naip:state": "ga",
-            "proj:shape": [12460, 10620],
-            "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0]
-        },
-        "links": [
-            {
-                "rel": "collection",
-                "type": "application/json",
-                "href": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/naip"
+            "assets": {
+                "image": {
+                    "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif",
+                    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                    "roles": ["data"],
+                    "title": "RGBIR COG tile",
+                    "eo:bands": [
+                        {"name": "Red", "common_name": "red"},
+                        {"name": "Green", "common_name": "green"},
+                        {"name": "Blue", "common_name": "blue"},
+                        {"name": "NIR", "common_name": "nir", "description": "near-infrared"},
+                    ],
+                },
+                "thumbnail": {
+                    "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.200.jpg",
+                    "type": "image/jpeg",
+                    "roles": ["thumbnail"],
+                    "title": "Thumbnail",
+                },
+                "tilejson": {
+                    "title": "TileJSON with default rendering",
+                    "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/tilejson.json?collection=naip&item=ga_m_3308421_se_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
+                    "type": "application/json",
+                    "roles": ["tiles"],
+                },
+                "rendered_preview": {
+                    "title": "Rendered preview",
+                    "rel": "preview",
+                    "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/preview.png?collection=naip&item=ga_m_3308421_se_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
+                    "roles": ["overview"],
+                    "type": "image/png",
+                },
             },
-            {
-                "rel": "root",
-                "href": "./catalog.json",
-                "type": "application/json",
-                "title": "NAIP: National Agriculture Imagery Program"
-            },
-            {
-                "rel": "parent",
-                "href": "./catalog.json",
-                "type": "application/json",
-                "title": "NAIP: National Agriculture Imagery Program"
-            }
-        ],
-        "assets": {
-            "image": {
-                "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif",
-                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-                "roles": ["data"],
-                "title": "RGBIR COG tile",
-                "eo:bands": [
-                    {"name": "Red", "common_name": "red"},
-                    {"name": "Green", "common_name": "green"},
-                    {"name": "Blue", "common_name": "blue"},
-                    {"name": "NIR", "common_name": "nir", "description": "near-infrared"}
-                ]
-            },
-            "thumbnail": {
-                "href": "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.200.jpg",
-                "type": "image/jpeg",
-                "roles": ["thumbnail"],
-                "title": "Thumbnail"
-            },
-            "tilejson": {
-                "title": "TileJSON with default rendering",
-                "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/tilejson.json?collection=naip&item=ga_m_3308421_se_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
-                "type": "application/json",
-                "roles": ["tiles"]
-            },
-            "rendered_preview": {
-                "title": "Rendered preview",
-                "rel": "preview",
-                "href": "https://planetarycomputer.microsoft.com/api/data/v1/item/preview.png?collection=naip&item=ga_m_3308421_se_16_060_20211114&assets=image&asset_bidx=image%7C1%2C2%2C3&format=png",
-                "roles": ["overview"],
-                "type": "image/png"
-            }
-        },
-        "stac_extensions": [
-            "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
-            "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
-        ]
-    })
-    
+            "stac_extensions": [
+                "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+                "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+            ],
+        }
+    )
+
+
 def create_stac_item(client, collection_id, item_id):
     """Create a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
@@ -217,7 +219,9 @@ def create_stac_item(client, collection_id, item_id):
     stac_item.collection = collection_id
 
     try:
-        stac_item_create_response = client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
+        stac_item_create_response = client.stac.begin_create_item(
+            collection_id=collection_id, body=stac_item, polling=True
+        )
         stac_item_create_response.result()
         print(f"Created item {item_id}")
     except HttpResponseError as e:
@@ -240,7 +244,7 @@ def update_stac_item(client, collection_id, item_id):
 
 def create_or_replace_stac_item(client, collection_id, item_id):
     """Create or replace a STAC item (idempotent operation).
-    
+
     This demonstrates using begin_create_or_replace_item which is idempotent:
     - First ensures item exists by creating it with begin_create_item
     - Then demonstrates replace using begin_create_or_replace_item
@@ -248,11 +252,9 @@ def create_or_replace_stac_item(client, collection_id, item_id):
     """
     # First, create the item using begin_create_item
     stac_item = get_sample_stac_item(collection_id, item_id)
-    
+
     try:
-        create_poller = client.stac.begin_create_item(
-            collection_id=collection_id, body=stac_item, polling=True
-        )
+        create_poller = client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
         create_poller.result()
         logging.info(f"Created item {item_id}")
     except HttpResponseError as e:
@@ -260,24 +262,24 @@ def create_or_replace_stac_item(client, collection_id, item_id):
             logging.info(f"Item {item_id} already exists, continuing...")
         else:
             raise
-    
+
     # Verify creation
     created_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
     logging.info(f"Verified item {created_item.id}")
-    
+
     # Wait for item to be fully available before replacing
     time.sleep(2)
-    
+
     # Now demonstrate create_or_replace (replace since item exists)
     stac_item.properties["platform"] = "Imagery Updated"
     stac_item.properties["processing_level"] = "L2"
-    
+
     replace_poller = client.stac.begin_create_or_replace_item(
         collection_id=collection_id, item_id=item_id, body=stac_item, polling=True
     )
     replace_poller.result()
     logging.info(f"Replaced item {item_id} using create_or_replace")
-    
+
     # Verify replacement
     replaced_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
     logging.info(f"Verified replaced item, platform: {replaced_item.properties.get('platform', 'N/A')}")
@@ -285,7 +287,7 @@ def create_or_replace_stac_item(client, collection_id, item_id):
 
 def delete_stac_item(client, collection_id, item_id):
     """Delete a STAC item.
-    
+
     This demonstrates using begin_delete_item to remove an item from a collection.
     The operation is asynchronous and returns a poller that can be used to track completion.
     """
@@ -293,19 +295,15 @@ def delete_stac_item(client, collection_id, item_id):
         # Check if item exists before attempting deletion
         existing_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
         logging.info(f"Found item {existing_item.id} to delete")
-        
+
         # Delete the item using begin_delete_item
-        delete_poller = client.stac.begin_delete_item(
-            collection_id=collection_id,
-            item_id=item_id,
-            polling=True
-        )
+        delete_poller = client.stac.begin_delete_item(collection_id=collection_id, item_id=item_id, polling=True)
         delete_poller.result()
         logging.info(f"Successfully deleted item {item_id}")
-        
+
         # Wait a moment for deletion to complete
         time.sleep(2)
-        
+
         # Verify deletion by attempting to retrieve the item
         try:
             client.stac.get_item(collection_id=collection_id, item_id=item_id)
@@ -315,7 +313,7 @@ def delete_stac_item(client, collection_id, item_id):
                 logging.info(f"Verified item {item_id} was successfully deleted")
             else:
                 raise
-                
+
     except HttpResponseError as e:
         if "not found" in str(e).lower() or e.status_code == 404:
             logging.info(f"Item {item_id} does not exist, nothing to delete")

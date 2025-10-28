@@ -52,11 +52,7 @@ def list_tile_matrices(client):
 
 def get_asset_statistics(client, collection_id, item_id):
     """Get asset statistics for an item."""
-    result = client.tiler.get_asset_statistics(
-        collection_id=collection_id,
-        item_id=item_id,
-        assets=["image"]
-    )
+    result = client.tiler.get_asset_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
@@ -68,17 +64,13 @@ def list_available_assets(client, collection_id, item_id):
 
 def get_assets_info(client, collection_id, item_id):
     """Get basic info for dataset's assets.
-    
+
     Returns dataset's basic information including data types, bounds, and other metadata
     for the specified assets. If no assets are specified, returns info for all assets.
     """
-    
+
     # Get info for specific assets
-    result_specific = client.tiler.get_assets_info(
-        collection_id=collection_id,
-        item_id=item_id,
-        assets=["image"]
-    )
+    result_specific = client.tiler.get_assets_info(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info("Assets info (image asset only):")
     logging.info(f"  Dataset: {result_specific}")
 
@@ -121,21 +113,14 @@ def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson):
 def get_geo_json_statistics(client, collection_id, item_id, geojson):
     """Get statistics for a GeoJSON area."""
     result = client.tiler.get_geo_json_statistics(
-        collection_id=collection_id,
-        item_id=item_id,
-        body=geojson,
-        assets=["image"]
+        collection_id=collection_id, item_id=item_id, body=geojson, assets=["image"]
     )
     logging.info(result)
 
 
 def get_info_geo_json(client, collection_id, item_id):
     """Get info for GeoJSON."""
-    result = client.tiler.get_info_geo_json(
-        collection_id=collection_id,
-        item_id=item_id,
-        assets=["image"]
-    )
+    result = client.tiler.get_info_geo_json(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
@@ -218,11 +203,7 @@ def get_preview_with_format(client, collection_id, item_id):
 
 def list_statistics(client, collection_id, item_id):
     """List statistics for an item."""
-    result = client.tiler.list_statistics(
-        collection_id=collection_id,
-        item_id=item_id,
-        assets=["image"]
-    )
+    result = client.tiler.list_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
@@ -296,7 +277,7 @@ def main():
     geometry = Polygon(
         coordinates=[
             [
-                [-84.3906, 33.6714],  # bottom-left 
+                [-84.3906, 33.6714],  # bottom-left
                 [-84.3814, 33.6714],  # bottom-right
                 [-84.3814, 33.6806],  # top-right
                 [-84.3906, 33.6806],  # top-left
