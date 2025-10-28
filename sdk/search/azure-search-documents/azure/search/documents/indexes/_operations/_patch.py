@@ -417,8 +417,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: list[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_synonym_maps(**kwargs)
-        assert result.synonym_maps is not None  # Hint for mypy
+        result = self.get_synonym_maps(**kwargs)
         return [x.name for x in result]
 
     @distributed_trace
