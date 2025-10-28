@@ -126,8 +126,8 @@ class ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         if "response" not in eval_input:
             raise EvaluationException(
-                message="response, is a required inputs to the Tool Success evaluator.",
-                internal_message="response, is a required inputs to the Tool Success evaluator.",
+                message="response is a required input to the Tool Success evaluator.",
+                internal_message="response is a required input to the Tool Success evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_SUCCESS_EVALUATOR,
