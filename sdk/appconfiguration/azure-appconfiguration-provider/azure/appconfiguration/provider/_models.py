@@ -43,21 +43,44 @@ class SettingSelector:
     """
     Selects a set of configuration settings from Azure App Configuration.
 
-    :keyword key_filter:A filter to select configuration settings and feature flags based on their keys.
+    :keyword key_filter: A filter to select configuration settings and feature flags based on their keys.
+     Cannot be used with snapshot_name.
     :type key_filter: str
     :keyword label_filter: A filter to select configuration settings and feature flags based on their labels. Default
-    is value is \0 i.e. (No Label) as seen in the portal.
+     is value is \0 i.e. (No Label) as seen in the portal. Cannot be used with snapshot_name.
     :type label_filter: Optional[str]
     :keyword tag_filters: A filter to select configuration settings and feature flags based on their tags. This is a
-    list of strings that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,)
-    must be escaped with backslash if they are part of the value. Tag filters must follow the format
-    "tagName=tagValue", for empty values use "tagName=" and for null values use "tagName=\\0".
+     list of strings that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,)
+     must be escaped with backslash if they are part of the value. Tag filters must follow the format
+     "tagName=tagValue", for empty values use "tagName=" and for null values use "tagName=\\0".
+     Cannot be used with snapshot_name.
     :type tag_filters: Optional[List[str]]
+    :keyword snapshot_name: The name of the snapshot to load configuration settings from. When specified,
+     all configuration settings from the snapshot will be loaded. Cannot be used with key_filter, label_filter,
+     or tag_filters.
+    :type snapshot_name: Optional[str]
     """
 
     def __init__(
-        self, *, key_filter: str, label_filter: Optional[str] = NULL_CHAR, tag_filters: Optional[List[str]] = None
+        self, 
+        *, 
+        key_filter: Optional[str] = None, 
+        label_filter: Optional[str] = NULL_CHAR, 
+        tag_filters: Optional[List[str]] = None, 
+        snapshot_name: Optional[str] = None
     ):
+        if snapshot_name is not None:
+            # When using snapshots, no other filtering parameters should be specified
+            if key_filter is not None:
+                raise ValueError("Cannot specify both snapshot_name and key_filter. When using snapshots, all other filtering parameters are ignored.")
+            if label_filter != NULL_CHAR:
+                raise ValueError("Cannot specify both snapshot_name and label_filter. When using snapshots, all other filtering parameters are ignored.")
+            if tag_filters is not None:
+                raise ValueError("Cannot specify both snapshot_name and tag_filters. When using snapshots, all other filtering parameters are ignored.")
+        
+        if snapshot_name is None and key_filter is None:
+            raise ValueError("Either key_filter or snapshot_name must be specified.")
+            
         if tag_filters is not None:
             if not isinstance(tag_filters, list):
                 raise TypeError("tag_filters must be a list of strings.")
@@ -70,6 +93,7 @@ class SettingSelector:
         self.key_filter = key_filter
         self.label_filter = label_filter
         self.tag_filters = tag_filters
+        self.snapshot_name = snapshot_name
 
 
 class WatchKey(NamedTuple):

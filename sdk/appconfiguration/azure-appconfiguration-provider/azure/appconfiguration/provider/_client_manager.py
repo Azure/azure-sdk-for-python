@@ -136,9 +136,16 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
         configuration_settings = []
         for select in selects:
-            configurations = self._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
-            )
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                configurations = self._client.list_configuration_settings(
+                    snapshot_name=select.snapshot_name, **kwargs
+                )
+            else:
+                # Use traditional filtering when not loading from a snapshot
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
+                )
             for config in configurations:
                 if not isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
