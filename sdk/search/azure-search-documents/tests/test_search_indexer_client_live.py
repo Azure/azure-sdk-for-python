@@ -28,18 +28,28 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
     def test_search_indexers(self, endpoint, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
         container_name = kwargs.get("search_storage_container_name")
-        client = SearchIndexerClient(endpoint, get_credential(), retry_backoff_factor=60)
-        index_client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
+        client = SearchIndexerClient(
+            endpoint, get_credential(), retry_backoff_factor=60
+        )
+        index_client = SearchIndexClient(
+            endpoint, get_credential(), retry_backoff_factor=60
+        )
         self._test_create_indexer(client, index_client, storage_cs, container_name)
         self._test_delete_indexer(client, index_client, storage_cs, container_name)
         self._test_get_indexer(client, index_client, storage_cs, container_name)
         self._test_list_indexer(client, index_client, storage_cs, container_name)
-        self._test_create_or_update_indexer(client, index_client, storage_cs, container_name)
+        self._test_create_or_update_indexer(
+            client, index_client, storage_cs, container_name
+        )
         self._test_reset_indexer(client, index_client, storage_cs, container_name)
         self._test_run_indexer(client, index_client, storage_cs, container_name)
         self._test_get_indexer_status(client, index_client, storage_cs, container_name)
-        self._test_create_or_update_indexer_if_unchanged(client, index_client, storage_cs, container_name)
-        self._test_delete_indexer_if_unchanged(client, index_client, storage_cs, container_name)
+        self._test_create_or_update_indexer_if_unchanged(
+            client, index_client, storage_cs, container_name
+        )
+        self._test_delete_indexer_if_unchanged(
+            client, index_client, storage_cs, container_name
+        )
 
     def _prepare_indexer(self, client, index_client, storage_cs, name, container_name):
         data_source_connection = SearchIndexerDataSourceConnection(
@@ -50,14 +60,20 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
         )
         ds = client.create_data_source_connection(data_source_connection)
 
-        fields = [{"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False}]
+        fields = [
+            {"name": "hotelId", "type": "Edm.String", "key": True, "searchable": False}
+        ]
         index = SearchIndex(name=f"{name}-hotels", fields=fields)
         ind = index_client.create_index(index)
-        return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
+        return SearchIndexer(
+            name=name, data_source_name=ds.name, target_index_name=ind.name
+        )
 
     def _test_create_indexer(self, client, index_client, storage_cs, container_name):
         name = "create"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         result = client.create_indexer(indexer)
         assert result.name == name
         assert result.target_index_name == f"{name}-hotels"
@@ -65,7 +81,9 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
 
     def _test_delete_indexer(self, client, index_client, storage_cs, container_name):
         name = "delete"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         client.create_indexer(indexer)
         expected = len(client.get_indexers()) - 1
         client.delete_indexer(name)
@@ -73,7 +91,9 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
 
     def _test_get_indexer(self, client, index_client, storage_cs, container_name):
         name = "get"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         client.create_indexer(indexer)
         result = client.get_indexer(name)
         assert result.name == name
@@ -81,17 +101,27 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
     def _test_list_indexer(self, client, index_client, storage_cs, container_name):
         name1 = "list1"
         name2 = "list2"
-        indexer1 = self._prepare_indexer(client, index_client, storage_cs, name1, container_name)
-        indexer2 = self._prepare_indexer(client, index_client, storage_cs, name2, container_name)
+        indexer1 = self._prepare_indexer(
+            client, index_client, storage_cs, name1, container_name
+        )
+        indexer2 = self._prepare_indexer(
+            client, index_client, storage_cs, name2, container_name
+        )
         client.create_indexer(indexer1)
         client.create_indexer(indexer2)
         result = client.get_indexers()
         assert isinstance(result, list)
-        assert set(x.name for x in result).intersection([name1, name2]) == set([name1, name2])
+        assert set(x.name for x in result).intersection([name1, name2]) == set(
+            [name1, name2]
+        )
 
-    def _test_create_or_update_indexer(self, client, index_client, storage_cs, container_name):
+    def _test_create_or_update_indexer(
+        self, client, index_client, storage_cs, container_name
+    ):
         name = "cou"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         client.create_indexer(indexer)
         expected = len(client.get_indexers())
         if self.is_live:
@@ -105,7 +135,9 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
 
     def _test_reset_indexer(self, client, index_client, storage_cs, container_name):
         name = "reset"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         client.create_indexer(indexer)
         if self.is_live:
             time.sleep(10)
@@ -117,21 +149,31 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
 
     def _test_run_indexer(self, client, index_client, storage_cs, container_name):
         name = "run"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         client.create_indexer(indexer)
         client.run_indexer(name)
         assert (client.get_indexer_status(name)).status == "running"
 
-    def _test_get_indexer_status(self, client, index_client, storage_cs, container_name):
+    def _test_get_indexer_status(
+        self, client, index_client, storage_cs, container_name
+    ):
         name = "get-status"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         client.create_indexer(indexer)
         status = client.get_indexer_status(name)
         assert status.status is not None
 
-    def _test_create_or_update_indexer_if_unchanged(self, client, index_client, storage_cs, container_name):
+    def _test_create_or_update_indexer_if_unchanged(
+        self, client, index_client, storage_cs, container_name
+    ):
         name = "couunch"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         created = client.create_indexer(indexer)
         etag = created.e_tag
         if self.is_live:
@@ -141,11 +183,17 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
 
         indexer.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
+            client.create_or_update_indexer(
+                indexer, match_condition=MatchConditions.IfNotModified
+            )
 
-    def _test_delete_indexer_if_unchanged(self, client, index_client, storage_cs, container_name):
+    def _test_delete_indexer_if_unchanged(
+        self, client, index_client, storage_cs, container_name
+    ):
         name = "delunch"
-        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        indexer = self._prepare_indexer(
+            client, index_client, storage_cs, name, container_name
+        )
         result = client.create_indexer(indexer)
         etag = result.e_tag
         if self.is_live:
@@ -155,4 +203,6 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
 
         indexer.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.delete_indexer(indexer, match_condition=MatchConditions.IfNotModified)
+            client.delete_indexer(
+                indexer, match_condition=MatchConditions.IfNotModified
+            )
