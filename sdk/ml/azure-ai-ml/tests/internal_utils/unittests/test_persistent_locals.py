@@ -63,6 +63,9 @@ def mock_function_multi_return_expected(__self, mock_arg):
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
+@pytest.mark.skipif(
+    condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+)
 class TestPersistentLocalsProfiler:
     @classmethod
     def get_persistent_locals_builder(cls) -> _func_utils.PersistentLocalsFunctionBuilder:

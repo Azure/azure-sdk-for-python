@@ -1209,6 +1209,8 @@
         "ikey",
         "msecs",
         "mycontainer",
+        "pclp",
+        "pcsp",
         "semconv",
         "updown",
         "uvicorn"
@@ -1674,7 +1676,26 @@
         "getopenidmetadata",
         "getopenidmetadataasync",
         "aikcert",
-        "shareduks"
+        "shareduks",
+        "PKIX",
+        "tcbbaselines",
+        "Iiwg",
+        "Ijog",
+        "Ghvc",
+        "MCIs",
+        "Mdxl",
+        "Dxxf",
+        "PYSN",
+        "Aiandr",
+        "Ijoic",
+        "Jjcn",
+        "QLTI",
+        "Hhnc",
+        "Mkxzellr",
+        "Sjhual",
+        "Inki",
+        "NGZZN",
+        "Igog",
       ]
     },
     {
@@ -1869,6 +1890,14 @@
         "moduleid",
         "onvif",
         "Onvif"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
       ]
     },
     {

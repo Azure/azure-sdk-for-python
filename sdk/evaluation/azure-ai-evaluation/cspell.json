@@ -25,7 +25,8 @@
         "Fallafel",
         "isna",
         "dtype",
-        "duckdb"
+        "duckdb",
+        "semconv"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",

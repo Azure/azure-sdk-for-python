@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/preview/2023-06-30-preview/examples/IotHub_ManualFailover.json
+# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/IoTHub/preview/2025-08-01-preview/examples/IotHub_ManualFailover.json
 if __name__ == "__main__":
     main()

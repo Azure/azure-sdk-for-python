@@ -10,7 +10,11 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
+from ..._common.utils import (
+    reformat_conversation_history,
+    reformat_agent_response,
+    reformat_tool_definitions,
+)
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -40,6 +44,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
             :start-after: [START task_adherence_evaluator]
             :end-before: [END task_adherence_evaluator]
@@ -72,12 +77,14 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        self.threshold = threshold
+        self.threshold = threshold  # to be removed in favor of _threshold
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            threshold=threshold,
             credential=credential,
+            _higher_is_better=True,
             **kwargs,
         )
 
@@ -153,19 +160,38 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
         if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
             eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = prompty_output_dict["llm_output"]
+
+        score = math.nan
         if isinstance(llm_output, dict):
             score = float(llm_output.get("score", math.nan))
-            score_result = "pass" if score >= self.threshold else "fail"
+            score_result = "pass" if score >= self._threshold else "fail"
             reason = llm_output.get("explanation", "")
             return {
                 f"{self._result_key}": score,
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
                 # Uncomment the following line in the next iteration after UI contracts are validated.
                 # f"{self._result_key}_additional_details": llm_output
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-        return {self._result_key: math.nan}
+
+        binary_result = self._get_binary_result(score)
+        return {
+            self._result_key: float(score),
+            f"gpt_{self._result_key}": float(score),
+            f"{self._result_key}_result": binary_result,
+            f"{self._result_key}_threshold": self._threshold,
+        }

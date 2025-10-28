@@ -149,7 +149,9 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
         if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
             eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
 
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = prompty_output_dict.get("llm_output", {})
+
         if isinstance(llm_output, dict):
             success = llm_output.get("success", False)
             if isinstance(success, str):
@@ -162,6 +164,13 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
                 f"{self._result_key}_result": success_result,
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_details": llm_output.get("details", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning False for the success.")
