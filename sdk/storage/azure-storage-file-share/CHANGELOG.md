@@ -1,5 +1,10 @@
 # Release History
 
+## 12.23.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `ShareClient`, `ShareDirectoryClient`, and `ShareFileClient`.
+
 ## 12.23.0 (2025-10-15)
 
 ### Features Added
