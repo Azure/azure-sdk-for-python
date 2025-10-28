@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import PlanetaryComputerClientConfiguration
-from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 
@@ -43,14 +43,13 @@ JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 _Unset: Any = object()
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_ingestion_management_cancel_operation_request(  # pylint: disable=name-too-long
-    operation_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_cancel_operation_request(operation_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
@@ -68,9 +67,7 @@ def build_ingestion_management_cancel_operation_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_ingestion_management_cancel_all_operations_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_ingestion_cancel_all_operations_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
@@ -83,9 +80,7 @@ def build_ingestion_management_cancel_all_operations_request(  # pylint: disable
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_ingestion_management_get_operation_request(  # pylint: disable=name-too-long
-    operation_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_get_operation_request(operation_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -109,13 +104,13 @@ def build_ingestion_management_get_operation_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_list_operations_request(  # pylint: disable=name-too-long
+def build_ingestion_list_operations_request(
     *,
     top: Optional[int] = None,
     skip: Optional[int] = None,
     collection_id: Optional[str] = None,
     status: Optional[Union[str, _models.OperationStatus]] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -143,9 +138,7 @@ def build_ingestion_management_list_operations_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_create_run_request(  # pylint: disable=name-too-long
-    collection_id: str, ingestion_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_create_run_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -170,9 +163,7 @@ def build_ingestion_management_create_run_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_get_run_request(  # pylint: disable=name-too-long
-    collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_get_run_request(collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -198,7 +189,7 @@ def build_ingestion_management_get_run_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_list_runs_request(  # pylint: disable=name-too-long
+def build_ingestion_list_runs_request(
     collection_id: str, ingestion_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -229,9 +220,7 @@ def build_ingestion_management_list_runs_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_create_request(  # pylint: disable=name-too-long
-    collection_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_create_request(collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -258,9 +247,7 @@ def build_ingestion_management_create_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_delete_request(  # pylint: disable=name-too-long
-    collection_id: str, ingestion_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_delete_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -285,7 +272,7 @@ def build_ingestion_management_delete_request(  # pylint: disable=name-too-long
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_get_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_get_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -310,7 +297,7 @@ def build_ingestion_management_get_request(collection_id: str, ingestion_id: str
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_lists_request(
+def build_ingestion_list_request(
     collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -340,9 +327,7 @@ def build_ingestion_management_lists_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_update_request(  # pylint: disable=name-too-long
-    collection_id: str, ingestion_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_update_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -370,7 +355,7 @@ def build_ingestion_management_update_request(  # pylint: disable=name-too-long
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_create_source_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_ingestion_create_source_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -392,9 +377,7 @@ def build_ingestion_management_create_source_request(**kwargs: Any) -> HttpReque
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_create_or_replace_source_request(  # pylint: disable=name-too-long
-    id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_replace_source_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -421,9 +404,7 @@ def build_ingestion_management_create_or_replace_source_request(  # pylint: disa
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_delete_source_request(  # pylint: disable=name-too-long
-    id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_delete_source_request(id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
@@ -441,9 +422,7 @@ def build_ingestion_management_delete_source_request(  # pylint: disable=name-to
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_ingestion_management_get_source_request(  # pylint: disable=name-too-long
-    id: str, **kwargs: Any
-) -> HttpRequest:
+def build_ingestion_get_source_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -467,7 +446,7 @@ def build_ingestion_management_get_source_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_list_sources_request(  # pylint: disable=name-too-long
+def build_ingestion_list_sources_request(
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -492,9 +471,7 @@ def build_ingestion_management_list_sources_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_management_list_managed_identities_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_ingestion_list_managed_identities_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -539,7 +516,7 @@ def build_stac_create_collection_asset_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_create_or_replace_collection_asset_request(  # pylint: disable=name-too-long
+def build_stac_replace_collection_asset_request(  # pylint: disable=name-too-long
     collection_id: str, asset_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -569,9 +546,12 @@ def build_stac_create_or_replace_collection_asset_request(  # pylint: disable=na
 def build_stac_delete_collection_asset_request(  # pylint: disable=name-too-long
     collection_id: str, asset_id: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/stac/collections/{collectionId}/assets/{assetId}"
     path_format_arguments = {
@@ -584,7 +564,10 @@ def build_stac_delete_collection_asset_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_stac_get_collection_configuration_request(  # pylint: disable=name-too-long
@@ -640,9 +623,7 @@ def build_stac_add_mosaic_request(collection_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_create_or_replace_mosaic_request(  # pylint: disable=name-too-long
-    collection_id: str, mosaic_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_stac_replace_mosaic_request(collection_id: str, mosaic_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -818,7 +799,7 @@ def build_stac_get_collection_request(
     *,
     sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
     duration_in_minutes: Optional[int] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -851,7 +832,7 @@ def build_stac_list_collections_request(
     *,
     sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
     duration_in_minutes: Optional[int] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -952,9 +933,7 @@ def build_stac_create_render_option_request(collection_id: str, **kwargs: Any) -
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_create_or_replace_render_option_request(  # pylint: disable=name-too-long
-    collection_id: str, render_option_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_stac_replace_render_option_request(collection_id: str, render_option_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1147,6 +1126,25 @@ def build_stac_get_conformance_class_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_stac_get_landing_page_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/stac"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_stac_create_item_request(collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1254,13 +1252,13 @@ def build_stac_get_item_request(collection_id: str, item_id: str, **kwargs: Any)
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_list_items_request(
+def build_stac_get_item_collection_request(
     collection_id: str,
     *,
     limit: Optional[int] = None,
-    bounding_box: Optional[list[str]] = None,
+    bounding_box: Optional[List[str]] = None,
     datetime: Optional[str] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1319,25 +1317,6 @@ def build_stac_update_item_request(collection_id: str, item_id: str, **kwargs: A
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_get_stac_landing_page_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/stac"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_stac_create_queryables_request(collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1365,9 +1344,7 @@ def build_stac_create_queryables_request(collection_id: str, **kwargs: Any) -> H
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_create_or_replace_queryable_request(  # pylint: disable=name-too-long
-    collection_id: str, queryable_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_stac_replace_queryable_request(collection_id: str, queryable_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1433,7 +1410,7 @@ def build_stac_list_queryables_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_list_collection_queryables_request(  # pylint: disable=name-too-long
+def build_stac_get_collection_queryables_request(  # pylint: disable=name-too-long
     collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1530,20 +1507,20 @@ def build_tiler_get_asset_statistics_request(
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    categories_pixels: Optional[list[str]] = None,
-    percentiles: Optional[list[int]] = None,
+    categories_pixels: Optional[List[str]] = None,
+    percentiles: Optional[List[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1567,7 +1544,7 @@ def build_tiler_get_asset_statistics_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -1622,7 +1599,7 @@ def build_tiler_list_available_assets_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_list_bounds_request(collection_id: str, item_id: str, **kwargs: Any) -> HttpRequest:
+def build_tiler_get_bounds_request(collection_id: str, item_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1652,9 +1629,9 @@ def build_tiler_crop_geo_json_request(
     item_id: str,
     format: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1666,11 +1643,11 @@ def build_tiler_crop_geo_json_request(
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1696,7 +1673,7 @@ def build_tiler_crop_geo_json_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -1740,13 +1717,13 @@ def build_tiler_crop_geo_json_request(
 def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
-    width: float,
-    height: float,
+    width: int,
+    height: int,
     format: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1756,11 +1733,11 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
     coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1774,8 +1751,8 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "width": _SERIALIZER.url("width", width, "float"),
-        "height": _SERIALIZER.url("height", height, "float"),
+        "width": _SERIALIZER.url("width", width, "int"),
+        "height": _SERIALIZER.url("height", height, "int"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -1788,7 +1765,7 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -1829,9 +1806,9 @@ def build_tiler_get_geo_json_statistics_request(  # pylint: disable=name-too-lon
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1839,11 +1816,11 @@ def build_tiler_get_geo_json_statistics_request(  # pylint: disable=name-too-lon
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    categories_pixels: Optional[list[str]] = None,
-    percentiles: Optional[list[int]] = None,
+    categories_pixels: Optional[List[str]] = None,
+    percentiles: Optional[List[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1868,7 +1845,7 @@ def build_tiler_get_geo_json_statistics_request(  # pylint: disable=name-too-lon
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -1901,7 +1878,7 @@ def build_tiler_get_geo_json_statistics_request(  # pylint: disable=name-too-lon
 
 
 def build_tiler_get_info_geo_json_request(
-    collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
+    collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1929,8 +1906,8 @@ def build_tiler_get_info_geo_json_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_assets_info_request(
-    collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
+def build_tiler_get_item_asset_details_request(  # pylint: disable=name-too-long
+    collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1967,9 +1944,9 @@ def build_tiler_get_part_request(
     maxy: float,
     format: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1982,11 +1959,11 @@ def build_tiler_get_part_request(
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2015,7 +1992,7 @@ def build_tiler_get_part_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2063,13 +2040,13 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     miny: float,
     maxx: float,
     maxy: float,
-    width: float,
-    height: float,
+    width: int,
+    height: int,
     format: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2080,11 +2057,11 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2101,8 +2078,8 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
         "miny": _SERIALIZER.url("miny", miny, "float"),
         "maxx": _SERIALIZER.url("maxx", maxx, "float"),
         "maxy": _SERIALIZER.url("maxy", maxy, "float"),
-        "width": _SERIALIZER.url("width", width, "float"),
-        "height": _SERIALIZER.url("height", height, "float"),
+        "width": _SERIALIZER.url("width", width, "int"),
+        "height": _SERIALIZER.url("height", height, "int"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -2115,7 +2092,7 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2158,15 +2135,15 @@ def build_tiler_get_point_request(
     longitude: float,
     latitude: float,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
     coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2192,7 +2169,7 @@ def build_tiler_get_point_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2214,9 +2191,9 @@ def build_tiler_get_preview_request(
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2229,11 +2206,11 @@ def build_tiler_get_preview_request(
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2257,7 +2234,7 @@ def build_tiler_get_preview_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2303,9 +2280,9 @@ def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-lon
     item_id: str,
     format: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2317,11 +2294,11 @@ def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-lon
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2346,7 +2323,7 @@ def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-lon
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2441,20 +2418,20 @@ def build_tiler_list_statistics_request(
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    categories_pixels: Optional[list[str]] = None,
-    percentiles: Optional[list[int]] = None,
+    categories_pixels: Optional[List[str]] = None,
+    percentiles: Optional[List[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2478,7 +2455,7 @@ def build_tiler_list_statistics_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2511,9 +2488,9 @@ def build_tiler_get_tile_json_request(
     item_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2526,11 +2503,11 @@ def build_tiler_get_tile_json_request(
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2555,7 +2532,7 @@ def build_tiler_get_tile_json_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2605,9 +2582,9 @@ def build_tiler_get_tile_request(
     scale: float,
     format: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2616,13 +2593,13 @@ def build_tiler_get_tile_request(
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
     subdataset_name: Optional[str] = None,
-    subdataset_bands: Optional[list[str]] = None,
-    **kwargs: Any,
+    subdataset_bands: Optional[List[str]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2652,7 +2629,7 @@ def build_tiler_get_tile_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2694,9 +2671,9 @@ def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
     item_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2709,11 +2686,11 @@ def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2738,7 +2715,7 @@ def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -2845,7 +2822,7 @@ def build_tiler_get_legend_request(
     width: Optional[float] = None,
     trim_start: Optional[int] = None,
     trim_end: Optional[int] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2889,7 +2866,7 @@ def build_tiler_get_mosaics_assets_for_point_request(  # pylint: disable=name-to
     exit_when_full: Optional[bool] = None,
     skip_covered: Optional[bool] = None,
     coordinate_reference_system: Optional[str] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2941,7 +2918,7 @@ def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too
     time_limit: Optional[int] = None,
     exit_when_full: Optional[bool] = None,
     skip_covered: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3033,9 +3010,9 @@ def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3055,11 +3032,11 @@ def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
     collection: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3083,7 +3060,7 @@ def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -3146,9 +3123,9 @@ def build_tiler_get_mosaics_tile_request(
     scale: float,
     format: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3164,11 +3141,11 @@ def build_tiler_get_mosaics_tile_request(
     collection: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3197,7 +3174,7 @@ def build_tiler_get_mosaics_tile_request(
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -3248,9 +3225,9 @@ def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-t
     search_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[list[str]] = None,
+    assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
+    asset_band_indices: Optional[str] = None,
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3263,11 +3240,11 @@ def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-t
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
+    rescale: Optional[List[str]] = None,
     color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
     color_map: Optional[str] = None,
     return_mask: Optional[bool] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3291,7 +3268,7 @@ def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-t
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
     if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "str")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if no_data is not None:
@@ -3400,14 +3377,14 @@ def build_shared_access_signature_revoke_token_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-class IngestionManagementOperations:
+class IngestionOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
-        :attr:`ingestion_management` attribute.
+        :attr:`ingestion` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -3442,7 +3419,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_cancel_operation_request(
+        _request = build_ingestion_cancel_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3488,7 +3465,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_cancel_all_operations_request(
+        _request = build_ingestion_cancel_all_operations_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3535,7 +3512,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[_models.Operation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_get_operation_request(
+        _request = build_ingestion_get_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3580,7 +3557,7 @@ class IngestionManagementOperations:
         skip: Optional[int] = None,
         collection_id: Optional[str] = None,
         status: Optional[Union[str, _models.OperationStatus]] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> ItemPaged["_models.Operation"]:
         """Get operations of a geo-catalog collection.
 
@@ -3600,7 +3577,7 @@ class IngestionManagementOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Operation]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3613,7 +3590,7 @@ class IngestionManagementOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_management_list_operations_request(
+                _request = build_ingestion_list_operations_request(
                     top=top,
                     skip=skip,
                     collection_id=collection_id,
@@ -3653,7 +3630,7 @@ class IngestionManagementOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3700,7 +3677,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_create_run_request(
+        _request = build_ingestion_create_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -3768,7 +3745,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_get_run_request(
+        _request = build_ingestion_get_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             run_id=run_id,
@@ -3815,7 +3792,7 @@ class IngestionManagementOperations:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> ItemPaged["_models.IngestionRun"]:
         """Get the runs of an ingestion.
 
@@ -3834,7 +3811,7 @@ class IngestionManagementOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.IngestionRun]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.IngestionRun]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3847,7 +3824,7 @@ class IngestionManagementOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_management_list_runs_request(
+                _request = build_ingestion_list_runs_request(
                     collection_id=collection_id,
                     ingestion_id=ingestion_id,
                     top=top,
@@ -3887,7 +3864,7 @@ class IngestionManagementOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.IngestionRun], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.IngestionRun], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3913,74 +3890,74 @@ class IngestionManagementOperations:
     def create(
         self,
         collection_id: str,
-        definition: _models.Ingestion,
+        body: _models.IngestionDefinition,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.Ingestion:
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param definition: Definition of the ingestion. Required.
-        :type definition: ~azure.planetarycomputer.models.Ingestion
+        :param body: Definition of the ingestion. Required.
+        :type body: ~azure.planetarycomputer.models.IngestionDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create(
-        self, collection_id: str, definition: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Ingestion:
+        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param definition: Definition of the ingestion. Required.
-        :type definition: JSON
+        :param body: Definition of the ingestion. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create(
-        self, collection_id: str, definition: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Ingestion:
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param definition: Definition of the ingestion. Required.
-        :type definition: IO[bytes]
+        :param body: Definition of the ingestion. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create(
-        self, collection_id: str, definition: Union[_models.Ingestion, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Ingestion:
+        self, collection_id: str, body: Union[_models.IngestionDefinition, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param definition: Definition of the ingestion. Is one of the following types: Ingestion, JSON,
-         IO[bytes] Required.
-        :type definition: ~azure.planetarycomputer.models.Ingestion or JSON or IO[bytes]
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :param body: Definition of the ingestion. Is one of the following types: IngestionDefinition,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3995,16 +3972,16 @@ class IngestionManagementOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(definition, (IOBase, bytes)):
-            _content = definition
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_management_create_request(
+        _request = build_ingestion_create_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4039,7 +4016,7 @@ class IngestionManagementOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Ingestion, response.json())
+            deserialized = _deserialize(_models.IngestionDefinition, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4060,7 +4037,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_delete_request(
+        _request = build_ingestion_delete_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -4125,7 +4102,7 @@ class IngestionManagementOperations:
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -4156,15 +4133,15 @@ class IngestionManagementOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.Ingestion:
+    def get(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
         """Get the definition of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4178,9 +4155,9 @@ class IngestionManagementOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_get_request(
+        _request = build_ingestion_get_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -4211,7 +4188,7 @@ class IngestionManagementOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Ingestion, response.json())
+            deserialized = _deserialize(_models.IngestionDefinition, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4219,9 +4196,9 @@ class IngestionManagementOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def lists(
+    def list(
         self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.Ingestion"]:
+    ) -> ItemPaged["_models.IngestionDefinition"]:
         """Get ingestions of a catalog.
 
         :param collection_id: Catalog collection id. Required.
@@ -4230,14 +4207,14 @@ class IngestionManagementOperations:
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of Ingestion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.planetarycomputer.models.Ingestion]
+        :return: An iterator like instance of IngestionDefinition
+        :rtype: ~azure.core.paging.ItemPaged[~azure.planetarycomputer.models.IngestionDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Ingestion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.IngestionDefinition]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4250,7 +4227,7 @@ class IngestionManagementOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_management_lists_request(
+                _request = build_ingestion_list_request(
                     collection_id=collection_id,
                     top=top,
                     skip=skip,
@@ -4289,7 +4266,7 @@ class IngestionManagementOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.Ingestion], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.IngestionDefinition], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4316,24 +4293,24 @@ class IngestionManagementOperations:
         self,
         collection_id: str,
         ingestion_id: str,
-        definition: _models.Ingestion,
+        body: _models.IngestionDefinition,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
-    ) -> _models.Ingestion:
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
-        :param definition: Ingestion properties to update. Required.
-        :type definition: ~azure.planetarycomputer.models.Ingestion
+        :param body: Ingestion properties to update. Required.
+        :type body: ~azure.planetarycomputer.models.IngestionDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4342,24 +4319,24 @@ class IngestionManagementOperations:
         self,
         collection_id: str,
         ingestion_id: str,
-        definition: JSON,
+        body: JSON,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
-    ) -> _models.Ingestion:
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
-        :param definition: Ingestion properties to update. Required.
-        :type definition: JSON
+        :param body: Ingestion properties to update. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4368,24 +4345,24 @@ class IngestionManagementOperations:
         self,
         collection_id: str,
         ingestion_id: str,
-        definition: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
-    ) -> _models.Ingestion:
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
-        :param definition: Ingestion properties to update. Required.
-        :type definition: IO[bytes]
+        :param body: Ingestion properties to update. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4394,20 +4371,20 @@ class IngestionManagementOperations:
         self,
         collection_id: str,
         ingestion_id: str,
-        definition: Union[_models.Ingestion, JSON, IO[bytes]],
-        **kwargs: Any,
-    ) -> _models.Ingestion:
+        body: Union[_models.IngestionDefinition, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
-        :param definition: Ingestion properties to update. Is one of the following types: Ingestion,
-         JSON, IO[bytes] Required.
-        :type definition: ~azure.planetarycomputer.models.Ingestion or JSON or IO[bytes]
-        :return: Ingestion. The Ingestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Ingestion
+        :param body: Ingestion properties to update. Is one of the following types:
+         IngestionDefinition, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4422,16 +4399,16 @@ class IngestionManagementOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(definition, (IOBase, bytes)):
-            _content = definition
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_management_update_request(
+        _request = build_ingestion_update_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             content_type=content_type,
@@ -4464,7 +4441,7 @@ class IngestionManagementOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Ingestion, response.json())
+            deserialized = _deserialize(_models.IngestionDefinition, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4473,12 +4450,12 @@ class IngestionManagementOperations:
 
     @overload
     def create_source(
-        self, ingestion_source: _models.IngestionSource, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.IngestionSource, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
 
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource
+        :param body: Definition of the ingestion source. Required.
+        :type body: ~azure.planetarycomputer.models.IngestionSource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4489,12 +4466,12 @@ class IngestionManagementOperations:
 
     @overload
     def create_source(
-        self, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
 
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: JSON
+        :param body: Definition of the ingestion source. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4505,12 +4482,12 @@ class IngestionManagementOperations:
 
     @overload
     def create_source(
-        self, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
 
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: IO[bytes]
+        :param body: Definition of the ingestion source. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4521,13 +4498,13 @@ class IngestionManagementOperations:
 
     @distributed_trace
     def create_source(
-        self, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
 
-        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
+        :param body: Definition of the ingestion source. Is one of the following types:
          IngestionSource, JSON, IO[bytes] Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
         :return: IngestionSource. The IngestionSource is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.IngestionSource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4548,12 +4525,12 @@ class IngestionManagementOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(ingestion_source, (IOBase, bytes)):
-            _content = ingestion_source
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_management_create_source_request(
+        _request = build_ingestion_create_source_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4595,20 +4572,15 @@ class IngestionManagementOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create_or_replace_source(
-        self,
-        id: str,
-        ingestion_source: _models.IngestionSource,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+    def replace_source(
+        self, id: str, body: _models.IngestionSource, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
 
         :param id: Ingestion source id. Required.
         :type id: str
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource
+        :param body: Definition of the ingestion source. Required.
+        :type body: ~azure.planetarycomputer.models.IngestionSource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4618,15 +4590,15 @@ class IngestionManagementOperations:
         """
 
     @overload
-    def create_or_replace_source(
-        self, id: str, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
+    def replace_source(
+        self, id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
 
         :param id: Ingestion source id. Required.
         :type id: str
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: JSON
+        :param body: Definition of the ingestion source. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4636,15 +4608,15 @@ class IngestionManagementOperations:
         """
 
     @overload
-    def create_or_replace_source(
-        self, id: str, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    def replace_source(
+        self, id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
 
         :param id: Ingestion source id. Required.
         :type id: str
-        :param ingestion_source: Definition of the ingestion source. Required.
-        :type ingestion_source: IO[bytes]
+        :param body: Definition of the ingestion source. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4654,16 +4626,16 @@ class IngestionManagementOperations:
         """
 
     @distributed_trace
-    def create_or_replace_source(
-        self, id: str, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
+    def replace_source(
+        self, id: str, body: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
 
         :param id: Ingestion source id. Required.
         :type id: str
-        :param ingestion_source: Definition of the ingestion source. Is one of the following types:
+        :param body: Definition of the ingestion source. Is one of the following types:
          IngestionSource, JSON, IO[bytes] Required.
-        :type ingestion_source: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.IngestionSource or JSON or IO[bytes]
         :return: IngestionSource. The IngestionSource is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.IngestionSource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4684,12 +4656,12 @@ class IngestionManagementOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(ingestion_source, (IOBase, bytes)):
-            _content = ingestion_source
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_management_create_or_replace_source_request(
+        _request = build_ingestion_replace_source_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4709,7 +4681,7 @@ class IngestionManagementOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -4754,7 +4726,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_delete_source_request(
+        _request = build_ingestion_delete_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4802,7 +4774,7 @@ class IngestionManagementOperations:
 
         cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_management_get_source_request(
+        _request = build_ingestion_get_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4856,7 +4828,7 @@ class IngestionManagementOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.IngestionSourceSummary]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.IngestionSourceSummary]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4869,7 +4841,7 @@ class IngestionManagementOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_management_list_sources_request(
+                _request = build_ingestion_list_sources_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -4907,7 +4879,7 @@ class IngestionManagementOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.IngestionSourceSummary], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.IngestionSourceSummary], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4940,7 +4912,7 @@ class IngestionManagementOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.ManagedIdentityMetadata]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ManagedIdentityMetadata]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4953,7 +4925,7 @@ class IngestionManagementOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_management_list_managed_identities_request(
+                _request = build_ingestion_list_managed_identities_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4989,7 +4961,7 @@ class IngestionManagementOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.ManagedIdentityMetadata], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.ManagedIdentityMetadata], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5031,7 +5003,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_collection_asset(
-        self, collection_id: str, body: _models.FormContent, **kwargs: Any
+        self, collection_id: str, body: _models.StacAssetData, **kwargs: Any
     ) -> _models.StacCollection:
         """Create Collection Asset.
 
@@ -5041,7 +5013,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :param body: Multi-part form data. Required.
-        :type body: ~azure.planetarycomputer.models.FormContent
+        :type body: ~azure.planetarycomputer.models.StacAssetData
         :return: StacCollection. The StacCollection is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5065,7 +5037,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def create_collection_asset(
-        self, collection_id: str, body: Union[_models.FormContent, JSON], **kwargs: Any
+        self, collection_id: str, body: Union[_models.StacAssetData, JSON], **kwargs: Any
     ) -> _models.StacCollection:
         """Create Collection Asset.
 
@@ -5074,8 +5046,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :param body: Multi-part form data. Is either a FormContent type or a JSON type. Required.
-        :type body: ~azure.planetarycomputer.models.FormContent or JSON
+        :param body: Multi-part form data. Is either a StacAssetData type or a JSON type. Required.
+        :type body: ~azure.planetarycomputer.models.StacAssetData or JSON
         :return: StacCollection. The StacCollection is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5118,7 +5090,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -5138,8 +5110,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def create_or_replace_collection_asset(
-        self, collection_id: str, asset_id: str, body: _models.FormContent, **kwargs: Any
+    def replace_collection_asset(
+        self, collection_id: str, asset_id: str, body: _models.StacAssetData, **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
 
@@ -5150,14 +5122,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
         :param body: Multi-part form data. Required.
-        :type body: ~azure.planetarycomputer.models.FormContent
+        :type body: ~azure.planetarycomputer.models.StacAssetData
         :return: StacCollection. The StacCollection is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_or_replace_collection_asset(
+    def replace_collection_asset(
         self, collection_id: str, asset_id: str, body: JSON, **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
@@ -5176,8 +5148,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_or_replace_collection_asset(
-        self, collection_id: str, asset_id: str, body: Union[_models.FormContent, JSON], **kwargs: Any
+    def replace_collection_asset(
+        self, collection_id: str, asset_id: str, body: Union[_models.StacAssetData, JSON], **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
 
@@ -5187,8 +5159,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
-        :param body: Multi-part form data. Is either a FormContent type or a JSON type. Required.
-        :type body: ~azure.planetarycomputer.models.FormContent or JSON
+        :param body: Multi-part form data. Is either a StacAssetData type or a JSON type. Required.
+        :type body: ~azure.planetarycomputer.models.StacAssetData or JSON
         :return: StacCollection. The StacCollection is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5211,7 +5183,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _data_fields: list[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_stac_create_or_replace_collection_asset_request(
+        _request = build_stac_replace_collection_asset_request(
             collection_id=collection_id,
             asset_id=asset_id,
             api_version=self._config.api_version,
@@ -5232,7 +5204,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -5252,9 +5224,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_collection_asset(  # pylint: disable=inconsistent-return-statements
-        self, collection_id: str, asset_id: str, **kwargs: Any
-    ) -> None:
+    def delete_collection_asset(self, collection_id: str, asset_id: str, **kwargs: Any) -> _models.StacCollection:
         """Delete Collection Asset.
 
         Delete an asset from a given collection.
@@ -5263,8 +5233,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
-        :return: None
-        :rtype: None
+        :return: StacCollection. The StacCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5278,7 +5248,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
 
         _request = build_stac_delete_collection_asset_request(
             collection_id=collection_id,
@@ -5292,7 +5262,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -5300,11 +5270,23 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacCollection, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_collection_configuration(self, collection_id: str, **kwargs: Any) -> _models.UserCollectionSettings:
@@ -5486,7 +5468,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -5506,14 +5488,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def create_or_replace_mosaic(
+    def replace_mosaic(
         self,
         collection_id: str,
         mosaic_id: str,
         body: _models.StacMosaic,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
@@ -5534,7 +5516,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def create_or_replace_mosaic(
+    def replace_mosaic(
         self, collection_id: str, mosaic_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.StacMosaic:
         """Update Collection Mosaic.
@@ -5556,14 +5538,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def create_or_replace_mosaic(
+    def replace_mosaic(
         self,
         collection_id: str,
         mosaic_id: str,
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
@@ -5584,7 +5566,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_or_replace_mosaic(
+    def replace_mosaic(
         self, collection_id: str, mosaic_id: str, body: Union[_models.StacMosaic, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.StacMosaic:
         """Update Collection Mosaic.
@@ -5623,7 +5605,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_create_or_replace_mosaic_request(
+        _request = build_stac_replace_mosaic_request(
             collection_id=collection_id,
             mosaic_id=mosaic_id,
             content_type=content_type,
@@ -5644,7 +5626,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -5784,7 +5766,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_mosaics(self, collection_id: str, **kwargs: Any) -> list[_models.StacMosaic]:
+    def list_mosaics(self, collection_id: str, **kwargs: Any) -> List[_models.StacMosaic]:
         """Get Collection Mosaics.
 
         Get the mosaic definitions for a given collection.
@@ -5806,7 +5788,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.StacMosaic]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.StacMosaic]] = kwargs.pop("cls", None)
 
         _request = build_stac_list_mosaics_request(
             collection_id=collection_id,
@@ -5838,7 +5820,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[_models.StacMosaic], response.json())
+            deserialized = _deserialize(List[_models.StacMosaic], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6016,9 +5998,83 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _create_or_replace_collection_initial(
+    @overload
+    def create_or_replace_collection(
+        self, collection_id: str, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.StacCollection:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StacCollection. The StacCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_replace_collection(
+        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.StacCollection:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StacCollection. The StacCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_replace_collection(
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.StacCollection:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: StacCollection. The StacCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_replace_collection(
         self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.StacCollection:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
+        :return: StacCollection. The StacCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6031,7 +6087,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -6053,7 +6109,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -6061,146 +6117,23 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacCollection, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    def begin_create_or_replace_collection(
-        self, collection_id: str, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_replace_collection(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_or_replace_collection(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_or_replace_collection(
-        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> LROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_or_replace_collection_initial(
-                collection_id=collection_id,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _delete_collection_initial(self, collection_id: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6311,7 +6244,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         *,
         sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
         duration_in_minutes: Optional[int] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacCollection:
         """Get Collection.
 
@@ -6386,7 +6319,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         *,
         sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
         duration_in_minutes: Optional[int] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacCatalogCollections:
         """Get Collections.
 
@@ -6523,9 +6456,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
-
         Ideal partitioning schemes result in partitions of roughly 100k items each.
-
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -6550,9 +6481,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
-
         Ideal partitioning schemes result in partitions of roughly 100k items each.
-
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -6577,9 +6506,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
-
         Ideal partitioning schemes result in partitions of roughly 100k items each.
-
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -6604,9 +6531,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
-
         Ideal partitioning schemes result in partitions of roughly 100k items each.
-
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -6659,7 +6584,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -6784,7 +6709,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -6804,14 +6729,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def create_or_replace_render_option(
+    def replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
         body: _models.RenderOption,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -6832,14 +6757,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def create_or_replace_render_option(
+    def replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
         body: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -6860,14 +6785,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def create_or_replace_render_option(
+    def replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -6888,12 +6813,12 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_or_replace_render_option(
+    def replace_render_option(
         self,
         collection_id: str,
         render_option_id: str,
         body: Union[_models.RenderOption, JSON, IO[bytes]],
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -6931,7 +6856,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_create_or_replace_render_option_request(
+        _request = build_stac_replace_render_option_request(
             collection_id=collection_id,
             render_option_id=render_option_id,
             content_type=content_type,
@@ -6952,7 +6877,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -7092,7 +7017,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_render_options(self, collection_id: str, **kwargs: Any) -> list[_models.RenderOption]:
+    def list_render_options(self, collection_id: str, **kwargs: Any) -> List[_models.RenderOption]:
         """Get Collection Render Options.
 
         Get all render options for a given collection.
@@ -7114,7 +7039,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.RenderOption]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
 
         _request = build_stac_list_render_options_request(
             collection_id=collection_id,
@@ -7146,7 +7071,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[_models.RenderOption], response.json())
+            deserialized = _deserialize(List[_models.RenderOption], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7479,6 +7404,65 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
+    @distributed_trace
+    def get_landing_page(self, **kwargs: Any) -> _models.StacLandingPage:
+        """Landing Page.
+
+        Return the STAC landing page.
+
+        :return: StacLandingPage. The StacLandingPage is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacLandingPage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StacLandingPage] = kwargs.pop("cls", None)
+
+        _request = build_stac_get_landing_page_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacLandingPage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     def _create_item_initial(
         self, collection_id: str, body: Union[_models.StacItemOrStacItemCollection, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
@@ -7549,7 +7533,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItemOrStacItemCollection,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Create a new STAC item or a set of items in a collection.
 
@@ -7679,7 +7663,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -7781,7 +7765,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItem,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Create or replace a STAC item in a collection.
 
@@ -7827,7 +7811,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Create or replace a STAC item in a collection.
 
@@ -7878,7 +7862,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -7986,7 +7970,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -8080,17 +8064,16 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_items(
+    def get_item_collection(
         self,
         collection_id: str,
         *,
         limit: Optional[int] = None,
-        bounding_box: Optional[list[str]] = None,
+        bounding_box: Optional[List[str]] = None,
         datetime: Optional[str] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacItemCollection:
         """Fetch features of the feature collection with id ``collectionId``.
-
         Every feature in a dataset belongs to a collection. A dataset may
         consist of multiple feature collections. A feature collection is often a
         collection of features of a similar type, based on a common schema.
@@ -8174,7 +8157,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.StacItemCollection] = kwargs.pop("cls", None)
 
-        _request = build_stac_list_items_request(
+        _request = build_stac_get_item_collection_request(
             collection_id=collection_id,
             limit=limit,
             bounding_box=bounding_box,
@@ -8286,7 +8269,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItem,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Update a STAC item in a collection.
 
@@ -8312,7 +8295,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: JSON,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Update a STAC item in a collection.
 
@@ -8338,7 +8321,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Update a STAC item in a collection.
 
@@ -8389,7 +8372,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -8419,74 +8402,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @distributed_trace
-    def get_stac_landing_page(self, **kwargs: Any) -> _models.StacLandingPage:
-        """Landing Page.
-
-        Return the STAC landing page.
-
-        :return: StacLandingPage. The StacLandingPage is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StacLandingPage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.StacLandingPage] = kwargs.pop("cls", None)
-
-        _request = build_stac_get_stac_landing_page_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.StacLandingPage, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
     def create_queryables(
         self,
         collection_id: str,
-        body: list[_models.StacQueryable],
+        body: List[_models.StacQueryable],
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> list[_models.StacQueryable]:
+        **kwargs: Any
+    ) -> List[_models.StacQueryable]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
@@ -8505,8 +8429,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_queryables(
-        self, collection_id: str, body: list[JSON], *, content_type: str = "application/json", **kwargs: Any
-    ) -> list[_models.StacQueryable]:
+        self, collection_id: str, body: List[JSON], *, content_type: str = "application/json", **kwargs: Any
+    ) -> List[_models.StacQueryable]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
@@ -8526,7 +8450,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     @overload
     def create_queryables(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> list[_models.StacQueryable]:
+    ) -> List[_models.StacQueryable]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
@@ -8545,8 +8469,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def create_queryables(
-        self, collection_id: str, body: Union[list[_models.StacQueryable], list[JSON], IO[bytes]], **kwargs: Any
-    ) -> list[_models.StacQueryable]:
+        self, collection_id: str, body: Union[List[_models.StacQueryable], List[JSON], IO[bytes]], **kwargs: Any
+    ) -> List[_models.StacQueryable]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
@@ -8572,7 +8496,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[list[_models.StacQueryable]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.StacQueryable]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8613,7 +8537,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[_models.StacQueryable], response.json())
+            deserialized = _deserialize(List[_models.StacQueryable], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8621,14 +8545,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def create_or_replace_queryable(
+    def replace_queryable(
         self,
         collection_id: str,
         queryable_name: str,
         body: _models.StacQueryable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -8650,14 +8574,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def create_or_replace_queryable(
+    def replace_queryable(
         self,
         collection_id: str,
         queryable_name: str,
         body: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -8679,14 +8603,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def create_or_replace_queryable(
+    def replace_queryable(
         self,
         collection_id: str,
         queryable_name: str,
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -8708,12 +8632,12 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_or_replace_queryable(
+    def replace_queryable(
         self,
         collection_id: str,
         queryable_name: str,
         body: Union[_models.StacQueryable, JSON, IO[bytes]],
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -8752,7 +8676,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_create_or_replace_queryable_request(
+        _request = build_stac_replace_queryable_request(
             collection_id=collection_id,
             queryable_name=queryable_name,
             content_type=content_type,
@@ -8773,7 +8697,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -8907,7 +8831,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_collection_queryables(self, collection_id: str, **kwargs: Any) -> dict[str, Any]:
+    def get_collection_queryables(self, collection_id: str, **kwargs: Any) -> dict[str, Any]:
         """Collection Queryables.
 
         List all queryables in a given collection.
@@ -8931,7 +8855,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
-        _request = build_stac_list_collection_queryables_request(
+        _request = build_stac_get_collection_queryables_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9177,7 +9101,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_tile_matrices(self, **kwargs: Any) -> list[str]:
+    def list_tile_matrices(self, **kwargs: Any) -> List[str]:
         """Matrix List.
 
         Return Matrix List.
@@ -9197,7 +9121,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[str]] = kwargs.pop("cls", None)
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         _request = build_tiler_list_tile_matrices_request(
             api_version=self._config.api_version,
@@ -9228,7 +9152,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[str], response.json())
+            deserialized = _deserialize(List[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9241,21 +9165,21 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.StacAssetStatistics:
+        **kwargs: Any
+    ) -> dict[str, dict[str, _models.BandStatistics]]:
         """Asset Statistics.
 
         Per Asset statistics.
@@ -9268,9 +9192,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -9314,8 +9238,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
          None.
         :paramtype histogram_range: str
-        :return: StacAssetStatistics. The StacAssetStatistics is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StacAssetStatistics
+        :return: dict mapping str to dict mapping str to BandStatistics
+        :rtype: dict[str, dict[str, ~azure.planetarycomputer.models.BandStatistics]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -9329,7 +9253,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.StacAssetStatistics] = kwargs.pop("cls", None)
+        cls: ClsType[dict[str, dict[str, _models.BandStatistics]]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_asset_statistics_request(
             collection_id=collection_id,
@@ -9375,7 +9299,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.StacAssetStatistics, response.json())
+            deserialized = _deserialize(dict[str, dict[str, _models.BandStatistics]], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9383,7 +9307,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_available_assets(self, collection_id: str, item_id: str, **kwargs: Any) -> list[str]:
+    def list_available_assets(self, collection_id: str, item_id: str, **kwargs: Any) -> List[str]:
         """Available Assets.
 
         Return a list of supported assets.
@@ -9407,7 +9331,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[str]] = kwargs.pop("cls", None)
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         _request = build_tiler_list_available_assets_request(
             collection_id=collection_id,
@@ -9440,7 +9364,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[str], response.json())
+            deserialized = _deserialize(List[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9448,7 +9372,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_bounds(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StacItemBounds:
+    def get_bounds(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StacItemBounds:
         """Bounds.
 
         Return all Bounds.
@@ -9474,7 +9398,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.StacItemBounds] = kwargs.pop("cls", None)
 
-        _request = build_tiler_list_bounds_request(
+        _request = build_tiler_get_bounds_request(
             collection_id=collection_id,
             item_id=item_id,
             api_version=self._config.api_version,
@@ -9520,9 +9444,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: _models.Feature,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -9534,12 +9458,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -9557,9 +9481,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -9642,9 +9566,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: JSON,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -9656,12 +9580,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -9679,9 +9603,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -9764,9 +9688,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: IO[bytes],
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -9778,12 +9702,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -9801,9 +9725,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -9886,9 +9810,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: Union[_models.Feature, JSON, IO[bytes]],
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -9900,11 +9824,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -9923,9 +9847,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10087,14 +10011,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        width: float,
-        height: float,
+        width: int,
+        height: int,
         format: str,
         body: _models.Feature,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10104,12 +10028,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -10120,9 +10044,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: float
+        :type width: int
         :param height: Height in pixels for the output image. Required.
-        :type height: float
+        :type height: int
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -10131,9 +10055,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10209,14 +10133,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        width: float,
-        height: float,
+        width: int,
+        height: int,
         format: str,
         body: JSON,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10226,12 +10150,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -10242,9 +10166,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: float
+        :type width: int
         :param height: Height in pixels for the output image. Required.
-        :type height: float
+        :type height: int
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -10253,9 +10177,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10331,14 +10255,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        width: float,
-        height: float,
+        width: int,
+        height: int,
         format: str,
         body: IO[bytes],
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10348,12 +10272,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -10364,9 +10288,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: float
+        :type width: int
         :param height: Height in pixels for the output image. Required.
-        :type height: float
+        :type height: int
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
@@ -10375,9 +10299,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10453,14 +10377,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        width: float,
-        height: float,
+        width: int,
+        height: int,
         format: str,
         body: Union[_models.Feature, JSON, IO[bytes]],
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10470,11 +10394,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -10485,9 +10409,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param width: Width in pixels for the output image. Required.
-        :type width: float
+        :type width: int
         :param height: Height in pixels for the output image. Required.
-        :type height: float
+        :type height: int
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Is one of the following types: Feature, JSON, IO[bytes]
@@ -10497,9 +10421,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10659,9 +10583,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: _models.Feature,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10669,12 +10593,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
@@ -10690,9 +10614,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10755,9 +10679,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: JSON,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10765,12 +10689,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
@@ -10786,9 +10710,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10851,9 +10775,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: IO[bytes],
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10861,12 +10785,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
@@ -10882,9 +10806,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -10947,9 +10871,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: Union[_models.Feature, JSON, IO[bytes]],
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10957,11 +10881,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
@@ -10978,9 +10902,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -11109,7 +11033,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_info_geo_json(
-        self, collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
+        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
     ) -> _models.TilerInfoGeoJsonFeature:
         """Info Geojson.
 
@@ -11178,9 +11102,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_assets_info(
-        self, collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
-    ) -> _models.InfoOperationResponse:
+    def get_item_asset_details(
+        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
+    ) -> dict[str, _models.TilerInfo]:
         """Info.
 
         Return dataset's basic info.
@@ -11191,8 +11115,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
-        :return: InfoOperationResponse. The InfoOperationResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.InfoOperationResponse
+        :return: dict mapping str to TilerInfo
+        :rtype: dict[str, ~azure.planetarycomputer.models.TilerInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -11206,9 +11130,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.InfoOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[dict[str, _models.TilerInfo]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_assets_info_request(
+        _request = build_tiler_get_item_asset_details_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -11240,7 +11164,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.InfoOperationResponse, response.json())
+            deserialized = _deserialize(dict[str, _models.TilerInfo], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11258,9 +11182,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         maxy: float,
         format: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11273,11 +11197,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Part.
 
@@ -11301,9 +11225,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -11466,13 +11390,13 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         miny: float,
         maxx: float,
         maxy: float,
-        width: float,
-        height: float,
+        width: int,
+        height: int,
         format: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11483,11 +11407,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Part.
 
@@ -11506,18 +11430,18 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param maxy: Bounding box max Y. Required.
         :type maxy: float
         :param width: Width in pixels for the output image. Required.
-        :type width: float
+        :type width: int
         :param height: Height in pixels for the output image. Required.
-        :type height: float
+        :type height: int
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -11675,15 +11599,15 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         longitude: float,
         latitude: float,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.TilerCoreModelsResponsesPoint:
         """Point.
 
@@ -11701,9 +11625,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -11788,9 +11712,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11803,11 +11727,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Preview.
 
@@ -11821,9 +11745,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -11979,9 +11903,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         format: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11993,11 +11917,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Preview.
 
@@ -12013,9 +11937,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -12163,7 +12087,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_static_image(
-        self, collection_id: str, body: _models.ImageRequest, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        collection_id: str,
+        body: _models.ImageParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ImageResponse:
         """Create Static Image.
 
@@ -12172,7 +12101,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :param body: Image request body. Required.
-        :type body: ~azure.planetarycomputer.models.ImageRequest
+        :type body: ~azure.planetarycomputer.models.ImageParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12223,7 +12152,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def create_static_image(
-        self, collection_id: str, body: Union[_models.ImageRequest, JSON, IO[bytes]], **kwargs: Any
+        self, collection_id: str, body: Union[_models.ImageParameters, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ImageResponse:
         """Create Static Image.
 
@@ -12231,9 +12160,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :param body: Image request body. Is one of the following types: ImageRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.planetarycomputer.models.ImageRequest or JSON or IO[bytes]
+        :param body: Image request body. Is one of the following types: ImageParameters, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.ImageParameters or JSON or IO[bytes]
         :return: ImageResponse. The ImageResponse is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12369,21 +12298,21 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.StatisticsResponse:
+        **kwargs: Any
+    ) -> _models.TilerStacItemStatistics:
         """Statistics.
 
         Merged assets statistics.
@@ -12396,9 +12325,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -12442,8 +12371,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
          None.
         :paramtype histogram_range: str
-        :return: StatisticsResponse. The StatisticsResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StatisticsResponse
+        :return: TilerStacItemStatistics. The TilerStacItemStatistics is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerStacItemStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -12457,7 +12386,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.StatisticsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TilerStacItemStatistics] = kwargs.pop("cls", None)
 
         _request = build_tiler_list_statistics_request(
             collection_id=collection_id,
@@ -12503,7 +12432,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.StatisticsResponse, response.json())
+            deserialized = _deserialize(_models.TilerStacItemStatistics, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12517,9 +12446,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12532,12 +12461,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> _models.TileJsonMetaData:
+        **kwargs: Any
+    ) -> _models.TileJsonMetadata:
         """TileJson Tilematrixsetid As Path.
 
         Return the TileJson Tilematrixsetid As a path.
@@ -12552,9 +12481,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -12628,8 +12557,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
+        :return: TileJsonMetadata. The TileJsonMetadata is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -12643,7 +12572,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TileJsonMetaData] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_tile_json_request(
             collection_id=collection_id,
@@ -12696,7 +12625,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TileJsonMetaData, response.json())
+            deserialized = _deserialize(_models.TileJsonMetadata, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12715,9 +12644,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         scale: float,
         format: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12726,13 +12655,13 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         subdataset_name: Optional[str] = None,
-        subdataset_bands: Optional[list[str]] = None,
-        **kwargs: Any,
+        subdataset_bands: Optional[List[str]] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid As Path.
 
@@ -12761,9 +12690,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -12921,9 +12850,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12936,11 +12865,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Wmts Tilematrixsetid As Path.
 
@@ -12956,9 +12885,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -13178,7 +13107,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_interval_legend(
         self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> list[list["_types.IntervalLegendsElement"]]:
+    ) -> List[List["_types.IntervalLegendsElement"]]:
         """Get Interval Legend.
 
         Generate values and color swatches mapping for a given interval classmap.
@@ -13204,7 +13133,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[list["_types.IntervalLegendsElement"]]] = kwargs.pop("cls", None)
+        cls: ClsType[List[List["_types.IntervalLegendsElement"]]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_interval_legend_request(
             classmap_name=classmap_name,
@@ -13241,7 +13170,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[list["_types.IntervalLegendsElement"]], response.json())
+            deserialized = _deserialize(List[List["_types.IntervalLegendsElement"]], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13257,12 +13186,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         width: Optional[float] = None,
         trim_start: Optional[int] = None,
         trim_end: Optional[int] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Get Legend.
 
         Generate a legend image for a given colormap.
-
         If the colormap has non-contiguous values at the beginning or end,
         which aren't desired in the output image, they can be trimmed by specifying
         the number of values to trim.
@@ -13348,8 +13276,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         exit_when_full: Optional[bool] = None,
         skip_covered: Optional[bool] = None,
         coordinate_reference_system: Optional[str] = None,
-        **kwargs: Any,
-    ) -> list[_models.StacAsset]:
+        **kwargs: Any
+    ) -> List[_models.StacItemPointAsset]:
         """Assets For Point.
 
         Return a list of assets for a given point.
@@ -13379,8 +13307,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
          to ``epsg:4326``. Default value is None.
         :paramtype coordinate_reference_system: str
-        :return: list of StacAsset
-        :rtype: list[~azure.planetarycomputer.models.StacAsset]
+        :return: list of StacItemPointAsset
+        :rtype: list[~azure.planetarycomputer.models.StacItemPointAsset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13394,7 +13322,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.StacAsset]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.StacItemPointAsset]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_mosaics_assets_for_point_request(
             search_id=search_id,
@@ -13434,7 +13362,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[_models.StacAsset], response.json())
+            deserialized = _deserialize(List[_models.StacItemPointAsset], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13456,8 +13384,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         time_limit: Optional[int] = None,
         exit_when_full: Optional[bool] = None,
         skip_covered: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> list[Any]:
+        **kwargs: Any
+    ) -> List[Any]:
         """Assets For Tile Tilematrixsetid As Path.
 
         Return a list of assets which overlap a given tile.
@@ -13508,7 +13436,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[Any]] = kwargs.pop("cls", None)
+        cls: ClsType[List[Any]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_mosaics_assets_for_tile_request(
             search_id=search_id,
@@ -13550,7 +13478,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[Any], response.json())
+            deserialized = _deserialize(List[Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13625,17 +13553,17 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         *,
         content_type: str = "application/json",
-        collections: Optional[list[str]] = None,
-        ids: Optional[list[str]] = None,
+        collections: Optional[List[str]] = None,
+        ids: Optional[List[str]] = None,
         bounding_box: Optional[float] = None,
         intersects: Optional[_models.Geometry] = None,
         query: Optional[dict[str, Any]] = None,
         filter: Optional[dict[str, Any]] = None,
         datetime: Optional[str] = None,
-        sort_by: Optional[list[_models.StacSortExtension]] = None,
+        sort_by: Optional[List[_models.StacSortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.MosaicMetadata] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.TilerMosaicSearchRegistrationResponse:
         """Register Search.
 
@@ -13717,17 +13645,17 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        collections: Optional[list[str]] = None,
-        ids: Optional[list[str]] = None,
+        collections: Optional[List[str]] = None,
+        ids: Optional[List[str]] = None,
         bounding_box: Optional[float] = None,
         intersects: Optional[_models.Geometry] = None,
         query: Optional[dict[str, Any]] = None,
         filter: Optional[dict[str, Any]] = None,
         datetime: Optional[str] = None,
-        sort_by: Optional[list[_models.StacSortExtension]] = None,
+        sort_by: Optional[List[_models.StacSortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.MosaicMetadata] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.TilerMosaicSearchRegistrationResponse:
         """Register Search.
 
@@ -13843,9 +13771,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         search_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13865,12 +13793,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> _models.TileJsonMetaData:
+        **kwargs: Any
+    ) -> _models.TileJsonMetadata:
         """TileJson Tilematrixsetid As Path.
 
         Return TileJSON document for a searchId.
@@ -13883,9 +13811,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -13980,8 +13908,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
+        :return: TileJsonMetadata. The TileJsonMetadata is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13995,7 +13923,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TileJsonMetaData] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_mosaics_tile_json_request(
             search_id=search_id,
@@ -14054,7 +13982,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TileJsonMetaData, response.json())
+            deserialized = _deserialize(_models.TileJsonMetadata, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14072,9 +14000,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         scale: float,
         format: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14090,11 +14018,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid As Path.
 
@@ -14121,9 +14049,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -14300,9 +14228,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         search_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[list[str]] = None,
+        assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
+        asset_band_indices: Optional[str] = None,
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14315,11 +14243,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
+        rescale: Optional[List[str]] = None,
         color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         """Wmts Tilematrixsetid As Path.
 
@@ -14333,9 +14261,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: str
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword no_data: Overwrite internal Nodata value. Default value is None.
@@ -14503,7 +14431,7 @@ class SharedAccessSignatureOperations:
     def get_sign(
         self, *, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any
     ) -> _models.SharedAccessSignatureSignedLink:
-        """sign an HREF in the format of a URL and returns a SingedLink.
+        """sign an HREF in the format of a URL and returns a SharedAccessSignatureSignedHrefResponse.
 
         Signs a HREF (a link URL) by appending a `SAS Token
         <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_.
@@ -14644,7 +14572,7 @@ class SharedAccessSignatureOperations:
     def revoke_token(  # pylint: disable=inconsistent-return-statements
         self, *, duration_in_minutes: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """revoke a SAS Token for the given Azure Blob storage account.
+        """Revoke SAS token for the managed storage account of this GeoCatalog.
 
         Revoke a `SAS Token
         <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
