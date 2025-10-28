@@ -36,13 +36,13 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
             ]
             poller = await client.begin_update_sources(
                 project_name=project_name,
-                body=cast(list[_models.UpdateSourceRecord], update_source_ops),
+                sources=cast(list[_models.UpdateSourceRecord], update_source_ops),
                 content_type="application/json",
                 polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type]
             )
             await poller.result()
             found = False
-            async for s in client.get_sources(project_name=project_name):
+            async for s in client.list_sources(project_name=project_name):
                 if s.get("displayName") == "MicrosoftFAQ":
                     found = True
             assert found
@@ -73,13 +73,13 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
             ]
             poller = await client.begin_update_qnas(
                 project_name=project_name,
-                body=cast(list[_models.UpdateQnaRecord], update_qna_ops),
+                qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
                 content_type="application/json",
                 polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type]
             )
             await poller.result()
             found = False
-            async for qna in client.get_qnas(project_name=project_name):
+            async for qna in client.list_qnas(project_name=project_name):
                 if qna.get("answer") == answer and question in qna.get("questions", []):
                     found = True
             assert found
@@ -101,11 +101,11 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
             )
             await client.update_synonyms(
                 project_name=project_name,
-                body=synonyms_model,
+                synonyms=synonyms_model,
                 content_type="application/json",
             )
             found = False
-            async for s in client.get_synonyms(project_name=project_name):
+            async for s in client.list_synonyms(project_name=project_name):
                 if "qnamaker" in s.get("alterations", []) and "qna maker" in s.get("alterations", []):
                     found = True
             assert found

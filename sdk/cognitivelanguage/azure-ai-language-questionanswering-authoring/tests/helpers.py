@@ -15,7 +15,7 @@ class AuthoringTestHelper:
         polling_interval = kwargs.pop("polling_interval", None)
         client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "Biography of Sir Isaac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -34,7 +34,7 @@ class AuthoringTestHelper:
     def add_sources(client, project_name, **kwargs):
         poller = client.begin_update_sources(
             project_name=project_name,
-            body=[
+            sources=[
                 {
                     "op": "add",
                     "value": {
@@ -77,7 +77,7 @@ class AuthoringAsyncTestHelper:
         polling_interval = kwargs.pop("polling_interval", None)
         await client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "Biography of Sir Isaac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -96,7 +96,7 @@ class AuthoringAsyncTestHelper:
     async def add_sources(client, project_name, **kwargs):
         poller = await client.begin_update_sources(
             project_name=project_name,
-            body=[
+            sources=[
                 {
                     "op": "add",
                     "value": {

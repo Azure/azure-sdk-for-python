@@ -8,15 +8,19 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from __future__ import annotations
 
-from typing import Any, Union, overload
+from typing import Any, Union, overload, IO, Any, TYPE_CHECKING
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from . import _models
+
+# Import specific model types only for static type checking to avoid runtime circular imports.
+if TYPE_CHECKING:
+    from ..models import _models
+
 from ._operations import (
     _QuestionAnsweringAuthoringClientOperationsMixin as _QuestionAnsweringAuthoringClientOperationsMixinGenerated,
 )
-from typing_extensions import JSON, IO
 
 
 class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthoringClientOperationsMixinGenerated):

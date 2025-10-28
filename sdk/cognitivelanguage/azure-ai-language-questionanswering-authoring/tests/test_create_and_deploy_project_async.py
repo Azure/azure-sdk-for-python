@@ -17,7 +17,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
         async with client:
             await client.create_project(
                 project_name=project_name,
-                body={
+                options={
                     "description": "Biography of Sir Isaac Newton",
                     "language": "en",
                     "multilingualResource": True,

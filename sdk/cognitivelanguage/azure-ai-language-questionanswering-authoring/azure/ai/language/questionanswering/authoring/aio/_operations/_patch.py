@@ -9,14 +9,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Union, overload
+from __future__ import annotations
+from typing import Any, Union, overload, IO, Any, TYPE_CHECKING
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
-from . import _models
+if TYPE_CHECKING:
+    from . import _models
 from ._operations import (
     _QuestionAnsweringAuthoringClientOperationsMixin as _QuestionAnsweringAuthoringClientOperationsMixinGenerated,
 )
-from typing_extensions import JSON, IO
 
 
 class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthoringClientOperationsMixinGenerated):
