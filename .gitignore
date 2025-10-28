@@ -60,6 +60,7 @@ conda/assembled/
 conda/downloaded/
 conda/conda-env/
 scenario_*.txt
+.wheels
 
 # tox environment folders
 .tox/

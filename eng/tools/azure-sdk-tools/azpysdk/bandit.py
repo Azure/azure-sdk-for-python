@@ -49,13 +49,7 @@ class bandit(Check):
                 logger.error(f"Failed to install bandit: {e}")
                 return e.returncode
 
-            # debug a pip freeze result
-            cmd = get_pip_command(executable) + ["freeze"]
-            freeze_result = subprocess.run(
-                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
-            logger.debug(f"Running pip freeze with {cmd}")
-            logger.debug(freeze_result.stdout)
+            self.pip_freeze(executable)
 
             if in_ci():
                 if not is_check_enabled(package_dir, "bandit"):
