@@ -1,5 +1,10 @@
 # Release History
 
+## 12.27.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `BlobClient`.
+
 ## 12.27.0 (2025-10-15)
 
 ### Features Added
