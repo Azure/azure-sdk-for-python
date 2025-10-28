@@ -181,6 +181,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[Dict]):
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
     """Async SearchClient operations mixin customizations."""
+
     @distributed_trace_async
     async def index_documents(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
         """Specify a document operations to perform as a batch.
@@ -194,17 +195,22 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         """
         return await self._index_documents_actions(batch=batch, **kwargs)
 
-    async def _index_documents_actions(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
+    async def _index_documents_actions(
+        self, batch: _models.IndexDocumentsBatch, **kwargs: Any
+    ) -> List[_models.IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
 
         try:
             batch_response = await self._index(batch=batch, error_map=error_map, **kwargs)
-            return cast(List[_models.IndexingResult], batch_response.results)
+            typed_result = [cast(_models.IndexingResult, x) for x in batch_response.results]
+            return typed_result
         except RequestEntityTooLargeError:
             if len(batch.actions) == 1:
                 raise
             pos = round(len(batch.actions) / 2)
-            batch_response_first_half = await self._index_documents_actions(batch=_models.IndexDocumentsBatch(actions=batch.actions[:pos]), **kwargs)
+            batch_response_first_half = await self._index_documents_actions(
+                batch=_models.IndexDocumentsBatch(actions=batch.actions[:pos]), **kwargs
+            )
             if batch_response_first_half:
                 result_first_half = batch_response_first_half
             else:
@@ -242,7 +248,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_upload_actions(documents)
 
         result = await self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Delete documents from the Azure search index.
@@ -270,7 +276,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_delete_actions(documents)
 
         result = await self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     async def merge_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Merge documents in the Azure search index.
@@ -298,7 +304,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_merge_actions(documents)
 
         result = await self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     async def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Merge or upload documents to the Azure search index.
@@ -325,7 +331,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_merge_or_upload_actions(documents)
 
         result = await self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     @distributed_trace_async
     async def search(
@@ -368,7 +374,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
         hybrid_search: Optional[_models.HybridSearch] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncSearchItemPaged[Dict]:
         """Search the Azure search index for documents.
 

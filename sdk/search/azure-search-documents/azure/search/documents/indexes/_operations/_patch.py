@@ -390,7 +390,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        names = self.list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self.list_indexes(cls=lambda objs: [x.get("name") for x in objs], **kwargs)
         return cast(ItemPaged[str], names)
 
     @distributed_trace
@@ -407,7 +407,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """
         result = self._get_synonym_maps(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
-        return result.synonym_maps
+        typed_result = [cast(_models.SynonymMap, x) for x in result.synonym_maps]
+        return typed_result
 
     @distributed_trace
     def get_synonym_map_names(self, **kwargs: Any) -> List[str]:
@@ -418,7 +419,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = self.get_synonym_maps(**kwargs)
-        return [x.name for x in result]
+        return [x.get("name") for x in result]
 
     @distributed_trace
     def list_alias_names(self, **kwargs: Any) -> ItemPaged[str]:
@@ -429,7 +430,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         """
-        names = self.list_aliases(cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self.list_aliases(cls=lambda objs: [x.get("name") for x in objs], **kwargs)
         return cast(ItemPaged[str], names)
 
 
@@ -673,7 +674,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = self._get_skillsets(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
-        return result.skillsets
+        typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
+        return typed_result
 
     @overload
     def get_indexers(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexer]:
@@ -712,7 +714,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = self._get_indexers(**kwargs)
         assert result.indexers is not None  # Hint for mypy
-        return result.indexers
+        typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
+        return typed_result
 
     @distributed_trace
     def get_indexer_names(self, **kwargs: Any) -> Sequence[str]:
@@ -731,7 +734,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
                 :caption: List all the SearchIndexers
         """
         result = self.get_indexers(**kwargs)
-        return [x.name for x in result]
+        return [x.get("name") for x in result]
 
     @overload
     def get_data_source_connections(
@@ -750,9 +753,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         ...
 
     @distributed_trace
-    def get_data_source_connections(
-        self, **kwargs: Any
-    ) -> List[_models.SearchIndexerDataSourceConnection]:
+    def get_data_source_connections(self, **kwargs: Any) -> List[_models.SearchIndexerDataSourceConnection]:
         """Lists all data source connections available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -774,7 +775,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """
         result = self._get_data_source_connections(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
-        return result.data_sources
+        typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
+        return typed_result
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs: Any) -> Sequence[str]:
@@ -785,7 +787,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = self.get_data_source_connections(**kwargs)
-        return [x.name for x in result]
+        return [x.get("name") for x in result]
 
     @distributed_trace
     def get_skillset_names(self, **kwargs: Any) -> List[str]:
@@ -797,7 +799,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = self.get_skillsets(**kwargs)
-        return [x.name for x in result]
+        return [x.get("name") for x in result]
 
 
 __all__: list[str] = [

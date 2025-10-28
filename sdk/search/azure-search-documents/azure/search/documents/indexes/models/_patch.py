@@ -514,89 +514,12 @@ def ComplexField(
     return _SearchField(**result)
 
 
-class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
-    """Represents a datasource connection definition, which can be used to configure an indexer.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Required. The name of the datasource connection.
-    :vartype name: str
-    :ivar description: The description of the datasource connection.
-    :vartype description: str
-    :ivar type: Required. The type of the datasource connection. Possible values include: "azuresql",
-     "cosmosdb", "azureblob", "azuretable", "mysql", "adlsgen2".
-    :vartype type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
-    :ivar connection_string: The connection string for the datasource connection.
-    :vartype connection_string: str
-    :ivar container: Required. The data container for the datasource connection.
-    :vartype container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
-    :ivar identity: An explicit managed identity to use for this datasource. If not specified and
-     the connection string is a managed identity, the system-assigned managed identity is used. If
-     not specified, the value remains unchanged. If "none" is specified, the value of this property
-     is cleared.
-    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
-    :ivar indexer_permission_options: Ingestion options with various types of permission data.
-    :vartype indexer_permission_options: list[str or
-     ~azure.search.documents.indexes.models.IndexerPermissionOption]
-    :ivar data_change_detection_policy: The data change detection policy for the datasource connection.
-    :vartype data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
-    :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
-    :vartype data_deletion_detection_policy:
-     ~azure.search.documents.models.DataDeletionDetectionPolicy
-    :ivar e_tag: The ETag of the data source.
-    :vartype e_tag: str
-    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
-     This key is used to provide an additional level of encryption-at-rest for your datasource
-     definition when you want full assurance that no one, not even Microsoft, can decrypt your data
-     source definition in Azure Cognitive Search. Once you have encrypted your data source
-     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
-     this property to null. You can change this property as needed if you want to rotate your
-     encryption key; Your datasource definition will be unaffected. Encryption with customer-managed
-     keys is not available for free search services, and is only available for paid services created
-     on or after January 1, 2019.
-    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    """
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        description: Optional[str] = None,
-        type: str,
-        connection_string: str,
-        container: SearchIndexerDataContainer,
-        identity: Optional[SearchIndexerDataIdentity] = None,
-        indexer_permission_options: Optional[List[Union[str, IndexerPermissionOption]]] = None,
-        data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
-        data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
-        e_tag: Optional[str] = None,
-        encryption_key: Optional[SearchResourceEncryptionKey] = None,
-        **kwargs
-    ):
-        credentials = DataSourceCredentials(connection_string=connection_string)
-        super().__init__(
-            name=name,
-            description=description,
-            type=type,
-            credentials=credentials,
-            container=container,
-            data_change_detection_policy=data_change_detection_policy,
-            data_deletion_detection_policy=data_deletion_detection_policy,
-            e_tag=e_tag,
-            encryption_key=encryption_key,
-            identity=identity,
-            indexer_permission_options=indexer_permission_options,
-            **kwargs
-        )
-
-
 __all__: list[str] = [
     "SearchField",
     "SearchFieldDataType",
     "SimpleField",
     "SearchableField",
     "ComplexField",
-    "SearchIndexerDataSourceConnection",
 ]  # Add all objects you want publicly available to users at this package level
 
 

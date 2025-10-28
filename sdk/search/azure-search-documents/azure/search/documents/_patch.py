@@ -23,6 +23,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 DEFAULT_VERSION = ApiVersion.V2025_08_01_PREVIEW
 
+
 class SearchClient(_SearchClient):
     """SearchClient customizations go here."""
 

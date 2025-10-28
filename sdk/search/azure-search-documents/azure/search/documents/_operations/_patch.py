@@ -323,6 +323,7 @@ class SearchItemPaged(ItemPaged[Dict]):
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
     """SearchClient operations mixin customizations."""
+
     @distributed_trace
     def index_documents(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
         """Specify a document operations to perform as a batch.
@@ -336,21 +337,28 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         """
         return self._index_documents_actions(batch=batch, **kwargs)
 
-    def _index_documents_actions(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
+    def _index_documents_actions(
+        self, batch: _models.IndexDocumentsBatch, **kwargs: Any
+    ) -> List[_models.IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
         try:
             batch_response = self._index(batch=batch, error_map=error_map, **kwargs)
-            return cast(List[_models.IndexingResult], batch_response.results)
+            typed_result = [cast(_models.IndexingResult, x) for x in batch_response.results]
+            return typed_result
         except RequestEntityTooLargeError:
             if len(batch.actions) == 1:
                 raise
             pos = round(len(batch.actions) / 2)
-            batch_response_first_half = self._index_documents_actions(batch=_models.IndexDocumentsBatch(actions=batch.actions[:pos]), **kwargs)
+            batch_response_first_half = self._index_documents_actions(
+                batch=_models.IndexDocumentsBatch(actions=batch.actions[:pos]), **kwargs
+            )
             if batch_response_first_half:
                 result_first_half = batch_response_first_half
             else:
                 result_first_half = []
-            batch_response_second_half = self._index_documents_actions(batch=_models.IndexDocumentsBatch(actions=batch.actions[pos:]), **kwargs)
+            batch_response_second_half = self._index_documents_actions(
+                batch=_models.IndexDocumentsBatch(actions=batch.actions[pos:]), **kwargs
+            )
             if batch_response_second_half:
                 result_second_half = batch_response_second_half
             else:
@@ -383,7 +391,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_upload_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     def delete_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Delete documents from the Azure search index.
@@ -411,7 +419,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_delete_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     def merge_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Merge documents in the Azure search index.
@@ -439,7 +447,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_merge_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Merge or upload documents to the Azure search index.
@@ -466,7 +474,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         batch.add_merge_or_upload_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
-        return cast(List[_models.IndexingResult], result.results)
+        return result
 
     @distributed_trace
     def search(
@@ -791,7 +799,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         # Return SearchItemPaged with the factory function
         return SearchItemPaged(page_iterator_factory)
 
-
     @distributed_trace
     def autocomplete(
         self,
@@ -946,6 +953,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         assert response.results is not None  # Hint for mypy
         return response.results
+
 
 __all__: list[str] = [
     "_SearchClientOperationsMixin",

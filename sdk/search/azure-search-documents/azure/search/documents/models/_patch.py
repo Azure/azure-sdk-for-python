@@ -18,6 +18,7 @@ from ._enums import IndexActionType
 class RequestEntityTooLargeError(HttpResponseError):
     """An error response with status code 413 - Request Entity Too Large"""
 
+
 class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
     """Contains a batch of document write actions to send to the index."""
 
