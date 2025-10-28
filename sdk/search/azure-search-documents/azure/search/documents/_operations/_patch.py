@@ -22,7 +22,7 @@ from .. import models as _models
 
 def _convert_search_result(result: _models.SearchResult) -> Dict[str, Any]:
     """Convert SearchResult model to dictionary with @search.* metadata."""
-    ret = dict(result.additional_properties) if result.additional_properties else {}
+    ret = dict(result)
     if result.score is not None:
         ret["@search.score"] = result.score
     if result.reranker_score is not None:
