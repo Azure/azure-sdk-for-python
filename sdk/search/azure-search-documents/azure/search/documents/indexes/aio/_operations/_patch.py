@@ -646,6 +646,45 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         else:
             return await super().delete_skillset(*args, **kwargs)
 
+    @overload
+    async def get_indexers(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexer]:
+        """Lists all indexers available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+         list of JSON property names, or '*' for all properties. The default is all properties. Default
+         value is None.
+        :paramtype select: str
+        :return: List of all the SearchIndexers.
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def get_indexers(self, **kwargs: Any) -> List[_models.SearchIndexer]:
+        """Lists all indexers available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+         list of JSON property names, or '*' for all properties. The default is all properties. Default
+         value is None.
+        :paramtype select: str
+        :return: List of all the SearchIndexers.
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_indexers_operations_async.py
+                :start-after: [START list_indexer_async]
+                :end-before: [END list_indexer_async]
+                :language: python
+                :dedent: 4
+                :caption: List all the SearchIndexers
+        """
+        result = await self._get_indexers(**kwargs)
+        assert result.indexers is not None  # Hint for mypy
+        return result.indexers
+
     @distributed_trace_async
     async def get_indexer_names(self, **kwargs) -> Sequence[str]:
         """Lists all indexer names available for a search service.
@@ -653,9 +692,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :return: List of all the SearchIndexer names.
         :rtype: list[str]
         """
-        result = await self.list_indexers(**kwargs)
-        assert result.indexers is not None  # Hint for mypy
-        return [x.name for x in result.indexers]
+        result = await self.get_indexers(**kwargs)
+        return [x.name for x in result]
 
     @distributed_trace_async
     async def get_data_source_connection_names(self, **kwargs) -> Sequence[str]:
