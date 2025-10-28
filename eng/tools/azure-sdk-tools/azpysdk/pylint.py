@@ -51,7 +51,6 @@ class pylint(Check):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
-            pip_cmd = get_pip_command(executable)
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
@@ -91,13 +90,7 @@ class pylint(Check):
                 logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
 
-            # debug a pip freeze result
-            cmd = pip_cmd + ["freeze"]
-            freeze_result = subprocess.run(
-                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
-            logger.debug(f"Running pip freeze with {cmd}")
-            logger.debug(freeze_result.stdout)
+            self.pip_freeze(executable)
 
             top_level_module = parsed.namespace.split(".")[0]
 

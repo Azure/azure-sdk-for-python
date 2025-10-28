@@ -1,5 +1,94 @@
 # Release History
 
+## 4.0.0 (2025-10-24)
+
+### Features Added
+
+  - Model `ContainerAppsAPIClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_endpoint_connections`
+  - Client `ContainerAppsAPIClient` added operation group `managed_environment_private_link_resources`
+  - Client `ContainerAppsAPIClient` added operation group `http_route_config`
+  - Client `ContainerAppsAPIClient` added operation group `maintenance_configurations`
+  - Client `ContainerAppsAPIClient` added operation group `logic_apps`
+  - Model `AzureFileProperties` added property `account_key_vault_properties`
+  - Enum `BindingType` added member `AUTO`
+  - Model `CertificateProperties` added property `deployment_errors`
+  - Enum `CertificateProvisioningState` added member `DELETING`
+  - Model `ConnectedEnvironmentStorageProperties` added property `provisioning_state`
+  - Model `ConnectedEnvironmentStorageProperties` added property `deployment_errors`
+  - Model `ContainerApp` added property `kind`
+  - Model `Dapr` added property `app_health`
+  - Model `Dapr` added property `max_concurrency`
+  - Model `DaprComponent` added property `provisioning_state`
+  - Model `DaprComponent` added property `deployment_errors`
+  - Model `ManagedEnvironment` added property `ingress_configuration`
+  - Model `ManagedEnvironment` added property `private_endpoint_connections`
+  - Model `ManagedEnvironment` added property `public_network_access`
+  - Added model `ConnectedEnvironmentPatchResource`
+  - Added enum `ConnectedEnvironmentStorageProvisioningState`
+  - Added model `DaprAppHealth`
+  - Added enum `DaprComponentProvisioningState`
+  - Added model `ErrorEntity`
+  - Added model `HttpRoute`
+  - Added model `HttpRouteAction`
+  - Added model `HttpRouteConfig`
+  - Added model `HttpRouteConfigCollection`
+  - Added model `HttpRouteConfigProperties`
+  - Added model `HttpRouteMatch`
+  - Added model `HttpRouteProvisioningErrors`
+  - Added enum `HttpRouteProvisioningState`
+  - Added model `HttpRouteRule`
+  - Added model `HttpRouteTarget`
+  - Added model `IngressConfiguration`
+  - Added enum `Kind`
+  - Added model `LogicApp`
+  - Added model `MaintenanceConfigurationCollection`
+  - Added model `MaintenanceConfigurationResource`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionListResult`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added enum `PublicNetworkAccess`
+  - Added model `ResourceTags`
+  - Added model `ScheduledEntry`
+  - Added model `SecretKeyVaultProperties`
+  - Added enum `WeekDay`
+  - Added model `WorkflowEnvelope`
+  - Added model `WorkflowEnvelopeCollection`
+  - Added model `WorkflowEnvelopeProperties`
+  - Added model `WorkflowHealth`
+  - Added enum `WorkflowHealthState`
+  - Added enum `WorkflowKind`
+  - Added enum `WorkflowState`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsCertificatesOperations` added method `begin_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsDaprComponentsOperations` added method `begin_delete`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_create_or_update`
+  - Operation group `ConnectedEnvironmentsStoragesOperations` added method `begin_delete`
+  - Added operation group `HttpRouteConfigOperations`
+  - Added operation group `LogicAppsOperations`
+  - Added operation group `MaintenanceConfigurationsOperations`
+  - Added operation group `ManagedEnvironmentPrivateEndpointConnectionsOperations`
+  - Added operation group `ManagedEnvironmentPrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.delete`
+  - Deleted or renamed method `ConnectedEnvironmentsCertificatesOperations.update`
+  - Deleted or renamed method `ConnectedEnvironmentsDaprComponentsOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsDaprComponentsOperations.delete`
+  - Method `ConnectedEnvironmentsOperations.update` inserted a `positional_or_keyword` parameter `environment_envelope`
+  - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.create_or_update`
+  - Deleted or renamed method `ConnectedEnvironmentsStoragesOperations.delete`
+  - Deleted or renamed operation group `ContainerAppsAPIClientOperationsMixin`
+
 ## 4.0.0b1 (2025-08-19)
 
 ### Features Added
