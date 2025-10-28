@@ -60,6 +60,7 @@ def _filetime_to_datetime(filetime: str) -> Optional[datetime]:
     # Try RFC 1123 as backup
     return _rfc_1123_to_datetime(filetime)
 
+
 def _get_development_storage_endpoint(service: str) -> str:
     """Creates a development storage endpoint for Azurite Storage Emulator.
 

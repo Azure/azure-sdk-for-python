@@ -202,7 +202,7 @@ def parse_connection_str(
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
-    if conn_settings.get('USEDEVELOPMENTSTORAGE') == 'true':
+    if conn_settings.get("USEDEVELOPMENTSTORAGE") == "true":
         return _get_development_storage_endpoint(service), None, DEVSTORE_ACCOUNT_KEY
     endpoints = _SERVICE_PARAMS[service]
     primary = None
