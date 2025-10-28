@@ -4,8 +4,12 @@ import pytest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import (
+    NetworkFeatures,
+    ServiceLevel,
     Volume,
+    VolumeProperties,
     VolumePatch,
+    VolumePatchProperties,
     ReplicationObject,
     VolumePropertiesDataProtection,
     AuthorizeRequest,
@@ -24,8 +28,7 @@ SUBSID = "69a75bda-882e-44d5-8431-63421204132a"
 
 def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA_VNET, enable_subvolumes=None):
     default_protocol_type = ["NFSv3"]
-    volume_body = Volume(
-        location=location,
+    volume_properties = VolumeProperties(
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
@@ -41,6 +44,9 @@ def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA
         + setup.PERMA_SUBNET,
         network_features="Standard",
     )
+    volume_body = Volume(
+    location=location,
+    properties=volume_properties)
 
     return volume_body
 
@@ -88,8 +94,7 @@ def create_dp_volume(
 
     default_protocol_type = ["NFSv3"]
 
-    volume_body = Volume(
-        location=location,
+    volume_properties = VolumeProperties(
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
@@ -104,7 +109,9 @@ def create_dp_volume(
         volume_type="DataProtection",
         data_protection=data_protection,
     )
-
+    volume_body = Volume(
+    location=location,
+    properties=volume_properties)
     destination_volume = client.volumes.begin_create_or_update(
         rg, account_name, pool_name, volume_name, volume_body
     ).result()
@@ -137,8 +144,7 @@ def create_migration_volume(
 
     default_protocol_type = ["NFSv3"]
 
-    volume_body = Volume(
-        location=location,
+    volume_properties = VolumeProperties(
         usage_threshold=100 * GIGABYTE,
         protocol_types=default_protocol_type,
         creation_token=volume_name,
@@ -153,7 +159,10 @@ def create_migration_volume(
         volume_type="Migration",
         data_protection=data_protection,
     )
-
+    volume_body = Volume(
+        location=location,
+        properties=volume_properties
+    )
     destination_volume = client.volumes.begin_create_or_update(
         rg, account_name, pool_name, volume_name, volume_body
     ).result()
@@ -625,22 +634,25 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             assert "Premium" == volume.service_level
             assert 100 * GIGABYTE == volume.usage_threshold
 
-            volume_body = Volume(
+            volume_properties = VolumeProperties(
                 usage_threshold=200 * GIGABYTE,
+                protocol_types=["NFSv3"],
                 creation_token=volumeName1,
-                SERVICE_LEVEL="Premium",  # cannot differ from pool
-                location=setup.LOCATION,
+                service_level=ServiceLevel.PREMIUM,  # cannot differ from pool
                 subnet_id="/subscriptions/"
-                + SUBSID
-                + "/resourceGroups/"
-                + setup.TEST_RG
-                + "/providers/Microsoft.Network/virtualNetworks/"
-                + setup.PERMA_VNET
-                + "/subnets/"
-                + setup.PERMA_SUBNET,
-                network_features="Standard",
+                    + SUBSID
+                    + "/resourceGroups/"
+                    + setup.TEST_RG
+                    + "/providers/Microsoft.Network/virtualNetworks/"
+                    + setup.PERMA_VNET
+                    + "/subnets/"
+                    + setup.PERMA_SUBNET,
+                network_features=NetworkFeatures.STANDARD,
             )
-
+            volume_body = Volume(
+                location=setup.LOCATION,
+                properties=volume_properties
+            )
             volume = self.client.volumes.begin_create_or_update(
                 setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, volume_body
             ).result()
@@ -669,7 +681,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             assert "Premium" == volume.service_level
             assert 100 * GIGABYTE == volume.usage_threshold
 
-            volume_patch = VolumePatch(usage_threshold=200 * GIGABYTE)
+            volume_patch_properties = VolumePatchProperties(usage_threshold=200 * GIGABYTE)
+            volume_patch = VolumePatch(properties=volume_patch_properties)
             volume = self.client.volumes.begin_update(
                 setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, volume_patch
             ).result()
