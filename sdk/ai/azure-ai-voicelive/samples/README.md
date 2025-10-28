@@ -15,7 +15,7 @@ This directory contains sample applications demonstrating various capabilities o
 1. **Install dependencies**:
 
    ```bash
-   pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
+   pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv azure-identity
    ```
 
 2. **Configure environment variables**:
@@ -25,15 +25,18 @@ This directory contains sample applications demonstrating various capabilities o
    ```ini
    AZURE_VOICELIVE_API_KEY=your-voicelive-api-key
    AZURE_VOICELIVE_ENDPOINT=wss://api.voicelive.com/v1
-   AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
-   AZURE_VOICELIVE_VOICE=alloy
+   AZURE_VOICELIVE_API_VERSION=2025-10-01
+   AZURE_VOICELIVE_MODEL=gpt-realtime
+   AZURE_VOICELIVE_VOICE=en-US-Ava:DragonHDLatestNeural
    AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful assistant. Keep your responses concise.
+   AZURE_VOICELIVE_AGENT_ID=<your_agent_id>
+   AZURE_VOICELIVE_PROJECT_NAME=<your_project_name>
    ```
 
-   You can copy the `.env.template` file and fill in your values:
+   You can copy the `.env_sample` file and fill in your values:
 
    ```bash
-   cp ../.env.template ./.env
+   cp ../.env_sample ./.env
    ```
 
 ## Running the samples
