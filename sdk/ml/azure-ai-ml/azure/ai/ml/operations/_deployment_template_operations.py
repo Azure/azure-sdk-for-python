@@ -6,8 +6,7 @@
 # pylint: disable=too-many-locals,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 # pylint: disable=no-else-return,too-many-statements
 
-from typing import Any, Dict, Iterable, Optional, Union, cast
-from os import PathLike
+from typing import Any, Dict, Iterable, Optional, cast
 
 from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
@@ -277,17 +276,17 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
     ) -> Iterable[DeploymentTemplate]:
         """List deployment templates.
 
-        :param name: Filter by deployment template name.
-        :type name: Optional[str]
-        :param tags: Comma-separated list of tag names (and optionally values). Example:
+        :keyword name: Filter by deployment template name.
+        :paramtype name: Optional[str]
+        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
             tag1,tag2=value2.
-        :type tags: Optional[str]
-        :param count: Maximum number of items to return.
-        :type count: Optional[int]
-        :param stage: Filter by deployment template stage.
-        :type stage: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived entities.
-        :type list_view_type: str
+        :paramtype tags: Optional[str]
+        :keyword count: Maximum number of items to return.
+        :paramtype count: Optional[int]
+        :keyword stage: Filter by deployment template stage.
+        :paramtype stage: Optional[str]
+        :keyword list_view_type: View type for including/excluding (for example) archived entities.
+        :paramtype list_view_type: str
         :return: Iterator of deployment template objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.DeploymentTemplate]
         """
@@ -343,9 +342,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(
-        self, deployment_template: DeploymentTemplate, **kwargs: Any
-    ) -> DeploymentTemplate:
+    def create_or_update(self, deployment_template: DeploymentTemplate, **kwargs: Any) -> DeploymentTemplate:
         """Create or update a deployment template.
 
         :param deployment_template: DeploymentTemplate object to create or update, dictionary containing deployment
@@ -357,9 +354,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         try:
             # Ensure we have a DeploymentTemplate object
             if not isinstance(deployment_template, DeploymentTemplate):
-                raise ValueError(
-                    "deployment_template must be a DeploymentTemplate object"
-                )
+                raise ValueError("deployment_template must be a DeploymentTemplate object")
 
             if hasattr(self._service_client, "deployment_templates"):
                 endpoint = self._get_registry_endpoint()
