@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
+class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
     """The Task Completion evaluator determines whether an AI agent successfully completed the requested task based on:
 
         - Final outcome and deliverable of the task
@@ -43,7 +43,7 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
             :end-before: [END task_completion_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a TaskCompletionEvaluator with a query and response.
+            :caption: Initialize and call a _TaskCompletionEvaluator with a query and response.
 
     .. admonition:: Example using Azure AI Project URL:
 
@@ -52,7 +52,7 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
             :end-before: [END task_completion_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call TaskCompletionEvaluator using Azure AI Project URL in the following format
+            :caption: Initialize and call a _TaskCompletionEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
@@ -89,14 +89,14 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
 
 
         Example with string inputs and no tools:
-            evaluator = TaskCompletionEvaluator(model_config)
+            evaluator = _TaskCompletionEvaluator(model_config)
             query = "Plan a 3-day itinerary for Paris with cultural landmarks and local cuisine."
             response = "**Day 1:** Morning: Louvre Museum, Lunch: Le Comptoir du Relais..."
 
             result = evaluator(query=query, response=response)
 
         Example with list of messages:
-            evaluator = TaskCompletionEvaluator(model_config)
+            evaluator = _TaskCompletionEvaluator(model_config)
             query = [{'role': 'system', 'content': 'You are a helpful travel planning assistant.'}, {'createdAt': 1700000060, 'role': 'user', 'content': [{'type': 'text', 'text': 'Plan a 3-day Paris itinerary with cultural landmarks and cuisine'}]}]
             response = [{'createdAt': 1700000070, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': '**Day 1:** Morning: Visit Louvre Museum (9 AM - 12 PM)...'}]}]
             tool_definitions = [{'name': 'get_attractions', 'description': 'Get tourist attractions for a city.', 'parameters': {'type': 'object', 'properties': {'city': {'type': 'string', 'description': 'The city name.'}}}}]
