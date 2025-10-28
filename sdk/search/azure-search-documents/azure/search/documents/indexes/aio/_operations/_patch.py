@@ -647,6 +647,36 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             return await super().delete_skillset(*args, **kwargs)
 
     @overload
+    async def get_skillsets(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexerSkillset]:
+        """Lists all skillsets available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+         list of JSON property names, or '*' for all properties. The default is all properties. Default
+         value is None.
+        :paramtype select: str
+        :return: List of all the SearchIndexerSkillsets.
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def get_skillsets(self, **kwargs: Any) -> List[_models.SearchIndexerSkillset]:
+        """Lists all skillsets available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+         list of JSON property names, or '*' for all properties. The default is all properties. Default
+         value is None.
+        :paramtype select: str
+        :return: List of all the SearchIndexerSkillsets.
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        result = await self._get_skillsets(**kwargs)
+        assert result.skillsets is not None  # Hint for mypy
+        return result.skillsets
+
+    @overload
     async def get_indexers(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexer]:
         """Lists all indexers available for a search service.
 
@@ -758,9 +788,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
 
         """
-        result = await self.list_skillsets(**kwargs)
-        assert result.skillsets is not None  # Hint for mypy
-        return [x.name for x in result.skillsets]
+        result = await self.get_skillsets(**kwargs)
+        return [x.get("name") for x in result]
 
 
 __all__: list[str] = [
