@@ -217,6 +217,44 @@ class TestBaseExporter(unittest.TestCase):
             storage_directory
         )
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.getpass.getuser")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
+    def test_constructor_no_storage_directory_and_invalid_user_details(self, mock_get_temp_dir, mock_get_user):
+        mock_get_temp_dir.return_value = TEST_TEMP_DIR
+        mock_get_user.side_effect = OSError("failed to resolve user")
+        base = BaseExporter(
+            api_version="2021-02-10_Preview",
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            distro_version="1.0.0",
+            storage_maintenance_period=30,
+            storage_max_size=1000,
+            storage_min_retry_interval=100,
+            storage_retention_period=2000,
+        )
+        self.assertEqual(
+            base._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            base._endpoint,
+            "https://westus-0.in.applicationinsights.azure.com/",
+        )
+        self.assertEqual(base._distro_version, "1.0.0")
+        self.assertIsNotNone(base.storage)
+        self.assertEqual(base.storage._max_size, 1000)
+        self.assertEqual(base.storage._retention_period, 2000)
+        self.assertEqual(base._storage_maintenance_period, 30)
+        self.assertEqual(base._timeout, 10)
+        self.assertEqual(base._api_version, "2021-02-10_Preview")
+        self.assertEqual(base._storage_min_retry_interval, 100)
+        storage_directory = _get_storage_directory(instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(
+            base._storage_directory,
+            storage_directory
+        )
+        mock_get_user.assert_called()
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_disable_offline_storage(self, mock_get_temp_dir):
         mock_get_temp_dir.side_effect = Exception()

@@ -83,7 +83,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
 
 logger = logging.getLogger(__name__)
 
-_AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
+_AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 
@@ -614,21 +614,43 @@ def _get_storage_directory(instrumentation_key: str) -> str:
     block others because the directory inherits that user's ``umask``. This is avoided by
     inserting a hash of the instrumentation key, user name, process name, and
     application directory, giving each user their own subdirectory, e.g.
-    ``/tmp/1a2b3c.../Microsoft/AzureMonitor/opentelemetry-python-<ikey>``.
+    ``/tmp/Microsoft-AzureMonitor-1234...../opentelemetry-python-<ikey>``.
 
     :param str instrumentation_key: Application Insights instrumentation key.
     :return: Absolute path to the storage directory.
     :rtype: str
     """
 
-    process = psutil.Process()
-    process_name = process.name()
-    application_directory = Path(process.cwd() or sys.argv[0]).resolve()
+    def _safe_psutil_call(func, default=""):
+        try:
+            return func() or default
+        except psutil.Error:
+            return default
+
     shared_root = tempfile.gettempdir()
+    
+    process = None
+    try:
+        process = psutil.Process()
+    except psutil.Error:
+        pass
+
+    process_name = _safe_psutil_call(process.name) if process else ""
+    candidate_path = _safe_psutil_call(process.cwd) if process else ""
+
+    if not candidate_path:
+        candidate_path = sys.argv[0] if sys.argv else ""
+
+    try:
+        application_directory = Path(candidate_path or ".").resolve()
+    except Exception:
+        application_directory = Path(shared_root)
+
     try:
         user_segment = getpass.getuser()
     except Exception:
         user_segment = ""
+
     hash_input = ";".join(
         [
             instrumentation_key,
@@ -639,6 +661,6 @@ def _get_storage_directory(instrumentation_key: str) -> str:
     )
     subdirectory = _get_sha256_hash(hash_input)
     storage_directory = os.path.join(
-        shared_root, subdirectory, _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + instrumentation_key
+        shared_root, _AZURE_TEMPDIR_PREFIX + subdirectory, _TEMPDIR_PREFIX + instrumentation_key
     )
     return storage_directory
