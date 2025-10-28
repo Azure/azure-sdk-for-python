@@ -21,6 +21,7 @@ from ..._operations._patch import (
     _pack_continuation_token,
     _unpack_continuation_token,
 )
+from ...models._patch import RequestEntityTooLargeError
 from ... import models as _models
 
 
@@ -180,6 +181,41 @@ class AsyncSearchItemPaged(AsyncItemPaged[Dict]):
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
     """Async SearchClient operations mixin customizations."""
+    @distributed_trace_async
+    async def index_documents(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
+        """Specify a document operations to perform as a batch.
+
+        :param batch: A batch of document operations to perform.
+        :type batch: IndexDocumentsBatch
+        :return: List of IndexingResult
+        :rtype:  list[IndexingResult]
+
+        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
+        """
+        return await self._index_documents_actions(batch=batch, **kwargs)
+
+    async def _index_documents_actions(self, batch: _models.IndexDocumentsBatch, **kwargs: Any) -> List[_models.IndexingResult]:
+        error_map = {413: RequestEntityTooLargeError}
+
+        try:
+            batch_response = await self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            return cast(List[_models.IndexingResult], batch_response.results)
+        except RequestEntityTooLargeError:
+            if len(batch.actions) == 1:
+                raise
+            pos = round(len(batch.actions) / 2)
+            batch_response_first_half = await self._index_documents_actions(batch=_models.IndexDocumentsBatch(actions=batch.actions[:pos]), **kwargs)
+            if batch_response_first_half:
+                result_first_half = batch_response_first_half
+            else:
+                result_first_half = []
+            batch_response_second_half = await self._index_documents_actions(actions=actions[pos:], **kwargs)
+            if batch_response_second_half:
+                result_second_half = batch_response_second_half
+            else:
+                result_second_half = []
+            result_first_half.extend(result_second_half)
+            return result_first_half
 
     async def upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[_models.IndexingResult]:
         """Upload documents to the Azure search index.

@@ -11,6 +11,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from ._client import SearchClient as _SearchClient
 from ._operations._patch import SearchItemPaged
+from .models._patch import RequestEntityTooLargeError
 
 
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -21,7 +22,6 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 DEFAULT_VERSION = ApiVersion.V2025_08_01_PREVIEW
-
 
 class SearchClient(_SearchClient):
     """SearchClient customizations go here."""
@@ -35,6 +35,7 @@ __all__: list[str] = [
     "SearchItemPaged",
     "ApiVersion",
     "DEFAULT_VERSION",
+    "RequestEntityTooLargeError",
 ]  # Add all objects you want publicly available to users at this package level
 
 
