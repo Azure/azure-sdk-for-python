@@ -207,8 +207,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             pass
         return None
 
-    @staticmethod
-    def _get_needed_built_in_tool_definitions(tool_calls: List[Dict]) -> List[Dict]:
+    def _get_needed_built_in_tool_definitions(self, tool_calls: List[Dict]) -> List[Dict]:
         """Extract tool definitions needed for the given built-in tool calls."""
         needed_definitions = []
         for tool_call in tool_calls:
@@ -219,14 +218,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 if tool_type == "tool_call":
                     tool_name = tool_call.get("name")
                     if tool_name:
-                        definition = PromptyEvaluatorBase._get_built_in_tool_definition(tool_name)
+                        definition = self._get_built_in_tool_definition(tool_name)
                         if definition and definition not in needed_definitions:
                             needed_definitions.append(definition)
 
         return needed_definitions
 
-    @staticmethod
-    def _extract_tool_names_from_calls(tool_calls: List[Dict]) -> List[str]:
+    def _extract_tool_names_from_calls(self, tool_calls: List[Dict]) -> List[str]:
         """Extract just the tool names from tool calls, removing parameters."""
         tool_names = []
         for tool_call in tool_calls:

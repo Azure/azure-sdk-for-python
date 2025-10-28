@@ -42,18 +42,22 @@ async def tool_selection_flow_side_effect(timeout, **kwargs):
     # Handle invalid scenarios - check if any tool name contains "invalid"
     if any("invalid" in str(tc).lower() for tc in tool_calls):
         return {
-            "explanation": "Invalid tool call detected",
-            "score": "invalid_score",
-            "details": {},
+            "llm_output": {
+                "explanation": "Invalid tool call detected",
+                "score": "invalid_score",
+                "details": {},
+            }
         }
 
     return {
-        "explanation": reason,
-        "score": score,
-        "details": {
-            "tools_available": len(tool_definitions),
-            "tools_selected": len(tool_calls),
-        },
+        "llm_output": {
+            "explanation": reason,
+            "score": score,
+            "details": {
+                "tools_available": len(tool_definitions),
+                "tools_selected": len(tool_calls),
+            },
+        }
     }
 
 
