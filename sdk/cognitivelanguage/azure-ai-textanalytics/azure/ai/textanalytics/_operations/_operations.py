@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import TextAnalysisConfiguration
+from .._configuration import TextAnalysisClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
@@ -141,8 +141,8 @@ def build_text_analysis_cancel_job_request(job_id: str, **kwargs: Any) -> HttpRe
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-class _TextAnalysisOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], TextAnalysisConfiguration]
+class _TextAnalysisClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], TextAnalysisClientConfiguration]
 ):
 
     @overload

@@ -8,11 +8,11 @@
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import TextAnalysisPreparer
-from testpreparer_async import TextAnalysisTestBaseAsync
+from testpreparer_async import TextAnalysisClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestTextAnalysisAsync(TextAnalysisTestBaseAsync):
+class TestTextAnalysisAsync(TextAnalysisClientTestBaseAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     async def test_analyze_text(self, textanalysis_endpoint):

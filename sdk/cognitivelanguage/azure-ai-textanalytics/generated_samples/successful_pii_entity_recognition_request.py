@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.textanalytics import TextAnalysis
+from azure.ai.textanalytics import TextAnalysisClient
 
 """
 # PREREQUISITES
@@ -18,7 +18,7 @@ from azure.ai.textanalytics import TextAnalysis
 
 
 def main():
-    client = TextAnalysis(
+    client = TextAnalysisClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )

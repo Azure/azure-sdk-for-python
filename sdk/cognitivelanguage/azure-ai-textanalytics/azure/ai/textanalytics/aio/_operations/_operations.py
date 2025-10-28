@@ -38,7 +38,7 @@ from ..._operations._operations import (
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
-from .._configuration import TextAnalysisConfiguration
+from .._configuration import TextAnalysisClientConfiguration
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -46,8 +46,8 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class _TextAnalysisOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], TextAnalysisConfiguration]
+class _TextAnalysisClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], TextAnalysisClientConfiguration]
 ):
 
     @overload

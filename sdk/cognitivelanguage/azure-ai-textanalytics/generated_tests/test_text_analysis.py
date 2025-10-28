@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import TextAnalysisPreparer, TextAnalysisTestBase
+from testpreparer import TextAnalysisClientTestBase, TextAnalysisPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestTextAnalysis(TextAnalysisTestBase):
+class TestTextAnalysis(TextAnalysisClientTestBase):
     @TextAnalysisPreparer()
     @recorded_by_proxy
     def test_analyze_text(self, textanalysis_endpoint):

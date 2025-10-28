@@ -1,4 +1,4 @@
 directory: specification/cognitiveservices/data-plane/LanguageAnalyzeText
-commit: 856560f304f6a4df7c50f17b7d72ac73884fab74
+commit: 817d1af94455cd42b3e9fc7082024ba42aee7b4e
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

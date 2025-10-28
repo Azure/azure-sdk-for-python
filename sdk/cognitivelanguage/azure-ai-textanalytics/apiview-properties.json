@@ -192,13 +192,13 @@
         "azure.ai.textanalytics.models.ExtractiveSummarizationSortingCriteria": "Language.Text.ExtractiveSummarizationSortingCriteria",
         "azure.ai.textanalytics.models.FhirVersion": "Language.Text.fhirVersion",
         "azure.ai.textanalytics.models.HealthcareDocumentType": "Language.Text.healthcareDocumentType",
-        "azure.ai.textanalytics.TextAnalysis.analyze_text": "Language.Text.analyzeText",
-        "azure.ai.textanalytics.aio.TextAnalysis.analyze_text": "Language.Text.analyzeText",
-        "azure.ai.textanalytics.TextAnalysis.get_job_status": "Language.Text.analyzeTextJobStatus",
-        "azure.ai.textanalytics.aio.TextAnalysis.get_job_status": "Language.Text.analyzeTextJobStatus",
-        "azure.ai.textanalytics.TextAnalysis.begin_analyze_text_job": "Language.Text.analyzeTextSubmitJob",
-        "azure.ai.textanalytics.aio.TextAnalysis.begin_analyze_text_job": "Language.Text.analyzeTextSubmitJob",
-        "azure.ai.textanalytics.TextAnalysis.begin_cancel_job": "Language.Text.analyzeTextCancelJob",
-        "azure.ai.textanalytics.aio.TextAnalysis.begin_cancel_job": "Language.Text.analyzeTextCancelJob"
+        "azure.ai.textanalytics.TextAnalysisClient.analyze_text": "Language.Text.analyzeText",
+        "azure.ai.textanalytics.aio.TextAnalysisClient.analyze_text": "Language.Text.analyzeText",
+        "azure.ai.textanalytics.TextAnalysisClient.get_job_status": "Language.Text.analyzeTextJobStatus",
+        "azure.ai.textanalytics.aio.TextAnalysisClient.get_job_status": "Language.Text.analyzeTextJobStatus",
+        "azure.ai.textanalytics.TextAnalysisClient.begin_analyze_text_job": "Language.Text.analyzeTextSubmitJob",
+        "azure.ai.textanalytics.aio.TextAnalysisClient.begin_analyze_text_job": "Language.Text.analyzeTextSubmitJob",
+        "azure.ai.textanalytics.TextAnalysisClient.begin_cancel_job": "Language.Text.analyzeTextCancelJob",
+        "azure.ai.textanalytics.aio.TextAnalysisClient.begin_cancel_job": "Language.Text.analyzeTextCancelJob"
     }
 }
