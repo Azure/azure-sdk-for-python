@@ -150,12 +150,12 @@
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft @koen-mertens
 
-# AzureSdkOwners: @mccoyp @Azure/azure-sdk-write-keyvault
+# AzureSdkOwners: @Azure/azure-sdk-write-keyvault
 # ServiceLabel: %KeyVault
 # ServiceOwners:                                                     @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @mccoyp @Azure/azure-sdk-write-keyvault
+/sdk/keyvault/                                                       @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @prativen @mitsha-microsoft @ninallam
