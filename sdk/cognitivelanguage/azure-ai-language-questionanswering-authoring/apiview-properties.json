@@ -22,7 +22,7 @@
         "azure.ai.language.questionanswering.authoring.models.QuestionAnsweringAuthoringProjectDeploymentJobState": "Language.QuestionAnswering.Authoring.QuestionAnsweringAuthoringProjectDeploymentJobState",
         "azure.ai.language.questionanswering.authoring.models.QuestionAnsweringAuthoringUpdateQnasJobState": "Language.QuestionAnswering.Authoring.QuestionAnsweringAuthoringUpdateQnasJobState",
         "azure.ai.language.questionanswering.authoring.models.QuestionAnsweringAuthoringUpdateSourcesJobState": "Language.QuestionAnswering.Authoring.QuestionAnsweringAuthoringUpdateSourcesJobState",
-        "azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject": "Language.QuestionAnswering.Authoring.QuestionAnsweringProject",
+        "azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject": "Language.QuestionAnswering.Authoring.QuestionAnsweringProjectMetadata",
         "azure.ai.language.questionanswering.authoring.models.RetrieveQnaRecord": "Language.QuestionAnswering.Authoring.RetrieveQnaRecord",
         "azure.ai.language.questionanswering.authoring.models.SuggestedQuestion": "Language.QuestionAnswering.Authoring.SuggestedQuestion",
         "azure.ai.language.questionanswering.authoring.models.SuggestedQuestionsCluster": "Language.QuestionAnswering.Authoring.SuggestedQuestionsCluster",
