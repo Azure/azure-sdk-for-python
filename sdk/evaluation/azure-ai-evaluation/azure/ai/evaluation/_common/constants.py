@@ -13,7 +13,7 @@ PROMPT_BASED_REASON_EVALUATORS = [
     "groundedness",
     "fluency",
     "intent_resolution",
-    "tool_call_accurate",
+    "tool_call_accuracy",
     "response_completeness",
     "task_adherence",
     "tool_selection",
