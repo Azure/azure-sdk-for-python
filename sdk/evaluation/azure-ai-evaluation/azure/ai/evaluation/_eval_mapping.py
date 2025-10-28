@@ -11,7 +11,7 @@
 
 # Import all evals
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
-from azure.ai.evaluation._evaluators._task_completion import TaskCompletionEvaluator
+from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
     CodeVulnerabilityEvaluator,
