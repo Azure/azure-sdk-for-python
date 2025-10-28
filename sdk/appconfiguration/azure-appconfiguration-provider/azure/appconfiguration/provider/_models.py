@@ -6,6 +6,13 @@
 from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple, List
 from ._constants import NULL_CHAR
 
+# Error message constants for SettingSelector validation
+_SNAPSHOT_PARAMETER_CONFLICT_ERROR = (
+    "Cannot specify both snapshot_name and {parameter}. "
+    "When using snapshots, all other filtering parameters are ignored."
+)
+_SELECTOR_REQUIRED_ERROR = "Either key_filter or snapshot_name must be specified."
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
@@ -62,25 +69,25 @@ class SettingSelector:
     """
 
     def __init__(
-        self, 
-        *, 
-        key_filter: Optional[str] = None, 
-        label_filter: Optional[str] = NULL_CHAR, 
-        tag_filters: Optional[List[str]] = None, 
-        snapshot_name: Optional[str] = None
+        self,
+        *,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = NULL_CHAR,
+        tag_filters: Optional[List[str]] = None,
+        snapshot_name: Optional[str] = None,
     ):
         if snapshot_name is not None:
             # When using snapshots, no other filtering parameters should be specified
             if key_filter is not None:
-                raise ValueError("Cannot specify both snapshot_name and key_filter. When using snapshots, all other filtering parameters are ignored.")
+                raise ValueError(_SNAPSHOT_PARAMETER_CONFLICT_ERROR.format(parameter="key_filter"))
             if label_filter != NULL_CHAR:
-                raise ValueError("Cannot specify both snapshot_name and label_filter. When using snapshots, all other filtering parameters are ignored.")
+                raise ValueError(_SNAPSHOT_PARAMETER_CONFLICT_ERROR.format(parameter="label_filter"))
             if tag_filters is not None:
-                raise ValueError("Cannot specify both snapshot_name and tag_filters. When using snapshots, all other filtering parameters are ignored.")
-        
+                raise ValueError(_SNAPSHOT_PARAMETER_CONFLICT_ERROR.format(parameter="tag_filters"))
+
         if snapshot_name is None and key_filter is None:
-            raise ValueError("Either key_filter or snapshot_name must be specified.")
-            
+            raise ValueError(_SELECTOR_REQUIRED_ERROR)
+
         if tag_filters is not None:
             if not isinstance(tag_filters, list):
                 raise TypeError("tag_filters must be a list of strings.")

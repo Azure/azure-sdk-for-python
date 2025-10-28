@@ -138,13 +138,14 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         for select in selects:
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                configurations = self._client.list_configuration_settings(
-                    snapshot_name=select.snapshot_name, **kwargs
-                )
+                configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Use traditional filtering when not loading from a snapshot
                 configurations = self._client.list_configuration_settings(
-                    key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs
                 )
             for config in configurations:
                 if not isinstance(config, FeatureFlagConfigurationSetting):
@@ -161,8 +162,10 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
+            # Handle None key_filter by converting to empty string
+            key_filter = select.key_filter if select.key_filter is not None else ""
             feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + select.key_filter,
+                key_filter=FEATURE_FLAG_PREFIX + key_filter,
                 label_filter=select.label_filter,
                 tags_filter=select.tag_filters,
                 **kwargs
