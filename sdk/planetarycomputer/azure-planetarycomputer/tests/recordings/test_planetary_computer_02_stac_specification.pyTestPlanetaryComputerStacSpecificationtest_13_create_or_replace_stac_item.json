@@ -110,7 +110,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/878b70fd-ea31-447f-a247-f4812afeac7a?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/a8d77ca9-a6f6-4031-a0f3-417b06909e94?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -125,11 +125,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:55:37.6332394Z"
+            "timestamp": "2025-10-28T17:53:56.6087963Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-27T17:55:37.6332359Z",
+        "creationTime": "2025-10-28T17:53:56.6087949Z",
         "collectionId": "naip-atl"
       }
     },
@@ -167,11 +167,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:55:37.6332394Z"
+            "timestamp": "2025-10-28T17:53:56.6087963Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-27T17:55:37.6332359Z",
+        "creationTime": "2025-10-28T17:53:56.6087949Z",
         "collectionId": "naip-atl"
       }
     },
@@ -209,23 +209,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:55:37.633235Z"
+            "timestamp": "2025-10-28T17:53:56.608794Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-27T17:55:38.018398Z"
+            "timestamp": "2025-10-28T17:53:58.975017Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-27T17:55:38.374546Z",
+            "timestamp": "2025-10-28T17:53:59.380981Z",
             "errorCode": "ItemAlreadyExistsInCollection",
             "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_replace_test' already exists in collection 'naip-atl'"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-27T17:55:37.633235Z",
-        "startTime": "2025-10-27T17:55:37.633235Z",
-        "finishTime": "2025-10-27T17:55:38.374546Z",
+        "creationTime": "2025-10-28T17:53:56.608794Z",
+        "startTime": "2025-10-28T17:53:56.608794Z",
+        "finishTime": "2025-10-28T17:53:59.380981Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "1",
@@ -312,7 +312,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-27T17:43:53.130660Z",
+        "_msft:ts": "2025-10-27T17:56:14.047759Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -340,7 +340,7 @@
             ]
           ]
         },
-        "_msft:etag": "feec4689-7787-44dc-8259-6703eaf31f49",
+        "_msft:etag": "ae8f04db-54e7-4b54-9197-71351d15a357",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -489,7 +489,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/391aad48-16af-48ad-8852-f9159f4d41eb?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/8abd6098-c6a7-42ab-beae-482f34dbd04d?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -504,11 +504,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:56:11.5151156Z"
+            "timestamp": "2025-10-28T17:54:31.0796921Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-27T17:56:11.5151121Z",
+        "creationTime": "2025-10-28T17:54:31.0796908Z",
         "collectionId": "naip-atl"
       }
     },
@@ -546,11 +546,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:56:11.5151156Z"
+            "timestamp": "2025-10-28T17:54:31.0796921Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-27T17:56:11.5151121Z",
+        "creationTime": "2025-10-28T17:54:31.0796908Z",
         "collectionId": "naip-atl"
       }
     },
@@ -588,21 +588,21 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:56:11.515112Z"
+            "timestamp": "2025-10-28T17:54:31.07969Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-27T17:56:12.900378Z"
+            "timestamp": "2025-10-28T17:54:31.432931Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-27T17:56:14.047721Z"
+            "timestamp": "2025-10-28T17:54:32.904001Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-27T17:56:11.515112Z",
-        "startTime": "2025-10-27T17:56:11.515112Z",
-        "finishTime": "2025-10-27T17:56:14.047721Z",
+        "creationTime": "2025-10-28T17:54:31.07969Z",
+        "startTime": "2025-10-28T17:54:31.07969Z",
+        "finishTime": "2025-10-28T17:54:32.904001Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "0",
@@ -683,7 +683,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-27T17:56:14.047759Z",
+        "_msft:ts": "2025-10-28T17:54:32.904033Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -711,7 +711,7 @@
             ]
           ]
         },
-        "_msft:etag": "ae8f04db-54e7-4b54-9197-71351d15a357",
+        "_msft:etag": "24a31142-4b56-4c51-9fac-3990eaf88700",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -820,7 +820,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-27T17:56:14.047759Z",
+        "_msft:ts": "2025-10-28T17:54:32.904033Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -848,7 +848,7 @@
             ]
           ]
         },
-        "_msft:etag": "ae8f04db-54e7-4b54-9197-71351d15a357",
+        "_msft:etag": "24a31142-4b56-4c51-9fac-3990eaf88700",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,

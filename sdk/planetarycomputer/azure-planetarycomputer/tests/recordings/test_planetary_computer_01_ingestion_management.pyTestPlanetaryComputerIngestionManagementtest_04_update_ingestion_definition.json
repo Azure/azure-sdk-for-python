@@ -39,7 +39,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-27T17:53:17.6611741Z",
+        "creationTime": "2025-10-28T17:51:44.4651567Z",
         "importType": "StaticCatalog",
         "displayName": "Sample Dataset Ingestion",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -83,7 +83,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-27T17:53:17.6611741Z",
+        "creationTime": "2025-10-28T17:51:44.4651567Z",
         "importType": "StaticCatalog",
         "displayName": "Updated Ingestion Name",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",

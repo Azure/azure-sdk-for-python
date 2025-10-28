@@ -93,11 +93,11 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "url": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static/geocatalog-naip-atl-45816b8288ca40a582622c336503230c.png?api-version=2025-04-30-preview"
+        "url": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static/geocatalog-naip-atl-08529e20fdbd4219a5da0235cc79dbb0.png?api-version=2025-04-30-preview"
       }
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static/geocatalog-naip-atl-0000000088ca40a582622c336503230c.png?api-version=2025-04-30-preview",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static/geocatalog-naip-atl-00000000fdbd4219a5da0235cc79dbb0.png?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "image/png",

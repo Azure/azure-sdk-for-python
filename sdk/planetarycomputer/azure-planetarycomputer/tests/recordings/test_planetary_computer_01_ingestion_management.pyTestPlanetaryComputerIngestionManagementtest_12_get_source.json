@@ -1,59 +1,6 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Expose-Headers": "Location",
-        "Access-Control-Max-Age": "1728000",
-        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "keep-alive",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Request-ID": "00000000000000000000000000000000"
-      },
-      "ResponseBody": {
-        "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Succeeded",
-        "statusHistory": [
-          {
-            "status": "Pending",
-            "timestamp": "2025-10-27T17:53:12.6930297Z"
-          },
-          {
-            "status": "Running",
-            "timestamp": "2025-10-27T17:53:26.2042751Z"
-          },
-          {
-            "status": "Finished",
-            "timestamp": "2025-10-27T17:53:26.2515404Z"
-          }
-        ],
-        "type": "DeleteIngestion",
-        "creationTime": "2025-10-27T17:53:12.6930282Z",
-        "collectionId": "naip-atl",
-        "additionalInformation": {
-          "IngestionId": "03e6718f-cc27-474a-8443-30591d662921"
-        }
-      }
-    },
-    {
       "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/ingestion-sources/managed-identities?api-version=2025-04-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
@@ -96,14 +43,14 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "171",
+        "Content-Length": "219",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "connectionInfo": {
-          "containerUrl": "Sanitized",
+          "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
         },
         "kind": "BlobManagedIdentity"
@@ -131,9 +78,9 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-27T17:53:42.8687892Z",
+        "created": "2025-10-28T17:52:04.6320753Z",
         "connectionInfo": {
-          "containerUrl": "Sanitized",
+          "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
         }
       }
@@ -169,9 +116,9 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-27T17:53:42.8687892Z",
+        "created": "2025-10-28T17:52:04.6320753Z",
         "connectionInfo": {
-          "containerUrl": "Sanitized",
+          "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
         }
       }

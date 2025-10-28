@@ -71,7 +71,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-27T17:42:11.600060Z",
+        "_msft:ts": "2025-10-27T17:54:28.819895Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -99,7 +99,7 @@
             ]
           ]
         },
-        "_msft:etag": "e6e203e1-e622-49ff-b749-840e8519601c",
+        "_msft:etag": "a2926ad1-1bb8-42f2-85dc-19ba8dbec719",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -186,7 +186,7 @@
             "title": "RGBIR COG tile"
           }
         },
-        "_msft:ts": "2025-10-27T17:42:11.600060Z",
+        "_msft:ts": "2025-10-27T17:54:28.819895Z",
         "geometry": {
           "type": "Polygon",
           "coordinates": [
@@ -214,7 +214,7 @@
             ]
           ]
         },
-        "_msft:etag": "e6e203e1-e622-49ff-b749-840e8519601c",
+        "_msft:etag": "a2926ad1-1bb8-42f2-85dc-19ba8dbec719",
         "collection": "naip-atl",
         "properties": {
           "gsd": 0.6,
@@ -262,7 +262,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/7515d4c5-4239-40b0-80e0-f94e9ac69bbc?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/9389d82e-6890-4d48-90d2-cad2ce4d7526?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -277,11 +277,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:55:00.1182195Z"
+            "timestamp": "2025-10-28T17:53:20.0972201Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-27T17:55:00.1182176Z",
+        "creationTime": "2025-10-28T17:53:20.0972188Z",
         "collectionId": "naip-atl"
       }
     },
@@ -319,11 +319,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:55:00.1182195Z"
+            "timestamp": "2025-10-28T17:53:20.0972201Z"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-27T17:55:00.1182176Z",
+        "creationTime": "2025-10-28T17:53:20.0972188Z",
         "collectionId": "naip-atl"
       }
     },
@@ -361,23 +361,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-27T17:55:00.118217Z"
+            "timestamp": "2025-10-28T17:53:20.097218Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-27T17:55:01.347143Z"
+            "timestamp": "2025-10-28T17:53:20.506095Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-27T17:55:02.614351Z",
+            "timestamp": "2025-10-28T17:53:22.086047Z",
             "errorCode": "PublicAccessRestricted",
             "errorMessage": "Asset transformation exception. Reason: Error retrieving content from public source. Reason: Public access is not permitted on this storage account. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif. Source: https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif"
           }
         ],
         "type": "UpdateItem",
-        "creationTime": "2025-10-27T17:55:00.118217Z",
-        "startTime": "2025-10-27T17:55:00.118217Z",
-        "finishTime": "2025-10-27T17:55:02.614351Z",
+        "creationTime": "2025-10-28T17:53:20.097218Z",
+        "startTime": "2025-10-28T17:53:20.097218Z",
+        "finishTime": "2025-10-28T17:53:22.086047Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "1",

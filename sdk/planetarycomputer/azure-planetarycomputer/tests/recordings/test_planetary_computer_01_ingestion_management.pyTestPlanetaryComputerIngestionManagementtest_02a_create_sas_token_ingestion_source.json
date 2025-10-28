@@ -6,14 +6,14 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "188",
+        "Content-Length": "236",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "connectionInfo": {
-          "containerUrl": "Sanitized",
+          "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "sasToken": "sv=2021-01-01&st=Sanitized&se=Sanitized&sr=c&sp=rl&sig=Sanitized"
         },
         "kind": "SasToken"
@@ -41,9 +41,9 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "SasToken",
-        "created": "2025-10-27T17:53:10.0243567Z",
+        "created": "2025-10-28T17:51:38.6924797Z",
         "connectionInfo": {
-          "containerUrl": "Sanitized",
+          "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "expiration": "2099-12-31T23:59:59.0000000Z"
         }
       }

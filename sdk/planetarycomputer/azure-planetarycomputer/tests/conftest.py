@@ -87,19 +87,45 @@ def add_sanitizers(test_proxy):
         if real_endpoint:
             add_general_string_sanitizer(target=real_endpoint, value=fake_endpoint)
     
-    # Sanitize storage account URLs WITH URL-encoded protocol prefix (e.g., in query parameters)
-    # Matches: https%3A%2F%2Fvojrtgdatasa.blob.core.windows.net → https%3A%2F%2FSANITIZED_STORAGE.blob.core.windows.net
-    # This MUST come first to preserve the %2F%2F encoding
-    add_uri_regex_sanitizer(
-        regex=r"https%3A%2F%2F[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
-        value="https%3A%2F%2FSANITIZED_STORAGE.blob.core.windows.net"
+    # Sanitize full container URLs to preserve structure instead of just "Sanitized"
+    # This replaces real container URLs with a fake URL that maintains the structure
+    # Example: https://realaccount.blob.core.windows.net/realcontainer → https://SANITIZED.blob.core.windows.net/sample-container
+    # IMPORTANT: This MUST come BEFORE the general storage account sanitizers below
+    fake_container_url = "https://SANITIZED.blob.core.windows.net/sample-container"
+    
+    # Replace the default "Sanitized" value with our structured fake URL for container URLs
+    # This uses body key sanitizer to target specific JSON fields
+    from devtools_testutils import add_body_regex_sanitizer
+    add_body_regex_sanitizer(
+        regex=r'"containerUrl"\s*:\s*"Sanitized"',
+        value=f'"containerUrl": "{fake_container_url}"'
+    )
+    add_body_regex_sanitizer(
+        regex=r'"containerUri"\s*:\s*"Sanitized"',
+        value=f'"containerUri": "{fake_container_url}"'
     )
     
-    # Sanitize storage account URLs WITHOUT URL encoding (normal URLs)
-    # Matches: vojrtgdatasa.blob.core.windows.net → SANITIZED_STORAGE.blob.core.windows.net
+    # In live mode, also replace the real container URL with our fake URL
+    if is_live():
+        # Try both environment variables that might contain container URLs
+        for env_var in ["AZURE_INGESTION_CONTAINER_URI", "PLANETARYCOMPUTER_INGESTION_CONTAINER_URI"]:
+            real_container_url = os.environ.get(env_var, "")
+            if real_container_url:
+                add_general_string_sanitizer(target=real_container_url, value=fake_container_url)
+    
+    # Sanitize storage account URLs WITH URL-encoded protocol prefix (e.g., in query parameters)
+    # Matches: https%3A%2F%2Fvojrtgdatasa.blob.core.windows.net → https%3A%2F%2Fexamplestorage.blob.core.windows.net
     add_uri_regex_sanitizer(
-        regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net", 
-        value="SANITIZED_STORAGE.blob.core.windows.net"
+        regex=r"https%3A%2F%2F[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
+        value="https%3A%2F%2Fexamplestorage.blob.core.windows.net"
+    )
+    
+    # Sanitize storage account URLs WITHOUT URL encoding (normal URLs) - for URLs without container paths
+    # Matches: vojrtgdatasa.blob.core.windows.net → examplestorage.blob.core.windows.net
+    # Note: This is a fallback for URLs that don't include a container path
+    add_uri_regex_sanitizer(
+        regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net(?!/)", 
+        value="examplestorage.blob.core.windows.net"
     )
     
     # Sanitize storage account URLs in response bodies ONLY (not request bodies)
@@ -108,7 +134,6 @@ def add_sanitizers(test_proxy):
     # but we need it to avoid double-sanitization issues. The test proxy will apply
     # URI sanitizers to request bodies automatically, so we rely on those instead.
     # This body sanitizer is primarily for response bodies that aren't caught by URI sanitizers.
-    from devtools_testutils import add_body_regex_sanitizer
     # Commenting out to prevent double-sanitization in request bodies
     # add_body_regex_sanitizer(
     #     regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",

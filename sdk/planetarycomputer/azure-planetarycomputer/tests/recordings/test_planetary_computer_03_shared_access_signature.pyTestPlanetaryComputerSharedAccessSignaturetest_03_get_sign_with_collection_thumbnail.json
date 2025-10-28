@@ -194,7 +194,7 @@
         },
         "stac_version": "1.0.0",
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-27T17:50:13.216550Z",
+        "msft:_updated": "2025-10-28T17:01:22.652537Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"
@@ -202,7 +202,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/sas/sign?api-version=2025-04-30-preview&href=https%3A%2F%2FSANITIZED_STORAGE.blob.core.windows.net%2Fnaip-atl-00000000%2Fcollection-assets%2Fthumbnail%2Fthumbnail.png",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/sas/sign?api-version=2025-04-30-preview&href=https%3A%2F%examplestorage.blob.core.windows.net%2Fnaip-atl-00000000%2Fcollection-assets%2Fthumbnail%2Fthumbnail.png",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -229,7 +229,7 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-10-28T17:58:01Z",
+        "msft:expiry": "2025-10-29T17:56:16Z",
         "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-10-26T17%3A41%3A15Z&ske=2025-11-02T17%3A40%3A15Z&sks=b&skv=2025-01-05&sig=Sanitized"
       }
     }

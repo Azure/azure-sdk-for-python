@@ -93,7 +93,7 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "url": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static/geocatalog-naip-atl-15be7ff0c9cd4825a6c9c69543df9ada.png?api-version=2025-04-30-preview"
+        "url": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/collections/naip-atl/image/static/geocatalog-naip-atl-b1d7313980f24774afe3c2b44535526c.png?api-version=2025-04-30-preview"
       }
     }
   ],

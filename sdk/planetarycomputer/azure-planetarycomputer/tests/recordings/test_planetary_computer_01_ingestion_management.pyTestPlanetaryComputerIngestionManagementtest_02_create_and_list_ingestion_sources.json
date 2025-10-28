@@ -70,7 +70,7 @@
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "kind": "BlobManagedIdentity",
-            "created": "2025-10-27T17:40:17.987354Z"
+            "created": "2025-10-28T17:46:58.8631334Z"
           }
         ]
       }
@@ -110,14 +110,14 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "171",
+        "Content-Length": "219",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "connectionInfo": {
-          "containerUrl": "Sanitized",
+          "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
         },
         "kind": "BlobManagedIdentity"
@@ -145,9 +145,9 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-27T17:53:07.3401714Z",
+        "created": "2025-10-28T17:51:34.5965528Z",
         "connectionInfo": {
-          "containerUrl": "Sanitized",
+          "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
         }
       }
@@ -185,7 +185,7 @@
           {
             "id": "00000000-0000-0000-0000-000000000000",
             "kind": "BlobManagedIdentity",
-            "created": "2025-10-27T17:53:07.3401714Z"
+            "created": "2025-10-28T17:51:34.5965528Z"
           }
         ]
       }

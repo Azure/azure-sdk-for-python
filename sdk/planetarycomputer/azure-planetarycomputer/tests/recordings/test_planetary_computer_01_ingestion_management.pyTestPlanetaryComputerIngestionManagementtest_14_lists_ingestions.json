@@ -39,7 +39,7 @@
       },
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
-        "creationTime": "2025-10-27T17:53:49.512468Z",
+        "creationTime": "2025-10-28T17:52:09.9840921Z",
         "importType": "StaticCatalog",
         "displayName": "Ingestion for Lists Test",
         "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -80,7 +80,7 @@
         "value": [
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-27T17:53:15.0279447Z",
+            "creationTime": "2025-10-28T17:51:42.3666417Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -90,7 +90,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-27T17:53:17.6611741Z",
+            "creationTime": "2025-10-28T17:51:44.4651567Z",
             "importType": "StaticCatalog",
             "displayName": "Updated Ingestion Name",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -100,7 +100,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-27T17:53:21.2377219Z",
+            "creationTime": "2025-10-28T17:51:46.5281778Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Run",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -110,7 +110,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-27T17:53:23.8788842Z",
+            "creationTime": "2025-10-28T17:51:48.6954926Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Status Check",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -120,7 +120,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-27T17:53:30.3939754Z",
+            "creationTime": "2025-10-28T17:51:54.9313845Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Operation",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -130,7 +130,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-27T17:53:35.6552998Z",
+            "creationTime": "2025-10-28T17:52:00.169374Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Cancel Test",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
@@ -140,7 +140,7 @@
           },
           {
             "id": "00000000-0000-0000-0000-000000000000",
-            "creationTime": "2025-10-27T17:53:49.512468Z",
+            "creationTime": "2025-10-28T17:52:09.9840921Z",
             "importType": "StaticCatalog",
             "displayName": "Ingestion for Lists Test",
             "sourceCatalogUrl": "https://raw.githubusercontent.com/aloverro/mpcpro-sample-datasets/main/datasets/planetary_computer/naip/catalog.json",
