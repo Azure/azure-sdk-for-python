@@ -115,21 +115,21 @@ class TestNetAppSubvolume(AzureMgmtRecordedTestCase):
 
             # update
             ## Fix sdk gen, request is malformed for now
-            # subvolume_patch_properties = SubvolumePatchParams(path="/sub_vol_update.txt", size=2000000)
-            # subvolume_patch = SubvolumePatchRequest(subvolume_patch_properties)
-            # print("Updating subvolume")
-            # subvolume = self.client.subvolumes.begin_update(
-            #     setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, subvolumeName, subvolume_patch
-            # ).result()
+            subvolume_patch_properties = SubvolumePatchParams(path="/sub_vol_update.txt", size=2000000)
+            subvolume_patch = SubvolumePatchRequest(properties=subvolume_patch_properties)
+            print("Updating subvolume")
+            subvolume = self.client.subvolumes.begin_update(
+                setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, subvolumeName, subvolume_patch
+            ).result()
             print("\tDone")
-            # wait_for_subvolume(
-            #     self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, subvolumeName
-            # )
-            # wait_for_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
-            # assert (
-            #     subvolume.name == setup.PERMA_ACCOUNT + "/" + setup.PERMA_POOL + "/" + volumeName1 + "/" + subvolumeName
-            # )
-            # assert subvolume.path == "/sub_vol_update.txt"
+            wait_for_subvolume(
+                self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, subvolumeName
+            )
+            wait_for_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
+            assert (
+                subvolume.name == setup.PERMA_ACCOUNT + "/" + setup.PERMA_POOL + "/" + volumeName1 + "/" + subvolumeName
+            )
+            assert subvolume.path == "/sub_vol_update.txt"
 
             # get
             subvolume_info = self.client.subvolumes.get(
