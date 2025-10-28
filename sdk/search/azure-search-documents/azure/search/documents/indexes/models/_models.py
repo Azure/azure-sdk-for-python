@@ -5798,6 +5798,131 @@ class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Limit
         self.odata_type = "#Microsoft.Azure.Search.LimitTokenFilter"  # type: ignore
 
 
+class ListDataSourcesResult(_Model):
+    """Response from a List Datasources request. If successful, it includes the full definitions of
+    all datasources.
+
+    :ivar data_sources: The datasources in the Search service. Required.
+    :vartype data_sources:
+     list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
+    """
+
+    data_sources: list["_models.SearchIndexerDataSourceConnection"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The datasources in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_sources: list["_models.SearchIndexerDataSourceConnection"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListIndexersResult(_Model):
+    """Response from a List Indexers request. If successful, it includes the full definitions of all
+    indexers.
+
+    :ivar indexers: The indexers in the Search service. Required.
+    :vartype indexers: list[~azure.search.documents.indexes.models.SearchIndexer]
+    """
+
+    indexers: list["_models.SearchIndexer"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The indexers in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        indexers: list["_models.SearchIndexer"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListSkillsetsResult(_Model):
+    """Response from a list skillset request. If successful, it includes the full definitions of all
+    skillsets.
+
+    :ivar skillsets: The skillsets defined in the Search service. Required.
+    :vartype skillsets: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
+    """
+
+    skillsets: list["_models.SearchIndexerSkillset"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The skillsets defined in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skillsets: list["_models.SearchIndexerSkillset"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListSynonymMapsResult(_Model):
+    """Response from a List SynonymMaps request. If successful, it includes the full definitions of
+    all synonym maps.
+
+    :ivar synonym_maps: The synonym maps in the Search service. Required.
+    :vartype synonym_maps: list[~azure.search.documents.indexes.models.SynonymMap]
+    """
+
+    synonym_maps: list["_models.SynonymMap"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The synonym maps in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        synonym_maps: list["_models.SynonymMap"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StandardAnalyzer"):
     """Standard Apache Lucene analyzer; Composed of the standard tokenizer, lowercase filter and stop
     filter.

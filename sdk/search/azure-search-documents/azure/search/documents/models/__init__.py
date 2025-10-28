@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AutocompleteItem,
-    AutocompleteResult,
     DebugInfo,
     DocumentDebugInfo,
     ErrorAdditionalInfo,
@@ -41,8 +40,6 @@ from ._models import (  # type: ignore
     SearchScoreThreshold,
     SemanticDebugInfo,
     SingleVectorFieldResult,
-    SuggestDocumentsResult,
-    SuggestResult,
     TextResult,
     VectorQuery,
     VectorSimilarityThreshold,
@@ -82,7 +79,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AutocompleteItem",
-    "AutocompleteResult",
     "DebugInfo",
     "DocumentDebugInfo",
     "ErrorAdditionalInfo",
@@ -108,8 +104,6 @@ __all__ = [
     "SearchScoreThreshold",
     "SemanticDebugInfo",
     "SingleVectorFieldResult",
-    "SuggestDocumentsResult",
-    "SuggestResult",
     "TextResult",
     "VectorQuery",
     "VectorSimilarityThreshold",

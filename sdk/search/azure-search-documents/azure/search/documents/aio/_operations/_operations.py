@@ -10,10 +10,8 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
-import urllib.parse
 
 from azure.core import AsyncPipelineClient
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -26,21 +24,20 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models2
 from ..._operations._operations import (
     build_search_autocomplete_get_request,
-    build_search_autocomplete_request,
+    build_search_autocomplete_post_request,
     build_search_get_document_count_request,
     build_search_get_document_request,
-    build_search_index_documents_request,
+    build_search_index_request,
     build_search_search_get_request,
     build_search_search_post_request,
     build_search_suggest_get_request,
-    build_search_suggest_request,
+    build_search_suggest_post_request,
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
@@ -401,7 +398,7 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def search_post(
+    async def _search_post(
         self,
         *,
         query_source_authorization: Optional[str] = None,
@@ -440,210 +437,28 @@ class _SearchClientOperationsMixin(
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
         hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult:
-        """Searches for documents in the index.
-
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword include_total_count: A value that specifies whether to fetch the total count of
-         results. Default is false. Setting this value to true may have a performance impact. Note that
-         the count returned is an approximation. Default value is None.
-        :paramtype include_total_count: bool
-        :keyword facets: The list of facet expressions to apply to the search query. Each facet
-         expression contains a field name, optionally followed by a comma-separated list of name:value
-         pairs. Default value is None.
-        :paramtype facets: list[str]
-        :keyword filter: The OData $filter expression to apply to the search query. Default value is
-         None.
-        :paramtype filter: str
-        :keyword highlight_fields: The comma-separated list of field names to use for hit highlights.
-         Only searchable fields can be used for hit highlighting. Default value is None.
-        :paramtype highlight_fields: str
-        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
-         highlightPreTag. Default is &lt;/em&gt;. Default value is None.
-        :paramtype highlight_post_tag: str
-        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
-         highlightPostTag. Default is &lt;em&gt;. Default value is None.
-        :paramtype highlight_pre_tag: str
-        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-         that must be covered by a search query in order for the query to be reported as a success. This
-         parameter can be useful for ensuring search availability even for services with only one
-         replica. The default is 100. Default value is None.
-        :paramtype minimum_coverage: float
-        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
-         results. Each expression can be either a field name or a call to either the geo.distance() or
-         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
-         desc to indicate descending. The default is ascending order. Ties will be broken by the match
-         scores of documents. If no $orderby is specified, the default sort order is descending by
-         document match score. There can be at most 32 $orderby clauses. Default value is None.
-        :paramtype order_by: str
-        :keyword query_type: A value that specifies the syntax of the search query. The default is
-         'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
-         "full", and "semantic". Default value is None.
-        :paramtype query_type: str or ~azure.search.documents.models.QueryType
-        :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
-         statistics (such as document frequency) globally for more consistent scoring, or locally, for
-         lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
-         before scoring. Using global scoring statistics can increase latency of search queries. Known
-         values are: "local" and "global". Default value is None.
-        :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
-        :keyword session_id: A value to be used to create a sticky session, which can help getting more
-         consistent results. As long as the same sessionId is used, a best-effort attempt will be made
-         to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
-         interfere with the load balancing of the requests across replicas and adversely affect the
-         performance of the search service. The value used as sessionId cannot start with a '_'
-         character. Default value is None.
-        :paramtype session_id: str
-        :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
-         example, referencePointParameter) using the format name-values. For example, if the scoring
-         profile defines a function with a parameter called 'mylocation' the parameter string would be
-         "mylocation--122.2,44.8" (without the quotes). Default value is None.
-        :paramtype scoring_parameters: list[str]
-        :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
-         documents in order to sort the results. Default value is None.
-        :paramtype scoring_profile: str
-        :keyword debug: Enables a debugging tool that can be used to further explore your reranked
-         results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
-         "all". Default value is None.
-        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
-         match all documents. Default value is None.
-        :paramtype search_text: str
-        :keyword search_fields: The comma-separated list of field names to which to scope the full-text
-         search. When using fielded search (fieldName:searchExpression) in a full Lucene query, the
-         field names of each fielded search expression take precedence over any field names listed in
-         this parameter. Default value is None.
-        :paramtype search_fields: str
-        :keyword search_mode: A value that specifies whether any or all of the search terms must be
-         matched in order to count the document as a match. Known values are: "any" and "all". Default
-         value is None.
-        :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-        :keyword query_language: A value that specifies the language of the search query. Known values
-         are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
-         "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
-         "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
-         "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
-         "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
-         "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
-         "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
-         "te-in", and "ur-pk". Default value is None.
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
-         individual search query terms. Known values are: "none" and "lexicon". Default value is None.
-        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
-        :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
-         marked as retrievable in the schema are included. Default value is None.
-        :paramtype select: str
-        :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
-         If you need to scan documents in sequence, but cannot use skip due to this limitation, consider
-         using orderby on a totally-ordered key and filter with a range query instead. Default value is
-         None.
-        :paramtype skip: int
-        :keyword top: The number of search results to retrieve. This can be used in conjunction with
-         $skip to implement client-side paging of search results. If results are truncated due to
-         server-side paging, the response will include a continuation token that can be used to issue
-         another Search request for the next page of results. Default value is None.
-        :paramtype top: int
-        :keyword semantic_configuration_name: The name of a semantic configuration that will be used
-         when processing documents for queries of type semantic. Default value is None.
-        :paramtype semantic_configuration_name: str
-        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
-         completely (default / current behavior), or to return partial results. Known values are:
-         "partial" and "fail". Default value is None.
-        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
-        :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
-         of time it takes for semantic enrichment to finish processing before the request fails. Default
-         value is None.
-        :paramtype semantic_max_wait_in_milliseconds: int
-        :keyword semantic_query: Allows setting a separate search query that will be solely used for
-         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
-         is a need to use different queries between the base retrieval and ranking phase, and the L2
-         semantic phase. Default value is None.
-        :paramtype semantic_query: str
-        :keyword answers: A value that specifies whether answers should be returned as part of the
-         search response. Known values are: "none" and "extractive". Default value is None.
-        :paramtype answers: str or ~azure.search.documents.models.QueryAnswerType
-        :keyword captions: A value that specifies whether captions should be returned as part of the
-         search response. Known values are: "none" and "extractive". Default value is None.
-        :paramtype captions: str or ~azure.search.documents.models.QueryCaptionType
-        :keyword query_rewrites: A value that specifies whether query rewrites should be generated to
-         augment the search query. Known values are: "none" and "generative". Default value is None.
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
-        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
-         Default value is None.
-        :paramtype semantic_fields: str
-        :keyword vector_queries: The query parameters for vector and hybrid search queries. Default
-         value is None.
-        :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
-        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
-         vector search is performed. Default is 'preFilter' for new indexes. Known values are:
-         "postFilter", "preFilter", and "strictPostFilter". Default value is None.
-        :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
-        :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
-         value is None.
-        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
-        :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchDocumentsResult: ...
     @overload
-    async def search_post(
+    async def _search_post(
         self,
         body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult:
-        """Searches for documents in the index.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchDocumentsResult: ...
     @overload
-    async def search_post(
+    async def _search_post(
         self,
         body: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.SearchDocumentsResult:
-        """Searches for documents in the index.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.SearchDocumentsResult: ...
 
     @distributed_trace_async
-    async def search_post(
+    async def _search_post(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1009,8 +824,8 @@ class _SearchClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def _suggest_get(
+    @distributed_trace_async
+    async def _suggest_get(
         self,
         *,
         search_text: str,
@@ -1026,7 +841,7 @@ class _SearchClientOperationsMixin(
         top: Optional[int] = None,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models2.SuggestResult"]:
+    ) -> _models2._models.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
 
         :keyword search_text: The search text to use to suggest documents. Must be at least 1
@@ -1077,15 +892,10 @@ class _SearchClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
-        :return: An iterator like instance of SuggestResult
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.models.SuggestResult]
+        :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models._models.SuggestDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[_models2.SuggestResult]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1094,83 +904,65 @@ class _SearchClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-                _request = build_search_suggest_get_request(
-                    index_name=self._config.index_name,
-                    search_text=search_text,
-                    suggester_name=suggester_name,
-                    filter=filter,
-                    use_fuzzy_matching=use_fuzzy_matching,
-                    highlight_post_tag=highlight_post_tag,
-                    highlight_pre_tag=highlight_pre_tag,
-                    minimum_coverage=minimum_coverage,
-                    order_by=order_by,
-                    search_fields=search_fields,
-                    select=select,
-                    top=top,
-                    query_source_authorization=query_source_authorization,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        cls: ClsType[_models2._models.SuggestDocumentsResult] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_search_suggest_get_request(
+            index_name=self._config.index_name,
+            search_text=search_text,
+            suggester_name=suggester_name,
+            filter=filter,
+            use_fuzzy_matching=use_fuzzy_matching,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            search_fields=search_fields,
+            select=select,
+            top=top,
+            query_source_authorization=query_source_authorization,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.SuggestResult], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+        response = pipeline_response.http_response
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models2._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
             )
-            response = pipeline_response.http_response
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
-                raise HttpResponseError(response=response, model=error)
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @overload
-    async def suggest(
+    async def _suggest_post(
         self,
         *,
         search_text: str,
@@ -1187,117 +979,28 @@ class _SearchClientOperationsMixin(
         select: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> _models2.SuggestDocumentsResult:
-        """Suggests documents in the index that match the given partial query text.
-
-        :keyword search_text: The search text to use to suggest documents. Must be at least 1
-         character, and no more than 100 characters. Required.
-        :paramtype search_text: str
-        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
-         that's part of the index definition. Required.
-        :paramtype suggester_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword filter: An OData expression that filters the documents considered for suggestions.
-         Default value is None.
-        :paramtype filter: str
-        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
-         suggestion query. Default is false. When set to true, the query will find suggestions even if
-         there's a substituted or missing character in the search text. While this provides a better
-         experience in some scenarios, it comes at a performance cost as fuzzy suggestion searches are
-         slower and consume more resources. Default value is None.
-        :paramtype use_fuzzy_matching: bool
-        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
-         highlightPreTag. If omitted, hit highlighting of suggestions is disabled. Default value is
-         None.
-        :paramtype highlight_post_tag: str
-        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
-         highlightPostTag. If omitted, hit highlighting of suggestions is disabled. Default value is
-         None.
-        :paramtype highlight_pre_tag: str
-        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-         that must be covered by a suggestion query in order for the query to be reported as a success.
-         This parameter can be useful for ensuring search availability even for services with only one
-         replica. The default is 80. Default value is None.
-        :paramtype minimum_coverage: float
-        :keyword order_by: The comma-separated list of OData $orderby expressions by which to sort the
-         results. Each expression can be either a field name or a call to either the geo.distance() or
-         the search.score() functions. Each expression can be followed by asc to indicate ascending, or
-         desc to indicate descending. The default is ascending order. Ties will be broken by the match
-         scores of documents. If no $orderby is specified, the default sort order is descending by
-         document match score. There can be at most 32 $orderby clauses. Default value is None.
-        :paramtype order_by: str
-        :keyword search_fields: The comma-separated list of field names to search for the specified
-         search text. Target fields must be included in the specified suggester. Default value is None.
-        :paramtype search_fields: str
-        :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
-         field will be included in the results. Default value is None.
-        :paramtype select: str
-        :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
-         The default is 5. Default value is None.
-        :paramtype top: int
-        :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SuggestDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2._models.SuggestDocumentsResult: ...
     @overload
-    async def suggest(
+    async def _suggest_post(
         self,
         body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.SuggestDocumentsResult:
-        """Suggests documents in the index that match the given partial query text.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SuggestDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2._models.SuggestDocumentsResult: ...
     @overload
-    async def suggest(
+    async def _suggest_post(
         self,
         body: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.SuggestDocumentsResult:
-        """Suggests documents in the index that match the given partial query text.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SuggestDocumentsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2._models.SuggestDocumentsResult: ...
 
     @distributed_trace_async
-    async def suggest(
+    async def _suggest_post(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1314,7 +1017,7 @@ class _SearchClientOperationsMixin(
         select: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> _models2.SuggestDocumentsResult:
+    ) -> _models2._models.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -1368,7 +1071,7 @@ class _SearchClientOperationsMixin(
          The default is 5. Default value is None.
         :paramtype top: int
         :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SuggestDocumentsResult
+        :rtype: ~azure.search.documents.models._models.SuggestDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1383,7 +1086,7 @@ class _SearchClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.SuggestDocumentsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models2._models.SuggestDocumentsResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if search_text is _Unset:
@@ -1411,7 +1114,7 @@ class _SearchClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_suggest_request(
+        _request = build_search_suggest_post_request(
             index_name=self._config.index_name,
             query_source_authorization=query_source_authorization,
             content_type=content_type,
@@ -1445,7 +1148,9 @@ class _SearchClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.SuggestDocumentsResult, response.json())
+            deserialized = _deserialize(
+                _models2._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1453,88 +1158,41 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    def index_documents(
+    async def _index(
         self,
         batch: _models2.IndexDocumentsBatch,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncItemPaged["_models2.IndexingResult"]:
-        """Sends a batch of document write actions to the index.
-
-        :param batch: The batch of index actions. Required.
-        :type batch: ~azure.search.documents.models.IndexDocumentsBatch
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An iterator like instance of IndexingResult
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.models.IndexingResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2._models.IndexDocumentsResult: ...
     @overload
-    def index_documents(
+    async def _index(
         self,
         batch: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncItemPaged["_models2.IndexingResult"]:
-        """Sends a batch of document write actions to the index.
-
-        :param batch: The batch of index actions. Required.
-        :type batch: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An iterator like instance of IndexingResult
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.models.IndexingResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2._models.IndexDocumentsResult: ...
     @overload
-    def index_documents(
+    async def _index(
         self,
         batch: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncItemPaged["_models2.IndexingResult"]:
-        """Sends a batch of document write actions to the index.
+    ) -> _models2._models.IndexDocumentsResult: ...
 
-        :param batch: The batch of index actions. Required.
-        :type batch: IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An iterator like instance of IndexingResult
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.models.IndexingResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def index_documents(
+    @distributed_trace_async
+    async def _index(
         self,
         batch: Union[_models2.IndexDocumentsBatch, JSON, IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models2.IndexingResult"]:
+    ) -> _models2._models.IndexDocumentsResult:
         """Sends a batch of document write actions to the index.
 
         :param batch: The batch of index actions. Is one of the following types: IndexDocumentsBatch,
@@ -1544,16 +1202,10 @@ class _SearchClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
-        :return: An iterator like instance of IndexingResult
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.models.IndexingResult]
+        :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models._models.IndexDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[list[_models2.IndexingResult]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1561,6 +1213,13 @@ class _SearchClientOperationsMixin(
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models2._models.IndexDocumentsResult] = kwargs.pop("cls", None)
+
         content_type = content_type or "application/json"
         _content = None
         if isinstance(batch, (IOBase, bytes)):
@@ -1568,74 +1227,51 @@ class _SearchClientOperationsMixin(
         else:
             _content = json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _request = build_search_index_request(
+            index_name=self._config.index_name,
+            query_source_authorization=query_source_authorization,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-                _request = build_search_index_documents_request(
-                    index_name=self._config.index_name,
-                    query_source_authorization=query_source_authorization,
-                    content_type=content_type,
-                    api_version=self._config.api_version,
-                    content=_content,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        response = pipeline_response.http_response
 
-            return _request
+        if response.status_code not in [200, 207]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.IndexingResult], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models2._models.IndexDocumentsResult, response.json()  # pylint: disable=protected-access
             )
-            response = pipeline_response.http_response
 
-            if response.status_code not in [200, 207]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
-                raise HttpResponseError(response=response, model=error)
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            return pipeline_response
+        return deserialized  # type: ignore
 
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def _autocomplete_get(
+    @distributed_trace_async
+    async def _autocomplete_get(
         self,
         *,
         search_text: str,
@@ -1650,7 +1286,7 @@ class _SearchClientOperationsMixin(
         top: Optional[int] = None,
         query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models2.AutocompleteItem"]:
+    ) -> _models2._models.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
         :keyword search_text: The incomplete term which should be auto-completed. Required.
@@ -1693,16 +1329,10 @@ class _SearchClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
-        :return: An iterator like instance of AutocompleteItem
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.models.AutocompleteItem]
+        :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models._models.AutocompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[_models2.AutocompleteItem]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1711,82 +1341,64 @@ class _SearchClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-                _request = build_search_autocomplete_get_request(
-                    index_name=self._config.index_name,
-                    search_text=search_text,
-                    suggester_name=suggester_name,
-                    autocomplete_mode=autocomplete_mode,
-                    filter=filter,
-                    use_fuzzy_matching=use_fuzzy_matching,
-                    highlight_post_tag=highlight_post_tag,
-                    highlight_pre_tag=highlight_pre_tag,
-                    minimum_coverage=minimum_coverage,
-                    search_fields=search_fields,
-                    top=top,
-                    query_source_authorization=query_source_authorization,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        cls: ClsType[_models2._models.AutocompleteResult] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_search_autocomplete_get_request(
+            index_name=self._config.index_name,
+            search_text=search_text,
+            suggester_name=suggester_name,
+            autocomplete_mode=autocomplete_mode,
+            filter=filter,
+            use_fuzzy_matching=use_fuzzy_matching,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            search_fields=search_fields,
+            top=top,
+            query_source_authorization=query_source_authorization,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.AutocompleteItem], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+        response = pipeline_response.http_response
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models2._models.AutocompleteResult, response.json()  # pylint: disable=protected-access
             )
-            response = pipeline_response.http_response
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
-                raise HttpResponseError(response=response, model=error)
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @overload
-    async def autocomplete(
+    async def _autocomplete_post(
         self,
         *,
         search_text: str,
@@ -1802,110 +1414,28 @@ class _SearchClientOperationsMixin(
         search_fields: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> _models2.AutocompleteResult:
-        """Autocompletes incomplete query terms based on input text and matching terms in the index.
-
-        :keyword search_text: The search text on which to base autocomplete results. Required.
-        :paramtype search_text: str
-        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
-         that's part of the index definition. Required.
-        :paramtype suggester_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
-         'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
-         auto-completed terms. Known values are: "oneTerm", "twoTerms", and "oneTermWithContext".
-         Default value is None.
-        :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
-        :keyword filter: An OData expression that filters the documents used to produce completed terms
-         for the Autocomplete result. Default value is None.
-        :paramtype filter: str
-        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
-         autocomplete query. Default is false. When set to true, the query will autocomplete terms even
-         if there's a substituted or missing character in the search text. While this provides a better
-         experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
-         slower and consume more resources. Default value is None.
-        :paramtype use_fuzzy_matching: bool
-        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
-         highlightPreTag. If omitted, hit highlighting is disabled. Default value is None.
-        :paramtype highlight_post_tag: str
-        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
-         highlightPostTag. If omitted, hit highlighting is disabled. Default value is None.
-        :paramtype highlight_pre_tag: str
-        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index
-         that must be covered by an autocomplete query in order for the query to be reported as a
-         success. This parameter can be useful for ensuring search availability even for services with
-         only one replica. The default is 80. Default value is None.
-        :paramtype minimum_coverage: float
-        :keyword search_fields: The comma-separated list of field names to consider when querying for
-         auto-completed terms. Target fields must be included in the specified suggester. Default value
-         is None.
-        :paramtype search_fields: str
-        :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
-         and 100. The default is 5. Default value is None.
-        :paramtype top: int
-        :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.AutocompleteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2._models.AutocompleteResult: ...
     @overload
-    async def autocomplete(
+    async def _autocomplete_post(
         self,
         body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.AutocompleteResult:
-        """Autocompletes incomplete query terms based on input text and matching terms in the index.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.AutocompleteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2._models.AutocompleteResult: ...
     @overload
-    async def autocomplete(
+    async def _autocomplete_post(
         self,
         body: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models2.AutocompleteResult:
-        """Autocompletes incomplete query terms based on input text and matching terms in the index.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.AutocompleteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2._models.AutocompleteResult: ...
 
     @distributed_trace_async
-    async def autocomplete(
+    async def _autocomplete_post(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -1921,7 +1451,7 @@ class _SearchClientOperationsMixin(
         search_fields: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> _models2.AutocompleteResult:
+    ) -> _models2._models.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -1968,7 +1498,7 @@ class _SearchClientOperationsMixin(
          and 100. The default is 5. Default value is None.
         :paramtype top: int
         :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.AutocompleteResult
+        :rtype: ~azure.search.documents.models._models.AutocompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1983,7 +1513,7 @@ class _SearchClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models2.AutocompleteResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models2._models.AutocompleteResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if search_text is _Unset:
@@ -2010,7 +1540,7 @@ class _SearchClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_autocomplete_request(
+        _request = build_search_autocomplete_post_request(
             index_name=self._config.index_name,
             query_source_authorization=query_source_authorization,
             content_type=content_type,
@@ -2044,7 +1574,9 @@ class _SearchClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models2.AutocompleteResult, response.json())
+            deserialized = _deserialize(
+                _models2._models.AutocompleteResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
