@@ -7,7 +7,6 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-
 EPOCH_AS_FILETIME = 116444736000000000  # January 1, 1970 as MS filetime
 HUNDREDS_OF_NANOSECONDS = 10000000
 
