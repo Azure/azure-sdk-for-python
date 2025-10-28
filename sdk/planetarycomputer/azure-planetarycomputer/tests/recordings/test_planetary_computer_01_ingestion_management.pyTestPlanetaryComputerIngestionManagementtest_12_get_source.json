@@ -78,7 +78,7 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-28T17:52:04.6320753Z",
+        "created": "2025-10-28T18:41:41.6273209Z",
         "connectionInfo": {
           "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"
@@ -116,7 +116,7 @@
       "ResponseBody": {
         "id": "00000000-0000-0000-0000-000000000000",
         "kind": "BlobManagedIdentity",
-        "created": "2025-10-28T17:52:04.6320753Z",
+        "created": "2025-10-28T18:41:41.6273209Z",
         "connectionInfo": {
           "containerUrl": "https://SANITIZED.blob.core.windows.net/sample-container",
           "objectId": "ebad594e-84af-49da-89db-7bffc9c39f3a"

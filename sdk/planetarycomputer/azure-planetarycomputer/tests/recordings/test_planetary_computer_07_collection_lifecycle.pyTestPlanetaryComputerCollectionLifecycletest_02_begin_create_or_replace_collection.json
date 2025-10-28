@@ -79,8 +79,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-28T17:58:25.7099182Z",
-        "msft:_updated": "2025-10-28T17:58:25.7099182Z"
+        "msft:_created": "2025-10-28T18:47:27.7827791Z",
+        "msft:_updated": "2025-10-28T18:47:27.7827791Z"
       }
     },
     {
@@ -142,8 +142,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-28T17:58:25.7099182Z",
-        "msft:_updated": "2025-10-28T17:58:25.7099182Z"
+        "msft:_created": "2025-10-28T18:47:27.7827791Z",
+        "msft:_updated": "2025-10-28T18:47:27.7827791Z"
       },
       "StatusCode": 200,
       "ResponseHeaders": {
@@ -213,8 +213,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-28T17:58:25.7099182Z",
-        "msft:_updated": "2025-10-28T17:58:59.6434835Z"
+        "msft:_created": "2025-10-28T18:47:27.7827791Z",
+        "msft:_updated": "2025-10-28T18:48:06.7735849Z"
       }
     },
     {
@@ -296,8 +296,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-28T17:58:25.7099182Z",
-        "msft:_updated": "2025-10-28T17:58:59.6434835Z"
+        "msft:_created": "2025-10-28T18:47:27.7827791Z",
+        "msft:_updated": "2025-10-28T18:48:06.7735849Z"
       }
     }
   ],

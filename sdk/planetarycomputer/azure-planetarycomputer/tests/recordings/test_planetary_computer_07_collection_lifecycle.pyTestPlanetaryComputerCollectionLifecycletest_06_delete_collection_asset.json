@@ -7,21 +7,21 @@
         "Accept": "application/json",
         "Connection": "keep-alive",
         "Content-Length": "449",
-        "Content-Type": "multipart/form-data; boundary=0cbc63491e04ac01f2a1f37589fe0488",
+        "Content-Type": "multipart/form-data; boundary=1abb547378ed200d77cc9c331311f4a8",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--0cbc63491e04ac01f2a1f37589fe0488\r\n",
+        "--1abb547378ed200d77cc9c331311f4a8\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "b64:eyJrZXkiOiAidGVzdC1hc3NldC10by1iZS1kZWxldGVkIiwgImhyZWYiOiAiaHR0cHM6Ly9leGFtcGxlLmNvbS90ZXN0LWFzc2V0LXRvLWRlbGV0ZS50eHQiLCAidHlwZSI6ICJ0ZXh0L3BsYWluIiwgInJvbGVzIjogWyJtZXRhZGF0YSJdLCAidGl0bGUiOiAiVGVzdCBBc3NldCBUbyBCZSBEZWxldGVkIn0=",
         "\r\n",
-        "--0cbc63491e04ac01f2a1f37589fe0488\r\n",
+        "--1abb547378ed200d77cc9c331311f4a8\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset-to-delete.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50IGZvciBkZWxldGlvbg==",
         "\r\n",
-        "--0cbc63491e04ac01f2a1f37589fe0488--\r\n"
+        "--1abb547378ed200d77cc9c331311f4a8--\r\n"
       ],
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -33,7 +33,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "3115",
+        "Content-Length": "3106",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -116,7 +116,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-28T18:00:28.887920Z",
+        "msft:_updated": "2025-10-28T18:49:34.312364Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
@@ -195,7 +195,7 @@
         },
         "assets": {
           "thumbnail": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "title": "NAIP thumbnail",
             "roles": [
@@ -203,7 +203,7 @@
             ]
           },
           "test-asset": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
             "type": "text/plain",
             "title": "Test Asset - Updated",
             "roles": [
@@ -211,7 +211,7 @@
             ]
           },
           "test-asset-to-be-deleted": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset-to-be-deleted/test-asset-to-delete.txt",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset-to-be-deleted/test-asset-to-delete.txt",
             "type": "text/plain",
             "title": "Test Asset To Be Deleted",
             "roles": [
@@ -242,7 +242,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2872",
+        "Content-Length": "2866",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -325,7 +325,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-28T18:00:29.154669Z",
+        "msft:_updated": "2025-10-28T18:49:34.586853Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
@@ -404,7 +404,7 @@
         },
         "assets": {
           "thumbnail": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "title": "NAIP thumbnail",
             "roles": [
@@ -412,7 +412,7 @@
             ]
           },
           "test-asset": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
             "type": "text/plain",
             "title": "Test Asset - Updated",
             "roles": [
@@ -442,7 +442,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2872",
+        "Content-Length": "2866",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -480,7 +480,7 @@
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "assets": {
           "thumbnail": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
             "roles": [
               "thumbnail"
@@ -488,7 +488,7 @@
             "title": "NAIP thumbnail"
           },
           "test-asset": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
             "type": "text/plain",
             "roles": [
               "metadata"
@@ -616,7 +616,7 @@
         },
         "stac_version": "1.0.0",
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-28T18:00:29.154669Z",
+        "msft:_updated": "2025-10-28T18:49:34.586853Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"

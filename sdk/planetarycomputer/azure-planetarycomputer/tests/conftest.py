@@ -114,18 +114,29 @@ def add_sanitizers(test_proxy):
                 add_general_string_sanitizer(target=real_container_url, value=fake_container_url)
     
     # Sanitize storage account URLs WITH URL-encoded protocol prefix (e.g., in query parameters)
-    # Matches: https%3A%2F%2Fvojrtgdatasa.blob.core.windows.net → https%3A%2F%2Fexamplestorage.blob.core.windows.net
+    # Matches: https%3A%2F%2Fcontosdatasa.blob.core.windows.net → https%3A%2F%2FSANITIZED.blob.core.windows.net  
+    # Note: %2F%2F is the URL-encoded form of // (two forward slashes)
+    # Storage account names can only contain lowercase letters and numbers (no uppercase, no hyphens at start/end)
     add_uri_regex_sanitizer(
-        regex=r"https%3A%2F%2F[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
-        value="https%3A%2F%2Fexamplestorage.blob.core.windows.net"
+        regex=r"https%3A%2F%2F[a-z0-9]+\.blob\.core\.windows\.net",
+        value="https%3A%2F%2FSANITIZED.blob.core.windows.net"
     )
     
-    # Sanitize storage account URLs WITHOUT URL encoding (normal URLs) - for URLs without container paths
-    # Matches: vojrtgdatasa.blob.core.windows.net → examplestorage.blob.core.windows.net
+    # Sanitize ALL blob storage URLs in response bodies (for asset URLs, error messages, etc.)
+    # This catches URLs like: https://contosdatasa.blob.core.windows.net/container/path
+    # → https://SANITIZED.blob.core.windows.net/container/path
+    # Storage account names: 3-24 characters, lowercase letters and numbers only
+    add_body_regex_sanitizer(
+        regex=r"https://[a-z0-9]{3,24}\.blob\.core\.windows\.net",
+        value="https://SANITIZED.blob.core.windows.net"
+    )
+    
+    # Sanitize storage account URLs in URIs (normal URLs) - for URLs without container paths
+    # Matches: contosdatasa.blob.core.windows.net → SANITIZED.blob.core.windows.net
     # Note: This is a fallback for URLs that don't include a container path
     add_uri_regex_sanitizer(
-        regex=r"[a-zA-Z0-9\-]+\.blob\.core\.windows\.net(?!/)", 
-        value="examplestorage.blob.core.windows.net"
+        regex=r"[a-z0-9]{3,24}\.blob\.core\.windows\.net(?!/)", 
+        value="SANITIZED.blob.core.windows.net"
     )
     
     # Sanitize storage account URLs in response bodies ONLY (not request bodies)

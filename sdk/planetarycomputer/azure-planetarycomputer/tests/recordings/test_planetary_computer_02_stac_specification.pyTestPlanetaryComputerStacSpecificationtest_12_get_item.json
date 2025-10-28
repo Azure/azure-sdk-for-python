@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "3766",
+        "Content-Length": "3754",
         "Content-Type": "application/geo+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -66,7 +66,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -93,7 +93,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/tilejson.json",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -101,7 +101,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/thumbnail.jpg",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -110,7 +110,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/rendered_preview.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -247,7 +247,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2851",
+        "Content-Length": "2839",
         "Content-Type": "application/geo+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -290,7 +290,7 @@
         ],
         "assets": {
           "image": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/image.tif",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/image.tif",
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
               "data"
@@ -317,7 +317,7 @@
             ]
           },
           "tilejson": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/tilejson.json",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/tilejson.json",
             "type": "application/json",
             "roles": [
               "tiles"
@@ -325,7 +325,7 @@
             "title": "TileJSON with default rendering"
           },
           "thumbnail": {
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/thumbnail.jpg",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/thumbnail.jpg",
             "type": "image/jpeg",
             "roles": [
               "thumbnail"
@@ -334,7 +334,7 @@
           },
           "rendered_preview": {
             "rel": "preview",
-            "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/rendered_preview.png",
+            "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/d8d/ga_m_3308429_nw_16_060_20231008_20240103/rendered_preview.png",
             "type": "image/png",
             "roles": [
               "overview"

@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "33455",
+        "Content-Length": "33428",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -166,7 +166,7 @@
             "title": "NAIP (MPC Pro Sample Datasets)",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-sample-datasets-83498858/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"
@@ -452,7 +452,7 @@
             "title": "Tutorial Collection",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/tutorial-collection-20250527170217-34b2cde8/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/tutorial-collection-20250527170217-34b2cde8/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"
@@ -531,7 +531,7 @@
             "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-sample-dataset-b943876c/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-sample-dataset-b943876c/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"
@@ -693,7 +693,7 @@
             "title": "sentinel-2-l2a-tutorial-372",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/sentinel-2-l2a-tutorial-372-f4d2f1d8/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/sentinel-2-l2a-tutorial-372-f4d2f1d8/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"
@@ -1218,7 +1218,7 @@
             "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-sample-dataset-100-a161ce8d/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-sample-dataset-100-a161ce8d/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"
@@ -1380,7 +1380,7 @@
             "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/maxar-sample-dataset-e4eaa3d3/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/maxar-sample-dataset-e4eaa3d3/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"
@@ -1542,7 +1542,7 @@
             "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"
@@ -1550,7 +1550,7 @@
                 "title": "NAIP thumbnail"
               },
               "test-asset": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
                 "type": "text/plain",
                 "roles": [
                   "metadata"
@@ -1678,7 +1678,7 @@
             },
             "stac_version": "1.0.0",
             "msft:_created": "2025-10-22T11:14:31.811918Z",
-            "msft:_updated": "2025-10-28T17:01:22.652537Z",
+            "msft:_updated": "2025-10-28T18:00:29.154669Z",
             "stac_extensions": [
               "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
               "https://stac-extensions.github.io/table/v1.2.0/schema.json"
@@ -1712,7 +1712,7 @@
             "title": "Collection python-sdk-sentinel-3",
             "assets": {
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/collection-assets/thumbnail/thumbnail.png",
+                "href": "https://SANITIZED.blob.core.windows.net/python-sdk-sentinel-3-f616ab54/collection-assets/thumbnail/thumbnail.png",
                 "type": "image/png",
                 "roles": [
                   "thumbnail"

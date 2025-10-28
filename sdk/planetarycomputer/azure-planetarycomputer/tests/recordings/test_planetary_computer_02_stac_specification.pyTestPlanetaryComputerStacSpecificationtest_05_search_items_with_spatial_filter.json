@@ -70,7 +70,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "17718",
+        "Content-Length": "17652",
         "Content-Type": "application/geo+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -115,7 +115,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -142,7 +142,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/tilejson.json",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -150,7 +150,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/thumbnail.jpg",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -159,7 +159,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/rendered_preview.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/a34/ga_m_3308429_nw_16_060_20211114/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -274,7 +274,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -301,7 +301,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/tilejson.json",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -309,7 +309,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/thumbnail.jpg",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -318,7 +318,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/rendered_preview.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/6f0/ga_m_3308429_ne_16_060_20211114/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -433,7 +433,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -460,7 +460,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/tilejson.json",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -468,7 +468,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/thumbnail.jpg",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -477,7 +477,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/rendered_preview.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/e27/ga_m_3308421_sw_16_060_20211114/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -592,7 +592,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/08a/ga_m_3308421_se_16_060_20211114_test/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -600,7 +600,7 @@
                 "title": "RGBIR COG tile"
               }
             },
-            "_msft:ts": "2025-10-27T17:42:11.600060Z",
+            "_msft:ts": "2025-10-27T17:54:28.819895Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -628,7 +628,7 @@
                 ]
               ]
             },
-            "_msft:etag": "e6e203e1-e622-49ff-b749-840e8519601c",
+            "_msft:etag": "a2926ad1-1bb8-42f2-85dc-19ba8dbec719",
             "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
@@ -696,7 +696,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/230/ga_m_3308421_se_16_060_20211114_replace_test/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/230/ga_m_3308421_se_16_060_20211114_replace_test/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -704,7 +704,7 @@
                 "title": "RGBIR COG tile"
               }
             },
-            "_msft:ts": "2025-10-27T17:56:14.047759Z",
+            "_msft:ts": "2025-10-28T17:54:32.904033Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -732,7 +732,7 @@
                 ]
               ]
             },
-            "_msft:etag": "ae8f04db-54e7-4b54-9197-71351d15a357",
+            "_msft:etag": "24a31142-4b56-4c51-9fac-3990eaf88700",
             "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
@@ -802,7 +802,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -829,7 +829,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/tilejson.json",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -837,7 +837,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/thumbnail.jpg",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -846,7 +846,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/rendered_preview.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/4eb/ga_m_3308421_se_16_060_20211114_replace_demo/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
@@ -963,7 +963,7 @@
             ],
             "assets": {
               "image": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/image.tif",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/image.tif",
                 "type": "image/tiff; application=geotiff; profile=cloud-optimized",
                 "roles": [
                   "data"
@@ -990,7 +990,7 @@
                 ]
               },
               "tilejson": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/tilejson.json",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/tilejson.json",
                 "type": "application/json",
                 "roles": [
                   "tiles"
@@ -998,7 +998,7 @@
                 "title": "TileJSON with default rendering"
               },
               "thumbnail": {
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/thumbnail.jpg",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/thumbnail.jpg",
                 "type": "image/jpeg",
                 "roles": [
                   "thumbnail"
@@ -1007,7 +1007,7 @@
               },
               "rendered_preview": {
                 "rel": "preview",
-                "href": "https://vojrtgdatasa.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/rendered_preview.png",
+                "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/234/ga_m_3308421_se_16_060_20211114/rendered_preview.png",
                 "type": "image/png",
                 "roles": [
                   "overview"
