@@ -105,7 +105,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
         Either they receive a collection of keyname inputs that are all single values
-        (like a query and response), or they receive conversation that iss a list of dictionary
+        (like a query and response), or they receive conversation that is a list of dictionary
         values.
 
         The self._singleton_inputs list assigned during initialization is used to find and extract
@@ -262,3 +262,5 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if total_tools_called > 0:
             accuracy = (correct_tool_selections / total_tools_called) * 100
             return round(accuracy, 2)
+        else:
+            return 100.0
