@@ -29,11 +29,16 @@ system:
 
 user:
 # Definition
-**Groundedness** refers to how faithfully a response adheres to the information provided in the CONTEXT, ensuring that all content is directly supported by the context without introducing unsupported information or omitting critical details. It evaluates the fidelity and precision of the response in relation to the source material.
+**Groundedness** refers to how well a response is anchored in the provided context, evaluating its relevance, accuracy, and completeness based exclusively on that context. It assesses the extent to which the response directly and fully addresses the information without introducing unrelated or incorrect information.
+
+> Context is the source of truth for evaluating the response. 
+> Evaluate the groundedness of the response message based on the provided context.
 
 # Ratings
-## [Groundedness: 1] (Completely Ungrounded Response)
-**Definition:** The response is entirely unrelated to the CONTEXT, introducing topics or information that have no connection to the provided material.
+## [Groundedness: 1] (Completely Unrelated Response)
+**Definition:** A response that does not relate to the context in any way.
+  - Does not relate to the context at all.
+  - Talks about the general topic but does not respond to the context.
 
 **Examples:**
   **Context:** The company's profits increased by 20% in the last quarter.
@@ -42,8 +47,8 @@ user:
   **Context:** The new smartphone model features a larger display and improved battery life.
   **Response:** The history of ancient Egypt is fascinating and full of mysteries.
 
-## [Groundedness: 2] (Contradictory Response)
-**Definition:** The response directly contradicts or misrepresents the information provided in the CONTEXT.
+## [Groundedness: 2] (Attempts to Respond but Contains Incorrect Information)
+**Definition:** A response that attempts to relate to the context but includes incorrect information not supported by the context. It may misstate facts, misinterpret the context, or provide erroneous details. Even if some points are correct, the presence of inaccuracies makes the response unreliable.
 
 **Examples:**
   **Context:** The company's profits increased by 20% in the last quarter.
@@ -52,18 +57,18 @@ user:
   **Context:** The new smartphone model features a larger display and improved battery life.
   **Response:** The new smartphone model has a smaller display and shorter battery life.
 
-## [Groundedness: 3] (Accurate Response with Unsupported Additions)
-**Definition:** The response accurately includes information from the CONTEXT but adds details, opinions, or explanations that are not supported by the provided material.
+## [Groundedness: 3] (Accurate but Vague Response)
+**Definition:** A response that provides accurate information from the context but is overly generic or vague, not meaningfully engaging with the specific details in the context. The information is correct but lacks specificity and detail.
 
 **Examples:**
-  **Context:** The company's profits increased by 20% in the last quarter.
-  **Response:** The company's profits increased by 20% in the last quarter due to their aggressive marketing strategy.
+  **Context:** The company's profits increased by 20% in the last quarter, marking the highest growth rate in its history.
+  **Response:** The company is doing well financially.
 
-  **Context:** The new smartphone model features a larger display and improved battery life.
-  **Response:** The new smartphone model features a larger display, improved battery life, and comes with a free case.
+  **Context:** The new smartphone model features a larger display, improved battery life, and an upgraded camera system.
+  **Response:** The smartphone has some nice features.
 
-## [Groundedness: 4] (Incomplete Response Missing Critical Details)
-**Definition:** The response contains information from the CONTEXT but omits essential details that are necessary for a comprehensive understanding of the main point.
+## [Groundedness: 4] (Partially Correct Response)
+**Definition:** A response that provides correct information from the context but is incomplete or lacks specific details mentioned in the context. It captures some of the necessary information but omits key elements needed for a full understanding.
 
 **Examples:**
   **Context:** The company's profits increased by 20% in the last quarter, marking the highest growth rate in its history.      
@@ -73,7 +78,7 @@ user:
   **Response:** The new smartphone model features a larger display and improved battery life.
 
 ## [Groundedness: 5] (Fully Grounded and Complete Response)
-**Definition:** The response is entirely based on the CONTEXT, accurately and thoroughly conveying all essential information without introducing unsupported details or omitting critical points.
+**Definition:** A response that thoroughly and accurately conveys information from the context, including all relevant details. It directly addresses the context with precise information, demonstrating complete understanding without adding extraneous information.
 
 **Examples:**
   **Context:** The company's profits increased by 20% in the last quarter, marking the highest growth rate in its history.      

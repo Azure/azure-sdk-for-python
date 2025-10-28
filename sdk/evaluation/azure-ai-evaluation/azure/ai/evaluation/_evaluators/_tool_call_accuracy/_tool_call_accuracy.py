@@ -97,6 +97,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             credential=credential,
+            threshold=threshold,
             **kwargs,
         )
 
@@ -202,8 +203,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict
         """
         # Single LLM call for all tool calls
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = prompty_output_dict.get("llm_output", {})
         if isinstance(llm_output, dict):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
@@ -224,10 +225,18 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score_result = "pass" if score >= self.threshold else "fail"
             response_dict = {
                 self._result_key: score,
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
+                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
-                "details": llm_output.get("details", {}),
+                f"{self._result_key}_details": llm_output.get("details", {}),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
+                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
             return response_dict
 
@@ -242,9 +251,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
-        :keyword kwargs: The inputs to evaluate.
+        :keyword kwargs: The inputs to evaluate
         :type kwargs: Dict
-        :return: The evaluation result.
+        :return: The evaluation result
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
         # Convert inputs into list of evaluable inputs.
