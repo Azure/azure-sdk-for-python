@@ -580,36 +580,40 @@ def _extract_text_from_content(content):
     return text
 
 
-def _get_conversation_history(query, include_system_messages=False):
-    all_user_queries = []
-    cur_user_query = []
-    all_agent_responses = []
-    cur_agent_response = []
+def _get_conversation_history(query, include_system_messages=False, include_tool_messages=False):
+    all_user_queries, all_agent_responses = [], []
+    cur_user_query, cur_agent_response = [], []
     system_message = None
+
     for msg in query:
-        if not "role" in msg:
+        role = msg.get("role")
+        if not role:
             continue
-        if include_system_messages and msg["role"] == "system" and "content" in msg:
+        if include_system_messages and role == "system":
             system_message = msg.get("content", "")
-        if msg["role"] == "user" and "content" in msg:
-            if cur_agent_response != []:
-                all_agent_responses.append(cur_agent_response)
+
+        elif role == "user" and "content" in msg:
+            if cur_agent_response:
+                formatted_agent_response = _get_agent_response(
+                    cur_agent_response, include_tool_messages=include_tool_messages
+                )
+                all_agent_responses.append([formatted_agent_response])
                 cur_agent_response = []
             text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
                 cur_user_query.append(text_in_msg)
 
-        if msg["role"] == "assistant" and "content" in msg:
-            if cur_user_query != []:
+        elif role in ("assistant", "tool"):
+            if cur_user_query:
                 all_user_queries.append(cur_user_query)
                 cur_user_query = []
-            text_in_msg = _extract_text_from_content(msg["content"])
-            if text_in_msg:
-                cur_agent_response.append(text_in_msg)
-    if cur_user_query != []:
+            cur_agent_response.append(msg)
+
+    if cur_user_query:
         all_user_queries.append(cur_user_query)
-    if cur_agent_response != []:
-        all_agent_responses.append(cur_agent_response)
+    if cur_agent_response:
+        formatted_agent_response = _get_agent_response(cur_agent_response, include_tool_messages=include_tool_messages)
+        all_agent_responses.append([formatted_agent_response])
 
     if len(all_user_queries) != len(all_agent_responses) + 1:
         raise EvaluationException(
@@ -619,8 +623,9 @@ def _get_conversation_history(query, include_system_messages=False):
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
+
     result = {"user_queries": all_user_queries, "agent_responses": all_agent_responses}
-    if include_system_messages:
+    if include_system_messages and system_message:
         result["system_message"] = system_message
     return result
 
@@ -636,20 +641,30 @@ def _pretty_format_conversation_history(conversation_history):
     ):
         formatted_history += f"User turn {i+1}:\n"
         for msg in user_query:
-            formatted_history += "  " + "\n  ".join(msg)
-        formatted_history += "\n\n"
+            if isinstance(msg, list):
+                for submsg in msg:
+                    formatted_history += "  " + "\n  ".join(submsg.split("\n")) + "\n"
+            else:
+                formatted_history += "  " + "\n  ".join(msg.split("\n")) + "\n"
+        formatted_history += "\n"
         if agent_response:
             formatted_history += f"Agent turn {i+1}:\n"
             for msg in agent_response:
-                formatted_history += "  " + "\n  ".join(msg)
-            formatted_history += "\n\n"
+                if isinstance(msg, list):
+                    for submsg in msg:
+                        formatted_history += "  " + "\n  ".join(submsg.split("\n")) + "\n"
+                else:
+                    formatted_history += "  " + "\n  ".join(msg.split("\n")) + "\n"
+            formatted_history += "\n"
     return formatted_history
 
 
-def reformat_conversation_history(query, logger=None, include_system_messages=False):
+def reformat_conversation_history(query, logger=None, include_system_messages=False, include_tool_messages=False):
     """Reformats the conversation history to a more compact representation."""
     try:
-        conversation_history = _get_conversation_history(query, include_system_messages=include_system_messages)
+        conversation_history = _get_conversation_history(
+            query, include_system_messages=include_system_messages, include_tool_messages=include_tool_messages
+        )
         return _pretty_format_conversation_history(conversation_history)
     except:
         # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
