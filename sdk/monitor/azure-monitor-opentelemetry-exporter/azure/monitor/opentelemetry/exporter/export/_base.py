@@ -628,7 +628,7 @@ def _get_storage_directory(instrumentation_key: str) -> str:
             return default
 
     shared_root = tempfile.gettempdir()
-    
+
     process = None
     try:
         process = psutil.Process()
