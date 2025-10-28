@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 
 import pytest
 from azure.storage.queue import AccountSasPermissions, generate_account_sas, ResourceTypes, VERSION
+from azure.storage.queue._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -298,14 +299,18 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service.scheme == "http"
 
     @QueuePreparer()
-    def test_create_service_with_connection_string_emulated(self, *args):
-        # Arrange
+    def test_create_service_use_development_storage(self):
         for service_type in SERVICES.items():
-            conn_string = "UseDevelopmentStorage=true;"
-
             # Act
-            with pytest.raises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, queue_name="foo")
+            service = service_type[0].from_connection_string("UseDevelopmentStorage=true;", queue_name="test")
+
+            # Assert
+            assert service is not None
+            assert service.scheme == "http"
+            assert service.account_name == DEVSTORE_ACCOUNT_NAME
+            assert service.credential.account_name == DEVSTORE_ACCOUNT_NAME
+            assert service.credential.account_key == DEVSTORE_ACCOUNT_KEY
+            assert f"127.0.0.1:10001/{DEVSTORE_ACCOUNT_NAME}" in service.url
 
     @QueuePreparer()
     def test_create_service_with_connection_string_custom_domain(self, **kwargs):
