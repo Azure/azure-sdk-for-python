@@ -695,6 +695,49 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         result = await self.get_indexers(**kwargs)
         return [x.name for x in result]
 
+    @overload
+    async def get_data_source_connections(
+        self, *, select: str | None = None, **kwargs: Any
+    ) -> List[_models.SearchIndexerDataSourceConnection]:
+        """Lists all data source connections available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+         list of JSON property names, or '*' for all properties. The default is all properties. Default
+         value is None.
+        :paramtype select: str
+        :return: List of all the data source connections.
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def get_data_source_connections(
+        self, **kwargs: Any
+    ) -> List[_models.SearchIndexerDataSourceConnection]:
+        """Lists all data source connections available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+         list of JSON property names, or '*' for all properties. The default is all properties. Default
+         value is None.
+        :paramtype select: str
+        :return: List of all the data source connections.
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
+                :start-after: [START list_data_source_connection]
+                :end-before: [END list_data_source_connection]
+                :language: python
+                :dedent: 4
+                :caption: List all the data source connections
+        """
+        result = await self._get_data_source_connections(**kwargs)
+        assert result.data_sources is not None  # Hint for mypy
+        return result.data_sources
+
     @distributed_trace_async
     async def get_data_source_connection_names(self, **kwargs) -> Sequence[str]:
         """Lists all data source connection names available for a search service.
@@ -704,8 +747,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = await self.get_data_source_connections(**kwargs)
-        assert result.data_sources is not None  # Hint for mypy
-        return [x.name for x in result.data_sources]
+        return [x.get("name") for x in result]
 
     @distributed_trace_async
     async def get_skillset_names(self, **kwargs) -> Sequence[str]:
