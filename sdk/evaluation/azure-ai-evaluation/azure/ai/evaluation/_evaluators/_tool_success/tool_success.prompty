@@ -58,7 +58,7 @@ B. Examine tool result and definition for the tool being called to check whether
     - The tool call returned a result that indicates an error or failure
     - The tool call returned an object or JSON string that has one or more of its fields indicating an error
     - The tool timed-out or returned a result that indicate a time-out
-    - The tool result does not make sense ,from technical perspective not business perspective, given the definition of that tool , if the definition is present
+    - The tool result does not make sense, from technical perspective, not business perspective, given the definition of that tool, if the definition is present
   2. If none of the error cases apply to the tool result , it is considered **succeeded** even if the tool result itself indicates a business mistake
 C. If one or more tool result are **failed** , then you the **evaluation process** has **failed**, otherwise , the **evaluation process** has **succeeded**
 D. You are required to return your **output** in the following format:
