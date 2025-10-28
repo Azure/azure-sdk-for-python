@@ -103,7 +103,7 @@ class TestStorageClient(StorageRecordedTestCase):
             assert service.scheme == 'https'
 
     @BlobPreparer()
-    def test_create_service_use_development_storage(self, **kwargs):
+    def test_create_service_use_development_storage(self):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(

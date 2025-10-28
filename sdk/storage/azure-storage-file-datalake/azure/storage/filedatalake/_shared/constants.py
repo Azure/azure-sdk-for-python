@@ -17,7 +17,3 @@ DEFAULT_OAUTH_SCOPE = "/.default"
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
 SERVICE_HOST_BASE = "core.windows.net"
-
-# Devstore account information used for Azurite Storage Emulator
-DEVSTORE_ACCOUNT_NAME = "devstoreaccount1"
-DEVSTORE_ACCOUNT_KEY = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
