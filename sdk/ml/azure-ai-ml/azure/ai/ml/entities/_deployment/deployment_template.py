@@ -9,7 +9,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, IO, AnyStr
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -264,7 +264,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         res: DeploymentTemplate = load_from_dict(DeploymentTemplateSchema, data, context, **kwargs)
         return res
 
-    def dump(self, dest: Optional[Union[str, PathLike]] = None, **kwargs: Any) -> Dict[str, Any]:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]] = None, **kwargs: Any) -> Dict[str, Any]:
         """Dump the deployment template to a dictionary.
 
         :param dest: Destination path to write the deployment template to.
