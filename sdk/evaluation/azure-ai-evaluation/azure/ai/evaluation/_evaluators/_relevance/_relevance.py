@@ -186,6 +186,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             binary_result = self._get_binary_result(score)
             return {
                 self._result_key: float(score),
+                f"gpt_{self._result_key}": float(score),
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,

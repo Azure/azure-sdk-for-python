@@ -2,4 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-VERSION = "1.31.0"
+from ._tool_success import ToolSuccessEvaluator
+
+__all__ = ["ToolSuccessEvaluator"]
