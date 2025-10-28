@@ -120,7 +120,7 @@ async def flow_side_effect(timeout, **kwargs):
             },
             "result": 1,  # PASS
         }
-    
+
     # Return in the format expected by _do_eval: wrapped in llm_output key
     return {"llm_output": llm_output}
 
@@ -408,7 +408,9 @@ class TestToolInputAccuracyEvaluator:
         assert result is not None
         assert result[key] == 0
         assert result[f"{key}_result"] == "fail"
-        assert "multiple" in result[f"{key}_reason"].lower() or len(result[f"{key}_details"]["incorrect_parameters"]) >= 2
+        assert (
+            "multiple" in result[f"{key}_reason"].lower() or len(result[f"{key}_details"]["incorrect_parameters"]) >= 2
+        )
         assert f"{key}_details" in result
         assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 25.0  # 1/4 correct params
 

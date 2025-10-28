@@ -36,7 +36,9 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_in_order_match_with_extra_steps(self):
         """Test when agent has extra steps but maintains order."""
-        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
+        )
 
         response = [
             {
