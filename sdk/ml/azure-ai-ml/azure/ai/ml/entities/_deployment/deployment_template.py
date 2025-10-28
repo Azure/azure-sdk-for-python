@@ -264,7 +264,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         res: DeploymentTemplate = load_from_dict(DeploymentTemplateSchema, data, context, **kwargs)
         return res
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]] = None, **kwargs: Any) -> Dict[str, Any]: # type: ignore
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]] = None, **kwargs: Any) -> Dict[str, Any]:  # type: ignore
         """Dump the deployment template to a dictionary.
 
         :param dest: Destination path to write the deployment template to.
