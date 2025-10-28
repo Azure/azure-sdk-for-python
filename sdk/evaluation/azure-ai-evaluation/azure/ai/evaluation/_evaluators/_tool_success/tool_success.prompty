@@ -42,7 +42,7 @@ TOOL_CALLS: {{tool_calls}}
 
 
 TOOL_CALLS is a list of tool calls that was produced by the AI agent's. It includes calls together with the result of every tool call.
-TOOL_DEFINITIONS is a list of definitions for the tools that was called. This definition can contain a description of functionality provided by the tool, the parameters that the tool accept and the expected return of the tool. This definition can contribute to the assessment of whether a tool call succeeded or failed. 
+TOOL_DEFINITIONS is a list of definitions for the tools that were called. This definition can contain a description of functionality provided by the tool, the parameters that the tool accepts and the expected return of the tool. This definition can contribute to the assessment of whether a tool call succeeded or failed. 
 
 
 EVALUATION FRAMEWORK
