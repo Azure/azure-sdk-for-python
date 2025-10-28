@@ -105,7 +105,7 @@ class TestWorkloadIdentityCredentialTokenProxy:
                 mock_transport_instance = MagicMock()
                 mock_transport_class.return_value = mock_transport_instance
 
-                credential = WorkloadIdentityCredential(
+                WorkloadIdentityCredential(
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
@@ -136,7 +136,7 @@ class TestWorkloadIdentityCredentialTokenProxy:
                 mock_transport_instance = MagicMock()
                 mock_transport_class.return_value = mock_transport_instance
 
-                credential = WorkloadIdentityCredential(
+                WorkloadIdentityCredential(
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
@@ -242,7 +242,7 @@ class TestWorkloadIdentityCredentialTokenProxy:
         token_file_path = "foo-path"
 
         with patch("azure.identity._credentials.workload_identity.HttpClientTransport") as mock_transport_class:
-            credential = WorkloadIdentityCredential(
+            WorkloadIdentityCredential(
                 tenant_id=tenant_id,
                 client_id=client_id,
                 token_file_path=token_file_path,

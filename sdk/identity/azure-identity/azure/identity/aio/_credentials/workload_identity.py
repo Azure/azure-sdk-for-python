@@ -2,12 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore cafile
 import os
+import ssl
+import logging
 from typing import Any, Optional
+
 from .client_assertion import ClientAssertionCredential
 from ..._credentials.workload_identity import TokenFileMixin, WORKLOAD_CONFIG_ERROR
 from ..._constants import EnvironmentVariables
-from ..._internal.http_client_transport import HttpClientTransport
+from ..._internal.token_binding_transport_mixin import TokenBindingTransportMixin
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
@@ -78,14 +85,14 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         self._token_file_path = token_file_path
 
         if use_token_proxy:
-            token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
-            if not token_proxy_endpoint:
+            self._token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
+            if not self._token_proxy_endpoint:
                 raise ValueError(
                     "use_token_proxy is True, but no token proxy endpoint was found. "
                     f"Ensure the {EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY} environment variable is set."
                 )
 
-            sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
+            self._sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
             ca_file = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_FILE)
             ca_data = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_DATA)
 
@@ -94,12 +101,19 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
                     "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set"
                 )
 
-            kwargs["transport"] = HttpClientTransport(
-                sni=sni,
-                proxy_endpoint=token_proxy_endpoint,
+            transport = _get_transport(
+                sni=self._sni,
+                token_proxy_endpoint=self._token_proxy_endpoint,
                 ca_file=ca_file,
                 ca_data=ca_data,
             )
+
+            if transport:
+                kwargs["transport"] = transport
+            else:
+                raise ValueError(
+                    "Async transport creation failed. Ensure that the aiohttp package is installed to enable token proxy usage."
+                )
 
         super().__init__(
             tenant_id=tenant_id,
@@ -108,3 +122,48 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
             token_file_path=token_file_path,
             **kwargs,
         )
+
+
+def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
+    try:
+        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+            AioHttpTransport,
+        )
+
+        class WorkloadIdentityAioHttpTransport(TokenBindingTransportMixin, AioHttpTransport):
+
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self._ssl_context = ssl.create_default_context(cadata=self._ca_data)
+
+            async def send(self, request, **kwargs):
+                self._update_request_url(request)
+                kwargs.setdefault("server_hostname", self._sni)
+
+                # Check if CA file has changed and reload ca_data if needed
+                if self._ca_file and self._has_ca_file_changed():
+                    self._load_ca_file_to_data()
+                    # If ca_data was updated, recreate SSL context with the new data
+                    if self._ca_data:
+                        self._ssl_context = ssl.create_default_context(cadata=self._ca_data)
+
+                if self._ssl_context:
+                    kwargs.setdefault("ssl", self._ssl_context)
+                return await super().send(request, **kwargs)
+
+            async def __aenter__(self):
+                await super().__aenter__()
+                return self
+
+            async def __aexit__(self, *args):
+                await super().__aexit__(*args)
+
+        transport = WorkloadIdentityAioHttpTransport(
+            sni=sni,
+            proxy_endpoint=token_proxy_endpoint,
+            ca_file=ca_file,
+            ca_data=ca_data,
+        )
+    except ImportError:
+        transport = None
+    return transport

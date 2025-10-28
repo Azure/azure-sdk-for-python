@@ -75,7 +75,7 @@ class TokenProxyHandler(BaseHTTPRequestHandler):
         # Simulate different responses based on path
         if path == "/health":
             self._send_health_response()
-        elif path.startswith("/oauth2/v2.0/token"):
+        elif path.endswith("/oauth2/v2.0/token"):
             self._send_token_response(body)
         elif path == "/error/500":
             self._send_error_response(500, "Internal Server Error")
@@ -300,3 +300,40 @@ class TokenProxyTestServer:
         """Get the base URL of the server."""
         scheme = "https" if self.use_ssl else "http"
         return f"{scheme}://{self.host}:{self.port}"
+
+
+def main():
+    """Run the test server standalone."""
+    parser = argparse.ArgumentParser(description="Token Proxy Test Server")
+    parser.add_argument("--host", default="localhost", help="Host to bind to")
+    parser.add_argument("--port", type=int, default=8443, help="Port to bind to")
+    parser.add_argument("--no-ssl", action="store_true", help="Disable SSL/TLS")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
+
+    args = parser.parse_args()
+
+    # Configure logging
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=log_level, format="%(asctime)s - %(levelname)s - %(message)s")
+
+    # Start server
+    with TokenProxyTestServer(host=args.host, port=args.port, use_ssl=not args.no_ssl) as server:
+        print(f"Server running at {server.base_url}")
+        print("Available endpoints:")
+        print(f"  {server.base_url}/health - Health check")
+        print(f"  {server.base_url}/oauth2/v2.0/token - Mock OAuth token endpoint")
+        print(f"  {server.base_url}/error/500 - Simulate server error")
+        print(f"  {server.base_url}/error/ssl - Simulate SSL error")
+        print(f"  {server.base_url}/slow - Simulate slow response")
+        print(f"  {server.base_url}/<any-path> - Generic proxy response")
+        print("\nPress Ctrl+C to stop")
+
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("\nShutting down...")
+
+
+if __name__ == "__main__":
+    main()
