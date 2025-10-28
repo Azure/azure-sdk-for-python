@@ -69,7 +69,7 @@ from ..._operations._operations import (
     build_search_indexer_create_data_source_connection_request,
     build_search_indexer_create_indexer_request,
     build_search_indexer_create_or_update_data_source_connection_request,
-    build_search_indexer_create_or_update_request,
+    build_search_indexer_create_or_update_indexer_request,
     build_search_indexer_create_or_update_skillset_request,
     build_search_indexer_create_skillset_request,
     build_search_indexer_delete_data_source_connection_request,
@@ -100,7 +100,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 ):
 
     @overload
-    async def create_or_update_synonym_map(
+    async def _create_or_update_synonym_map(
         self,
         synonym_map_name: str,
         synonym_map: _models2.SynonymMap,
@@ -109,28 +109,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SynonymMap:
-        """Creates a new synonym map or updates a synonym map if it already exists.
-
-        :param synonym_map_name: The name of the synonym map. Required.
-        :type synonym_map_name: str
-        :param synonym_map: The definition of the synonym map to create or update. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SynonymMap. The SynonymMap is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SynonymMap: ...
     @overload
-    async def create_or_update_synonym_map(
+    async def _create_or_update_synonym_map(
         self,
         synonym_map_name: str,
         synonym_map: JSON,
@@ -139,28 +120,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SynonymMap:
-        """Creates a new synonym map or updates a synonym map if it already exists.
-
-        :param synonym_map_name: The name of the synonym map. Required.
-        :type synonym_map_name: str
-        :param synonym_map: The definition of the synonym map to create or update. Required.
-        :type synonym_map: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SynonymMap. The SynonymMap is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SynonymMap: ...
     @overload
-    async def create_or_update_synonym_map(
+    async def _create_or_update_synonym_map(
         self,
         synonym_map_name: str,
         synonym_map: IO[bytes],
@@ -169,28 +131,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SynonymMap:
-        """Creates a new synonym map or updates a synonym map if it already exists.
-
-        :param synonym_map_name: The name of the synonym map. Required.
-        :type synonym_map_name: str
-        :param synonym_map: The definition of the synonym map to create or update. Required.
-        :type synonym_map: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SynonymMap. The SynonymMap is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.SynonymMap: ...
 
     @distributed_trace_async
-    async def create_or_update_synonym_map(
+    async def _create_or_update_synonym_map(
         self,
         synonym_map_name: str,
         synonym_map: Union[_models2.SynonymMap, JSON, IO[bytes]],
@@ -605,7 +549,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_update_index(
+    async def _create_or_update_index(
         self,
         index_name: str,
         index: _models2.SearchIndex,
@@ -616,38 +560,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndex:
-        """Creates a new search index or updates an index if it already exists.
-
-        :param index_name: The name of the index. Required.
-        :type index_name: str
-        :param index: The definition of the index to create or update. Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex
-        :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
-         to be added to an index by taking the index offline for at least a few seconds. This
-         temporarily causes indexing and query requests to fail. Performance and write availability of
-         the index can be impaired for several minutes after the index is updated, or longer for very
-         large indexes. Default value is None.
-        :paramtype allow_index_downtime: bool
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndex. The SearchIndex is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndex
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndex: ...
     @overload
-    async def create_or_update_index(
+    async def _create_or_update_index(
         self,
         index_name: str,
         index: JSON,
@@ -658,38 +573,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndex:
-        """Creates a new search index or updates an index if it already exists.
-
-        :param index_name: The name of the index. Required.
-        :type index_name: str
-        :param index: The definition of the index to create or update. Required.
-        :type index: JSON
-        :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
-         to be added to an index by taking the index offline for at least a few seconds. This
-         temporarily causes indexing and query requests to fail. Performance and write availability of
-         the index can be impaired for several minutes after the index is updated, or longer for very
-         large indexes. Default value is None.
-        :paramtype allow_index_downtime: bool
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndex. The SearchIndex is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndex
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndex: ...
     @overload
-    async def create_or_update_index(
+    async def _create_or_update_index(
         self,
         index_name: str,
         index: IO[bytes],
@@ -700,38 +586,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndex:
-        """Creates a new search index or updates an index if it already exists.
-
-        :param index_name: The name of the index. Required.
-        :type index_name: str
-        :param index: The definition of the index to create or update. Required.
-        :type index: IO[bytes]
-        :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
-         to be added to an index by taking the index offline for at least a few seconds. This
-         temporarily causes indexing and query requests to fail. Performance and write availability of
-         the index can be impaired for several minutes after the index is updated, or longer for very
-         large indexes. Default value is None.
-        :paramtype allow_index_downtime: bool
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndex. The SearchIndex is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndex
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.SearchIndex: ...
 
     @distributed_trace_async
-    async def create_or_update_index(
+    async def _create_or_update_index(
         self,
         index_name: str,
         index: Union[_models2.SearchIndex, JSON, IO[bytes]],
@@ -1436,7 +1294,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_update_alias(
+    async def _create_or_update_alias(
         self,
         alias_name: str,
         alias: _models2.SearchAlias,
@@ -1445,28 +1303,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchAlias:
-        """Creates a new search alias or updates an alias if it already exists.
-
-        :param alias_name: The name of the alias. Required.
-        :type alias_name: str
-        :param alias: The definition of the alias to create or update. Required.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchAlias. The SearchAlias is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchAlias
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchAlias: ...
     @overload
-    async def create_or_update_alias(
+    async def _create_or_update_alias(
         self,
         alias_name: str,
         alias: JSON,
@@ -1475,28 +1314,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchAlias:
-        """Creates a new search alias or updates an alias if it already exists.
-
-        :param alias_name: The name of the alias. Required.
-        :type alias_name: str
-        :param alias: The definition of the alias to create or update. Required.
-        :type alias: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchAlias. The SearchAlias is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchAlias
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchAlias: ...
     @overload
-    async def create_or_update_alias(
+    async def _create_or_update_alias(
         self,
         alias_name: str,
         alias: IO[bytes],
@@ -1505,28 +1325,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchAlias:
-        """Creates a new search alias or updates an alias if it already exists.
-
-        :param alias_name: The name of the alias. Required.
-        :type alias_name: str
-        :param alias: The definition of the alias to create or update. Required.
-        :type alias: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchAlias. The SearchAlias is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchAlias
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.SearchAlias: ...
 
     @distributed_trace_async
-    async def create_or_update_alias(
+    async def _create_or_update_alias(
         self,
         alias_name: str,
         alias: Union[_models2.SearchAlias, JSON, IO[bytes]],
@@ -1959,7 +1761,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_update_agent(
+    async def _create_or_update_agent(
         self,
         agent_name: str,
         knowledge_agent: _models2.KnowledgeAgent,
@@ -1968,28 +1770,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.KnowledgeAgent:
-        """Creates a new agent or updates an agent if it already exists.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param knowledge_agent: The definition of the agent to create or update. Required.
-        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.KnowledgeAgent: ...
     @overload
-    async def create_or_update_agent(
+    async def _create_or_update_agent(
         self,
         agent_name: str,
         knowledge_agent: JSON,
@@ -1998,28 +1781,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.KnowledgeAgent:
-        """Creates a new agent or updates an agent if it already exists.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param knowledge_agent: The definition of the agent to create or update. Required.
-        :type knowledge_agent: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.KnowledgeAgent: ...
     @overload
-    async def create_or_update_agent(
+    async def _create_or_update_agent(
         self,
         agent_name: str,
         knowledge_agent: IO[bytes],
@@ -2028,28 +1792,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.KnowledgeAgent:
-        """Creates a new agent or updates an agent if it already exists.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param knowledge_agent: The definition of the agent to create or update. Required.
-        :type knowledge_agent: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.KnowledgeAgent: ...
 
     @distributed_trace_async
-    async def create_or_update_agent(
+    async def _create_or_update_agent(
         self,
         agent_name: str,
         knowledge_agent: Union[_models2.KnowledgeAgent, JSON, IO[bytes]],
@@ -2484,7 +2230,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_update_knowledge_source(
+    async def _create_or_update_knowledge_source(
         self,
         source_name: str,
         knowledge_source: _models2.KnowledgeSource,
@@ -2493,28 +2239,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.KnowledgeSource:
-        """Creates a new knowledge source or updates an knowledge source if it already exists.
-
-        :param source_name: The name of the knowledge source. Required.
-        :type source_name: str
-        :param knowledge_source: The definition of the knowledge source to create or update. Required.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeSource. The KnowledgeSource is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.KnowledgeSource: ...
     @overload
-    async def create_or_update_knowledge_source(
+    async def _create_or_update_knowledge_source(
         self,
         source_name: str,
         knowledge_source: JSON,
@@ -2523,28 +2250,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.KnowledgeSource:
-        """Creates a new knowledge source or updates an knowledge source if it already exists.
-
-        :param source_name: The name of the knowledge source. Required.
-        :type source_name: str
-        :param knowledge_source: The definition of the knowledge source to create or update. Required.
-        :type knowledge_source: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeSource. The KnowledgeSource is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.KnowledgeSource: ...
     @overload
-    async def create_or_update_knowledge_source(
+    async def _create_or_update_knowledge_source(
         self,
         source_name: str,
         knowledge_source: IO[bytes],
@@ -2553,28 +2261,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.KnowledgeSource:
-        """Creates a new knowledge source or updates an knowledge source if it already exists.
-
-        :param source_name: The name of the knowledge source. Required.
-        :type source_name: str
-        :param knowledge_source: The definition of the knowledge source to create or update. Required.
-        :type knowledge_source: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeSource. The KnowledgeSource is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.KnowledgeSource: ...
 
     @distributed_trace_async
-    async def create_or_update_knowledge_source(
+    async def _create_or_update_knowledge_source(
         self,
         source_name: str,
         knowledge_source: Union[_models2.KnowledgeSource, JSON, IO[bytes]],
@@ -3160,7 +2850,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 ):
 
     @overload
-    async def create_or_update_data_source_connection(
+    async def _create_or_update_data_source_connection(
         self,
         data_source_name: str,
         data_source: _models2.SearchIndexerDataSourceConnection,
@@ -3170,32 +2860,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexerDataSourceConnection:
-        """Creates a new datasource or updates a datasource if it already exists.
-
-        :param data_source_name: The name of the datasource. Required.
-        :type data_source_name: str
-        :param data_source: The definition of the datasource to create or update. Required.
-        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexerDataSourceConnection. The SearchIndexerDataSourceConnection is compatible
-         with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndexerDataSourceConnection: ...
     @overload
-    async def create_or_update_data_source_connection(
+    async def _create_or_update_data_source_connection(
         self,
         data_source_name: str,
         data_source: JSON,
@@ -3205,32 +2872,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexerDataSourceConnection:
-        """Creates a new datasource or updates a datasource if it already exists.
-
-        :param data_source_name: The name of the datasource. Required.
-        :type data_source_name: str
-        :param data_source: The definition of the datasource to create or update. Required.
-        :type data_source: JSON
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexerDataSourceConnection. The SearchIndexerDataSourceConnection is compatible
-         with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndexerDataSourceConnection: ...
     @overload
-    async def create_or_update_data_source_connection(
+    async def _create_or_update_data_source_connection(
         self,
         data_source_name: str,
         data_source: IO[bytes],
@@ -3240,36 +2884,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexerDataSourceConnection:
-        """Creates a new datasource or updates a datasource if it already exists.
-
-        :param data_source_name: The name of the datasource. Required.
-        :type data_source_name: str
-        :param data_source: The definition of the datasource to create or update. Required.
-        :type data_source: IO[bytes]
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexerDataSourceConnection. The SearchIndexerDataSourceConnection is compatible
-         with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.SearchIndexerDataSourceConnection: ...
 
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2025-08-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
         api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
-    async def create_or_update_data_source_connection(
+    async def _create_or_update_data_source_connection(
         self,
         data_source_name: str,
         data_source: Union[_models2.SearchIndexerDataSourceConnection, JSON, IO[bytes]],
@@ -4029,7 +3651,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def create_or_update(
+    async def _create_or_update_indexer(
         self,
         indexer_name: str,
         indexer: _models2.SearchIndexer,
@@ -4040,34 +3662,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexer:
-        """Creates a new indexer or updates an indexer if it already exists.
-
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
-        :param indexer: The definition of the indexer to create or update. Required.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexer. The SearchIndexer is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndexer: ...
     @overload
-    async def create_or_update(
+    async def _create_or_update_indexer(
         self,
         indexer_name: str,
         indexer: JSON,
@@ -4078,34 +3675,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexer:
-        """Creates a new indexer or updates an indexer if it already exists.
-
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
-        :param indexer: The definition of the indexer to create or update. Required.
-        :type indexer: JSON
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexer. The SearchIndexer is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndexer: ...
     @overload
-    async def create_or_update(
+    async def _create_or_update_indexer(
         self,
         indexer_name: str,
         indexer: IO[bytes],
@@ -4116,31 +3688,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexer:
-        """Creates a new indexer or updates an indexer if it already exists.
-
-        :param indexer_name: The name of the indexer. Required.
-        :type indexer_name: str
-        :param indexer: The definition of the indexer to create or update. Required.
-        :type indexer: IO[bytes]
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexer. The SearchIndexer is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.SearchIndexer: ...
 
     @distributed_trace_async
     @api_version_validation(
@@ -4152,7 +3700,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         },
         api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
-    async def create_or_update(
+    async def _create_or_update_indexer(
         self,
         indexer_name: str,
         indexer: Union[_models2.SearchIndexer, JSON, IO[bytes]],
@@ -4213,7 +3761,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         else:
             _content = json.dumps(indexer, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_indexer_create_or_update_request(
+        _request = build_search_indexer_create_or_update_indexer_request(
             indexer_name=indexer_name,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
@@ -4638,7 +4186,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_update_skillset(
+    async def _create_or_update_skillset(
         self,
         skillset_name: str,
         skillset: _models2.SearchIndexerSkillset,
@@ -4649,35 +4197,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexerSkillset:
-        """Creates a new skillset in a search service or updates the skillset if it already exists.
-
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
-        :param skillset: The skillset containing one or more skills to create or update in a search
-         service. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexerSkillset. The SearchIndexerSkillset is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndexerSkillset: ...
     @overload
-    async def create_or_update_skillset(
+    async def _create_or_update_skillset(
         self,
         skillset_name: str,
         skillset: JSON,
@@ -4688,35 +4210,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexerSkillset:
-        """Creates a new skillset in a search service or updates the skillset if it already exists.
-
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
-        :param skillset: The skillset containing one or more skills to create or update in a search
-         service. Required.
-        :type skillset: JSON
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexerSkillset. The SearchIndexerSkillset is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models2.SearchIndexerSkillset: ...
     @overload
-    async def create_or_update_skillset(
+    async def _create_or_update_skillset(
         self,
         skillset_name: str,
         skillset: IO[bytes],
@@ -4727,32 +4223,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models2.SearchIndexerSkillset:
-        """Creates a new skillset in a search service or updates the skillset if it already exists.
-
-        :param skillset_name: The name of the skillset. Required.
-        :type skillset_name: str
-        :param skillset: The skillset containing one or more skills to create or update in a search
-         service. Required.
-        :type skillset: IO[bytes]
-        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
-         value is None.
-        :paramtype skip_indexer_reset_requirement_for_cache: bool
-        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection. Default value is None.
-        :paramtype disable_cache_reprocessing_change_detection: bool
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: SearchIndexerSkillset. The SearchIndexerSkillset is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models2.SearchIndexerSkillset: ...
 
     @distributed_trace_async
     @api_version_validation(
@@ -4764,7 +4235,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         },
         api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
-    async def create_or_update_skillset(
+    async def _create_or_update_skillset(
         self,
         skillset_name: str,
         skillset: Union[_models2.SearchIndexerSkillset, JSON, IO[bytes]],

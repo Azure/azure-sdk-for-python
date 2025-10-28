@@ -94,6 +94,80 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             return await super().delete_synonym_map(*args, **kwargs)
 
     @overload
+    async def create_or_update_synonym_map(
+        self,
+        synonym_map_name: str,
+        synonym_map: _models.SynonymMap,
+        *,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SynonymMap:
+        """Creates a new synonym map or updates a synonym map if it already exists.
+
+        :param synonym_map_name: The name of the synonym map. Required.
+        :type synonym_map_name: str
+        :param synonym_map: The definition of the synonym map to create or update. Required.
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SynonymMap
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_synonym_map(
+        self,
+        synonym_map: _models.SynonymMap,
+        /,
+        *,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SynonymMap:
+        """Creates a new synonym map or updates a synonym map if it already exists.
+
+        :param synonym_map: The SynonymMap object to create or update. Required.
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SynonymMap
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_synonym_map(
+        self, *args: Union[str, _models.SynonymMap], **kwargs: Any
+    ) -> _models.SynonymMap:
+        """Creates a new synonym map or updates a synonym map if it already exists.
+
+        :param synonym_map_name: The name of the synonym map. Required.
+        :type synonym_map_name: str
+        :param synonym_map: The SynonymMap object to create or update.
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SynonymMap
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.SynonymMap):
+            synonym_map = args[0]
+            kwargs.setdefault("etag", synonym_map.e_tag)
+            return await self._create_or_update_synonym_map(synonym_map.name, synonym_map, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_synonym_map(*args, prefer="return=representation", **kwargs)
+
+    @overload
     async def delete_index(
         self,
         index_name: str,
@@ -175,6 +249,186 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             return await super().delete_index(index.name, **kwargs)
         else:
             return await super().delete_index(*args, **kwargs)
+
+    @overload
+    async def create_or_update_index(
+        self,
+        index_name: str,
+        index: _models.SearchIndex,
+        *,
+        allow_index_downtime: bool | None = None,
+        query_source_authorization: str | None = None,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndex:
+        """Creates a new search index or updates an index if it already exists.
+
+        :param index_name: The name of the index. Required.
+        :type index_name: str
+        :param index: The definition of the index to create or update. Required.
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
+        :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
+         to be added to an index by taking the index offline for at least a few seconds. This
+         temporarily causes indexing and query requests to fail. Performance and write availability of
+         the index can be impaired for several minutes after the index is updated, or longer for very
+         large indexes. Default value is None.
+        :paramtype allow_index_downtime: bool
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndex
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_index(
+        self,
+        index: _models.SearchIndex,
+        /,
+        *,
+        allow_index_downtime: bool | None = None,
+        query_source_authorization: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndex:
+        """Creates a new search index or updates an index if it already exists.
+
+        :param index: The SearchIndex object to create or update. Required.
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
+        :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
+         to be added to an index by taking the index offline for at least a few seconds. This
+         temporarily causes indexing and query requests to fail. Performance and write availability of
+         the index can be impaired for several minutes after the index is updated, or longer for very
+         large indexes. Default value is None.
+        :paramtype allow_index_downtime: bool
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndex
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_index(
+        self, *args: Union[str, _models.SearchIndex], **kwargs: Any
+    ) -> _models.SearchIndex:
+        """Creates a new search index or updates an index if it already exists.
+
+        :param index_name: The name of the index. Required.
+        :type index_name: str
+        :param index: The SearchIndex object to create or update.
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
+        :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
+         to be added to an index by taking the index offline for at least a few seconds. This
+         temporarily causes indexing and query requests to fail. Performance and write availability of
+         the index can be impaired for several minutes after the index is updated, or longer for very
+         large indexes. Default value is None.
+        :paramtype allow_index_downtime: bool
+        :keyword query_source_authorization: Token identifying the user for which the query is being
+         executed. This token is used to enforce security restrictions on documents. Default value is
+         None.
+        :paramtype query_source_authorization: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndex
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.SearchIndex):
+            index = args[0]
+            kwargs.setdefault("etag", index.e_tag)
+            return await self._create_or_update_index(index.name, index, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_index(*args, prefer="return=representation", **kwargs)
+
+    @overload
+    async def create_or_update_alias(
+        self,
+        alias_name: str,
+        alias: _models.SearchAlias,
+        *,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchAlias:
+        """Creates a new search alias or updates an alias if it already exists.
+
+        :param alias_name: The name of the alias. Required.
+        :type alias_name: str
+        :param alias: The definition of the alias to create or update. Required.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchAlias
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_alias(
+        self,
+        alias: _models.SearchAlias,
+        /,
+        *,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchAlias:
+        """Creates a new search alias or updates an alias if it already exists.
+
+        :param alias: The SearchAlias object to create or update. Required.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchAlias
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_alias(self, *args: Union[str, _models.SearchAlias], **kwargs: Any) -> _models.SearchAlias:
+        """Creates a new search alias or updates an alias if it already exists.
+
+        :param alias_name: The name of the alias. Required.
+        :type alias_name: str
+        :param alias: The SearchAlias object to create or update.
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchAlias
+        :rtype: ~azure.search.documents.indexes.models.SearchAlias
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.SearchAlias):
+            alias = args[0]
+            kwargs.setdefault("etag", alias.e_tag)
+            return await self._create_or_update_alias(alias.name, alias, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_alias(*args, prefer="return=representation", **kwargs)
 
     @overload
     async def delete_alias(
@@ -315,6 +569,154 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             return await super().delete_agent(*args, **kwargs)
 
     @overload
+    async def create_or_update_agent(
+        self,
+        agent_name: str,
+        agent: _models.KnowledgeAgent,
+        *,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent or updates an agent if it already exists.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param agent: The definition of the agent to create or update. Required.
+        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: KnowledgeAgent
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_agent(
+        self,
+        agent: _models.KnowledgeAgent,
+        /,
+        *,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent or updates an agent if it already exists.
+
+        :param agent: The KnowledgeAgent object to create or update. Required.
+        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: KnowledgeAgent
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_agent(
+        self, *args: Union[str, _models.KnowledgeAgent], **kwargs: Any
+    ) -> _models.KnowledgeAgent:
+        """Creates a new agent or updates an agent if it already exists.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param agent: The KnowledgeAgent object to create or update.
+        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: KnowledgeAgent
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.KnowledgeAgent):
+            agent = args[0]
+            kwargs.setdefault("etag", agent.e_tag)
+            return await self._create_or_update_agent(agent.name, agent, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_agent(*args, prefer="return=representation", **kwargs)
+
+    @overload
+    async def create_or_update_knowledge_source(
+        self,
+        source_name: str,
+        knowledge_source: _models.KnowledgeSource,
+        *,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source or updates a knowledge source if it already exists.
+
+        :param source_name: The name of the knowledge source. Required.
+        :type source_name: str
+        :param knowledge_source: The definition of the knowledge source to create or update. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: KnowledgeSource
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_knowledge_source(
+        self,
+        knowledge_source: _models.KnowledgeSource,
+        /,
+        *,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source or updates a knowledge source if it already exists.
+
+        :param knowledge_source: The KnowledgeSource object to create or update. Required.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: KnowledgeSource
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_knowledge_source(
+        self, *args: Union[str, _models.KnowledgeSource], **kwargs: Any
+    ) -> _models.KnowledgeSource:
+        """Creates a new knowledge source or updates a knowledge source if it already exists.
+
+        :param source_name: The name of the knowledge source. Required.
+        :type source_name: str
+        :param knowledge_source: The KnowledgeSource object to create or update.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: KnowledgeSource
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.KnowledgeSource):
+            knowledge_source = args[0]
+            kwargs.setdefault("etag", knowledge_source.e_tag)
+            return await self._create_or_update_knowledge_source(knowledge_source.name, knowledge_source, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_knowledge_source(*args, prefer="return=representation", **kwargs)
+
+    @overload
     async def delete_knowledge_source(
         self,
         source_name: str,
@@ -391,7 +793,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        names = self.list_indexes(cls=lambda objs: [x.get("name") for x in objs], **kwargs)
+        names = self.list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(AsyncItemPaged[str], names)
 
     @distributed_trace_async
@@ -420,7 +822,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = await self.get_synonym_maps(**kwargs)
-        return [x.get("name") for x in result]
+        return [x.name for x in result]
 
     @distributed_trace
     def list_alias_names(self, **kwargs) -> AsyncItemPaged[str]:
@@ -430,7 +832,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
-        names = self.list_aliases(cls=lambda objs: [x.get("name") for x in objs], **kwargs)
+        names = self.list_aliases(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(AsyncItemPaged[str], names)
 
 
@@ -509,6 +911,91 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             return await super().delete_data_source_connection(*args, **kwargs)
 
     @overload
+    async def create_or_update_data_source_connection(
+        self,
+        data_source_name: str,
+        data_source: _models.SearchIndexerDataSourceConnection,
+        *,
+        skip_indexer_reset_requirement_for_cache: bool | None = None,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndexerDataSourceConnection:
+        """Creates a new data source connection or updates a data source connection if it already exists.
+
+        :param data_source_name: The name of the data source connection. Required.
+        :type data_source_name: str
+        :param data_source: The definition of the data source connection to create or update. Required.
+        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_data_source_connection(
+        self,
+        data_source: _models.SearchIndexerDataSourceConnection,
+        /,
+        *,
+        skip_indexer_reset_requirement_for_cache: bool | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndexerDataSourceConnection:
+        """Creates a new data source connection or updates a data source connection if it already exists.
+
+        :param data_source: The SearchIndexerDataSourceConnection object to create or update. Required.
+        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_data_source_connection(
+        self, *args: Union[str, _models.SearchIndexerDataSourceConnection], **kwargs: Any
+    ) -> _models.SearchIndexerDataSourceConnection:
+        """Creates a new data source connection or updates a data source connection if it already exists.
+
+        :param data_source_name: The name of the data source connection. Required.
+        :type data_source_name: str
+        :param data_source: The SearchIndexerDataSourceConnection object to create or update.
+        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.SearchIndexerDataSourceConnection):
+            data_source = args[0]
+            kwargs.setdefault("etag", data_source.e_tag)
+            return await self._create_or_update_data_source_connection(data_source.name, data_source, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_data_source_connection(*args, prefer="return=representation", **kwargs)
+
+    @overload
     async def delete_indexer(
         self,
         indexer_name: str,
@@ -578,6 +1065,100 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             return await super().delete_indexer(*args, **kwargs)
 
     @overload
+    async def create_or_update_indexer(
+        self,
+        indexer_name: str,
+        indexer: _models.SearchIndexer,
+        *,
+        skip_indexer_reset_requirement_for_cache: bool | None = None,
+        disable_cache_reprocessing_change_detection: bool | None = None,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndexer:
+        """Creates a new indexer or updates an indexer if it already exists.
+
+        :param indexer_name: The name of the indexer. Required.
+        :type indexer_name: str
+        :param indexer: The definition of the indexer to create or update. Required.
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :paramtype disable_cache_reprocessing_change_detection: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_indexer(
+        self,
+        indexer: _models.SearchIndexer,
+        /,
+        *,
+        skip_indexer_reset_requirement_for_cache: bool | None = None,
+        disable_cache_reprocessing_change_detection: bool | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndexer:
+        """Creates a new indexer or updates an indexer if it already exists.
+
+        :param indexer: The SearchIndexer object to create or update. Required.
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :paramtype disable_cache_reprocessing_change_detection: bool
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_indexer(self, *args: Union[str, _models.SearchIndexer], **kwargs: Any) -> _models.SearchIndexer:
+        """Creates a new indexer or updates an indexer if it already exists.
+
+        :param indexer_name: The name of the indexer. Required.
+        :type indexer_name: str
+        :param indexer: The SearchIndexer object to create or update.
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :paramtype disable_cache_reprocessing_change_detection: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexer
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.SearchIndexer):
+            indexer = args[0]
+            kwargs.setdefault("etag", indexer.e_tag)
+            return await self._create_or_update_indexer(indexer.name, indexer, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_indexer(*args, prefer="return=representation", **kwargs)
+
+    @overload
     async def delete_skillset(
         self,
         skillset_name: str,
@@ -645,6 +1226,103 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             return await super().delete_skillset(skillset.name, **kwargs)
         else:
             return await super().delete_skillset(*args, **kwargs)
+
+    @overload
+    async def create_or_update_skillset(
+        self,
+        skillset_name: str,
+        skillset: _models.SearchIndexerSkillset,
+        *,
+        skip_indexer_reset_requirement_for_cache: bool | None = None,
+        disable_cache_reprocessing_change_detection: bool | None = None,
+        etag: str | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndexerSkillset:
+        """Creates a new skillset in a search service or updates the skillset if it already exists.
+
+        :param skillset_name: The name of the skillset. Required.
+        :type skillset_name: str
+        :param skillset: The skillset containing one or more skills to create or update in a search
+         service. Required.
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :paramtype disable_cache_reprocessing_change_detection: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexerSkillset
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    async def create_or_update_skillset(
+        self,
+        skillset: _models.SearchIndexerSkillset,
+        /,
+        *,
+        skip_indexer_reset_requirement_for_cache: bool | None = None,
+        disable_cache_reprocessing_change_detection: bool | None = None,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> _models.SearchIndexerSkillset:
+        """Creates a new skillset in a search service or updates the skillset if it already exists.
+
+        :param skillset: The SearchIndexerSkillset object to create or update. Required.
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :paramtype disable_cache_reprocessing_change_detection: bool
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexerSkillset
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_or_update_skillset(
+        self, *args: Union[str, _models.SearchIndexerSkillset], **kwargs: Any
+    ) -> _models.SearchIndexerSkillset:
+        """Creates a new skillset in a search service or updates the skillset if it already exists.
+
+        :param skillset_name: The name of the skillset. Required.
+        :type skillset_name: str
+        :param skillset: The SearchIndexerSkillset object to create or update.
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :paramtype skip_indexer_reset_requirement_for_cache: bool
+        :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :paramtype disable_cache_reprocessing_change_detection: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: SearchIndexerSkillset
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if args and isinstance(args[0], _models.SearchIndexerSkillset):
+            skillset = args[0]
+            kwargs.setdefault("etag", skillset.e_tag)
+            return await self._create_or_update_skillset(skillset.name, skillset, prefer="return=representation", **kwargs)
+        else:
+            return await self._create_or_update_skillset(*args, prefer="return=representation", **kwargs)
 
     @overload
     async def get_skillsets(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexerSkillset]:
@@ -725,7 +1403,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[str]
         """
         result = await self.get_indexers(**kwargs)
-        return [x.get("name") for x in result]
+        return [x.name for x in result]
 
     @overload
     async def get_data_source_connections(
@@ -778,7 +1456,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = await self.get_data_source_connections(**kwargs)
-        return [x.get("name") for x in result]
+        return [x.name for x in result]
 
     @distributed_trace_async
     async def get_skillset_names(self, **kwargs) -> Sequence[str]:
@@ -790,7 +1468,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         """
         result = await self.get_skillsets(**kwargs)
-        return [x.get("name") for x in result]
+        return [x.name for x in result]
 
 
 __all__: list[str] = [

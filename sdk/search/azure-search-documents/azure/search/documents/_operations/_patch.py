@@ -23,18 +23,12 @@ from .. import models as _models
 def _convert_search_result(result: _models.SearchResult) -> Dict[str, Any]:
     """Convert SearchResult model to dictionary with @search.* metadata."""
     ret = dict(result)
-    if result.score is not None:
-        ret["@search.score"] = result.score
-    if result.reranker_score is not None:
-        ret["@search.reranker_score"] = result.reranker_score
-    if result.highlights is not None:
-        ret["@search.highlights"] = result.highlights
-    if result.captions is not None:
-        ret["@search.captions"] = result.captions
-    if result.document_debug_info is not None:
-        ret["@search.document_debug_info"] = result.document_debug_info
-    if result.reranker_boosted_score is not None:
-        ret["@search.reranker_boosted_score"] = result.reranker_boosted_score
+    ret["@search.score"] = result.score
+    ret["@search.reranker_score"] = result.reranker_score
+    ret["@search.highlights"] = result.highlights
+    ret["@search.captions"] = result.captions
+    ret["@search.document_debug_info"] = result.document_debug_info
+    ret["@search.reranker_boosted_score"] = result.reranker_boosted_score
     return ret
 
 

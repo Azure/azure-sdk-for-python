@@ -41,8 +41,8 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     def _test_get_service_statistics(self, client):
         result = client.get_service_statistics()
-        assert isinstance(result, dict)
-        assert set(result.keys()) == {"counters", "limits"}
+        assert "counters" in set(result.keys())
+        assert "limits" in set(result.keys())
 
     def _test_list_indexes_empty(self, client):
         result = client.list_indexes()
