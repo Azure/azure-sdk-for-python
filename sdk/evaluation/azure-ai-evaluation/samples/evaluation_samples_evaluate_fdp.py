@@ -610,7 +610,7 @@ class EvaluationEvaluateSamples(object):
 
         # [START tool_output_utilization]
         import os
-        from azure.ai.evaluation import ToolOutputUtilizationEvaluator
+        from azure.ai.evaluation import _ToolOutputUtilizationEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
@@ -618,7 +618,7 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        tool_output_utilization_evaluator = ToolOutputUtilizationEvaluator(model_config=model_config)
+        tool_output_utilization_evaluator = _ToolOutputUtilizationEvaluator(model_config=model_config)
         query = [
             {"role": "system", "content": "You are a customer service assistant helping with order inquiries."},
             {"role": "user", "content": [{"type": "text", "text": "What's the status of order #12345?"}]},
