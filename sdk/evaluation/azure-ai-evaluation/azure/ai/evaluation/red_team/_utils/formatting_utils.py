@@ -15,7 +15,9 @@ from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
 
 
-def message_to_dict(message: ChatMessage, context: str = None, tool_calls: List[Any] = None) -> Dict[str, Any]:
+def message_to_dict(
+    message: ChatMessage, context: str = None, tool_calls: List[Any] = None, token_usage: Dict[str, Any] = None
+) -> Dict[str, Any]:
     """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
@@ -24,10 +26,15 @@ def message_to_dict(message: ChatMessage, context: str = None, tool_calls: List[
     :type context: str
     :param tool_calls: List of tool calls to include in the dictionary
     :type tool_calls: List[Any]
+    :param token_usage: Token usage information from the callback
+    :type token_usage: Dict[str, Any]
     :return: Dictionary representation with role and content
     :rtype: Dict[str, Any]
     """
-    return {"role": message.role, "content": message.content, "context": context, "tool_calls": tool_calls}
+    msg_dict = {"role": message.role, "content": message.content, "context": context, "tool_calls": tool_calls}
+    if token_usage:
+        msg_dict["token_usage"] = token_usage
+    return msg_dict
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -277,6 +284,7 @@ def write_pyrit_outputs_to_file(
                 prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""),
                 item.labels.get("tool_calls", []),
                 item.labels.get("risk_sub_type"),
+                item.labels.get("token_usage"),
             )
             for item in group
         ]
@@ -303,7 +311,10 @@ def write_pyrit_outputs_to_file(
                     conv_dict = {
                         "conversation": {
                             "messages": [
-                                message_to_dict(message[0], message[1], message[2]) for message in conversation
+                                message_to_dict(
+                                    message[0], message[1], message[2], message[4] if len(message) > 4 else None
+                                )
+                                for message in conversation
                             ]
                         }
                     }
@@ -336,7 +347,10 @@ def write_pyrit_outputs_to_file(
                 continue
             conv_dict = {
                 "conversation": {
-                    "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
+                    "messages": [
+                        message_to_dict(message[0], message[1], message[2], message[4] if len(message) > 4 else None)
+                        for message in conversation
+                    ]
                 }
             }
             # Add risk_sub_type if present (check first message for the label)

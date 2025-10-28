@@ -76,12 +76,27 @@ class _CallbackChatTarget(PromptChatTarget):
 
         # response_context contains "messages", "stream", "session_state, "context"
         response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
+
+        # Store token_usage before processing tuple
+        token_usage = None
+        if isinstance(response, dict) and "token_usage" in response:
+            token_usage = response["token_usage"]
+
         if type(response) == tuple:
             response, tool_output = response
             request.labels["tool_calls"] = tool_output
+            # Check for token_usage in the response dict from tuple
+            if isinstance(response, dict) and "token_usage" in response:
+                token_usage = response["token_usage"]
+
         response_text = response["messages"][-1]["content"]
 
         response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
+
+        # Add token_usage to the response entry's labels (not the request)
+        if token_usage:
+            response_entry.request_pieces[0].labels["token_usage"] = token_usage
+            logger.debug(f"Captured token usage from callback: {token_usage}")
 
         logger.info("Received the following response from the prompt target" + f"{response_text}")
         return response_entry

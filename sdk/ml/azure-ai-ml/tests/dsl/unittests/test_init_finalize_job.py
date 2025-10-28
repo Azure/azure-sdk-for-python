@@ -2,6 +2,7 @@ from functools import partial
 from pathlib import Path
 
 import pytest
+import sys
 
 from azure.ai.ml import dsl, load_component, load_job
 from azure.ai.ml.entities import PipelineJob
@@ -32,6 +33,9 @@ class TestInitFinalizeJob:
         assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
         assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
 
+    @pytest.mark.skipif(
+        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+    )
     def test_init_finalize_job_from_sdk(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
         from azure.ai.ml.dsl import pipeline
@@ -93,6 +97,9 @@ class TestInitFinalizeJob:
             == "On_finalize job should not have connection to other execution node."
         )
 
+    @pytest.mark.skipif(
+        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+    )
     def test_invalid_init_finalize_job_from_sdk(self) -> None:
         # invalid case: job name not exists
         @dsl.pipeline()
@@ -157,6 +164,9 @@ class TestInitFinalizeJob:
             subgraph_with_init_func()
         assert str(e.value) == "On_init/on_finalize is not supported for pipeline component."
 
+    @pytest.mark.skipif(
+        condition=sys.version_info >= (3, 13), reason="historical implementation doesn't support Python 3.13+"
+    )
     def test_init_finalize_job_with_subgraph(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
 
