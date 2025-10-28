@@ -162,7 +162,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
 
     @app_config_decorator
     @recorded_by_proxy
-    def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string):
+    def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
         """Test creating a snapshot and loading provider from it."""
         import time
         from azure.appconfiguration import SnapshotComposition, SnapshotStatus
@@ -198,16 +198,21 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
         # Set the configuration settings
         for setting in test_settings:
             sdk_client.set_configuration_setting(setting)
+
+        variables = kwargs.pop("variables", {})
+        dynamic_snapshot_name_postfix = kwargs.pop("dynamic_snapshot_name_postfix", int(time.time()))
+        variables.setdefault("dynamic_snapshot_name_postfix", dynamic_snapshot_name_postfix)
         
         # Create a unique snapshot name with timestamp to avoid conflicts
-        snapshot_name = f"test-snapshot-{int(time.time())}"
+        snapshot_name = f"test-snapshot-{dynamic_snapshot_name_postfix}"
         
         try:
             # Create the snapshot
             snapshot = sdk_client.begin_create_snapshot(
                 name=snapshot_name,
                 filters=[ConfigurationSettingsFilter(key="snapshot_test_*")],  # Include all our test keys
-                composition_type=SnapshotComposition.KEY
+                composition_type=SnapshotComposition.KEY,
+                retention_period=0 # 0 Retention defaults to 1 hour.
             ).result()
             
             # Verify snapshot was created successfully
@@ -307,17 +312,18 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 # Archive the snapshot (delete is not supported, but archive effectively removes it)
                 sdk_client.archive_snapshot(snapshot_name)
             except Exception:
-                pass  # Snapshot cleanup is best effort
+                pass
                 
             # Clean up test settings
             for setting in test_settings:
                 try:
                     sdk_client.delete_configuration_setting(key=setting.key, label=setting.label)
                 except Exception:
-                    pass  # Setting cleanup is best effort
+                    pass
             
             # Clean up additional test keys
             try:
                 sdk_client.delete_configuration_setting(key="new_key_added_after_load", label=NULL_CHAR)
             except Exception:
-                pass  # Setting cleanup is best effort
+                pass
+        return variables
