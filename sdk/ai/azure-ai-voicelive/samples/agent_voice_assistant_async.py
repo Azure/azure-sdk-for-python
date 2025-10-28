@@ -15,6 +15,9 @@ DESCRIPTION:
     a basic voice assistant that can engage in natural conversation with proper interruption
     handling. This serves as the foundational example that showcases the core value 
     proposition of unified speech-to-speech interaction.
+    
+    In this example a Foundry agent is used as the conversational AI backend. This example also
+    demonstrates how to collect a conversation log of user and agent interactions.
 
 USAGE:
     python basic_voice_assistant_async.py
@@ -79,6 +82,9 @@ if not os.path.exists('logs'):
 
 ## Add timestamp for logfiles
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+## Create conversation log filename
+logfilename = f"{timestamp}_conversation.log"
 
 ## Set up logging
 logging.basicConfig(
@@ -267,22 +273,26 @@ class AudioProcessor:
         logger.info("Audio processor cleaned up")
 
 class BasicVoiceAssistant:
-    """Basic voice assistant implementing the VoiceLive SDK patterns."""
+    """
+        Basic voice assistant implementing the VoiceLive SDK patterns with Foundry Agent.
+        This sample also demonstrates how to collect a conversation log of user and agent interactions.
+    """
+
 
     def __init__(
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        model: str,
+        agent_id: str,
+        foundry_project_name: str,
         voice: str,
-        instructions: str,
     ):
 
         self.endpoint = endpoint
         self.credential = credential
-        self.model = model
+        self.agent_id = agent_id
+        self.foundry_project_name = foundry_project_name
         self.voice = voice
-        self.instructions = instructions
         self.connection: Optional["VoiceLiveConnection"] = None
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready = False
@@ -291,13 +301,21 @@ class BasicVoiceAssistant:
     async def start(self):
         """Start the voice assistant session."""
         try:
-            logger.info("Connecting to VoiceLive API with model %s", self.model)
+            logger.info("Connecting to VoiceLive API with Foundry agent connection %s for project %s", self.agent_id, self.foundry_project_name)
+
+            # Get agent access token
+            agent_access_token = (await DefaultAzureCredential().get_token("https://ai.azure.com/.default")).token
+            logger.info("Obtained agent access token")
 
             # Connect to VoiceLive WebSocket API
             async with connect(
                 endpoint=self.endpoint,
                 credential=self.credential,
-                model=self.model,
+                query={
+                    "agent-id": self.agent_id,
+                    "agent-project-name": self.foundry_project_name,
+                    "agent-access-token": agent_access_token
+                },
             ) as connection:
                 conn = connection
                 self.connection = conn
@@ -347,7 +365,6 @@ class BasicVoiceAssistant:
         # Create strongly typed session configuration
         session_config = RequestSession(
             modalities=[Modality.TEXT, Modality.AUDIO],
-            instructions=self.instructions,
             voice=voice_config,
             input_audio_format=InputAudioFormat.PCM16,
             output_audio_format=OutputAudioFormat.PCM16,
@@ -383,10 +400,30 @@ class BasicVoiceAssistant:
 
         if event.type == ServerEventType.SESSION_UPDATED:
             logger.info("Session ready: %s", event.session.id)
+            await write_conversation_log(f"SessionID: {event.session.id}")
+            await write_conversation_log(f"Model: {event.session.model}")
+            await write_conversation_log(f"Voice: {event.session.voice}")
+            await write_conversation_log(f"Instructions: {event.session.instructions}")
+            await write_conversation_log(f"")
             self.session_ready = True
 
             # Start audio capture once session is ready
             ap.start_capture()
+
+        elif event.type == ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED:
+            user_transcript = f'User Input:\t{event.get("transcript", "")}'
+            print("👤 You said: ", user_transcript)
+            await write_conversation_log(user_transcript)
+
+        elif event.type == ServerEventType.RESPONSE_TEXT_DONE:
+            agent_text = f'Agent Text Response:\t{event.get("text", "")}'
+            print("🤖 Agent responded with text: ", agent_text)
+            await write_conversation_log(agent_text)
+
+        elif event.type == ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE:
+            agent_audio = f'Agent Audio Response:\t{event.get("transcript", "")}'
+            print("🤖 Agent responded with audio transcript: ", agent_audio)
+            await write_conversation_log(agent_audio)
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
             logger.info("User started speaking - stopping playback")
@@ -430,6 +467,10 @@ class BasicVoiceAssistant:
         else:
             logger.debug("Unhandled event type: %s", event.type)
 
+async def write_conversation_log(message: str) -> None:
+    """Write a message to the conversation log."""
+    with open(f'logs/{logfilename}', 'a', encoding='utf-8') as conversation_log:
+        conversation_log.write(message + "\n")
 
 def parse_arguments():
     """Parse command line arguments."""
@@ -453,10 +494,17 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--model",
-        help="VoiceLive model to use",
+        "--agent_id",
+        help="Foundry agent ID to use",
         type=str,
-        default=os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-realtime"),
+        default=os.environ.get("AZURE_VOICELIVE_AGENT_ID", ""),
+    )
+
+    parser.add_argument(
+        "--foundry_project_name",
+        help="Foundry project name to use",
+        type=str,
+        default=os.environ.get("AZURE_VOICELIVE_PROJECT_NAME", ""),
     )
 
     parser.add_argument(
@@ -464,17 +512,6 @@ def parse_arguments():
         help="Voice to use for the assistant. E.g. alloy, echo, fable, en-US-AvaNeural, en-US-GuyNeural",
         type=str,
         default=os.environ.get("AZURE_VOICELIVE_VOICE", "en-US-Ava:DragonHDLatestNeural"),
-    )
-
-    parser.add_argument(
-        "--instructions",
-        help="System instructions for the AI assistant",
-        type=str,
-        default=os.environ.get(
-            "AZURE_VOICELIVE_INSTRUCTIONS",
-            "You are a helpful AI assistant. Respond naturally and conversationally. "
-            "Keep your responses concise but engaging.",
-        ),
     )
 
     parser.add_argument(
@@ -514,9 +551,9 @@ def main():
     assistant = BasicVoiceAssistant(
         endpoint=args.endpoint,
         credential=credential,
-        model=args.model,
+        agent_id=args.agent_id,
+        foundry_project_name=args.foundry_project_name,
         voice=args.voice,
-        instructions=args.instructions,
     )
 
     # Setup signal handlers for graceful shutdown
