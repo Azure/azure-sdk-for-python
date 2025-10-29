@@ -6,11 +6,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "171",
+        "Content-Length": "148",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
-      "RequestBody": "[{\"name\": \"test:property_to_be_deleted\", \"data_type\": \"number\", \"create_index\": false, \"definition\": {\"data_type\": \"number\", \"description\": \"Test property for deletion\"}}]",
+      "RequestBody": "[{\"name\": \"test:property_to_be_deleted\", \"data_type\": \"number\", \"create_index\": false, \"definition\": {\"description\": \"Test property for deletion\"}}]",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Access-Control-Allow-Credentials": "true",
@@ -20,7 +20,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "161",
+        "Content-Length": "140",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -28,7 +28,7 @@
         "X-Cache": "CONFIG_NOCACHE",
         "X-Request-ID": "00000000000000000000000000000000"
       },
-      "ResponseBody": "[{\"name\":\"test:property_to_be_deleted\",\"definition\":{\"data_type\":\"number\",\"description\":\"Test property for deletion\"},\"create_index\":false,\"data_type\":\"number\"}]"
+      "ResponseBody": "[{\"name\":\"test:property_to_be_deleted\",\"definition\":{\"description\":\"Test property for deletion\"},\"create_index\":false,\"data_type\":\"number\"}]"
     },
     {
       "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/queryables?api-version=2025-04-30-preview",
@@ -50,7 +50,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "921",
+        "Content-Length": "879",
         "Content-Type": "application/schema+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -83,14 +83,12 @@
             "description": "Item Geometry"
           },
           "test:property": {
-            "data_type": "number",
             "description": "Test property - updated"
           },
           "eo:cloud_cover": {
             "data_type": "number"
           },
           "test:property_to_be_deleted": {
-            "data_type": "number",
             "description": "Test property for deletion"
           }
         },
@@ -146,7 +144,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "825",
+        "Content-Length": "804",
         "Content-Type": "application/schema+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -179,7 +177,6 @@
             "description": "Item Geometry"
           },
           "test:property": {
-            "data_type": "number",
             "description": "Test property - updated"
           },
           "eo:cloud_cover": {

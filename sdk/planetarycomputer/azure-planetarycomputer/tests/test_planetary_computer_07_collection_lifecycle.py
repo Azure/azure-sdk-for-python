@@ -123,12 +123,11 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: create_or_replace_collection(collection_id='{test_collection_id}', body=collection)"
         )
-        update_poller = client.stac.create_or_replace_collection(
+        updated_collection = client.stac.create_or_replace_collection(
             collection_id=test_collection_id, body=collection
         )
-        result = update_poller.result()
 
-        test_logger.info(f"Collection updated: {result}")
+        test_logger.info(f"Collection updated: {updated_collection}")
 
         # Verify update
         if is_live():

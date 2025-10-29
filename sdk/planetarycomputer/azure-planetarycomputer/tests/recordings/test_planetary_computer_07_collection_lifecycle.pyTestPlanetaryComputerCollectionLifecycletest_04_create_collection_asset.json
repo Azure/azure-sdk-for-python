@@ -4,7 +4,7 @@
       "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl/assets/test-asset?api-version=2025-04-30-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
-        "Accept": "*/*",
+        "Accept": "application/json",
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
@@ -104,7 +104,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-28T18:49:23.628302Z",
+        "msft:_updated": "2025-10-29T00:43:21.556864Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
@@ -200,21 +200,21 @@
         "Accept": "application/json",
         "Connection": "keep-alive",
         "Content-Length": "388",
-        "Content-Type": "multipart/form-data; boundary=d6706c803694df5c71909c7d203a6b58",
+        "Content-Type": "multipart/form-data; boundary=c6ed16d800f9d3aec68f78af90c11ad7",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--d6706c803694df5c71909c7d203a6b58\r\n",
+        "--c6ed16d800f9d3aec68f78af90c11ad7\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "b64:eyJrZXkiOiAidGVzdC1hc3NldCIsICJocmVmIjogImh0dHBzOi8vZXhhbXBsZS5jb20vdGVzdC1hc3NldC50eHQiLCAidHlwZSI6ICJ0ZXh0L3BsYWluIiwgInJvbGVzIjogWyJtZXRhZGF0YSJdLCAidGl0bGUiOiAiVGVzdCBBc3NldCJ9",
         "\r\n",
-        "--d6706c803694df5c71909c7d203a6b58\r\n",
+        "--c6ed16d800f9d3aec68f78af90c11ad7\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50",
         "\r\n",
-        "--d6706c803694df5c71909c7d203a6b58--\r\n"
+        "--c6ed16d800f9d3aec68f78af90c11ad7--\r\n"
       ],
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -309,7 +309,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-28T18:49:28.953860Z",
+        "msft:_updated": "2025-10-29T00:43:26.838016Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {

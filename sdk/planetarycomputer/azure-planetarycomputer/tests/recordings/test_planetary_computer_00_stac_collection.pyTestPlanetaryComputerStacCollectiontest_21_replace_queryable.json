@@ -6,7 +6,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "152",
+        "Content-Length": "129",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -15,7 +15,6 @@
         "data_type": "number",
         "create_index": false,
         "definition": {
-          "data_type": "number",
           "description": "Test property - updated"
         }
       },
@@ -29,7 +28,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "138",
+        "Content-Length": "117",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -40,7 +39,6 @@
       "ResponseBody": {
         "name": "test:property",
         "definition": {
-          "data_type": "number",
           "description": "Test property - updated"
         },
         "create_index": false,
