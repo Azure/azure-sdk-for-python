@@ -8,8 +8,10 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where customer provided excluded region was not always being honored during certain transient failures. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
 
 #### Other Changes
+* Enhanced logging to ensure when a region is marked unavailable we have the proper context. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
 
 ### 4.14.0 (2025-10-13)
 This version and all future versions will require Python 3.9+.
