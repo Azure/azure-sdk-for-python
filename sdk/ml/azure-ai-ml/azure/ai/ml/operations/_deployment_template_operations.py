@@ -6,8 +6,7 @@
 # pylint: disable=too-many-locals,docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 # pylint: disable=no-else-return,too-many-statements
 
-from typing import Any, Dict, Iterable, Optional, Union, cast
-from os import PathLike
+from typing import Any, Dict, Iterable, Optional, cast
 
 from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
@@ -140,10 +139,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             raise ValueError("environment is required but was not found in the data")
 
         # Handle field name variations for constructor parameters
-        allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceType")
-        if isinstance(allowed_instance_types, str):
+        allowed_instance_type = get_field_value(data, "allowed_instance_type", "allowedInstanceType")
+        if isinstance(allowed_instance_type, str):
             # Convert space-separated string to list
-            allowed_instance_types = allowed_instance_types.split()
+            allowed_instance_type = allowed_instance_type.split()
 
         default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
         deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")
@@ -253,7 +252,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             code_configuration=code_configuration,
             environment_variables=environment_variables,
             app_insights_enabled=app_insights_enabled,
-            allowed_instance_types=allowed_instance_types,
+            allowed_instance_type=allowed_instance_type,
             default_instance_type=default_instance_type,
             scoring_port=scoring_port,
             scoring_path=scoring_path,
@@ -267,6 +266,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.List", ActivityType.PUBLICAPI)
     def list(
         self,
+        *,
         name: Optional[str] = None,
         tags: Optional[str] = None,
         count: Optional[int] = None,
@@ -276,17 +276,17 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
     ) -> Iterable[DeploymentTemplate]:
         """List deployment templates.
 
-        :param name: Filter by deployment template name.
-        :type name: Optional[str]
-        :param tags: Comma-separated list of tag names (and optionally values). Example:
+        :keyword name: Filter by deployment template name.
+        :paramtype name: Optional[str]
+        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
             tag1,tag2=value2.
-        :type tags: Optional[str]
-        :param count: Maximum number of items to return.
-        :type count: Optional[int]
-        :param stage: Filter by deployment template stage.
-        :type stage: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived entities.
-        :type list_view_type: str
+        :paramtype tags: Optional[str]
+        :keyword count: Maximum number of items to return.
+        :paramtype count: Optional[int]
+        :keyword stage: Filter by deployment template stage.
+        :paramtype stage: Optional[str]
+        :keyword list_view_type: View type for including/excluding (for example) archived entities.
+        :paramtype list_view_type: str
         :return: Iterator of deployment template objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.DeploymentTemplate]
         """
@@ -310,7 +310,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None) -> DeploymentTemplate:
+    def get(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Get a deployment template by name and version.
 
         :param name: Name of the deployment template.
@@ -333,7 +333,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                 registry_name=self._operation_scope.registry_name,
                 name=name,
                 version=version,
-                **self._init_kwargs,
+                **kwargs,
             )
             return DeploymentTemplate._from_rest_object(result)
         except Exception as e:
@@ -342,9 +342,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(
-        self, deployment_template: Union[DeploymentTemplate, Dict[str, Any], str, PathLike]
-    ) -> DeploymentTemplate:
+    def create_or_update(self, deployment_template: DeploymentTemplate, **kwargs: Any) -> DeploymentTemplate:
         """Create or update a deployment template.
 
         :param deployment_template: DeploymentTemplate object to create or update, dictionary containing deployment
@@ -354,21 +352,9 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         """
         try:
-            # Handle YAML file path input
-            if isinstance(deployment_template, (str, PathLike)):
-                from azure.ai.ml.entities._load_functions import load_deployment_template
-
-                deployment_template = load_deployment_template(source=deployment_template)
-
-            # Handle dictionary input
-            elif isinstance(deployment_template, dict):
-                deployment_template = self._convert_dict_to_deployment_template(deployment_template)
-
             # Ensure we have a DeploymentTemplate object
             if not isinstance(deployment_template, DeploymentTemplate):
-                raise ValueError(
-                    "deployment_template must be a DeploymentTemplate object, dictionary, or path to a YAML file"
-                )
+                raise ValueError("deployment_template must be a DeploymentTemplate object")
 
             if hasattr(self._service_client, "deployment_templates"):
                 endpoint = self._get_registry_endpoint()
@@ -382,7 +368,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     name=deployment_template.name,
                     version=deployment_template.version,
                     body=rest_object,
-                    **self._init_kwargs,
+                    **kwargs,
                 )
                 return deployment_template
             else:
@@ -393,7 +379,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, version: Optional[str] = None) -> None:
+    def delete(self, name: str, version: Optional[str] = None, **kwargs: Any) -> None:
         """Delete a deployment template.
 
         :param name: Name of the deployment template to delete.
@@ -414,7 +400,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
                     registry_name=self._operation_scope.registry_name,
                     name=name,
                     version=version,
-                    **self._init_kwargs,
+                    **kwargs,
                 )
             else:
                 raise RuntimeError("DeploymentTemplate service not available")
@@ -426,7 +412,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: Optional[str] = None) -> DeploymentTemplate:
+    def archive(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Archive a deployment template by setting its stage to 'Archived'.
 
         :param name: Name of the deployment template to archive.
@@ -439,20 +425,20 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         """
         try:
             # Get the existing template
-            template = self.get(name=name, version=version)
+            template = self.get(name=name, version=version, **kwargs)
 
             # Set stage to Archived
             template.stage = "Archived"
 
             # Update the template using create_or_update
-            return self.create_or_update(template)
+            return self.create_or_update(template, **kwargs)
         except Exception as e:
             module_logger.error("DeploymentTemplate archive operation failed: %s", e)
             raise
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: Optional[str] = None) -> DeploymentTemplate:
+    def restore(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Restore a deployment template by setting its stage to 'Development'.
 
         :param name: Name of the deployment template to restore.
@@ -465,13 +451,13 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         """
         try:
             # Get the existing template
-            template = self.get(name=name, version=version)
+            template = self.get(name=name, version=version, **kwargs)
 
             # Set stage to Development
             template.stage = "Development"
 
             # Update the template using create_or_update
-            return self.create_or_update(template)
+            return self.create_or_update(template, **kwargs)
         except Exception as e:
             module_logger.error("DeploymentTemplate restore operation failed: %s", e)
             raise
