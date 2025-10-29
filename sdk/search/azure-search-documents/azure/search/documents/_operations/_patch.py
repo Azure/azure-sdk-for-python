@@ -381,7 +381,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :dedent: 4
                 :caption: Upload new documents to an index
         """
-        batch = _models.IndexDocumentsBatch()
+        batch = _models.IndexDocumentsBatch(actions=[])
         batch.add_upload_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
@@ -409,7 +409,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :dedent: 4
                 :caption: Delete documents from an index
         """
-        batch = _models.IndexDocumentsBatch()
+        batch = _models.IndexDocumentsBatch(actions=[])
         batch.add_delete_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
@@ -437,7 +437,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :dedent: 4
                 :caption: Merge documents in an index
         """
-        batch = _models.IndexDocumentsBatch()
+        batch = _models.IndexDocumentsBatch(actions=[])
         batch.add_merge_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
@@ -464,7 +464,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
                 :dedent: 4
                 :caption: Merge or upload documents to an index
         """
-        batch = _models.IndexDocumentsBatch()
+        batch = _models.IndexDocumentsBatch(actions=[])
         batch.add_merge_or_upload_actions(documents)
 
         result = self.index_documents(batch, **kwargs)
