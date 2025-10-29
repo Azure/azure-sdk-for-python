@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: basic_voice_assistant_async.py
+FILE: agent_voice_assistant_async.py
 
 DESCRIPTION:
     This sample demonstrates the fundamental capabilities of the VoiceLive SDK by creating
@@ -469,8 +469,11 @@ class BasicVoiceAssistant:
 
 async def write_conversation_log(message: str) -> None:
     """Write a message to the conversation log."""
-    with open(f'logs/{logfilename}', 'a', encoding='utf-8') as conversation_log:
-        conversation_log.write(message + "\n")
+    def _write_to_file():
+        with open(f'logs/{logfilename}', 'a', encoding='utf-8') as conversation_log:
+            conversation_log.write(message + "\n")
+    
+    await asyncio.to_thread(_write_to_file)
 
 def parse_arguments():
     """Parse command line arguments."""
