@@ -33,6 +33,7 @@ from ._constants import _Constants
 from ._version import VERSION
 
 # cspell:ignore ppcb
+# pylint: disable=protected-access
 
 def get_user_agent(suffix: Optional[str] = None) -> str:
     os_name = safe_user_agent_header(platform.platform())

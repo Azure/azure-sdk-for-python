@@ -24,8 +24,6 @@
 import copy
 import json
 import time
-from datetime import datetime, timezone
-import logging
 
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
@@ -112,12 +110,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         and not connection_policy.DisableSSLVerification
     )
 
-    route_end = time.perf_counter()    
-
-    route_duration = (route_end - route_start) * 1000
-
-    start = time.perf_counter()
-
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -144,25 +136,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
-
-    end = time.perf_counter()
-    duration = (end - start) * 1000
-
-    logger = logging.getLogger("internal_requests")
-    response_time = datetime.now(timezone.utc)
-    print_string = f"Response time: {response_time.isoformat()} | "
-    print_string += f"Request URL: {request.url} | "
-    print_string += f"Resource type: {request.headers['x-ms-thinclient-proxy-resource-type']} | "
-    print_string += f"Operation type: {request.headers['x-ms-thinclient-proxy-operation-type']} | "
-    print_string += f"Status code: {response.http_response.status_code} | "
-    print_string += f"Sub-status code: {response.http_response.headers.get('x-ms-substatus', 'N/A')} | "
-    print_string += f"Routing duration: {route_duration} ms | "
-    print_string += f"Request/response duration: {duration} ms | "
-    print_string += f"Activity Id: {request.headers.get('x-ms-activity-id', 'N/A')} |"
-    print_string += f"Partition Id: {response.http_response.headers.get('x-ms-cosmos-internal-partition-id', 'N/A')} |"
-    print_string += f"Physical Id: {response.http_response.headers.get('x-ms-cosmos-physical-partition-id', 'N/A')} |"
-    logger.info(print_string)
-    print(print_string)
 
     response = response.http_response
     headers = copy.copy(response.headers)

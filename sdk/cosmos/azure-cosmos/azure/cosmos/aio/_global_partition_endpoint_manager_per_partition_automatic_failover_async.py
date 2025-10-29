@@ -51,7 +51,6 @@ class PartitionLevelFailoverInfo:
         :rtype: bool
         """
         with self._lock:
-            print("got lock to move to next location")
             if endpoint_region != self.current_region and self.current_region is not None:
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
@@ -68,8 +67,6 @@ class PartitionLevelFailoverInfo:
                 logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
-                print(f"routing to {regional_endpoint} from {endpoint_region}")
-                print(f"current unavailable: {str(self.unavailable_regional_endpoints)}")
                 return True
 
             return False
@@ -199,8 +196,6 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                                     request)
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
-                        endpoint_region = self.location_cache.get_location_from_endpoint(
-                            request.location_endpoint_to_route)
                         partition_failover_info.current_region = endpoint_region
             else:
                 partition_failover_info = PartitionLevelFailoverInfo()
