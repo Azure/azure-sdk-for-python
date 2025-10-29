@@ -27,7 +27,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
     """Mixin class for patching methods with backward compatible parameter names."""
 
     # create_project overloads with 'options' parameter
-    @overload
+    @overload # type: ignore
     def create_project(
         self,
         project_name: str,
@@ -50,7 +50,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def create_project(
         self, project_name: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QuestionAnsweringProject:
@@ -68,7 +68,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def create_project(
         self, project_name: str, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QuestionAnsweringProject:
@@ -111,7 +111,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().create_project(project_name=project_name, body=options, content_type=content_type, **kwargs)
 
     # update_synonyms overloads with 'synonyms' parameter
-    @overload
+    @overload # type: ignore
     def update_synonyms(
         self,
         project_name: str,
@@ -134,7 +134,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def update_synonyms(
         self, project_name: str, synonyms: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
@@ -152,7 +152,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def update_synonyms(
         self, project_name: str, synonyms: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
@@ -195,7 +195,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().update_synonyms(project_name=project_name, body=synonyms, content_type=content_type, **kwargs)
 
     # begin_update_qnas overloads with 'qnas' parameter
-    @overload
+    @overload # type: ignore
     def begin_update_qnas(
         self,
         project_name: str,
@@ -218,7 +218,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def begin_update_qnas(
         self, project_name: str, qnas: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
@@ -236,7 +236,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def begin_update_qnas(
         self, project_name: str, qnas: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
@@ -279,7 +279,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().begin_update_qnas(project_name=project_name, body=qnas, content_type=content_type, **kwargs)
 
     # begin_update_sources overloads with 'sources' parameter
-    @overload
+    @overload # type: ignore
     def begin_update_sources(
         self,
         project_name: str,
@@ -302,7 +302,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def begin_update_sources(
         self, project_name: str, sources: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
@@ -320,7 +320,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
+    @overload # type: ignore
     def begin_update_sources(
         self, project_name: str, sources: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
