@@ -187,7 +187,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -265,7 +268,10 @@ class VaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -334,7 +340,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -662,7 +671,10 @@ class VaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -723,7 +735,10 @@ class VaultsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -816,7 +831,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -903,7 +921,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1084,7 +1105,10 @@ class VaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1125,6 +1149,7 @@ class VaultsOperations:
         _request = build_vaults_get_deleted_request(
             vault_name=vault_name,
             location=location,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1147,7 +1172,10 @@ class VaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1177,6 +1205,7 @@ class VaultsOperations:
         _request = build_vaults_purge_deleted_request(
             vault_name=vault_name,
             location=location,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1198,7 +1227,10 @@ class VaultsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1346,7 +1378,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1407,7 +1442,7 @@ class VaultsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = api_version
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
@@ -1438,7 +1473,10 @@ class VaultsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1563,7 +1601,10 @@ class VaultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1654,7 +1695,10 @@ class PrivateEndpointConnectionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -1843,7 +1887,10 @@ class PrivateEndpointConnectionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1905,7 +1952,10 @@ class PrivateEndpointConnectionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2078,7 +2128,10 @@ class PrivateEndpointConnectionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2156,7 +2209,10 @@ class ManagedHsmsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ManagedHsmError, response)
+            error = _failsafe_deserialize(
+                _models.ManagedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -2223,7 +2279,10 @@ class ManagedHsmsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ManagedHsmError, response)
+            error = _failsafe_deserialize(
+                _models.ManagedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2445,7 +2504,10 @@ class ManagedHsmsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ManagedHsmError, response)
+            error = _failsafe_deserialize(
+                _models.ManagedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2655,7 +2717,10 @@ class ManagedHsmsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ManagedHsmError, response)
+            error = _failsafe_deserialize(
+                _models.ManagedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2814,7 +2879,10 @@ class ManagedHsmsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ManagedHsmError, response)
+                error = _failsafe_deserialize(
+                    _models.ManagedHsmError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2902,7 +2970,10 @@ class ManagedHsmsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ManagedHsmError, response)
+                error = _failsafe_deserialize(
+                    _models.ManagedHsmError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2937,6 +3008,7 @@ class ManagedHsmsOperations:
         _request = build_managed_hsms_get_deleted_request(
             name=name,
             location=location,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -2959,7 +3031,10 @@ class ManagedHsmsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ManagedHsmError, response)
+            error = _failsafe_deserialize(
+                _models.ManagedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2989,6 +3064,7 @@ class ManagedHsmsOperations:
         _request = build_managed_hsms_purge_deleted_request(
             name=name,
             location=location,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -3010,7 +3086,10 @@ class ManagedHsmsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ManagedHsmError, response)
+            error = _failsafe_deserialize(
+                _models.ManagedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3153,7 +3232,10 @@ class ManagedHsmsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ManagedHsmError, response)
+                error = _failsafe_deserialize(
+                    _models.ManagedHsmError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3278,7 +3360,10 @@ class ManagedHsmsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3366,7 +3451,10 @@ class SecretsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3554,7 +3642,10 @@ class SecretsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3745,7 +3836,10 @@ class SecretsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3849,7 +3943,10 @@ class SecretsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3930,7 +4027,10 @@ class KeysOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4117,7 +4217,10 @@ class KeysOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4214,7 +4317,10 @@ class KeysOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4283,7 +4389,10 @@ class KeysOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4386,7 +4495,10 @@ class KeysOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4469,7 +4581,10 @@ class ManagedHsmKeysOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4665,7 +4780,10 @@ class ManagedHsmKeysOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4762,7 +4880,10 @@ class ManagedHsmKeysOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4832,7 +4953,10 @@ class ManagedHsmKeysOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4936,7 +5060,10 @@ class ManagedHsmKeysOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5017,7 +5144,10 @@ class PrivateLinkResourcesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -5104,7 +5234,10 @@ class MHSMPrivateLinkResourcesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -5222,7 +5355,10 @@ class MHSMRegionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ManagedHsmError, response)
+                error = _failsafe_deserialize(
+                    _models.ManagedHsmError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5307,7 +5443,10 @@ class MHSMPrivateEndpointConnectionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ManagedHsmError, response)
+            error = _failsafe_deserialize(
+                _models.ManagedHsmError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -5495,7 +5634,10 @@ class MHSMPrivateEndpointConnectionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5557,7 +5699,10 @@ class MHSMPrivateEndpointConnectionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5730,7 +5875,10 @@ class MHSMPrivateEndpointConnectionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ManagedHsmError, response)
+                error = _failsafe_deserialize(
+                    _models.ManagedHsmError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
