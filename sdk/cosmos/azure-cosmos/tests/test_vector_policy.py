@@ -35,6 +35,27 @@ class TestVectorPolicy(unittest.TestCase):
     def tearDownClass(cls):
         test_config.TestConfig.try_delete_database_with_id(cls.client, cls.test_db.id)
 
+    @unittest.skip
+    def test_create_valid_vector_embedding_policy(self):
+        # Using valid data types
+        data_types = ["float32", "float16", "int8", "uint8"]
+        for data_type in data_types:
+            vector_embedding_policy = {
+                "vectorEmbeddings": [
+                    {
+                        "path": "/vector1",
+                        "dataType": data_type,
+                        "dimensions": 256,
+                        "distanceFunction": "euclidean"
+                    }]}
+            created_container = self.test_db.create_container(
+                id='vector_container_' + data_type,
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy)
+            properties = created_container.read()
+            assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+            self.test_db.delete_container('vector_container_' + data_type)
+
     def test_create_vector_embedding_container(self):
         indexing_policy = {
             "vectorIndexes": [

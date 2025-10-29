@@ -6,6 +6,8 @@
 
 - Performance Counters
   ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
+- Adding more diagnostic log message IDs
+  ([#43183](https://github.com/Azure/azure-sdk-for-python/pull/43183))
 
 ### Breaking Changes
 
