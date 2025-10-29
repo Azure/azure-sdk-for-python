@@ -645,6 +645,91 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert response_hook.count == 1
         await self.created_db.delete_container(created_collection.id)
 
+    async def test_query_pagination_with_max_item_count_async(self):
+        """Test pagination showing per-page limits and total results counting."""
+        created_collection = await self.created_db.create_container(
+            "pagination_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
+        
+        # Create 20 items in a single partition
+        total_items = 20
+        partition_key_value = "test_pk"
+        for i in range(total_items):
+            document_definition = {
+                'pk': partition_key_value,
+                'id': f'item_{i}',
+                'value': i
+            }
+            await created_collection.create_item(body=document_definition)
+        
+        # Test pagination with max_item_count limiting items per page
+        max_items_per_page = 7
+        query = "SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']"
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=[{"name": "@pk", "value": partition_key_value}],
+            partition_key=partition_key_value,
+            max_item_count=max_items_per_page
+        )
+        
+        # Iterate through pages and verify per-page counts
+        all_fetched_results = []
+        page_count = 0
+        item_pages = query_iterable.by_page()
+        
+        async for page in item_pages:
+            page_count += 1
+            items_in_page = [item async for item in page]
+            all_fetched_results.extend(items_in_page)
+            
+            # Each page should have at most max_item_count items
+            # (last page may have fewer)
+            assert len(items_in_page) <= max_items_per_page
+        
+        # Verify total results match expected count
+        assert len(all_fetched_results) == total_items
+        
+        # Verify we got the expected number of pages
+        # 20 items with max 7 per page = 3 pages (7, 7, 6)
+        assert page_count == 3
+        
+        # Verify ordering is maintained
+        for i, item in enumerate(all_fetched_results):
+            assert item['value'] == i
+        
+        await self.created_db.delete_container(created_collection.id)
+    
+    async def test_query_pagination_without_max_item_count_async(self):
+        """Test pagination behavior without specifying max_item_count."""
+        created_collection = await self.created_db.create_container(
+            "pagination_no_max_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
+        
+        # Create 15 items in a single partition
+        total_items = 15
+        partition_key_value = "test_pk_2"
+        for i in range(total_items):
+            document_definition = {
+                'pk': partition_key_value,
+                'id': f'item_{i}',
+                'value': i
+            }
+            await created_collection.create_item(body=document_definition)
+        
+        # Query without specifying max_item_count
+        query = "SELECT * FROM c WHERE c.pk = @pk"
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=[{"name": "@pk", "value": partition_key_value}],
+            partition_key=partition_key_value
+        )
+        
+        # Count total results
+        all_results = [item async for item in query_iterable]
+        assert len(all_results) == total_items
+        
+        await self.created_db.delete_container(created_collection.id)
+
     async def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:
             if args[1].operation_type == 'SqlQuery':

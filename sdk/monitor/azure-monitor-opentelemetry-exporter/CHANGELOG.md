@@ -1,5 +1,25 @@
 # Release History
 
+## 1.0.0b45 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
+  ([#43091](https://github.com/Azure/azure-sdk-for-python/pull/43091))
+
+### Other Changes
+- Unpinned fixedint dependency
+  ([#43475](https://github.com/Azure/azure-sdk-for-python/pull/43475))
+
+## 1.0.0b44 (2025-10-14)
+
+### Bugs Fixed
+- Fixed issue where AAD authentication for Live Metrics failed for users in sovereign cloud environments
+  ([#43392](https://github.com/Azure/azure-sdk-for-python/pull/43392))
+
 ## 1.0.0b43 (2025-10-08)
 
 ### Features Added

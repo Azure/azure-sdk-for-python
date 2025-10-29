@@ -1,5 +1,14 @@
 # Release History
 
+## 9.1.0b2 (2025-10-15)
+
+### Features Added
+
+  - Model `HDInsightManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `GatewaySettings` added property `rest_auth_entra_users`
+  - Model `UpdateGatewaySettingsParameters` added property `rest_auth_entra_users`
+  - Added model `EntraUserInfo`
+
 ## 9.1.0b1 (2024-09-10)
 
 ### Other Changes

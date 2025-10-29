@@ -2,6 +2,13 @@
 
 # Release History
 
+## 1.2.0b6 (2025-10-24)
+
+### Bugs Fixed
+
+- Fix missing `await` in calls to asynchronous Agent methods, when `AIAgentsInstrumentor().instrument()`
+is called but no tracer is configured
+
 ## 1.2.0b5 (2025-09-29)
 
 ### Features Added

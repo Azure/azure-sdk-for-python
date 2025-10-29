@@ -25,7 +25,7 @@ class TestStorageManagementQueueServicesOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.queue_services.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestStorageManagementQueueServicesOperationsAsync(AzureMgmtRecordedTestCas
                 "name": "str",
                 "type": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
             queue_service_name="default",
         )
 
@@ -66,7 +66,7 @@ class TestStorageManagementQueueServicesOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.queue_services.get_service_properties(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
             queue_service_name="default",
         )
 

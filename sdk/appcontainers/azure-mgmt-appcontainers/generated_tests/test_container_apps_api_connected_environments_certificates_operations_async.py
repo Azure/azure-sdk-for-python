@@ -25,7 +25,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
         response = self.client.connected_environments_certificates.list(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             certificate_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 connected_environment_name="str",
                 certificate_name="str",
-                api_version="2025-02-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,7 +67,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 connected_environment_name="str",
                 certificate_name="str",
-                api_version="2025-02-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -83,7 +83,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperationsAsync(Azure
                 connected_environment_name="str",
                 certificate_name="str",
                 certificate_envelope={"tags": {"str": "str"}},
-                api_version="2025-02-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
