@@ -1,3 +1,4 @@
+# pylint: disable=missing-module-docstring,invalid-name,too-few-public-methods,missing-function-docstring
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.

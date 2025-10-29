@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines,duplicate-code,missing-module-docstring,missing-class-docstring,missing-function-docstring,consider-using-f-string,invalid-name,too-many-locals,too-many-branches
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
