@@ -3,10 +3,12 @@ from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set
 from azure.mgmt.netapp.models import (
     SnapshotPolicy,
     SnapshotPolicyPatch,
+    SnapshotPolicyProperties,
     HourlySchedule,
     DailySchedule,
     VolumeSnapshotProperties,
     VolumePatchPropertiesDataProtection,
+    VolumePatchProperties,
     VolumePatch,
 )
 from test_account import create_account, delete_account
@@ -154,15 +156,15 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         print("Starting test_update_snapshot_policies")
         ACCOUNT1 = self.get_resource_name(setup.TEST_ACC_1 + "-")
         create_snapshot_policy(self.client, setup.TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1)
-
-        snapshot_policy_body = SnapshotPolicyPatch(
-            location=setup.LOCATION,
-            hourly_schedule={},
+        snapshot_policy_patchproperties = SnapshotPolicyProperties(
+            #hourly_schedule={},
             daily_schedule=DailySchedule(snapshots_to_keep=1, minute=50, hour=1),
-            weekly_schedule={},
-            monthly_schedule={},
+            #weekly_schedule={},
+            #monthly_schedule={},
             enabled=False,
         )
+        snapshot_policy_body = SnapshotPolicyPatch(properties=snapshot_policy_patchproperties)
+
         snapshot_policy = self.client.snapshot_policies.begin_update(
             setup.TEST_RG, ACCOUNT1, setup.TEST_SNAPSHOT_POLICY_1, snapshot_policy_body
         ).result()
@@ -191,7 +193,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         # assign the snapshot policy to the volume
         snapshot = VolumeSnapshotProperties(snapshot_policy_id=snapshot_policy.id)
         data_protection = VolumePatchPropertiesDataProtection(snapshot=snapshot)
-        volume_patch = VolumePatch(data_protection=data_protection)
+        volume_patch_properties = VolumePatchProperties(data_protection=data_protection)
+        volume_patch = VolumePatch(properties=volume_patch_properties)
         volume = self.client.volumes.begin_update(
             setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1, volume_patch
         ).result()
