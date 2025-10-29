@@ -74,11 +74,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     ) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 
-    def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
-        self.location_cache.mark_endpoint_unavailable_for_read(endpoint, refresh_cache)
+    def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache, context: str):
+        self.location_cache.mark_endpoint_unavailable_for_read(endpoint, refresh_cache, context)
 
-    def mark_endpoint_unavailable_for_write(self, endpoint, refresh_cache):
-        self.location_cache.mark_endpoint_unavailable_for_write(endpoint, refresh_cache)
+    def mark_endpoint_unavailable_for_write(self, endpoint, refresh_cache, context: str):
+        self.location_cache.mark_endpoint_unavailable_for_write(endpoint, refresh_cache, context)
 
     def get_ordered_write_locations(self):
         return self.location_cache.get_ordered_write_locations()
@@ -96,14 +96,15 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def update_location_cache(self):
         self.location_cache.update_location_cache()
 
-    def _mark_endpoint_unavailable(self, endpoint: str):
+    def _mark_endpoint_unavailable(self, endpoint: str, context: str):
         """Marks an endpoint as unavailable for the appropriate operations.
         :param str endpoint: The endpoint to mark as unavailable.
+        :param str context: The context for marking the endpoint as unavailable.
         """
         write_endpoints = self.location_cache.get_all_write_endpoints()
-        self.mark_endpoint_unavailable_for_read(endpoint, False)
+        self.mark_endpoint_unavailable_for_read(endpoint, False, context)
         if endpoint in write_endpoints:
-            self.mark_endpoint_unavailable_for_write(endpoint, False)
+            self.mark_endpoint_unavailable_for_write(endpoint, False, context)
 
     def refresh_endpoint_list(self, database_account, **kwargs):
         if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
@@ -159,7 +160,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self.location_cache.mark_endpoint_available(locational_endpoint)
                     return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    self._mark_endpoint_unavailable(locational_endpoint)
+                    self._mark_endpoint_unavailable(locational_endpoint, "_GetDatabaseAccount")
             raise
 
     def _endpoints_health_check(self, **kwargs):
@@ -194,7 +195,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     success_count += 1
                     self.location_cache.mark_endpoint_available(endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    self._mark_endpoint_unavailable(endpoint)
+                    self._mark_endpoint_unavailable(endpoint, "_endpoints_health_check")
 
                 finally:
                     # after the health check for that endpoint setting the timeouts back to their original values
