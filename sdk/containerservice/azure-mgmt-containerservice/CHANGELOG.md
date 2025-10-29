@@ -1,6 +1,6 @@
 # Release History
 
-## 40.1.0 (2025-11-16)
+## 40.1.0 (2025-10-31)
 
 ### Features Added
 
@@ -30,7 +30,7 @@
   - Added model `NetworkPolicies`
   - Added enum `PolicyRule`
   - Added model `ResourceQuota`
-  - Added model `ManagedNamespacesOperations`
+  - Added operation group `ManagedNamespacesOperations`
 
 ## 41.0.0b1 (2025-10-24)
 
