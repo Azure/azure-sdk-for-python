@@ -32,14 +32,13 @@ def main():
     )
 
     response = client.migrations.list_by_target_server(
-        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
-        resource_group_name="testrg",
-        target_db_server_name="testtarget",
+        resource_group_name="exampleresourcegroup",
+        server_name="exampleserver",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/Migrations_ListByTargetServer.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2025-08-01/examples/MigrationsListByTargetServer.json
 if __name__ == "__main__":
     main()
