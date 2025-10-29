@@ -580,6 +580,35 @@ def _extract_text_from_content(content):
     return text
 
 
+def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
+    """Filters the tool definitions to only include those that were actually used in the messages lists."""
+    try:
+        used_tool_names = set()
+        any_tools_used = False
+        for msgs in msgs_lists:
+            for msg in msgs:
+                if msg.get("role") == "assistant" and "content" in msg:
+                    for content in msg.get("content", []):
+                        if content.get("type") == "tool_call":
+                            any_tools_used = True
+                            if "tool_call" in content and "function" in content["tool_call"]:
+                                used_tool_names.add(content["tool_call"]["function"])
+                            elif "name" in content:
+                                used_tool_names.add(content["name"])
+
+        filtered_tools = [tool for tool in tool_definitions if tool.get("name") in used_tool_names]
+        if any_tools_used and not filtered_tools:
+            if logger:
+                logger.warning("No tool definitions matched the tools used in the messages. Returning original list.")
+            filtered_tools = tool_definitions
+
+        return filtered_tools
+    except Exception as e:
+        if logger:
+            logger.warning(f"Failed to filter tool definitions, returning original list. Error: {e}")
+        return tool_definitions
+
+
 def _get_conversation_history(query, include_system_messages=False, include_tool_messages=False):
     all_user_queries, all_agent_responses = [], []
     cur_user_query, cur_agent_response = [], []
@@ -633,7 +662,7 @@ def _get_conversation_history(query, include_system_messages=False, include_tool
 def _pretty_format_conversation_history(conversation_history):
     """Formats the conversation history for better readability."""
     formatted_history = ""
-    if "system_message" in conversation_history and conversation_history["system_message"] is not None:
+    if conversation_history.get("system_message"):
         formatted_history += "SYSTEM_PROMPT:\n"
         formatted_history += "  " + conversation_history["system_message"] + "\n\n"
     for i, (user_query, agent_response) in enumerate(
@@ -663,10 +692,12 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
     """Reformats the conversation history to a more compact representation."""
     try:
         conversation_history = _get_conversation_history(
-            query, include_system_messages=include_system_messages, include_tool_messages=include_tool_messages
+            query,
+            include_system_messages=include_system_messages,
+            include_tool_messages=include_tool_messages,
         )
         return _pretty_format_conversation_history(conversation_history)
-    except:
+    except Exception as e:
         # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
         # This is a fallback to ensure that the evaluation can still proceed. However the accuracy of the evaluation will be affected.
         # From our tests the negative impact on IntentResolution is:
