@@ -12,7 +12,7 @@ from azure.ai.evaluation._exceptions import EvaluationException
 async def flow_side_effect(timeout, **kwargs):
     query = kwargs.get("query", "")
     response = kwargs.get("response", "")
-    
+
     # Simple logic to determine success based on keywords in query and response
     if "complete" in str(response).lower() or "done" in str(response).lower():
         success = 1
@@ -20,7 +20,7 @@ async def flow_side_effect(timeout, **kwargs):
         details = {
             "task_requirements": "The requirements for the task.",
             "delivered_outcome": "The final deliverable of the task.",
-            "completion_gaps": "complete"
+            "completion_gaps": "complete",
         }
     elif "partial" in str(response).lower():
         success = 0
@@ -28,7 +28,7 @@ async def flow_side_effect(timeout, **kwargs):
         details = {
             "task_requirements": "The requirements for the task.",
             "delivered_outcome": "The final deliverable of the task.",
-            "completion_gaps": "incomplete"
+            "completion_gaps": "incomplete",
         }
     elif "invalid" in str(response).lower():
         # Return invalid output to test error handling
@@ -41,9 +41,9 @@ async def flow_side_effect(timeout, **kwargs):
         details = {
             "task_requirements": "The requirements for the task.",
             "delivered_outcome": "none",
-            "completion_gaps": "failed"
+            "completion_gaps": "failed",
         }
-    
+
     return {
         "llm_output": {
             "success": success,
@@ -63,7 +63,7 @@ class TestTaskCompletionEvaluator:
 
         query = "Plan a 3-day itinerary for Paris with cultural landmarks and local cuisine."
         response = "I have completed a comprehensive 3-day Paris itinerary with cultural landmarks and local cuisine recommendations."
-        
+
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
@@ -83,7 +83,7 @@ class TestTaskCompletionEvaluator:
 
         query = "Write a detailed analysis of market trends."
         response = "I cannot provide this analysis at the moment."
-        
+
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
@@ -101,7 +101,7 @@ class TestTaskCompletionEvaluator:
 
         query = "Create a budget plan with income, expenses, and savings goals."
         response = "I have provided a partial budget plan with income and expenses only."
-        
+
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
@@ -117,38 +117,29 @@ class TestTaskCompletionEvaluator:
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        query = [
-            {'role': 'user', 'content': 'Find hotels in Paris and book the cheapest one'}
-        ]
+        query = [{"role": "user", "content": "Find hotels in Paris and book the cheapest one"}]
         response = [
-            {
-                'role': 'assistant', 
-                'content': 'Task is complete. I found hotels and booked the cheapest option.'
-            }
+            {"role": "assistant", "content": "Task is complete. I found hotels and booked the cheapest option."}
         ]
         tool_definitions = [
             {
-                'name': 'search_hotels',
-                'description': 'Search for hotels in a location',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'location': {'type': 'string', 'description': 'City name'}
-                    }
-                }
+                "name": "search_hotels",
+                "description": "Search for hotels in a location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "City name"}},
+                },
             },
             {
-                'name': 'book_hotel',
-                'description': 'Book a hotel',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'hotel_id': {'type': 'string', 'description': 'Hotel identifier'}
-                    }
-                }
-            }
+                "name": "book_hotel",
+                "description": "Book a hotel",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"hotel_id": {"type": "string", "description": "Hotel identifier"}},
+                },
+            },
         ]
-        
+
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
@@ -163,18 +154,15 @@ class TestTaskCompletionEvaluator:
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
         query = [
-            {'role': 'system', 'content': 'You are a helpful travel assistant.'},
-            {'role': 'user', 'content': 'I need to book a flight to Tokyo.'},
-            {'role': 'assistant', 'content': 'I can help you with that. What dates?'},
-            {'role': 'user', 'content': 'December 15-22, 2025'}
+            {"role": "system", "content": "You are a helpful travel assistant."},
+            {"role": "user", "content": "I need to book a flight to Tokyo."},
+            {"role": "assistant", "content": "I can help you with that. What dates?"},
+            {"role": "user", "content": "December 15-22, 2025"},
         ]
         response = [
-            {
-                'role': 'assistant',
-                'content': 'Done! I have booked your flight to Tokyo for December 15-22, 2025.'
-            }
+            {"role": "assistant", "content": "Done! I have booked your flight to Tokyo for December 15-22, 2025."}
         ]
-        
+
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
@@ -196,7 +184,7 @@ class TestTaskCompletionEvaluator:
     def test_string_success_value_true(self, mock_model_config):
         """Test handling of string 'TRUE' as success value"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
-        
+
         async def string_true_flow(timeout, **kwargs):
             return {
                 "llm_output": {
@@ -205,7 +193,7 @@ class TestTaskCompletionEvaluator:
                     "details": {},
                 }
             }
-        
+
         evaluator._flow = MagicMock(side_effect=string_true_flow)
 
         query = "Complete this task"
@@ -219,7 +207,7 @@ class TestTaskCompletionEvaluator:
     def test_string_success_value_false(self, mock_model_config):
         """Test handling of string 'FALSE' as success value"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
-        
+
         async def string_false_flow(timeout, **kwargs):
             return {
                 "llm_output": {
@@ -228,7 +216,7 @@ class TestTaskCompletionEvaluator:
                     "details": {},
                 }
             }
-        
+
         evaluator._flow = MagicMock(side_effect=string_false_flow)
 
         query = "Complete this task"
@@ -242,12 +230,10 @@ class TestTaskCompletionEvaluator:
     def test_invalid_llm_output_format(self, mock_model_config):
         """Test handling when LLM output is not a dictionary"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
-        
+
         async def invalid_output_flow(timeout, **kwargs):
-            return {
-                "llm_output": "This is a string, not a dictionary"
-            }
-        
+            return {"llm_output": "This is a string, not a dictionary"}
+
         evaluator._flow = MagicMock(side_effect=invalid_output_flow)
 
         query = "Complete this task"
@@ -260,7 +246,7 @@ class TestTaskCompletionEvaluator:
     def test_default_success_value(self, mock_model_config):
         """Test that default success value is 0 when not provided"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
-        
+
         async def no_success_flow(timeout, **kwargs):
             return {
                 "llm_output": {
@@ -268,7 +254,7 @@ class TestTaskCompletionEvaluator:
                     "details": {},
                 }
             }
-        
+
         evaluator._flow = MagicMock(side_effect=no_success_flow)
 
         query = "Complete this task"
@@ -287,38 +273,31 @@ class TestTaskCompletionEvaluator:
         query = "Search for restaurants and make a reservation"
         response = [
             {
-                'role': 'assistant',
-                'content': [{'type': 'text', 'text': 'Let me search for restaurants.'}],
-                'tool_calls': [
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Let me search for restaurants."}],
+                "tool_calls": [
                     {
-                        'type': 'function',
-                        'id': 'call_1',
-                        'function': {
-                            'name': 'search_restaurants',
-                            'arguments': '{"location": "downtown", "cuisine": "Italian"}'
-                        }
+                        "type": "function",
+                        "id": "call_1",
+                        "function": {
+                            "name": "search_restaurants",
+                            "arguments": '{"location": "downtown", "cuisine": "Italian"}',
+                        },
                     }
-                ]
+                ],
             },
-            {
-                'role': 'tool',
-                'tool_call_id': 'call_1',
-                'content': 'Found 5 Italian restaurants downtown.'
-            },
-            {
-                'role': 'assistant',
-                'content': 'Task complete! I found restaurants and made a reservation.'
-            }
+            {"role": "tool", "tool_call_id": "call_1", "content": "Found 5 Italian restaurants downtown."},
+            {"role": "assistant", "content": "Task complete! I found restaurants and made a reservation."},
         ]
         tool_definitions = [
             {
-                'name': 'search_restaurants',
-                'type': 'function',
-                'description': 'Search for restaurants',
-                'parameters': {'type': 'object', 'properties': {}}
+                "name": "search_restaurants",
+                "type": "function",
+                "description": "Search for restaurants",
+                "parameters": {"type": "object", "properties": {}},
             }
         ]
-        
+
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
@@ -330,7 +309,7 @@ class TestTaskCompletionEvaluator:
     def test_numeric_success_values(self, mock_model_config):
         """Test that numeric 0 and 1 values work correctly"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
-        
+
         async def numeric_success_flow(timeout, **kwargs):
             # Return 1 for success
             return {
@@ -340,7 +319,7 @@ class TestTaskCompletionEvaluator:
                     "details": {},
                 }
             }
-        
+
         evaluator._flow = MagicMock(side_effect=numeric_success_flow)
 
         query = "Complete this task"
@@ -354,7 +333,7 @@ class TestTaskCompletionEvaluator:
     def test_empty_details(self, mock_model_config):
         """Test handling of empty details field"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
-        
+
         async def empty_details_flow(timeout, **kwargs):
             return {
                 "llm_output": {
@@ -363,7 +342,7 @@ class TestTaskCompletionEvaluator:
                     # No details field
                 }
             }
-        
+
         evaluator._flow = MagicMock(side_effect=empty_details_flow)
 
         query = "Test"
@@ -377,7 +356,7 @@ class TestTaskCompletionEvaluator:
     def test_empty_explanation(self, mock_model_config):
         """Test handling of missing explanation field"""
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config)
-        
+
         async def no_explanation_flow(timeout, **kwargs):
             return {
                 "llm_output": {
@@ -386,7 +365,7 @@ class TestTaskCompletionEvaluator:
                     # No explanation field
                 }
             }
-        
+
         evaluator._flow = MagicMock(side_effect=no_explanation_flow)
 
         query = "Test"
