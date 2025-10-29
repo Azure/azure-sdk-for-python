@@ -939,7 +939,7 @@ def _build_sync_eval_payload(
 
     # Build QueryResponseInlineMessage object
     item_content = QueryResponseInlineMessage(
-        query=data.get("query", ""),
+        query=data.get("query", "query"), #TODO: remove default query once sync evals supports no query
         response=data.get("response", ""),
         context=context,
         tools=data.get("tool_calls"),
