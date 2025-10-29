@@ -297,7 +297,7 @@ def main():
     get_asset_statistics(client, collection_id, item_id)
     list_available_assets(client, collection_id, item_id)
     get_item_asset_details(client, collection_id, item_id)
-    list_bounds(client, collection_id, item_id)
+    get_bounds(client, collection_id, item_id)
     crop_geo_json(client, collection_id, item_id, geojson)
     crop_geo_json_with_dimensions(client, collection_id, item_id, geojson)
     get_geo_json_statistics(client, collection_id, item_id, geojson)
