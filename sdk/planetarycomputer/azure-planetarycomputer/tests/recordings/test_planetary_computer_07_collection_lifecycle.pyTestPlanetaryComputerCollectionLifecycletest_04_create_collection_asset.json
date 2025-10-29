@@ -104,7 +104,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-29T00:43:21.556864Z",
+        "msft:_updated": "2025-10-29T11:34:10.078254Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {
@@ -200,21 +200,21 @@
         "Accept": "application/json",
         "Connection": "keep-alive",
         "Content-Length": "388",
-        "Content-Type": "multipart/form-data; boundary=c6ed16d800f9d3aec68f78af90c11ad7",
+        "Content-Type": "multipart/form-data; boundary=bb2f477bb13564fe3609084f26617bc1",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--c6ed16d800f9d3aec68f78af90c11ad7\r\n",
+        "--bb2f477bb13564fe3609084f26617bc1\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "b64:eyJrZXkiOiAidGVzdC1hc3NldCIsICJocmVmIjogImh0dHBzOi8vZXhhbXBsZS5jb20vdGVzdC1hc3NldC50eHQiLCAidHlwZSI6ICJ0ZXh0L3BsYWluIiwgInJvbGVzIjogWyJtZXRhZGF0YSJdLCAidGl0bGUiOiAiVGVzdCBBc3NldCJ9",
         "\r\n",
-        "--c6ed16d800f9d3aec68f78af90c11ad7\r\n",
+        "--bb2f477bb13564fe3609084f26617bc1\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50",
         "\r\n",
-        "--c6ed16d800f9d3aec68f78af90c11ad7--\r\n"
+        "--bb2f477bb13564fe3609084f26617bc1--\r\n"
       ],
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -224,7 +224,7 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
-        "Connection": "keep-alive",
+        "Connection": "close",
         "Content-Encoding": "gzip",
         "Content-Length": "2856",
         "Content-Type": "application/json",
@@ -309,7 +309,7 @@
           }
         },
         "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-29T00:43:26.838016Z",
+        "msft:_updated": "2025-10-29T11:34:15.409406Z",
         "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
         "extent": {
           "spatial": {

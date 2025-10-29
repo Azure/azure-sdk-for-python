@@ -86,7 +86,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/56636a84-0c09-45c9-b3ba-5c32cf0c352d?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/c111d696-607d-4293-b655-ef60c83c796f?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -101,11 +101,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:33:15.2291101Z"
+            "timestamp": "2025-10-29T11:24:22.1593807Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T00:33:15.2291054Z",
+        "creationTime": "2025-10-29T11:24:22.1593773Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -143,11 +143,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:33:15.2291101Z"
+            "timestamp": "2025-10-29T11:24:22.1593807Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T00:33:15.2291054Z",
+        "creationTime": "2025-10-29T11:24:22.1593773Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -185,19 +185,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:33:15.2291101Z"
+            "timestamp": "2025-10-29T11:24:22.1593807Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-29T00:33:35.5114484Z"
+            "timestamp": "2025-10-29T11:24:49.3614447Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-29T00:33:35.7481672Z"
+            "timestamp": "2025-10-29T11:24:49.6157407Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T00:33:15.2291054Z",
+        "creationTime": "2025-10-29T11:24:22.1593773Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -235,19 +235,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:33:15.2291101Z"
+            "timestamp": "2025-10-29T11:24:22.1593807Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-29T00:33:35.5114484Z"
+            "timestamp": "2025-10-29T11:24:49.3614447Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-29T00:33:35.7481672Z"
+            "timestamp": "2025-10-29T11:24:49.6157407Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T00:33:15.2291054Z",
+        "creationTime": "2025-10-29T11:24:22.1593773Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -336,7 +336,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/1580107e-4185-406c-a383-e01722edd4d9?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/d12fc0c6-c897-4550-aefe-e0ce8ae14b42?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -351,11 +351,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:33:48.5016629Z"
+            "timestamp": "2025-10-29T11:24:53.098118Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-29T00:33:48.5016614Z",
+        "creationTime": "2025-10-29T11:24:53.0981171Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -393,11 +393,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:33:48.5016629Z"
+            "timestamp": "2025-10-29T11:24:53.098118Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-29T00:33:48.5016614Z",
+        "creationTime": "2025-10-29T11:24:53.0981171Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -435,19 +435,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:33:48.5016629Z"
+            "timestamp": "2025-10-29T11:24:53.098118Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-29T00:34:05.7929176Z"
+            "timestamp": "2025-10-29T11:25:19.6425234Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-29T00:34:05.9099845Z"
+            "timestamp": "2025-10-29T11:25:19.7614421Z"
           }
         ],
         "type": "DeleteCollection",
-        "creationTime": "2025-10-29T00:33:48.5016614Z",
+        "creationTime": "2025-10-29T11:24:53.0981171Z",
         "collectionId": "test-partition-type-collection"
       }
     }

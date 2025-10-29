@@ -876,7 +876,7 @@
                 "title": "RGBIR COG tile"
               }
             },
-            "_msft:ts": "2025-10-28T18:42:25.612385Z",
+            "_msft:ts": "2025-10-29T00:35:58.674468Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -904,7 +904,7 @@
                 ]
               ]
             },
-            "_msft:etag": "b0482deb-435c-4992-b753-0134297b8526",
+            "_msft:etag": "2d249095-bc95-4a3a-89e0-3e03f95535ee",
             "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,
@@ -980,7 +980,7 @@
                 "title": "RGBIR COG tile"
               }
             },
-            "_msft:ts": "2025-10-29T00:00:19.299792Z",
+            "_msft:ts": "2025-10-29T01:09:08.881403Z",
             "geometry": {
               "type": "Polygon",
               "coordinates": [
@@ -1008,7 +1008,7 @@
                 ]
               ]
             },
-            "_msft:etag": "1d97ac7c-450c-4af0-8371-317939a22c05",
+            "_msft:etag": "092a280a-9dc2-4bde-9b81-2bc5efdab3ec",
             "collection": "naip-atl",
             "properties": {
               "gsd": 0.6,

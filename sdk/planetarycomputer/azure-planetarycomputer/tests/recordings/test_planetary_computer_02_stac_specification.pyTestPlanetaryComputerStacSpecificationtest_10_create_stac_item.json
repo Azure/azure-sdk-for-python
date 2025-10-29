@@ -1787,7 +1787,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/c846b239-9abb-407f-824d-a028e77f9b7f?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/3bf401e5-8af3-481c-b125-865d47180385?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -1802,11 +1802,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:35:56.1369707Z"
+            "timestamp": "2025-10-29T11:26:45.6014372Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-29T00:35:56.1369691Z",
+        "creationTime": "2025-10-29T11:26:45.6014361Z",
         "collectionId": "naip-atl"
       }
     },
@@ -1844,11 +1844,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:35:56.1369707Z"
+            "timestamp": "2025-10-29T11:26:45.6014372Z"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-29T00:35:56.1369691Z",
+        "creationTime": "2025-10-29T11:26:45.6014361Z",
         "collectionId": "naip-atl"
       }
     },
@@ -1870,7 +1870,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
-        "Connection": "close",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
@@ -1886,23 +1886,23 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T00:35:56.136969Z"
+            "timestamp": "2025-10-29T11:26:45.601436Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-29T00:35:57.184165Z"
+            "timestamp": "2025-10-29T11:26:47.352861Z"
           },
           {
             "status": "Failed",
-            "timestamp": "2025-10-29T00:35:58.046136Z",
+            "timestamp": "2025-10-29T11:26:48.557285Z",
             "errorCode": "ItemAlreadyExistsInCollection",
             "errorMessage": "Item 'ga_m_3308421_se_16_060_20211114_test' already exists in collection 'naip-atl'"
           }
         ],
         "type": "AddItem",
-        "creationTime": "2025-10-29T00:35:56.136969Z",
-        "startTime": "2025-10-29T00:35:56.136969Z",
-        "finishTime": "2025-10-29T00:35:58.046136Z",
+        "creationTime": "2025-10-29T11:26:45.601436Z",
+        "startTime": "2025-10-29T11:26:45.601436Z",
+        "finishTime": "2025-10-29T11:26:48.557285Z",
         "collectionId": "naip-atl",
         "additionalInformation": {
           "TotalFailedItems": "1",
