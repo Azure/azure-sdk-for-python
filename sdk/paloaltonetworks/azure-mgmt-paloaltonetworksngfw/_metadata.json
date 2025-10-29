@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-10-08",
+  "commit": "bef8b5a67ca1bd7320fd44d0f8e95dc4bae3f6ae",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/paloaltonetworks/PaloAltoNetworks.Management",
+  "emitterVersion": "0.52.2"
+}
