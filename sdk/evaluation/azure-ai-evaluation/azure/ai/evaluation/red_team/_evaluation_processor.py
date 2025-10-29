@@ -144,7 +144,6 @@ class EvaluationProcessor:
 
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
-                    nonlocal metric_name
                     try:
                         # Use sync_evals endpoint for OneDP projects, legacy endpoint for others
                         if is_onedp_project(self.azure_ai_project):
