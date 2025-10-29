@@ -24,7 +24,7 @@ class TestNetworkManagementNetworkSecurityPerimeterOperationStatusesOperations(A
         response = self.client.network_security_perimeter_operation_statuses.get(
             location="str",
             operation_id="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
