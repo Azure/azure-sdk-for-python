@@ -5,15 +5,15 @@
 # --------------------------------------------------------------------------
 
 import pytest
+import time
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR
 from azure.appconfiguration.provider import load, WatchKey
-from azure.appconfiguration import ConfigurationSetting, ConfigurationSettingsFilter
+from azure.appconfiguration import ConfigurationSetting, ConfigurationSettingsFilter, SnapshotComposition, SnapshotStatus
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase
-
 
 class TestSnapshotSupport:
     """Tests for snapshot functionality in SettingSelector."""
@@ -164,9 +164,6 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     @recorded_by_proxy
     def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
         """Test creating a snapshot and loading provider from it."""
-        import time
-        from azure.appconfiguration import SnapshotComposition, SnapshotStatus
-        
         # Create SDK client for setup
         sdk_client = self.create_sdk_client(appconfiguration_connection_string)
         
@@ -200,9 +197,8 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             sdk_client.set_configuration_setting(setting)
 
         variables = kwargs.pop("variables", {})
-        dynamic_snapshot_name_postfix = kwargs.pop("dynamic_snapshot_name_postfix", int(time.time()))
-        variables.setdefault("dynamic_snapshot_name_postfix", dynamic_snapshot_name_postfix)
-        
+        dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", int(time.time()))
+
         # Create a unique snapshot name with timestamp to avoid conflicts
         snapshot_name = f"test-snapshot-{dynamic_snapshot_name_postfix}"
         
@@ -212,7 +208,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 name=snapshot_name,
                 filters=[ConfigurationSettingsFilter(key="snapshot_test_*")],  # Include all our test keys
                 composition_type=SnapshotComposition.KEY,
-                retention_period=0 # 0 Retention defaults to 1 hour.
+                retention_period=3600 # Min valid value is 1 hour
             ).result()
             
             # Verify snapshot was created successfully
