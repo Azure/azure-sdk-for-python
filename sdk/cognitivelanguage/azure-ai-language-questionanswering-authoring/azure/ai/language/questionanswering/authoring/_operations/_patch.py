@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from __future__ import annotations
-
+from collections.abc import MutableMapping
 from typing import Any, Union, overload, IO, Any, TYPE_CHECKING
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 from ._operations import (
     _QuestionAnsweringAuthoringClientOperationsMixin as _QuestionAnsweringAuthoringClientOperationsMixinGenerated,
 )
-
+JSON = MutableMapping[str, Any]
 
 class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthoringClientOperationsMixinGenerated):
     """Mixin class for patching methods with backward compatible parameter names."""

@@ -4,7 +4,7 @@ The `azure-ai-language-questionanswering-authoring` package provides **authoring
 
 > NOTE: This is a preview (`1.0.0b1`) targeting a preview service API version (`2025-05-15-preview`). APIs, models, and LRO result payloads may change before GA.
 
-[Source code][source] | [Package (PyPI)][pypi] | [Authoring REST docs][rest_authoring] | [Product documentation][product_docs] | [Samples][samples]
+[Product documentation][product_docs]
 
 ## Getting started
 
@@ -65,7 +65,7 @@ client = QuestionAnsweringAuthoringClient(
 
 ## Examples
 
-Below are minimal synchronous examples. More complete samples (including async equivalents) are in the [samples directory][samples]. Environment variables used by samples: `AZURE_QUESTIONANSWERING_ENDPOINT`, `AZURE_QUESTIONANSWERING_KEY`.
+Below are minimal synchronous examples. More complete samples (including async equivalents) are in the samples directory. Environment variables used by samples: `AZURE_QUESTIONANSWERING_ENDPOINT`, `AZURE_QUESTIONANSWERING_KEY`.
 
 ### Create a project
 ```python
@@ -193,8 +193,7 @@ For request/response details set environment variable `AZURE_LOG_LEVEL=info` or 
 
 ## Next steps
 
-- Explore the full [samples][samples] (sync & async)
-- Read the authoring [REST documentation][rest_authoring]
+- Explore the full samples
 - Learn about Question Answering concepts in [product documentation][product_docs]
 
 ## Contributing
@@ -208,10 +207,6 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact <mailto:opencode@microsoft.com> with any additional questions or comments.
 
 <!-- LINKS -->
-[source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering-authoring
-[pypi]: https://pypi.org/project/azure-ai-language-questionanswering-authoring/
-[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering-authoring/samples/README.md
-[rest_authoring]: https://learn.microsoft.com/rest/api/language/question-answering-projects
 [product_docs]: https://learn.microsoft.com/azure/ai-services/language-service/question-answering/overview
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
