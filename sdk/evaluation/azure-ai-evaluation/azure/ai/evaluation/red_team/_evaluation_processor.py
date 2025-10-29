@@ -148,11 +148,10 @@ class EvaluationProcessor:
                         # Use sync_evals endpoint for OneDP projects, legacy endpoint for others
                         if is_onedp_project(self.azure_ai_project):
                             # If using sync API use hate_unfairness rather than hate_fairness
-                            if metric_name == "hate_fairness":
-                                metric_name = "hate_unfairness"
+                            effective_metric_name = "hate_unfairness" if metric_name == "hate_fairness" else metric_name
                             return await evaluate_with_rai_service_sync(
                                 data=query_response,
-                                metric_name=metric_name,
+                                metric_name=effective_metric_name,
                                 project_scope=self.azure_ai_project,
                                 credential=self.credential,
                                 annotation_task=annotation_task,
