@@ -426,21 +426,21 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information, see the [Code of Conduct FAQ][code_of_conduct_faq] or contact [opencode@microsoft.com][opencode_email] with any additional questions or comments.
 
 <!-- LINKS -->
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-transcription
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure.ai.transcription
 [pypi_package]: https://pypi.org/project/azure-ai-transcription/
-[api_reference]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-transcription/azure/ai/transcription
+[api_reference]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure.ai.transcription/azure/ai/transcription
 [product_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/
 [azure_sub]: https://azure.microsoft.com/free/
 [speech_resource]: https://learn.microsoft.com/azure/ai-services/speech-service/overview
 [pip]: https://pypi.org/project/pip/
 [azure_portal]: https://portal.azure.com
 [azure_cli]: https://learn.microsoft.com/cli/azure
-[transcription_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-transcription/azure/ai/transcription/_client.py
+[transcription_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure.ai.transcription/azure/ai/transcription/_client.py
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
 [rest_api]: https://learn.microsoft.com/azure/ai-services/speech-service/rest-speech-to-text
-[samples_directory]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-transcription/samples
-[azure_sdk_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-transcription/samples
+[samples_directory]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure.ai.transcription/samples
+[azure_sdk_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure.ai.transcription/samples
 [speech_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
