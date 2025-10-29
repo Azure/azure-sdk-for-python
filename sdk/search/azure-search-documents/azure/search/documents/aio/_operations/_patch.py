@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, Dict, List, Optional, Union, cast
 
-from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
+from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import _SearchClientOperationsMixin as _SearchClientOperationsMixinGenerated
@@ -107,7 +107,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
         return response.debug_info
 
 
-class AsyncSearchItemPaged(AsyncItemPaged[Dict]):
+class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
     """An async pageable list of search results with metadata accessors."""
 
     def __init__(self, page_iterator_factory_func) -> None:
@@ -128,7 +128,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[Dict]):
         """
         return self._page_iterator_factory(continuation_token)
 
-    async def __anext__(self) -> Dict:
+    async def __anext__(self) -> ReturnType:
         if self._page_iterator is None:
             self._page_iterator = self.by_page()
         if self._page is None:

@@ -13,7 +13,7 @@ import base64
 import itertools
 import json
 
-from azure.core.paging import ItemPaged, PageIterator
+from azure.core.paging import ItemPaged, PageIterator, ReturnType
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import _SearchClientOperationsMixin as _SearchClientOperationsMixinGenerated
@@ -306,7 +306,7 @@ class SearchPageIterator(PageIterator):
         return response.debug_info
 
 
-class SearchItemPaged(ItemPaged[Dict]):
+class SearchItemPaged(ItemPaged[ReturnType]):
     """A pageable list of search results with metadata accessors."""
 
     def __init__(self, page_iterator_factory_func) -> None:
@@ -327,7 +327,7 @@ class SearchItemPaged(ItemPaged[Dict]):
         """
         return self._page_iterator_factory(continuation_token)
 
-    def __next__(self) -> Dict:
+    def __next__(self) -> ReturnType:
         if self._page_iterator is None:
             first_iterator = self._first_iterator_instance()
             self._page_iterator = itertools.chain.from_iterable(first_iterator)
