@@ -260,20 +260,16 @@ with open(audio_file_path, "rb") as audio_file:
     # Create enhanced mode properties
     # Enable enhanced mode for advanced processing capabilities
     enhanced_mode = EnhancedModeProperties(
-        enabled=True,
         task="translation",  # Specify the task type (e.g., "translation", "summarization")
         target_language="es-ES",  # Target language for translation
         prompt=[
             "Translate the following audio to Spanish",
-            "Focus on technical terminology"
+            "Focus on technical terminology",
         ],  # Optional prompts to guide the enhanced mode
     )
 
     # Create transcription options with enhanced mode
-    options = TranscriptionOptions(
-        locales=["en-US"],
-        enhanced_mode=enhanced_mode
-    )
+    options = TranscriptionOptions(locales=["en-US"], enhanced_mode=enhanced_mode)
 
     # Create the request content
     request_content = TranscribeRequestContent(options=options, audio=audio_file)
