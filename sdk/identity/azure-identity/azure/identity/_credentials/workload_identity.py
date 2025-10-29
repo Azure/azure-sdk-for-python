@@ -58,7 +58,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
-    :keyword str use_token_proxy: Whether or not to to read token proxy configuration from environment variables and use
+    :keyword bool use_token_proxy: Whether or not to read token proxy configuration from environment variables and use
         a token proxy to acquire tokens. Defaults to False.
 
     .. admonition:: Example:
@@ -118,7 +118,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
             if ca_file and ca_data:
                 raise ValueError(
-                    "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set"
+                    "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set."
                 )
 
             kwargs["transport"] = HttpClientTransport(

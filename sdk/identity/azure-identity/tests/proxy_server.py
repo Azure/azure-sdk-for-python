@@ -134,7 +134,6 @@ class TokenProxyHandler(BaseHTTPRequestHandler):
         self.send_response(status_code)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(response_json)))
-        self.send_header("Server", "token-proxy-test-server")
         self.end_headers()
 
         self.wfile.write(response_json.encode("utf-8"))

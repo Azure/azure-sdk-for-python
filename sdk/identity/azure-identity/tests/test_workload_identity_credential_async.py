@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cspell:ignore cafile
+# cspell:ignore cafile aexit ests
 import os
 import tempfile
 from time import sleep as real_sleep

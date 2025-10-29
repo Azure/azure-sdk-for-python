@@ -199,7 +199,7 @@ class HttpClientTransport(TokenBindingTransportMixin, HttpTransport):
         # Use cached SSL context or create a new one
         ssl_context = self._ssl_context or self._create_ssl_context()
 
-        connection = http.client.HTTPSConnection(
+        connection = http.client.HTTPSConnection(  # nosec
             host,
             timeout=self.connection_config.timeout,
             context=ssl_context,

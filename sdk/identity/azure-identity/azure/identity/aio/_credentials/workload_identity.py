@@ -38,7 +38,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
-    :keyword str use_token_proxy: Whether or not to to read token proxy configuration from environment variables and use
+    :keyword bool use_token_proxy: Whether or not to read token proxy configuration from environment variables and use
         a token proxy to acquire tokens. Defaults to False.
 
     .. admonition:: Example:
@@ -89,7 +89,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
             if not self._token_proxy_endpoint:
                 raise ValueError(
                     "use_token_proxy is True, but no token proxy endpoint was found. "
-                    f"Ensure the {EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY} environment variable is set."
+                    f"Ensure that the {EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY} environment variable is set."
                 )
 
             self._sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
@@ -98,7 +98,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
             if ca_file and ca_data:
                 raise ValueError(
-                    "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set"
+                    "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set."
                 )
 
             transport = _get_transport(
@@ -112,7 +112,8 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
                 kwargs["transport"] = transport
             else:
                 raise ValueError(
-                    "Async transport creation failed. Ensure that the aiohttp package is installed to enable token proxy usage."
+                    "Async transport creation failed. Ensure that the aiohttp package is installed to enable token "
+                    "proxy usage in this credential."
                 )
 
         super().__init__(

@@ -106,8 +106,8 @@ class TokenBindingTransportMixin:
         :param request: The HTTP request object to update.
         :type request: ~azure.core.rest.HttpRequest
         """
-        parsed_request_url = urllib.parse.urlparse(request.url)
         if self._proxy_endpoint:
+            parsed_request_url = urllib.parse.urlparse(request.url)
             parsed_proxy_url = urllib.parse.urlparse(self._proxy_endpoint)
             combined_path = parsed_proxy_url.path.rstrip("/") + "/" + parsed_request_url.path.lstrip("/")
             new_url = urllib.parse.urlunparse(
