@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: planetarycomputer_ingestion_management.py
+FILE: planetarycomputer_ingestion.py
 
 DESCRIPTION:
     This sample demonstrates comprehensive ingestion management operations including:
@@ -20,7 +20,7 @@ DESCRIPTION:
     - Managing ingestion operations
 
 USAGE:
-    python planetarycomputer_ingestion_management.py
+    python planetarycomputer_ingestion.py
 
     Set the environment variable PLANETARYCOMPUTER_ENDPOINT with your endpoint URL.
     Set the environment variable PLANETARYCOMPUTER_COLLECTION_ID with your collection ID.
@@ -45,7 +45,7 @@ from azure.planetarycomputer.models import (
     ManagedIdentityIngestionSource,
     SharedAccessSignatureTokenConnection,
     SharedAccessSignatureTokenIngestionSource,
-    Ingestion,
+    IngestionDefinition,
     IngestionType,
     OperationStatus,
 )
@@ -76,9 +76,9 @@ def create_managed_identity_ingestion_sources(
         )
 
     # Clean up existing sources
-    existing_sources = list(client.ingestion_management.list_sources())
+    existing_sources = list(client.ingestion.list_sources())
     for source in existing_sources:
-        client.ingestion_management.delete_source(id=source.id)
+        client.ingestion.delete_source(id=source.id)
         logging.info(f"Deleted existing source: {source.id}")
 
     # Create connection info with managed identity
@@ -87,12 +87,12 @@ def create_managed_identity_ingestion_sources(
     # Create ingestion source with unique ID
     source_id = str(uuid.uuid4())
     ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
-    created_source = client.ingestion_management.create_source(ingestion_source=ingestion_source)
+    created_source = client.ingestion.create_source(body=ingestion_source)
     logging.info(f"Created managed identity ingestion source: {created_source.id}")
 
     # List managed identities
     logging.info("Listing available managed identities:")
-    managed_identities = client.ingestion_management.list_managed_identities()
+    managed_identities = client.ingestion.list_managed_identities()
     for identity in managed_identities:
         logging.info(f"  - Object ID: {identity.object_id}")
         logging.info(f"    Resource ID: {identity.resource_id}")
@@ -125,7 +125,7 @@ def create_or_replace_source(client: PlanetaryComputerClient, sas_container_uri:
 
     # First call - replaces the existing source with original token
     logging.info(f"First call to create_or_replace_source with existing source ID: {source_id}")
-    first_result = client.ingestion_management.create_or_replace_source(id=source_id, ingestion_source=ingestion_source)
+    first_result = client.ingestion.replace_source(id=source_id, body=ingestion_source)
     logging.info(f"First call result: {first_result.id}")
 
     time.sleep(1)
@@ -146,8 +146,8 @@ def create_or_replace_source(client: PlanetaryComputerClient, sas_container_uri:
     )
 
     logging.info("Second call to create_or_replace_source with updated SAS token")
-    second_result = client.ingestion_management.create_or_replace_source(
-        id=source_id, ingestion_source=updated_ingestion_source
+    second_result = client.ingestion.replace_source(
+        id=source_id, body=updated_ingestion_source
     )
     logging.info(f"Second call result: {second_result.id}")
 
@@ -163,7 +163,7 @@ def get_source_by_id(client: PlanetaryComputerClient, source_id: str):
     logging.info(f"Retrieving ingestion source: {source_id}")
 
     try:
-        source = client.ingestion_management.get_source(id=source_id)
+        source = client.ingestion.get_source(id=source_id)
         logging.info(f"Successfully retrieved source: {source.id}")
         return source
     except Exception as e:
@@ -176,13 +176,13 @@ def create_github_public_ingestion(client: PlanetaryComputerClient, collection_i
 
     # Delete all existing ingestions
     logging.info("Deleting all existing ingestions...")
-    existing_ingestions = list(client.ingestion_management.lists(collection_id=collection_id))
+    existing_ingestions = list(client.ingestion.list(collection_id=collection_id))
     for ingestion in existing_ingestions:
-        client.ingestion_management.begin_delete(collection_id=collection_id, ingestion_id=ingestion.id, polling=True)
+        client.ingestion.begin_delete(collection_id=collection_id, ingestion_id=ingestion.id, polling=True)
         logging.info(f"Deleted existing ingestion: {ingestion.id}")
 
     # Create ingestion definition
-    ingestion_definition = Ingestion(
+    ingestion_definition = IngestionDefinition(
         import_type=IngestionType.STATIC_CATALOG,
         display_name="Sample Ingestion",
         source_catalog_url=source_catalog_url,
@@ -191,25 +191,25 @@ def create_github_public_ingestion(client: PlanetaryComputerClient, collection_i
     )
 
     # Create the ingestion
-    # TODO: The SDK's ingestion_management.create() method behavior should be reviewed.
+    # TODO: The SDK's ingestion.create() method behavior should be reviewed.
     # Currently, calling create() on an existing ingestion only performs updates rather than
     # failing or replacing the ingestion. This should be clarified or a separate create_or_update
     # method should be provided for idempotent operations.
     logging.info("Creating ingestion for sample catalog...")
-    ingestion_response = client.ingestion_management.create(
-        collection_id=collection_id, definition=ingestion_definition
+    ingestion_response = client.ingestion.create(
+        collection_id=collection_id, body=ingestion_definition
     )
     ingestion_id = ingestion_response.id
     logging.info(f"Created ingestion: {ingestion_id}")
 
     # Update the ingestion display name
-    updated_definition = Ingestion(
+    updated_definition = IngestionDefinition(
         import_type=IngestionType.STATIC_CATALOG,
         display_name="Sample Dataset Ingestion",
     )
 
-    ingestion = client.ingestion_management.update(
-        collection_id=collection_id, ingestion_id=ingestion_id, definition=updated_definition
+    ingestion = client.ingestion.update(
+        collection_id=collection_id, ingestion_id=ingestion_id, body=updated_definition
     )
     logging.info(f"Updated ingestion display name to: {updated_definition.display_name}")
 
@@ -225,7 +225,7 @@ def get_ingestion_by_id(client: PlanetaryComputerClient, collection_id: str, ing
     logging.info(f"Retrieving ingestion: {ingestion_id} from collection: {collection_id}")
 
     try:
-        ingestion = client.ingestion_management.get(collection_id=collection_id, ingestion_id=ingestion_id)
+        ingestion = client.ingestion.get(collection_id=collection_id, ingestion_id=ingestion_id)
 
         logging.info(f"Successfully retrieved ingestion: {ingestion.id}")
         logging.info(f"  Display name: {ingestion.display_name}")
@@ -248,7 +248,7 @@ def list_ingestion_runs(client: PlanetaryComputerClient, collection_id: str, ing
     logging.info(f"Listing runs for ingestion: {ingestion_id}")
 
     try:
-        runs = list(client.ingestion_management.list_runs(collection_id=collection_id, ingestion_id=ingestion_id))
+        runs = list(client.ingestion.list_runs(collection_id=collection_id, ingestion_id=ingestion_id))
 
         logging.info(f"Found {len(runs)} run(s) for ingestion {ingestion_id}")
 
@@ -303,7 +303,7 @@ def create_sas_token_ingestion_source(client: PlanetaryComputerClient, sas_conta
     )
 
     # Register the SAS token source
-    created_sas_source = client.ingestion_management.create_source(ingestion_source=sas_ingestion_source)
+    created_sas_source = client.ingestion.create_source(body=sas_ingestion_source)
     logging.info(f"Created SAS token ingestion source: {created_sas_source.id}")
     return created_sas_source.id
 
@@ -312,13 +312,13 @@ def run_and_monitor_ingestion(client: PlanetaryComputerClient, collection_id: st
     """Create an ingestion run and monitor its progress."""
 
     # Create ingestion run
-    run_response = client.ingestion_management.create_run(collection_id=collection_id, ingestion_id=ingestion_id)
+    run_response = client.ingestion.create_run(collection_id=collection_id, ingestion_id=ingestion_id)
     run_id = run_response.id
 
     # Monitor the run status
     status = None
     while True:
-        run = client.ingestion_management.get_run(collection_id=collection_id, ingestion_id=ingestion_id, run_id=run_id)
+        run = client.ingestion.get_run(collection_id=collection_id, ingestion_id=ingestion_id, run_id=run_id)
 
         operation = run.operation
         status = operation.status
@@ -347,23 +347,23 @@ def manage_operations(client: PlanetaryComputerClient):
     """List, get, and cancel ingestion operations."""
 
     # List operations
-    operations = list(client.ingestion_management.list_operations())
+    operations = list(client.ingestion.list_operations())
 
     if operations:
         # Get a specific operation
         operation_id = operations[0].id
-        operation = client.ingestion_management.get_operation(operation_id)
+        operation = client.ingestion.get_operation(operation_id)
 
         # Try to cancel the operation
         try:
-            client.ingestion_management.cancel_operation(operation.id)
+            client.ingestion.cancel_operation(operation.id)
         except HttpResponseError as e:
             logging.info(f"Failed to cancel operation {operation.id}: {e.message}")
             pass
 
     # Cancel all operations
     try:
-        client.ingestion_management.cancel_all_operations()
+        client.ingestion.cancel_all_operations()
     except HttpResponseError as e:
         raise RuntimeError("Failed to cancel all operations") from e
 

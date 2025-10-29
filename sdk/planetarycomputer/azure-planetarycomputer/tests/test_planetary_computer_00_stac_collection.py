@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,9 +6,10 @@
 """
 Unit tests for STAC Collection operations.
 """
+
 import logging
 import time
-import pytest
+import datetime
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
@@ -110,7 +110,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
 
         test_logger.info(f"Number of conformance classes: {len(conforms_to)}")
         for i, uri in enumerate(conforms_to[:5]):  # Log first 5
-            test_logger.info(f"  {i+1}. {uri}")
+            test_logger.info(f"  {i + 1}. {uri}")
 
         test_logger.info("Test PASSED\n")
 
@@ -302,24 +302,24 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_08_list_collection_queryables(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_08_get_collection_queryables(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
-        Test listing queryables for a collection.
+        Test getting queryables for a collection.
 
         Expected response:
         - Dictionary with 'properties' key
         - Properties contain queryable definitions
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_08_list_collection_queryables")
+        test_logger.info("TEST: test_08_get_collection_queryables")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: list_collection_queryables(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.list_collection_queryables(collection_id=planetarycomputer_collection_id)
+        test_logger.info(f"Calling: get_collection_queryables(collection_id='{planetarycomputer_collection_id}')")
+        response = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}")
@@ -334,7 +334,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
         if len(properties) > 0:
             # Log first few queryables
             for i, (key, value) in enumerate(list(properties.items())[:5]):
-                test_logger.info(f"  Queryable {i+1}: {key}")
+                test_logger.info(f"  Queryable {i + 1}: {key}")
 
         test_logger.info("Test PASSED\n")
 
@@ -529,12 +529,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_14_create_or_replace_render_option(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_14_replace_render_option(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test creating or replacing a render option.
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_14_create_or_replace_render_option")
+        test_logger.info("TEST: test_14_replace_render_option")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -553,7 +553,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: create_or_replace_render_option(collection_id='{planetarycomputer_collection_id}', render_option_id='test-natural-color', body={render_option})"
         )
-        response = client.stac.create_or_replace_render_option(
+        response = client.stac.replace_render_option(
             collection_id=planetarycomputer_collection_id, render_option_id="test-natural-color", body=render_option
         )
 
@@ -685,12 +685,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_17_create_or_replace_mosaic(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_17_replace_mosaic(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test creating or replacing a mosaic.
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_17_create_or_replace_mosaic")
+        test_logger.info("TEST: test_17_replace_mosaic")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -707,7 +707,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: create_or_replace_mosaic(collection_id='{planetarycomputer_collection_id}', mosaic_id='test-mosaic-1', body={mosaic})"
         )
-        response = client.stac.create_or_replace_mosaic(
+        response = client.stac.replace_mosaic(
             collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1", body=mosaic
         )
 
@@ -807,9 +807,17 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
 
         # Define collection extents
         spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-180, -90, 180, 90]])
-        temporal_extent = StacCollectionTemporalExtent(interval=[["2020-01-01T00:00:00Z", "2099-12-31T23:59:59Z"]])
-        extent = StacExtensionExtent(spatial=spatial_extent, temporal=temporal_extent)
 
+        temporal_extent = StacCollectionTemporalExtent(
+            interval=[
+                [
+                    datetime.datetime.fromisoformat("2020-01-01T00:00:00Z"),
+                    datetime.datetime.fromisoformat("2099-12-31T23:59:59Z"),
+                ]
+            ]
+        )
+
+        extent = StacExtensionExtent(spatial=spatial_extent, temporal=temporal_extent)
         # Create collection payload
         collection_data = {
             "id": test_collection_id,
@@ -903,7 +911,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
 
         # Check if queryable already exists and delete it
         try:
-            queryables = client.stac.list_collection_queryables(collection_id=planetarycomputer_collection_id)
+            queryables = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
             if "test:property" in queryables.get("properties", {}):
                 test_logger.info("Queryable 'test:property' already exists, deleting it first")
                 client.stac.delete_queryable(
@@ -944,12 +952,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_21_create_or_replace_queryable(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_21_replace_queryable(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test creating or replacing a queryable.
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_21_create_or_replace_queryable")
+        test_logger.info("TEST: test_21_replace_queryable")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -961,7 +969,6 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
             data_type=StacQueryableDefinitionDataType.NUMBER,
             create_index=False,
             definition={
-                "data_type": StacQueryableDefinitionDataType.NUMBER,
                 "description": "Test property - updated",
             },
         )
@@ -969,7 +976,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: create_or_replace_queryable(collection_id='{planetarycomputer_collection_id}', queryable_name='test:property', body=queryable)"
         )
-        response = client.stac.create_or_replace_queryable(
+        response = client.stac.replace_queryable(
             collection_id=planetarycomputer_collection_id, queryable_name="test:property", body=queryable
         )
 
@@ -999,7 +1006,6 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
             data_type=StacQueryableDefinitionDataType.NUMBER,
             create_index=False,
             definition={
-                "data_type": StacQueryableDefinitionDataType.NUMBER,
                 "description": "Test property for deletion",
             },
         )
@@ -1008,7 +1014,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
         client.stac.create_queryables(collection_id=planetarycomputer_collection_id, body=[queryable])
 
         # Verify it exists
-        queryables = client.stac.list_collection_queryables(collection_id=planetarycomputer_collection_id)
+        queryables = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
         assert "test:property_to_be_deleted" in queryables["properties"]
         test_logger.info("Queryable created successfully")
 
@@ -1023,7 +1029,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
         test_logger.info("Queryable deleted successfully")
 
         # Verify deletion
-        queryables_after = client.stac.list_collection_queryables(collection_id=planetarycomputer_collection_id)
+        queryables_after = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
         assert "test:property_to_be_deleted" not in queryables_after["properties"], "Queryable should have been deleted"
 
         test_logger.info("Test PASSED\n")

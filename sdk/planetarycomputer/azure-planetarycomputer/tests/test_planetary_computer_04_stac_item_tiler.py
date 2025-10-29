@@ -164,7 +164,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_04_list_bounds(
+    def test_04_get_bounds(
         self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id
     ):
         """
@@ -175,7 +175,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         - Represents bounding box of the item
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_04_list_bounds")
+        test_logger.info("TEST: test_04_get_bounds")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
@@ -186,7 +186,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: list_bounds(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}')"
         )
-        response = client.tiler.list_bounds(
+        response = client.tiler.get_bounds(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id
         )
 
@@ -246,7 +246,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             width=512,
             height=512,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
         )
 
         test_logger.info(f"Response type: {type(response)}")
@@ -775,7 +775,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_19_get_assets_info(
+    def test_19_get_item_asset_details(
         self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id
     ):
         """
@@ -785,7 +785,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         - Object with asset information including metadata
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_19_get_assets_info")
+        test_logger.info("TEST: test_19_get_item_asset_details")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
@@ -793,8 +793,8 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info("Calling: get_assets_info(...)")
-        response = client.tiler.get_assets_info(
+        test_logger.info("Calling: get_item_asset_details(...)")
+        response = client.tiler.get_item_asset_details(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id, assets=["image"]
         )
 

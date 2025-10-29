@@ -514,7 +514,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
 
         from azure.planetarycomputer.models import (
-            ImageRequest,
+            ImageParameters,
             Polygon,
         )
 
@@ -548,7 +548,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         }
 
         # Create image request
-        image_request = ImageRequest(
+        image_request = ImageParameters(
             cql=cql_filter,
             zoom=13,
             geometry=geometry,
@@ -592,7 +592,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
 
         from azure.planetarycomputer.models import (
-            ImageRequest,
+            ImageParameters,
             Polygon,
         )
 
@@ -622,7 +622,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             ],
         }
 
-        image_request = ImageRequest(
+        image_request = ImageParameters(
             cql=cql_filter,
             zoom=13,
             geometry=geometry,

@@ -19,7 +19,7 @@ from azure.planetarycomputer.models import (
     ManagedIdentityIngestionSource,
     SharedAccessSignatureTokenConnection,
     SharedAccessSignatureTokenIngestionSource,
-    Ingestion,
+    IngestionDefinition,
     IngestionType,
 )
 
@@ -32,7 +32,7 @@ log_dir = Path(__file__).parent / "logs"
 log_dir.mkdir(exist_ok=True)
 
 # Configure file handler
-log_file = log_dir / "ingestion_management_test_results.log"
+log_file = log_dir / "ingestion_test_results.log"
 file_handler = logging.FileHandler(log_file, mode="w")
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
@@ -53,7 +53,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List managed identities
-        managed_identities = list(client.ingestion_management.list_managed_identities())
+        managed_identities = list(client.ingestion.list_managed_identities())
         logger.info(f"Found {len(managed_identities)} managed identities")
 
         for identity in managed_identities:
@@ -79,7 +79,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         container_uri = os.environ.get("AZURE_INGESTION_CONTAINER_URI", "https://test.blob.core.windows.net/container")
 
         # Get a valid managed identity object ID from the service
-        managed_identities = list(client.ingestion_management.list_managed_identities())
+        managed_identities = list(client.ingestion.list_managed_identities())
         if not managed_identities:
             logger.warning("No managed identities found. Skipping test.")
             return
@@ -90,11 +90,11 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Managed Identity Object ID: {managed_identity_object_id}")
 
         # Clean up existing sources first
-        existing_sources = list(client.ingestion_management.list_sources())
+        existing_sources = list(client.ingestion.list_sources())
         logger.info(f"Found {len(existing_sources)} existing sources to clean up")
         for source in existing_sources:
             source_id = source["id"] if isinstance(source, dict) else source.id
-            client.ingestion_management.delete_source(id=source_id)
+            client.ingestion.delete_source(id=source_id)
             logger.info(f"  Deleted source: {source_id}")
 
         # Create connection info with managed identity
@@ -103,14 +103,14 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         # Create ingestion source (id must be a valid GUID)
         source_id = str(uuid.uuid4())
         ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
-        created_source = client.ingestion_management.create_source(ingestion_source=ingestion_source)
+        created_source = client.ingestion.create_source(body=ingestion_source)
 
         logger.info("Created ingestion source:")
         logger.info(f"  - ID: {created_source.id}")
         logger.info(f"  - Type: {type(created_source).__name__}")
 
         # List sources to verify creation
-        sources = list(client.ingestion_management.list_sources())
+        sources = list(client.ingestion.list_sources())
         logger.info(f"Total sources after creation: {len(sources)}")
 
         # Assertions
@@ -153,7 +153,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Register the SAS token source
-        created_sas_source = client.ingestion_management.create_source(ingestion_source=sas_ingestion_source)
+        created_sas_source = client.ingestion.create_source(body=sas_ingestion_source)
 
         logger.info("Created SAS token ingestion source:")
         logger.info(f"  - ID: {created_sas_source.id}")
@@ -167,7 +167,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         assert len(created_sas_source.id) > 0, "Source ID should not be empty"
 
         # Clean up
-        client.ingestion_management.delete_source(id=created_sas_source.id)
+        client.ingestion.delete_source(id=created_sas_source.id)
         logger.info(f"Cleaned up SAS source: {created_sas_source.id}")
 
     @PlanetaryComputerPreparer()
@@ -191,15 +191,15 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         # Delete all existing ingestions first
         logger.info("Deleting all existing ingestions...")
-        existing_ingestions = list(client.ingestion_management.lists(collection_id=planetarycomputer_collection_id))
+        existing_ingestions = list(client.ingestion.list(collection_id=planetarycomputer_collection_id))
         for ingestion in existing_ingestions:
-            client.ingestion_management.begin_delete(
+            client.ingestion.begin_delete(
                 collection_id=planetarycomputer_collection_id, ingestion_id=ingestion.id, polling=True
             )
             logger.info(f"  Deleted existing ingestion: {ingestion.id}")
 
         # Create ingestion definition
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion",
             source_catalog_url=source_catalog_url,
@@ -215,8 +215,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"  - Skip Existing Items: {ingestion_definition.skip_existing_items}")
 
         # Create the ingestion
-        ingestion_response = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        ingestion_response = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Handle both dict and object responses
@@ -248,7 +248,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # First create an ingestion
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Sample Dataset Ingestion",
             source_catalog_url=source_catalog_url,
@@ -256,8 +256,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        ingestion_response = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        ingestion_response = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Get ingestion ID
@@ -269,13 +269,13 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Created ingestion with ID: {ingestion_id}")
 
         # Update the ingestion with new display name
-        updated_definition = Ingestion(
+        updated_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Updated Ingestion Name",
         )
 
-        updated_ingestion = client.ingestion_management.update(
-            collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id, definition=updated_definition
+        updated_ingestion = client.ingestion.update(
+            collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id, body=updated_definition
         )
 
         logger.info("Updated ingestion:")
@@ -305,7 +305,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Create an ingestion first
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion for Run",
             source_catalog_url=source_catalog_url,
@@ -313,8 +313,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        ingestion_response = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        ingestion_response = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Get ingestion ID
@@ -326,7 +326,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Created ingestion with ID: {ingestion_id}")
 
         # Create ingestion run
-        run_response = client.ingestion_management.create_run(
+        run_response = client.ingestion.create_run(
             collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
         )
 
@@ -356,7 +356,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Create an ingestion
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion for Status Check",
             source_catalog_url=source_catalog_url,
@@ -364,8 +364,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        ingestion_response = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        ingestion_response = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Get ingestion ID
@@ -375,7 +375,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             ingestion_id = ingestion_response.id
 
         # Create ingestion run
-        run_response = client.ingestion_management.create_run(
+        run_response = client.ingestion.create_run(
             collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
         )
         run_id = run_response.id
@@ -383,7 +383,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Created run with ID: {run_id}")
 
         # Get run status
-        run = client.ingestion_management.get_run(
+        run = client.ingestion.get_run(
             collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id, run_id=run_id
         )
 
@@ -422,7 +422,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List operations
-        operations = list(client.ingestion_management.list_operations())
+        operations = list(client.ingestion.list_operations())
         logger.info(f"Found {len(operations)} operations")
 
         for i, operation in enumerate(operations[:5]):  # Log first 5 operations
@@ -458,7 +458,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Create an ingestion and run to generate an operation
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion for Operation",
             source_catalog_url=source_catalog_url,
@@ -466,8 +466,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        ingestion_response = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        ingestion_response = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Get ingestion ID
@@ -477,7 +477,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             ingestion_id = ingestion_response.id
 
         # Create run to generate an operation
-        run_response = client.ingestion_management.create_run(
+        run_response = client.ingestion.create_run(
             collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
         )
 
@@ -485,7 +485,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Created operation with ID: {operation_id}")
 
         # Get the specific operation
-        operation = client.ingestion_management.get_operation(operation_id)
+        operation = client.ingestion.get_operation(operation_id)
 
         logger.info("Retrieved operation:")
         logger.info(f"  - ID: {operation.id}")
@@ -513,7 +513,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         container_uri = f"https://test.blob.core.windows.net/test-container-{test_container_id}"
 
         # Get a valid managed identity object ID from the service
-        managed_identities = list(client.ingestion_management.list_managed_identities())
+        managed_identities = list(client.ingestion.list_managed_identities())
         if not managed_identities:
             logger.warning("No managed identities found. Skipping test.")
             return
@@ -527,17 +527,17 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         source_id = str(uuid.uuid4())
         ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
-        created_source = client.ingestion_management.create_source(ingestion_source=ingestion_source)
+        created_source = client.ingestion.create_source(body=ingestion_source)
         source_id = created_source.id
 
         logger.info(f"Created source with ID: {source_id}")
 
         # Delete the source
-        client.ingestion_management.delete_source(id=source_id)
+        client.ingestion.delete_source(id=source_id)
         logger.info(f"Deleted source: {source_id}")
 
         # List sources to verify deletion
-        sources = list(client.ingestion_management.list_sources())
+        sources = list(client.ingestion.list_sources())
         source_ids = [s["id"] if isinstance(s, dict) else s.id for s in sources]
 
         logger.info(f"Remaining sources: {len(sources)}")
@@ -567,7 +567,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Create an ingestion and run to generate an operation
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion for Cancel Test",
             source_catalog_url=source_catalog_url,
@@ -575,8 +575,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        ingestion_response = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        ingestion_response = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Get ingestion ID
@@ -586,7 +586,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             ingestion_id = ingestion_response.id
 
         # Create run to generate an operation
-        run_response = client.ingestion_management.create_run(
+        run_response = client.ingestion.create_run(
             collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
         )
 
@@ -595,7 +595,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         # Try to cancel the operation
         try:
-            client.ingestion_management.cancel_operation(operation_id)
+            client.ingestion.cancel_operation(operation_id)
             logger.info(f"Successfully requested cancellation for operation: {operation_id}")
             cancel_succeeded = True
         except HttpResponseError as e:
@@ -622,7 +622,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         # Try to cancel all operations
         try:
-            client.ingestion_management.cancel_all_operations()
+            client.ingestion.cancel_all_operations()
             logger.info("Successfully requested cancellation for all operations")
             cancel_succeeded = True
         except HttpResponseError as e:
@@ -646,7 +646,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get managed identity
-        managed_identities = list(client.ingestion_management.list_managed_identities())
+        managed_identities = list(client.ingestion.list_managed_identities())
         if not managed_identities:
             logger.warning("No managed identities found. Skipping test.")
             return
@@ -661,23 +661,23 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         source_id = str(uuid.uuid4())
         ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
-        created_source = client.ingestion_management.create_source(ingestion_source=ingestion_source)
+        created_source = client.ingestion.create_source(body=ingestion_source)
 
         logger.info(f"Created source with ID: {created_source.id}")
 
         # Get the source by ID
-        retrieved_source = client.ingestion_management.get_source(id=created_source.id)
+        retrieved_source = client.ingestion.get_source(id=created_source.id)
 
         logger.info("Retrieved source:")
         logger.info(f"  - Response type: {type(retrieved_source)}")
         logger.info(f"  - Response: {retrieved_source}")
 
         # Clean up
-        client.ingestion_management.delete_source(id=created_source.id)
+        client.ingestion.delete_source(id=created_source.id)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_13_create_or_replace_source(self, planetarycomputer_endpoint):
+    def test_13_replace_source(self, planetarycomputer_endpoint):
         """Test creating or replacing an ingestion source.
 
         This test demonstrates the idempotent create_or_replace_source operation.
@@ -707,7 +707,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         sas_ingestion_source = SharedAccessSignatureTokenIngestionSource(connection_info=sas_connection_info)
 
-        created_source = client.ingestion_management.create_source(ingestion_source=sas_ingestion_source)
+        created_source = client.ingestion.create_source(body=sas_ingestion_source)
         source_id = created_source.id
         logger.info(f"Created SAS token ingestion source: {source_id}")
 
@@ -719,8 +719,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             id=source_id, connection_info=sas_connection_info
         )
 
-        first_result = client.ingestion_management.create_or_replace_source(
-            id=source_id, ingestion_source=sas_ingestion_source_for_replace
+        first_result = client.ingestion.replace_source(
+            id=source_id, body=sas_ingestion_source_for_replace
         )
         logger.info(f"First call result: {first_result.id}")
 
@@ -735,8 +735,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             id=source_id, connection_info=updated_connection_info
         )
 
-        second_result = client.ingestion_management.create_or_replace_source(
-            id=source_id, ingestion_source=updated_ingestion_source
+        second_result = client.ingestion.replace_source(
+            id=source_id, body=updated_ingestion_source
         )
 
         logger.info("Second create_or_replace result (replacement):")
@@ -744,7 +744,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"  - Response: {second_result}")
 
         # Clean up
-        client.ingestion_management.delete_source(id=source_id)
+        client.ingestion.delete_source(id=source_id)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -763,7 +763,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Create an ingestion
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion for Lists Test",
             source_catalog_url=source_catalog_url,
@@ -771,14 +771,14 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         logger.info("Created ingestion")
 
         # List ingestions
-        ingestions = list(client.ingestion_management.lists(collection_id=planetarycomputer_collection_id))
+        ingestions = list(client.ingestion.list(collection_id=planetarycomputer_collection_id))
 
         logger.info(f"Found {len(ingestions)} ingestions")
         for i, ingestion in enumerate(ingestions[:5]):
@@ -804,7 +804,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Create an ingestion
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion for Get Test",
             source_catalog_url=source_catalog_url,
@@ -812,8 +812,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        created_ingestion = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        created_ingestion = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Get ingestion ID
@@ -825,7 +825,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Created ingestion with ID: {ingestion_id}")
 
         # Get the ingestion by ID
-        retrieved_ingestion = client.ingestion_management.get(
+        retrieved_ingestion = client.ingestion.get(
             collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
         )
 
@@ -852,7 +852,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         )
 
         # Create an ingestion
-        ingestion_definition = Ingestion(
+        ingestion_definition = IngestionDefinition(
             import_type=IngestionType.STATIC_CATALOG,
             display_name="Ingestion for List Runs Test",
             source_catalog_url=source_catalog_url,
@@ -860,8 +860,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        created_ingestion = client.ingestion_management.create(
-            collection_id=planetarycomputer_collection_id, definition=ingestion_definition
+        created_ingestion = client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
         )
 
         # Get ingestion ID
@@ -873,7 +873,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Created ingestion with ID: {ingestion_id}")
 
         # Create a run
-        run_response = client.ingestion_management.create_run(
+        run_response = client.ingestion.create_run(
             collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
         )
 
@@ -881,7 +881,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         # List runs
         runs = list(
-            client.ingestion_management.list_runs(
+            client.ingestion.list_runs(
                 collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
             )
         )
@@ -904,7 +904,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List existing operations
-        operations = list(client.ingestion_management.list_operations())
+        operations = list(client.ingestion.list_operations())
 
         if not operations:
             logger.info("No operations found. Skipping test.")
@@ -914,7 +914,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
         logger.info(f"Testing with operation ID: {operation_id}")
 
         # Get the operation
-        operation = client.ingestion_management.get_operation(operation_id)
+        operation = client.ingestion.get_operation(operation_id)
 
         logger.info("Retrieved operation:")
         logger.info(f"  - ID: {operation.id}")
@@ -939,7 +939,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         # Try to cancel all operations
         try:
-            client.ingestion_management.cancel_all_operations()
+            client.ingestion.cancel_all_operations()
             logger.info("Successfully requested cancellation for all operations")
         except HttpResponseError as e:
             logger.info(f"Failed to cancel all operations: {e.message}")

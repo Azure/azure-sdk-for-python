@@ -269,7 +269,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_06_list_items(self, planetarycomputer_endpoint):
+    def test_06_get_item_collection(self, planetarycomputer_endpoint):
         """Test listing items in a collection."""
         logger.info("=" * 80)
         logger.info("TEST: List Items in Collection")
@@ -277,7 +277,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
-        items_response = client.stac.list_items(collection_id=collection_id, limit=10)
+        items_response = client.stac.get_item_collection(collection_id=collection_id, limit=10)
 
         # Validate response
         assert items_response is not None, "Items response should not be None"
@@ -310,7 +310,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_07_list_collection_queryables(self, planetarycomputer_endpoint):
+    def test_07_get_collection_queryables(self, planetarycomputer_endpoint):
         """Test getting queryable properties for a collection."""
         logger.info("=" * 80)
         logger.info("TEST: List Collection Queryables")
@@ -318,7 +318,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
-        queryables = client.stac.list_collection_queryables(collection_id=collection_id)
+        queryables = client.stac.get_collection_queryables(collection_id=collection_id)
 
         # Validate queryables
         assert queryables is not None, "Queryables should not be None"
@@ -530,7 +530,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
 
         # Check if item already exists and delete if necessary
         try:
-            items_response = client.stac.list_items(collection_id=collection_id)
+            items_response = client.stac.get_item_collection(collection_id=collection_id)
             if any(item.id == item_id for item in items_response.features):
                 logger.info(f"Item {item_id} already exists. Deleting it first...")
                 delete_poller = client.stac.begin_delete_item(
@@ -632,7 +632,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
         collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
 
         # First, get an item ID from the collection
-        items_response = client.stac.list_items(collection_id=collection_id, limit=1)
+        items_response = client.stac.get_item_collection(collection_id=collection_id, limit=1)
 
         if len(items_response.features) > 0:
             item_id = items_response.features[0].id
@@ -677,7 +677,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_13_create_or_replace_stac_item(self, planetarycomputer_endpoint):
+    def test_13_replace_stac_item(self, planetarycomputer_endpoint):
         """Test creating or replacing a STAC item (idempotent operation).
 
         This demonstrates using begin_create_or_replace_item which is idempotent:

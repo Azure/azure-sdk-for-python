@@ -26,7 +26,7 @@ from azure.planetarycomputer.models import (
     StacSortExtension,
     StacSearchSortingDirection,
     TilerImageFormat,
-    ImageRequest,
+    ImageParameters,
     Polygon,
 )
 import logging
@@ -68,7 +68,7 @@ def get_mosaics_tile_json(client, search_id, collection_id):
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
         tile_scale=1,
         min_zoom=9,
         collection=collection_id,
@@ -88,7 +88,7 @@ def get_mosaics_tile(client, search_id, collection_id):
         scale=1,
         format="png",
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
         collection=collection_id,
     )
     mosaics_tile_matrix_sets_bytes = b"".join(mosaics_tile_matrix_sets_response)
@@ -110,7 +110,7 @@ def get_mosaics_wmts_capabilities(client, search_id):
         min_zoom=7,
         max_zoom=13,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     xml_bytes = b"".join(get_capabilities_xml_response)
     xml_string = xml_bytes.decode("utf-8")
@@ -184,7 +184,7 @@ def create_static_image(client, collection_id):
     )
 
     # Create image request with rendering parameters
-    image_request = ImageRequest(
+    image_request = ImageParameters(
         cql=cql_filter,
         zoom=13,
         geometry=geometry,

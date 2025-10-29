@@ -102,12 +102,12 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_02_begin_create_or_replace_collection(self, planetarycomputer_endpoint):
+    def test_02_create_or_replace_collection(self, planetarycomputer_endpoint):
         """
         Test updating a collection using create or replace.
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_02_begin_create_or_replace_collection")
+        test_logger.info("TEST: test_02_create_or_replace_collection")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -121,9 +121,9 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
         collection.description = "Test collection for lifecycle operations - UPDATED"
 
         test_logger.info(
-            f"Calling: begin_create_or_replace_collection(collection_id='{test_collection_id}', body=collection)"
+            f"Calling: create_or_replace_collection(collection_id='{test_collection_id}', body=collection)"
         )
-        update_poller = client.stac.begin_create_or_replace_collection(
+        update_poller = client.stac.create_or_replace_collection(
             collection_id=test_collection_id, body=collection, polling=True
         )
         result = update_poller.result()
@@ -225,12 +225,12 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_05_create_or_replace_collection_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_05_replace_collection_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test creating or replacing a collection asset.
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_05_create_or_replace_collection_asset")
+        test_logger.info("TEST: test_05_replace_collection_asset")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -251,7 +251,7 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: create_or_replace_collection_asset(collection_id='{planetarycomputer_collection_id}', asset_id='test-asset', body={{...}})"
         )
-        response = client.stac.create_or_replace_collection_asset(
+        response = client.stac.replace_collection_asset(
             collection_id=planetarycomputer_collection_id,
             asset_id="test-asset",
             body={"data": asset_data, "file": file_tuple},

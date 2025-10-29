@@ -25,6 +25,7 @@ USAGE:
 
 import os
 import time
+import datetime
 from io import BytesIO
 from urllib.request import urlopen
 from azure.planetarycomputer import PlanetaryComputerClient
@@ -69,7 +70,15 @@ def create_collection(client, collection_id):
 
     # Define collection spatial and temporal extents (Georgia state bounds)
     spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-85.605165, 30.357851, -80.839729, 35.000659]])
-    temporal_extent = StacCollectionTemporalExtent(interval=[["2010-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]])
+    temporal_extent = StacCollectionTemporalExtent(
+        interval=[
+            [
+                datetime.datetime.fromisoformat("2020-01-01T00:00:00Z"),
+                datetime.datetime.fromisoformat("2099-12-31T23:59:59Z"),
+            ]
+        ]
+    )
+
     extent = StacExtensionExtent(spatial=spatial_extent, temporal=temporal_extent)
 
     # Create StacCollection object
@@ -159,7 +168,7 @@ def update_collection(client, collection_id):
 
     # Update the collection
     logging.info("Updating collection...")
-    client.stac.begin_create_or_replace_collection(collection_id=collection_id, body=collection, polling=True)
+    client.stac.create_or_replace_collection(collection_id=collection_id, body=collection)
 
     # Verify the update
     updated_collection = client.stac.get_collection(collection_id=collection_id)
@@ -175,7 +184,7 @@ def manage_partition_type(client, collection_id):
     logging.info(f"Current partition scheme: {partition_type.scheme}")
 
     # Check if collection is empty before updating
-    items = client.stac.list_items(collection_id=collection_id)
+    items = client.stac.get_item_collection(collection_id=collection_id)
     if items.features:
         logging.info("Collection is not empty, skipping partition type update")
     else:
@@ -222,7 +231,7 @@ def manage_render_options(client, collection_id):
     # Update with description
     render_option.description = "RGB from visual assets"
 
-    client.stac.create_or_replace_render_option(
+    client.stac.replace_render_option(
         collection_id=collection_id, render_option_id=render_option.id, body=render_option
     )
 
@@ -257,7 +266,7 @@ def manage_mosaics(client, collection_id):
     # Update with description
     mosaic.description = "Most recent available imagery in this collection"
 
-    stac_collection_mosaics_create_or_replace_response = client.stac.create_or_replace_mosaic(
+    stac_collection_mosaics_create_or_replace_response = client.stac.replace_mosaic(
         collection_id=collection_id,
         mosaic_id=mosaic.id,
         body=mosaic,
@@ -303,7 +312,7 @@ def get_stac_landing_page(client):
 
 def manage_queryables(client, collection_id):
     """Create and manage queryables for a collection."""
-    stac_queryables_get_all_response = client.stac.list_collection_queryables(collection_id=collection_id)
+    stac_queryables_get_all_response = client.stac.get_collection_queryables(collection_id=collection_id)
 
     queryable = StacQueryable(
         name="eo:cloud_cover",
@@ -327,7 +336,7 @@ def manage_queryables(client, collection_id):
 
     queryable.definition["description"] = "Cloud cover percentage"
 
-    create_or_replace_queryable_response = client.stac.create_or_replace_queryable(
+    create_or_replace_queryable_response = client.stac.replace_queryable(
         collection_id=collection_id,
         queryable_name=queryable.name,
         body=queryable,
@@ -374,13 +383,13 @@ def manage_collection_assets(client, collection_id):
 
     # Create or replace Collection Asset
     thumbnail_bytes.seek(0)  # Reset BytesIO position
-    client.stac.create_or_replace_collection_asset(
+    client.stac.replace_collection_asset(
         collection_id=collection_id, asset_id="thumbnail", body={"data": data, "file": thumbnail_tuple}
     )
 
     # Create or replace Collection Asset again
     thumbnail_bytes.seek(0)  # Reset BytesIO position
-    client.stac.create_or_replace_collection_asset(
+    client.stac.replace_collection_asset(
         collection_id=collection_id, asset_id="thumbnail", body={"data": data, "file": thumbnail_tuple}
     )
 

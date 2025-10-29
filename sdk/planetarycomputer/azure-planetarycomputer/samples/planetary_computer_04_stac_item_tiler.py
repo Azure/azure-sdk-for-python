@@ -62,7 +62,7 @@ def list_available_assets(client, collection_id, item_id):
     logging.info(result)
 
 
-def get_assets_info(client, collection_id, item_id):
+def get_item_asset_details(client, collection_id, item_id):
     """Get basic info for dataset's assets.
 
     Returns dataset's basic information including data types, bounds, and other metadata
@@ -70,14 +70,14 @@ def get_assets_info(client, collection_id, item_id):
     """
 
     # Get info for specific assets
-    result_specific = client.tiler.get_assets_info(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result_specific = client.tiler.get_item_asset_details(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info("Assets info (image asset only):")
     logging.info(f"  Dataset: {result_specific}")
 
 
-def list_bounds(client, collection_id, item_id):
+def get_bounds(client, collection_id, item_id):
     """List bounds for an item."""
-    result = client.tiler.list_bounds(collection_id=collection_id, item_id=item_id)
+    result = client.tiler.get_bounds(collection_id=collection_id, item_id=item_id)
     logging.info(result)
 
 
@@ -88,7 +88,7 @@ def crop_geo_json(client, collection_id, item_id, geojson):
         item_id=item_id,
         format=TilerImageFormat.PNG,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
         body=geojson,
     )
     logging.info("Cropping with GeoJSON completed")
@@ -104,7 +104,7 @@ def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson):
         width=512,
         height=512,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
         body=geojson,
     )
     display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
@@ -137,7 +137,7 @@ def get_part(client, collection_id, item_id, bounds):
         width=512,
         height=512,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     display_response(get_part_response, f"part_{item_id}.png")
 
@@ -155,7 +155,7 @@ def get_part_with_dimensions(client, collection_id, item_id, bounds):
         width=512,
         height=512,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     display_response(get_part_with_dimensions_response, f"part_dims_{item_id}.png")
 
@@ -182,7 +182,7 @@ def get_preview(client, collection_id, item_id):
         width=512,
         height=512,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     display_response(get_preview_response, f"preview_{item_id}.png")
 
@@ -196,7 +196,7 @@ def get_preview_with_format(client, collection_id, item_id):
         width=512,
         height=512,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     display_response(get_preview_with_format_response, f"preview_format_{item_id}.png")
 
@@ -218,7 +218,7 @@ def get_tile_json(client, collection_id, item_id):
         min_zoom=7,
         max_zoom=14,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     logging.info(result)
 
@@ -235,7 +235,7 @@ def get_tile(client, collection_id, item_id):
         scale=1,
         format="png",
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
 
@@ -251,7 +251,7 @@ def get_wmts_capabilities(client, collection_id, item_id):
         min_zoom=7,
         max_zoom=14,
         assets=["image"],
-        asset_band_indices=["image|1,2,3"],
+        asset_band_indices="image|1,2,3",
     )
     xml_bytes = b"".join(get_wmts_capabilities_response)
     xml_string = xml_bytes.decode("utf-8")
@@ -296,7 +296,7 @@ def main():
     list_tile_matrices(client)
     get_asset_statistics(client, collection_id, item_id)
     list_available_assets(client, collection_id, item_id)
-    get_assets_info(client, collection_id, item_id)
+    get_item_asset_details(client, collection_id, item_id)
     list_bounds(client, collection_id, item_id)
     crop_geo_json(client, collection_id, item_id, geojson)
     crop_geo_json_with_dimensions(client, collection_id, item_id, geojson)

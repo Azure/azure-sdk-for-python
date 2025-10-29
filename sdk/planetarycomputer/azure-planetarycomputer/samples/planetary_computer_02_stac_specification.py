@@ -203,7 +203,7 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
 def create_stac_item(client, collection_id, item_id):
     """Create a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
-    stac_item_get_items_response = client.stac.list_items(collection_id=collection_id)
+    stac_item_get_items_response = client.stac.get_item_collection(collection_id=collection_id)
     for item in stac_item_get_items_response.features:
         logging.error(item.id)
 
@@ -361,7 +361,7 @@ def query_items(client, collection_id):
 
 def get_queryables(client, collection_id):
     """Get queryable properties for a collection."""
-    queryables = client.stac.list_collection_queryables(collection_id=collection_id)
+    queryables = client.stac.get_collection_queryables(collection_id=collection_id)
     properties = queryables.get("properties")
 
     if properties:
