@@ -24,7 +24,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperations(AzureMgmtRecorde
         response = self.client.managed_environments_storages.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             environment_name="str",
             storage_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperations(AzureMgmtRecorde
                 },
                 "type": "str",
             },
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             environment_name="str",
             storage_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

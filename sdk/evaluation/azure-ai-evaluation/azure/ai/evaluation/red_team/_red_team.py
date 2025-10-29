@@ -325,6 +325,7 @@ class RedTeam:
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None,
         is_agent_target: Optional[bool] = None,
+        client_id: Optional[str] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
 
@@ -407,6 +408,7 @@ class RedTeam:
                 current_key,
                 num_objectives,
                 is_agent_target,
+                client_id,
             )
 
     async def _get_custom_attack_objectives(
@@ -469,6 +471,7 @@ class RedTeam:
         current_key: tuple,
         num_objectives: int,
         is_agent_target: Optional[bool] = None,
+        client_id: Optional[str] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI service."""
         content_harm_risk = None
@@ -495,6 +498,7 @@ class RedTeam:
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
                     target=target_type_str,
+                    client_id=client_id,
                 )
             else:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -505,6 +509,7 @@ class RedTeam:
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
                     target=target_type_str,
+                    client_id=client_id,
                 )
 
             if isinstance(objectives_response, list):
@@ -539,6 +544,7 @@ class RedTeam:
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
                             target="model",
+                            client_id=client_id,
                         )
                     else:
                         objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -549,6 +555,7 @@ class RedTeam:
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
                             target="model",
+                            client_id=client_id,
                         )
 
                     if isinstance(objectives_response, list):
@@ -1022,6 +1029,8 @@ class RedTeam:
         self._app_insights_configuration = _app_insights_configuration
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
+        client_id: Optional[str] = kwargs.get("client_id")
+
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
@@ -1112,7 +1121,7 @@ class RedTeam:
 
             # Fetch attack objectives
             all_objectives = await self._fetch_all_objectives(
-                flattened_attack_strategies, application_scenario, is_agent_target
+                flattened_attack_strategies, application_scenario, is_agent_target, client_id
             )
 
             chat_target = get_chat_target(target)
@@ -1228,7 +1237,11 @@ class RedTeam:
                 }
 
     async def _fetch_all_objectives(
-        self, flattened_attack_strategies: List, application_scenario: str, is_agent_target: bool
+        self,
+        flattened_attack_strategies: List,
+        application_scenario: str,
+        is_agent_target: bool,
+        client_id: Optional[str] = None,
     ) -> Dict:
         """Fetch all attack objectives for all strategies and risk categories."""
         log_section_header(self.logger, "Fetching attack objectives")
@@ -1242,6 +1255,7 @@ class RedTeam:
                 application_scenario=application_scenario,
                 strategy="baseline",
                 is_agent_target=is_agent_target,
+                client_id=client_id,
             )
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
@@ -1266,6 +1280,7 @@ class RedTeam:
                     application_scenario=application_scenario,
                     strategy=strategy_name,
                     is_agent_target=is_agent_target,
+                    client_id=client_id,
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
 
