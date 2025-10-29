@@ -389,7 +389,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             min_zoom=7,
             max_zoom=14,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
         )
 
         test_logger.info(f"Response type: {type(response)}")
@@ -472,7 +472,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             item_id=planetarycomputer_item_id,
             body=geojson_feature,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
             format=TilerImageFormat.PNG,
         )
 
@@ -520,7 +520,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             height=256,
             body=geojson_feature,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
             format=TilerImageFormat.PNG,
         )
 
@@ -597,7 +597,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             maxy=bounds[3],
             format=TilerImageFormat.PNG,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
         )
 
         image_bytes = b"".join(response)
@@ -636,7 +636,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             height=256,
             format=TilerImageFormat.PNG,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
         )
 
         image_bytes = b"".join(response)
@@ -695,7 +695,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             item_id=planetarycomputer_item_id,
             format=TilerImageFormat.JPEG,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
         )
 
         image_bytes = b"".join(response)
@@ -730,7 +730,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             min_zoom=7,
             max_zoom=14,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
         )
 
         test_logger.info(f"Response: {response}")
@@ -761,7 +761,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
             y=6564,
             scale=1,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
             format=TilerImageFormat.PNG,
         )
 

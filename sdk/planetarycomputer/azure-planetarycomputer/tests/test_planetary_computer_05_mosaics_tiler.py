@@ -188,7 +188,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
             tile_scale=1,
             min_zoom=9,
             collection=planetarycomputer_collection_id,
@@ -262,7 +262,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             scale=1,
             format="png",
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
             collection=planetarycomputer_collection_id,
         )
 
@@ -342,7 +342,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             min_zoom=7,
             max_zoom=13,
             assets=["image"],
-            asset_band_indices=["image|1,2,3"],
+            asset_band_indices="image|1,2,3",
         )
 
         test_logger.info(f"Response type: {type(response)}")

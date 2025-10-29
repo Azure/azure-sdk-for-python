@@ -124,7 +124,7 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
             f"Calling: create_or_replace_collection(collection_id='{test_collection_id}', body=collection)"
         )
         update_poller = client.stac.create_or_replace_collection(
-            collection_id=test_collection_id, body=collection, polling=True
+            collection_id=test_collection_id, body=collection
         )
         result = update_poller.result()
 
