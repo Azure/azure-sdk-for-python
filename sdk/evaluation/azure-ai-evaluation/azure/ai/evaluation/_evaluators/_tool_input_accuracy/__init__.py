@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._tool_success import _ToolSuccessEvaluator
+from ._tool_input_accuracy import _ToolInputAccuracyEvaluator
 
-__all__ = ["_ToolSuccessEvaluator"]
+__all__ = [
+    "_ToolInputAccuracyEvaluator",
+]

@@ -670,13 +670,21 @@ def _pretty_format_conversation_history(conversation_history):
     ):
         formatted_history += f"User turn {i+1}:\n"
         for msg in user_query:
-            formatted_history += "  " + "\n  ".join(msg)
-        formatted_history += "\n\n"
+            if isinstance(msg, list):
+                for submsg in msg:
+                    formatted_history += "  " + "\n  ".join(submsg.split("\n")) + "\n"
+            else:
+                formatted_history += "  " + "\n  ".join(msg.split("\n")) + "\n"
+        formatted_history += "\n"
         if agent_response:
             formatted_history += f"Agent turn {i+1}:\n"
             for msg in agent_response:
-                formatted_history += "  " + "\n  ".join(msg)
-            formatted_history += "\n\n"
+                if isinstance(msg, list):
+                    for submsg in msg:
+                        formatted_history += "  " + "\n  ".join(submsg.split("\n")) + "\n"
+                else:
+                    formatted_history += "  " + "\n  ".join(msg.split("\n")) + "\n"
+            formatted_history += "\n"
     return formatted_history
 
 
