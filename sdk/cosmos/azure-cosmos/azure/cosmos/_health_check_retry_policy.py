@@ -19,19 +19,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Internal class for database account retry policy implementation in the
+"""Internal class for health check retry policy implementation in the
 Azure Cosmos database service.
 """
 import os
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import _constants
 
 
 class HealthCheckRetryPolicy(object):
     """Implements retry logic for health checks in Azure Cosmos DB."""
-
-    # Tuple of exception types considered transient errors for retry logic.
-    transient_exceptions = (ServiceRequestError, ServiceResponseError)
 
     def __init__(self, connection_policy, *args):
         self.retry_count = 0
@@ -44,8 +40,8 @@ class HealthCheckRetryPolicy(object):
             str(_constants._Constants.AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT)
         ))
         self.connection_policy = connection_policy
-        self.retry_factor = 1.5
-        self.max_retry_after_in_milliseconds = 1000 * 20  # 20 seconds
+        self.retry_factor = 2
+        self.max_retry_after_in_milliseconds = 1000 * 60 * 3  # 3 minutes
         self.initial_connection_timeout = 5
         self.request = args[0] if args else None
 
