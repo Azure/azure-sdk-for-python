@@ -1,7 +1,7 @@
 {
   "apiVersion": "2025-08-01",
-  "commit": "348e0ea05f4f5cac81567e4d3cf3a780e17604f8",
+  "commit": "08a510e768ebd24b415dd642416cf955b70c4069",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/recoveryservices/resource-manager/Microsoft.RecoveryServices/RecoveryServices",
-  "emitterVersion": "0.51.2"
+  "emitterVersion": "0.52.1"
 }
