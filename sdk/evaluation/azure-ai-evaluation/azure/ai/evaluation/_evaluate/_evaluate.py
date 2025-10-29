@@ -1112,6 +1112,7 @@ def _log_events_to_app_insights(
     otel_logger,
     events: List[Dict[str, Any]],
     log_attributes: Dict[str, Any],
+    app_insights_config: AppInsightsConfig,
     data_source_item: Optional[Dict[str, Any]] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
@@ -1125,6 +1126,8 @@ def _log_events_to_app_insights(
     :type events: List[Dict[str, Any]]
     :param log_attributes: Attributes dict to use for each event (already includes extra_attributes if present)
     :type log_attributes: Dict[str, Any]
+    :param app_insights_config: App Insights configuration containing connection string
+    :type app_insights_config: AppInsightsConfig
     :param data_source_item: Data source item containing trace, response, and agent information
     :type data_source_item: Optional[Dict[str, Any]]
     """
@@ -1133,15 +1136,17 @@ def _log_events_to_app_insights(
     from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
 
     try:
-        # Get the trace_id and other context from data source item
+        # Initialize values from AppInsights config as defaults
         trace_id = None
         span_id = None
         response_id = None
         conversation_id = None
         previous_response_id = None
-        agent_id = None
-        agent_version = None
-        agent_name = None
+        agent_id = app_insights_config.get("agent_id", None)
+        agent_version = app_insights_config.get("agent_version", None)
+        agent_name = app_insights_config.get("agent_name", None)
+
+        # Data source item values have higher priority and will override AppInsights config defaults
         if data_source_item:
             for key, value in data_source_item.items():
                 if key.endswith("trace_id") and value and isinstance(value, str):
@@ -1338,6 +1343,7 @@ def emit_eval_result_events_to_app_insights(
                 log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
                 evaluator_config=evaluator_config,
+                app_insights_config=app_insights_config,
             )
         # Force flush to ensure events are sent
         logger_provider.force_flush()
