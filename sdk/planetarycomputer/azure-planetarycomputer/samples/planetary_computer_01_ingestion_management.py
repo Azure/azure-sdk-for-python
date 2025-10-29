@@ -37,7 +37,7 @@ USAGE:
 
 import os
 import time
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.planetarycomputer.models import (
@@ -59,7 +59,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def create_managed_identity_ingestion_sources(
-    client: PlanetaryComputerClient, container_uri: str, managed_identity_object_id: str
+    client: PlanetaryComputerProClient, container_uri: str, managed_identity_object_id: str
 ):
     """Create managed identity-based ingestion source and return the source_id."""
 
@@ -100,7 +100,9 @@ def create_managed_identity_ingestion_sources(
     return source_id
 
 
-def create_or_replace_source(client: PlanetaryComputerClient, sas_container_uri: str, sas_token: str, source_id: str):
+def create_or_replace_source(
+    client: PlanetaryComputerProClient, sas_container_uri: str, sas_token: str, source_id: str
+):
     """Demonstrate create_or_replace_source idempotent operation.
 
     This assumes the source already exists (created by create_sas_token_ingestion_source).
@@ -146,15 +148,13 @@ def create_or_replace_source(client: PlanetaryComputerClient, sas_container_uri:
     )
 
     logging.info("Second call to create_or_replace_source with updated SAS token")
-    second_result = client.ingestion.replace_source(
-        id=source_id, body=updated_ingestion_source
-    )
+    second_result = client.ingestion.replace_source(id=source_id, body=updated_ingestion_source)
     logging.info(f"Second call result: {second_result.id}")
 
     return second_result.id
 
 
-def get_source_by_id(client: PlanetaryComputerClient, source_id: str):
+def get_source_by_id(client: PlanetaryComputerProClient, source_id: str):
     """Retrieve a specific ingestion source by ID.
 
     This demonstrates using get_source to fetch a specific source directly
@@ -171,7 +171,7 @@ def get_source_by_id(client: PlanetaryComputerClient, source_id: str):
         return None
 
 
-def create_github_public_ingestion(client: PlanetaryComputerClient, collection_id: str, source_catalog_url: str):
+def create_github_public_ingestion(client: PlanetaryComputerProClient, collection_id: str, source_catalog_url: str):
     """Create, update, and run ingestion from sample public catalog on GitHub."""
 
     # Delete all existing ingestions
@@ -196,9 +196,7 @@ def create_github_public_ingestion(client: PlanetaryComputerClient, collection_i
     # failing or replacing the ingestion. This should be clarified or a separate create_or_update
     # method should be provided for idempotent operations.
     logging.info("Creating ingestion for sample catalog...")
-    ingestion_response = client.ingestion.create(
-        collection_id=collection_id, body=ingestion_definition
-    )
+    ingestion_response = client.ingestion.create(collection_id=collection_id, body=ingestion_definition)
     ingestion_id = ingestion_response.id
     logging.info(f"Created ingestion: {ingestion_id}")
 
@@ -208,15 +206,13 @@ def create_github_public_ingestion(client: PlanetaryComputerClient, collection_i
         display_name="Sample Dataset Ingestion",
     )
 
-    ingestion = client.ingestion.update(
-        collection_id=collection_id, ingestion_id=ingestion_id, body=updated_definition
-    )
+    ingestion = client.ingestion.update(collection_id=collection_id, ingestion_id=ingestion_id, body=updated_definition)
     logging.info(f"Updated ingestion display name to: {updated_definition.display_name}")
 
     return ingestion_id
 
 
-def get_ingestion_by_id(client: PlanetaryComputerClient, collection_id: str, ingestion_id: str):
+def get_ingestion_by_id(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
     """Retrieve a specific ingestion by ID.
 
     This demonstrates using get to fetch a specific ingestion directly
@@ -239,7 +235,7 @@ def get_ingestion_by_id(client: PlanetaryComputerClient, collection_id: str, ing
         return None
 
 
-def list_ingestion_runs(client: PlanetaryComputerClient, collection_id: str, ingestion_id: str):
+def list_ingestion_runs(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
     """List all runs for a specific ingestion.
 
     This demonstrates using list_runs to get all execution runs for an ingestion,
@@ -274,7 +270,7 @@ def list_ingestion_runs(client: PlanetaryComputerClient, collection_id: str, ing
         return []
 
 
-def create_sas_token_ingestion_source(client: PlanetaryComputerClient, sas_container_uri: str, sas_token: str):
+def create_sas_token_ingestion_source(client: PlanetaryComputerProClient, sas_container_uri: str, sas_token: str):
     """Create a SAS token ingestion source with example values."""
 
     # Validate required parameters
@@ -308,7 +304,7 @@ def create_sas_token_ingestion_source(client: PlanetaryComputerClient, sas_conta
     return created_sas_source.id
 
 
-def run_and_monitor_ingestion(client: PlanetaryComputerClient, collection_id: str, ingestion_id: str):
+def run_and_monitor_ingestion(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
     """Create an ingestion run and monitor its progress."""
 
     # Create ingestion run
@@ -343,7 +339,7 @@ def run_and_monitor_ingestion(client: PlanetaryComputerClient, collection_id: st
                 logging.error(f"Ingestion error: {status_item.error_code} - {status_item.error_message}")
 
 
-def manage_operations(client: PlanetaryComputerClient):
+def manage_operations(client: PlanetaryComputerProClient):
     """List, get, and cancel ingestion operations."""
 
     # List operations
@@ -396,7 +392,7 @@ def main():
 
     # Create client
     credential = DefaultAzureCredential()
-    client = PlanetaryComputerClient(
+    client = PlanetaryComputerProClient(
         endpoint=endpoint,
         credential=credential,
         logging_enable=False,  # Set to True for detailed HTTP logging

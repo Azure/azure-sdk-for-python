@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PlanetaryComputerClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for PlanetaryComputerClient.
+class PlanetaryComputerProClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for PlanetaryComputerProClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

@@ -28,7 +28,7 @@ import time
 import datetime
 from io import BytesIO
 from urllib.request import urlopen
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import (
     StacCollection,
@@ -412,7 +412,7 @@ def main():
 
     # Create client
     credential = DefaultAzureCredential()
-    client = PlanetaryComputerClient(endpoint=endpoint, credential=credential, logging_enable=True)
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
     logging.info(f"Connected to: {endpoint}")
     logging.info(f"Collection ID: {collection_id}\n")

@@ -11,7 +11,7 @@ import io
 import logging
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import TilerImageFormat, FeatureType, Feature, Polygon
 
 # Set up test logger
@@ -31,7 +31,7 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
     """Test suite for STAC Item Tiler operations."""
 
     @PlanetaryComputerPreparer()
@@ -54,7 +54,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_tile_matrix_definitions(tile_matrix_set_id='WebMercatorQuad')")
-        response = client.tiler.get_tile_matrix_definitions(tile_matrix_set_id="WebMercatorQuad")
+        response = client.data.get_tile_matrix_definitions(tile_matrix_set_id="WebMercatorQuad")
 
         test_logger.info(f"Response type: {type(response)}")
         if hasattr(response, "as_dict"):
@@ -99,7 +99,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: list_tile_matrices()")
-        response = client.tiler.list_tile_matrices()
+        response = client.data.list_tile_matrices()
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -143,7 +143,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: list_available_assets(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}')"
         )
-        response = client.tiler.list_available_assets(
+        response = client.data.list_available_assets(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id
         )
 
@@ -186,7 +186,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: list_bounds(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}')"
         )
-        response = client.tiler.get_bounds(
+        response = client.data.get_bounds(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id
         )
 
@@ -239,7 +239,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_preview(...)")
-        response = client.tiler.get_preview(
+        response = client.data.get_preview(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             format=TilerImageFormat.PNG,
@@ -304,7 +304,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_info_geo_json(...)")
-        response = client.tiler.get_info_geo_json(
+        response = client.data.get_info_geo_json(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id, assets=["image"]
         )
 
@@ -343,7 +343,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: list_statistics(...)")
-        response = client.tiler.list_statistics(
+        response = client.data.list_statistics(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id, assets=["image"]
         )
 
@@ -380,7 +380,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_wmts_capabilities(...)")
-        response = client.tiler.get_wmts_capabilities(
+        response = client.data.get_wmts_capabilities(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             tile_matrix_set_id="WebMercatorQuad",
@@ -428,7 +428,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: get_asset_statistics(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}', assets=['image'])"
         )
-        response = client.tiler.get_asset_statistics(
+        response = client.data.get_asset_statistics(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id, assets=["image"]
         )
 
@@ -467,7 +467,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: crop_geo_json(...)")
-        response = client.tiler.crop_geo_json(
+        response = client.data.crop_geo_json(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             body=geojson_feature,
@@ -513,7 +513,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: crop_geo_json_with_dimensions(...)")
-        response = client.tiler.crop_geo_json_with_dimensions(
+        response = client.data.crop_geo_json_with_dimensions(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             width=256,
@@ -561,7 +561,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: get_geo_json_statistics(...)")
-        response = client.tiler.get_geo_json_statistics(
+        response = client.data.get_geo_json_statistics(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             body=geojson_feature,
@@ -588,7 +588,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_part(...)")
-        response = client.tiler.get_part(
+        response = client.data.get_part(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             minx=bounds[0],
@@ -625,7 +625,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_part_with_dimensions(...)")
-        response = client.tiler.get_part_with_dimensions(
+        response = client.data.get_part_with_dimensions(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             minx=bounds[0],
@@ -662,7 +662,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_point(...)")
-        response = client.tiler.get_point(
+        response = client.data.get_point(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             longitude=point[0],
@@ -690,7 +690,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_preview_with_format(...)")
-        response = client.tiler.get_preview_with_format(
+        response = client.data.get_preview_with_format(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             format=TilerImageFormat.JPEG,
@@ -721,7 +721,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_tile_json(...)")
-        response = client.tiler.get_tile_json(
+        response = client.data.get_tile_json(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             tile_matrix_set_id="WebMercatorQuad",
@@ -752,7 +752,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_tile(...)")
-        response = client.tiler.get_tile(
+        response = client.data.get_tile(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             tile_matrix_set_id="WebMercatorQuad",
@@ -794,7 +794,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_item_asset_details(...)")
-        response = client.tiler.get_item_asset_details(
+        response = client.data.get_item_asset_details(
             collection_id=planetarycomputer_collection_id, item_id=planetarycomputer_item_id, assets=["image"]
         )
 

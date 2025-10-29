@@ -10,7 +10,7 @@ import io
 import logging
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import ColorMapNames
 
 # Set up test logger
@@ -30,7 +30,7 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerMapLegends(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerMapLegends(PlanetaryComputerProClientTestBase):
     """Test suite for Map Legend operations."""
 
     @PlanetaryComputerPreparer()
@@ -53,7 +53,7 @@ class TestPlanetaryComputerMapLegends(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info(f"Calling: get_class_map_legend(classmap_name={ColorMapNames.MTBS_SEVERITY})")
-        response = client.tiler.get_class_map_legend(
+        response = client.data.get_class_map_legend(
             classmap_name=ColorMapNames.MTBS_SEVERITY,
         )
 
@@ -112,7 +112,7 @@ class TestPlanetaryComputerMapLegends(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info(f"Calling: get_interval_legend(classmap_name={ColorMapNames.MODIS64_A1})")
-        response = client.tiler.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
+        response = client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -178,7 +178,7 @@ class TestPlanetaryComputerMapLegends(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_legend(color_map_name='rdylgn')")
-        response = client.tiler.get_legend(color_map_name="rdylgn")
+        response = client.data.get_legend(color_map_name="rdylgn")
 
         test_logger.info(f"Response type: {type(response)}")
 
@@ -241,7 +241,7 @@ class TestPlanetaryComputerMapLegends(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_legend(color_map_name='viridis')")
-        response = client.tiler.get_legend(color_map_name="viridis")
+        response = client.data.get_legend(color_map_name="viridis")
 
         test_logger.info(f"Response type: {type(response)}")
 
@@ -292,7 +292,7 @@ class TestPlanetaryComputerMapLegends(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info(f"Calling: get_class_map_legend(classmap_name={ColorMapNames.MTBS_SEVERITY})")
-        response = client.tiler.get_class_map_legend(
+        response = client.data.get_class_map_legend(
             classmap_name=ColorMapNames.MTBS_SEVERITY,
         )
 

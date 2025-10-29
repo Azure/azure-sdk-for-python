@@ -13,7 +13,7 @@ from urllib.request import urlopen
 from datetime import datetime, timedelta, timezone
 import re
 from devtools_testutils import recorded_by_proxy, is_live
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import SharedAccessSignatureToken, SharedAccessSignatureSignedLink
 
 # Set up test logger
@@ -33,7 +33,7 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerProClientTestBase):
     """Test suite for Shared Access Signature operations."""
 
     @PlanetaryComputerPreparer()

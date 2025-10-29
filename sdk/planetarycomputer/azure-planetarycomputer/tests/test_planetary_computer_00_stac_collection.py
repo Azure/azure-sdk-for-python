@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,7 +13,7 @@ import time
 import datetime
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy, is_live
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import (
     PartitionTypeScheme,
 )
@@ -34,7 +35,7 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerStacCollection(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
     """Test suite for STAC Collection operations."""
 
     @PlanetaryComputerPreparer()

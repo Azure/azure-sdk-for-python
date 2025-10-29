@@ -32,7 +32,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import PlanetaryComputerClientConfiguration
+from .._configuration import PlanetaryComputerProClientConfiguration
 from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
@@ -1458,7 +1458,7 @@ def build_stac_search_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_tile_matrix_definitions_request(  # pylint: disable=name-too-long
+def build_data_get_tile_matrix_definitions_request(  # pylint: disable=name-too-long
     tile_matrix_set_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1484,7 +1484,7 @@ def build_tiler_get_tile_matrix_definitions_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_list_tile_matrices_request(**kwargs: Any) -> HttpRequest:
+def build_data_list_tile_matrices_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1503,7 +1503,7 @@ def build_tiler_list_tile_matrices_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_asset_statistics_request(
+def build_data_get_asset_statistics_request(
     collection_id: str,
     item_id: str,
     *,
@@ -1572,9 +1572,7 @@ def build_tiler_get_asset_statistics_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_list_available_assets_request(  # pylint: disable=name-too-long
-    collection_id: str, item_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_data_list_available_assets_request(collection_id: str, item_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1599,7 +1597,7 @@ def build_tiler_list_available_assets_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_bounds_request(collection_id: str, item_id: str, **kwargs: Any) -> HttpRequest:
+def build_data_get_bounds_request(collection_id: str, item_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1624,7 +1622,7 @@ def build_tiler_get_bounds_request(collection_id: str, item_id: str, **kwargs: A
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_crop_geo_json_request(
+def build_data_crop_geo_json_request(
     collection_id: str,
     item_id: str,
     format: str,
@@ -1714,7 +1712,7 @@ def build_tiler_crop_geo_json_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-too-long
+def build_data_crop_geo_json_with_dimensions_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     width: int,
@@ -1802,7 +1800,7 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_geo_json_statistics_request(  # pylint: disable=name-too-long
+def build_data_get_geo_json_statistics_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     *,
@@ -1877,7 +1875,7 @@ def build_tiler_get_geo_json_statistics_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_info_geo_json_request(
+def build_data_get_info_geo_json_request(
     collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1906,7 +1904,7 @@ def build_tiler_get_info_geo_json_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_item_asset_details_request(  # pylint: disable=name-too-long
+def build_data_get_item_asset_details_request(  # pylint: disable=name-too-long
     collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1935,7 +1933,7 @@ def build_tiler_get_item_asset_details_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_part_request(
+def build_data_get_part_request(
     collection_id: str,
     item_id: str,
     minx: float,
@@ -2033,7 +2031,7 @@ def build_tiler_get_part_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-long
+def build_data_get_part_with_dimensions_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     minx: float,
@@ -2129,7 +2127,7 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_point_request(
+def build_data_get_point_request(
     collection_id: str,
     item_id: str,
     longitude: float,
@@ -2187,7 +2185,7 @@ def build_tiler_get_point_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_preview_request(
+def build_data_get_preview_request(
     collection_id: str,
     item_id: str,
     *,
@@ -2275,7 +2273,7 @@ def build_tiler_get_preview_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-long
+def build_data_get_preview_with_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     format: str,
@@ -2362,7 +2360,7 @@ def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_create_static_image_request(collection_id: str, **kwargs: Any) -> HttpRequest:
+def build_data_create_static_image_request(collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2389,7 +2387,7 @@ def build_tiler_create_static_image_request(collection_id: str, **kwargs: Any) -
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_static_image_request(collection_id: str, id: str, **kwargs: Any) -> HttpRequest:
+def build_data_get_static_image_request(collection_id: str, id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2414,7 +2412,7 @@ def build_tiler_get_static_image_request(collection_id: str, id: str, **kwargs: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_list_statistics_request(
+def build_data_list_statistics_request(
     collection_id: str,
     item_id: str,
     *,
@@ -2483,7 +2481,7 @@ def build_tiler_list_statistics_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_tile_json_request(
+def build_data_get_tile_json_request(
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2572,7 +2570,7 @@ def build_tiler_get_tile_json_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_tile_request(
+def build_data_get_tile_request(
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2666,7 +2664,7 @@ def build_tiler_get_tile_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
+def build_data_get_wmts_capabilities_request(
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2755,7 +2753,7 @@ def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_class_map_legend_request(
+def build_data_get_class_map_legend_request(
     classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2785,7 +2783,7 @@ def build_tiler_get_class_map_legend_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_interval_legend_request(
+def build_data_get_interval_legend_request(
     classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2815,7 +2813,7 @@ def build_tiler_get_interval_legend_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_legend_request(
+def build_data_get_legend_request(
     color_map_name: str,
     *,
     height: Optional[float] = None,
@@ -2855,7 +2853,7 @@ def build_tiler_get_legend_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_mosaics_assets_for_point_request(  # pylint: disable=name-too-long
+def build_data_get_mosaics_assets_for_point_request(  # pylint: disable=name-too-long
     search_id: str,
     longitude: float,
     latitude: float,
@@ -2905,7 +2903,7 @@ def build_tiler_get_mosaics_assets_for_point_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too-long
+def build_data_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -2958,7 +2956,7 @@ def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_mosaics_search_info_request(  # pylint: disable=name-too-long
+def build_data_get_mosaics_search_info_request(  # pylint: disable=name-too-long
     search_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2984,7 +2982,7 @@ def build_tiler_get_mosaics_search_info_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_data_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -3006,7 +3004,7 @@ def build_tiler_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
+def build_data_get_mosaics_tile_json_request(
     search_id: str,
     tile_matrix_set_id: str,
     *,
@@ -3114,7 +3112,7 @@ def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_mosaics_tile_request(
+def build_data_get_mosaics_tile_request(
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -3221,7 +3219,7 @@ def build_tiler_get_mosaics_tile_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-too-long
+def build_data_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     *,
@@ -3383,14 +3381,16 @@ class IngestionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerProClient`'s
         :attr:`ingestion` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlanetaryComputerProClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4990,14 +4990,16 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerProClient`'s
         :attr:`stac` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlanetaryComputerProClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9021,20 +9023,22 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class TilerOperations:  # pylint: disable=too-many-public-methods
+class DataOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
-        :attr:`tiler` attribute.
+        :class:`~azure.planetarycomputer.PlanetaryComputerProClient`'s
+        :attr:`data` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlanetaryComputerProClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9063,7 +9067,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileMatrixSet] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_tile_matrix_definitions_request(
+        _request = build_data_get_tile_matrix_definitions_request(
             tile_matrix_set_id=tile_matrix_set_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9123,7 +9127,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_list_tile_matrices_request(
+        _request = build_data_list_tile_matrices_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -9255,7 +9259,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[dict[str, dict[str, _models.BandStatistics]]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_asset_statistics_request(
+        _request = build_data_get_asset_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -9333,7 +9337,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_list_available_assets_request(
+        _request = build_data_list_available_assets_request(
             collection_id=collection_id,
             item_id=item_id,
             api_version=self._config.api_version,
@@ -9398,7 +9402,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.StacItemBounds] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_bounds_request(
+        _request = build_data_get_bounds_request(
             collection_id=collection_id,
             item_id=item_id,
             api_version=self._config.api_version,
@@ -9941,7 +9945,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_crop_geo_json_request(
+        _request = build_data_crop_geo_json_request(
             collection_id=collection_id,
             item_id=item_id,
             format=format,
@@ -10511,7 +10515,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_crop_geo_json_with_dimensions_request(
+        _request = build_data_crop_geo_json_with_dimensions_request(
             collection_id=collection_id,
             item_id=item_id,
             width=width,
@@ -10977,7 +10981,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_get_geo_json_statistics_request(
+        _request = build_data_get_geo_json_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -11062,7 +11066,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TilerInfoGeoJsonFeature] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_info_geo_json_request(
+        _request = build_data_get_info_geo_json_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -11132,7 +11136,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[dict[str, _models.TilerInfo]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_item_asset_details_request(
+        _request = build_data_get_item_asset_details_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -11313,7 +11317,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_part_request(
+        _request = build_data_get_part_request(
             collection_id=collection_id,
             item_id=item_id,
             minx=minx,
@@ -11523,7 +11527,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_part_with_dimensions_request(
+        _request = build_data_get_part_with_dimensions_request(
             collection_id=collection_id,
             item_id=item_id,
             minx=minx,
@@ -11658,7 +11662,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TilerCoreModelsResponsesPoint] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_point_request(
+        _request = build_data_get_point_request(
             collection_id=collection_id,
             item_id=item_id,
             longitude=longitude,
@@ -11833,7 +11837,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_preview_request(
+        _request = build_data_get_preview_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -12022,7 +12026,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_preview_with_format_request(
+        _request = build_data_get_preview_with_format_request(
             collection_id=collection_id,
             item_id=item_id,
             format=format,
@@ -12188,7 +12192,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_create_static_image_request(
+        _request = build_data_create_static_image_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -12254,7 +12258,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_static_image_request(
+        _request = build_data_get_static_image_request(
             collection_id=collection_id,
             id=id,
             api_version=self._config.api_version,
@@ -12388,7 +12392,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TilerStacItemStatistics] = kwargs.pop("cls", None)
 
-        _request = build_tiler_list_statistics_request(
+        _request = build_data_list_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -12574,7 +12578,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_tile_json_request(
+        _request = build_data_get_tile_json_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -12776,7 +12780,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_tile_request(
+        _request = build_data_get_tile_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -12976,7 +12980,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_wmts_capabilities_request(
+        _request = build_data_get_wmts_capabilities_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -13065,7 +13069,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_class_map_legend_request(
+        _request = build_data_get_class_map_legend_request(
             classmap_name=classmap_name,
             trim_start=trim_start,
             trim_end=trim_end,
@@ -13135,7 +13139,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[List["_types.IntervalLegendsElement"]]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_interval_legend_request(
+        _request = build_data_get_interval_legend_request(
             classmap_name=classmap_name,
             trim_start=trim_start,
             trim_end=trim_end,
@@ -13222,7 +13226,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_legend_request(
+        _request = build_data_get_legend_request(
             color_map_name=color_map_name,
             height=height,
             width=width,
@@ -13324,7 +13328,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[_models.StacItemPointAsset]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_assets_for_point_request(
+        _request = build_data_get_mosaics_assets_for_point_request(
             search_id=search_id,
             longitude=longitude,
             latitude=latitude,
@@ -13438,7 +13442,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[Any]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_assets_for_tile_request(
+        _request = build_data_get_mosaics_assets_for_tile_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -13511,7 +13515,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TilerStacSearchRegistration] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_search_info_request(
+        _request = build_data_get_mosaics_search_info_request(
             search_id=search_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -13727,7 +13731,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_register_mosaics_search_request(
+        _request = build_data_register_mosaics_search_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -13925,7 +13929,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_tile_json_request(
+        _request = build_data_get_mosaics_tile_json_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
@@ -14151,7 +14155,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_tile_request(
+        _request = build_data_get_mosaics_tile_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -14352,7 +14356,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_wmts_capabilities_request(
+        _request = build_data_get_mosaics_wmts_capabilities_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
@@ -14416,14 +14420,16 @@ class SharedAccessSignatureOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
+        :class:`~azure.planetarycomputer.PlanetaryComputerProClient`'s
         :attr:`shared_access_signature` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: PlanetaryComputerProClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

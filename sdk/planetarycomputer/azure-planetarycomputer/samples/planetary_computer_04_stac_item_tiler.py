@@ -19,7 +19,7 @@ USAGE:
 """
 
 import os
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import TilerImageFormat, Polygon, Feature, FeatureType
 
@@ -70,7 +70,9 @@ def get_item_asset_details(client, collection_id, item_id):
     """
 
     # Get info for specific assets
-    result_specific = client.tiler.get_item_asset_details(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result_specific = client.tiler.get_item_asset_details(
+        collection_id=collection_id, item_id=item_id, assets=["image"]
+    )
     logging.info("Assets info (image asset only):")
     logging.info(f"  Dataset: {result_specific}")
 
@@ -271,7 +273,7 @@ def main():
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
     item_id = "ga_m_3308421_se_16_060_20211114"
 
-    client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Define geometry for operations
     geometry = Polygon(

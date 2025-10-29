@@ -15,22 +15,22 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import PlanetaryComputerClientConfiguration
-from .operations import IngestionOperations, SharedAccessSignatureOperations, StacOperations, TilerOperations
+from ._configuration import PlanetaryComputerProClientConfiguration
+from .operations import DataOperations, IngestionOperations, SharedAccessSignatureOperations, StacOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PlanetaryComputerClient:
-    """PlanetaryComputerClient.
+class PlanetaryComputerProClient:
+    """PlanetaryComputerProClient.
 
     :ivar ingestion: IngestionOperations operations
     :vartype ingestion: azure.planetarycomputer.aio.operations.IngestionOperations
     :ivar stac: StacOperations operations
     :vartype stac: azure.planetarycomputer.aio.operations.StacOperations
-    :ivar tiler: TilerOperations operations
-    :vartype tiler: azure.planetarycomputer.aio.operations.TilerOperations
+    :ivar data: DataOperations operations
+    :vartype data: azure.planetarycomputer.aio.operations.DataOperations
     :ivar shared_access_signature: SharedAccessSignatureOperations operations
     :vartype shared_access_signature:
      azure.planetarycomputer.aio.operations.SharedAccessSignatureOperations
@@ -48,7 +48,7 @@ class PlanetaryComputerClient:
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = PlanetaryComputerClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = PlanetaryComputerProClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -74,7 +74,7 @@ class PlanetaryComputerClient:
         self._serialize.client_side_validation = False
         self.ingestion = IngestionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.stac = StacOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tiler = TilerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data = DataOperations(self._client, self._config, self._serialize, self._deserialize)
         self.shared_access_signature = SharedAccessSignatureOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

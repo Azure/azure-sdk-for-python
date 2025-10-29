@@ -29,7 +29,7 @@ USAGE:
 import os
 import json
 import time
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import (
     StacSearchParameters,
@@ -380,7 +380,7 @@ def main():
 
     # Create client
     credential = DefaultAzureCredential()
-    client = PlanetaryComputerClient(endpoint=endpoint, credential=credential, logging_enable=False)
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential, logging_enable=False)
 
     # Execute STAC specification operations
     get_landing_page(client)

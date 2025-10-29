@@ -17,7 +17,7 @@ USAGE:
 """
 
 import os
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import ColorMapNames
 
@@ -61,7 +61,7 @@ def main():
     if not endpoint:
         raise ValueError("PLANETARYCOMPUTER_ENDPOINT environment variable must be set")
 
-    client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     get_class_map_legend(client)
     get_interval_legend(client)

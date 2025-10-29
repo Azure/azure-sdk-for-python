@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import (
     ManagedIdentityConnection,
     ManagedIdentityIngestionSource,
@@ -39,7 +39,7 @@ file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelnam
 logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBase):
     """Test class for Planetary Computer ingestion management operations."""
 
     @PlanetaryComputerPreparer()
@@ -719,9 +719,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             id=source_id, connection_info=sas_connection_info
         )
 
-        first_result = client.ingestion.replace_source(
-            id=source_id, body=sas_ingestion_source_for_replace
-        )
+        first_result = client.ingestion.replace_source(id=source_id, body=sas_ingestion_source_for_replace)
         logger.info(f"First call result: {first_result.id}")
 
         # Step 3: Second call to create_or_replace_source - replaces again with updated token
@@ -735,9 +733,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             id=source_id, connection_info=updated_connection_info
         )
 
-        second_result = client.ingestion.replace_source(
-            id=source_id, body=updated_ingestion_source
-        )
+        second_result = client.ingestion.replace_source(id=source_id, body=updated_ingestion_source)
 
         logger.info("Second create_or_replace result (replacement):")
         logger.info(f"  - Response type: {type(second_result)}")
@@ -771,9 +767,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
             skip_existing_items=True,
         )
 
-        client.ingestion.create(
-            collection_id=planetarycomputer_collection_id, body=ingestion_definition
-        )
+        client.ingestion.create(collection_id=planetarycomputer_collection_id, body=ingestion_definition)
 
         logger.info("Created ingestion")
 
@@ -881,9 +875,7 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerClientTestBase):
 
         # List runs
         runs = list(
-            client.ingestion.list_runs(
-                collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
-            )
+            client.ingestion.list_runs(collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id)
         )
 
         logger.info(f"Found {len(runs)} runs")

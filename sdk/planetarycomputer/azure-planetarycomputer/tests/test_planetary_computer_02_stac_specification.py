@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 import pytest
 from devtools_testutils import recorded_by_proxy, is_live
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.core.exceptions import HttpResponseError
 from azure.planetarycomputer.models import (
     StacSearchParameters,
@@ -38,7 +38,7 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerStacSpecification(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase):
     """Test class for STAC API specification operations."""
 
     @PlanetaryComputerPreparer()

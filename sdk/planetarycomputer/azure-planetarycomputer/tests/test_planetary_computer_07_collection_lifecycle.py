@@ -13,7 +13,7 @@ import time
 import pytest
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy, is_live
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import (
     StacExtensionSpatialExtent,
     StacCollectionTemporalExtent,
@@ -37,7 +37,7 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBase):
     """Test suite for STAC Collection lifecycle operations."""
 
     @PlanetaryComputerPreparer()
@@ -123,9 +123,7 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: create_or_replace_collection(collection_id='{test_collection_id}', body=collection)"
         )
-        updated_collection = client.stac.create_or_replace_collection(
-            collection_id=test_collection_id, body=collection
-        )
+        updated_collection = client.stac.create_or_replace_collection(collection_id=test_collection_id, body=collection)
 
         test_logger.info(f"Collection updated: {updated_collection}")
 

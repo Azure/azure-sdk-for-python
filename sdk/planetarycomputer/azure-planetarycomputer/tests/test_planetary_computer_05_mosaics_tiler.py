@@ -10,7 +10,7 @@ import io
 import logging
 from pathlib import Path
 from devtools_testutils import recorded_by_proxy
-from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPreparer
+from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
 from azure.planetarycomputer.models import (
     StacSearchParameters,
     FilterLanguage,
@@ -36,7 +36,7 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
     """Test suite for Mosaics Tiler operations."""
 
     @PlanetaryComputerPreparer()
@@ -73,7 +73,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         test_logger.info(f"Search request: {register_search_request}")
 
         test_logger.info("Calling: register_mosaics_search(...)")
-        response = client.tiler.register_mosaics_search(register_search_request)
+        response = client.data.register_mosaics_search(register_search_request)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -120,12 +120,12 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
-        register_response = client.tiler.register_mosaics_search(register_search_request)
+        register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
         test_logger.info(f"Registered search ID: {search_id}")
 
         test_logger.info(f"Calling: get_mosaics_search_info(search_id='{search_id}')")
-        response = client.tiler.get_mosaics_search_info(search_id=search_id)
+        response = client.data.get_mosaics_search_info(search_id=search_id)
 
         test_logger.info(f"Response type: {type(response)}")
         if hasattr(response, "as_dict"):
@@ -179,12 +179,12 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
-        register_response = client.tiler.register_mosaics_search(register_search_request)
+        register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_tile_json(...)")
-        response = client.tiler.get_mosaics_tile_json(
+        response = client.data.get_mosaics_tile_json(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             assets=["image"],
@@ -248,12 +248,12 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
-        register_response = client.tiler.register_mosaics_search(register_search_request)
+        register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_tile(...)")
-        response = client.tiler.get_mosaics_tile(
+        response = client.data.get_mosaics_tile(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             z=13,
@@ -329,12 +329,12 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
-        register_response = client.tiler.register_mosaics_search(register_search_request)
+        register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_wmts_capabilities(...)")
-        response = client.tiler.get_mosaics_wmts_capabilities(
+        response = client.data.get_mosaics_wmts_capabilities(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             tile_format=TilerImageFormat.PNG,
@@ -396,12 +396,12 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
-        register_response = client.tiler.register_mosaics_search(register_search_request)
+        register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_assets_for_point(...)")
-        response = client.tiler.get_mosaics_assets_for_point(
+        response = client.data.get_mosaics_assets_for_point(
             search_id=search_id,
             longitude=-84.43202751899601,
             latitude=33.639647639722273,
@@ -472,12 +472,12 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             filter_lang=FilterLanguage.CQL2_JSON,
             sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
         )
-        register_response = client.tiler.register_mosaics_search(register_search_request)
+        register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_assets_for_tile(...)")
-        response = client.tiler.get_mosaics_assets_for_tile(
+        response = client.data.get_mosaics_assets_for_tile(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             z=13,
@@ -564,7 +564,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         )
 
         test_logger.info("Calling: create_static_image(...)")
-        response = client.tiler.create_static_image(collection_id=planetarycomputer_collection_id, body=image_request)
+        response = client.data.create_static_image(collection_id=planetarycomputer_collection_id, body=image_request)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -633,7 +633,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
             show_branding=False,
         )
 
-        create_response = client.tiler.create_static_image(
+        create_response = client.data.create_static_image(
             collection_id=planetarycomputer_collection_id, body=image_request
         )
 
@@ -653,7 +653,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerClientTestBase):
         test_logger.info(
             f"Calling: get_static_image(collection_id='{planetarycomputer_collection_id}', id='{image_id}')"
         )
-        image_data = client.tiler.get_static_image(collection_id=planetarycomputer_collection_id, id=image_id)
+        image_data = client.data.get_static_image(collection_id=planetarycomputer_collection_id, id=image_id)
 
         test_logger.info(f"Image data type: {type(image_data)}")
 

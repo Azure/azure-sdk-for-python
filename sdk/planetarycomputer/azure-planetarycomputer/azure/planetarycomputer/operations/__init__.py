@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 from ._operations import IngestionOperations  # type: ignore
 from ._operations import StacOperations  # type: ignore
-from ._operations import TilerOperations  # type: ignore
+from ._operations import DataOperations  # type: ignore
 from ._operations import SharedAccessSignatureOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -24,7 +24,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "IngestionOperations",
     "StacOperations",
-    "TilerOperations",
+    "DataOperations",
     "SharedAccessSignatureOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

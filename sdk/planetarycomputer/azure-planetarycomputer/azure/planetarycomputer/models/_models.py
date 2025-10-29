@@ -72,40 +72,38 @@ class AssetMetadata(_Model):
 class BandStatistics(_Model):
     """Statistical information about a data band.
 
-       :ivar minimum: Minimum value in the band. Required.
-       :vartype minimum: float
-       :ivar maximum: Maximum value in the band. Required.
-       :vartype maximum: float
-       :ivar mean: Mean value of the band. Required.
-       :vartype mean: float
-       :ivar count: Count of pixels in the band. Required.
-       :vartype count: float
-       :ivar sum: Sum of all pixel values in the band. Required.
-       :vartype sum: float
-       :ivar std: Standard deviation of pixel values in the band. Required.
-       :vartype std: float
-       :ivar median: Median value of the band. Required.
-       :vartype median: float
-       :ivar majority: Most common value in the band. Required.
-       :vartype majority: float
-       :ivar minority: Least common value in the band. Required.
-       :vartype minority: float
-       :ivar unique: Count of unique values in the band. Required.
-       :vartype unique: float
-       :ivar histogram: Histogram of pixel values in the band. Required.
-       :vartype histogram: list[list[float]]
-       :ivar valid_percent: Percentage of valid (non-masked) pixels. Required.
-       :vartype valid_percent: float
-       :ivar masked_pixels: Count of masked pixels in the band. Required.
-       :vartype masked_pixels: float
-       :ivar valid_pixels: Count of valid (non-masked) pixels in the band. Required.
-       :vartype valid_pixels: float
-       :ivar percentile2: Percentile 2
-    The 2nd percentile value. Required.
-       :vartype percentile2: float
-       :ivar percentile98: Percentile 98
-    The 98th percentile value. Required.
-       :vartype percentile98: float
+    :ivar minimum: Minimum value in the band. Required.
+    :vartype minimum: float
+    :ivar maximum: Maximum value in the band. Required.
+    :vartype maximum: float
+    :ivar mean: Mean value of the band. Required.
+    :vartype mean: float
+    :ivar count: Count of pixels in the band. Required.
+    :vartype count: float
+    :ivar sum: Sum of all pixel values in the band. Required.
+    :vartype sum: float
+    :ivar std: Standard deviation of pixel values in the band. Required.
+    :vartype std: float
+    :ivar median: Median value of the band. Required.
+    :vartype median: float
+    :ivar majority: Most common value in the band. Required.
+    :vartype majority: float
+    :ivar minority: Least common value in the band. Required.
+    :vartype minority: float
+    :ivar unique: Count of unique values in the band. Required.
+    :vartype unique: float
+    :ivar histogram: Histogram of pixel values in the band. Required.
+    :vartype histogram: list[list[float]]
+    :ivar valid_percent: Percentage of valid (non-masked) pixels. Required.
+    :vartype valid_percent: float
+    :ivar masked_pixels: Count of masked pixels in the band. Required.
+    :vartype masked_pixels: float
+    :ivar valid_pixels: Count of valid (non-masked) pixels in the band. Required.
+    :vartype valid_pixels: float
+    :ivar percentile2: The 2nd percentile value. Required.
+    :vartype percentile2: float
+    :ivar percentile98: The 98th percentile value. Required.
+    :vartype percentile98: float
     """
 
     minimum: float = rest_field(name="min", visibility=["read", "create", "update", "delete", "query"])
@@ -137,11 +135,9 @@ class BandStatistics(_Model):
     valid_pixels: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Count of valid (non-masked) pixels in the band. Required."""
     percentile2: float = rest_field(name="percentile_2", visibility=["read", "create", "update", "delete", "query"])
-    """Percentile 2
- The 2nd percentile value. Required."""
+    """The 2nd percentile value. Required."""
     percentile98: float = rest_field(name="percentile_98", visibility=["read", "create", "update", "delete", "query"])
-    """Percentile 98
- The 98th percentile value. Required."""
+    """The 98th percentile value. Required."""
 
     @overload
     def __init__(
@@ -1301,25 +1297,24 @@ class RenderOption(_Model):
        :ivar name: Short descriptive name for the render option. Required.
        :vartype name: str
        :ivar description: A longer description of the render option that can be used to explain its
-    content.
+        content.
        :vartype description: str
        :ivar type: The type of rendering to apply (raster or vector). Known values are: "raster-tile",
         "vt-polygon", and "vt-line".
        :vartype type: str or ~azure.planetarycomputer.models.RenderOptionType
        :ivar options: A URL query-string encoded string of TiTiler rendering options. Valid only for
-    ``raster-tile`` types.
+        ``raster-tile`` types.
     See `Query Parameters <https://developmentseed.org/titiler/endpoints/cog/#description>`_.
        :vartype options: str
-       :ivar vector_options: Options for rendering vector tiles. Valid only for ``vt-polygon``  and
-        ``vt-line``
-    types.
+       :ivar vector_options: Options for rendering vector tiles. Valid only for ``vt-polygon`` and
+        ``vt-line`` types.
        :vartype vector_options: ~azure.planetarycomputer.models.RenderOptionVectorOptions
        :ivar min_zoom: Minimum zoom level at which to display this layer.
        :vartype min_zoom: int
        :ivar legend: Legend configuration for this render option.
        :vartype legend: ~azure.planetarycomputer.models.RenderOptionLegend
        :ivar conditions: A list of property/value conditions that must be in the active mosaic CQL for
-    this render option to be enabled.
+        this render option to be enabled.
        :vartype conditions: list[~azure.planetarycomputer.models.RenderOptionCondition]
     """
 
@@ -1328,22 +1323,20 @@ class RenderOption(_Model):
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Short descriptive name for the render option. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A longer description of the render option that can be used to explain its
- content."""
+    """A longer description of the render option that can be used to explain its content."""
     type: Optional[Union[str, "_models.RenderOptionType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of rendering to apply (raster or vector). Known values are: \"raster-tile\",
      \"vt-polygon\", and \"vt-line\"."""
     options: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A URL query-string encoded string of TiTiler rendering options. Valid only for
- ``raster-tile`` types.
+    """A URL query-string encoded string of TiTiler rendering options. Valid only for ``raster-tile``
+     types.
  See `Query Parameters <https://developmentseed.org/titiler/endpoints/cog/#description>`_."""
     vector_options: Optional["_models.RenderOptionVectorOptions"] = rest_field(
         name="vectorOptions", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Options for rendering vector tiles. Valid only for ``vt-polygon``  and ``vt-line``
- types."""
+    """Options for rendering vector tiles. Valid only for ``vt-polygon`` and ``vt-line`` types."""
     min_zoom: Optional[int] = rest_field(name="minZoom", visibility=["read", "create", "update", "delete", "query"])
     """Minimum zoom level at which to display this layer."""
     legend: Optional["_models.RenderOptionLegend"] = rest_field(
@@ -1353,8 +1346,8 @@ class RenderOption(_Model):
     conditions: Optional[list["_models.RenderOptionCondition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """A list of property/value conditions that must be in the active mosaic CQL for
- this render option to be enabled."""
+    """A list of property/value conditions that must be in the active mosaic CQL for this render
+     option to be enabled."""
 
     @overload
     def __init__(
@@ -1418,51 +1411,41 @@ class RenderOptionCondition(_Model):
 class RenderOptionLegend(_Model):
     """Configuration for generating a data legend.
 
-       :ivar type: Legend type to make,
-    one of: ``continuous``,
-    ``classmap``,
-    ``interval`` or ``none``
-    (note, ``none`` is a string literal). Known values are: "continuous", "classmap", "interval",
-        and "none".
-       :vartype type: str or ~azure.planetarycomputer.models.LegendConfigType
-       :ivar labels: Text labels to display on the legend.
-       :vartype labels: list[str]
-       :ivar trim_start: The number of items to trim from the start of the legend definition. Used if
-    there are values important for rendering (e.g. nodata) that aren't desirable in
-    the legend.
-       :vartype trim_start: int
-       :ivar trim_end: Number of items to trim from the end of the legend.
-       :vartype trim_end: int
-       :ivar scale_factor: A factor to multiply interval legend labels by. Useful for scaled rasters
-        whose
-    colormap definitions map to unscaled values, effectively showing legend labels
-    as scaled values.
-       :vartype scale_factor: float
+    :ivar type: Legend type to make, one of: ``continuous``, ``classmap``, ``interval`` or ``none``
+     (note, ``none`` is a string literal). Known values are: "continuous", "classmap", "interval",
+     and "none".
+    :vartype type: str or ~azure.planetarycomputer.models.LegendConfigType
+    :ivar labels: Text labels to display on the legend.
+    :vartype labels: list[str]
+    :ivar trim_start: The number of items to trim from the start of the legend definition. Used if
+     there are values important for rendering (e.g. nodata) that aren't desirable in the legend.
+    :vartype trim_start: int
+    :ivar trim_end: Number of items to trim from the end of the legend.
+    :vartype trim_end: int
+    :ivar scale_factor: A factor to multiply interval legend labels by. Useful for scaled rasters
+     whose colormap definitions map to unscaled values, effectively showing legend labels as scaled
+     values.
+    :vartype scale_factor: float
     """
 
     type: Optional[Union[str, "_models.LegendConfigType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Legend type to make,
- one of: ``continuous``,
- ``classmap``,
- ``interval`` or ``none``
- (note, ``none`` is a string literal). Known values are: \"continuous\", \"classmap\",
-     \"interval\", and \"none\"."""
+    """Legend type to make, one of: ``continuous``, ``classmap``, ``interval`` or ``none`` (note,
+     ``none`` is a string literal). Known values are: \"continuous\", \"classmap\", \"interval\",
+     and \"none\"."""
     labels: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text labels to display on the legend."""
     trim_start: Optional[int] = rest_field(name="trimStart", visibility=["read", "create", "update", "delete", "query"])
-    """The number of items to trim from the start of the legend definition. Used if
- there are values important for rendering (e.g. nodata) that aren't desirable in
- the legend."""
+    """The number of items to trim from the start of the legend definition. Used if there are values
+     important for rendering (e.g. nodata) that aren't desirable in the legend."""
     trim_end: Optional[int] = rest_field(name="trimEnd", visibility=["read", "create", "update", "delete", "query"])
     """Number of items to trim from the end of the legend."""
     scale_factor: Optional[float] = rest_field(
         name="scaleFactor", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A factor to multiply interval legend labels by. Useful for scaled rasters whose
- colormap definitions map to unscaled values, effectively showing legend labels
- as scaled values."""
+    """A factor to multiply interval legend labels by. Useful for scaled rasters whose colormap
+     definitions map to unscaled values, effectively showing legend labels as scaled values."""
 
     @overload
     def __init__(
@@ -2881,18 +2864,17 @@ class StacLink(_Model):
         :vartype hreflang: str
         :ivar length: The length of the linked resource.
         :vartype length: int
-        :ivar method: Specifies the HTTP method that the resource expects.
-     Default: GET. Is one of the following types: Literal["GET"], Literal["POST"], str
+        :ivar method: Specifies the HTTP method that the resource expects. Default: GET. Is one of the
+         following types: Literal["GET"], Literal["POST"], str
         :vartype method: str or str or str
-        :ivar headers: Object key-value pairs that map to headers.
-     Example: { "Accept": "application/json" }.
+        :ivar headers: Object key-value pairs that map to headers. Example: { "Accept":
+         "application/json" }.
         :vartype headers: dict[str, str]
         :ivar body: For POST requests, the resource can specify the HTTP body as a JSON object.
         :vartype body: dict[str, any]
         :ivar merge: Indicates whether the client is expected to merge the body value into the current
-         request body before following the link.
-     This is only valid when the server is responding to a POST request.
-     Default: false.
+         request body before following the link. This is only valid when the server is responding to a
+         POST request. Default: false.
         :vartype merge: bool
     """
 
@@ -2916,18 +2898,16 @@ class StacLink(_Model):
     method: Optional[Union[Literal["GET"], Literal["POST"], str]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the HTTP method that the resource expects.
- Default: GET. Is one of the following types: Literal[\"GET\"], Literal[\"POST\"], str"""
+    """Specifies the HTTP method that the resource expects. Default: GET. Is one of the following
+     types: Literal[\"GET\"], Literal[\"POST\"], str"""
     headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Object key-value pairs that map to headers.
- Example: { \"Accept\": \"application/json\" }."""
+    """Object key-value pairs that map to headers. Example: { \"Accept\": \"application/json\" }."""
     body: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """For POST requests, the resource can specify the HTTP body as a JSON object."""
     merge: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the client is expected to merge the body value into the current request body
-     before following the link.
- This is only valid when the server is responding to a POST request.
- Default: false."""
+     before following the link. This is only valid when the server is responding to a POST request.
+     Default: false."""
 
     @overload
     def __init__(
@@ -3143,48 +3123,46 @@ class StacQueryable(_Model):
 
 
 class StacSearchParameters(_Model):
-    """Search model.
-    *
-    Defines parameters for a STAC search POST request.
+    """Search model. Defines parameters for a STAC search POST request.
 
-        :ivar collections: List of collection IDs to search within.
-        :vartype collections: list[str]
-        :ivar ids: List of specific item IDs to return.
-        :vartype ids: list[str]
-        :ivar bounding_box: Bounding box for spatial filtering in format [west, south, east, north].
-        :vartype bounding_box: list[float]
-        :ivar intersects: GeoJSON geometry for spatial filtering.
-        :vartype intersects: ~azure.planetarycomputer.models.Geometry
-        :ivar date_time: Temporal filter in RFC 3339 format, can be a single time or range.
-        :vartype date_time: str
-        :ivar limit: Maximum number of results to return.
-        :vartype limit: int
-        :ivar conformance_class: Conf
-     Overrides datetime validation from the base request model.
-        :vartype conformance_class: dict[str, any]
-        :ivar sign: Whether to sign asset URLs in the response. Known values are: "true" and "false".
-        :vartype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
-        :ivar duration_in_minutes: URL signature duration in minutes.
-        :vartype duration_in_minutes: int
-        :ivar query: STAC Query
-     See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_.
-        :vartype query: dict[str, any]
-        :ivar sort_by: Sort criteria for the search results.
-     See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_.
-        :vartype sort_by: list[~azure.planetarycomputer.models.StacSortExtension]
-        :ivar fields: Specifies which fields to include or exclude in the STAC search results.
-     See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_.
-        :vartype fields: list[~azure.planetarycomputer.models.SearchOptionsFields]
-        :ivar filter: CQL2 Filter
-     See the `STAC Filter Extension <https://github.com/stac-api-extensions/filter>`_.
-        :vartype filter: dict[str, any]
-        :ivar filter_coordinate_reference_system: Coordinate reference system for the filter.
-        :vartype filter_coordinate_reference_system: str
-        :ivar filter_lang: Filter language to use for the filter expression. Known values are:
-         "cql-json", "cql2-json", and "cql2-text".
-        :vartype filter_lang: str or ~azure.planetarycomputer.models.FilterLanguage
-        :ivar token: Pagination token for fetching the next set of results.
-        :vartype token: str
+       :ivar collections: List of collection IDs to search within.
+       :vartype collections: list[str]
+       :ivar ids: List of specific item IDs to return.
+       :vartype ids: list[str]
+       :ivar bounding_box: Bounding box for spatial filtering in format [west, south, east, north].
+       :vartype bounding_box: list[float]
+       :ivar intersects: GeoJSON geometry for spatial filtering.
+       :vartype intersects: ~azure.planetarycomputer.models.Geometry
+       :ivar date_time: Temporal filter in RFC 3339 format, can be a single time or range.
+       :vartype date_time: str
+       :ivar limit: Maximum number of results to return.
+       :vartype limit: int
+       :ivar conformance_class: Conf
+    Overrides datetime validation from the base request model.
+       :vartype conformance_class: dict[str, any]
+       :ivar sign: Whether to sign asset URLs in the response. Known values are: "true" and "false".
+       :vartype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+       :ivar duration_in_minutes: URL signature duration in minutes.
+       :vartype duration_in_minutes: int
+       :ivar query: STAC Query
+    See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_.
+       :vartype query: dict[str, any]
+       :ivar sort_by: Sort criteria for the search results.
+    See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_.
+       :vartype sort_by: list[~azure.planetarycomputer.models.StacSortExtension]
+       :ivar fields: Specifies which fields to include or exclude in the STAC search results.
+    See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_.
+       :vartype fields: list[~azure.planetarycomputer.models.SearchOptionsFields]
+       :ivar filter: CQL2 Filter
+    See the `STAC Filter Extension <https://github.com/stac-api-extensions/filter>`_.
+       :vartype filter: dict[str, any]
+       :ivar filter_coordinate_reference_system: Coordinate reference system for the filter.
+       :vartype filter_coordinate_reference_system: str
+       :ivar filter_lang: Filter language to use for the filter expression. Known values are:
+        "cql-json", "cql2-json", and "cql2-text".
+       :vartype filter_lang: str or ~azure.planetarycomputer.models.FilterLanguage
+       :ivar token: Pagination token for fetching the next set of results.
+       :vartype token: str
     """
 
     collections: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3430,7 +3408,7 @@ class TileMatrix(_Model):
         :ivar description: Human-readable description of this tile matrix level.
         :vartype description: str
         :ivar keywords: Unordered list of one or more commonly used or formalized word(s) or phrase(s)
-     used to describe this dataset.
+         used to describe this dataset.
         :vartype keywords: list[str]
         :ivar id: Unique identifier for this tile matrix level, often the zoom level. Required.
         :vartype id: str
@@ -3440,15 +3418,12 @@ class TileMatrix(_Model):
         :ivar cell_size: Size of a pixel in map units at this tile matrix level. Required.
         :vartype cell_size: float
         :ivar corner_of_origin: The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the
-         origin
-     for numbering tile rows and columns. This corner is also a corner of the (0, 0)
-     tile. Known values are: "topLeft" and "bottomLeft".
+         origin for numbering tile rows and columns. This corner is also a corner of the (0, 0) tile.
+         Known values are: "topLeft" and "bottomLeft".
         :vartype corner_of_origin: str or ~azure.planetarycomputer.models.TileMatrixCornerOfOrigin
         :ivar point_of_origin: Precise position in CRS coordinates of the corner of origin (e.g. the
-         top-left
-     corner) for this tile matrix. This position is also a corner of the (0, 0)
-     tile. In previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did
-     not exist. Required.
+         top-left corner) for this tile matrix. This position is also a corner of the (0, 0) tile. In
+         previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did not exist. Required.
         :vartype point_of_origin: list[float]
         :ivar tile_width: Pixel width of each tile at this level. Required.
         :vartype tile_width: int
@@ -3470,8 +3445,8 @@ class TileMatrix(_Model):
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable description of this tile matrix level."""
     keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unordered list of one or more commonly used or formalized word(s) or phrase(s)
- used to describe this dataset."""
+    """Unordered list of one or more commonly used or formalized word(s) or phrase(s) used to describe
+     this dataset."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for this tile matrix level, often the zoom level. Required."""
     scale_denominator: float = rest_field(
@@ -3483,16 +3458,15 @@ class TileMatrix(_Model):
     corner_of_origin: Optional[Union[str, "_models.TileMatrixCornerOfOrigin"]] = rest_field(
         name="cornerOfOrigin", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the origin
- for numbering tile rows and columns. This corner is also a corner of the (0, 0)
- tile. Known values are: \"topLeft\" and \"bottomLeft\"."""
+    """The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the origin for numbering tile
+     rows and columns. This corner is also a corner of the (0, 0) tile. Known values are:
+     \"topLeft\" and \"bottomLeft\"."""
     point_of_origin: list[float] = rest_field(
         name="pointOfOrigin", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Precise position in CRS coordinates of the corner of origin (e.g. the top-left
- corner) for this tile matrix. This position is also a corner of the (0, 0)
- tile. In previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did
- not exist. Required."""
+    """Precise position in CRS coordinates of the corner of origin (e.g. the top-left corner) for this
+     tile matrix. This position is also a corner of the (0, 0) tile. In previous version, this was
+     'topLeftCorner' and 'cornerOfOrigin' did not exist. Required."""
     tile_width: int = rest_field(name="tileWidth", visibility=["read", "create", "update", "delete", "query"])
     """Pixel width of each tile at this level. Required."""
     tile_height: int = rest_field(name="tileHeight", visibility=["read", "create", "update", "delete", "query"])
@@ -3551,10 +3525,10 @@ class TileMatrixSet(_Model):
         :ivar title: Human-readable title of the tile matrix set.
         :vartype title: str
         :ivar description: Brief narrative description of this tile matrix set, normally available for
-     display to a human.
+         display to a human.
         :vartype description: str
         :ivar keywords: Unordered list of one or more commonly used or formalized word(s) or phrase(s)
-     used to describe this tile matrix set.
+         used to describe this tile matrix set.
         :vartype keywords: list[str]
         :ivar id: Unique identifier for the tile matrix set.
         :vartype id: str
@@ -3575,11 +3549,10 @@ class TileMatrixSet(_Model):
     title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable title of the tile matrix set."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Brief narrative description of this tile matrix set, normally available for
- display to a human."""
+    """Brief narrative description of this tile matrix set, normally available for display to a human."""
     keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unordered list of one or more commonly used or formalized word(s) or phrase(s)
- used to describe this tile matrix set."""
+    """Unordered list of one or more commonly used or formalized word(s) or phrase(s) used to describe
+     this tile matrix set."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the tile matrix set."""
     uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4026,22 +3999,20 @@ class TilerStacSearchRegistration(_Model):
 class TileSettings(_Model):
     """Configuration for map tile visualization.
 
-       :ivar min_zoom: The minimum zoom level that can be requested for this collection. Provides a
-    hard limit for the tile servers to ensure they don't get requests for low zoom
-    levels, which would cause many files to be fetched and the tile servers to
-    hang. Required.
-       :vartype min_zoom: int
-       :ivar max_items_per_tile: Maximum number of items to include in a single tile. Required.
-       :vartype max_items_per_tile: int
-       :ivar default_location: Default map location when displaying this collection.
-       :vartype default_location: ~azure.planetarycomputer.models.DefaultLocation
+    :ivar min_zoom: The minimum zoom level that can be requested for this collection. Provides a
+     hard limit for the tile servers to ensure they don't get requests for low zoom levels, which
+     would cause many files to be fetched and the tile servers to hang. Required.
+    :vartype min_zoom: int
+    :ivar max_items_per_tile: Maximum number of items to include in a single tile. Required.
+    :vartype max_items_per_tile: int
+    :ivar default_location: Default map location when displaying this collection.
+    :vartype default_location: ~azure.planetarycomputer.models.DefaultLocation
     """
 
     min_zoom: int = rest_field(name="minZoom", visibility=["read", "create", "update", "delete", "query"])
-    """The minimum zoom level that can be requested for this collection. Provides a
- hard limit for the tile servers to ensure they don't get requests for low zoom
- levels, which would cause many files to be fetched and the tile servers to
- hang. Required."""
+    """The minimum zoom level that can be requested for this collection. Provides a hard limit for the
+     tile servers to ensure they don't get requests for low zoom levels, which would cause many
+     files to be fetched and the tile servers to hang. Required."""
     max_items_per_tile: int = rest_field(
         name="maxItemsPerTile", visibility=["read", "create", "update", "delete", "query"]
     )

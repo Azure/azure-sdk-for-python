@@ -18,7 +18,7 @@ USAGE:
 """
 
 import os
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from azure.planetarycomputer.models import (
     StacSearchParameters,
@@ -233,7 +233,7 @@ def main():
     assert endpoint is not None
     assert collection_id is not None
 
-    client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Execute mosaic tiler operations
     register_search_response = register_mosaics_search(client, collection_id)

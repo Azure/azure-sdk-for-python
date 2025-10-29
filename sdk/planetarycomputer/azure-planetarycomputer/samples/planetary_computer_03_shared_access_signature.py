@@ -22,7 +22,7 @@ USAGE:
 """
 
 import os
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from urllib.request import urlopen
 
@@ -33,13 +33,13 @@ logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(l
 logging.basicConfig(level=logging.INFO)
 
 
-def generate_sas_token(client: PlanetaryComputerClient, collection_id: str):
+def generate_sas_token(client: PlanetaryComputerProClient, collection_id: str):
     """Generate a SAS token for a collection."""
     get_token_response = client.shared_access_signature.get_token(collection_id=collection_id, duration_in_minutes=60)
     return get_token_response
 
 
-def sign_asset_href(client: PlanetaryComputerClient, collection_id: str):
+def sign_asset_href(client: PlanetaryComputerProClient, collection_id: str):
     """Sign an asset HREF to enable authenticated download."""
     collection = client.stac.get_collection(collection_id=collection_id)
 
@@ -78,7 +78,7 @@ def download_asset(signed_href: str):
             raise Exception(f"Downloaded content is not a valid PNG file (magic bytes: {content[:8].hex()})")
 
 
-def revoke_token(client: PlanetaryComputerClient):
+def revoke_token(client: PlanetaryComputerProClient):
     """Revoke the current SAS token."""
     revoke_token_response = client.shared_access_signature.revoke_token()
     return revoke_token_response
@@ -93,7 +93,7 @@ def main():
     assert collection_id is not None
 
     # Create client
-    client = PlanetaryComputerClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
     # Using API for signing a given URI
     signed_href, unsigned_href = sign_asset_href(client, collection_id)
