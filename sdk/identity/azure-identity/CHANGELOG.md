@@ -1,8 +1,10 @@
 # Release History
 
-## 1.25.2 (Unreleased)
+## 1.26.0b1 (Unreleased)
 
 ### Features Added
+
+- Added support for WorkloadIdentityCredential identity binding mode in AKS. ([#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287))
 
 ### Breaking Changes
 
