@@ -1580,7 +1580,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_synonym_map(  # pylint: disable=inconsistent-return-statements
+    def _delete_synonym_map(  # pylint: disable=inconsistent-return-statements
         self,
         synonym_map_name: str,
         *,
@@ -2049,7 +2049,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_index(  # pylint: disable=inconsistent-return-statements
+    def _delete_index(  # pylint: disable=inconsistent-return-statements
         self,
         index_name: str,
         *,
@@ -2771,7 +2771,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_alias(  # pylint: disable=inconsistent-return-statements
+    def _delete_alias(  # pylint: disable=inconsistent-return-statements
         self,
         alias_name: str,
         *,
@@ -3236,7 +3236,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_agent(  # pylint: disable=inconsistent-return-statements
+    def _delete_agent(  # pylint: disable=inconsistent-return-statements
         self,
         agent_name: str,
         *,
@@ -3704,7 +3704,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_knowledge_source(  # pylint: disable=inconsistent-return-statements
+    def _delete_knowledge_source(  # pylint: disable=inconsistent-return-statements
         self,
         source_name: str,
         *,
@@ -4336,7 +4336,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_data_source_connection(  # pylint: disable=inconsistent-return-statements
+    def _delete_data_source_connection(  # pylint: disable=inconsistent-return-statements
         self,
         data_source_name: str,
         *,
@@ -5148,7 +5148,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_indexer(  # pylint: disable=inconsistent-return-statements
+    def _delete_indexer(  # pylint: disable=inconsistent-return-statements
         self,
         indexer_name: str,
         *,
@@ -5682,7 +5682,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_skillset(  # pylint: disable=inconsistent-return-statements
+    def _delete_skillset(  # pylint: disable=inconsistent-return-statements
         self,
         skillset_name: str,
         *,

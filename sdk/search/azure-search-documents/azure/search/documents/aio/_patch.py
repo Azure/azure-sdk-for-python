@@ -7,9 +7,26 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from typing import Any, Union, TYPE_CHECKING
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from ._client import SearchClient as _SearchClient
+from ._operations._patch import AsyncSearchItemPaged
 
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+class SearchClient(_SearchClient):
+    """SearchClient customizations go here."""
+
+    def __init__(
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
+    ):
+        super().__init__(endpoint, credential, index_name, **kwargs)
+
+
+__all__: list[str] = [
+    "SearchClient",
+    "AsyncSearchItemPaged",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

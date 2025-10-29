@@ -7,8 +7,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from typing import Any, Union
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._client import SearchClient as _SearchClient
 from ._operations._patch import SearchItemPaged
 from .models._patch import RequestEntityTooLargeError
@@ -27,7 +29,9 @@ DEFAULT_VERSION = ApiVersion.V2025_08_01_PREVIEW
 class SearchClient(_SearchClient):
     """SearchClient customizations go here."""
 
-    def __init__(self, endpoint, index_name, credential, **kwargs):
+    def __init__(
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
+    ):
         super().__init__(endpoint, credential, index_name, **kwargs)
 
 

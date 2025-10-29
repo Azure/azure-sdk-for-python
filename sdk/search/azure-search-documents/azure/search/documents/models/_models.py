@@ -1348,13 +1348,13 @@ class SuggestDocumentsResult(_Model):
     """Response containing suggestion query results from an index.
 
     :ivar results: The sequence of results returned by the query. Required.
-    :vartype results: list[~azure.search.documents.models._models.SuggestResult]
+    :vartype results: list[~azure.search.documents.models.SuggestResult]
     :ivar coverage: A value indicating the percentage of the index that was included in the query,
      or null if minimumCoverage was not set in the request.
     :vartype coverage: float
     """
 
-    results: list["_models._models.SuggestResult"] = rest_field(
+    results: list["_models.SuggestResult"] = rest_field(
         name="value", visibility=["read", "create", "update", "delete", "query"]
     )
     """The sequence of results returned by the query. Required."""
@@ -1368,7 +1368,7 @@ class SuggestDocumentsResult(_Model):
     def __init__(
         self,
         *,
-        results: list["_models._models.SuggestResult"],
+        results: list["_models.SuggestResult"],
         coverage: Optional[float] = None,
     ) -> None: ...
 

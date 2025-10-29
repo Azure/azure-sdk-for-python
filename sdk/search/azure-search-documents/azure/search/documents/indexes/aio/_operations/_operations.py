@@ -231,7 +231,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_synonym_map(
+    async def _delete_synonym_map(
         self,
         synonym_map_name: str,
         *,
@@ -700,7 +700,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_index(
+    async def _delete_index(
         self,
         index_name: str,
         *,
@@ -1425,7 +1425,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_alias(
+    async def _delete_alias(
         self,
         alias_name: str,
         *,
@@ -1893,7 +1893,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_agent(
+    async def _delete_agent(
         self,
         agent_name: str,
         *,
@@ -2362,7 +2362,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_knowledge_source(
+    async def _delete_knowledge_source(
         self,
         source_name: str,
         *,
@@ -2995,7 +2995,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_data_source_connection(
+    async def _delete_data_source_connection(
         self,
         data_source_name: str,
         *,
@@ -3807,7 +3807,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_indexer(
+    async def _delete_indexer(
         self,
         indexer_name: str,
         *,
@@ -4343,7 +4343,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_skillset(
+    async def _delete_skillset(
         self,
         skillset_name: str,
         *,

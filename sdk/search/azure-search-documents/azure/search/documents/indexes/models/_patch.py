@@ -45,7 +45,7 @@ def _collection_helper(typ) -> str:
 
 
 # Monkey-patch the Collection method onto the enum class
-SearchFieldDataType.Collection = staticmethod(_collection_helper)
+SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore
 
 
 def Collection(typ) -> str:

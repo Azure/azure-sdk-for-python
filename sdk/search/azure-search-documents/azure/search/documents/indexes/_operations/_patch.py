@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Iterator, cast, List, Sequence, Union, overload
+from typing import Any, Iterator, cast, List, Sequence, Union
 
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
@@ -24,34 +24,10 @@ from ._operations import (
 class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):
     """Custom operations mixin for SearchIndexClient."""
 
-    @overload
+    @distributed_trace
     def delete_synonym_map(
         self,
-        synonym_map_name: str,
-        *,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a synonym map.
-
-        :param synonym_map_name: The name of the synonym map to delete. Required.
-        :type synonym_map_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_synonym_map(
-        self,
-        synonym_map: _models.SynonymMap,
+        synonym_map: Union[str, _models.SynonymMap],
         /,
         *,
         match_condition: MatchConditions | None = None,
@@ -59,39 +35,28 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     ) -> None:
         """Deletes a synonym map.
 
-        :param synonym_map: The SynonymMap object to delete. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :param synonym_map: The name of the synonym map to delete or a SynonymMap object. Required.
+        :type synonym_map: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def delete_synonym_map(self, *args: Union[str, _models.SynonymMap], **kwargs: Any) -> None:
-        """Deletes a synonym map.
-
-        :param synonym_map_name: The name of the synonym map to delete. Required.
-        :type synonym_map_name: str
-        :param synonym_map: The SynonymMap object to delete.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if args and isinstance(args[0], _models.SynonymMap):
-            synonym_map = args[0]
-            kwargs.setdefault("etag", synonym_map.e_tag)
-            return super().delete_synonym_map(synonym_map.name, **kwargs)
-        else:
-            return super().delete_synonym_map(*args, **kwargs)
+        try:
+            name: str = synonym_map.name  # type: ignore
+            return self._delete_synonym_map(
+                synonym_map_name=name,
+                match_condition=match_condition,
+                etag=synonym_map.e_tag, # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = synonym_map  # type: ignore
+            return self._delete_synonym_map(
+                synonym_map_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
     def create_or_update_synonym_map(
@@ -108,90 +73,42 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             prefer="return=representation",
             etag=synonym_map.e_tag,
             match_condition=match_condition,
-            **kwargs)
-
-    @overload
-    def delete_index(
-        self,
-        index_name: str,
-        *,
-        query_source_authorization: str | None = None,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a search index and all the documents it contains.
-
-        :param index_name: The name of the index to delete. Required.
-        :type index_name: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_index(
-        self,
-        index: _models.SearchIndex,
-        /,
-        *,
-        query_source_authorization: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a search index and all the documents it contains.
-
-        :param index: The SearchIndex object to delete. Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
+            **kwargs,
+        )
 
     @distributed_trace
-    def delete_index(self, *args: Union[str, _models.SearchIndex], **kwargs: Any) -> None:
+    def delete_index(
+        self,
+        index: Union[str, _models.SearchIndex],
+        /,
+        *,
+        match_condition: MatchConditions | None = None,
+        **kwargs: Any,
+    ) -> None:
         """Deletes a search index and all the documents it contains.
 
-        :param index_name: The name of the index to delete. Required.
-        :type index_name: str
-        :param index: The SearchIndex object to delete.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
+        :param index: The name of the index to delete or a SearchIndex object. Required.
+        :type index: str or ~azure.search.documents.indexes.models.SearchIndex
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if args and isinstance(args[0], _models.SearchIndex):
-            index = args[0]
-            kwargs.setdefault("etag", index.e_tag)
-            return super().delete_index(index.name, **kwargs)
-        else:
-            return super().delete_index(*args, **kwargs)
+        try:
+            name: str = index.name  # type: ignore
+            return self._delete_index(
+                index_name=name,
+                match_condition=match_condition,
+                etag=index.e_tag,  # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = index  # type: ignore
+            return self._delete_index(
+                index_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
     def create_or_update_index(
@@ -213,10 +130,6 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
          the index can be impaired for several minutes after the index is updated, or longer for very
          large indexes. Default value is None.
         :paramtype allow_index_downtime: bool
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndex
@@ -230,7 +143,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             allow_index_downtime=allow_index_downtime,
             etag=index.e_tag,
             match_condition=match_condition,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -258,37 +171,13 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             prefer="return=representation",
             etag=alias.e_tag,
             match_condition=match_condition,
-            **kwargs
+            **kwargs,
         )
 
-    @overload
+    @distributed_trace
     def delete_alias(
         self,
-        alias_name: str,
-        *,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a search alias and its associated mapping to an index.
-
-        :param alias_name: The name of the alias to delete. Required.
-        :type alias_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_alias(
-        self,
-        alias: _models.SearchAlias,
+        alias: Union[str, _models.SearchAlias],
         /,
         *,
         match_condition: MatchConditions | None = None,
@@ -296,68 +185,33 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     ) -> None:
         """Deletes a search alias and its associated mapping to an index.
 
-        :param alias: The SearchAlias object to delete. Required.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :param alias: The name of the alias to delete or a SearchAlias object. Required.
+        :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
+        try:
+            name: str = alias.name  # type: ignore
+            return self._delete_alias(
+                alias_name=name,
+                match_condition=match_condition,
+                etag=alias.e_tag,  # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = alias  # type: ignore
+            return self._delete_alias(
+                alias_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
-    def delete_alias(self, *args: Union[str, _models.SearchAlias], **kwargs: Any) -> None:
-        """Deletes a search alias and its associated mapping to an index.
-
-        :param alias_name: The name of the alias to delete. Required.
-        :type alias_name: str
-        :param alias: The SearchAlias object to delete.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if args and isinstance(args[0], _models.SearchAlias):
-            alias = args[0]
-            kwargs.setdefault("etag", alias.e_tag)
-            return super().delete_alias(alias.name, **kwargs)
-        else:
-            return super().delete_alias(*args, **kwargs)
-
-    @overload
     def delete_agent(
         self,
-        agent_name: str,
-        *,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a knowledge agent.
-
-        :param agent_name: The name of the agent to delete. Required.
-        :type agent_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_agent(
-        self,
-        agent: _models.KnowledgeAgent,
+        agent: Union[str, _models.KnowledgeAgent],
         /,
         *,
         match_condition: MatchConditions | None = None,
@@ -365,39 +219,28 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     ) -> None:
         """Deletes a knowledge agent.
 
-        :param agent: The KnowledgeAgent object to delete. Required.
-        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param agent: The name of the agent to delete or a KnowledgeAgent object. Required.
+        :type agent: str or ~azure.search.documents.indexes.models.KnowledgeAgent
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def delete_agent(self, *args: Union[str, _models.KnowledgeAgent], **kwargs: Any) -> None:
-        """Deletes a knowledge agent.
-
-        :param agent_name: The name of the agent to delete. Required.
-        :type agent_name: str
-        :param agent: The KnowledgeAgent object to delete.
-        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if args and isinstance(args[0], _models.KnowledgeAgent):
-            agent = args[0]
-            kwargs.setdefault("etag", agent.e_tag)
-            return super().delete_agent(agent.name, **kwargs)
-        else:
-            return super().delete_agent(*args, **kwargs)
+        try:
+            name: str = agent.name  # type: ignore
+            return self._delete_agent(
+                agent_name=name,
+                match_condition=match_condition,
+                etag=agent.e_tag,  # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = agent  # type: ignore
+            return self._delete_agent(
+                agent_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
     def create_or_update_agent(
@@ -424,7 +267,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             prefer="return=representation",
             etag=agent.e_tag,
             match_condition=match_condition,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -452,37 +295,13 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             prefer="return=representation",
             match_condition=match_condition,
             etag=knowledge_source.e_tag,
-            **kwargs
+            **kwargs,
         )
 
-    @overload
+    @distributed_trace
     def delete_knowledge_source(
         self,
-        source_name: str,
-        *,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a knowledge source.
-
-        :param source_name: The name of the knowledge source to delete. Required.
-        :type source_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_knowledge_source(
-        self,
-        knowledge_source: _models.KnowledgeSource,
+        knowledge_source: Union[str, _models.KnowledgeSource],
         /,
         *,
         match_condition: MatchConditions | None = None,
@@ -490,39 +309,28 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     ) -> None:
         """Deletes a knowledge source.
 
-        :param knowledge_source: The KnowledgeSource object to delete. Required.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :param knowledge_source: The name of the knowledge source to delete or a KnowledgeSource object. Required.
+        :type knowledge_source: str or ~azure.search.documents.indexes.models.KnowledgeSource
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def delete_knowledge_source(self, *args: Union[str, _models.KnowledgeSource], **kwargs: Any) -> None:
-        """Deletes a knowledge source.
-
-        :param source_name: The name of the knowledge source to delete. Required.
-        :type source_name: str
-        :param knowledge_source: The KnowledgeSource object to delete.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if args and isinstance(args[0], _models.KnowledgeSource):
-            knowledge_source = args[0]
-            kwargs.setdefault("etag", knowledge_source.e_tag)
-            return super().delete_knowledge_source(knowledge_source.name, **kwargs)
-        else:
-            return super().delete_knowledge_source(*args, **kwargs)
+        try:
+            name: str = knowledge_source.name  # type: ignore
+            return self._delete_knowledge_source(
+                source_name=name,
+                match_condition=match_condition,
+                etag=knowledge_source.e_tag,  # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = knowledge_source  # type: ignore
+            return self._delete_knowledge_source(
+                source_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
     def list_index_names(self, **kwargs: Any) -> ItemPaged[str]:
@@ -549,7 +357,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """
         result = self._get_synonym_maps(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
-        typed_result = [cast(_models.SynonymMap, x) for x in result.synonym_maps]
+        # typed_result = [cast(_models.SynonymMap, x) for x in result.synonym_maps]
+        typed_result = result.synonym_maps
         return typed_result
 
     @distributed_trace
@@ -579,34 +388,10 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
 class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGenerated):
     """Custom operations mixin for SearchIndexerClient."""
 
-    @overload
+    @distributed_trace
     def delete_data_source_connection(
         self,
-        data_source_name: str,
-        *,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a data source connection.
-
-        :param data_source_name: The name of the data source connection to delete. Required.
-        :type data_source_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_data_source_connection(
-        self,
-        data_source: _models.SearchIndexerDataSourceConnection,
+        data_source: Union[str, _models.SearchIndexerDataSourceConnection],
         /,
         *,
         match_condition: MatchConditions | None = None,
@@ -614,41 +399,28 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     ) -> None:
         """Deletes a data source connection.
 
-        :param data_source: The SearchIndexerDataSourceConnection object to delete. Required.
-        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :param data_source: The name of the data source connection to delete or a SearchIndexerDataSourceConnection object. Required.
+        :type data_source: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def delete_data_source_connection(
-        self, *args: Union[str, _models.SearchIndexerDataSourceConnection], **kwargs: Any
-    ) -> None:
-        """Deletes a data source connection.
-
-        :param data_source_name: The name of the data source connection to delete. Required.
-        :type data_source_name: str
-        :param data_source: The SearchIndexerDataSourceConnection object to delete.
-        :type data_source: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if args and isinstance(args[0], _models.SearchIndexerDataSourceConnection):
-            data_source = args[0]
-            kwargs.setdefault("etag", data_source.e_tag)
-            return super().delete_data_source_connection(data_source.name, **kwargs)
-        else:
-            return super().delete_data_source_connection(*args, **kwargs)
+        try:
+            name: str = data_source.name  # type: ignore
+            return self._delete_data_source_connection(
+                data_source_name=name,
+                match_condition=match_condition,
+                etag=data_source.e_tag,  # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = data_source  # type: ignore
+            return self._delete_data_source_connection(
+                data_source_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
     def create_or_update_data_source_connection(
@@ -680,37 +452,13 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             etag=data_source.e_tag,
             match_condition=match_condition,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
-            **kwargs
+            **kwargs,
         )
 
-    @overload
+    @distributed_trace
     def delete_indexer(
         self,
-        indexer_name: str,
-        *,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes an indexer.
-
-        :param indexer_name: The name of the indexer to delete. Required.
-        :type indexer_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_indexer(
-        self,
-        indexer: _models.SearchIndexer,
+        indexer: Union[str, _models.SearchIndexer],
         /,
         *,
         match_condition: MatchConditions | None = None,
@@ -718,39 +466,28 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     ) -> None:
         """Deletes an indexer.
 
-        :param indexer: The SearchIndexer object to delete. Required.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :param indexer: The name of the indexer to delete or a SearchIndexer object. Required.
+        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def delete_indexer(self, *args: Union[str, _models.SearchIndexer], **kwargs: Any) -> None:
-        """Deletes an indexer.
-
-        :param indexer_name: The name of the indexer to delete. Required.
-        :type indexer_name: str
-        :param indexer: The SearchIndexer object to delete.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if args and isinstance(args[0], _models.SearchIndexer):
-            indexer = args[0]
-            kwargs.setdefault("etag", indexer.e_tag)
-            return super().delete_indexer(indexer.name, **kwargs)
-        else:
-            return super().delete_indexer(*args, **kwargs)
+        try:
+            name: str = indexer.name  # type: ignore
+            return self._delete_indexer(
+                indexer_name=name,
+                match_condition=match_condition,
+                etag=indexer.e_tag,  # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = indexer  # type: ignore
+            return self._delete_indexer(
+                indexer_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
     def create_or_update_indexer(
@@ -787,37 +524,13 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             match_condition=match_condition,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
-            **kwargs
+            **kwargs,
         )
 
-    @overload
+    @distributed_trace
     def delete_skillset(
         self,
-        skillset_name: str,
-        *,
-        etag: str | None = None,
-        match_condition: MatchConditions | None = None,
-        **kwargs: Any,
-    ) -> None:
-        """Deletes a skillset.
-
-        :param skillset_name: The name of the skillset to delete. Required.
-        :type skillset_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    def delete_skillset(
-        self,
-        skillset: _models.SearchIndexerSkillset,
+        skillset: Union[str, _models.SearchIndexerSkillset],
         /,
         *,
         match_condition: MatchConditions | None = None,
@@ -825,39 +538,28 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     ) -> None:
         """Deletes a skillset.
 
-        :param skillset: The SearchIndexerSkillset object to delete. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :param skillset: The name of the skillset to delete or a SearchIndexerSkillset object. Required.
+        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def delete_skillset(self, *args: Union[str, _models.SearchIndexerSkillset], **kwargs: Any) -> None:
-        """Deletes a skillset.
-
-        :param skillset_name: The name of the skillset to delete. Required.
-        :type skillset_name: str
-        :param skillset: The SearchIndexerSkillset object to delete.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        if args and isinstance(args[0], _models.SearchIndexerSkillset):
-            skillset = args[0]
-            kwargs.setdefault("etag", skillset.e_tag)
-            return super().delete_skillset(skillset.name, **kwargs)
-        else:
-            return super().delete_skillset(*args, **kwargs)
+        try:
+            name: str = skillset.name  # type: ignore
+            return self._delete_skillset(
+                skillset_name=name,
+                match_condition=match_condition,
+                etag=skillset.e_tag,  # type: ignore
+                **kwargs,
+            )
+        except AttributeError:
+            name = skillset  # type: ignore
+            return self._delete_skillset(
+                skillset_name=name,
+                **kwargs,
+            )
 
     @distributed_trace
     def create_or_update_skillset(
@@ -894,10 +596,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             match_condition=match_condition,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
-            **kwargs
+            **kwargs,
         )
 
-    @overload
+    @distributed_trace
     def get_skillsets(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexerSkillset]:
         """Lists all skillsets available for a search service.
 
@@ -909,26 +611,15 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def get_skillsets(self, **kwargs: Any) -> List[_models.SearchIndexerSkillset]:
-        """Lists all skillsets available for a search service.
-
-        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
-         list of JSON property names, or '*' for all properties. The default is all properties. Default
-         value is None.
-        :paramtype select: str
-        :return: List of all the SearchIndexerSkillsets.
-        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+        if select is not None:
+            kwargs['select'] = ",".join(select)
         result = self._get_skillsets(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
-        typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
+        # typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
+        typed_result = result.skillsets
         return typed_result
 
-    @overload
+    @distributed_trace
     def get_indexers(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexer]:
         """Lists all indexers available for a search service.
 
@@ -940,32 +631,12 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def get_indexers(self, **kwargs: Any) -> List[_models.SearchIndexer]:
-        """Lists all indexers available for a search service.
-
-        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
-         list of JSON property names, or '*' for all properties. The default is all properties. Default
-         value is None.
-        :paramtype select: str
-        :return: List of all the SearchIndexers.
-        :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_indexers_operations.py
-                :start-after: [START list_indexer]
-                :end-before: [END list_indexer]
-                :language: python
-                :dedent: 4
-                :caption: List all the SearchIndexers
-        """
+        if select is not None:
+            kwargs['select'] = ",".join(select)
         result = self._get_indexers(**kwargs)
         assert result.indexers is not None  # Hint for mypy
-        typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
+        # typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
+        typed_result = result.indexers
         return typed_result
 
     @distributed_trace
@@ -987,7 +658,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         result = self.get_indexers(**kwargs)
         return [x.name for x in result]
 
-    @overload
+    @distributed_trace
     def get_data_source_connections(
         self, *, select: str | None = None, **kwargs: Any
     ) -> List[_models.SearchIndexerDataSourceConnection]:
@@ -1001,32 +672,12 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
-
-    @distributed_trace
-    def get_data_source_connections(self, **kwargs: Any) -> List[_models.SearchIndexerDataSourceConnection]:
-        """Lists all data source connections available for a search service.
-
-        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
-         list of JSON property names, or '*' for all properties. The default is all properties. Default
-         value is None.
-        :paramtype select: str
-        :return: List of all the data source connections.
-        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_data_source_operations.py
-                :start-after: [START list_data_source_connection]
-                :end-before: [END list_data_source_connection]
-                :language: python
-                :dedent: 4
-                :caption: List all the data source connections
-        """
+        if select is not None:
+            kwargs['select'] = ",".join(select)
         result = self._get_data_source_connections(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
-        typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
+        # typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
+        typed_result = result.data_sources
         return typed_result
 
     @distributed_trace

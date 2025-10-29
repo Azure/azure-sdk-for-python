@@ -602,7 +602,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         search_fields: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[_models.AutocompleteItem]:
         """Autocomplete incomplete search terms based on input text and matching terms in the index.
 
         :param str search_text: The search text on which to base autocomplete results.
@@ -678,7 +678,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         select: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[_models.SuggestResult]:
         """Get search suggestions for documents in the Azure search index.
 
         :param str search_text: The search text to use to suggest documents. Must be at least 1
