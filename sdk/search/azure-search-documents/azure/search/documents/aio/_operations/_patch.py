@@ -8,8 +8,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, Dict, List, Optional, Union, cast
-import base64
-import json
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -26,9 +24,15 @@ from ... import models as _models
 
 
 def _ensure_response(f):
-    """Decorator to ensure response is fetched before accessing metadata."""
+    """Decorator to ensure response is fetched before accessing metadata.
+    :param f: The function to wrap.
+    :type f: Callable
+    :return: The wrapped function.
+    :rtype: Callable
+    """
 
     async def wrapper(self, *args, **kw):
+        # pylint:disable=protected-access
         if self._current_page is None:
             self._response = await self._get_next(self.continuation_token)
             self.continuation_token, self._current_page = await self._extract_data(self._response)
@@ -54,10 +58,14 @@ class AsyncSearchPageIterator(AsyncPageIterator):
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return await self._client._search_post(body=self._initial_request, **self._kwargs)
+            return await self._client._search_post(  # pylint:disable=protected-access
+                body=self._initial_request, **self._kwargs
+            )
 
         _next_link, next_page_request = _unpack_continuation_token(continuation_token)
-        return await self._client._search_post(body=next_page_request, **self._kwargs)
+        return await self._client._search_post(  # pylint:disable=protected-access
+            body=next_page_request, **self._kwargs
+        )
 
     async def _extract_data_cb(self, response: _models.SearchDocumentsResult):
         continuation_token = _pack_continuation_token(response, api_version=self._api_version)
@@ -376,6 +384,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         hybrid_search: Optional[_models.HybridSearch] = None,
         **kwargs: Any,
     ) -> AsyncSearchItemPaged[Dict]:
+        # pylint:disable=too-many-locals
         """Search the Azure search index for documents.
 
         :param str search_text: A full-text search query expression; Use "*" or omit this parameter to

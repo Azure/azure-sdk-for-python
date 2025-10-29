@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,7 +22,12 @@ from .. import models as _models
 
 
 def _convert_search_result(result: _models.SearchResult) -> Dict[str, Any]:
-    """Convert SearchResult model to dictionary with @search.* metadata."""
+    """Convert SearchResult model to dictionary with @search.* metadata.
+
+    :param ~azure.search.documents.models.SearchResult result: The search result to convert.
+    :return: The converted search result.
+    :rtype: dict
+    """
     ret = dict(result)
     ret["@search.score"] = result.score
     ret["@search.reranker_score"] = result.reranker_score
@@ -33,7 +39,12 @@ def _convert_search_result(result: _models.SearchResult) -> Dict[str, Any]:
 
 
 def _pack_continuation_token(response: _models.SearchDocumentsResult, api_version: str) -> Optional[bytes]:
-    """Pack continuation token from search response."""
+    """Pack continuation token from search response.
+    :param ~azure.search.documents.models.SearchDocumentsResult response: The search response.
+    :param str api_version: The API version used in the request.
+    :return: The continuation token.
+    :rtype: bytes or None
+    """
     if response.next_page_parameters is not None:
         token = {
             "apiVersion": api_version,
@@ -45,7 +56,11 @@ def _pack_continuation_token(response: _models.SearchDocumentsResult, api_versio
 
 
 def _unpack_continuation_token(token: bytes) -> tuple:
-    """Unpack continuation token to get next link and request."""
+    """Unpack continuation token to get next link and request.
+    :param bytes token: The continuation token to unpack.
+    :return: A tuple of next link and next page request.
+    :rtype: tuple[str, ~azure.search.documents.models.SearchRequest]
+    """
     unpacked_token = json.loads(base64.b64decode(token))
     next_link = unpacked_token["nextLink"]
     next_page_parameters = unpacked_token["nextPageParameters"]
@@ -54,7 +69,14 @@ def _unpack_continuation_token(token: bytes) -> tuple:
 
 
 def _ensure_response(f):
-    """Decorator to ensure response is fetched before accessing metadata."""
+    # pylint:disable=protected-access
+    """Decorator to ensure response is fetched before accessing metadata.
+    :param f: The function to decorate.
+    :type f: function
+
+    :return: The wrapper function.
+    :rtype: function
+    """
 
     def wrapper(self, *args, **kw):
         if self._current_page is None:
@@ -105,9 +127,51 @@ def _build_search_request(
     debug: Optional[Union[str, _models.QueryDebugMode]] = None,
     hybrid_search: Optional[_models.HybridSearch] = None,
 ) -> _models.SearchRequest:
+    # pylint:disable=too-many-locals
     """Build a SearchRequest from search parameters.
 
     This is a shared helper function used by both sync and async search methods.
+
+    :param str search_text: A full-text search query expression; Use "*" or omit this parameter to search all fields.
+    :keyword bool include_total_count: A value that specifies whether to fetch the total count of results.
+    :keyword list[str] facets: The list of facet expressions to apply to the search query.
+    :keyword str filter: The OData $filter expression to apply to the search query.
+    :keyword str highlight_fields: The comma-separated list of field names to use for hit highlights.
+    :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with highlightPreTag.
+    :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with highlightPostTag.
+    :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+        must be covered by a search query in order for the query to be reported as a success.
+    :keyword order_by: The list of OData $orderby expressions by which to sort the results.
+    :keyword query_type: The type of query syntax to use for the search text.
+    :keyword list[str] scoring_parameters: The list of scoring parameters to use for the search query.
+    :keyword str scoring_profile: The name of the scoring profile to evaluate match scores for the search query.
+    :keyword str semantic_query: The semantic query to be used for the search.
+    :keyword search_fields: The list of field names to search over.
+    :keyword search_mode: The search mode to use for the search query.
+    :keyword query_language: The language of the search query.
+    :keyword query_speller: The type of spell checking to use for the search query.
+    :keyword query_answer: The type of answers to retrieve for a semantic search query.
+    :keyword int query_answer_count: The maximum number of answers to retrieve.
+    :keyword float query_answer_threshold: The confidence score threshold for answers to be included in the results.
+    :keyword query_caption: The type of captions to retrieve for a semantic search query.
+    :keyword bool query_caption_highlight_enabled: A value indicating whether caption highlights are enabled.
+    :keyword semantic_fields: The list of field names to retrieve for semantic search.
+    :keyword str semantic_configuration_name: The name of the semantic configuration to use for the search.
+    :keyword select: The list of field names to retrieve in the search results.
+    :keyword int skip: The number of search results to skip.
+    :keyword int top: The maximum number of search results to retrieve.
+    :keyword scoring_statistics: The scoring statistics to retrieve for the search query.
+    :keyword str session_id: The session ID for the search query.
+    :keyword list[~azure.search.documents.models.VectorQuery] vector_queries: The list of vector queries to use for the search.
+    :keyword vector_filter_mode: The vector filter mode to use for the search query.
+    :keyword semantic_error_mode: The semantic error handling mode to use for the search query.
+    :keyword int semantic_max_wait_in_milliseconds: The maximum wait time in milliseconds for semantic search.
+    :keyword query_rewrites: The type of query rewrites to apply for the search query.
+    :keyword int query_rewrites_count: The maximum number of query rewrites to apply.
+    :keyword debug: The debug mode for the search query.
+    :keyword hybrid_search: The hybrid search configuration for the search query.
+    :return: SearchRequest
+    :rtype: ~azure.search.documents.models.SearchRequest
     """
     # Convert list parameters to comma-separated strings if needed
     if isinstance(search_fields, list):
@@ -195,10 +259,12 @@ class SearchPageIterator(PageIterator):
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return self._client._search_post(body=self._initial_request, **self._kwargs)
+            return self._client._search_post(  # pylint:disable=protected-access
+                body=self._initial_request, **self._kwargs
+            )
 
         _next_link, next_page_request = _unpack_continuation_token(continuation_token)
-        return self._client._search_post(body=next_page_request, **self._kwargs)
+        return self._client._search_post(body=next_page_request, **self._kwargs)  # pylint:disable=protected-access
 
     def _extract_data_cb(self, response: _models.SearchDocumentsResult):
         continuation_token = _pack_continuation_token(response, api_version=self._api_version)
@@ -513,6 +579,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         hybrid_search: Optional[_models.HybridSearch] = None,
         **kwargs: Any,
     ) -> SearchItemPaged[Dict]:
+        # pylint:disable=too-many-locals
         """Search the Azure search index for documents.
 
         :param str search_text: A full-text search query expression; Use "*" or omit this parameter to

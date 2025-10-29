@@ -9,19 +9,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, Dict, List, Optional, Union
-from ._models import (
-    SearchField as _SearchField,
-    SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection,
-    SearchIndexerDataContainer,
-    SearchIndexerDataIdentity,
-    SearchResourceEncryptionKey,
-    DataChangeDetectionPolicy,
-    DataDeletionDetectionPolicy,
-    DataSourceCredentials,
-)
+from ._models import SearchField as _SearchField
 from ._enums import (
     LexicalAnalyzerName,
-    IndexerPermissionOption,
     SearchFieldDataType as _SearchFieldDataType,
     PermissionFilter,
     VectorEncodingFormat,
@@ -36,7 +26,9 @@ def _collection_helper(typ) -> str:
     """Helper function to create a collection type string.
 
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
+    :type typ: str or Enum
     :return: A collection type string.
+    :rtype: str
     """
     # If typ is an enum, get its value; otherwise use it as-is
     if hasattr(typ, "value"):
@@ -52,7 +44,9 @@ def Collection(typ) -> str:
     """Helper function to create a collection type string.
 
     :param typ: The type to wrap in a collection. Can be a string or an enum value.
+    :type typ: str or Enum
     :return: A collection type string.
+    :rtype: str
     """
     # If typ is an enum, get its value; otherwise use it as-is
     if hasattr(typ, "value"):

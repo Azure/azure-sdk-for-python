@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, AsyncIterator, cast, List, Sequence, Union
+from typing import Any, cast, List, Sequence, Union, Optional
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -29,9 +29,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def delete_synonym_map(
         self,
         synonym_map: Union[str, _models.SynonymMap],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a synonym map.
@@ -63,9 +62,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def create_or_update_synonym_map(
         self,
         synonym_map: _models.SynonymMap,
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SynonymMap:
         """Creates a new synonym map or updates a synonym map if it already exists.
@@ -91,9 +89,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def delete_index(
         self,
         index: Union[str, _models.SearchIndex],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a search index and all the documents it contains.
@@ -125,22 +122,21 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def create_or_update_index(
         self,
         index: _models.SearchIndex,
-        allow_index_downtime: bool | None = None,
-        /,
+        allow_index_downtime: Optional[bool] = None,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndex:
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The SearchIndex object to create or update. Required.
         :type index: ~azure.search.documents.indexes.models.SearchIndex
-        :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
+        :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
          the index can be impaired for several minutes after the index is updated, or longer for very
          large indexes. Default value is None.
-        :paramtype allow_index_downtime: bool
+        :type allow_index_downtime: bool
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndex
@@ -161,9 +157,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def create_or_update_alias(
         self,
         alias: _models.SearchAlias,
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchAlias:
         """Creates a new search alias or updates an alias if it already exists.
@@ -189,9 +184,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def delete_alias(
         self,
         alias: Union[str, _models.SearchAlias],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a search alias and its associated mapping to an index.
@@ -223,9 +217,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def delete_agent(
         self,
         agent: Union[str, _models.KnowledgeAgent],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a knowledge agent.
@@ -257,9 +250,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def create_or_update_agent(
         self,
         agent: _models.KnowledgeAgent,
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.KnowledgeAgent:
         """Creates a new agent or updates an agent if it already exists.
@@ -285,9 +277,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def create_or_update_knowledge_source(
         self,
         knowledge_source: _models.KnowledgeSource,
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.KnowledgeSource:
         """Creates a new knowledge source or updates a knowledge source if it already exists.
@@ -313,9 +304,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def delete_knowledge_source(
         self,
         knowledge_source: Union[str, _models.KnowledgeSource],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a knowledge source.
@@ -358,10 +348,6 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def get_synonym_maps(self, **kwargs: Any) -> List[_models.SynonymMap]:
         """Lists all synonym maps available for a search service.
 
-        :keyword select: Selects which top-level properties to retrieve. Specified as a
-         comma-separated list of JSON property names, or '*' for all properties. The default is all
-         properties.
-        :paramtype select: str
         :return: List of synonym maps
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -402,9 +388,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def delete_data_source_connection(
         self,
         data_source: Union[str, _models.SearchIndexerDataSourceConnection],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a data source connection.
@@ -436,10 +421,9 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def create_or_update_data_source_connection(
         self,
         data_source: _models.SearchIndexerDataSourceConnection,
-        /,
         *,
-        skip_indexer_reset_requirement_for_cache: bool | None = None,
-        match_condition: MatchConditions | None = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexerDataSourceConnection:
         """Creates a new data source connection or updates a data source connection if it already exists.
@@ -469,9 +453,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def delete_indexer(
         self,
         indexer: Union[str, _models.SearchIndexer],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes an indexer.
@@ -503,11 +486,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def create_or_update_indexer(
         self,
         indexer: _models.SearchIndexer,
-        /,
         *,
-        skip_indexer_reset_requirement_for_cache: bool | None = None,
-        disable_cache_reprocessing_change_detection: bool | None = None,
-        match_condition: MatchConditions | None = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexer:
         """Creates a new indexer or updates an indexer if it already exists.
@@ -541,9 +523,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def delete_skillset(
         self,
         skillset: Union[str, _models.SearchIndexerSkillset],
-        /,
         *,
-        match_condition: MatchConditions | None = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
         """Deletes a skillset.
@@ -575,11 +556,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def create_or_update_skillset(
         self,
         skillset: _models.SearchIndexerSkillset,
-        /,
         *,
-        skip_indexer_reset_requirement_for_cache: bool | None = None,
-        disable_cache_reprocessing_change_detection: bool | None = None,
-        match_condition: MatchConditions | None = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> _models.SearchIndexerSkillset:
         """Creates a new skillset in a search service or updates the skillset if it already exists.
@@ -610,7 +590,9 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         )
 
     @distributed_trace_async
-    async def get_skillsets(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexerSkillset]:
+    async def get_skillsets(
+        self, *, select: Optional[str] = None, **kwargs: Any
+    ) -> List[_models.SearchIndexerSkillset]:
         """Lists all skillsets available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -622,7 +604,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if select is not None:
-            kwargs['select'] = ",".join(select)
+            kwargs["select"] = ",".join(select)
         result = await self._get_skillsets(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
         # typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
@@ -630,7 +612,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         return typed_result
 
     @distributed_trace_async
-    async def get_indexers(self, *, select: str | None = None, **kwargs: Any) -> List[_models.SearchIndexer]:
+    async def get_indexers(self, *, select: Optional[str] = None, **kwargs: Any) -> List[_models.SearchIndexer]:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -642,7 +624,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if select is not None:
-            kwargs['select'] = ",".join(select)
+            kwargs["select"] = ",".join(select)
         result = await self._get_indexers(**kwargs)
         assert result.indexers is not None  # Hint for mypy
         # typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
@@ -661,7 +643,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
     @distributed_trace_async
     async def get_data_source_connections(
-        self, *, select: str | None = None, **kwargs: Any
+        self, *, select: Optional[str] = None, **kwargs: Any
     ) -> List[_models.SearchIndexerDataSourceConnection]:
         """Lists all data source connections available for a search service.
 
@@ -674,7 +656,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if select is not None:
-            kwargs['select'] = ",".join(select)
+            kwargs["select"] = ",".join(select)
         result = await self._get_data_source_connections(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
         # typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
