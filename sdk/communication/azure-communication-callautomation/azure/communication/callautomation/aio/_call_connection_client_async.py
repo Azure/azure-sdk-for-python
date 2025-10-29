@@ -17,6 +17,8 @@ from azure.core.credentials import AzureKeyCredential
 
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from .._credential.credential_utils import get_custom_enabled, get_custom_url
 from .._utils import serialize_phone_identifier, serialize_identifier, process_repeatability_first_sent
 from .._models import (
     CallParticipant,
@@ -58,7 +60,6 @@ from .._generated.models import (
     UnholdRequest,
     StartMediaStreamingRequest,
     StopMediaStreamingRequest,
-    InterruptAudioAndAnnounceRequest,
     MoveParticipantsRequest,
 )
 from .._generated.models._enums import RecognizeInputType
@@ -114,7 +115,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             if custom_enabled and custom_url is not None:
                 self._client = AzureCommunicationCallAutomationService(
                     custom_url,
-                    credential,
+                    cast(AzureKeyCredential, credential),  # credential,
                     api_version=api_version or DEFAULT_VERSION,
                     authentication_policy=get_call_automation_auth_policy(
                         custom_url, credential, acs_url=endpoint, is_async=True
@@ -1245,18 +1246,18 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
-            play_sources=[source._to_generated() for source in play_sources] if play_sources else None, # pylint:disable=protected-access
-            play_to=serialize_identifier(target_participant),
-            operation_context=operation_context,
-            kwargs=kwargs,
-        )
+        # interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
+        #     play_sources=[source._to_generated() for source in play_sources],  # pylint:disable=protected-access
+        #     play_to=serialize_identifier(target_participant),
+        #     operation_context=operation_context,
+        #     kwargs=kwargs,
+        # )
 
-        self._call_media_client.interrupt_audio_and_announce(
-            self._call_connection_id,
-            interrupt_audio_announce_request,
-            **kwargs
-            )
+        # self._call_media_client.interrupt_audio_and_announce(
+        #     self._call_connection_id,
+        #     interrupt_audio_announce_request,
+        #     **kwargs
+        #     )
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()

@@ -115,7 +115,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             if custom_enabled and custom_url is not None:
                 self._client = AzureCommunicationCallAutomationService(
                     custom_url,
-                    credential,
+                    cast(AzureKeyCredential, credential),
                     api_version=api_version or DEFAULT_VERSION,
                     authentication_policy=get_call_automation_auth_policy(custom_url, credential, acs_url=endpoint),
                     sdk_moniker=SDK_MONIKER,
@@ -632,7 +632,11 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         play_request = PlayRequest(
             play_sources=play_sources,
             play_to=audience,
-            play_options=PlayOptions(loop=loop, interrupt_call_media_operation=interrupt_call_media_operation, interrupt_hold_audio=interrupt_hold_audio),
+            play_options=PlayOptions(
+                loop=loop,
+                interrupt_call_media_operation=interrupt_call_media_operation,
+                interrupt_hold_audio=interrupt_hold_audio
+            ),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             **kwargs,
@@ -1235,7 +1239,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         """
 
         interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
-            play_sources=[source._to_generated() for source in play_sources] if play_sources else None, # pylint: disable=protected-access
+            play_sources=[source._to_generated() for source in play_sources],  # pylint:disable=protected-access
             play_to=serialize_identifier(target_participant),
             operation_context=operation_context,
             kwargs=kwargs,
