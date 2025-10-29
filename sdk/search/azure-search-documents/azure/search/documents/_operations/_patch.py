@@ -310,6 +310,7 @@ class SearchItemPaged(ItemPaged[Dict]):
     """A pageable list of search results with metadata accessors."""
 
     def __init__(self, page_iterator_factory_func) -> None:
+        super(SearchItemPaged, self).__init__()
         # Store the factory function that creates SearchPageIterator instances
         self._page_iterator_factory = page_iterator_factory_func
         self._first_page_iterator_instance: Optional[SearchPageIterator] = None
