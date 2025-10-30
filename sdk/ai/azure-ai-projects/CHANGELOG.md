@@ -4,7 +4,11 @@
 
 ### Features added
 
+* New Agent operations (now built on top OpenAI's "Responses" protocol) were added to the `AIProjectClient`.
+This package no longer depends on the `azure-ai-agents` package. See `samples\agents` folder.
+
 ### Sample updates
+
 * Added `files` samples for operations create, delete, list, retrieve and content.
 
 ## 1.1.0b4 (2025-09-12)
