@@ -29,3 +29,6 @@ REM Disable the version validation
 REM No longer needed, since the service now supports api-version "2025-11-15-preview"
 REM powershell -Command "(Get-Content azure\ai\projects\_validation.py) -replace 'if _index_with_default\(method_added_on\) > _index_with_default\(client_api_version\):', 'if False:  # pylint: disable=using-constant-test' | Set-Content azure\ai\projects\_validation.py"
 REM powershell -Command "(Get-Content azure\ai\projects\_validation.py) -replace 'if unsupported:', 'if False:  # pylint: disable=using-constant-test' | Set-Content azure\ai\projects\_validation.py"
+
+echo Now do these additional changes manually, if you want the "Generate docs" job to succeed in PR pipeline
+REM 1. Remove `generate_summary` from class `Reasoning`. It's deprecated but causes two types of errors. Consider removing it from TypeSpec.
