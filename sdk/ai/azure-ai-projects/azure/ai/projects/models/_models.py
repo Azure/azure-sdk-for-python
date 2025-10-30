@@ -2026,10 +2026,6 @@ class BingGroundingSearchConfiguration(_Model):
 class BingGroundingSearchToolParameters(_Model):
     """The bing grounding search tool parameters.
 
-    :ivar project_connections: The project connections attached to this tool. There can be a
-     maximum of 1 connection
-     resource attached to the tool. Required.
-    :vartype project_connections: ~azure.ai.projects.models.ToolProjectConnectionList
     :ivar search_configurations: The search configurations attached to this tool. There can be a
      maximum of 1
      search configuration resource attached to the tool. Required.
@@ -2037,11 +2033,6 @@ class BingGroundingSearchToolParameters(_Model):
      list[~azure.ai.projects.models.BingGroundingSearchConfiguration]
     """
 
-    project_connections: "_models.ToolProjectConnectionList" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project connections attached to this tool. There can be a maximum of 1 connection
-     resource attached to the tool. Required."""
     search_configurations: list["_models.BingGroundingSearchConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2052,7 +2043,6 @@ class BingGroundingSearchToolParameters(_Model):
     def __init__(
         self,
         *,
-        project_connections: "_models.ToolProjectConnectionList",
         search_configurations: list["_models.BingGroundingSearchConfiguration"],
     ) -> None: ...
 
@@ -14166,7 +14156,9 @@ class TaxonomyCategory(_Model):
     :ivar description: Description of the taxonomy category.
     :vartype description: str
     :ivar risk_category: Risk category associated with this taxonomy category. Required. Known
-     values are: "HateUnfairness", "Violence", "Sexual", and "SelfHarm".
+     values are: "HateUnfairness", "Violence", "Sexual", "SelfHarm", "ProtectedMaterial",
+     "CodeVulnerability", "UngroundedAttributes", "ProhibitedActions", "SensitiveDataLeakage", and
+     "TaskAdherence".
     :vartype risk_category: str or ~azure.ai.projects.models.RiskCategory
     :ivar sub_categories: List of taxonomy sub categories. Required.
     :vartype sub_categories: list[~azure.ai.projects.models.TaxonomySubCategory]
@@ -14184,7 +14176,9 @@ class TaxonomyCategory(_Model):
         name="riskCategory", visibility=["read", "create", "update", "delete", "query"]
     )
     """Risk category associated with this taxonomy category. Required. Known values are:
-     \"HateUnfairness\", \"Violence\", \"Sexual\", and \"SelfHarm\"."""
+     \"HateUnfairness\", \"Violence\", \"Sexual\", \"SelfHarm\", \"ProtectedMaterial\",
+     \"CodeVulnerability\", \"UngroundedAttributes\", \"ProhibitedActions\",
+     \"SensitiveDataLeakage\", and \"TaskAdherence\"."""
     sub_categories: list["_models.TaxonomySubCategory"] = rest_field(
         name="subCategories", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -14589,40 +14583,6 @@ class ToolProjectConnection(_Model):
         self,
         *,
         project_connection_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ToolProjectConnectionList(_Model):
-    """A set of project connection resources currently used by either the ``bing_grounding``,
-    ``fabric_dataagent``, or ``sharepoint_grounding`` tools.
-
-    :ivar project_connections: The project connections attached to this tool. There can be a
-     maximum of 1 connection
-     resource attached to the tool.
-    :vartype project_connections: list[~azure.ai.projects.models.ToolProjectConnection]
-    """
-
-    project_connections: Optional[list["_models.ToolProjectConnection"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project connections attached to this tool. There can be a maximum of 1 connection
-     resource attached to the tool."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_connections: Optional[list["_models.ToolProjectConnection"]] = None,
     ) -> None: ...
 
     @overload

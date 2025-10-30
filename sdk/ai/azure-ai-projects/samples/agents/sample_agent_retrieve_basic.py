@@ -51,9 +51,7 @@ with project_client:
     print(f"Agent retrieved (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
     # Retrieved a stored conversation
-    conversation = openai_client.conversations.retrieve(
-        conversation_id=conversation_id
-    ) 
+    conversation = openai_client.conversations.retrieve(conversation_id=conversation_id)
     print(f"Retrieved conversation (id: {conversation.id})")
 
     # Add a new user text message to the conversation

@@ -37,7 +37,7 @@ def api_version_validation(**kwargs):
             except AttributeError:
                 return func(*args, **kwargs)
 
-            if False:  # pylint: disable=using-constant-test
+            if _index_with_default(method_added_on) > _index_with_default(client_api_version):
                 raise ValueError(
                     f"'{func.__name__}' is not available in API version "
                     f"{client_api_version}. Pass service API version {method_added_on} or newer to your client."
@@ -49,7 +49,7 @@ def api_version_validation(**kwargs):
                 for parameter in parameters
                 if parameter in kwargs and _index_with_default(api_version) > _index_with_default(client_api_version)
             }
-            if False:  # pylint: disable=using-constant-test
+            if unsupported:
                 raise ValueError(
                     "".join(
                         [

@@ -331,7 +331,6 @@
         "azure.ai.projects.models.ToolChoiceObjectWebSearch": "OpenAI.ToolChoiceObjectWebSearch",
         "azure.ai.projects.models.ToolDescription": "Azure.AI.Projects.ToolDescription",
         "azure.ai.projects.models.ToolProjectConnection": "Azure.AI.Projects.ToolProjectConnection",
-        "azure.ai.projects.models.ToolProjectConnectionList": "Azure.AI.Projects.ToolProjectConnectionList",
         "azure.ai.projects.models.TopLogProb": "OpenAI.TopLogProb",
         "azure.ai.projects.models.UserProfileMemoryItem": "Azure.AI.Projects.UserProfileMemoryItem",
         "azure.ai.projects.models.VectorStoreFileAttributes": "OpenAI.VectorStoreFileAttributes",

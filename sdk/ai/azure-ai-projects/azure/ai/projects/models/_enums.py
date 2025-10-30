@@ -130,6 +130,14 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASELINE = "baseline"
     """Represents the baseline direct adversarial probing, which is used by attack strategies as the
     attack objective."""
+    INDIRECT_JAILBREAK = "indirect_jailbreak"
+    """Represents indirect jailbreak attacks that use complex methods to bypass AI safeguards."""
+    TENSE = "tense"
+    """Alters the tense of the text, changing its temporal context."""
+    MULTI_TURN = "multi_turn"
+    """Creates multi-turn conversations to simulate extended interactions."""
+    CRESCENDO = "crescendo"
+    """Gradually increases the intensity or complexity of the attack over time."""
 
 
 class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -633,6 +641,18 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content of a sexual nature."""
     SELF_HARM = "SelfHarm"
     """Represents content related to self-harm."""
+    PROTECTED_MATERIAL = "ProtectedMaterial"
+    """Represents content that involves illegal activities."""
+    CODE_VULNERABILITY = "CodeVulnerability"
+    """Represents content that contains vulnerabilities in code."""
+    UNGROUNDED_ATTRIBUTES = "UngroundedAttributes"
+    """Represents content that lacks a solid grounding in fact."""
+    PROHIBITED_ACTIONS = "ProhibitedActions"
+    """Represents content that involves prohibited actions."""
+    SENSITIVE_DATA_LEAKAGE = "SensitiveDataLeakage"
+    """Represents content that involves sensitive data leakage."""
+    TASK_ADHERENCE = "TaskAdherence"
+    """Represents content that involves task adherence."""
 
 
 class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
