@@ -167,9 +167,8 @@ class ReadItemsHelperSync:
             # All items in this list share the same partition key value. Get it from the first item.
             pk_value = pk_items[0][2]
             epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
-            pk_range_options = _base.format_pk_range_options(self.options)
             overlapping_ranges = self.client._routing_map_provider.get_overlapping_ranges(
-                collection_rid, [epk_range], pk_range_options
+                collection_rid, [epk_range], self.options
             )
             if overlapping_ranges:
                 range_id = overlapping_ranges[0]["id"]
