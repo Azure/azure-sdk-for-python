@@ -22,26 +22,26 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
 import warnings
+from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import RetryMode
-
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
-from azure.cosmos.offer import ThroughputProperties
+from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ..cosmos_client import _parse_connection_str
-from .._constants import _Constants as Constants
+from azure.cosmos.offer import ThroughputProperties
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
-from .._base import build_options as _build_options, _set_throughput_options
-from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy, _get_database_link
+from ._retry_utility_async import _ConnectionRetryPolicy
+from .._base import build_options as _build_options, _set_throughput_options
+from .._constants import _Constants as Constants
+from .._cosmos_responses import CosmosDict
+from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
-from .._cosmos_responses import CosmosDict
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
@@ -179,6 +179,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads for write operations on items by default unless specified differently per operation.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
+    :keyword dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy config to use for this request.
+    :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
 
     .. admonition:: Example:
 
@@ -197,16 +200,20 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
+            availability_strategy_config: Optional[dict[str, Any]] = None,
+            availability_strategy_max_concurrency: Optional[int] = None,
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url,
+            url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
+            availability_strategy_config=availability_strategy_config,
+            availability_strategy_max_concurrency=availability_strategy_max_concurrency,
             **kwargs
         )
 
