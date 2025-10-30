@@ -1236,14 +1236,14 @@ def _log_events_to_app_insights(
                 standard_log_attributes["http.client_ip"] = "0.0.0.0"
 
                 event_logger.emit(
-                        Event(
-                            name=EVALUATION_EVENT_NAME,
-                            attributes=standard_log_attributes,
-                            body=EVALUATION_EVENT_NAME,
-                            trace_id=trace_id if trace_id is not None else None,
-                            span_id=span_id if span_id is not None else None,
-                        )
+                    Event(
+                        name=EVALUATION_EVENT_NAME,
+                        attributes=standard_log_attributes,
+                        body=EVALUATION_EVENT_NAME,
+                        trace_id=trace_id if trace_id is not None else None,
+                        span_id=span_id if span_id is not None else None,
                     )
+                )
 
             except Exception as e:
                 LOGGER.warning(f"Failed to log event {i}: {e}")
