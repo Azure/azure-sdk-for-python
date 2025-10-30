@@ -26,5 +26,6 @@ REM Add additional pylint disables to the model_base.py file
 powershell -Command "(Get-Content azure\ai\projects\_utils\model_base.py) -replace '# pylint: disable=protected-access, broad-except', '# pylint: disable=protected-access, broad-except, import-error, no-value-for-parameter' | Set-Content azure\ai\projects\_utils\model_base.py"
 
 REM Disable the version validation
-powershell -Command "(Get-Content azure\ai\projects\_validation.py) -replace 'if _index_with_default\(method_added_on\) > _index_with_default\(client_api_version\):', 'if False:  # pylint: disable=using-constant-test' | Set-Content azure\ai\projects\_validation.py"
-powershell -Command "(Get-Content azure\ai\projects\_validation.py) -replace 'if unsupported:', 'if False:  # pylint: disable=using-constant-test' | Set-Content azure\ai\projects\_validation.py"
+REM No longer needed, since the service now supports api-version "2025-11-15-preview"
+REM powershell -Command "(Get-Content azure\ai\projects\_validation.py) -replace 'if _index_with_default\(method_added_on\) > _index_with_default\(client_api_version\):', 'if False:  # pylint: disable=using-constant-test' | Set-Content azure\ai\projects\_validation.py"
+REM powershell -Command "(Get-Content azure\ai\projects\_validation.py) -replace 'if unsupported:', 'if False:  # pylint: disable=using-constant-test' | Set-Content azure\ai\projects\_validation.py"
