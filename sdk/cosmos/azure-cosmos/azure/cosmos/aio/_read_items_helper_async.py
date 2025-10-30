@@ -109,9 +109,8 @@ class ReadItemsHelperAsync:
         for pk_items in items_by_pk_value.values():
             pk_value = pk_items[0][2]
             epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
-            pk_range_options = _base.format_pk_range_options(self.options)
             overlapping_ranges = await self.client._routing_map_provider.get_overlapping_ranges(
-                collection_rid, [epk_range], pk_range_options
+                collection_rid, [epk_range], self.options
             )
             if overlapping_ranges:
                 range_id = overlapping_ranges[0]["id"]

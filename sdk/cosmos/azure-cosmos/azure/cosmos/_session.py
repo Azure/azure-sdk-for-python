@@ -116,10 +116,9 @@ class SessionContainer(object):
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
-                        pk_range_options = _base.format_pk_range_options(options)
                         pk_range = routing_map_provider.get_overlapping_ranges(collection_name,
                                                                                [epk_range],
-                                                                               pk_range_options)
+                                                                               options)
                         if len(pk_range) > 0:
                             partition_key_range_id = pk_range[0]['id']
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
@@ -211,10 +210,9 @@ class SessionContainer(object):
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
-                        pk_range_options = _base.format_pk_range_options(options)
                         pk_range = await routing_map_provider.get_overlapping_ranges(collection_name,
                                                                                      [epk_range],
-                                                                                     pk_range_options)
+                                                                                     options)
                         if len(pk_range) > 0:
                             partition_key_range_id = pk_range[0]['id']
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)

@@ -3,7 +3,6 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-from azure.cosmos._base import format_pk_range_options
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
@@ -290,9 +289,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         if target_all_ranges:
             return [item async for item in self._client._ReadPartitionKeyRanges(collection_link=self._resource_link)]
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
-        pk_range_options = format_pk_range_options(self._options)
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link,
             [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
-            pk_range_options
+            self._options
         )
