@@ -25,7 +25,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperations(AzureMgmtRecordedTest
         response = self.client.network_security_groups.begin_delete(
             resource_group_name=resource_group.name,
             network_security_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperations(AzureMgmtRecordedTest
         response = self.client.network_security_groups.get(
             resource_group_name=resource_group.name,
             network_security_group_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -5117,7 +5117,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5130,7 +5130,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             network_security_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -5140,7 +5140,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperations(AzureMgmtRecordedTest
     @recorded_by_proxy
     def test_network_security_groups_list_all(self, resource_group):
         response = self.client.network_security_groups.list_all(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5151,7 +5151,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperations(AzureMgmtRecordedTest
     def test_network_security_groups_list(self, resource_group):
         response = self.client.network_security_groups.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

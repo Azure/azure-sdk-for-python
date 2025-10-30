@@ -373,6 +373,11 @@ class _ErrorCodes:
     # Linux Error Codes
     LinuxConnectionReset = 131
 
+class SDKSupportedCapabilities:
+    """Constants of SDK supported capabilities.
+    """
+    NONE = '0'
+    PARTITION_MERGE = '1'
 
 class StatusCodes:
     """HTTP status codes returned by the REST operations

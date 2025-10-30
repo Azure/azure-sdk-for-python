@@ -11,6 +11,11 @@ of the user that is authorized to use the generated SAS URL.
 - Added support for the keyword `user_delegation_key` to `generate_queue_sas` used with 
 `user_delegation_oid` to authenticate the request to generate a new SAS URL.
 
+## 12.14.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `QueueClient`.
+
 ## 12.14.0 (2025-10-15)
 
 ### Features Added

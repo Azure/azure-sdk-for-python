@@ -19,6 +19,11 @@ for the SMB protocol to specify whether encryption in transit is required.
 - Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
 optional initial data to be uploaded (up to 4MB).
 
+## 12.23.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `ShareClient`, `ShareDirectoryClient`, and `ShareFileClient`.
+
 ## 12.23.0 (2025-10-15)
 
 ### Features Added

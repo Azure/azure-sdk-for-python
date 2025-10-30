@@ -62,18 +62,12 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
-# AzureSdkOwners: @xiangyan99
+# AzureSdkOwners: @mrm9084
 # ServiceLabel: %App Configuration
 # ServiceOwners: @albertofori @avanigupta @mrm9084
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                               @xiangyan99
-
-# ServiceOwners: @mrm9084
-# ServiceLabel: %App Configuration Provider
-
-# PRLabel: %App Configuration Provider
-/sdk/appconfiguration/azure-appconfiguration-provider/               @albertofori @avanigupta @mrm9084 @rossgrambo
+/sdk/appconfiguration/                                               @albertofori @avanigupta @mrm9084 @rossgrambo @xiangyan99
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
@@ -156,12 +150,12 @@
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft @koen-mertens
 
-# AzureSdkOwners: @mccoyp @Azure/azure-sdk-write-keyvault
+# AzureSdkOwners: @Azure/azure-sdk-write-keyvault
 # ServiceLabel: %KeyVault
 # ServiceOwners:                                                     @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @mccoyp @Azure/azure-sdk-write-keyvault
+/sdk/keyvault/                                                       @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @prativen @mitsha-microsoft @ninallam

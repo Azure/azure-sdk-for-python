@@ -53,6 +53,10 @@ from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import StorageAccountHostsMixin
 
 class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
+    container_name: str
+    blob_name: str
+    snapshot: Optional[str]
+    version_id: Optional[str]
     def __init__(
         self,
         account_url: str,
