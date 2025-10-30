@@ -20,6 +20,7 @@ from azure.core.pipeline.policies import (
     AsyncRedirectPolicy,
     SensitiveHeaderCleanupPolicy,
 )
+from azure.core.pipeline.policies._authentication import MAX_REFRESH_JITTER_SECONDS
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 import pytest
 import trio
@@ -244,7 +245,9 @@ async def test_bearer_policy_access_token_info_caching(http_request):
     await pipeline.run(http_request("GET", "https://spam.eggs"))
     assert credential.get_token_info.call_count == 2  # token is expired -> policy should call get_token_info again
 
-    refreshable_token = AccessTokenInfo("token", int(time.time() + 3600), refresh_on=int(time.time() - 1))
+    refreshable_token = AccessTokenInfo(
+        "token", int(time.time() + 3600), refresh_on=int(time.time() - (MAX_REFRESH_JITTER_SECONDS + 5))
+    )
     credential.get_token_info.reset_mock()
     credential.get_token_info.return_value = refreshable_token
     pipeline = AsyncPipeline(transport=AsyncMock(), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")])
