@@ -369,7 +369,7 @@ class RedTeam:
 
             if custom_objectives:
                 # Use custom objectives for this risk category
-                return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key)
+                return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key, is_agent_target)
             else:
                 # No custom objectives for this risk category, but risk_categories was specified
                 # Fetch from service if this risk category is in the requested list
@@ -412,7 +412,7 @@ class RedTeam:
             )
 
     async def _get_custom_attack_objectives(
-        self, risk_cat_value: str, num_objectives: int, strategy: str, current_key: tuple
+        self, risk_cat_value: str, num_objectives: int, strategy: str, current_key: tuple, is_agent_target: Optional[bool] = None
     ) -> List[str]:
         """Get attack objectives from custom seed prompts."""
         attack_objective_generator = self.attack_objective_generator
@@ -439,10 +439,12 @@ class RedTeam:
         else:
             selected_cat_objectives = custom_objectives
             self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
-
+        target_type_str = "agent" if is_agent_target else "model"
         # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
         if strategy == "jailbreak":
             selected_cat_objectives = await self._apply_jailbreak_prefixes(selected_cat_objectives)
+        elif strategy == "indirect_jailbreak":
+            selected_cat_objectives = await self._apply_xpia_prompts(selected_cat_objectives, target_type_str)
 
         # Extract content from selected objectives
         selected_prompts = []
@@ -517,6 +519,8 @@ class RedTeam:
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
+            elif strategy == "indirect_jailbreak":
+                objectives_response = await self._apply_xpia_prompts(objectives_response, "model")
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -566,8 +570,7 @@ class RedTeam:
                     if strategy == "jailbreak":
                         objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
                     elif strategy == "indirect_jailbreak":
-                        # Try agent-type XPIA first, will fallback to model-type XPIA within the method
-                        objectives_response = await self._apply_xpia_prompts(objectives_response, "agent")
+                        objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
                     # Check if fallback response is also empty
                     if not objectives_response or (
