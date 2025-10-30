@@ -2305,11 +2305,14 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         logger.info(
             f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}"
         )
+        result_counts["total"] += 1
+        passed_count = 0
+        failed_count = 0
+        error_count = 0
         if isinstance(aoai_result, dict) and "results" in aoai_result:
             logger.info(
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
             )
-            result_counts["total"] += len(aoai_result["results"])
             for result_item in aoai_result["results"]:
                 if isinstance(result_item, dict):
                     # Check if the result has a 'passed' field
@@ -2322,11 +2325,11 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                                 "passed": 0,
                             }
                         if result_item["passed"] is True:
-                            result_counts["passed"] += 1
+                            passed_count += 1
                             result_counts_stats[testing_criteria]["passed"] += 1
 
                         elif result_item["passed"] is False:
-                            result_counts["failed"] += 1
+                            failed_count += 1
                             result_counts_stats[testing_criteria]["failed"] += 1
                     # Check if the result indicates an error status
                     elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
@@ -2334,11 +2337,18 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                         and isinstance(result_item["sample"], dict)
                         and result_item["sample"].get("error", None) is not None
                     ):
-                        result_counts["errored"] += 1
+                        error_count += 1
         elif hasattr(aoai_result, "status") and aoai_result.status == "error":
-            result_counts["errored"] += 1
+            error_count += 1
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
+            error_count += 1
+
+        if error_count > 0:
             result_counts["errored"] += 1
+        elif failed_count > 0:
+            result_counts["failed"] += 1
+        elif error_count == 0 and failed_count == 0 and passed_count > 0:
+            result_counts["passed"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
