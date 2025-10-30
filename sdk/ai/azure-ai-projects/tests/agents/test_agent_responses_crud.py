@@ -33,8 +33,8 @@ class TestAgentResponsesCrud(TestBase):
 
         # Test focus:
         POST   /openai/responses                             openai_client.responses.create()
-        GET    /openai/responses/{conversation_id}           openai_client.responses.retrieve() # SERVICE BUG? returns 500 Internal Server Error
-        DELETE /openai/responses/{conversation_id}           openai_client.responses.delete() # SERVICE BUG? returns 500 Internal Server Error
+        GET    /openai/responses/{response_id}               openai_client.responses.retrieve() # SERVICE BUG? returns 500 Internal Server Error
+        DELETE /openai/responses/{response_id}               openai_client.responses.delete() # SERVICE BUG? returns 500 Internal Server Error
         GET    /openai/responses/{response_id}/input_items   openai_client.responses.list_input_items() # SERVICE BUG? returns 500 Internal Server Error
         GET    /openai/responses                             openai_client.responses.list()
         POST   /openai/responses/{response_id}/cancel        openai_client.responses.cancel() # SERVICE BUG? returns 500 Internal Server Error

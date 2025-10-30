@@ -24,7 +24,7 @@ class TestConversationCrud(TestBase):
         """
         Test CRUD operations for Conversations.
 
-        This tests gets an OpenAI client,creates three conversations, each with different message formats.
+        This test gets an OpenAI client, creates three conversations, each with different message formats.
         It then retrieves, lists, and deletes the conversations, validating at each step.
         It uses different ways of creating conversations: strongly typed, dictionary, and IO[bytes].
 
@@ -58,11 +58,11 @@ class TestConversationCrud(TestBase):
         print(f"Created conversation 2 (id: {conversation2.id})")
 
         # Create a conversation with a short-form text message, strongly typed.
-        # NOTE: The assert below will fail if you just use the auto-emitted souce code as-is. You need to apply
+        # NOTE: The assert below will fail if you just use the auto-emitted source code as-is. You need to apply
         # the fixes in file post-emitter-fixes.cmd to fix the emitted code and make the assert below pass.
         # conversation3 = client.conversations.create(
         #     items=[
-        #         ResponsesUserMessageItemParam(content="third messsage"),
+        #         ResponsesUserMessageItemParam(content="third message"),
         #         ResponsesUserMessageItemParam(content=[ItemContentInputText(text="fourth message")]),
         #     ]
         # )

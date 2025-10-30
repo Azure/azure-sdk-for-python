@@ -20,7 +20,7 @@ class TestAgentCrudAsync(TestBase):
         """
         Test CRUD operations for Agents.
 
-        This tests creates two agents, the first one with two versions, the second one with one version.
+        This test creates two agents, the first one with two versions, the second one with one version.
         It then retrieves, lists, and deletes them, validating at each step.
         It uses different ways of creating agents: strongly typed, dictionary, and IO[bytes].
         """

@@ -41,7 +41,7 @@ class TestConversationCrudAsync(TestBase):
             print(f"Created conversation 2 (id: {conversation2.id})")
 
             # Create a conversation with a short-form text message, strongly typed.
-            # NOTE: The assert below will fail if you just use the auto-emitted souce code as-is. You need to apply
+            # NOTE: The assert below will fail if you just use the auto-emitted source code as-is. You need to apply
             # the fixes in file post-emitter-fixes.cmd to fix the emitted code and make the assert below pass.
             # conversation3 = await client.conversations.create(
             #     items=[
