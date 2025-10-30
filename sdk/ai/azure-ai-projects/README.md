@@ -4,14 +4,14 @@ The AI Projects client library (in preview) is part of the Azure AI Foundry SDK,
 resources in your Azure AI Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
-* **Get an AzureOpenAI client** using the `.get_openai_client()` client method.
+* **Get an AzureOpenAI client** using the `.get_openai_client_legacy()` client method.
 * **Run Evaluations** to assess the performance of generative AI applications, using the `.evaluations` operations.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods the `.indexes` operations.
 
-The client library uses version `2025-05-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
+The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
@@ -94,21 +94,50 @@ The `.agents` property on the `AIProjectsClient` gives you access to an authenti
 
 The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
 
-<!-- SNIPPET:sample_agents.agents_sample -->
+<!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
 ```python
-agent = project_client.agents.create_agent(
-    model=model_deployment_name,
-    name="my-agent",
-    instructions="You are helpful agent",
+openai_client = project_client.get_openai_client()
+
+agent = project_client.agents.create_version(
+    agent_name="MyAgent",
+    definition=PromptAgentDefinition(
+        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        instructions="You are a helpful assistant that answers general questions",
+    ),
 )
-print(f"Created agent, agent ID: {agent.id}")
+print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-# Do something with your Agent!
-# See samples here https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples
+conversation = openai_client.conversations.create(
+    items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
+)
+print(f"Created conversation with initial user message (id: {conversation.id})")
 
-project_client.agents.delete_agent(agent.id)
-print("Deleted agent")
+response = openai_client.responses.create(
+    conversation=conversation.id,
+    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+    input="",  # TODO: Remove 'input' once service is fixed
+)
+print(f"Response output: {response.output_text}")
+
+openai_client.conversations.items.create(
+    conversation_id=conversation.id,
+    items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
+)
+print(f"Added a second user message to  the conversation")
+
+response = openai_client.responses.create(
+    conversation=conversation.id,
+    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+    input="",  # TODO: Remove 'input' once service is fixed
+)
+print(f"Response output: {response.output_text}")
+
+openai_client.conversations.delete(conversation_id=conversation.id)
+print("Conversation deleted")
+
+project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+print("Agent deleted")
 ```
 
 <!-- END SNIPPET -->
@@ -136,7 +165,7 @@ Update the `api_version` value with one found in the "Data plane - inference" ro
 print(
     "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
 )
-with project_client.get_openai_client(api_version="2024-10-21") as client:
+with project_client.get_openai_client_legacy(api_version="2024-10-21") as client:
 
     response = client.chat.completions.create(
         model=model_deployment_name,
@@ -153,7 +182,9 @@ with project_client.get_openai_client(api_version="2024-10-21") as client:
 print(
     "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a chat completion operation:"
 )
-with project_client.get_openai_client(api_version="2024-10-21", connection_name=connection_name) as client:
+with project_client.get_openai_client_legacy(
+    api_version="2024-10-21", connection_name=connection_name
+) as client:
 
     response = client.chat.completions.create(
         model=model_deployment_name,
@@ -180,7 +211,7 @@ See the "inference" folder in the [package samples][samples] for additional samp
 print(
     "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a 'responses' operation:"
 )
-with project_client.get_openai_client(api_version="2025-04-01-preview") as client:
+with project_client.get_openai_client_legacy(api_version="2025-04-01-preview") as client:
 
     response = client.responses.create(
         model=model_deployment_name,
@@ -192,7 +223,7 @@ with project_client.get_openai_client(api_version="2025-04-01-preview") as clien
 print(
     "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a 'responses' operation:"
 )
-with project_client.get_openai_client(
+with project_client.get_openai_client_legacy(
     api_version="2025-04-01-preview", connection_name=connection_name
 ) as client:
 
@@ -337,6 +368,37 @@ project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 
 <!-- END SNIPPET -->
 
+### Files operations
+
+The code below shows some Files operations using the OpenAI client, which allow you to upload, retrieve, list, and delete files. These operations are useful for working with files that can be used for fine-tuning and other AI model operations. Full samples can be found under the "files" folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_files.files_sample-->
+
+```python
+print("Uploading file")
+with open(file_path, "rb") as f:
+    uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
+print(uploaded_file)
+
+print(f"Retrieving file metadata with ID: {uploaded_file.id}")
+retrieved_file = openai_client.files.retrieve(uploaded_file.id)
+print(retrieved_file)
+
+print(f"Retrieving file content with ID: {uploaded_file.id}")
+file_content = openai_client.files.content(uploaded_file.id)
+print(file_content.content)
+
+print("Listing all files:")
+for file in openai_client.files.list():
+    print(file)
+
+print(f"Deleting file with ID: {uploaded_file.id}")
+deleted_file = openai_client.files.delete(uploaded_file.id)
+print(f"Successfully deleted file: {deleted_file.id}")
+```
+
+<!-- END SNIPPET -->
+
 ### Indexes operations
 
 The code below shows some Indexes operations. Full samples can be found under the "indexes"
@@ -379,70 +441,9 @@ Evaluation in Azure AI Project client library provides quantitive, AI-assisted q
 
 The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
-<!-- SNIPPET:sample_evaluations.evaluations_sample-->
-
-```python
-print("Upload a single file and create a new Dataset to reference the file.")
-dataset: DatasetVersion = project_client.datasets.upload_file(
-    name=dataset_name,
-    version=dataset_version,
-    file_path=data_file,
-    connection_name=connection_name,
-)
-print(dataset)
-
-print("Create an evaluation")
-evaluation: Evaluation = Evaluation(
-    display_name="Sample Evaluation Test",
-    description="Sample evaluation for testing",
-    # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-    data=InputDataset(id=dataset.id if dataset.id else ""),
-    evaluators={
-        "relevance": EvaluatorConfiguration(
-            id=EvaluatorIds.RELEVANCE.value,
-            init_params={
-                "deployment_name": model_deployment_name,
-            },
-            data_mapping={
-                "query": "${data.query}",
-                "response": "${data.response}",
-            },
-        ),
-        "violence": EvaluatorConfiguration(
-            id=EvaluatorIds.VIOLENCE.value,
-            init_params={
-                "azure_ai_project": endpoint,
-            },
-        ),
-        "bleu_score": EvaluatorConfiguration(
-            id=EvaluatorIds.BLEU_SCORE.value,
-        ),
-    },
-)
-
-evaluation_response: Evaluation = project_client.evaluations.create(
-    evaluation,
-    headers={
-        "model-endpoint": model_endpoint,
-        "model-api-key": model_api_key,
-    },
-)
-print(evaluation_response)
-
-print("Get evaluation")
-get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
-print(get_evaluation_response)
-
-print("List evaluations")
-for evaluation in project_client.evaluations.list():
-    print(evaluation)
-```
-
-<!-- END SNIPPET -->
-
 ## Tracing
 
-The AI Projects client library can be configured to emit OpenTelemetry traces for all its REST API calls. These can be viewed in the "Tracing" tab in your AI Foundry Project page, once you add an Application Insights resource and configured your application appropriately. Agent operations (via the `.agents` property) can also be instrumented, as well as OpenAI client library operations (client created by calling `get_openai_client()` method). For local debugging purposes, traces can also be omitted to the console. For more information see:
+The AI Projects client library can be configured to emit OpenTelemetry traces for all its REST API calls. These can be viewed in the "Tracing" tab in your AI Foundry Project page, once you add an Application Insights resource and configured your application appropriately. Agent operations (via the `.agents` property) can also be instrumented, as well as OpenAI client library operations (client created by calling `get_openai_client_legacy()` method). For local debugging purposes, traces can also be omitted to the console. For more information see:
 
 * [Trace AI applications using OpenAI SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application)
 * Chat-completion samples with console or Azure Monitor tracing enabled. See `samples\inference\azure-openai` folder.

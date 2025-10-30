@@ -1,8 +1,11 @@
 # Release History
 
-## 1.1.0b5 (Unreleased)
+## 2.0.0b1 (Unreleased)
 
 ### Features added
+
+### Sample updates
+* Added `files` samples for operations create, delete, list, retrieve and content.
 
 ## 1.1.0b4 (2025-09-12)
 

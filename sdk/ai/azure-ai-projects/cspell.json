@@ -12,6 +12,16 @@
         "quantitive",
         "balapvbyostoragecanary",
         "fspath",
+        "aread",
+        "ilike",
+        "inpainting",
+        "CPSDL",
+        "dmcp",
+        "Clippy",
+        "Bellingshausen",
+        "Lazarev",
+        "ROYGBIV",
+        "aiofiles"
     ],
     "ignorePaths": [
     ]

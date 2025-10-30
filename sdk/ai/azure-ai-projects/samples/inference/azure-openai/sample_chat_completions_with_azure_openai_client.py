@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0" openai python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
@@ -46,7 +46,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print(
             "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
         )
-        with project_client.get_openai_client(api_version="2024-10-21") as client:
+        with project_client.get_openai_client_legacy(api_version="2024-10-21") as client:
 
             response = client.chat.completions.create(
                 model=model_deployment_name,
@@ -63,7 +63,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print(
             "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a chat completion operation:"
         )
-        with project_client.get_openai_client(api_version="2024-10-21", connection_name=connection_name) as client:
+        with project_client.get_openai_client_legacy(
+            api_version="2024-10-21", connection_name=connection_name
+        ) as client:
 
             response = client.chat.completions.create(
                 model=model_deployment_name,

@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects aiohttp openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0" aiohttp openai python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
@@ -51,7 +51,7 @@ async def main():
             print(
                 "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a 'responses' operation:"
             )
-            async with await project_client.get_openai_client(api_version="2025-04-01-preview") as client:
+            async with await project_client.get_openai_client_legacy(api_version="2025-04-01-preview") as client:
 
                 response = await client.responses.create(
                     model=model_deployment_name,
@@ -63,7 +63,7 @@ async def main():
             print(
                 "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a 'responses' operation:"
             )
-            async with await project_client.get_openai_client(
+            async with await project_client.get_openai_client_legacy(
                 api_version="2025-04-01-preview", connection_name=connection_name
             ) as client:
 

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects openai httpx azure-monitor-opentelemetry opentelemetry-instrumentation-openai-v2 python-dotenv
+    pip install "azure-ai-projects>=2.0.0" openai httpx azure-monitor-opentelemetry opentelemetry-instrumentation-openai-v2 python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
@@ -57,7 +58,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         with tracer.start_as_current_span(scenario):
 
-            with project_client.get_openai_client(api_version="2024-10-21") as client:
+            with project_client.get_openai_client_legacy(api_version="2024-10-21") as client:
 
                 response = client.chat.completions.create(
                     model=model_deployment_name,
