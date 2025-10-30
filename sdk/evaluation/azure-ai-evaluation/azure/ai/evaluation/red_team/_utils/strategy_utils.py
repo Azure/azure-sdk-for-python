@@ -5,8 +5,6 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
 import logging
-from functools import partial 
-
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from .._attack_strategy import AttackStrategy
 from pyrit.prompt_converter import (
