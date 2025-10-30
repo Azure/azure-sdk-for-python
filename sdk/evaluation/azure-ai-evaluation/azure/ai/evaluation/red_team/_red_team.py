@@ -489,15 +489,28 @@ class RedTeam:
             # Get objectives from RAI service
             target_type_str = "agent" if is_agent_target else "model" if is_agent_target is not None else None
 
-            objectives_response = await self.generated_rai_client.get_attack_objectives(
-                risk_type=content_harm_risk,
-                risk_category=other_risk,
-                application_scenario=application_scenario or "",
-                language=self.language.value,
-                scan_session_id=self.scan_session_id,
-                target=target_type_str,
-                client_id=client_id,
-            )
+            if "tense" in strategy:
+                objectives_response = await self.generated_rai_client.get_attack_objectives(
+                    risk_type=content_harm_risk,
+                    risk_category=other_risk,
+                    application_scenario=application_scenario or "",
+                    strategy="tense",
+                    language=self.language.value,
+                    scan_session_id=self.scan_session_id,
+                    target=target_type_str,
+                    client_id=client_id,
+                )
+            else:
+                objectives_response = await self.generated_rai_client.get_attack_objectives(
+                    risk_type=content_harm_risk,
+                    risk_category=other_risk,
+                    application_scenario=application_scenario or "",
+                    strategy=None,
+                    language=self.language.value,
+                    scan_session_id=self.scan_session_id,
+                    target=target_type_str,
+                    client_id=client_id,
+                )
 
             if isinstance(objectives_response, list):
                 self.logger.debug(f"API returned {len(objectives_response)} objectives")
@@ -522,15 +535,28 @@ class RedTeam:
                 )
                 try:
                     # Retry with model target type
-                    objectives_response = await self.generated_rai_client.get_attack_objectives(
-                        risk_type=content_harm_risk,
-                        risk_category=other_risk,
-                        application_scenario=application_scenario or "",
-                        language=self.language.value,
-                        scan_session_id=self.scan_session_id,
-                        target="model",
-                        client_id=client_id,
-                    )
+                    if "tense" in strategy:
+                        objectives_response = await self.generated_rai_client.get_attack_objectives(
+                            risk_type=content_harm_risk,
+                            risk_category=other_risk,
+                            application_scenario=application_scenario or "",
+                            strategy="tense",
+                            language=self.language.value,
+                            scan_session_id=self.scan_session_id,
+                            target="model",
+                            client_id=client_id,
+                        )
+                    else:
+                        objectives_response = await self.generated_rai_client.get_attack_objectives(
+                            risk_type=content_harm_risk,
+                            risk_category=other_risk,
+                            application_scenario=application_scenario or "",
+                            strategy=None,
+                            language=self.language.value,
+                            scan_session_id=self.scan_session_id,
+                            target="model",
+                            client_id=client_id,
+                        )
 
                     if isinstance(objectives_response, list):
                         self.logger.debug(f"Fallback API returned {len(objectives_response)} model-type objectives")
