@@ -3224,7 +3224,9 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
+
         Ideal partitioning schemes result in partitions of roughly 100k items each.
+
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -3249,7 +3251,9 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
+
         Ideal partitioning schemes result in partitions of roughly 100k items each.
+
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -3274,7 +3278,9 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
+
         Ideal partitioning schemes result in partitions of roughly 100k items each.
+
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -3299,7 +3305,9 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Updates partition type for a GeoCatalog Collection. This will
         determine the partitioning scheme for items within the database,
         and can only be set before any items are loaded.
+
         Ideal partitioning schemes result in partitions of roughly 100k items each.
+
         The default partitioning scheme is "none" which does not partition items.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
@@ -4843,6 +4851,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         **kwargs: Any
     ) -> _models.StacItemCollection:
         """Fetch features of the feature collection with id ``collectionId``.
+
         Every feature in a dataset belongs to a collection. A dataset may
         consist of multiple feature collections. A feature collection is often a
         collection of features of a similar type, based on a common schema.
@@ -9961,6 +9970,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """Get Legend.
 
         Generate a legend image for a given colormap.
+
         If the colormap has non-contiguous values at the beginning or end,
         which aren't desired in the output image, they can be trimmed by specifying
         the number of values to trim.

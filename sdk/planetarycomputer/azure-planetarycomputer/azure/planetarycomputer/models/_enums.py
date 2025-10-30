@@ -456,11 +456,14 @@ class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class FilterLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Choices for filter-lang value in a POST request.
+
     Based on
     `https://github.com/stac-api-extensions/filter#queryables
-        <https://github.com/stac-api-extensions/filter#queryables>`_
+    <https://github.com/stac-api-extensions/filter#queryables>`_
+
     Note the addition of cql2-json, which is used by the pgstac backend,
     but is not included in the spec above.
+
     Defines the supported filter languages for STAC API queries.
     """
 
@@ -516,8 +519,7 @@ class IngestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class LegendConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Legend type to make, one of: ``continuous``, ``classmap``, ``interval`` or ``none``
-    (note, ``none`` is a string literal).Defines the legend configuration types for data
-        visualization.
+    (note, ``none`` is a string literal).
     """
 
     CONTINUOUS = "continuous"
@@ -584,9 +586,10 @@ class PartitionTypeScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class PixelSelection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifier selecting one of the TileMatrixSetId supported (default:
-    'WebMercatorQuad')Identifier selecting one of the TileMatrixSetId supported (default:
-    'WebMercatorQuad')Method used to select or compute pixels when creating composites from
-        multiple sources.
+    'WebMercatorQuad')
+
+    Represents the method used to select or compute pixels when creating
+    composites from multiple sources.
     """
 
     FIRST = "first"
@@ -697,19 +700,19 @@ class StacQueryableDefinitionDataType(str, Enum, metaclass=CaseInsensitiveEnumMe
 
     STRING = "string"
     """Character strings.
-Example: 'This is a literal string.'"""
+    Example: 'This is a literal string.'"""
     NUMBER = "number"
     """Numbers including integers and floating point values.
-Examples: -100, 3.14159"""
+    Examples: -100, 3.14159"""
     BOOLEAN = "boolean"
     """Booleans.
-Examples: true, false"""
+    Examples: true, false"""
     TIMESTAMP = "timestamp"
     """An instant with a granularity of a second or smaller.
-Example (JSON): { "timestamp": "1969-07-20T20:17:40Z" }"""
+    Example (JSON): { "timestamp": "1969-07-20T20:17:40Z" }"""
     DATE = "date"
     """An instant with a granularity of a day.
-Example (JSON): { "date": "1969-07-20" }"""
+    Example (JSON): { "date": "1969-07-20" }"""
 
 
 class StacSearchSortingDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
