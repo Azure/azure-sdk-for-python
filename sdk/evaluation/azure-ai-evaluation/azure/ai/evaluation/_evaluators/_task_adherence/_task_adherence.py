@@ -142,12 +142,12 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
-        
+
         # Reformat conversation history and extract system message
         query_messages = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
         system_message = ""
         user_query = ""
-        
+
         # Parse query messages to extract system message and user query
         if isinstance(query_messages, list):
             for msg in query_messages:
@@ -157,12 +157,12 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     user_query = msg.get("content", "")
         elif isinstance(query_messages, str):
             user_query = query_messages
-        
+
         # Reformat response and separate assistant messages from tool calls
         response_messages = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
         assistant_response = ""
         tool_calls = ""
-        
+
         # Parse response messages to extract assistant response and tool calls
         if isinstance(response_messages, list):
             assistant_parts = []
@@ -187,7 +187,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_calls = "\n".join(tool_parts)
         elif isinstance(response_messages, str):
             assistant_response = response_messages
-        
+
         # Prepare inputs for prompty
         prompty_input = {
             "system_message": system_message,
@@ -205,7 +205,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Convert flagged to numeric score for backward compatibility (0 = pass, 1 = fail)
             score = 1.0 if flagged else 0.0
             score_result = "fail" if flagged else "pass"
-            
+
             return {
                 f"{self._result_key}": score,
                 f"gpt_{self._result_key}": score,
@@ -221,7 +221,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
                 f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
-        
+
         if logger:
             logger.warning("LLM output is not a dictionary, returning default values.")
 
