@@ -36,10 +36,9 @@ from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from .._callback_chat_target import _CallbackChatTarget
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
+
 def create_tense_converter(
-    generated_rai_client: GeneratedRAIClient,
-    is_one_dp_project: bool,
-    logger: logging.Logger
+    generated_rai_client: GeneratedRAIClient, is_one_dp_project: bool, logger: logging.Logger
 ) -> TenseConverter:
     """Factory function for creating TenseConverter with proper dependencies."""
     converter_target = AzureRAIServiceTarget(
@@ -49,9 +48,10 @@ def create_tense_converter(
         prompt_template_key="prompt_converters/tense_converter.yaml",
         logger=logger,
         is_one_dp_project=is_one_dp_project,
-        tense="past"
+        tense="past",
     )
     return TenseConverter(converter_target=converter_target, tense="past")
+
 
 def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
     """
@@ -95,18 +95,18 @@ def get_converter_for_strategy(
     attack_strategy: Union[AttackStrategy, List[AttackStrategy]],
     generated_rai_client: GeneratedRAIClient,
     is_one_dp_project: bool,
-    logger: logging.Logger
+    logger: logging.Logger,
 ) -> Union[PromptConverter, List[PromptConverter], None]:
     """Get the appropriate converter for a given attack strategy."""
     factory_map = strategy_converter_map()
-    
+
     def _resolve_converter(strategy):
         converter_or_factory = factory_map[strategy]
         if callable(converter_or_factory) and not isinstance(converter_or_factory, PromptConverter):
             # It's a factory function, call it with dependencies
             return converter_or_factory(generated_rai_client, is_one_dp_project, logger)
         return converter_or_factory
-    
+
     if isinstance(attack_strategy, List):
         return [_resolve_converter(strategy) for strategy in attack_strategy]
     else:

@@ -857,7 +857,9 @@ class RedTeam:
             tqdm.write(f"▶️ Starting task: {strategy_name} strategy for {risk_category.value} risk category")
 
             # Get converter and orchestrator function
-            converter = get_converter_for_strategy(strategy, self.generated_rai_client, self._one_dp_project, self.logger)
+            converter = get_converter_for_strategy(
+                strategy, self.generated_rai_client, self._one_dp_project, self.logger
+            )
             call_orchestrator = self.orchestrator_manager.get_orchestrator_for_attack_strategy(strategy)
 
             try:

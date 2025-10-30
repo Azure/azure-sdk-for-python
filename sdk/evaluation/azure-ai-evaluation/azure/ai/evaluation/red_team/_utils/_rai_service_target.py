@@ -124,7 +124,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
             body["templateParameters"]["tense"] = self.tense
         if objective or self.objective:
             body["templateParameters"]["objective"] = objective or self.objective
-            
+
         self.logger.debug(f"Created simulation request body: {json.dumps(body, indent=2)}")
         return body
 
