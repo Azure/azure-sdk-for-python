@@ -812,8 +812,8 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         temporal_extent = StacCollectionTemporalExtent(
             interval=[
                 [
-                    datetime.datetime.fromisoformat("2020-01-01T00:00:00Z"),
-                    datetime.datetime.fromisoformat("2099-12-31T23:59:59Z"),
+                    datetime.datetime.fromisoformat("2020-01-01T00:00:00+00:00"),
+                    datetime.datetime.fromisoformat("2099-12-31T23:59:59+00:00"),
                 ]
             ]
         )
