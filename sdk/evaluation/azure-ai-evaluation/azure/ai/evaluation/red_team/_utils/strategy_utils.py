@@ -36,7 +36,11 @@ from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from .._callback_chat_target import _CallbackChatTarget
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
-def create_tense_converter(generated_rai_client, is_one_dp_project, logger):
+def create_tense_converter(
+    generated_rai_client: GeneratedRAIClient,
+    is_one_dp_project: bool,
+    logger: logging.Logger
+) -> TenseConverter:
     """Factory function for creating TenseConverter with proper dependencies."""
     converter_target = AzureRAIServiceTarget(
         client=generated_rai_client,
