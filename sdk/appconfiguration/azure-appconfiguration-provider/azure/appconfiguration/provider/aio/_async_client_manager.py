@@ -15,6 +15,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
+    SnapshotComposition
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from .._client_manager_base import (
@@ -140,6 +141,9 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         for select in selects:
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                snapshot = await self._client.get_snapshot(select.snapshot_name)
+                if (snapshot.composition_type != SnapshotComposition.KEY):
+                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Use traditional filtering when not loading from a snapshot

@@ -8,12 +8,13 @@ import pytest
 import time
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR
-from azure.appconfiguration.provider import load, WatchKey
+from azure.appconfiguration.provider.aio import load
+from azure.appconfiguration.provider import WatchKey
 from azure.appconfiguration import ConfigurationSetting, ConfigurationSettingsFilter, SnapshotComposition, SnapshotStatus
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator
-from testcase import AppConfigTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from async_preparers import app_config_decorator_async
+from asynctestcase import AppConfigTestCase
 
 class TestSnapshotSupport:
     """Tests for snapshot functionality in SettingSelector."""
@@ -77,14 +78,15 @@ class TestSnapshotSupport:
         assert selector.tag_filters == ["env=prod"]
         assert selector.snapshot_name is None
 
-    def test_feature_flag_selectors_with_snapshot_raises_error(self):
+    @pytest.mark.asyncio
+    async def test_feature_flag_selectors_with_snapshot_raises_error(self):
         """Test that feature_flag_selectors with snapshot_name raises ValueError during validation."""
         with pytest.raises(
             ValueError,
             match=r"snapshot_name cannot be used with feature_flag_selectors\. "
             r"Use snapshot_name with regular selects instead to load feature flags from snapshots\.",
         ):
-            load(
+            await load(
                 connection_string="Endpoint=test;Id=test;Secret=test",
                 feature_flag_enabled=True,
                 feature_flag_selectors=[SettingSelector(snapshot_name="my-snapshot")],
@@ -124,45 +126,44 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             assert selector.label_filter == NULL_CHAR
             assert selector.tag_filters is None
 
-    @app_config_decorator
-    @recorded_by_proxy
-    def test_load_provider_with_snapshot_not_found(self, appconfiguration_connection_string):
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_load_provider_with_snapshot_not_found(self, appconfiguration_connection_string):
         """Test loading provider with a non-existent snapshot returns error."""
         # Try to load from a non-existent snapshot
         with pytest.raises(ResourceNotFoundError):
-            self.create_client(
+            await self.create_client(
                 connection_string=appconfiguration_connection_string,
                 selects=[SettingSelector(snapshot_name="non-existent-snapshot")]
             )
 
-    @app_config_decorator
-    @recorded_by_proxy
-    def test_load_provider_with_regular_selectors(self, appconfiguration_connection_string):
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_load_provider_with_regular_selectors(self, appconfiguration_connection_string):
         """Test loading provider with regular selectors works (baseline test)."""
         # This should work - regular selector loading
-        provider = self.create_client(
+        async with await self.create_client(
             connection_string=appconfiguration_connection_string,
             selects=[SettingSelector(key_filter="message")]  # Regular selector
-        )
-        
-        # Verify we can access the configuration (message is set up by setup_configs)
-        assert "message" in provider
+        ) as provider:
+            # Verify we can access the configuration (message is set up by setup_configs)
+            assert "message" in provider
 
-    @app_config_decorator
-    @recorded_by_proxy
-    def test_snapshot_selector_parameter_validation_in_provider(self, appconfiguration_connection_string):
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_snapshot_selector_parameter_validation_in_provider(self, appconfiguration_connection_string):
         """Test that snapshot selector parameter validation works when loading provider."""
         # Test that feature flag selectors with snapshots are rejected
         with pytest.raises(ValueError, match="snapshot_name cannot be used with feature_flag_selectors"):
-            self.create_client(
+            await self.create_client(
                 connection_string=appconfiguration_connection_string,
                 feature_flag_enabled=True,
                 feature_flag_selectors=[SettingSelector(snapshot_name="test-snapshot")]
             )
 
-    @app_config_decorator
-    @recorded_by_proxy
-    def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
         """Test creating a snapshot and loading provider from it."""
         # Create SDK client for setup
         sdk_client = self.create_sdk_client(appconfiguration_connection_string)
@@ -194,7 +195,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
         
         # Set the configuration settings
         for setting in test_settings:
-            sdk_client.set_configuration_setting(setting)
+            await sdk_client.set_configuration_setting(setting)
 
         variables = kwargs.pop("variables", {})
         dynamic_snapshot_name_postfix = variables.setdefault("dynamic_snapshot_name_postfix", str(int(time.time())))
@@ -204,12 +205,13 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
         
         try:
             # Create the snapshot
-            snapshot = sdk_client.begin_create_snapshot(
+            snapshot_poller = await sdk_client.begin_create_snapshot(
                 name=snapshot_name,
                 filters=[ConfigurationSettingsFilter(key="snapshot_test_*")],  # Include all our test keys
                 composition_type=SnapshotComposition.KEY,
                 retention_period=3600 # Min valid value is 1 hour
-            ).result()
+            )
+            snapshot = await snapshot_poller.result()
             
             # Verify snapshot was created successfully
             assert snapshot.name == snapshot_name
@@ -217,7 +219,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             assert snapshot.composition_type == SnapshotComposition.KEY
 
             # Load provider using the snapshot with refresh enabled
-            provider = self.create_client(
+            async with await self.create_client(
                 connection_string=appconfiguration_connection_string,
                 selects=[
                     SettingSelector(snapshot_name=snapshot_name),  # Snapshot data
@@ -225,101 +227,101 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
                 ],
                 refresh_on=[WatchKey("refresh_test_key")],  # Watch non-snapshot key for refresh
                 refresh_interval=1  # Short refresh interval for testing
-            )
-            
-            # Verify all snapshot settings are loaded
-            assert provider["snapshot_test_key1"] == "snapshot_test_value1" 
-            assert provider["snapshot_test_key2"] == "snapshot_test_value2"
-            assert provider["snapshot_test_json"]["nested"] == "snapshot_value"
-            assert provider["refresh_test_key"] == "original_refresh_value"
-            
-            # Verify that snapshot settings and refresh key are loaded
-            snapshot_keys = [key for key in provider.keys() if key.startswith("snapshot_test_")]
-            assert len(snapshot_keys) == 3
-            
-            # Test snapshot immutability: modify the original settings
-            modified_settings = [
-                ConfigurationSetting(
-                    key="snapshot_test_key1",
-                    value="MODIFIED_VALUE1",  # Changed value
+            ) as provider:
+                
+                # Verify all snapshot settings are loaded
+                assert provider["snapshot_test_key1"] == "snapshot_test_value1" 
+                assert provider["snapshot_test_key2"] == "snapshot_test_value2"
+                assert provider["snapshot_test_json"]["nested"] == "snapshot_value"
+                assert provider["refresh_test_key"] == "original_refresh_value"
+                
+                # Verify that snapshot settings and refresh key are loaded
+                snapshot_keys = [key for key in provider.keys() if key.startswith("snapshot_test_")]
+                assert len(snapshot_keys) == 3
+                
+                # Test snapshot immutability: modify the original settings
+                modified_settings = [
+                    ConfigurationSetting(
+                        key="snapshot_test_key1",
+                        value="MODIFIED_VALUE1",  # Changed value
+                        label=NULL_CHAR
+                    ),
+                    ConfigurationSetting(
+                        key="snapshot_test_key2",
+                        value="MODIFIED_VALUE2",  # Changed value
+                        label=NULL_CHAR
+                    ),
+                    ConfigurationSetting(
+                        key="snapshot_test_json",
+                        value='{"nested": "MODIFIED_VALUE"}',  # Changed nested value
+                        label=NULL_CHAR,
+                        content_type="application/json"
+                    ),
+                    ConfigurationSetting(
+                    key="refresh_test_key",
+                    value="updated_refresh_value",  # Changed value to trigger refresh
                     label=NULL_CHAR
-                ),
-                ConfigurationSetting(
-                    key="snapshot_test_key2",
-                    value="MODIFIED_VALUE2",  # Changed value
+                    )
+                ]
+                
+                # Update the original settings with new values
+                for setting in modified_settings:
+                    await sdk_client.set_configuration_setting(setting)
+                
+                # Add a completely new key after initial load
+                new_key = ConfigurationSetting(
+                    key="new_key_added_after_load",
+                    value="new_value",
                     label=NULL_CHAR
-                ),
-                ConfigurationSetting(
-                    key="snapshot_test_json",
-                    value='{"nested": "MODIFIED_VALUE"}',  # Changed nested value
-                    label=NULL_CHAR,
-                    content_type="application/json"
-                ),
-                ConfigurationSetting(
-                key="refresh_test_key",
-                value="updated_refresh_value",  # Changed value to trigger refresh
-                label=NULL_CHAR
                 )
-            ]
-            
-            # Update the original settings with new values
-            for setting in modified_settings:
-                sdk_client.set_configuration_setting(setting)
-            
-            # Add a completely new key after initial load
-            new_key = ConfigurationSetting(
-                key="new_key_added_after_load",
-                value="new_value",
-                label=NULL_CHAR
-            )
-            sdk_client.set_configuration_setting(new_key)
+                await sdk_client.set_configuration_setting(new_key)
 
-            # Wait for refresh interval to pass
-            time.sleep(1)
-            
-            # Refresh the existing provider (snapshots should remain immutable, but non-snapshot keys should update)
-            provider.refresh()
-            
-            # Verify the snapshot still contains the original values after refresh (immutability)
-            assert provider["snapshot_test_key1"] == "snapshot_test_value1"  # Original value
-            assert provider["snapshot_test_key2"] == "snapshot_test_value2"  # Original value
-            assert provider["snapshot_test_json"]["nested"] == "snapshot_value"  # Original value
-            
-            # Verify the non-snapshot key was updated during refresh
-            assert provider["refresh_test_key"] == "updated_refresh_value"  # Updated value
-            
-            # Verify new keys are NOT added during refresh (only watched keys trigger full reload)
-            assert "new_key_added_after_load" not in provider  # New key should not be loaded
-            
+                # Wait for refresh interval to pass
+                time.sleep(1)
+                
+                # Refresh the existing provider (snapshots should remain immutable, but non-snapshot keys should update)
+                await provider.refresh()
+                
+                # Verify the snapshot still contains the original values after refresh (immutability)
+                assert provider["snapshot_test_key1"] == "snapshot_test_value1"  # Original value
+                assert provider["snapshot_test_key2"] == "snapshot_test_value2"  # Original value
+                assert provider["snapshot_test_json"]["nested"] == "snapshot_value"  # Original value
+                
+                # Verify the non-snapshot key was updated during refresh
+                assert provider["refresh_test_key"] == "updated_refresh_value"  # Updated value
+                
+                # Verify new keys are NOT added during refresh (only watched keys trigger full reload)
+                assert "new_key_added_after_load" not in provider  # New key should not be loaded
+                
             # Verify that loading without snapshot gets the modified values
-            provider_current = self.create_client(
+            async with await self.create_client(
                 connection_string=appconfiguration_connection_string,
                 selects=[SettingSelector(key_filter="snapshot_test_*")]
-            )
-            
-            # Current values should be the modified ones
-            assert provider_current["snapshot_test_key1"] == "MODIFIED_VALUE1"  # Modified value
-            assert provider_current["snapshot_test_key2"] == "MODIFIED_VALUE2"  # Modified value
-            assert provider_current["snapshot_test_json"]["nested"] == "MODIFIED_VALUE"  # Modified value
+            ) as provider_current:
+                
+                # Current values should be the modified ones
+                assert provider_current["snapshot_test_key1"] == "MODIFIED_VALUE1"  # Modified value
+                assert provider_current["snapshot_test_key2"] == "MODIFIED_VALUE2"  # Modified value
+                assert provider_current["snapshot_test_json"]["nested"] == "MODIFIED_VALUE"  # Modified value
             
         finally:
             # Clean up: delete the snapshot and test settings
             try:
                 # Archive the snapshot (delete is not supported, but archive effectively removes it)
-                sdk_client.archive_snapshot(snapshot_name)
+                await sdk_client.archive_snapshot(snapshot_name)
             except Exception:
                 pass
                 
             # Clean up test settings
             for setting in test_settings:
                 try:
-                    sdk_client.delete_configuration_setting(key=setting.key, label=setting.label)
+                    await sdk_client.delete_configuration_setting(key=setting.key, label=setting.label)
                 except Exception:
                     pass
             
             # Clean up additional test keys
             try:
-                sdk_client.delete_configuration_setting(key="new_key_added_after_load", label=NULL_CHAR)
+                await sdk_client.delete_configuration_setting(key="new_key_added_after_load", label=NULL_CHAR)
             except Exception:
                 pass
         return variables
