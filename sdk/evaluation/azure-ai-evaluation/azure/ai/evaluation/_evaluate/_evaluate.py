@@ -2347,7 +2347,12 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
             result_counts["errored"] += 1
         elif failed_count > 0:
             result_counts["failed"] += 1
-        elif error_count == 0 and failed_count == 0 and passed_count > 0:
+        elif (
+            error_count == 0
+            and failed_count == 0
+            and passed_count > 0
+            and passed_count == len(aoai_result.get("results", []))
+        ):
             result_counts["passed"] += 1
 
         # Extract usage statistics from aoai_result.sample
