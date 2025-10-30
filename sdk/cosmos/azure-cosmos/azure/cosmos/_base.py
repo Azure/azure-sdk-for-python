@@ -946,7 +946,7 @@ def _build_properties_cache(properties: dict[str, Any], container_link: str) -> 
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
 
-def format_pk_range_options(query_options: dict[str, Any]) -> dict[str, Any]:
+def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
     """Formats the partition key range options to be used internally from the query ones.
 
     :param dict query_options: The query options being used.
@@ -956,4 +956,6 @@ def format_pk_range_options(query_options: dict[str, Any]) -> dict[str, Any]:
     pk_range_options: dict[str, Any] = {}
     if "containerRID" in query_options:
         pk_range_options["containerRID"] = query_options["containerRID"]
+    if "excludedLocations" in query_options:
+        pk_range_options["excludedLocations"] = query_options["excludedLocations"]
     return pk_range_options

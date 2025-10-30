@@ -23,6 +23,7 @@
 """
 from typing import TYPE_CHECKING, Optional
 
+from azure.cosmos._base import format_pk_range_options
 from azure.cosmos._constants import _Constants
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
@@ -72,8 +73,9 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
             partition_key_value = request.pk_val
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
+            pk_range_options = format_pk_range_options(options)
             partition_ranges = (self.client._routing_map_provider # pylint: disable=protected-access
-                                      .get_overlapping_ranges(container_link, epk_range, options))
+                                      .get_overlapping_ranges(container_link, epk_range, pk_range_options))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]

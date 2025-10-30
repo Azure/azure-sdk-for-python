@@ -33,6 +33,7 @@ import logging
 from typing_extensions import Literal
 
 from azure.cosmos import http_constants
+from azure.cosmos._base import format_pk_range_options
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
     ChangeFeedStartFromETagAndFeedRange
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
@@ -286,11 +287,12 @@ class ChangeFeedStateV2(ChangeFeedState):
         self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id
+        pk_range_options = format_pk_range_options(feed_options)
         over_lapping_ranges = \
             routing_provider.get_overlapping_ranges(
                 self._container_link,
                 [self._continuation.current_token.feed_range],
-                feed_options)
+                pk_range_options)
 
         self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 
@@ -305,11 +307,12 @@ class ChangeFeedStateV2(ChangeFeedState):
         self.set_start_from_request_headers(request_headers)
 
         # based on the feed range to find the overlapping partition key range id
+        pk_range_options = format_pk_range_options(feed_options)
         over_lapping_ranges = \
             await async_routing_provider.get_overlapping_ranges(
                 self._container_link,
                 [self._continuation.current_token.feed_range],
-                feed_options)
+                pk_range_options)
 
         self.set_pk_range_id_request_headers(over_lapping_ranges, request_headers)
 

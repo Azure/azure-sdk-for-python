@@ -3,7 +3,7 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
+from azure.cosmos._base import format_pk_range_options
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context.aio import document_producer
@@ -107,12 +107,12 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
         )
 
     async def _get_target_partition_key_range(self):
-
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
+        pk_range_options = format_pk_range_options(self._options)
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link,
             [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
-            self._options
+            pk_range_options
         )
 
     async def _configure_partition_ranges(self):
