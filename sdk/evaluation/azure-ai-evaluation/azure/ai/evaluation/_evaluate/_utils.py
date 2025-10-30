@@ -197,8 +197,10 @@ def _log_metrics_and_instance_results_onedp(
             )
         )
 
+        # TODO: type mis-match because Evaluation instance is assigned to EvaluationRun, gix after Ignite 2025
+        evaluation_id = upload_run_response.name if hasattr(upload_run_response, "name") else upload_run_response.id # type: ignore
         update_run_response = client.update_evaluation_run(
-            name=upload_run_response.id,
+            name=evaluation_id,
             evaluation=EvaluationUpload(
                 display_name=evaluation_name,
                 status="Completed",
