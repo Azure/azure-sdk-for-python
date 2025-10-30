@@ -11,7 +11,7 @@
   - `{evaluator_name}_result`: pass/fail based on threshold,
   - `{evaluator_name}_reason`, `{evaluator_name}_threshold`
   - `{evaluator_name}_prompt_tokens`, `{evaluator_name}_completion_tokens`, `{evaluator_name}_total_tokens`, `{evaluator_name}_finish_reason`
-  - `{evaluator_name}_model`: model used for
+  - `{evaluator_name}_model`: model used for evaluation
   - `{evaluator_name}_sample_input`, `{evaluator_name}_sample_output`: input and output used for evaluation
   
   This change standardizes the output format across all evaluators and follows OTel convention.
