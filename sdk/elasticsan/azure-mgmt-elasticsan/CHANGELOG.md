@@ -16,11 +16,12 @@
   - Added model `PreValidationResponse`
   - Added model `ScaleUpProperties`
   - Added model `VolumeNameList`
-  - Model `VolumesOperations` added method `begin_pre_backup`
-  - Model `VolumesOperations` added method `begin_pre_restore`
+  - Operation group `VolumesOperations` added method `begin_pre_backup`
+  - Operation group `VolumesOperations` added method `begin_pre_restore`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed model `ElasticSanList`
   - Deleted or renamed model `SkuInformationList`
   - Deleted or renamed model `SnapshotList`
