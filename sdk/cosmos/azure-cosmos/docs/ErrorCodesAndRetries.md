@@ -57,4 +57,5 @@ flowchart TD
 The SDK performs health checks on the account regions to perform decisions on where to route requests. These requests happen 
 every 5 minutes in the background and concurrently. A call will be made to all the endpoints the SDK can use based on the preferred locations.
 If the health check call fails after three retries, the endpoint will be marked as unavailable. If the health check call succeeds, the endpoint will be marked as available. 
-The health check retries are performed with an exponential backoff and increase the `read_timeout` with each retry. This is the only way the SDK can mark an endpoint as available. 
+The health check retries are performed in following sequence after 500 ms, 1 second, and finally 2 seconds and for each retry we increase the `read_timeout`. 
+This is the only way the SDK can mark an endpoint as available. 

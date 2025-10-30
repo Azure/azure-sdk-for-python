@@ -55,8 +55,8 @@ class HealthCheckRetryPolicy(object):
         :rtype: bool
         """
         if self.retry_count > 0:
-            # exponential backoff for subsequent retries
-            self.retry_after_in_milliseconds = min(self.retry_after_in_milliseconds ** self.retry_factor,
+            self.retry_after_in_milliseconds = min(self.retry_after_in_milliseconds +
+                                                   self.retry_factor ** self.retry_count,
                                                    self.max_retry_after_in_milliseconds)
         if self.request:
             # increase read timeout for each retry
