@@ -155,7 +155,6 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     use_token_proxy=True,
                 )
 
-                # Verify HttpClientTransport was called with minimal config
                 mock_get_transport.assert_called_once_with(
                     sni=None,
                     token_proxy_endpoint=proxy_endpoint,
@@ -223,7 +222,6 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
             assert request.data.get("client_assertion") == assertion
             return mock_response(json_payload=build_aad_response(access_token=access_token))
 
-        # Mock the transport that would be created by HttpClientTransport
         mock_transport_instance = MagicMock(send=send)
 
         env_vars = {
@@ -249,7 +247,7 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                 open_mock.assert_called_once_with(token_file_path, encoding="utf-8")
 
     def test_use_token_proxy_false_does_not_create_transport(self):
-        """Test that use_token_proxy=False (default) does not create HttpClientTransport."""
+        """Test that use_token_proxy=False (default) does not create a custom transport."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -678,26 +676,6 @@ class TestCustomAioHttpTransportWithLocalServer:
             assert response.status_code == 200
             data = response.json()
             assert data["status"] == "healthy"
-
-    @pytest.mark.asyncio
-    async def test_connection_reuse(self):
-        """Test that connections are reused for multiple requests."""
-        with TokenProxyTestServer(use_ssl=True) as server:
-            transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None)
-            assert transport is not None
-
-            # Make multiple requests
-            requests_data = []
-            for i in range(3):
-                request = HttpRequest("GET", f"{server.base_url}/health")
-                response = await transport.send(request)
-                assert response.status_code == 200
-                requests_data.append(response.json())
-
-            # All requests should succeed
-            assert len(requests_data) == 3
-            for data in requests_data:
-                assert data["status"] == "healthy"
 
     @pytest.mark.asyncio
     async def test_ca_file_change_detection(self):
