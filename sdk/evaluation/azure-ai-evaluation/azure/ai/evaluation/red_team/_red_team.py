@@ -369,7 +369,9 @@ class RedTeam:
 
             if custom_objectives:
                 # Use custom objectives for this risk category
-                return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key, is_agent_target)
+                return await self._get_custom_attack_objectives(
+                    risk_cat_value, num_objectives, strategy, current_key, is_agent_target
+                )
             else:
                 # No custom objectives for this risk category, but risk_categories was specified
                 # Fetch from service if this risk category is in the requested list
@@ -412,7 +414,12 @@ class RedTeam:
             )
 
     async def _get_custom_attack_objectives(
-        self, risk_cat_value: str, num_objectives: int, strategy: str, current_key: tuple, is_agent_target: Optional[bool] = None
+        self,
+        risk_cat_value: str,
+        num_objectives: int,
+        strategy: str,
+        current_key: tuple,
+        is_agent_target: Optional[bool] = None,
     ) -> List[str]:
         """Get attack objectives from custom seed prompts."""
         attack_objective_generator = self.attack_objective_generator
@@ -520,7 +527,7 @@ class RedTeam:
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
             elif strategy == "indirect_jailbreak":
-                objectives_response = await self._apply_xpia_prompts(objectives_response, "model")
+                objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
