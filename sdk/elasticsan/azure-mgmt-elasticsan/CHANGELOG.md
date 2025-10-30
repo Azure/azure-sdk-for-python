@@ -1,5 +1,34 @@
 # Release History
 
+## 2.0.0 (2025-10-30)
+
+### Features Added
+
+  - Model `ElasticSanMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ElasticSanMgmtClient` added method `send_request`
+  - Model `ElasticSanProperties` added property `auto_scale_properties`
+  - Model `ElasticSanUpdateProperties` added property `auto_scale_properties`
+  - Enum `ProvisioningStates` added member `DELETED`
+  - Enum `ProvisioningStates` added member `RESTORING`
+  - Added enum `AutoScalePolicyEnforcement`
+  - Added model `AutoScaleProperties`
+  - Added model `DiskSnapshotList`
+  - Added model `PreValidationResponse`
+  - Added model `ScaleUpProperties`
+  - Added model `VolumeNameList`
+  - Model `VolumesOperations` added method `begin_pre_backup`
+  - Model `VolumesOperations` added method `begin_pre_restore`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ElasticSanList`
+  - Deleted or renamed model `SkuInformationList`
+  - Deleted or renamed model `SnapshotList`
+  - Deleted or renamed model `VolumeGroupList`
+  - Deleted or renamed model `VolumeList`
+  - Method `VolumesOperations.begin_delete` changed its parameter `x_ms_delete_snapshots` from `positional_or_keyword` to `keyword_only`
+  - Method `VolumesOperations.begin_delete` changed its parameter `x_ms_force_delete` from `positional_or_keyword` to `keyword_only`
+
 ## 1.2.0b2 (2025-04-21)
 
 ### Features Added
