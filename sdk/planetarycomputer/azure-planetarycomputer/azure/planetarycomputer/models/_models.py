@@ -3484,13 +3484,11 @@ class TileMatrix(_Model):
         :ivar cell_size: Size of a pixel in map units at this tile matrix level. Required.
         :vartype cell_size: float
         :ivar corner_of_origin: The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the
-        origin
-    for numbering tile rows and columns. This corner is also a corner of the (0, 0)
-    tile. Known values are: "topLeft" and "bottomLeft".
+         origin for numbering tile rows and columns. This corner is also a corner of the (0, 0)
+         tile. Known values are: "topLeft" and "bottomLeft".
         :vartype corner_of_origin: str or ~azure.planetarycomputer.models.TileMatrixCornerOfOrigin
         :ivar point_of_origin: Precise position in CRS coordinates of the corner of origin (e.g. the
-         top-left
-         corner) for this tile matrix. This position is also a corner of the (0, 0)
+         top-left corner) for this tile matrix. This position is also a corner of the (0, 0)
          tile. In previous version, this was 'topLeftCorner' and 'cornerOfOrigin' did
          not exist. Required.
         :vartype point_of_origin: list[float]
