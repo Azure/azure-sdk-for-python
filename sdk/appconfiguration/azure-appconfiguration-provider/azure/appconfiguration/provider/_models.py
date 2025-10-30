@@ -54,7 +54,7 @@ class SettingSelector:
      Cannot be used with snapshot_name.
     :type key_filter: str
     :keyword label_filter: A filter to select configuration settings and feature flags based on their labels. Default
-     is value is \0 i.e. (No Label) as seen in the portal. Cannot be used with snapshot_name.
+     value is \0 i.e. (No Label) as seen in the portal. Cannot be used with snapshot_name.
     :type label_filter: Optional[str]
     :keyword tag_filters: A filter to select configuration settings and feature flags based on their tags. This is a
      list of strings that will be used to match tags on the configuration settings. Reserved characters (\\*, \\, ,)

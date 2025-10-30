@@ -38,16 +38,14 @@ async def main():
         print(f"{key}: {value}")
 
     # Loading feature flags from a snapshot
-    # Feature flags in snapshots will be loaded just like regular configuration settings
+    # To load feature flags from a snapshot, include the snapshot selector in the 'selects' parameter and set feature_flag_enabled=True.
     feature_flag_selects = [SettingSelector(snapshot_name=snapshot_name)]
     config_with_flags = await load(
         connection_string=connection_string,
         selects=feature_flag_selects,
         feature_flag_enabled=True,
-        feature_flag_selectors=feature_flag_selects,
         **kwargs,
     )
-
     print(
         f"\nConfiguration includes feature flags: {any(key.startswith('.appconfig.featureflag/') for key in config_with_flags.keys())}"
     )
