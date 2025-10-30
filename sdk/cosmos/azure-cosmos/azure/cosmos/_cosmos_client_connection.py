@@ -3259,9 +3259,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:
-            last_response_headers = CaseInsensitiveDict()
+            pk_range_options = base.format_pk_range_options(query_options=options)
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feed_range_epk],
-                                                                                    options)
+                                                                                    pk_range_options)
             # It is possible to get more than one over lapping range. We need to get the query results for each one
             results: dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over

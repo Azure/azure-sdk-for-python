@@ -3,11 +3,13 @@
 ### 4.14.1 (Unreleased)
 
 #### Features Added
+* Added merge support. See [PR 42924](https://github.com/Azure/azure-sdk-for-python/pull/42924).
 
 #### Breaking Changes
 
 #### Bugs Fixed
 * Fixed bug where customer provided excluded region was not always being honored during certain transient failures. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
+* Fixed bug where queries using `feed_range` and `continuation` options would not work as expected. See [PR ]().
 
 #### Other Changes
 * Enhanced logging to ensure when a region is marked unavailable we have the proper context. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
@@ -40,7 +42,6 @@ This version and all future versions will require Python 3.9+.
 #### Features Added
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 * Added ability to replace a container's indexing policy if a vector embedding policy was present. See [PR 42810](https://github.com/Azure/azure-sdk-for-python/pull/42810).
-* Added merge support. See [PR 42924](https://github.com/Azure/azure-sdk-for-python/pull/42924).
 
 #### Bugs Fixed
 * Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).

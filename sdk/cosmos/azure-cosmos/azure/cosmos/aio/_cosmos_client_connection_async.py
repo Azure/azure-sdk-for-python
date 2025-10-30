@@ -3064,8 +3064,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
 
         if feed_range_epk is not None:
+            pk_range_options = base.format_pk_range_options(query_options=options)
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk],
-                                                                                          options)
+                                                                                          pk_range_options)
             results: dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
             # lapping physical partition. The EPK sub range will be one of four:
