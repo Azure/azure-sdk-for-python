@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 
 class LogRecordEnrichingProcessor(LogRecordProcessor):
     """
-    A log record processor that enriches log records with operation name 
+    A log record processor that enriches log records with operation name
     from the current span context.
     """
     
