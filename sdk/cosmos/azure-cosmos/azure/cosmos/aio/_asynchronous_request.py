@@ -88,7 +88,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     parse_result = urlparse(request.url)
 
     # Add relevant enabled features to user agent for debugging
-    if request.headers['x-ms-thinclient-proxy-resource-type'] == 'docs':
+    if request.headers[http_constants.HttpHeaders.ThinClientProxyResourceType] == http_constants.ResourceType.Document:
         user_agent_features = get_user_agent_features(global_endpoint_manager)
         if len(user_agent_features) > 0:
             user_agent = kwargs.pop("user_agent", global_endpoint_manager.client._user_agent)
