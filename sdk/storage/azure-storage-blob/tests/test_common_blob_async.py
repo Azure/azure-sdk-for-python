@@ -3551,4 +3551,31 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         result = await downloaded.readall()
         assert result == compressed_data
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_download_blob_no_decompress_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        await self.bsc.create_container(self.container_name)
+        blob = BlobClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            container_name=self.container_name,
+            blob_name=blob_name,
+            credential=storage_account_key,
+            max_chunk_get_size=4,
+            max_single_get_size=4,
+        )
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await blob.upload_blob(data=compressed_data, content_settings=content_settings)
+
+        result = await (await blob.download_blob(decompress=False)).readall()
+        assert result == compressed_data
+
 # ------------------------------------------------------------------------------
