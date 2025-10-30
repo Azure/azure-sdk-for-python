@@ -1,5 +1,6 @@
 {
     "ignoreWords": [
+        "agentic",
         "aiproject",
         "azureopenai",
         "GLEU",
@@ -13,16 +14,12 @@
         "balapvbyostoragecanary",
         "fspath",
         "aread",
-        "ilike",
         "inpainting",
-        "CPSDL",
-        "dmcp",
-        "Clippy",
-        "Bellingshausen",
-        "Lazarev",
-        "ROYGBIV",
-        "aiofiles"
+        "CSDL",
     ],
     "ignorePaths": [
+      "*.csv",
+      "*.json",
+      "*.jsonl"
     ]
 }
