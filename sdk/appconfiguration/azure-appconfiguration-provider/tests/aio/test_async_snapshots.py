@@ -17,6 +17,7 @@ from azure.appconfiguration import (
     SnapshotStatus,
 )
 from azure.core.exceptions import ResourceNotFoundError
+from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase
@@ -208,7 +209,10 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             snapshot = await snapshot_poller.result()
 
             # Verify snapshot was created successfully
-            assert snapshot.name == snapshot_name
+            if is_live():
+                assert snapshot.name == snapshot_name
+            else:
+                assert snapshot.name == "Sanitized"
             assert snapshot.status == SnapshotStatus.READY
             assert snapshot.composition_type == SnapshotComposition.KEY
 

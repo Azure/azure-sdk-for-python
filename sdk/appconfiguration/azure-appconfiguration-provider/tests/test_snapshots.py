@@ -16,7 +16,7 @@ from azure.appconfiguration import (
     SnapshotStatus,
 )
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase
 
@@ -206,7 +206,10 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             ).result()
 
             # Verify snapshot was created successfully
-            assert snapshot.name == snapshot_name
+            if is_live():
+                assert snapshot.name == snapshot_name
+            else:
+                assert snapshot.name == "Sanitized"
             assert snapshot.status == SnapshotStatus.READY
             assert snapshot.composition_type == SnapshotComposition.KEY
 
