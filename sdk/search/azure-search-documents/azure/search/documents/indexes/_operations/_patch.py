@@ -66,7 +66,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         **kwargs: Any,
     ) -> _models.SynonymMap:
         return self._create_or_update_synonym_map(
-            name=synonym_map.name,
+            synonym_map_name=synonym_map.name,
             synonym_map=synonym_map,
             prefer="return=representation",
             etag=synonym_map.e_tag,
