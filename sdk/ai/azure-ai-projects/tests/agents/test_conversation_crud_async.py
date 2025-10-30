@@ -45,7 +45,7 @@ class TestConversationCrudAsync(TestBase):
             # the fixes in file post-emitter-fixes.cmd to fix the emitted code and make the assert below pass.
             # conversation3 = await client.conversations.create(
             #     items=[
-            #         ResponsesUserMessageItemParam(content="third messsage"),
+            #         ResponsesUserMessageItemParam(content="third message"),
             #         ResponsesUserMessageItemParam(content=[ItemContentInputText(text="fourth message")]),
             #     ]
             # )
