@@ -79,9 +79,8 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
-            threshold=threshold,
             credential=credential,
-            _higher_is_better=False,
+            _higher_is_better=True,
             **kwargs,
         )
 
@@ -91,7 +90,8 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         query: Union[str, List[dict]],
         response: Union[str, List[dict]],
-    ) -> Dict[str, Union[str, float, bool]]:
+        tool_definitions: Optional[Union[dict, List[dict]]] = None,
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate task adherence for a given query and response.
         The query and response must be lists of messages in conversation format.
 
@@ -202,17 +202,15 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(llm_output, dict):
             flagged = llm_output.get("flagged", False)
             reasoning = llm_output.get("reasoning", "")
-            # Convert flagged to numeric score for backward compatibility (0 = pass, 1 = fail)
-            score = 1.0 if flagged else 0.0
+            # Convert flagged to numeric score for backward compatibility (1 = pass, 0 = fail)
+            score = 0.0 if flagged else 1.0
             score_result = "fail" if flagged else "pass"
 
             return {
                 f"{self._result_key}": score,
-                f"gpt_{self._result_key}": score,
-                f"{self._result_key}_flagged": flagged,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reasoning,
+                f"{self._result_key}_details": llm_output.get("details", ""),
                 f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
                 f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
                 f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
@@ -223,12 +221,6 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
 
         if logger:
-            logger.warning("LLM output is not a dictionary, returning default values.")
+            logger.warning("LLM output is not a dictionary, returning 0 for the success.")
 
-        return {
-            self._result_key: math.nan,
-            f"gpt_{self._result_key}": math.nan,
-            f"{self._result_key}_flagged": False,
-            f"{self._result_key}_result": "unknown",
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        return {self._result_key: 0}
