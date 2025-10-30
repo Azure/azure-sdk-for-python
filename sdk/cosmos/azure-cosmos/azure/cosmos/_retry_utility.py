@@ -43,7 +43,6 @@ from .documents import _OperationType
 from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 from ._cosmos_http_logging_policy import _log_diagnostics_error
-from ._utils import get_user_agent_features
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
@@ -114,13 +113,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     else:
         container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(
             client, client._container_properties_cache, None, *args)
-
-    user_agent_features = get_user_agent_features(global_endpoint_manager)
-    if len(user_agent_features) > 0:
-        user_agent = kwargs.pop("user_agent", client._user_agent)
-        user_agent = "{} {}".format(user_agent, user_agent_features)
-        kwargs.update({"user_agent": user_agent})
-        kwargs.update({"user_agent_overwrite": True})
 
     while True:
         client_timeout = kwargs.get('timeout')
