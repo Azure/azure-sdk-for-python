@@ -4,13 +4,11 @@
 # ------------------------------------
 import os
 import time
-import ssl
 from typing import Any
 from typing import Optional
 
 from .client_assertion import ClientAssertionCredential
 from .._constants import EnvironmentVariables
-from .._internal.token_binding_transport_mixin import TokenBindingTransportMixin
 
 
 WORKLOAD_CONFIG_ERROR = (
@@ -148,51 +146,9 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
 def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
     try:
-        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
-            RequestsTransport,
-        )
-        from requests.adapters import HTTPAdapter
-        from requests import Session
+        from .._internal.token_binding_transport import CustomRequestsTransport
 
-        class SNIAdapter(HTTPAdapter):
-            """A custom HTTPAdapter that allows setting a custom SNI hostname."""
-
-            def __init__(self, server_hostname, ca_data, **kwargs):
-                self.server_hostname = server_hostname
-                self.ca_data = ca_data
-                super().__init__(**kwargs)
-
-            def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
-                if self.server_hostname:
-                    pool_kwargs["server_hostname"] = self.server_hostname
-                pool_kwargs["ssl_context"] = ssl.create_default_context(cadata=self.ca_data)
-                super().init_poolmanager(connections, maxsize, block, **pool_kwargs)
-
-        class CustomRequestsTransport(TokenBindingTransportMixin, RequestsTransport):
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                self._create_session()
-
-            def _create_session(self):
-                if self.session:  # pylint: disable=access-member-before-definition
-                    self.session.close()  # pylint: disable=access-member-before-definition
-
-                self.session = Session()
-                adapter = SNIAdapter(self._sni, self._ca_data)
-                self.session.mount("https://", adapter)
-
-            def send(self, request, **kwargs):
-                self._update_request_url(request)
-
-                # Check if CA file has changed and reload ca_data if needed
-                if self._ca_file and self._has_ca_file_changed():
-                    self._load_ca_file_to_data()
-                    # If ca_data was updated, recreate SSL context with the new data
-                    if self._ca_data:
-                        self._create_session()
-                return super().send(request, **kwargs)
-
-        transport = CustomRequestsTransport(
+        return CustomRequestsTransport(
             sni=sni,
             proxy_endpoint=token_proxy_endpoint,
             ca_file=ca_file,
@@ -201,4 +157,3 @@ def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
 
     except ImportError:
         return None
-    return transport

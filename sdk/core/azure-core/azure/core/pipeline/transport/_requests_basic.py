@@ -270,7 +270,6 @@ class RequestsTransport(HttpTransport):
         self._use_env_settings = kwargs.pop("use_env_settings", True)
         # See https://github.com/Azure/azure-sdk-for-python/issues/25640 to understand why we track this
         self._has_been_opened = False
-        print('---done init---')
 
     def __enter__(self) -> "RequestsTransport":
         self.open()

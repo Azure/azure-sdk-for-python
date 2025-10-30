@@ -4,7 +4,7 @@
 # ------------------------------------
 # cspell:ignore ests
 """
-Local test server for HttpClientTransport testing.
+Local test server for token binding proxy testing.
 
 This server simulates a token proxy that can:
 1. Accept HTTPS requests with custom SNI and CA certificates

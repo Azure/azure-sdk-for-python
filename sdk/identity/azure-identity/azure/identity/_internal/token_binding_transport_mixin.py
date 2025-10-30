@@ -5,7 +5,7 @@
 # cspell:ignore cafile
 import os
 import urllib.parse
-from typing import Optional
+from typing import Optional, Any
 
 from azure.core.rest import HttpRequest
 
@@ -13,7 +13,7 @@ from azure.core.rest import HttpRequest
 class TokenBindingTransportMixin:
     """Mixin class providing URL validation, CA file tracking, and proxy URL functionality for transport classes."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """Initialize CA file tracking and proxy attributes."""
         self._ca_file = kwargs.pop("ca_file", None)
         self._ca_data = kwargs.pop("ca_data", None)

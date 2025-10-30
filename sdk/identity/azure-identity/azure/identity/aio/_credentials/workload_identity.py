@@ -4,17 +4,12 @@
 # ------------------------------------
 # cspell:ignore cafile
 import os
-import ssl
 import logging
 from typing import Any, Optional
 
 from .client_assertion import ClientAssertionCredential
 from ..._credentials.workload_identity import TokenFileMixin, WORKLOAD_CONFIG_ERROR
 from ..._constants import EnvironmentVariables
-from ..._internal.token_binding_transport_mixin import TokenBindingTransportMixin
-
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
@@ -127,44 +122,13 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
 def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
     try:
-        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
-            AioHttpTransport,
-        )
+        from .._internal.token_binding_transport import CustomAioHttpTransport
 
-        class WorkloadIdentityAioHttpTransport(TokenBindingTransportMixin, AioHttpTransport):
-
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                self._ssl_context = ssl.create_default_context(cadata=self._ca_data)
-
-            async def send(self, request, **kwargs):
-                self._update_request_url(request)
-                kwargs.setdefault("server_hostname", self._sni)
-
-                # Check if CA file has changed and reload ca_data if needed
-                if self._ca_file and self._has_ca_file_changed():
-                    self._load_ca_file_to_data()
-                    # If ca_data was updated, recreate SSL context with the new data
-                    if self._ca_data:
-                        self._ssl_context = ssl.create_default_context(cadata=self._ca_data)
-
-                if self._ssl_context:
-                    kwargs.setdefault("ssl", self._ssl_context)
-                return await super().send(request, **kwargs)
-
-            async def __aenter__(self):
-                await super().__aenter__()
-                return self
-
-            async def __aexit__(self, *args):
-                await super().__aexit__(*args)
-
-        transport = WorkloadIdentityAioHttpTransport(
+        return CustomAioHttpTransport(
             sni=sni,
             proxy_endpoint=token_proxy_endpoint,
             ca_file=ca_file,
             ca_data=ca_data,
         )
     except ImportError:
-        transport = None
-    return transport
+        return None
