@@ -954,8 +954,9 @@ def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
     :rtype: dict
     """
     pk_range_options: dict[str, Any] = {}
-    if "containerRID" in query_options:
-        pk_range_options["containerRID"] = query_options["containerRID"]
-    if "excludedLocations" in query_options:
-        pk_range_options["excludedLocations"] = query_options["excludedLocations"]
+    if query_options is not None:
+        if "containerRID" in query_options:
+            pk_range_options["containerRID"] = query_options["containerRID"]
+        if "excludedLocations" in query_options:
+            pk_range_options["excludedLocations"] = query_options["excludedLocations"]
     return pk_range_options
