@@ -512,7 +512,6 @@ class TestConfigure(unittest.TestCase):
         logging_handler_mock = Mock()
         elp_mock = Mock()
         set_elp_mock = Mock()
-        clrp_mock = Mock()
 
         lp_init_mock = Mock()
         lp_mock.return_value = lp_init_mock
@@ -530,8 +529,6 @@ class TestConfigure(unittest.TestCase):
         formatter_init_mock = Mock()
         elp_init_mock = Mock()
         elp_mock.return_value = elp_init_mock
-        clrp_init_mock = Mock()
-        clrp_mock.return_value = clrp_init_mock
         pclp_init_mock = Mock()
         pclp_mock.return_value = pclp_init_mock
         configurations = {
