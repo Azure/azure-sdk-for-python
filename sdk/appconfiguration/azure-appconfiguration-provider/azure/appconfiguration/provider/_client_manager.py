@@ -17,7 +17,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     ConfigurationSetting,
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
-    SnapshotComposition
+    SnapshotComposition,
 )
 from ._client_manager_base import (
     _ConfigurationClientWrapperBase,
@@ -45,7 +45,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
-        **kwargs
+        **kwargs,
     ) -> Self:
         """
         Creates a new instance of the _ConfigurationClientWrapper class, using the provided credential to authenticate
@@ -67,7 +67,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -94,7 +94,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -140,7 +140,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 snapshot = self._client.get_snapshot(select.snapshot_name)
-                if (snapshot.composition_type != SnapshotComposition.KEY):
+                if snapshot.composition_type != SnapshotComposition.KEY:
                     raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
@@ -149,7 +149,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     key_filter=select.key_filter,
                     label_filter=select.label_filter,
                     tags_filter=select.tag_filters,
-                    **kwargs
+                    **kwargs,
                 )
             for config in configurations:
                 if not isinstance(config, FeatureFlagConfigurationSetting):
@@ -172,7 +172,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 key_filter=FEATURE_FLAG_PREFIX + key_filter,
                 label_filter=select.label_filter,
                 tags_filter=select.tag_filters,
-                **kwargs
+                **kwargs,
             )
             for feature_flag in feature_flags:
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
@@ -275,7 +275,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         min_backoff_sec,
         max_backoff_sec,
         load_balancing_enabled,
-        **kwargs
+        **kwargs,
     ):
         super(ConfigurationClientManager, self).__init__(
             endpoint,
@@ -286,7 +286,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             min_backoff_sec,
             max_backoff_sec,
             load_balancing_enabled,
-            **kwargs
+            **kwargs,
         )
         self._original_connection_string = connection_string
         self._credential = credential
@@ -381,7 +381,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
                 elif self._credential:
@@ -392,7 +392,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
