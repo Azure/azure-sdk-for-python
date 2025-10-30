@@ -446,7 +446,7 @@ class RedTeam:
         else:
             selected_cat_objectives = custom_objectives
             self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
-        target_type_str = "agent" if is_agent_target else "model"
+        target_type_str = "agent" if is_agent_target else "model" if is_agent_target is not None else None
         # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
         if strategy == "jailbreak":
             selected_cat_objectives = await self._apply_jailbreak_prefixes(selected_cat_objectives)
