@@ -4,7 +4,8 @@
 
 ### Features Added
 
-- Added LogRecordProcessors to allow passing custom log record processors
+- Added custom log record processors configuration option
+  ([#43713](https://github.com/Azure/azure-sdk-for-python/pull/43713))
 - Performance Counters
   ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
 - Adding more diagnostic log message IDs
