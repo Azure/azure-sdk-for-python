@@ -102,8 +102,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Attributes take priority over default attributes and those from Resource Detectors.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
-    :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_record_processors: List of `LogRecordProcessor` objects
-     to process every log record prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_record_processors: List of `LogRecordProcessor` 
+    |objects to process every log record prior to exporting. Will be run sequentially.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
      Defaults to `False`.
     :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
