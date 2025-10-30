@@ -16,7 +16,7 @@ from ._operations._patch import AsyncSearchItemPaged
 
 class SearchClient(_SearchClient):
     """SearchClient.
-    
+
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
@@ -30,6 +30,7 @@ class SearchClient(_SearchClient):
         behavior.
     :paramtype api_version: str
     """
+
     def __init__(
         self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
