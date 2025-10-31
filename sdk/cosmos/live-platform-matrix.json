@@ -73,10 +73,10 @@
     },
     {
       "PyPyConfig": {
-        "ubuntu2404_pypy39_query": {
+        "ubuntu2404_pypy311_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.9",
+          "PythonVersion": "pypy3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
