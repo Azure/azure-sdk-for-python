@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus import ServiceBusClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,19 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusRulesOperations(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_rules_get(self, resource_group):
-        response = self.client.rules.get(
+    def test_migration_configs_get(self, resource_group):
+        response = self.client.migration_configs.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
-            subscription_name="str",
-            rule_name="str",
+            config_name="str",
         )
 
         # please add some check logic here by yourself
@@ -34,33 +32,21 @@ class TestServiceBusRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_rules_create_or_update(self, resource_group):
-        response = self.client.rules.create_or_update(
+    def test_migration_configs_begin_create_and_start_migration(self, resource_group):
+        response = self.client.migration_configs.begin_create_and_start_migration(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
-            subscription_name="str",
-            rule_name="str",
+            config_name="str",
             parameters={
                 "id": "str",
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "action": {"compatibilityLevel": 0, "requiresPreprocessing": bool, "sqlExpression": "str"},
-                    "correlationFilter": {
-                        "contentType": "str",
-                        "correlationId": "str",
-                        "label": "str",
-                        "messageId": "str",
-                        "properties": {"str": "str"},
-                        "replyTo": "str",
-                        "replyToSessionId": "str",
-                        "requiresPreprocessing": bool,
-                        "sessionId": "str",
-                        "to": "str",
-                    },
-                    "filterType": "str",
-                    "sqlFilter": {"compatibilityLevel": 0, "requiresPreprocessing": bool, "sqlExpression": "str"},
+                    "postMigrationName": "str",
+                    "targetNamespace": "str",
+                    "migrationState": "str",
+                    "pendingReplicationOperationsCount": 0,
+                    "provisioningState": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -72,6 +58,18 @@ class TestServiceBusRulesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_migration_configs_delete(self, resource_group):
+        response = self.client.migration_configs.delete(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+            config_name="str",
         )
 
         # please add some check logic here by yourself
@@ -79,27 +77,35 @@ class TestServiceBusRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_rules_delete(self, resource_group):
-        response = self.client.rules.delete(
+    def test_migration_configs_list(self, resource_group):
+        response = self.client.migration_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
-            subscription_name="str",
-            rule_name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_rules_list_by_subscriptions(self, resource_group):
-        response = self.client.rules.list_by_subscriptions(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-            topic_name="str",
-            subscription_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_migration_configs_complete_migration(self, resource_group):
+        response = self.client.migration_configs.complete_migration(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+            config_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_migration_configs_revert(self, resource_group):
+        response = self.client.migration_configs.revert(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+            config_name="str",
+        )
+
         # please add some check logic here by yourself
         # ...

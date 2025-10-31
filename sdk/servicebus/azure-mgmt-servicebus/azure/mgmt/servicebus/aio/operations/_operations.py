@@ -108,7 +108,7 @@ from ...operations._operations import (
     build_topics_list_keys_request,
     build_topics_regenerate_keys_request,
 )
-from .._configuration import ServiceBusClientConfiguration
+from .._configuration import ServiceBusManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -122,14 +122,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -226,14 +228,16 @@ class DisasterRecoveryConfigsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`disaster_recovery_configs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1325,14 +1329,16 @@ class QueuesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`queues` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2496,14 +2502,16 @@ class TopicsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`topics` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3667,14 +3675,16 @@ class PrivateEndpointConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`private_endpoint_connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4170,14 +4180,16 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`network_security_perimeter_configurations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4325,14 +4337,16 @@ class MigrationConfigsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`migration_configs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4975,14 +4989,16 @@ class RulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5481,14 +5497,16 @@ class NamespacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`namespaces` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7656,14 +7674,16 @@ class PrivateLinkResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`private_link_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7746,14 +7766,16 @@ class NetworkSecurityPerimeterConfigurationOperations:  # pylint: disable=name-t
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`network_security_perimeter_configuration` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7863,14 +7885,16 @@ class SubscriptionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicebus.aio.ServiceBusClient`'s
+        :class:`~azure.mgmt.servicebus.aio.ServiceBusManagementClient`'s
         :attr:`subscriptions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ServiceBusClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceBusManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

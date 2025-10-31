@@ -208,9 +208,9 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The minimum TLS version for the cluster to support, e.g. '1.2'."""
 
-    ENUM_1_0 = "1.0"
-    ENUM_1_1 = "1.1"
-    ENUM_1_2 = "1.2"
+    ONE0 = "1.0"
+    ONE1 = "1.1"
+    ONE2 = "1.2"
 
 
 class UnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

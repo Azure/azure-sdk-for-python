@@ -6,25 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus import ServiceBusClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusPrivateLinkResourcesOperations(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_private_link_resources_get(self, resource_group):
-        response = self.client.private_link_resources.get(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-        )
-
+    @recorded_by_proxy_async
+    async def test_operations_list(self, resource_group):
+        response = self.client.operations.list()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

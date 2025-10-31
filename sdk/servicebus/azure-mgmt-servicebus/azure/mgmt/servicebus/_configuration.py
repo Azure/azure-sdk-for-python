@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ServiceBusClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ServiceBusClient.
+class ServiceBusManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for ServiceBusManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

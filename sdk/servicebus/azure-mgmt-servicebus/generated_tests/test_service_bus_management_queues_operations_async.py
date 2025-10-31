@@ -6,25 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus import ServiceBusClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementQueuesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_get_authorization_rule(self, resource_group):
-        response = self.client.topics.get_authorization_rule(
+    @recorded_by_proxy_async
+    async def test_queues_get_authorization_rule(self, resource_group):
+        response = await self.client.queues.get_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
             authorization_rule_name="str",
         )
 
@@ -32,12 +33,12 @@ class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_create_or_update_authorization_rule(self, resource_group):
-        response = self.client.topics.create_or_update_authorization_rule(
+    @recorded_by_proxy_async
+    async def test_queues_create_or_update_authorization_rule(self, resource_group):
+        response = await self.client.queues.create_or_update_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
             authorization_rule_name="str",
             parameters={
                 "id": "str",
@@ -60,12 +61,12 @@ class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_delete_authorization_rule(self, resource_group):
-        response = self.client.topics.delete_authorization_rule(
+    @recorded_by_proxy_async
+    async def test_queues_delete_authorization_rule(self, resource_group):
+        response = await self.client.queues.delete_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
             authorization_rule_name="str",
         )
 
@@ -73,24 +74,24 @@ class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_list_authorization_rules(self, resource_group):
-        response = self.client.topics.list_authorization_rules(
+    @recorded_by_proxy_async
+    async def test_queues_list_authorization_rules(self, resource_group):
+        response = self.client.queues.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_list_keys(self, resource_group):
-        response = self.client.topics.list_keys(
+    @recorded_by_proxy_async
+    async def test_queues_list_keys(self, resource_group):
+        response = await self.client.queues.list_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
             authorization_rule_name="str",
         )
 
@@ -98,12 +99,12 @@ class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_regenerate_keys(self, resource_group):
-        response = self.client.topics.regenerate_keys(
+    @recorded_by_proxy_async
+    async def test_queues_regenerate_keys(self, resource_group):
+        response = await self.client.queues.regenerate_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
             authorization_rule_name="str",
             parameters={"keyType": "str", "key": "str"},
         )
@@ -112,24 +113,24 @@ class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_get(self, resource_group):
-        response = self.client.topics.get(
+    @recorded_by_proxy_async
+    async def test_queues_get(self, resource_group):
+        response = await self.client.queues.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_create_or_update(self, resource_group):
-        response = self.client.topics.create_or_update(
+    @recorded_by_proxy_async
+    async def test_queues_create_or_update(self, resource_group):
+        response = await self.client.queues.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
             parameters={
                 "id": "str",
                 "location": "str",
@@ -145,18 +146,23 @@ class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
                         "transferMessageCount": 0,
                     },
                     "createdAt": "2020-02-20 00:00:00",
+                    "deadLetteringOnMessageExpiration": bool,
                     "defaultMessageTimeToLive": "1 day, 0:00:00",
                     "duplicateDetectionHistoryTimeWindow": "1 day, 0:00:00",
                     "enableBatchedOperations": bool,
                     "enableExpress": bool,
                     "enablePartitioning": bool,
+                    "forwardDeadLetteredMessagesTo": "str",
+                    "forwardTo": "str",
+                    "lockDuration": "1 day, 0:00:00",
+                    "maxDeliveryCount": 0,
                     "maxMessageSizeInKilobytes": 0,
                     "maxSizeInMegabytes": 0,
+                    "messageCount": 0,
                     "requiresDuplicateDetection": bool,
+                    "requiresSession": bool,
                     "sizeInBytes": 0,
                     "status": "str",
-                    "subscriptionCount": 0,
-                    "supportOrdering": bool,
                     "updatedAt": "2020-02-20 00:00:00",
                     "userMetadata": "str",
                 },
@@ -176,24 +182,24 @@ class TestServiceBusTopicsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_delete(self, resource_group):
-        response = self.client.topics.delete(
+    @recorded_by_proxy_async
+    async def test_queues_delete(self, resource_group):
+        response = await self.client.queues.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            topic_name="str",
+            queue_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_topics_list_by_namespace(self, resource_group):
-        response = self.client.topics.list_by_namespace(
+    @recorded_by_proxy_async
+    async def test_queues_list_by_namespace(self, resource_group):
+        response = self.client.queues.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

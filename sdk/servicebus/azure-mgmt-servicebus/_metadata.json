@@ -1,6 +1,6 @@
 {
   "apiVersion": "2025-05-01-preview",
-  "commit": "1696c86b135235733c6cb62b11617dadefdd267a",
+  "commit": "272fbfb28a96d40addf4d5b1a8d61ce51ea3f480",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/servicebus/resource-manager/Microsoft.ServiceBus/ServiceBus",
   "emitterVersion": "0.52.2"

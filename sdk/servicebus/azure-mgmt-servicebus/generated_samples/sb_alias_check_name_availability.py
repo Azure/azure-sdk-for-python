@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.servicebus import ServiceBusClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.servicebus import ServiceBusClient
 
 
 def main():
-    client = ServiceBusClient(
+    client = ServiceBusManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

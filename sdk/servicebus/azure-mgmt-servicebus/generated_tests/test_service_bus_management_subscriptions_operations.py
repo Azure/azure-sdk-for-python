@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.aio import ServiceBusClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient, is_async=True)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_subscriptions_get(self, resource_group):
-        response = await self.client.subscriptions.get(
+    @recorded_by_proxy
+    def test_subscriptions_get(self, resource_group):
+        response = self.client.subscriptions.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
@@ -33,9 +32,9 @@ class TestServiceBusSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_subscriptions_create_or_update(self, resource_group):
-        response = await self.client.subscriptions.create_or_update(
+    @recorded_by_proxy
+    def test_subscriptions_create_or_update(self, resource_group):
+        response = self.client.subscriptions.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
@@ -88,9 +87,9 @@ class TestServiceBusSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_subscriptions_delete(self, resource_group):
-        response = await self.client.subscriptions.delete(
+    @recorded_by_proxy
+    def test_subscriptions_delete(self, resource_group):
+        response = self.client.subscriptions.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
@@ -101,13 +100,13 @@ class TestServiceBusSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_subscriptions_list_by_topic(self, resource_group):
+    @recorded_by_proxy
+    def test_subscriptions_list_by_topic(self, resource_group):
         response = self.client.subscriptions.list_by_topic(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

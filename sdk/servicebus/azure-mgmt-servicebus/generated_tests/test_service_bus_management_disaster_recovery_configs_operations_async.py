@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus import ServiceBusClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_get_authorization_rule(self, resource_group):
-        response = self.client.disaster_recovery_configs.get_authorization_rule(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_get_authorization_rule(self, resource_group):
+        response = await self.client.disaster_recovery_configs.get_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
@@ -32,21 +33,21 @@ class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase)
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_list_authorization_rules(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_list_authorization_rules(self, resource_group):
         response = self.client.disaster_recovery_configs.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_list_keys(self, resource_group):
-        response = self.client.disaster_recovery_configs.list_keys(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_list_keys(self, resource_group):
+        response = await self.client.disaster_recovery_configs.list_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
@@ -57,9 +58,9 @@ class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase)
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_check_name_availability(self, resource_group):
-        response = self.client.disaster_recovery_configs.check_name_availability(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_check_name_availability(self, resource_group):
+        response = await self.client.disaster_recovery_configs.check_name_availability(
             resource_group_name=resource_group.name,
             namespace_name="str",
             parameters={"name": "str"},
@@ -69,9 +70,9 @@ class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase)
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_get(self, resource_group):
-        response = self.client.disaster_recovery_configs.get(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_get(self, resource_group):
+        response = await self.client.disaster_recovery_configs.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
@@ -81,9 +82,9 @@ class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase)
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_create_or_update(self, resource_group):
-        response = self.client.disaster_recovery_configs.create_or_update(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_create_or_update(self, resource_group):
+        response = await self.client.disaster_recovery_configs.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
@@ -114,9 +115,9 @@ class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase)
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_delete(self, resource_group):
-        response = self.client.disaster_recovery_configs.delete(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_delete(self, resource_group):
+        response = await self.client.disaster_recovery_configs.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
@@ -126,20 +127,20 @@ class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase)
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_list(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_list(self, resource_group):
         response = self.client.disaster_recovery_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_break_pairing(self, resource_group):
-        response = self.client.disaster_recovery_configs.break_pairing(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_break_pairing(self, resource_group):
+        response = await self.client.disaster_recovery_configs.break_pairing(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
@@ -149,9 +150,9 @@ class TestServiceBusDisasterRecoveryConfigsOperations(AzureMgmtRecordedTestCase)
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_disaster_recovery_configs_fail_over(self, resource_group):
-        response = self.client.disaster_recovery_configs.fail_over(
+    @recorded_by_proxy_async
+    async def test_disaster_recovery_configs_fail_over(self, resource_group):
+        response = await self.client.disaster_recovery_configs.fail_over(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",

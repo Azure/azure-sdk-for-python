@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.aio import ServiceBusClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,19 +15,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusRulesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementSubscriptionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient, is_async=True)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_rules_get(self, resource_group):
-        response = await self.client.rules.get(
+    async def test_subscriptions_get(self, resource_group):
+        response = await self.client.subscriptions.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            rule_name="str",
         )
 
         # please add some check logic here by yourself
@@ -35,33 +34,43 @@ class TestServiceBusRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_rules_create_or_update(self, resource_group):
-        response = await self.client.rules.create_or_update(
+    async def test_subscriptions_create_or_update(self, resource_group):
+        response = await self.client.subscriptions.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            rule_name="str",
             parameters={
                 "id": "str",
                 "location": "str",
                 "name": "str",
                 "properties": {
-                    "action": {"compatibilityLevel": 0, "requiresPreprocessing": bool, "sqlExpression": "str"},
-                    "correlationFilter": {
-                        "contentType": "str",
-                        "correlationId": "str",
-                        "label": "str",
-                        "messageId": "str",
-                        "properties": {"str": "str"},
-                        "replyTo": "str",
-                        "replyToSessionId": "str",
-                        "requiresPreprocessing": bool,
-                        "sessionId": "str",
-                        "to": "str",
+                    "accessedAt": "2020-02-20 00:00:00",
+                    "autoDeleteOnIdle": "1 day, 0:00:00",
+                    "clientAffineProperties": {"clientId": "str", "isDurable": bool, "isShared": bool},
+                    "countDetails": {
+                        "activeMessageCount": 0,
+                        "deadLetterMessageCount": 0,
+                        "scheduledMessageCount": 0,
+                        "transferDeadLetterMessageCount": 0,
+                        "transferMessageCount": 0,
                     },
-                    "filterType": "str",
-                    "sqlFilter": {"compatibilityLevel": 0, "requiresPreprocessing": bool, "sqlExpression": "str"},
+                    "createdAt": "2020-02-20 00:00:00",
+                    "deadLetteringOnFilterEvaluationExceptions": bool,
+                    "deadLetteringOnMessageExpiration": bool,
+                    "defaultMessageTimeToLive": "1 day, 0:00:00",
+                    "duplicateDetectionHistoryTimeWindow": "1 day, 0:00:00",
+                    "enableBatchedOperations": bool,
+                    "forwardDeadLetteredMessagesTo": "str",
+                    "forwardTo": "str",
+                    "isClientAffine": bool,
+                    "lockDuration": "1 day, 0:00:00",
+                    "maxDeliveryCount": 0,
+                    "messageCount": 0,
+                    "requiresSession": bool,
+                    "status": "str",
+                    "updatedAt": "2020-02-20 00:00:00",
+                    "userMetadata": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -80,13 +89,12 @@ class TestServiceBusRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_rules_delete(self, resource_group):
-        response = await self.client.rules.delete(
+    async def test_subscriptions_delete(self, resource_group):
+        response = await self.client.subscriptions.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            rule_name="str",
         )
 
         # please add some check logic here by yourself
@@ -94,12 +102,11 @@ class TestServiceBusRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_rules_list_by_subscriptions(self, resource_group):
-        response = self.client.rules.list_by_subscriptions(
+    async def test_subscriptions_list_by_topic(self, resource_group):
+        response = self.client.subscriptions.list_by_topic(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            subscription_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

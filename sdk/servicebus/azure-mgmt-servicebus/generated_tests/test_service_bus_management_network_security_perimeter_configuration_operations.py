@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus import ServiceBusClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,14 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusOperations(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementNetworkSecurityPerimeterConfigurationOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
+    def test_network_security_perimeter_configuration_list(self, resource_group):
+        response = self.client.network_security_perimeter_configuration.list(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+        )
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

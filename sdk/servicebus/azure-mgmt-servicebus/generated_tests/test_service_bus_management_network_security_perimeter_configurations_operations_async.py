@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus import ServiceBusClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestServiceBusNetworkSecurityPerimeterConfigurationsOperations(AzureMgmtRecordedTestCase):
+class TestServiceBusManagementNetworkSecurityPerimeterConfigurationsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ServiceBusClient)
+        self.client = self.create_mgmt_client(ServiceBusManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_network_security_perimeter_configurations_get_resource_association_name(self, resource_group):
-        response = self.client.network_security_perimeter_configurations.get_resource_association_name(
+    @recorded_by_proxy_async
+    async def test_network_security_perimeter_configurations_get_resource_association_name(self, resource_group):
+        response = await self.client.network_security_perimeter_configurations.get_resource_association_name(
             resource_group_name=resource_group.name,
             namespace_name="str",
             resource_association_name="str",
@@ -31,9 +32,9 @@ class TestServiceBusNetworkSecurityPerimeterConfigurationsOperations(AzureMgmtRe
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_network_security_perimeter_configurations_reconcile(self, resource_group):
-        response = self.client.network_security_perimeter_configurations.reconcile(
+    @recorded_by_proxy_async
+    async def test_network_security_perimeter_configurations_reconcile(self, resource_group):
+        response = await self.client.network_security_perimeter_configurations.reconcile(
             resource_group_name=resource_group.name,
             namespace_name="str",
             resource_association_name="str",
