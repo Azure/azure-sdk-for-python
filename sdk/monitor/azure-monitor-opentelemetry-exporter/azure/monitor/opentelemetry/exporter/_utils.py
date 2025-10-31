@@ -9,6 +9,7 @@ import platform
 import threading
 import time
 import warnings
+import hashlib
 from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
@@ -422,3 +423,6 @@ def get_compute_type():
     if _is_on_aks():
         return _RP_Names.AKS.value
     return _RP_Names.UNKNOWN.value
+
+def _get_sha256_hash(input_str: str) -> str:
+    return hashlib.sha256(input_str.encode("utf-8")).hexdigest()
