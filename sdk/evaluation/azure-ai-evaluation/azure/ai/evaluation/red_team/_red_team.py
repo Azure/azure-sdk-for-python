@@ -904,7 +904,9 @@ class RedTeam:
 
                     # Check if any context has agent-specific fields
                     has_agent_fields = any(
-                        isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
+                        isinstance(ctx, dict)
+                        and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
+                        for ctx in contexts
                     )
 
                     # For contexts without agent fields, append them to the content
