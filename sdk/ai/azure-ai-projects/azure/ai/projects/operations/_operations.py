@@ -1457,7 +1457,7 @@ def build_evaluation_taxonomies_get_request(name: str, **kwargs: Any) -> HttpReq
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1483,7 +1483,7 @@ def build_evaluation_taxonomies_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies"
+    _url = "/evaluationtaxonomies"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1506,7 +1506,7 @@ def build_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1532,7 +1532,7 @@ def build_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1561,7 +1561,7 @@ def build_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }

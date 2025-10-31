@@ -614,7 +614,7 @@ class ResponseTextFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEn
 
     Configuring ``{ "type": "json_schema" }`` enables Structured Outputs,
     which ensures the model will match your supplied JSON schema. Learn more in the
-    `Structured Outputs guide </docs/guides/structured-outputs>`_.
+    `Structured Outputs guide <https://platform.openai.com/docs/guides/structured-outputs>`_.
 
     The default format is ``{ "type": "text" }`` with no additional options.
 
@@ -693,8 +693,8 @@ class ServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Project settings. Unless otherwise configured, the Project will use 'default'.
     * If set to 'default', then the request will be processed with the standard pricing and
     performance for the selected model.
-    * If set to '[flex](/docs/guides/flex-processing)' or 'priority', then the request will be
-    processed with the corresponding service tier. [Contact
+    * If set to '[flex](https://platform.openai.com/docs/guides/flex-processing)' or 'priority',
+    then the request will be processed with the corresponding service tier. [Contact
     sales](https://openai.com/contact-sales) to learn more about Priority processing.
     * When not set, the default behavior is 'auto'.
 
@@ -712,7 +712,7 @@ class ServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ToolChoiceObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that the model should use a built-in tool to generate a response.
-    `Learn more about built-in tools </docs/guides/tools>`_.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
     """
 
     FILE_SEARCH = "file_search"
