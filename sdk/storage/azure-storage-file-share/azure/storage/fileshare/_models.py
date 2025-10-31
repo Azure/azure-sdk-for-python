@@ -17,6 +17,7 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 
+from ._generated._utils.serialization import Deserializer
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import DirectoryItem
@@ -29,7 +30,6 @@ from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
 from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedSmbEncryptionInTransit
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
-from ._parser import _parse_datetime_from_str
 from ._shared.models import DictMixin, get_enum_value
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
@@ -991,9 +991,12 @@ class DirectoryProperties(DictMixin):
         self.etag = kwargs.get('ETag')  # type: ignore [assignment]
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
         self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
-        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
-        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
-        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.change_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-change-time')) if (
+                kwargs.get('x-ms-file-change-time') is not None) else None
+        self.creation_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-creation-time')) if (
+                kwargs.get('x-ms-file-creation-time') is not None) else None
+        self.last_write_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-last-write-time')) if (
+                kwargs.get('x-ms-file-last-write-time') is not None) else None
         self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
         self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]
@@ -1239,9 +1242,12 @@ class FileProperties(DictMixin):
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
-        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
-        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
-        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.change_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-change-time')) if (
+            kwargs.get('x-ms-file-change-time') is not None) else None
+        self.creation_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-creation-time')) if (
+            kwargs.get('x-ms-file-creation-time') is not None) else None
+        self.last_write_time = Deserializer.deserialize_iso(kwargs.get('x-ms-file-last-write-time')) if (
+            kwargs.get('x-ms-file-last-write-time') is not None) else None
         self.last_access_time = None
         self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
         self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from azure.core.exceptions import ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError
@@ -115,7 +115,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         directory_client = share_client.get_directory_client('dir1')
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         await directory_client.create_directory(
@@ -1362,9 +1362,9 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         source_directory = await share_client.create_directory('dir1')
 
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
-        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
-        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000, tzinfo=timezone.utc)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000, tzinfo=timezone.utc)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         new_directory = await source_directory.rename_directory(
