@@ -1,5 +1,404 @@
 # Release History
 
+## 8.0.0b2 (2025-11-16)
+
+### Features Added
+
+  - Model `MonitorManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ErrorResponse` added property `error`
+  - Model `MetricAlertResource` added property `resolve_configuration`
+  - Model `MetricAlertResource` added property `custom_properties`
+  - Model `MetricAlertResource` added property `action_properties`
+  - Model `MetricAlertResource` added property `identity`
+  - Model `MetricAlertResourcePatch` added property `identity`
+  - Model `MetricAlertResourcePatch` added property `resolve_configuration`
+  - Model `MetricAlertResourcePatch` added property `custom_properties`
+  - Model `MetricAlertResourcePatch` added property `action_properties`
+  - Enum `Odatatype` added member `MICROSOFT_AZURE_MONITOR_PROM_QL_CRITERIA`
+  - Model `Resource` added property `identity`
+  - Added model `DynamicPromQLCriteria`
+  - Added model `MultiPromQLCriteria`
+  - Added model `PromQLCriteria`
+  - Added model `QueryFailingPeriods`
+  - Added model `ResolveConfiguration`
+  - Added model `StaticPromQLCriteria`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `MonitorManagementClient.action_groups`
+  - Deleted or renamed client operation group `MonitorManagementClient.activity_log_alerts`
+  - Deleted or renamed client operation group `MonitorManagementClient.activity_logs`
+  - Deleted or renamed client operation group `MonitorManagementClient.tenant_activity_logs`
+  - Deleted or renamed client operation group `MonitorManagementClient.alert_rule_incidents`
+  - Deleted or renamed client operation group `MonitorManagementClient.autoscale_settings`
+  - Deleted or renamed client operation group `MonitorManagementClient.predictive_metric`
+  - Deleted or renamed client operation group `MonitorManagementClient.baselines`
+  - Deleted or renamed client operation group `MonitorManagementClient.diagnostic_settings`
+  - Deleted or renamed client operation group `MonitorManagementClient.diagnostic_settings_category`
+  - Deleted or renamed client operation group `MonitorManagementClient.event_categories`
+  - Deleted or renamed client operation group `MonitorManagementClient.guest_diagnostics_settings`
+  - Deleted or renamed client operation group `MonitorManagementClient.guest_diagnostics_settings_association`
+  - Deleted or renamed client operation group `MonitorManagementClient.log_profiles`
+  - Deleted or renamed client operation group `MonitorManagementClient.metric_definitions`
+  - Deleted or renamed client operation group `MonitorManagementClient.metric_namespaces`
+  - Deleted or renamed client operation group `MonitorManagementClient.metrics`
+  - Deleted or renamed client operation group `MonitorManagementClient.operations`
+  - Deleted or renamed client operation group `MonitorManagementClient.scheduled_query_rules`
+  - Deleted or renamed client operation group `MonitorManagementClient.service_diagnostic_settings`
+  - Deleted or renamed client operation group `MonitorManagementClient.vm_insights`
+  - Deleted or renamed client operation group `MonitorManagementClient.private_link_scopes`
+  - Deleted or renamed client operation group `MonitorManagementClient.private_link_scope_operation_status`
+  - Deleted or renamed client operation group `MonitorManagementClient.private_link_resources`
+  - Deleted or renamed client operation group `MonitorManagementClient.private_endpoint_connections`
+  - Deleted or renamed client operation group `MonitorManagementClient.private_link_scoped_resources`
+  - Deleted or renamed client operation group `MonitorManagementClient.subscription_diagnostic_settings`
+  - Deleted or renamed client operation group `MonitorManagementClient.azure_monitor_workspaces`
+  - Deleted or renamed client operation group `MonitorManagementClient.monitor_operations`
+  - Deleted or renamed client operation group `MonitorManagementClient.data_collection_endpoints`
+  - Deleted or renamed client operation group `MonitorManagementClient.data_collection_rule_associations`
+  - Deleted or renamed client operation group `MonitorManagementClient.data_collection_rules`
+  - Model `ErrorResponse` deleted or renamed its instance variable `code`
+  - Model `ErrorResponse` deleted or renamed its instance variable `message`
+  - Model `Resource` deleted or renamed its instance variable `system_data`
+  - Deleted or renamed model `ActionDetail`
+  - Deleted or renamed model `ActionGroup`
+  - Deleted or renamed model `ActionGroupList`
+  - Deleted or renamed model `ActionGroupPatchBody`
+  - Deleted or renamed model `ActionGroupResource`
+  - Deleted or renamed model `ActionList`
+  - Deleted or renamed model `ActionType`
+  - Deleted or renamed model `Actions`
+  - Deleted or renamed model `ActivityLogAlertResource`
+  - Deleted or renamed model `AdxDestination`
+  - Deleted or renamed model `AgentSetting`
+  - Deleted or renamed model `AgentSettingsSpec`
+  - Deleted or renamed model `AggregationType`
+  - Deleted or renamed model `AlertRuleAllOfCondition`
+  - Deleted or renamed model `AlertRuleAnyOfOrLeafCondition`
+  - Deleted or renamed model `AlertRuleLeafCondition`
+  - Deleted or renamed model `AlertRuleList`
+  - Deleted or renamed model `AlertRulePatchObject`
+  - Deleted or renamed model `AlertSeverity`
+  - Deleted or renamed model `ArmRoleReceiver`
+  - Deleted or renamed model `AutomationRunbookReceiver`
+  - Deleted or renamed model `AutoscaleErrorResponse`
+  - Deleted or renamed model `AutoscaleErrorResponseError`
+  - Deleted or renamed model `AutoscaleNotification`
+  - Deleted or renamed model `AutoscaleProfile`
+  - Deleted or renamed model `AutoscaleSettingResource`
+  - Deleted or renamed model `AutoscaleSettingResourceCollection`
+  - Deleted or renamed model `AutoscaleSettingResourcePatch`
+  - Deleted or renamed model `AzureAppPushReceiver`
+  - Deleted or renamed model `AzureFunctionReceiver`
+  - Deleted or renamed model `AzureMonitorMetricsDestination`
+  - Deleted or renamed model `AzureMonitorPrivateLinkScope`
+  - Deleted or renamed model `AzureMonitorWorkspace`
+  - Deleted or renamed model `AzureMonitorWorkspaceDefaultIngestionSettings`
+  - Deleted or renamed model `AzureMonitorWorkspaceMetrics`
+  - Deleted or renamed model `AzureMonitorWorkspaceResource`
+  - Deleted or renamed model `AzureMonitorWorkspaceResourceForUpdate`
+  - Deleted or renamed model `AzureMonitorWorkspaceResourceProperties`
+  - Deleted or renamed model `AzureResource`
+  - Deleted or renamed model `AzureResourceAutoGenerated`
+  - Deleted or renamed model `BaselineMetadata`
+  - Deleted or renamed model `BaselineSensitivity`
+  - Deleted or renamed model `CategoryType`
+  - Deleted or renamed model `ColumnDefinition`
+  - Deleted or renamed model `ComparisonOperationType`
+  - Deleted or renamed model `Condition`
+  - Deleted or renamed model `ConditionFailingPeriods`
+  - Deleted or renamed model `ConditionOperator`
+  - Deleted or renamed model `ConfigurationAccessEndpointSpec`
+  - Deleted or renamed model `Context`
+  - Deleted or renamed model `CreatedByType`
+  - Deleted or renamed model `DataCollectionEndpoint`
+  - Deleted or renamed model `DataCollectionEndpointConfigurationAccess`
+  - Deleted or renamed model `DataCollectionEndpointFailoverConfiguration`
+  - Deleted or renamed model `DataCollectionEndpointLogsIngestion`
+  - Deleted or renamed model `DataCollectionEndpointMetadata`
+  - Deleted or renamed model `DataCollectionEndpointMetricsIngestion`
+  - Deleted or renamed model `DataCollectionEndpointNetworkAcls`
+  - Deleted or renamed model `DataCollectionEndpointResource`
+  - Deleted or renamed model `DataCollectionEndpointResourceIdentity`
+  - Deleted or renamed model `DataCollectionEndpointResourceProperties`
+  - Deleted or renamed model `DataCollectionEndpointResourceSystemData`
+  - Deleted or renamed model `DataCollectionRule`
+  - Deleted or renamed model `DataCollectionRuleAgentSettings`
+  - Deleted or renamed model `DataCollectionRuleAssociation`
+  - Deleted or renamed model `DataCollectionRuleAssociationMetadata`
+  - Deleted or renamed model `DataCollectionRuleAssociationProxyOnlyResource`
+  - Deleted or renamed model `DataCollectionRuleAssociationProxyOnlyResourceProperties`
+  - Deleted or renamed model `DataCollectionRuleAssociationProxyOnlyResourceSystemData`
+  - Deleted or renamed model `DataCollectionRuleDataSources`
+  - Deleted or renamed model `DataCollectionRuleDestinations`
+  - Deleted or renamed model `DataCollectionRuleEndpoints`
+  - Deleted or renamed model `DataCollectionRuleMetadata`
+  - Deleted or renamed model `DataCollectionRuleReferences`
+  - Deleted or renamed model `DataCollectionRuleResource`
+  - Deleted or renamed model `DataCollectionRuleResourceIdentity`
+  - Deleted or renamed model `DataCollectionRuleResourceProperties`
+  - Deleted or renamed model `DataCollectionRuleResourceSystemData`
+  - Deleted or renamed model `DataContainer`
+  - Deleted or renamed model `DataFlow`
+  - Deleted or renamed model `DataImportSources`
+  - Deleted or renamed model `DataImportSourcesEventHub`
+  - Deleted or renamed model `DataSource`
+  - Deleted or renamed model `DataSourceConfiguration`
+  - Deleted or renamed model `DataSourceKind`
+  - Deleted or renamed model `DataSourcesSpec`
+  - Deleted or renamed model `DataSourcesSpecDataImports`
+  - Deleted or renamed model `DataStatus`
+  - Deleted or renamed model `DestinationsSpec`
+  - Deleted or renamed model `DestinationsSpecAzureMonitorMetrics`
+  - Deleted or renamed model `DiagnosticSettingsCategoryResource`
+  - Deleted or renamed model `DiagnosticSettingsCategoryResourceCollection`
+  - Deleted or renamed model `DiagnosticSettingsResource`
+  - Deleted or renamed model `DiagnosticSettingsResourceCollection`
+  - Deleted or renamed model `Dimension`
+  - Deleted or renamed model `DimensionOperator`
+  - Deleted or renamed model `EmailNotification`
+  - Deleted or renamed model `EmailReceiver`
+  - Deleted or renamed model `EnableRequest`
+  - Deleted or renamed model `EndpointsSpec`
+  - Deleted or renamed model `EnrichmentData`
+  - Deleted or renamed model `Error`
+  - Deleted or renamed model `ErrorAdditionalInfo`
+  - Deleted or renamed model `ErrorContract`
+  - Deleted or renamed model `ErrorDetailAutoGenerated`
+  - Deleted or renamed model `ErrorDetailAutoGenerated2`
+  - Deleted or renamed model `ErrorResponseAutoGenerated`
+  - Deleted or renamed model `ErrorResponseAutoGenerated2`
+  - Deleted or renamed model `ErrorResponseAutoGenerated3`
+  - Deleted or renamed model `ErrorResponseAutoGenerated4`
+  - Deleted or renamed model `ErrorResponseAutoGenerated5`
+  - Deleted or renamed model `ErrorResponseCommon`
+  - Deleted or renamed model `ErrorResponseCommonV2`
+  - Deleted or renamed model `EtwEventConfiguration`
+  - Deleted or renamed model `EtwProviderConfiguration`
+  - Deleted or renamed model `EventCategoryCollection`
+  - Deleted or renamed model `EventData`
+  - Deleted or renamed model `EventDataCollection`
+  - Deleted or renamed model `EventHubDataSource`
+  - Deleted or renamed model `EventHubDestination`
+  - Deleted or renamed model `EventHubDirectDestination`
+  - Deleted or renamed model `EventHubReceiver`
+  - Deleted or renamed model `EventLevel`
+  - Deleted or renamed model `EventLogConfiguration`
+  - Deleted or renamed model `ExtensionDataSource`
+  - Deleted or renamed model `FailoverConfigurationSpec`
+  - Deleted or renamed model `GuestDiagnosticSettingsAssociationList`
+  - Deleted or renamed model `GuestDiagnosticSettingsAssociationResource`
+  - Deleted or renamed model `GuestDiagnosticSettingsAssociationResourcePatch`
+  - Deleted or renamed model `GuestDiagnosticSettingsList`
+  - Deleted or renamed model `GuestDiagnosticSettingsOsType`
+  - Deleted or renamed model `GuestDiagnosticSettingsPatchResource`
+  - Deleted or renamed model `GuestDiagnosticSettingsResource`
+  - Deleted or renamed model `HttpRequestInfo`
+  - Deleted or renamed model `IisLogsDataSource`
+  - Deleted or renamed model `Incident`
+  - Deleted or renamed model `IngestionSettings`
+  - Deleted or renamed model `ItsmReceiver`
+  - Deleted or renamed model `Kind`
+  - Deleted or renamed model `KnownAgentSettingName`
+  - Deleted or renamed model `KnownColumnDefinitionType`
+  - Deleted or renamed model `KnownDataCollectionEndpointProvisioningState`
+  - Deleted or renamed model `KnownDataCollectionEndpointResourceKind`
+  - Deleted or renamed model `KnownDataCollectionRuleAssociationProvisioningState`
+  - Deleted or renamed model `KnownDataCollectionRuleProvisioningState`
+  - Deleted or renamed model `KnownDataCollectionRuleResourceKind`
+  - Deleted or renamed model `KnownDataFlowStreams`
+  - Deleted or renamed model `KnownExtensionDataSourceStreams`
+  - Deleted or renamed model `KnownLocationSpecProvisioningStatus`
+  - Deleted or renamed model `KnownLogFileTextSettingsRecordStartTimestampFormat`
+  - Deleted or renamed model `KnownLogFilesDataSourceFormat`
+  - Deleted or renamed model `KnownPerfCounterDataSourceStreams`
+  - Deleted or renamed model `KnownPrometheusForwarderDataSourceStreams`
+  - Deleted or renamed model `KnownPublicNetworkAccessOptions`
+  - Deleted or renamed model `KnownStorageBlobLookupType`
+  - Deleted or renamed model `KnownSyslogDataSourceFacilityNames`
+  - Deleted or renamed model `KnownSyslogDataSourceLogLevels`
+  - Deleted or renamed model `KnownSyslogDataSourceStreams`
+  - Deleted or renamed model `KnownWindowsEventLogDataSourceStreams`
+  - Deleted or renamed model `KnownWindowsFirewallLogsDataSourceProfileFilter`
+  - Deleted or renamed model `LocalizableString`
+  - Deleted or renamed model `LocalizableStringAutoGenerated`
+  - Deleted or renamed model `LocationSpec`
+  - Deleted or renamed model `LogAnalyticsDestination`
+  - Deleted or renamed model `LogFileSettings`
+  - Deleted or renamed model `LogFileSettingsText`
+  - Deleted or renamed model `LogFileTextSettings`
+  - Deleted or renamed model `LogFilesDataSource`
+  - Deleted or renamed model `LogFilesDataSourceSettings`
+  - Deleted or renamed model `LogProfileCollection`
+  - Deleted or renamed model `LogProfileResource`
+  - Deleted or renamed model `LogProfileResourcePatch`
+  - Deleted or renamed model `LogSettings`
+  - Deleted or renamed model `LogSettingsAutoGenerated`
+  - Deleted or renamed model `LogicAppReceiver`
+  - Deleted or renamed model `LogsIngestionEndpointSpec`
+  - Deleted or renamed model `ManagedServiceIdentity`
+  - Deleted or renamed model `ManagedServiceIdentityType`
+  - Deleted or renamed model `Metadata`
+  - Deleted or renamed model `MetadataValue`
+  - Deleted or renamed model `Metric`
+  - Deleted or renamed model `MetricAggregationType`
+  - Deleted or renamed model `MetricAvailability`
+  - Deleted or renamed model `MetricBaselinesResponse`
+  - Deleted or renamed model `MetricClass`
+  - Deleted or renamed model `MetricDefinition`
+  - Deleted or renamed model `MetricDefinitionCollection`
+  - Deleted or renamed model `MetricNamespace`
+  - Deleted or renamed model `MetricNamespaceCollection`
+  - Deleted or renamed model `MetricNamespaceName`
+  - Deleted or renamed model `MetricResultType`
+  - Deleted or renamed model `MetricSettings`
+  - Deleted or renamed model `MetricSettingsAutoGenerated`
+  - Deleted or renamed model `MetricSingleDimension`
+  - Deleted or renamed model `MetricStatisticType`
+  - Deleted or renamed model `MetricTrigger`
+  - Deleted or renamed model `MetricUnit`
+  - Deleted or renamed model `MetricValue`
+  - Deleted or renamed model `Metrics`
+  - Deleted or renamed model `MetricsIngestionEndpointSpec`
+  - Deleted or renamed model `MicrosoftFabricDestination`
+  - Deleted or renamed model `MonitoringAccountDestination`
+  - Deleted or renamed model `NamespaceClassification`
+  - Deleted or renamed model `NetworkRuleSet`
+  - Deleted or renamed model `NotificationRequestBody`
+  - Deleted or renamed model `OnboardingStatus`
+  - Deleted or renamed model `Operation`
+  - Deleted or renamed model `OperationAutoGenerated`
+  - Deleted or renamed model `OperationDisplay`
+  - Deleted or renamed model `OperationDisplayAutoGenerated`
+  - Deleted or renamed model `OperationListResultAutoGenerated`
+  - Deleted or renamed model `OperationStatus`
+  - Deleted or renamed model `Origin`
+  - Deleted or renamed model `PerfCounterDataSource`
+  - Deleted or renamed model `PerformanceCounterConfiguration`
+  - Deleted or renamed model `PlatformTelemetryDataSource`
+  - Deleted or renamed model `PredictiveAutoscalePolicy`
+  - Deleted or renamed model `PredictiveAutoscalePolicyScaleMode`
+  - Deleted or renamed model `PredictiveResponse`
+  - Deleted or renamed model `PredictiveValue`
+  - Deleted or renamed model `PrivateEndpoint`
+  - Deleted or renamed model `PrivateEndpointConnection`
+  - Deleted or renamed model `PrivateEndpointConnectionAutoGenerated`
+  - Deleted or renamed model `PrivateEndpointConnectionProvisioningState`
+  - Deleted or renamed model `PrivateEndpointProperty`
+  - Deleted or renamed model `PrivateEndpointServiceConnectionStatus`
+  - Deleted or renamed model `PrivateLinkResource`
+  - Deleted or renamed model `PrivateLinkScopedResource`
+  - Deleted or renamed model `PrivateLinkScopesResource`
+  - Deleted or renamed model `PrivateLinkServiceConnectionState`
+  - Deleted or renamed model `PrivateLinkServiceConnectionStateProperty`
+  - Deleted or renamed model `PrometheusForwarderDataSource`
+  - Deleted or renamed model `ProvisioningState`
+  - Deleted or renamed model `ProxyOnlyResource`
+  - Deleted or renamed model `ProxyResource`
+  - Deleted or renamed model `PublicNetworkAccess`
+  - Deleted or renamed model `ReceiverStatus`
+  - Deleted or renamed model `Recurrence`
+  - Deleted or renamed model `RecurrenceFrequency`
+  - Deleted or renamed model `RecurrentSchedule`
+  - Deleted or renamed model `ReferencesSpec`
+  - Deleted or renamed model `ReferencesSpecEnrichmentData`
+  - Deleted or renamed model `ResourceAutoGenerated`
+  - Deleted or renamed model `ResourceAutoGenerated2`
+  - Deleted or renamed model `ResourceAutoGenerated3`
+  - Deleted or renamed model `ResourceAutoGenerated4`
+  - Deleted or renamed model `ResourceAutoGenerated5`
+  - Deleted or renamed model `ResourceAutoGenerated6`
+  - Deleted or renamed model `ResourceAutoGenerated7`
+  - Deleted or renamed model `ResourceAutoGenerated8`
+  - Deleted or renamed model `ResourceForUpdate`
+  - Deleted or renamed model `ResourceForUpdateIdentity`
+  - Deleted or renamed model `Response`
+  - Deleted or renamed model `ResponseWithError`
+  - Deleted or renamed model `ResultType`
+  - Deleted or renamed model `RetentionPolicy`
+  - Deleted or renamed model `RuleResolveConfiguration`
+  - Deleted or renamed model `ScaleAction`
+  - Deleted or renamed model `ScaleCapacity`
+  - Deleted or renamed model `ScaleDirection`
+  - Deleted or renamed model `ScaleRule`
+  - Deleted or renamed model `ScaleRuleMetricDimension`
+  - Deleted or renamed model `ScaleRuleMetricDimensionOperationType`
+  - Deleted or renamed model `ScaleType`
+  - Deleted or renamed model `ScheduledQueryRuleCriteria`
+  - Deleted or renamed model `ScheduledQueryRuleResource`
+  - Deleted or renamed model `ScheduledQueryRuleResourceCollection`
+  - Deleted or renamed model `ScheduledQueryRuleResourcePatch`
+  - Deleted or renamed model `ScopedResource`
+  - Deleted or renamed model `SenderAuthorization`
+  - Deleted or renamed model `ServiceDiagnosticSettingsResource`
+  - Deleted or renamed model `ServiceDiagnosticSettingsResourcePatch`
+  - Deleted or renamed model `SingleBaseline`
+  - Deleted or renamed model `SingleMetricBaseline`
+  - Deleted or renamed model `SinkConfiguration`
+  - Deleted or renamed model `SinkConfigurationKind`
+  - Deleted or renamed model `SmsReceiver`
+  - Deleted or renamed model `StorageBlob`
+  - Deleted or renamed model `StorageBlobDestination`
+  - Deleted or renamed model `StorageTableDestination`
+  - Deleted or renamed model `StreamDeclaration`
+  - Deleted or renamed model `SubscriptionDiagnosticSettingsResource`
+  - Deleted or renamed model `SubscriptionDiagnosticSettingsResourceCollection`
+  - Deleted or renamed model `SubscriptionLogSettings`
+  - Deleted or renamed model `SubscriptionProxyOnlyResource`
+  - Deleted or renamed model `SubscriptionScopeMetricDefinition`
+  - Deleted or renamed model `SubscriptionScopeMetricDefinitionCollection`
+  - Deleted or renamed model `SubscriptionScopeMetricsRequestBodyParameters`
+  - Deleted or renamed model `SyslogDataSource`
+  - Deleted or renamed model `SystemData`
+  - Deleted or renamed model `TagsResource`
+  - Deleted or renamed model `TestNotificationDetailsResponse`
+  - Deleted or renamed model `TimeAggregation`
+  - Deleted or renamed model `TimeAggregationType`
+  - Deleted or renamed model `TimeSeriesBaseline`
+  - Deleted or renamed model `TimeSeriesElement`
+  - Deleted or renamed model `TimeWindow`
+  - Deleted or renamed model `TrackedResource`
+  - Deleted or renamed model `UserAssignedIdentity`
+  - Deleted or renamed model `VMInsightsOnboardingStatus`
+  - Deleted or renamed model `VoiceReceiver`
+  - Deleted or renamed model `WebhookNotification`
+  - Deleted or renamed model `WebhookReceiver`
+  - Deleted or renamed model `WindowsEventLogDataSource`
+  - Deleted or renamed model `WindowsFirewallLogsDataSource`
+  - Deleted or renamed model `WorkspaceInfo`
+  - Deleted or renamed model `ActionGroupsOperations`
+  - Deleted or renamed model `ActivityLogAlertsOperations`
+  - Deleted or renamed model `ActivityLogsOperations`
+  - Deleted or renamed model `AlertRuleIncidentsOperations`
+  - Deleted or renamed model `AutoscaleSettingsOperations`
+  - Deleted or renamed model `AzureMonitorWorkspacesOperations`
+  - Deleted or renamed model `BaselinesOperations`
+  - Deleted or renamed model `DataCollectionEndpointsOperations`
+  - Deleted or renamed model `DataCollectionRuleAssociationsOperations`
+  - Deleted or renamed model `DataCollectionRulesOperations`
+  - Deleted or renamed model `DiagnosticSettingsCategoryOperations`
+  - Deleted or renamed model `DiagnosticSettingsOperations`
+  - Deleted or renamed model `EventCategoriesOperations`
+  - Deleted or renamed model `GuestDiagnosticsSettingsAssociationOperations`
+  - Deleted or renamed model `GuestDiagnosticsSettingsOperations`
+  - Deleted or renamed model `LogProfilesOperations`
+  - Deleted or renamed model `MetricDefinitionsOperations`
+  - Deleted or renamed model `MetricNamespacesOperations`
+  - Deleted or renamed model `MetricsOperations`
+  - Deleted or renamed model `MonitorOperationsOperations`
+  - Deleted or renamed model `Operations`
+  - Deleted or renamed model `PredictiveMetricOperations`
+  - Deleted or renamed model `PrivateEndpointConnectionsOperations`
+  - Deleted or renamed model `PrivateLinkResourcesOperations`
+  - Deleted or renamed model `PrivateLinkScopeOperationStatusOperations`
+  - Deleted or renamed model `PrivateLinkScopedResourcesOperations`
+  - Deleted or renamed model `PrivateLinkScopesOperations`
+  - Deleted or renamed model `ScheduledQueryRulesOperations`
+  - Deleted or renamed model `ServiceDiagnosticSettingsOperations`
+  - Deleted or renamed model `SubscriptionDiagnosticSettingsOperations`
+  - Deleted or renamed model `TenantActivityLogsOperations`
+  - Deleted or renamed model `VMInsightsOperations`
+
 ## 8.0.0b1 (2025-08-05)
 
 ### Features Added
