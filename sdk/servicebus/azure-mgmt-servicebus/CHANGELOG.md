@@ -40,28 +40,16 @@
   - Added enum `ResourceAssociationAccessMode`
   - Added model `Ruleproperties`
   - Added model `SBNamespaceUpdateProperties`
-  - Model `NamespacesOperations` added method `begin_failover`
-  - Added model `NetworkSecurityPerimeterConfigurationOperations`
-  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
+  - Operation group `NamespacesOperations` added method `begin_failover`
+  - Added operation group `NetworkSecurityPerimeterConfigurationOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
 
 ### Breaking Changes
 
   - Model `FailoverProperties` deleted or renamed its instance variable `is_safe_failover`
   - Model `ProxyResource` deleted or renamed its instance variable `location`
-  - Model `Rule` deleted or renamed its instance variable `action`
-  - Model `Rule` deleted or renamed its instance variable `filter_type`
-  - Model `Rule` deleted or renamed its instance variable `sql_filter`
-  - Model `Rule` deleted or renamed its instance variable `correlation_filter`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `provisioning_state`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `status`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `created_at`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `updated_at`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `service_bus_endpoint`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `metric_id`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `encryption`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `alternate_name`
+  - Model `Rule` instance variables `action`, `filter_type`, `sql_filter`, and `correlation_filter` have been moved under property `properties`
+  - Model `SBNamespaceUpdateParameters` instance variables `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `encryption`, `private_endpoint_connections`, `disable_local_auth`, and `alternate_name` have been moved under property `properties`
   - Deleted or renamed model `SqlRuleAction`
 
 ## 10.0.0b1 (2025-07-15)
