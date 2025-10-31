@@ -8,6 +8,18 @@ REM
 REM Then run this script to "fix" the emitted code.
 REM
 
+REM Restore hand-written files that were deleted. Remove this once the emitter is fixed to go back to old behavior
+git restore azure/ai/projects/aio/operations/_patch_connections_async.py
+git restore azure/ai/projects/aio/operations/_patch_datasets_async.py
+git restore azure/ai/projects/aio/operations/_patch_telemetry_async.py
+git restore azure/ai/projects/operations/_patch_connections.py
+git restore azure/ai/projects/operations/_patch_datasets.py
+git restore azure/ai/projects/operations/_patch_telemetry.py
+git restore azure/ai/projects/telemetry/__init__.py
+git restore azure/ai/projects/telemetry/_ai_project_instrumentor.py
+git restore azure/ai/projects/telemetry/_trace_function.py
+git restore azure/ai/projects/telemetry/_utils.py
+
 REM Revert this, as we want to keep some edits to these file.
 git restore pyproject.toml
 git restore azure\ai\projects\_version.py
