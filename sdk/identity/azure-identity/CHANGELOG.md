@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for WorkloadIdentityCredential identity binding mode in AKS. ([#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287))
+- Added support for `WorkloadIdentityCredential` identity binding mode in AKS environments. This feature addresses Entra's limitation on the number of federated identity credentials (FICs) per managed identity by utilizing an AKS proxy that handles FIC exchanges on behalf of pods. When the environment is properly configured and `use_token_proxy=True` is specified in the `WorkloadIdentityCredential` constructor, all token requests are routed through this proxy service. ([#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287))
 
 ### Breaking Changes
 

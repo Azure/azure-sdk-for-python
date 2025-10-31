@@ -4,7 +4,6 @@
 # ------------------------------------
 # cspell:ignore cafile
 import os
-import logging
 from typing import Any, Optional
 
 from .client_assertion import ClientAssertionCredential
