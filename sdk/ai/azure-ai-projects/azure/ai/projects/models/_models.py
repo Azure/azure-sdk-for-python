@@ -849,7 +849,6 @@ class AISearchIndexResource(_Model):
     """A AI Search Index resource.
 
     :ivar project_connection_id: An index connection ID in an IndexResource attached to this agent.
-     Required.
     :vartype project_connection_id: str
     :ivar index_name: The name of an index in an IndexResource attached to this agent.
     :vartype index_name: str
@@ -865,30 +864,28 @@ class AISearchIndexResource(_Model):
     :vartype index_asset_id: str
     """
 
-    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An index connection ID in an IndexResource attached to this agent. Required."""
-    index_name: Optional[str] = rest_field(name="indexName", visibility=["read", "create", "update", "delete", "query"])
+    project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An index connection ID in an IndexResource attached to this agent."""
+    index_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of an index in an IndexResource attached to this agent."""
     query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = rest_field(
-        name="queryType", visibility=["read", "create", "update", "delete", "query"]
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
      \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
-    top_k: Optional[int] = rest_field(name="topK", visibility=["read", "create", "update", "delete", "query"])
+    top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents to retrieve from search and present to the model."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """filter string for search resource. `Learn more here
      <https://learn.microsoft.com/azure/search/search-filters>`_."""
-    index_asset_id: Optional[str] = rest_field(
-        name="indexAssetId", visibility=["read", "create", "update", "delete", "query"]
-    )
+    index_asset_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Index asset id for search resource."""
 
     @overload
     def __init__(
         self,
         *,
-        project_connection_id: str,
+        project_connection_id: Optional[str] = None,
         index_name: Optional[str] = None,
         query_type: Optional[Union[str, "_models.AzureAISearchQueryType"]] = None,
         top_k: Optional[int] = None,
@@ -1520,21 +1517,21 @@ class AzureAISearchToolResource(_Model):
     """A set of index resources used by the ``azure_ai_search`` tool.
 
     :ivar indexes: The indices attached to this agent. There can be a maximum of 1 index
-     resource attached to the agent.
+     resource attached to the agent. Required.
     :vartype indexes: list[~azure.ai.projects.models.AISearchIndexResource]
     """
 
-    indexes: Optional[list["_models.AISearchIndexResource"]] = rest_field(
+    indexes: list["_models.AISearchIndexResource"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The indices attached to this agent. There can be a maximum of 1 index
-     resource attached to the agent."""
+     resource attached to the agent. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        indexes: Optional[list["_models.AISearchIndexResource"]] = None,
+        indexes: list["_models.AISearchIndexResource"],
     ) -> None: ...
 
     @overload
@@ -2158,18 +2155,19 @@ class BrowserAutomationAgentTool(Tool, discriminator="browser_automation_preview
 class BrowserAutomationToolConnectionParameters(_Model):  # pylint: disable=name-too-long
     """Definition of input parameters for the connection used by the Browser Automation Tool.
 
-    :ivar id: The ID of the project connection to your Azure Playwright resource. Required.
-    :vartype id: str
+    :ivar project_connection_id: The ID of the project connection to your Azure Playwright
+     resource. Required.
+    :vartype project_connection_id: str
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the project connection to your Azure Playwright resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
+        project_connection_id: str,
     ) -> None: ...
 
     @overload
@@ -2186,13 +2184,12 @@ class BrowserAutomationToolConnectionParameters(_Model):  # pylint: disable=name
 class BrowserAutomationToolParameters(_Model):
     """Definition of input parameters for the Browser Automation Tool.
 
-    :ivar project_connection: The project connection parameters associated with the Browser
-     Automation Tool. Required.
-    :vartype project_connection:
-     ~azure.ai.projects.models.BrowserAutomationToolConnectionParameters
+    :ivar connection: The project connection parameters associated with the Browser Automation
+     Tool. Required.
+    :vartype connection: ~azure.ai.projects.models.BrowserAutomationToolConnectionParameters
     """
 
-    project_connection: "_models.BrowserAutomationToolConnectionParameters" = rest_field(
+    connection: "_models.BrowserAutomationToolConnectionParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The project connection parameters associated with the Browser Automation Tool. Required."""
@@ -2201,7 +2198,7 @@ class BrowserAutomationToolParameters(_Model):
     def __init__(
         self,
         *,
-        project_connection: "_models.BrowserAutomationToolConnectionParameters",
+        connection: "_models.BrowserAutomationToolConnectionParameters",
     ) -> None: ...
 
     @overload
@@ -9407,9 +9404,7 @@ class OpenApiFunctionDefinition(_Model):
     """Open API authentication details. Required."""
     default_params: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of OpenAPI spec parameters that will use user-provided defaults."""
-    functions: Optional[list["_models.OpenApiFunctionDefinitionFunction"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    functions: Optional[list["_models.OpenApiFunctionDefinitionFunction"]] = rest_field(visibility=["read"])
     """List of function definitions used by OpenApi tool."""
 
     @overload
@@ -9421,7 +9416,6 @@ class OpenApiFunctionDefinition(_Model):
         auth: "_models.OpenApiAuthDetails",
         description: Optional[str] = None,
         default_params: Optional[list[str]] = None,
-        functions: Optional[list["_models.OpenApiFunctionDefinitionFunction"]] = None,
     ) -> None: ...
 
     @overload
@@ -10058,9 +10052,9 @@ class Reasoning(_Model):
      Literal["concise"], Literal["detailed"]
     :vartype summary: str or str or str
     :ivar generate_summary: **Deprecated:** use ``summary`` instead. A summary of the reasoning
-    performed by the model. This can be useful for debugging and understanding the model's
-    reasoning process. One of ``auto``, ``concise``, or ``detailed``. Is one of the following
-    types: Literal["auto"], Literal["concise"], Literal["detailed"]
+     performed by the model. This can be useful for debugging and understanding the model's
+     reasoning process. One of ``auto``, ``concise``, or ``detailed``. Is one of the following
+     types: Literal["auto"], Literal["concise"], Literal["detailed"]
     :vartype generate_summary: str or str or str
     """
 

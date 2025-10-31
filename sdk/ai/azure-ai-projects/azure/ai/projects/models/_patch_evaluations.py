@@ -11,7 +11,7 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
-
+# TODO: Remove me. These are not supported by latest api-version used by this SDK.
 class EvaluatorIds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELEVANCE = "azureai://built-in/evaluators/relevance"
     HATE_UNFAIRNESS = "azureai://built-in/evaluators/hate_unfairness"
