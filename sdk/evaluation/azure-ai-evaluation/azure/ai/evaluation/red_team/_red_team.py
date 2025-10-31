@@ -19,8 +19,9 @@ from tqdm import tqdm
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 
-# from azure.ai.evaluation._evaluate._evaluate import emit_eval_result_events_to_app_insights #TODO: uncomment when app insights checked in
-# from azure.ai.evaluation._model_configurations import EvaluationResult, AppInsightsConfig
+from azure.ai.evaluation._evaluate._evaluate import (
+    emit_eval_result_events_to_app_insights,
+)  # TODO: uncomment when app insights checked in
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
@@ -324,6 +325,7 @@ class RedTeam:
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None,
         is_agent_target: Optional[bool] = None,
+        client_id: Optional[str] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
 
@@ -406,6 +408,7 @@ class RedTeam:
                 current_key,
                 num_objectives,
                 is_agent_target,
+                client_id,
             )
 
     async def _get_custom_attack_objectives(
@@ -468,6 +471,7 @@ class RedTeam:
         current_key: tuple,
         num_objectives: int,
         is_agent_target: Optional[bool] = None,
+        client_id: Optional[str] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI service."""
         content_harm_risk = None
@@ -494,6 +498,7 @@ class RedTeam:
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
                     target=target_type_str,
+                    client_id=client_id,
                 )
             else:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -504,6 +509,7 @@ class RedTeam:
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
                     target=target_type_str,
+                    client_id=client_id,
                 )
 
             if isinstance(objectives_response, list):
@@ -511,9 +517,6 @@ class RedTeam:
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
-            # Handle indirect jailbreak strategy
-            elif strategy == "indirect_jailbreak":
-                objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -541,6 +544,7 @@ class RedTeam:
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
                             target="model",
+                            client_id=client_id,
                         )
                     else:
                         objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -551,6 +555,7 @@ class RedTeam:
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
                             target="model",
+                            client_id=client_id,
                         )
 
                     if isinstance(objectives_response, list):
@@ -589,26 +594,6 @@ class RedTeam:
         self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
 
         return selected_prompts
-
-    async def _apply_jailbreak_prefixes(self, objectives_list: List) -> List:
-        """Apply jailbreak prefixes to objectives."""
-        self.logger.debug("Applying jailbreak prefixes to objectives")
-        try:
-            # Use centralized retry decorator
-            @self.retry_manager.create_retry_decorator(context="jailbreak_prefixes")
-            async def get_jailbreak_prefixes_with_retry():
-                return await self.generated_rai_client.get_jailbreak_prefixes()
-
-            jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
-            for objective in objectives_list:
-                if "messages" in objective and len(objective["messages"]) > 0:
-                    message = objective["messages"][0]
-                    if isinstance(message, dict) and "content" in message:
-                        message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-        except Exception as e:
-            self.logger.error(f"Error applying jailbreak prefixes: {str(e)}")
-
-        return objectives_list
 
     async def _apply_xpia_prompts(self, objectives_list: List, target_type_str: str) -> List:
         """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy.
@@ -764,6 +749,26 @@ class RedTeam:
         except Exception as e:
             self.logger.error(f"Error applying XPIA prompts: {str(e)}")
             self.logger.warning("XPIA prompt application failed, returning original objectives")
+
+        return objectives_list
+
+    async def _apply_jailbreak_prefixes(self, objectives_list: List) -> List:
+        """Apply jailbreak prefixes to objectives."""
+        self.logger.debug("Applying jailbreak prefixes to objectives")
+        try:
+            # Use centralized retry decorator
+            @self.retry_manager.create_retry_decorator(context="jailbreak_prefixes")
+            async def get_jailbreak_prefixes_with_retry():
+                return await self.generated_rai_client.get_jailbreak_prefixes()
+
+            jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
+            for objective in objectives_list:
+                if "messages" in objective and len(objective["messages"]) > 0:
+                    message = objective["messages"][0]
+                    if isinstance(message, dict) and "content" in message:
+                        message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
+        except Exception as e:
+            self.logger.error(f"Error applying jailbreak prefixes: {str(e)}")
 
         return objectives_list
 
@@ -1177,11 +1182,12 @@ class RedTeam:
         eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
         created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
         taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories")  # key is risk category value is taxonomy
-        # TODO: uncomment when app insights logging checked in
-        # _app_insights_configuration = kwargs.get("_app_insights_configuration")
-        # self._app_insights_configuration = _app_insights_configuration
+        _app_insights_configuration = kwargs.get("_app_insights_configuration")
+        self._app_insights_configuration = _app_insights_configuration
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
+        client_id: Optional[str] = kwargs.get("client_id")
+
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
@@ -1272,7 +1278,7 @@ class RedTeam:
 
             # Fetch attack objectives
             all_objectives = await self._fetch_all_objectives(
-                flattened_attack_strategies, application_scenario, is_agent_target
+                flattened_attack_strategies, application_scenario, is_agent_target, client_id
             )
 
             chat_target = get_chat_target(target)
@@ -1369,7 +1375,9 @@ class RedTeam:
             self.logger.warning(
                 "Tense strategy is not compatible with UngroundedAttributes risk categories. Skipping Tense strategy."
             )
-            raise ValueError("Tense strategy is not compatible with UngroundedAttributes risk categories.")
+            raise ValueError(
+                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories."
+            )
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
@@ -1386,7 +1394,11 @@ class RedTeam:
                 }
 
     async def _fetch_all_objectives(
-        self, flattened_attack_strategies: List, application_scenario: str, is_agent_target: bool
+        self,
+        flattened_attack_strategies: List,
+        application_scenario: str,
+        is_agent_target: bool,
+        client_id: Optional[str] = None,
     ) -> Dict:
         """Fetch all attack objectives for all strategies and risk categories."""
         log_section_header(self.logger, "Fetching attack objectives")
@@ -1400,6 +1412,7 @@ class RedTeam:
                 application_scenario=application_scenario,
                 strategy="baseline",
                 is_agent_target=is_agent_target,
+                client_id=client_id,
             )
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
@@ -1424,6 +1437,7 @@ class RedTeam:
                     application_scenario=application_scenario,
                     strategy=strategy_name,
                     is_agent_target=is_agent_target,
+                    client_id=client_id,
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
 
@@ -1540,9 +1554,10 @@ class RedTeam:
 
         # Extract AOAI summary for passing to MLflow logging
         aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
-        # TODO: uncomment when app insights checked in
-        # if self._app_insights_configuration:
-        #     emit_eval_result_events_to_app_insights(self._app_insights_configuration, aoai_summary["output_items"]["data"])
+        if self._app_insights_configuration:
+            emit_eval_result_events_to_app_insights(
+                self._app_insights_configuration, aoai_summary["output_items"]["data"]
+            )
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
@@ -1564,8 +1579,15 @@ class RedTeam:
                 os.remove(abs_output_path)
             os.makedirs(abs_output_path, exist_ok=True)
 
-            # Write scan result to eval_result.json (default name when path is directory)
-            _write_output(abs_output_path, red_team_result.scan_result)
+            # Create a copy of scan_result without AOAI properties for eval_result.json
+            scan_result_without_aoai = {
+                key: value
+                for key, value in red_team_result.scan_result.items()
+                if not key.startswith("AOAI_Compatible")
+            }
+
+            # Write scan result without AOAI properties to eval_result.json
+            _write_output(abs_output_path, scan_result_without_aoai)
 
             # Write the AOAI summary to results.json
             if aoai_summary:

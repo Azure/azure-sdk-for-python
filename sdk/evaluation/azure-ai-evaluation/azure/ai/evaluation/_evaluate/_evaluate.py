@@ -1112,6 +1112,7 @@ def _log_events_to_app_insights(
     otel_logger,
     events: List[Dict[str, Any]],
     log_attributes: Dict[str, Any],
+    app_insights_config: AppInsightsConfig,
     data_source_item: Optional[Dict[str, Any]] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
@@ -1125,6 +1126,8 @@ def _log_events_to_app_insights(
     :type events: List[Dict[str, Any]]
     :param log_attributes: Attributes dict to use for each event (already includes extra_attributes if present)
     :type log_attributes: Dict[str, Any]
+    :param app_insights_config: App Insights configuration containing connection string
+    :type app_insights_config: AppInsightsConfig
     :param data_source_item: Data source item containing trace, response, and agent information
     :type data_source_item: Optional[Dict[str, Any]]
     """
@@ -1133,15 +1136,17 @@ def _log_events_to_app_insights(
     from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
 
     try:
-        # Get the trace_id and other context from data source item
+        # Initialize values from AppInsights config as defaults
         trace_id = None
         span_id = None
         response_id = None
         conversation_id = None
         previous_response_id = None
-        agent_id = None
-        agent_version = None
-        agent_name = None
+        agent_id = app_insights_config.get("agent_id", None)
+        agent_version = app_insights_config.get("agent_version", None)
+        agent_name = app_insights_config.get("agent_name", None)
+
+        # Data source item values have higher priority and will override AppInsights config defaults
         if data_source_item:
             for key, value in data_source_item.items():
                 if key.endswith("trace_id") and value and isinstance(value, str):
@@ -1338,6 +1343,7 @@ def emit_eval_result_events_to_app_insights(
                 log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
                 evaluator_config=evaluator_config,
+                app_insights_config=app_insights_config,
             )
         # Force flush to ensure events are sent
         logger_provider.force_flush()
@@ -1817,7 +1823,10 @@ def _convert_results_to_aoai_evaluation_results(
         if criteria_name in criteria_name_types_from_meta:
             criteria_type = criteria_name_types_from_meta[criteria_name].get("type", None)
             evaluator_name = criteria_name_types_from_meta[criteria_name].get("evaluator_name", None)
-            if evaluator_name:
+            current_evaluator_metrics = criteria_name_types_from_meta[criteria_name].get("metrics", None)
+            if current_evaluator_metrics and len(current_evaluator_metrics) > 0:
+                metrics.extend(current_evaluator_metrics)
+            elif evaluator_name:
                 if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
                     evaluator_name = evaluator_name.replace("builtin.", "")
                 metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
@@ -2296,11 +2305,14 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         logger.info(
             f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}"
         )
+        result_counts["total"] += 1
+        passed_count = 0
+        failed_count = 0
+        error_count = 0
         if isinstance(aoai_result, dict) and "results" in aoai_result:
             logger.info(
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
             )
-            result_counts["total"] += len(aoai_result["results"])
             for result_item in aoai_result["results"]:
                 if isinstance(result_item, dict):
                     # Check if the result has a 'passed' field
@@ -2313,11 +2325,11 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                                 "passed": 0,
                             }
                         if result_item["passed"] is True:
-                            result_counts["passed"] += 1
+                            passed_count += 1
                             result_counts_stats[testing_criteria]["passed"] += 1
 
                         elif result_item["passed"] is False:
-                            result_counts["failed"] += 1
+                            failed_count += 1
                             result_counts_stats[testing_criteria]["failed"] += 1
                     # Check if the result indicates an error status
                     elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
@@ -2325,11 +2337,23 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                         and isinstance(result_item["sample"], dict)
                         and result_item["sample"].get("error", None) is not None
                     ):
-                        result_counts["errored"] += 1
+                        error_count += 1
         elif hasattr(aoai_result, "status") and aoai_result.status == "error":
-            result_counts["errored"] += 1
+            error_count += 1
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
+            error_count += 1
+
+        if error_count > 0:
             result_counts["errored"] += 1
+        elif failed_count > 0:
+            result_counts["failed"] += 1
+        elif (
+            error_count == 0
+            and failed_count == 0
+            and passed_count > 0
+            and passed_count == len(aoai_result.get("results", []))
+        ):
+            result_counts["passed"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
