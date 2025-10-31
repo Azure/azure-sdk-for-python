@@ -30,7 +30,6 @@ from .. import models as _models1
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Serializer
 from ..._utils.utils import ClientMixinABC
-from ..._validation import api_version_validation
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -167,20 +166,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-01-preview",
-        params_added_on={
-            "2025-11-01-preview": [
-                "api_version",
-                "knowledge_base_name",
-                "query_source_authorization",
-                "client_request_id",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-01-preview"],
-    )
     def retrieve(
         self,
         knowledge_base_name: str,

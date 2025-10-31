@@ -30,7 +30,6 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models2
 from ...._utils.model_base import SdkJSONEncoder, _deserialize
 from ...._utils.utils import ClientMixinABC
-from ...._validation import api_version_validation
 from ..._operations._operations import build_knowledge_base_retrieval_retrieve_request
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
 
@@ -132,20 +131,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-01-preview",
-        params_added_on={
-            "2025-11-01-preview": [
-                "api_version",
-                "knowledge_base_name",
-                "query_source_authorization",
-                "client_request_id",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-01-preview"],
-    )
     async def retrieve(
         self,
         knowledge_base_name: str,

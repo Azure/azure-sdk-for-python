@@ -35,7 +35,6 @@ from ... import models as _models2
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Serializer
 from ..._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
-from ..._validation import api_version_validation
 from .._configuration import SearchIndexClientConfiguration, SearchIndexerClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -4097,11 +4096,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     def list_index_stats_summary(self, **kwargs: Any) -> ItemPaged["_models1.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.
 
@@ -4228,10 +4222,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexerDataSourceConnection: ...
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2025-08-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
-    )
     def _create_or_update_data_source_connection(
         self,
         data_source_name: str,
@@ -4715,11 +4705,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "indexer_name"]},
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     def resync(self, indexer_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
@@ -4856,13 +4841,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={
-            "2025-08-01-preview": ["api_version", "overwrite", "client_request_id", "indexer_name", "content_type"]
-        },
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     def reset_documents(  # pylint: disable=inconsistent-return-statements
         self,
         indexer_name: str,
@@ -5032,15 +5010,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexer: ...
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={
-            "2025-08-01-preview": [
-                "skip_indexer_reset_requirement_for_cache",
-                "disable_cache_reprocessing_change_detection",
-            ]
-        },
-        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
-    )
     def _create_or_update_indexer(
         self,
         indexer_name: str,
@@ -5565,15 +5534,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models1.SearchIndexerSkillset: ...
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={
-            "2025-08-01-preview": [
-                "skip_indexer_reset_requirement_for_cache",
-                "disable_cache_reprocessing_change_detection",
-            ]
-        },
-        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
-    )
     def _create_or_update_skillset(
         self,
         skillset_name: str,
@@ -6064,11 +6024,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         """
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "skillset_name", "content_type"]},
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     def reset_skills(  # pylint: disable=inconsistent-return-statements
         self, skillset_name: str, skill_names: Union[_models1.SkillNames, JSON, IO[bytes]], **kwargs: Any
     ) -> None:

@@ -35,7 +35,6 @@ from ... import models as _models2
 from .... import models as _models3
 from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ...._utils.utils import ClientMixinABC
-from ...._validation import api_version_validation
 from ..._operations._operations import (
     build_search_index_analyze_text_request,
     build_search_index_create_agent_request,
@@ -2756,11 +2755,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     def list_index_stats_summary(self, **kwargs: Any) -> AsyncItemPaged["_models2.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.
 
@@ -2887,10 +2881,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models2.SearchIndexerDataSourceConnection: ...
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={"2025-08-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
-    )
     async def _create_or_update_data_source_connection(
         self,
         data_source_name: str,
@@ -3374,11 +3364,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "indexer_name"]},
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     async def resync(self, indexer_name: str, **kwargs: Any) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
 
@@ -3515,13 +3500,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={
-            "2025-08-01-preview": ["api_version", "overwrite", "client_request_id", "indexer_name", "content_type"]
-        },
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     async def reset_documents(
         self,
         indexer_name: str,
@@ -3691,15 +3669,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models2.SearchIndexer: ...
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={
-            "2025-08-01-preview": [
-                "skip_indexer_reset_requirement_for_cache",
-                "disable_cache_reprocessing_change_detection",
-            ]
-        },
-        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
-    )
     async def _create_or_update_indexer(
         self,
         indexer_name: str,
@@ -4226,15 +4195,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     ) -> _models2.SearchIndexerSkillset: ...
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={
-            "2025-08-01-preview": [
-                "skip_indexer_reset_requirement_for_cache",
-                "disable_cache_reprocessing_change_detection",
-            ]
-        },
-        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
-    )
     async def _create_or_update_skillset(
         self,
         skillset_name: str,
@@ -4727,11 +4687,6 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-08-01-preview",
-        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "skillset_name", "content_type"]},
-        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
-    )
     async def reset_skills(
         self, skillset_name: str, skill_names: Union[_models2.SkillNames, JSON, IO[bytes]], **kwargs: Any
     ) -> None:

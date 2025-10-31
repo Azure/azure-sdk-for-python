@@ -41,7 +41,6 @@ from ..._operations._operations import (
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
-from ..._validation import api_version_validation
 from .._configuration import SearchClientConfiguration
 
 JSON = MutableMapping[str, Any]
@@ -119,12 +118,6 @@ class _SearchClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        params_added_on={
-            "2025-08-01-preview": ["query_rewrites", "debug", "query_language", "speller", "semantic_fields"]
-        },
-        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
-    )
     async def _search_get(
         self,
         *,
