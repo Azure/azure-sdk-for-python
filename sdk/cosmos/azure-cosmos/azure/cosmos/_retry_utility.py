@@ -30,7 +30,7 @@ from azure.core.exceptions import AzureError, ClientAuthenticationError, Service
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _database_account_retry_policy, _service_unavailable_retry_policy
+from . import _container_recreate_retry_policy, _health_check_retry_policy, _service_unavailable_retry_policy
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -73,8 +73,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, pk_range_wrapper, *args
     )
-    database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
-        client.connection_policy
+    health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
+        client.connection_policy, *args
     )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
         client.connection_policy.RetryOptions.MaxRetryAttemptCount,
@@ -167,7 +167,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 # update session token for relevant operations
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
-                retry_policy = database_account_retry_policy
+                retry_policy = health_check_retry_policy
             # Re-assign retry policy based on error code
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
@@ -245,7 +245,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
         except ServiceRequestError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 if args:
@@ -254,7 +254,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
         except ServiceResponseError as e:
             if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 if args:

@@ -1006,7 +1006,10 @@ class TestRedTeamProcessing:
         # Create mock prompt request pieces with conversation_id attribute
         mock_prompt_piece = MagicMock()
         mock_prompt_piece.conversation_id = "test-conv-id"
+        mock_prompt_piece.original_value = "test prompt"
         mock_prompt_piece.to_chat_message.return_value = MagicMock(role="user", content="test message")
+        # Mock labels.get() to return proper values
+        mock_prompt_piece.labels = {"context": "", "tool_calls": [], "risk_sub_type": None}
         mock_memory.get_prompt_request_pieces.return_value = [mock_prompt_piece]
 
         with patch("uuid.uuid4", return_value="test-uuid"), patch("pathlib.Path.open", mock_open()), patch(

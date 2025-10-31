@@ -187,10 +187,13 @@ def verify_endpoint(messages, client, expected_locations, multiple_write_locatio
     for req_url in req_urls:
         # Requests that require session tokens to be set can now potentially have a request made to fetch partition key ranges beforehand.
         # We only care about the request that is made to the actual item endpoint.
+        req_resource_type = re.search(r"'x-ms-thinclient-proxy-resource-type':\s*'([^']+)'", req_url)
+        resource_value = req_resource_type.group(1)
+        # ignore health check requests
+        if resource_value == ResourceType.DatabaseAccount:
+            continue
         if operation_type and resource_type:
-            req_resource_type = re.search(r"'x-ms-thinclient-proxy-resource-type':\s*'([^']+)'", req_url)
             req_operation_type = re.search(r"'x-ms-thinclient-proxy-operation-type':\s*'([^']+)'", req_url)
-            resource_value = req_resource_type.group(1)
             operation_value = req_operation_type.group(1)
             if resource_type != resource_value or operation_type != operation_value:
                 continue
@@ -434,7 +437,7 @@ class TestExcludedLocations:
             item_id = f'doc2-{str(uuid.uuid4())}'
             body = {'id': item_id}
             body.update(PARTITION_KEY_ITEMS)
-            create_item_with_excluded_locations(container, body, None)
+            create_item_with_excluded_locations(container, body, request_excluded_locations)
             MOCK_HANDLER.reset()
 
             # API call: delete_item

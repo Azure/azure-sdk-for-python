@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/P2SVpnGatewayGenerateVpnProfile.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-10-01/examples/P2SVpnGatewayGenerateVpnProfile.json
 if __name__ == "__main__":
     main()

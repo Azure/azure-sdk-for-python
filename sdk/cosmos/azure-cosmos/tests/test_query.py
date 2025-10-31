@@ -617,7 +617,7 @@ class TestQuery(unittest.TestCase):
         
         # Test pagination with max_item_count limiting items per page
         max_items_per_page = 7
-        query = "SELECT * FROM c WHERE c.pk = @pk ORDER BY c.value"
+        query = "SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']"
         query_iterable = created_collection.query_items(
             query=query,
             parameters=[{"name": "@pk", "value": partition_key_value}],

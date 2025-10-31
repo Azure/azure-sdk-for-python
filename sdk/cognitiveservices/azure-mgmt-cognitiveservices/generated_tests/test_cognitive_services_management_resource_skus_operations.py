@@ -22,7 +22,7 @@ class TestCognitiveServicesManagementResourceSkusOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_resource_skus_list(self, resource_group):
         response = self.client.resource_skus.list(
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

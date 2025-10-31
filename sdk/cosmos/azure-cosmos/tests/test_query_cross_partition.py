@@ -528,7 +528,7 @@ class TestCrossPartitionQuery(unittest.TestCase):
         
         # Test cross-partition query with max_item_count
         max_items_per_page = 8
-        query = "SELECT * FROM c ORDER BY c.value"
+        query = "SELECT * FROM c ORDER BY c['value']"
         query_iterable = created_collection.query_items(
             query=query,
             enable_cross_partition_query=True,

@@ -23,6 +23,8 @@
 ### Bugs Fixed
 
 - Fixed repeated import attempts of cchardet and chardet when charset_normalizer is used #43092
+- Fixed leaked requests and aiohttp exceptions for streamed responses #43200
+- Improved granularity of ServiceRequestError and ServiceResponseError exceptions raised in timeout scenarios from the requests and aiohttp transports #43200
 
 ### Other Changes
 
