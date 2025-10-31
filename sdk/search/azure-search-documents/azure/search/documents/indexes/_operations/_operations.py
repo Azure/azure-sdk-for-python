@@ -55,7 +55,7 @@ def build_search_index_create_or_update_synonym_map_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
@@ -202,7 +202,7 @@ def build_search_index_create_or_update_index_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
@@ -419,7 +419,7 @@ def build_search_index_create_or_update_alias_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
@@ -544,21 +544,25 @@ def build_search_index_create_alias_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_create_or_update_agent_request(  # pylint: disable=name-too-long
-    agent_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+def build_search_index_create_or_update_knowledge_base_request(  # pylint: disable=name-too-long
+    knowledge_base_name: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents('{agentName}')"
+    _url = "/knowledgebases('{knowledgeBaseName}')"
     path_format_arguments = {
-        "agentName": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -581,17 +585,21 @@ def build_search_index_create_or_update_agent_request(  # pylint: disable=name-t
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_delete_agent_request(
-    agent_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
+def build_search_index_delete_knowledge_base_request(  # pylint: disable=name-too-long
+    knowledge_base_name: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
-    _url = "/agents('{agentName}')"
+    _url = "/knowledgebases('{knowledgeBaseName}')"
     path_format_arguments = {
-        "agentName": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -610,7 +618,9 @@ def build_search_index_delete_agent_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_get_agent_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_search_index_get_knowledge_base_request(  # pylint: disable=name-too-long
+    knowledge_base_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -618,9 +628,9 @@ def build_search_index_get_agent_request(agent_name: str, **kwargs: Any) -> Http
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents('{agentName}')"
+    _url = "/knowledgebases('{knowledgeBaseName}')"
     path_format_arguments = {
-        "agentName": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -634,7 +644,7 @@ def build_search_index_get_agent_request(agent_name: str, **kwargs: Any) -> Http
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_list_agents_request(**kwargs: Any) -> HttpRequest:
+def build_search_index_list_knowledge_bases_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -642,7 +652,7 @@ def build_search_index_list_agents_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents"
+    _url = "/knowledgebases"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -653,7 +663,7 @@ def build_search_index_list_agents_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_create_agent_request(**kwargs: Any) -> HttpRequest:
+def build_search_index_create_knowledge_base_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -662,7 +672,7 @@ def build_search_index_create_agent_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents"
+    _url = "/knowledgebases"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -681,7 +691,7 @@ def build_search_index_create_or_update_knowledge_source_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
@@ -857,7 +867,7 @@ def build_search_indexer_create_or_update_data_source_connection_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
@@ -1103,7 +1113,7 @@ def build_search_indexer_create_or_update_indexer_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
@@ -1278,7 +1288,7 @@ def build_search_indexer_create_or_update_skillset_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    prefer: Literal["return=representation"] = kwargs.pop("prefer")
+    prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
@@ -1524,7 +1534,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models1.SynonymMap] = kwargs.pop("cls", None)
 
@@ -1565,7 +1575,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1641,7 +1654,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1695,7 +1711,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1760,7 +1779,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1883,7 +1905,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1991,7 +2016,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models1.SearchIndex] = kwargs.pop("cls", None)
 
@@ -2034,7 +2059,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2118,7 +2146,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2179,7 +2210,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2273,7 +2307,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2386,7 +2423,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2455,7 +2495,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2625,7 +2668,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2715,7 +2761,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models1.SearchAlias] = kwargs.pop("cls", None)
 
@@ -2756,7 +2802,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2833,7 +2882,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2887,7 +2939,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2976,7 +3031,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3089,7 +3147,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3103,64 +3164,63 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    def _create_or_update_agent(
+    def _create_or_update_knowledge_base(
         self,
-        agent_name: str,
-        knowledge_agent: _models1.KnowledgeAgent,
+        knowledge_base_name: str,
+        knowledge_base: _models1.KnowledgeBase,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
-    ) -> _models1.KnowledgeAgent: ...
+    ) -> _models1.KnowledgeBase: ...
     @overload
-    def _create_or_update_agent(
+    def _create_or_update_knowledge_base(
         self,
-        agent_name: str,
-        knowledge_agent: JSON,
+        knowledge_base_name: str,
+        knowledge_base: JSON,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
-    ) -> _models1.KnowledgeAgent: ...
+    ) -> _models1.KnowledgeBase: ...
     @overload
-    def _create_or_update_agent(
+    def _create_or_update_knowledge_base(
         self,
-        agent_name: str,
-        knowledge_agent: IO[bytes],
+        knowledge_base_name: str,
+        knowledge_base: IO[bytes],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
-    ) -> _models1.KnowledgeAgent: ...
+    ) -> _models1.KnowledgeBase: ...
 
     @distributed_trace
-    def _create_or_update_agent(
+    def _create_or_update_knowledge_base(
         self,
-        agent_name: str,
-        knowledge_agent: Union[_models1.KnowledgeAgent, JSON, IO[bytes]],
+        knowledge_base_name: str,
+        knowledge_base: Union[_models1.KnowledgeBase, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
-    ) -> _models1.KnowledgeAgent:
-        """Creates a new agent or updates an agent if it already exists.
+    ) -> _models1.KnowledgeBase:
+        """Creates a new knowledge base or updates a knowledge base if it already exists.
 
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param knowledge_agent: The definition of the agent to create or update. Is one of the
-         following types: KnowledgeAgent, JSON, IO[bytes] Required.
-        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent or JSON or
-         IO[bytes]
+        :param knowledge_base_name: The name of the knowledge base. Required.
+        :type knowledge_base_name: str
+        :param knowledge_base: The definition of the knowledge base to create or update. Is one of the
+         following types: KnowledgeBase, JSON, IO[bytes] Required.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3180,19 +3240,19 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models1.KnowledgeAgent] = kwargs.pop("cls", None)
+        cls: ClsType[_models1.KnowledgeBase] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(knowledge_agent, (IOBase, bytes)):
-            _content = knowledge_agent
+        if isinstance(knowledge_base, (IOBase, bytes)):
+            _content = knowledge_base
         else:
-            _content = json.dumps(knowledge_agent, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(knowledge_base, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_index_create_or_update_agent_request(
-            agent_name=agent_name,
+        _request = build_search_index_create_or_update_knowledge_base_request(
+            knowledge_base_name=knowledge_base_name,
             etag=etag,
             match_condition=match_condition,
             prefer=prefer,
@@ -3214,20 +3274,23 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models1.KnowledgeAgent, response.json())
+            deserialized = _deserialize(_models1.KnowledgeBase, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3235,19 +3298,18 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _delete_agent(  # pylint: disable=inconsistent-return-statements
+    def _delete_knowledge_base(  # pylint: disable=inconsistent-return-statements
         self,
-        agent_name: str,
+        knowledge_base_name: str,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any,
     ) -> None:
-        """Deletes a search alias and its associated mapping to an index. This operation is permanent,
-        with no recovery option. The mapped index is untouched by this operation.
+        """Deletes a knowledge base.
 
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
+        :param knowledge_base_name: The name of the knowledge base. Required.
+        :type knowledge_base_name: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3276,8 +3338,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_search_index_delete_agent_request(
-            agent_name=agent_name,
+        _request = build_search_index_delete_knowledge_base_request(
+            knowledge_base_name=knowledge_base_name,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -3298,20 +3360,23 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_agent(self, agent_name: str, **kwargs: Any) -> _models1.KnowledgeAgent:
-        """Retrieves an agent definition.
+    def get_knowledge_base(self, knowledge_base_name: str, **kwargs: Any) -> _models1.KnowledgeBase:
+        """Retrieves a knowledge base definition.
 
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base_name: The name of the knowledge base. Required.
+        :type knowledge_base_name: str
+        :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3325,10 +3390,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models1.KnowledgeAgent] = kwargs.pop("cls", None)
+        cls: ClsType[_models1.KnowledgeBase] = kwargs.pop("cls", None)
 
-        _request = build_search_index_get_agent_request(
-            agent_name=agent_name,
+        _request = build_search_index_get_knowledge_base_request(
+            knowledge_base_name=knowledge_base_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3352,13 +3417,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models1.KnowledgeAgent, response.json())
+            deserialized = _deserialize(_models1.KnowledgeBase, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3366,17 +3434,17 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_agents(self, **kwargs: Any) -> ItemPaged["_models1.KnowledgeAgent"]:
-        """Lists all agents available for a search service.
+    def list_knowledge_bases(self, **kwargs: Any) -> ItemPaged["_models1.KnowledgeBase"]:
+        """Lists all knowledge bases available for a search service.
 
-        :return: An iterator like instance of KnowledgeAgent
-        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.KnowledgeAgent]
+        :return: An iterator like instance of KnowledgeBase
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.KnowledgeBase]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models1.KnowledgeAgent]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models1.KnowledgeBase]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3389,7 +3457,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_index_list_agents_request(
+                _request = build_search_index_list_knowledge_bases_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3425,7 +3493,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models1.KnowledgeAgent], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models1.KnowledgeBase], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
@@ -3441,7 +3509,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3449,65 +3520,64 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return ItemPaged(get_next, extract_data)
 
     @overload
-    def create_agent(
-        self, knowledge_agent: _models1.KnowledgeAgent, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.KnowledgeAgent:
-        """Creates a new agent.
+    def create_knowledge_base(
+        self, knowledge_base: _models1.KnowledgeBase, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models1.KnowledgeBase:
+        """Creates a new knowledge base.
 
-        :param knowledge_agent: The definition of the agent to create. Required.
-        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base: The definition of the knowledge base to create. Required.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_agent(
-        self, knowledge_agent: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.KnowledgeAgent:
-        """Creates a new agent.
+    def create_knowledge_base(
+        self, knowledge_base: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models1.KnowledgeBase:
+        """Creates a new knowledge base.
 
-        :param knowledge_agent: The definition of the agent to create. Required.
-        :type knowledge_agent: JSON
+        :param knowledge_base: The definition of the knowledge base to create. Required.
+        :type knowledge_base: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_agent(
-        self, knowledge_agent: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.KnowledgeAgent:
-        """Creates a new agent.
+    def create_knowledge_base(
+        self, knowledge_base: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models1.KnowledgeBase:
+        """Creates a new knowledge base.
 
-        :param knowledge_agent: The definition of the agent to create. Required.
-        :type knowledge_agent: IO[bytes]
+        :param knowledge_base: The definition of the knowledge base to create. Required.
+        :type knowledge_base: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def create_agent(
-        self, knowledge_agent: Union[_models1.KnowledgeAgent, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models1.KnowledgeAgent:
-        """Creates a new agent.
+    def create_knowledge_base(
+        self, knowledge_base: Union[_models1.KnowledgeBase, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models1.KnowledgeBase:
+        """Creates a new knowledge base.
 
-        :param knowledge_agent: The definition of the agent to create. Is one of the following types:
-         KnowledgeAgent, JSON, IO[bytes] Required.
-        :type knowledge_agent: ~azure.search.documents.indexes.models.KnowledgeAgent or JSON or
-         IO[bytes]
-        :return: KnowledgeAgent. The KnowledgeAgent is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base: The definition of the knowledge base to create. Is one of the following
+         types: KnowledgeBase, JSON, IO[bytes] Required.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON or IO[bytes]
+        :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3522,16 +3592,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models1.KnowledgeAgent] = kwargs.pop("cls", None)
+        cls: ClsType[_models1.KnowledgeBase] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(knowledge_agent, (IOBase, bytes)):
-            _content = knowledge_agent
+        if isinstance(knowledge_base, (IOBase, bytes)):
+            _content = knowledge_base
         else:
-            _content = json.dumps(knowledge_agent, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(knowledge_base, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_search_index_create_agent_request(
+        _request = build_search_index_create_knowledge_base_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3557,13 +3627,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models1.KnowledgeAgent, response.json())
+            deserialized = _deserialize(_models1.KnowledgeBase, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3648,7 +3721,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models1.KnowledgeSource] = kwargs.pop("cls", None)
 
@@ -3689,7 +3762,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3765,7 +3841,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3819,7 +3898,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3908,7 +3990,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -4024,7 +4109,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4082,7 +4170,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4172,7 +4263,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models2.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -4270,7 +4364,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models1.SearchIndexerDataSourceConnection] = kwargs.pop("cls", None)
 
@@ -4312,7 +4406,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4388,7 +4485,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -4445,7 +4545,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4510,7 +4613,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4642,7 +4748,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4698,7 +4807,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -4747,7 +4859,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -4914,7 +5029,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -4963,7 +5081,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -5060,7 +5181,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models1.SearchIndexer] = kwargs.pop("cls", None)
 
@@ -5103,7 +5224,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5179,7 +5303,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -5233,7 +5360,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5296,7 +5426,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5419,7 +5552,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5480,7 +5616,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5585,7 +5724,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        prefer: Literal["return=representation"] = kwargs.pop("prefer")
+        prefer: Literal["return=representation"] = kwargs.pop("prefer", _headers.pop("Prefer", "return=representation"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models1.SearchIndexerSkillset] = kwargs.pop("cls", None)
 
@@ -5628,7 +5767,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5704,7 +5846,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -5758,7 +5903,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5821,7 +5969,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5948,7 +6099,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6081,7 +6235,10 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:

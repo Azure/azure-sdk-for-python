@@ -203,17 +203,17 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             )
 
     @distributed_trace
-    def delete_agent(
+    def delete_knowledge_base(
         self,
-        agent: Union[str, _models.KnowledgeAgent],
+        knowledge_base: Union[str, _models.KnowledgeBase],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
     ) -> None:
-        """Deletes a knowledge agent.
+        """Deletes a knowledge base.
 
-        :param agent: The name of the agent to delete or a KnowledgeAgent object. Required.
-        :type agent: str or ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base: The name of the knowledge base to delete or a KnowledgeBase object. Required.
+        :type knowledge_base: str or ~azure.search.documents.indexes.models.KnowledgeBase
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: None
@@ -221,43 +221,43 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         try:
-            name: str = agent.name  # type: ignore
-            return self._delete_agent(
-                agent_name=name,
+            name: str = knowledge_base.name  # type: ignore
+            return self._delete_knowledge_base(
+                knowledge_base_name=name,
                 match_condition=match_condition,
-                etag=agent.e_tag,  # type: ignore
+                etag=knowledge_base.e_tag,  # type: ignore
                 **kwargs,
             )
         except AttributeError:
-            name = agent  # type: ignore
-            return self._delete_agent(
-                agent_name=name,
+            name = knowledge_base  # type: ignore
+            return self._delete_knowledge_base(
+                knowledge_base_name=name,
                 **kwargs,
             )
 
     @distributed_trace
-    def create_or_update_agent(
+    def create_or_update_knowledge_base(
         self,
-        agent: _models.KnowledgeAgent,
+        knowledge_base: _models.KnowledgeBase,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
-    ) -> _models.KnowledgeAgent:
-        """Creates a new agent or updates an agent if it already exists.
+    ) -> _models.KnowledgeBase:
+        """Creates a new knowledge base or updates a knowledge base if it already exists.
 
-        :param agent: The KnowledgeAgent object to create or update. Required.
-        :type agent: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :param knowledge_base: The KnowledgeBase object to create or update. Required.
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: KnowledgeAgent
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeAgent
+        :return: KnowledgeBase
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._create_or_update_agent(
-            agent_name=agent.name,
-            agent=agent,
+        return self._create_or_update_knowledge_base(
+            knowledge_base_name=knowledge_base.name,
+            knowledge_base=knowledge_base,
             prefer="return=representation",
-            etag=agent.e_tag,
+            etag=knowledge_base.e_tag,
             match_condition=match_condition,
             **kwargs,
         )

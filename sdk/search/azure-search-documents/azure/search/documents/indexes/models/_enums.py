@@ -545,20 +545,11 @@ class KeyPhraseExtractionSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumM
     """Swedish"""
 
 
-class KnowledgeAgentModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KnowledgeBaseModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The AI model to be used for query planning."""
 
     AZURE_OPEN_AI = "azureOpenAI"
     """Use Azure Open AI models for query planning."""
-
-
-class KnowledgeAgentOutputConfigurationModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The output configuration for the agent."""
-
-    ANSWER_SYNTHESIS = "answerSynthesis"
-    """Synthesize an answer for the response payload."""
-    EXTRACTIVE_DATA = "extractiveData"
-    """Return data from the knowledge sources directly without generative alteration."""
 
 
 class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1089,13 +1080,13 @@ class OcrLineEnding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Lines are separated by a single space character."""
     CARRIAGE_RETURN = "carriageReturn"
     """Lines are separated by a carriage return ('
-') character."""
+    ') character."""
     LINE_FEED = "lineFeed"
     """Lines are separated by a single line feed ('
-') character."""
+    ') character."""
     CARRIAGE_RETURN_LINE_FEED = "carriageReturnLineFeed"
     """Lines are separated by a carriage return and a line feed ('
-') character."""
+    ') character."""
 
 
 class OcrSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):

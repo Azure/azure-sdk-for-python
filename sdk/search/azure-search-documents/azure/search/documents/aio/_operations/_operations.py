@@ -104,7 +104,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -377,7 +380,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -726,7 +732,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -804,7 +813,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -939,7 +951,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1135,7 +1150,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1248,7 +1266,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1375,7 +1396,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1561,7 +1585,10 @@ class _SearchClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models2.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:

@@ -13,7 +13,7 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 
 from ..._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
-    KnowledgeAgentModelKind,
+    KnowledgeBaseModelKind,
     KnowledgeSourceKind,
     VectorSearchAlgorithmKind,
     VectorSearchCompressionKind,
@@ -22,6 +22,7 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from .. import models as _models
+    from ...knowledgebase import models as _knowledgebase_models3
 
 
 class CognitiveServicesAccount(_Model):
@@ -742,7 +743,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
     :vartype embedding_model: ~azure.search.documents.indexes.models.VectorSearchVectorizer
     :ivar chat_completion_model: Optional chat completion model for image verbalization or context
      extraction.
-    :vartype chat_completion_model: ~azure.search.documents.indexes.models.KnowledgeAgentModel
+    :vartype chat_completion_model: ~azure.search.documents.indexes.models.KnowledgeBaseModel
     :ivar ingestion_schedule: Optional schedule for data ingestion.
     :vartype ingestion_schedule: ~azure.search.documents.indexes.models.IndexingSchedule
     :ivar created_resources: Resources created by the knowledge source.
@@ -769,7 +770,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         name="embeddingModel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional vectorizer configuration for vectorizing content."""
-    chat_completion_model: Optional["_models.KnowledgeAgentModel"] = rest_field(
+    chat_completion_model: Optional["_models.KnowledgeBaseModel"] = rest_field(
         name="chatCompletionModel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional chat completion model for image verbalization or context extraction."""
@@ -793,7 +794,7 @@ class AzureBlobKnowledgeSourceParameters(_Model):
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         folder_path: Optional[str] = None,
         embedding_model: Optional["_models.VectorSearchVectorizer"] = None,
-        chat_completion_model: Optional["_models.KnowledgeAgentModel"] = None,
+        chat_completion_model: Optional["_models.KnowledgeBaseModel"] = None,
         ingestion_schedule: Optional["_models.IndexingSchedule"] = None,
         disable_image_verbalization: Optional[bool] = None,
     ) -> None: ...
@@ -5313,73 +5314,86 @@ class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
         self.odata_type = "#Microsoft.Azure.Search.KeywordTokenizerV2"  # type: ignore
 
 
-class KnowledgeAgent(_Model):
-    """Represents a knowledge agent definition.
+class KnowledgeBase(_Model):
+    """Represents a knowledge base definition.
 
-    :ivar name: The name of the knowledge agent. Required.
+    :ivar name: The name of the knowledge base. Required.
     :vartype name: str
-    :ivar models: Contains configuration options on how to connect to AI models. Required.
-    :vartype models: list[~azure.search.documents.indexes.models.KnowledgeAgentModel]
-    :ivar knowledge_sources: Knowledge sources referenced by this agent. Required.
+    :ivar knowledge_sources: Knowledge sources referenced by this knowledge base. Required.
     :vartype knowledge_sources:
      list[~azure.search.documents.indexes.models.KnowledgeSourceReference]
-    :ivar output_configuration: Output configuration for the agent.
-    :vartype output_configuration:
-     ~azure.search.documents.indexes.models.KnowledgeAgentOutputConfiguration
-    :ivar request_limits: Request limits for the agent.
-    :vartype request_limits: ~azure.search.documents.indexes.models.KnowledgeAgentRequestLimits
-    :ivar retrieval_instructions: Instructions considered by the knowledge agent when developing
-     query plan.
-    :vartype retrieval_instructions: str
-    :ivar e_tag: The ETag of the agent.
+    :ivar models: Contains configuration options on how to connect to AI models.
+    :vartype models: list[~azure.search.documents.indexes.models.KnowledgeBaseModel]
+    :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
+    :vartype retrieval_reasoning_effort:
+     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalReasoningEffort
+    :ivar output_mode: The output mode for the knowledge base. Known values are: "extractiveData"
+     and "answerSynthesis".
+    :vartype output_mode: str or
+     ~azure.search.documents.knowledgebase.models.KnowledgeRetrievalOutputMode
+    :ivar e_tag: The ETag of the knowledge base.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :ivar description: The description of the agent.
+    :ivar description: The description of the knowledge base.
     :vartype description: str
+    :ivar retrieval_instructions: Instructions considered by the knowledge base when developing
+     query plan.
+    :vartype retrieval_instructions: str
+    :ivar answer_instructions: Instructions considered by the knowledge base when generating
+     answers.
+    :vartype answer_instructions: str
     """
 
     name: str = rest_field(visibility=["read"])
-    """The name of the knowledge agent. Required."""
-    models: list["_models.KnowledgeAgentModel"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Contains configuration options on how to connect to AI models. Required."""
+    """The name of the knowledge base. Required."""
     knowledge_sources: list["_models.KnowledgeSourceReference"] = rest_field(
         name="knowledgeSources", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Knowledge sources referenced by this agent. Required."""
-    output_configuration: Optional["_models.KnowledgeAgentOutputConfiguration"] = rest_field(
-        name="outputConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    """Knowledge sources referenced by this knowledge base. Required."""
+    models: Optional[list["_models.KnowledgeBaseModel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Output configuration for the agent."""
-    request_limits: Optional["_models.KnowledgeAgentRequestLimits"] = rest_field(
-        name="requestLimits", visibility=["read", "create", "update", "delete", "query"]
+    """Contains configuration options on how to connect to AI models."""
+    retrieval_reasoning_effort: Optional["_knowledgebase_models3.KnowledgeRetrievalReasoningEffort"] = rest_field(
+        name="retrievalReasoningEffort", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Request limits for the agent."""
-    retrieval_instructions: Optional[str] = rest_field(
-        name="retrievalInstructions", visibility=["read", "create", "update", "delete", "query"]
+    """The retrieval reasoning effort configuration."""
+    output_mode: Optional[Union[str, "_knowledgebase_models3.KnowledgeRetrievalOutputMode"]] = rest_field(
+        name="outputMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Instructions considered by the knowledge agent when developing query plan."""
+    """The output mode for the knowledge base. Known values are: \"extractiveData\" and
+     \"answerSynthesis\"."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
-    """The ETag of the agent."""
+    """The ETag of the knowledge base."""
     encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
         name="encryptionKey", visibility=["read", "create", "update", "delete", "query"]
     )
     """A description of an encryption key that you create in Azure Key Vault."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the agent."""
+    """The description of the knowledge base."""
+    retrieval_instructions: Optional[str] = rest_field(
+        name="retrievalInstructions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Instructions considered by the knowledge base when developing query plan."""
+    answer_instructions: Optional[str] = rest_field(
+        name="answerInstructions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Instructions considered by the knowledge base when generating answers."""
 
     @overload
     def __init__(
         self,
         *,
-        models: list["_models.KnowledgeAgentModel"],
         knowledge_sources: list["_models.KnowledgeSourceReference"],
-        output_configuration: Optional["_models.KnowledgeAgentOutputConfiguration"] = None,
-        request_limits: Optional["_models.KnowledgeAgentRequestLimits"] = None,
-        retrieval_instructions: Optional[str] = None,
+        models: Optional[list["_models.KnowledgeBaseModel"]] = None,
+        retrieval_reasoning_effort: Optional["_knowledgebase_models3.KnowledgeRetrievalReasoningEffort"] = None,
+        output_mode: Optional[Union[str, "_knowledgebase_models3.KnowledgeRetrievalOutputMode"]] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         description: Optional[str] = None,
+        retrieval_instructions: Optional[str] = None,
+        answer_instructions: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5393,14 +5407,14 @@ class KnowledgeAgent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeAgentModel(_Model):
+class KnowledgeBaseModel(_Model):
     """Specifies the connection parameters for the model to use for query planning.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    KnowledgeAgentAzureOpenAiModel
+    KnowledgeBaseAzureOpenAIModel
 
     :ivar kind: The AI model to be used for query planning. Required. "azureOpenAI"
-    :vartype kind: str or ~azure.search.documents.indexes.models.KnowledgeAgentModelKind
+    :vartype kind: str or ~azure.search.documents.indexes.models.KnowledgeBaseModelKind
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -5425,7 +5439,7 @@ class KnowledgeAgentModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KnowledgeAgentAzureOpenAiModel(KnowledgeAgentModel, discriminator="azureOpenAI"):
+class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpenAI"):
     """Specifies the Azure OpenAI resource used to do query planning.
 
     :ivar kind: Required. Use Azure Open AI models for query planning.
@@ -5434,7 +5448,7 @@ class KnowledgeAgentAzureOpenAiModel(KnowledgeAgentModel, discriminator="azureOp
     :vartype azure_open_ai_parameters: ~azure.search.documents.indexes.models.AzureOpenAiParameters
     """
 
-    kind: Literal[KnowledgeAgentModelKind.AZURE_OPEN_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Use Azure Open AI models for query planning."""
     azure_open_ai_parameters: "_models.AzureOpenAiParameters" = rest_field(
         name="azureOpenAIParameters", visibility=["read", "create", "update", "delete", "query"]
@@ -5457,101 +5471,7 @@ class KnowledgeAgentAzureOpenAiModel(KnowledgeAgentModel, discriminator="azureOp
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = KnowledgeAgentModelKind.AZURE_OPEN_AI  # type: ignore
-
-
-class KnowledgeAgentOutputConfiguration(_Model):
-    """Output configuration for knowledge agent.
-
-    :ivar modality: The output configuration for the agent. Known values are: "answerSynthesis" and
-     "extractiveData".
-    :vartype modality: str or
-     ~azure.search.documents.indexes.models.KnowledgeAgentOutputConfigurationModality
-    :ivar answer_instructions: Instructions considered by the knowledge agent when generating
-     answers.
-    :vartype answer_instructions: str
-    :ivar attempt_fast_path: Indicates whether the agent should attempt to issue the most recent
-     chat message as a direct query to the knowledge sources, bypassing the model calls.
-    :vartype attempt_fast_path: bool
-    :ivar include_activity: Indicates retrieval results should include activity information.
-    :vartype include_activity: bool
-    """
-
-    modality: Optional[Union[str, "_models.KnowledgeAgentOutputConfigurationModality"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The output configuration for the agent. Known values are: \"answerSynthesis\" and
-     \"extractiveData\"."""
-    answer_instructions: Optional[str] = rest_field(
-        name="answerInstructions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Instructions considered by the knowledge agent when generating answers."""
-    attempt_fast_path: Optional[bool] = rest_field(
-        name="attemptFastPath", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether the agent should attempt to issue the most recent chat message as a direct
-     query to the knowledge sources, bypassing the model calls."""
-    include_activity: Optional[bool] = rest_field(
-        name="includeActivity", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates retrieval results should include activity information."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        modality: Optional[Union[str, "_models.KnowledgeAgentOutputConfigurationModality"]] = None,
-        answer_instructions: Optional[str] = None,
-        attempt_fast_path: Optional[bool] = None,
-        include_activity: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class KnowledgeAgentRequestLimits(_Model):
-    """Guardrails to limit how much resources are utilized for a single agent retrieval request.
-
-    :ivar max_runtime_in_seconds: The maximum runtime in seconds.
-    :vartype max_runtime_in_seconds: int
-    :ivar max_output_size: Limits the maximum size of the content in the output.
-    :vartype max_output_size: int
-    """
-
-    max_runtime_in_seconds: Optional[int] = rest_field(
-        name="maxRuntimeInSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum runtime in seconds."""
-    max_output_size: Optional[int] = rest_field(
-        name="maxOutputSize", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Limits the maximum size of the content in the output."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_runtime_in_seconds: Optional[int] = None,
-        max_output_size: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+        self.kind = KnowledgeBaseModelKind.AZURE_OPEN_AI  # type: ignore
 
 
 class KnowledgeSourceReference(_Model):
@@ -5559,59 +5479,16 @@ class KnowledgeSourceReference(_Model):
 
     :ivar name: The name of the knowledge source. Required.
     :vartype name: str
-    :ivar include_references: Indicates whether references should be included for data retrieved
-     from this source.
-    :vartype include_references: bool
-    :ivar include_reference_source_data: Indicates whether references should include the structured
-     data obtained during retrieval in their payload.
-    :vartype include_reference_source_data: bool
-    :ivar always_query_source: Indicates that this knowledge source should bypass source selection
-     and always be queried at retrieval time.
-    :vartype always_query_source: bool
-    :ivar max_sub_queries: The maximum number of queries that can be issued at a time when
-     retrieving data from this source.
-    :vartype max_sub_queries: int
-    :ivar reranker_threshold: The reranker threshold all retrieved documents must meet to be
-     included in the response.
-    :vartype reranker_threshold: float
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the knowledge source. Required."""
-    include_references: Optional[bool] = rest_field(
-        name="includeReferences", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether references should be included for data retrieved from this source."""
-    include_reference_source_data: Optional[bool] = rest_field(
-        name="includeReferenceSourceData", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether references should include the structured data obtained during retrieval in
-     their payload."""
-    always_query_source: Optional[bool] = rest_field(
-        name="alwaysQuerySource", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates that this knowledge source should bypass source selection and always be queried at
-     retrieval time."""
-    max_sub_queries: Optional[int] = rest_field(
-        name="maxSubQueries", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum number of queries that can be issued at a time when retrieving data from this
-     source."""
-    reranker_threshold: Optional[float] = rest_field(
-        name="rerankerThreshold", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The reranker threshold all retrieved documents must meet to be included in the response."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
-        include_references: Optional[bool] = None,
-        include_reference_source_data: Optional[bool] = None,
-        always_query_source: Optional[bool] = None,
-        max_sub_queries: Optional[int] = None,
-        reranker_threshold: Optional[float] = None,
     ) -> None: ...
 
     @overload
@@ -8440,7 +8317,7 @@ class SearchIndexerDataSourceConnection(_Model):
         if key in self.__flattened_items:
             if self.credentials is None:
                 self.credentials = self._attr_to_rest_field["credentials"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.credentials, key, value)
         else:
             super().__setattr__(key, value)
 
@@ -9477,7 +9354,7 @@ class SearchResourceEncryptionKey(_Model):
         if key in self.__flattened_items:
             if self.access_credentials is None:
                 self.access_credentials = self._attr_to_rest_field["access_credentials"]._class_type()
-            setattr(self.properties, key, value)
+            setattr(self.access_credentials, key, value)
         else:
             super().__setattr__(key, value)
 
