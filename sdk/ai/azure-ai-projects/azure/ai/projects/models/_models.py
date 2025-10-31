@@ -10051,7 +10051,7 @@ class Reasoning(_Model):
      One of ``auto``, ``concise``, or ``detailed``. Is one of the following types: Literal["auto"],
      Literal["concise"], Literal["detailed"]
     :vartype summary: str or str or str
-    :ivar generate_summary: **Deprecated:** use ``summary`` instead. A summary of the reasoning
+    :ivar generate_summary: **Deprecated**: use ``summary`` instead. A summary of the reasoning
      performed by the model. This can be useful for debugging and understanding the model's
      reasoning process. One of ``auto``, ``concise``, or ``detailed``. Is one of the following
      types: Literal["auto"], Literal["concise"], Literal["detailed"]
@@ -10072,7 +10072,7 @@ class Reasoning(_Model):
     generate_summary: Optional[Literal["auto", "concise", "detailed"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """**Deprecated:** use ``summary`` instead. A summary of the reasoning performed by the model.
+    """**Deprecated**: use ``summary`` instead. A summary of the reasoning performed by the model.
      This can be useful for debugging and understanding the model's reasoning process. One of
      ``auto``, ``concise``, or ``detailed``. Is one of the following types: Literal[\"auto\"],
      Literal[\"concise\"], Literal[\"detailed\"]"""
@@ -10427,7 +10427,7 @@ class Response(_Model):
          We generally recommend altering this or ``temperature`` but not both. Required.
         :vartype top_p: float
         :ivar user: A unique identifier representing your end-user, which can help OpenAI to monitor
-         and detect abuse. `Learn more </docs/guides/safety-best-practices#end-user-ids>`_. Required.
+         and detect abuse. `Learn more about safety best practices </docs/guides/safety-best-practices#end-user-ids>`_. Required.
         :vartype user: str
         :ivar service_tier: Note: service_tier is not applicable to Azure OpenAI. Known values are:
          "auto", "default", "flex", "scale", and "priority".
@@ -10437,14 +10437,14 @@ class Response(_Model):
         :vartype top_logprobs: int
         :ivar previous_response_id: The unique ID of the previous response to the model. Use this to
          create multi-turn conversations. Learn more about
-         `conversation state </docs/guides/conversation-state>`_.
+         `managing conversation state </docs/guides/conversation-state>`_.
         :vartype previous_response_id: str
         :ivar model: The model deployment to use for the creation of this response.
         :vartype model: str
         :ivar reasoning:
         :vartype reasoning: ~azure.ai.projects.models.Reasoning
         :ivar background: Whether to run the model response in the background.
-         `Learn more </docs/guides/background>`_.
+         `Learn more about background responses </docs/guides/background>`_.
         :vartype background: bool
         :ivar max_output_tokens: An upper bound for the number of tokens that can be generated for a
          response, including visible output tokens and `reasoning tokens </docs/guides/reasoning>`_.
@@ -10458,19 +10458,17 @@ class Response(_Model):
          and `Structured Outputs </docs/guides/structured-outputs>`_.
         :vartype text: ~azure.ai.projects.models.ResponseText
         :ivar tools: An array of tools the model may call while generating a response. You
-    can specify which tool to use by setting the ``tool_choice`` parameter.
+         can specify which tool to use by setting the ``tool_choice`` parameter.
 
-    The two categories of tools you can provide the model are:
-
-
+         The two categories of tools you can provide the model are:
 
          * **Built-in tools**: Tools that are provided by OpenAI that extend the
-    model's capabilities, like [web search](/docs/guides/tools-web-search)
-    or [file search](/docs/guides/tools-file-search). Learn more about
-    [built-in tools](/docs/guides/tools).
+           model's capabilities, like [web search](/docs/guides/tools-web-search)
+           or [file search](/docs/guides/tools-file-search). Learn more about
+           `using built-in tools </docs/guides/tools>`_.
          * **Function calls (custom tools)**: Functions that are defined by you,
-    enabling the model to call your own code. Learn more about
-    [function calling](/docs/guides/function-calling).
+           enabling the model to call your own code. Learn more about
+           `using function calling </docs/guides/function-calling>`_.
         :vartype tools: list[~azure.ai.projects.models.Tool]
         :ivar tool_choice: How the model should select which tool (or tools) to use when generating
          a response. See the ``tools`` parameter to see how to specify which tools
@@ -10482,13 +10480,13 @@ class Response(_Model):
         :vartype prompt: ~azure.ai.projects.models.Prompt
         :ivar truncation: The truncation strategy to use for the model response.
 
-         * `auto`: If the context of this response and previous ones exceeds
-    the model's context window size, the model will truncate the
-    response to fit the context window by dropping input items in the
-    middle of the conversation.
-         * `disabled` (default): If a model response will exceed the context window
-    size for a model, the request will fail with a 400 error. Is either a Literal["auto"] type or a
-        Literal["disabled"] type.
+         * ``auto``: If the context of this response and previous ones exceeds
+           the model's context window size, the model will truncate the
+           response to fit the context window by dropping input items in the
+           middle of the conversation.
+         * ``disabled`` (default): If a model response will exceed the context window
+           size for a model, the request will fail with a 400 error. Is either a Literal["auto"] type or a
+           Literal["disabled"] type.
         :vartype truncation: str or str
         :ivar id: Unique identifier for this Response. Required.
         :vartype id: str
@@ -10508,14 +10506,12 @@ class Response(_Model):
         :vartype incomplete_details: ~azure.ai.projects.models.ResponseIncompleteDetails1
         :ivar output: An array of content items generated by the model.
 
-
-
-         * The length and order of items in the `output` array is dependent
-    on the model's response.
-         * Rather than accessing the first item in the `output` array and
-    assuming it's an `assistant` message with the content generated by
-    the model, you might consider using the `output_text` property where
-    supported in SDKs. Required.
+         * The length and order of items in the ``output`` array is dependent
+           on the model's response.
+         * Rather than accessing the first item in the ``output`` array and
+           assuming it's an ``assistant`` message with the content generated by
+           the model, you might consider using the ``output_text`` property where
+           supported in SDKs. Required.
         :vartype output: list[~azure.ai.projects.models.ItemResource]
         :ivar instructions: A system (or developer) message inserted into the model's context.
 
@@ -10561,7 +10557,7 @@ class Response(_Model):
      We generally recommend altering this or ``temperature`` but not both. Required."""
     user: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier representing your end-user, which can help OpenAI to monitor and detect
-     abuse. `Learn more </docs/guides/safety-best-practices#end-user-ids>`_. Required."""
+     abuse. `Learn more about safety best practices </docs/guides/safety-best-practices#end-user-ids>`_. Required."""
     service_tier: Optional[Union[str, "_models.ServiceTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10573,13 +10569,13 @@ class Response(_Model):
     previous_response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique ID of the previous response to the model. Use this to
      create multi-turn conversations. Learn more about
-     `conversation state </docs/guides/conversation-state>`_."""
+     `managing conversation state </docs/guides/conversation-state>`_."""
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model deployment to use for the creation of this response."""
     reasoning: Optional["_models.Reasoning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     background: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to run the model response in the background.
-     `Learn more </docs/guides/background>`_."""
+     `Learn more about background responses </docs/guides/background>`_."""
     max_output_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An upper bound for the number of tokens that can be generated for a response, including visible
      output tokens and `reasoning tokens </docs/guides/reasoning>`_."""
@@ -10593,19 +10589,17 @@ class Response(_Model):
      and `Structured Outputs </docs/guides/structured-outputs>`_."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of tools the model may call while generating a response. You
- can specify which tool to use by setting the ``tool_choice`` parameter.
- 
- The two categories of tools you can provide the model are:
- 
- 
- 
-      * **Built-in tools**: Tools that are provided by OpenAI that extend the
- model's capabilities, like [web search](/docs/guides/tools-web-search)
- or [file search](/docs/guides/tools-file-search). Learn more about
- [built-in tools](/docs/guides/tools).
-      * **Function calls (custom tools)**: Functions that are defined by you,
- enabling the model to call your own code. Learn more about
- [function calling](/docs/guides/function-calling)."""
+     can specify which tool to use by setting the ``tool_choice`` parameter.
+     
+     The two categories of tools you can provide the model are:
+     
+     * **Built-in tools**: Tools that are provided by OpenAI that extend the
+       model's capabilities, like [web search](/docs/guides/tools-web-search)
+       or [file search](/docs/guides/tools-file-search). Learn more about
+       `using built-in tools </docs/guides/tools>`_.
+     * **Function calls (custom tools)**: Functions that are defined by you,
+       enabling the model to call your own code. Learn more about
+       `using function calling </docs/guides/function-calling>`_."""
     tool_choice: Optional[Union[str, "_models.ToolChoiceOptions", "_models.ToolChoiceObject"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10618,14 +10612,14 @@ class Response(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The truncation strategy to use for the model response.
- 
-      * `auto`: If the context of this response and previous ones exceeds
- the model's context window size, the model will truncate the
- response to fit the context window by dropping input items in the
- middle of the conversation.
-      * `disabled` (default): If a model response will exceed the context window
- size for a model, the request will fail with a 400 error. Is either a Literal[\"auto\"] type or
-     a Literal[\"disabled\"] type."""
+     
+     * ``auto``: If the context of this response and previous ones exceeds
+       the model's context window size, the model will truncate the
+       response to fit the context window by dropping input items in the
+       middle of the conversation.
+     * ``disabled`` (default): If a model response will exceed the context window
+       size for a model, the request will fail with a 400 error. Is either a Literal[\"auto\"] type or
+       a Literal[\"disabled\"] type."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for this Response. Required."""
     object: Literal["response"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10650,15 +10644,13 @@ class Response(_Model):
     """Details about why the response is incomplete. Required."""
     output: list["_models.ItemResource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of content items generated by the model.
- 
- 
- 
-      * The length and order of items in the `output` array is dependent
- on the model's response.
-      * Rather than accessing the first item in the `output` array and
- assuming it's an `assistant` message with the content generated by
- the model, you might consider using the `output_text` property where
- supported in SDKs. Required."""
+     
+     * The length and order of items in the ``output`` array is dependent
+       on the model's response.
+     * Rather than accessing the first item in the ``output`` array and
+       assuming it's an ``assistant`` message with the content generated by
+       the model, you might consider using the ``output_text`` property where
+       supported in SDKs. Required."""
     instructions: Union[str, list["_models.ItemParam"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
