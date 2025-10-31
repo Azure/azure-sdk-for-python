@@ -92,15 +92,15 @@ from ...operations._operations import (
     build_insights_generate_request,
     build_insights_get_request,
     build_insights_list_request,
-    build_memory_stores_create_store_request,
+    build_memory_stores_create_request,
+    build_memory_stores_delete_request,
     build_memory_stores_delete_scope_request,
-    build_memory_stores_delete_store_request,
-    build_memory_stores_get_store_request,
+    build_memory_stores_get_request,
     build_memory_stores_get_update_result_request,
-    build_memory_stores_list_stores_request,
-    build_memory_stores_search_request,
+    build_memory_stores_list_request,
+    build_memory_stores_search_memories_request,
+    build_memory_stores_update_memories_request,
     build_memory_stores_update_request,
-    build_memory_stores_update_store_request,
     build_red_teams_create_request,
     build_red_teams_get_request,
     build_red_teams_list_request,
@@ -2746,7 +2746,7 @@ class MemoryStoresOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_store(
+    async def create(
         self,
         *,
         name: str,
@@ -2776,7 +2776,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def create_store(
+    async def create(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Create a memory store.
@@ -2792,7 +2792,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def create_store(
+    async def create(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Create a memory store.
@@ -2813,7 +2813,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def create_store(
+    async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -2868,7 +2868,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_create_store_request(
+        _request = build_memory_stores_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2911,7 +2911,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update_store(
+    async def update(
         self,
         name: str,
         *,
@@ -2938,7 +2938,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def update_store(
+    async def update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Update a memory store.
@@ -2956,7 +2956,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def update_store(
+    async def update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Update a memory store.
@@ -2979,7 +2979,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def update_store(
+    async def update(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3027,7 +3027,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_update_store_request(
+        _request = build_memory_stores_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3076,7 +3076,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def get_store(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
+    async def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
@@ -3098,7 +3098,7 @@ class MemoryStoresOperations:
 
         cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
 
-        _request = build_memory_stores_get_store_request(
+        _request = build_memory_stores_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3145,7 +3145,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "limit", "order", "after", "before", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def list_stores(
+    def list(
         self,
         *,
         limit: Optional[int] = None,
@@ -3189,7 +3189,7 @@ class MemoryStoresOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_memory_stores_list_stores_request(
+            _request = build_memory_stores_list_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -3238,7 +3238,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def delete_store(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResponse:
+    async def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResponse:
         """Delete a memory store.
 
         :param name: The name of the memory store to delete. Required.
@@ -3261,7 +3261,7 @@ class MemoryStoresOperations:
 
         cls: ClsType[_models.DeleteMemoryStoreResponse] = kwargs.pop("cls", None)
 
-        _request = build_memory_stores_delete_store_request(
+        _request = build_memory_stores_delete_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3303,7 +3303,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def search(
+    async def search_memories(
         self,
         name: str,
         *,
@@ -3344,7 +3344,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def search(
+    async def search_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResponse:
         """Search for relevant memories from a memory store based on conversation context.
@@ -3363,7 +3363,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def search(
+    async def search_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResponse:
         """Search for relevant memories from a memory store based on conversation context.
@@ -3387,7 +3387,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def search(
+    async def search_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3457,7 +3457,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_search_request(
+        _request = build_memory_stores_search_memories_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3505,7 +3505,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def _update_initial(
+    async def _update_memories_initial(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3549,7 +3549,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_update_request(
+        _request = build_memory_stores_update_memories_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3592,7 +3592,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def begin_update(
+    async def begin_update_memories(
         self,
         name: str,
         *,
@@ -3637,7 +3637,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def begin_update(
+    async def begin_update_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
         """Update memory store with conversation memories.
@@ -3656,7 +3656,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def begin_update(
+    async def begin_update_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
         """Update memory store with conversation memories.
@@ -3680,7 +3680,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def begin_update(
+    async def begin_update_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3731,7 +3731,7 @@ class MemoryStoresOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_initial(
+            raw_result = await self._update_memories_initial(
                 name=name,
                 body=body,
                 scope=scope,
