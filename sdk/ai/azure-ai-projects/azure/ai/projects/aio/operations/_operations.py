@@ -37,9 +37,9 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
-    build_agents_create_agent_from_manifest_request,
-    build_agents_create_agent_version_from_manifest_request,
+    build_agents_create_from_manifest_request,
     build_agents_create_request,
+    build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_container_request,
     build_agents_delete_request,
@@ -54,8 +54,8 @@ from ...operations._operations import (
     build_agents_retrieve_version_request,
     build_agents_start_container_request,
     build_agents_stop_container_request,
-    build_agents_update_agent_from_manifest_request,
     build_agents_update_container_request,
+    build_agents_update_from_manifest_request,
     build_agents_update_request,
     build_connections_get_request,
     build_connections_get_with_credentials_request,
@@ -92,15 +92,15 @@ from ...operations._operations import (
     build_insights_generate_request,
     build_insights_get_request,
     build_insights_list_request,
-    build_memory_stores_create_memory_store_request,
-    build_memory_stores_delete_memory_store_request,
+    build_memory_stores_create_store_request,
     build_memory_stores_delete_scope_request,
-    build_memory_stores_get_memory_store_request,
+    build_memory_stores_delete_store_request,
+    build_memory_stores_get_store_request,
     build_memory_stores_get_update_result_request,
-    build_memory_stores_list_memory_stores_request,
-    build_memory_stores_search_memories_request,
-    build_memory_stores_update_memories_request,
-    build_memory_stores_update_memory_store_request,
+    build_memory_stores_list_stores_request,
+    build_memory_stores_search_request,
+    build_memory_stores_update_request,
+    build_memory_stores_update_store_request,
     build_red_teams_create_request,
     build_red_teams_get_request,
     build_red_teams_list_request,
@@ -572,7 +572,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create_agent_from_manifest(
+    async def create_from_manifest(
         self,
         *,
         name: str,
@@ -615,7 +615,7 @@ class AgentsOperations:
         """
 
     @overload
-    async def create_agent_from_manifest(
+    async def create_from_manifest(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Creates an agent from a manifest.
@@ -631,7 +631,7 @@ class AgentsOperations:
         """
 
     @overload
-    async def create_agent_from_manifest(
+    async def create_from_manifest(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Creates an agent from a manifest.
@@ -652,7 +652,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def create_agent_from_manifest(
+    async def create_from_manifest(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -728,7 +728,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_agent_from_manifest_request(
+        _request = build_agents_create_from_manifest_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -771,7 +771,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update_agent_from_manifest(
+    async def update_from_manifest(
         self,
         agent_name: str,
         *,
@@ -811,7 +811,7 @@ class AgentsOperations:
         """
 
     @overload
-    async def update_agent_from_manifest(
+    async def update_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
@@ -831,7 +831,7 @@ class AgentsOperations:
         """
 
     @overload
-    async def update_agent_from_manifest(
+    async def update_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
@@ -856,7 +856,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def update_agent_from_manifest(
+    async def update_from_manifest(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -926,7 +926,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_agent_from_manifest_request(
+        _request = build_agents_update_from_manifest_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1335,7 +1335,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create_agent_version_from_manifest(
+    async def create_version_from_manifest(
         self,
         agent_name: str,
         *,
@@ -1378,7 +1378,7 @@ class AgentsOperations:
         """
 
     @overload
-    async def create_agent_version_from_manifest(
+    async def create_version_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionObject:
         """Create a new agent version from a manifest.
@@ -1401,7 +1401,7 @@ class AgentsOperations:
         """
 
     @overload
-    async def create_agent_version_from_manifest(
+    async def create_version_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionObject:
         """Create a new agent version from a manifest.
@@ -1429,7 +1429,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def create_agent_version_from_manifest(
+    async def create_version_from_manifest(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1502,7 +1502,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_agent_version_from_manifest_request(
+        _request = build_agents_create_version_from_manifest_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2746,7 +2746,7 @@ class MemoryStoresOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_memory_store(
+    async def create_store(
         self,
         *,
         name: str,
@@ -2776,7 +2776,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def create_memory_store(
+    async def create_store(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Create a memory store.
@@ -2792,7 +2792,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def create_memory_store(
+    async def create_store(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Create a memory store.
@@ -2813,7 +2813,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def create_memory_store(
+    async def create_store(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -2868,7 +2868,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_create_memory_store_request(
+        _request = build_memory_stores_create_store_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2911,7 +2911,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update_memory_store(
+    async def update_store(
         self,
         name: str,
         *,
@@ -2938,7 +2938,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def update_memory_store(
+    async def update_store(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Update a memory store.
@@ -2956,7 +2956,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def update_memory_store(
+    async def update_store(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Update a memory store.
@@ -2979,7 +2979,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def update_memory_store(
+    async def update_store(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3027,7 +3027,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_update_memory_store_request(
+        _request = build_memory_stores_update_store_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3076,7 +3076,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def get_memory_store(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
+    async def get_store(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
@@ -3098,7 +3098,7 @@ class MemoryStoresOperations:
 
         cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
 
-        _request = build_memory_stores_get_memory_store_request(
+        _request = build_memory_stores_get_store_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3145,7 +3145,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "limit", "order", "after", "before", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def list_memory_stores(
+    def list_stores(
         self,
         *,
         limit: Optional[int] = None,
@@ -3189,7 +3189,7 @@ class MemoryStoresOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_memory_stores_list_memory_stores_request(
+            _request = build_memory_stores_list_stores_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -3238,7 +3238,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def delete_memory_store(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResponse:
+    async def delete_store(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResponse:
         """Delete a memory store.
 
         :param name: The name of the memory store to delete. Required.
@@ -3261,7 +3261,7 @@ class MemoryStoresOperations:
 
         cls: ClsType[_models.DeleteMemoryStoreResponse] = kwargs.pop("cls", None)
 
-        _request = build_memory_stores_delete_memory_store_request(
+        _request = build_memory_stores_delete_store_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3303,7 +3303,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def search_memories(
+    async def search(
         self,
         name: str,
         *,
@@ -3344,7 +3344,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def search_memories(
+    async def search(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResponse:
         """Search for relevant memories from a memory store based on conversation context.
@@ -3363,7 +3363,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def search_memories(
+    async def search(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResponse:
         """Search for relevant memories from a memory store based on conversation context.
@@ -3387,7 +3387,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def search_memories(
+    async def search(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3457,7 +3457,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_search_memories_request(
+        _request = build_memory_stores_search_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3505,7 +3505,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def _update_memories_initial(
+    async def _update_initial(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3549,7 +3549,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_update_memories_request(
+        _request = build_memory_stores_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3592,7 +3592,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def begin_update_memories(
+    async def begin_update(
         self,
         name: str,
         *,
@@ -3637,7 +3637,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def begin_update_memories(
+    async def begin_update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
         """Update memory store with conversation memories.
@@ -3656,7 +3656,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    async def begin_update_memories(
+    async def begin_update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
         """Update memory store with conversation memories.
@@ -3680,7 +3680,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def begin_update_memories(
+    async def begin_update(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3731,7 +3731,7 @@ class MemoryStoresOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_memories_initial(
+            raw_result = await self._update_initial(
                 name=name,
                 body=body,
                 scope=scope,

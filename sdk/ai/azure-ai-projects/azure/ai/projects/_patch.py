@@ -58,6 +58,7 @@ def _patch_user_agent(user_agent: Optional[str]) -> str:
 
     return patched_user_agent
 
+
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
