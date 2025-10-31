@@ -21,7 +21,7 @@ class AttackStrategy(Enum):
     Binary = "binary"
     Caesar = "caesar"
     CharacterSpace = "character_space"
-    CharSwap = "character_swap`"
+    CharSwap = "character_swap"
     Diacritic = "diacritic"
     Flip = "flip"
     Leetspeak = "leetspeak"
