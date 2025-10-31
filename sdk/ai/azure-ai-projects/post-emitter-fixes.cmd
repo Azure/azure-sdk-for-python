@@ -12,7 +12,6 @@ REM Restore hand-written files that were deleted. Remove this once the emitter i
 git restore azure/ai/projects/aio/operations/_patch_connections_async.py
 git restore azure/ai/projects/aio/operations/_patch_datasets_async.py
 git restore azure/ai/projects/aio/operations/_patch_telemetry_async.py
-git restore azure/ai/projects/models/_patch_evaluations.py
 git restore azure/ai/projects/operations/_patch_connections.py
 git restore azure/ai/projects/operations/_patch_datasets.py
 git restore azure/ai/projects/operations/_patch_telemetry.py
