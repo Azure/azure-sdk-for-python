@@ -154,12 +154,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "Read" == messages_request.operation_type
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
-        # Verify we only have a total of 4 logged messages: 2 from databaseaccount read and 2 from create database
-        assert len(self.mock_handler_diagnostic.messages) == 4
+        # Verify we only have a total of 6 logged messages: 2 from databaseaccount read, 2 from health check, and 2 from create database
+        assert len(self.mock_handler_diagnostic.messages) == 6
         # Test if we can log into from creating a database
-        # The request to create database should follow the databaseaccount read request immediately
-        messages_request = self.mock_handler_diagnostic.messages[2]
-        messages_response = self.mock_handler_diagnostic.messages[3]
+        # The request to create database should follow the health check request immediately
+        messages_request = self.mock_handler_diagnostic.messages[4]
+        messages_response = self.mock_handler_diagnostic.messages[5]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.verb == "POST"

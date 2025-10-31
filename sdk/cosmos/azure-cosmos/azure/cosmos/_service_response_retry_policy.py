@@ -7,7 +7,6 @@ from the service, and as such we do not know what the output of the operation wa
 only do cross regional retries for read operations.
 """
 
-import logging
 from azure.cosmos.documents import _OperationType
 
 class ServiceResponseRetryPolicy(object):
@@ -27,7 +26,6 @@ class ServiceResponseRetryPolicy(object):
                 self.max_write_retry_count = self.request.retry_write
             self.location_endpoint = (self.global_endpoint_manager
                                       .resolve_service_endpoint_for_partition(self.request, pk_range_wrapper))
-        self.logger = logging.getLogger('azure.cosmos.ServiceResponseRetryPolicy')
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
