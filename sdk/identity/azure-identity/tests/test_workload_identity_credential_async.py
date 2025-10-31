@@ -5,11 +5,14 @@
 # cspell:ignore cafile aexit ests
 import os
 import tempfile
+import time
+import asyncio
 from time import sleep as real_sleep
 from unittest.mock import mock_open, patch, MagicMock
 
 import pytest
 from azure.core.rest import HttpRequest
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.identity.aio import WorkloadIdentityCredential
 from azure.identity.aio._credentials.workload_identity import _get_transport
 
@@ -717,8 +720,6 @@ class TestCustomAioHttpTransportWithLocalServer:
     @pytest.mark.asyncio
     async def test_ssl_error_handling(self):
         """Test SSL error handling."""
-        from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-
         with TokenProxyTestServer(use_ssl=True) as server:
             # Create transport without proper CA file (will cause SSL error)
             transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=None, ca_data=None)
@@ -747,8 +748,6 @@ class TestCustomAioHttpTransportWithLocalServer:
     @pytest.mark.asyncio
     async def test_slow_server_response(self):
         """Test handling of slow server responses."""
-        import time
-
         with TokenProxyTestServer(use_ssl=True) as server:
             transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None)
             assert transport is not None
@@ -817,8 +816,6 @@ class TestCustomAioHttpTransportWithLocalServer:
     @pytest.mark.asyncio
     async def test_concurrent_requests(self):
         """Test handling multiple concurrent requests."""
-        import asyncio
-
         with TokenProxyTestServer(use_ssl=True) as server:
             transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None)
             assert transport is not None
