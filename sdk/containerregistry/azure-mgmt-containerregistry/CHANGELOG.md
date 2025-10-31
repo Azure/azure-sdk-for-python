@@ -1,5 +1,158 @@
 # Release History
 
+## 14.1.0b3 (2025-11-17)
+
+### Features Added
+
+  - Model `Archive` added property `properties`
+  - Model `CredentialSetUpdateParameters` added property `properties`
+  - Model `ExportPipelineTargetProperties` added property `storage_access_mode`
+  - Model `ImportPipelineSourceProperties` added property `storage_access_mode`
+  - Model `OperationDefinition` added property `properties`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `RegistryNameCheckRequest` added property `type`
+  - Model `RegistryUpdateParameters` added property `properties`
+  - Model `WebhookCreateParameters` added property `properties`
+  - Model `WebhookUpdateParameters` added property `properties`
+  - Added model `ArchiveUpdateProperties`
+  - Added model `CacheRuleUpdateProperties`
+  - Added model `ConnectedRegistryUpdateProperties`
+  - Added enum `ContainerRegistryResourceType`
+  - Added model `CredentialSetUpdateProperties`
+  - Added model `OperationPropertiesDefinition`
+  - Added model `RegistryPropertiesUpdateParameters`
+  - Added model `ScopeMapPropertiesUpdateParameters`
+  - Added enum `StorageAccessMode`
+  - Added model `TokenUpdateProperties`
+  - Added model `TrackedResource`
+  - Added model `WebhookPropertiesCreateParameters`
+  - Added model `WebhookPropertiesUpdateParameters`
+
+### Breaking Changes
+
+  - Deleted or renamed client `ContainerRegistryManagementClient`
+  - Model `Archive` deleted or renamed its instance variable `package_source`
+  - Model `Archive` deleted or renamed its instance variable `published_version`
+  - Model `Archive` deleted or renamed its instance variable `repository_endpoint_prefix`
+  - Model `Archive` deleted or renamed its instance variable `repository_endpoint`
+  - Model `Archive` deleted or renamed its instance variable `provisioning_state`
+  - Model `ArchiveUpdateParameters` deleted or renamed its instance variable `published_version`
+  - Model `CacheRuleUpdateParameters` deleted or renamed its instance variable `credential_set_resource_id`
+  - Model `ConnectedRegistryUpdateParameters` deleted or renamed its instance variable `sync_properties`
+  - Model `ConnectedRegistryUpdateParameters` deleted or renamed its instance variable `logging`
+  - Model `ConnectedRegistryUpdateParameters` deleted or renamed its instance variable `client_token_ids`
+  - Model `ConnectedRegistryUpdateParameters` deleted or renamed its instance variable `notifications_list`
+  - Model `ConnectedRegistryUpdateParameters` deleted or renamed its instance variable `garbage_collection`
+  - Model `CredentialSetUpdateParameters` deleted or renamed its instance variable `auth_credentials`
+  - Model `OperationDefinition` deleted or renamed its instance variable `service_specification`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `admin_user_enabled`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `network_rule_set`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `policies`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `encryption`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `data_endpoint_enabled`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `network_rule_bypass_options`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `network_rule_bypass_allowed_for_tasks`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `anonymous_pull_enabled`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `metadata_search`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `role_assignment_mode`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `ScopeMapUpdateParameters` deleted or renamed its instance variable `description`
+  - Model `ScopeMapUpdateParameters` deleted or renamed its instance variable `actions`
+  - Model `TokenUpdateParameters` deleted or renamed its instance variable `scope_map_id`
+  - Model `TokenUpdateParameters` deleted or renamed its instance variable `status`
+  - Model `TokenUpdateParameters` deleted or renamed its instance variable `credentials`
+  - Model `WebhookCreateParameters` deleted or renamed its instance variable `service_uri`
+  - Model `WebhookCreateParameters` deleted or renamed its instance variable `custom_headers`
+  - Model `WebhookCreateParameters` deleted or renamed its instance variable `status`
+  - Model `WebhookCreateParameters` deleted or renamed its instance variable `scope`
+  - Model `WebhookCreateParameters` deleted or renamed its instance variable `actions`
+  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `service_uri`
+  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `custom_headers`
+  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `status`
+  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `scope`
+  - Model `WebhookUpdateParameters` deleted or renamed its instance variable `actions`
+  - Deleted or renamed model `ActiveDirectoryObject`
+  - Deleted or renamed model `AgentPool`
+  - Deleted or renamed model `AgentPoolQueueStatus`
+  - Deleted or renamed model `AgentPoolUpdateParameters`
+  - Deleted or renamed model `AgentProperties`
+  - Deleted or renamed model `Architecture`
+  - Deleted or renamed model `Argument`
+  - Deleted or renamed model `AuthInfo`
+  - Deleted or renamed model `AuthInfoUpdateParameters`
+  - Deleted or renamed model `BaseImageDependency`
+  - Deleted or renamed model `BaseImageDependencyType`
+  - Deleted or renamed model `BaseImageTrigger`
+  - Deleted or renamed model `BaseImageTriggerType`
+  - Deleted or renamed model `BaseImageTriggerUpdateParameters`
+  - Deleted or renamed model `Credentials`
+  - Deleted or renamed model `CustomRegistryCredentials`
+  - Deleted or renamed model `DebianArchivePackageSourceProperties`
+  - Deleted or renamed model `DebianArchiveProperties`
+  - Deleted or renamed model `DockerBuildRequest`
+  - Deleted or renamed model `DockerBuildStep`
+  - Deleted or renamed model `DockerBuildStepUpdateParameters`
+  - Deleted or renamed model `EncodedTaskRunRequest`
+  - Deleted or renamed model `EncodedTaskStep`
+  - Deleted or renamed model `EncodedTaskStepUpdateParameters`
+  - Deleted or renamed model `FileTaskRunRequest`
+  - Deleted or renamed model `FileTaskStep`
+  - Deleted or renamed model `FileTaskStepUpdateParameters`
+  - Deleted or renamed model `ImageDescriptor`
+  - Deleted or renamed model `ImageUpdateTrigger`
+  - Deleted or renamed model `LastModifiedByType`
+  - Deleted or renamed model `OS`
+  - Deleted or renamed model `OverrideTaskStepProperties`
+  - Deleted or renamed model `PackageType`
+  - Deleted or renamed model `PlatformProperties`
+  - Deleted or renamed model `PlatformUpdateParameters`
+  - Deleted or renamed model `Run`
+  - Deleted or renamed model `RunFilter`
+  - Deleted or renamed model `RunGetLogResult`
+  - Deleted or renamed model `RunRequest`
+  - Deleted or renamed model `RunStatus`
+  - Deleted or renamed model `RunType`
+  - Deleted or renamed model `RunUpdateParameters`
+  - Deleted or renamed model `SecretObject`
+  - Deleted or renamed model `SecretObjectType`
+  - Deleted or renamed model `SetValue`
+  - Deleted or renamed model `SourceControlType`
+  - Deleted or renamed model `SourceProperties`
+  - Deleted or renamed model `SourceRegistryCredentials`
+  - Deleted or renamed model `SourceRegistryLoginMode`
+  - Deleted or renamed model `SourceTrigger`
+  - Deleted or renamed model `SourceTriggerDescriptor`
+  - Deleted or renamed model `SourceTriggerEvent`
+  - Deleted or renamed model `SourceTriggerUpdateParameters`
+  - Deleted or renamed model `SourceUpdateParameters`
+  - Deleted or renamed model `SourceUploadDefinition`
+  - Deleted or renamed model `StepType`
+  - Deleted or renamed model `StorageAccountProperties`
+  - Deleted or renamed model `Task`
+  - Deleted or renamed model `TaskRun`
+  - Deleted or renamed model `TaskRunRequest`
+  - Deleted or renamed model `TaskRunUpdateParameters`
+  - Deleted or renamed model `TaskStatus`
+  - Deleted or renamed model `TaskStepProperties`
+  - Deleted or renamed model `TaskStepUpdateParameters`
+  - Deleted or renamed model `TaskUpdateParameters`
+  - Deleted or renamed model `TimerTrigger`
+  - Deleted or renamed model `TimerTriggerDescriptor`
+  - Deleted or renamed model `TimerTriggerUpdateParameters`
+  - Deleted or renamed model `TokenType`
+  - Deleted or renamed model `TriggerProperties`
+  - Deleted or renamed model `TriggerUpdateParameters`
+  - Deleted or renamed model `UpdateTriggerPayloadType`
+  - Deleted or renamed model `Variant`
+  - Deleted or renamed method `RegistriesOperations.get_build_source_upload_url`
+  - Deleted or renamed method `RegistriesOperations.schedule_run`
+  - Deleted or renamed model `AgentPoolsOperations`
+  - Deleted or renamed model `RunsOperations`
+  - Deleted or renamed model `TaskRunsOperations`
+  - Deleted or renamed model `TasksOperations`
+
 ## 14.1.0b2 (2025-08-15)
 
 ### Features Added
