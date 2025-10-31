@@ -50,7 +50,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     :rtype: tuple of (dict, dict)
 
     """
-    # pylint: disable=protected-access
+    # pylint: disable=protected-access, too-many-branches
 
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
