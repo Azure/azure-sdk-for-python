@@ -31,7 +31,9 @@ Azure AI Project Configuration Options:
 import json
 import os
 import base64
+
 from dotenv import load_dotenv
+
 import pandas as pd
 from azure.ai.evaluation import evaluate, AzureOpenAIScoreModelGrader
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, AzureAIProject
@@ -40,18 +42,21 @@ from azure.ai.evaluation import AzureOpenAIModelConfiguration, AzureAIProject
 load_dotenv()
 
 
-
 def create_sample_data() -> str:
     """Create sample conversation data for testing."""
-    AUDIO_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/input_audio.wav"
-    encoded_audio = base64.b64encode(open(AUDIO_FILE_PATH, 'rb').read()).decode('utf-8')
+    IMAGE_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/image.jpg"
+    encoded_image = base64.b64encode(open(IMAGE_FILE_PATH, 'rb').read()).decode('utf-8')
     sample_conversations = [
         {
-            "audio_data": f"{encoded_audio}",
-            "expected_emotion": "Person is speaking cheerfully",
+            "image_url": "https://en.wikipedia.org/wiki/Eiffel_Tower#/media/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg",
+            "caption": "This is a photo of Eiffel Tower in Paris.",
+        },
+        {
+            "image_url": f"data:image/jpg;base64,{encoded_image}",
+            "caption": "This is a photo of Eiffel Tower in Paris.",
         }
     ]
-
+    
     # Create JSONL file
     filename = "sample_conversations.jsonl"
     with open(filename, "w") as f:
@@ -102,7 +107,7 @@ def demonstrate_score_model_grader():
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
     
     endpoint = os.getenv("endpoint", "")
-    deployment = os.getenv("deployment_name", "gpt-4o-audio-preview")
+    deployment = os.getenv("deployment", "gpt-4o-mini")
     api_key = os.getenv("api_key", "")
 
     print(f"Endpoint: {endpoint}")
@@ -131,27 +136,28 @@ def demonstrate_score_model_grader():
         # 3. Create conversation quality grader
         score_model = AzureOpenAIScoreModelGrader(
             model_config=model_config,
-            name="Tone/Emotion Grader",
-            model="gpt-4o-audio-preview",
+            name="Image to Text Grader",
+            model="gpt-4o-mini",
             input=[
                 {
-                    "role": "system",
-                    "content": "You are an audio tone analyzer. Listen to the audio and provide an accurate primary emotion. Return a float score in [0,1] where 1 means the speaker tone/emotion is same as {{item.expected_emotion}}."
+                "role": "system",
+                "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if its an excelent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0."
                 },
                 {
                     "role": "user",
                     "content": [
-                        {
-                        "type": "input_audio",
-                        "input_audio": {
-                            "data": "{{ sample.output_audio.data }}",
-                            "format": "wav"
-                        }
+                        { 
+                            "type": "input_text", 
+                            "text": "Caption: {{ item.caption }}"
+                        },
+                        { 
+                            "type": "input_image", 
+                            "image_url": "{{ item.image_url }}"
                         }
                     ]
                 }
             ],
-            range=[0, 1],
+            range=[0.0, 1.0],
             pass_threshold=0.5
         )
 
@@ -165,7 +171,7 @@ def demonstrate_score_model_grader():
             azure_ai_project=azure_ai_project,
             tags={
                 "grader_type": "score_model",
-                "model": "gpt-4o-audio-preview",
+                "model": "gpt-4o-mini",
                 "evaluation_focus": "score_model",
                 "sample_size": "demo",
                 "automation_level": "full",
@@ -173,62 +179,48 @@ def demonstrate_score_model_grader():
             data_source_config={
                 "type": "custom",
                 "item_schema": {
-                "type": "object",
-                "properties": {
-                    "audio_data": {
-                        "type": "string",
-                        "description": "Base64-encoded WAV audio data."
+                    "type": "object",
+                    "properties": {
+                        "image_url": {
+                            "type": "string",
+                            "description": "The URL of the image to be evaluated."
+                        },
+                        "caption": {
+                            "type": "string",
+                            "description": "The caption describing the image."
+                        }
                     },
-                    "expected_emotion": {
-                        "type": "string",
-                        "description": "The expected primary emotion in the audio."
-                    }
-                },
-                "required": [
-                    "audio_data",
-                    "expected_emotion"
-                ]
+                    "required": [
+                        "image_url",
+                        "caption"
+                    ]
                 },
                 "include_sample_schema": True,
             },
             data_source={
                 "type": "completions",
-                "model": "gpt-4o-audio-preview",
-                "sampling_params": {
-                    "temperature": 0.8
-                },
-                "modalities": [
-                    "text",
-                    "audio"
-                ],
+                "model": "gpt-4o-mini",
                 "input_messages": {
                     "type": "template",
                     "template": [
                         {
                             "role": "system",
-                            "content": "You are an assistant that can analyze audio input for emotion and tone. You will be given an audio input to analyze."
+                            "content": "You are an assistant that analyzes images and provides captions that accurately describe the content of the image."
                         },
                         {
                             "role": "user",
                             "type": "message",
                             "content": {
-                                "type": "input_text",
-                                "text": "Listen to the following audio and identify the primary emotion/tone. Respond with audio that matches the same emotion. Keep your response under 10 seconds."
-                            }
-                        },
-                        {
-                            "role": "user",
-                            "type": "message",
-                            "content": {
-                                "type": "input_audio",
-                                "input_audio": {
-                                "data": "{{item.audio_data}}",
-                                "format": "wav"
-                                }
+                                "type": "input_image",
+                                "image_url": "{{ item.image_url }}",
+                                "detail": "auto"
                             }
                         }
                     ]
-                }
+                },
+                "sampling_params": {
+                    "temperature": 0.8
+                },
             }
         )
 
