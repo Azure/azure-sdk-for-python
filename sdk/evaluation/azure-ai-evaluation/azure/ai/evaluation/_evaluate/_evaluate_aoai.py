@@ -79,6 +79,7 @@ def _begin_aoai_evaluation(
     column_mappings: Optional[Dict[str, Dict[str, str]]],
     data: pd.DataFrame,
     run_name: str,
+    **kwargs: Any,
 ) -> List[OAIEvalRunCreationInfo]:
     """
     Use the AOAI SDK to start an evaluation of the inputted dataset against the supplied graders.
@@ -114,7 +115,7 @@ def _begin_aoai_evaluation(
             f"AOAI: Starting evaluation run {idx + 1}/{len(grader_mapping_list)} with {len(selected_graders)} grader(s)..."
         )
         all_eval_run_info.append(
-            _begin_single_aoai_evaluation(selected_graders, data, selected_column_mapping, run_name)
+            _begin_single_aoai_evaluation(selected_graders, data, selected_column_mapping, run_name, **kwargs)
         )
 
     LOGGER.info(f"AOAI: Successfully created {len(all_eval_run_info)} evaluation run(s).")
@@ -122,7 +123,7 @@ def _begin_aoai_evaluation(
 
 
 def _begin_single_aoai_evaluation(
-    graders: Dict[str, AzureOpenAIGrader], data: pd.DataFrame, column_mapping: Optional[Dict[str, str]], run_name: str
+    graders: Dict[str, AzureOpenAIGrader], data: pd.DataFrame, column_mapping: Optional[Dict[str, str]], run_name: str, **kwargs: Any
 ) -> OAIEvalRunCreationInfo:
     """
     Use the AOAI SDK to start an evaluation of the inputted dataset against the supplied graders.
@@ -146,6 +147,16 @@ def _begin_single_aoai_evaluation(
     LOGGER.info(f"AOAI: Preparing evaluation for {len(graders)} grader(s): {list(graders.keys())}")
     grader_name_list = []
     grader_list = []
+    
+    data_source = {}
+    data_source_config = {}
+    
+    if kwargs.get("data_source_config") is not None:
+        data_source_config = kwargs.get("data_source_config")
+        
+    if kwargs.get("data_source") is not None:
+        data_source = kwargs.get("data_source")
+
     # It's expected that all graders supplied for a single eval run use the same credentials
     # so grab a client from the first grader.
     client = list(graders.values())[0].get_client()
@@ -155,7 +166,8 @@ def _begin_single_aoai_evaluation(
         grader_list.append(grader._grader_config)
     effective_column_mapping: Dict[str, str] = column_mapping or {}
     LOGGER.info(f"AOAI: Generating data source config with {len(effective_column_mapping)} column mapping(s)...")
-    data_source_config = _generate_data_source_config(data, effective_column_mapping)
+    if data_source_config == {}:
+        data_source_config = _generate_data_source_config(data, effective_column_mapping)
     LOGGER.info(f"AOAI: Data source config generated with schema type: {data_source_config.get('type')}")
 
     # Create eval group
@@ -181,7 +193,7 @@ def _begin_single_aoai_evaluation(
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
-    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping)
+    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping, data_source)
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -655,7 +667,10 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
         for key in column_mapping.keys():
-            props[key] = {"type": "array"}
+            if input_data_df[key] is not None and len(input_data_df[key]) > 0 and isinstance(input_data_df[key].iloc[0], list):
+                props[key] = {"type": "array"}
+            else:
+                props[key] = {"type": "string"}
             req.append(key)
         LOGGER.info(f"AOAI: Flat schema generated with {len(props)} properties: {list(props.keys())}")
         return data_source_config
@@ -696,8 +711,7 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
     LOGGER.info(f"AOAI: Nested schema generated successfully with type '{nested_schema.get('type')}'")
     return {
         "type": "custom",
-        "item_schema": nested_schema,
-        "include_sample_schema": True,
+        "item_schema": nested_schema
     }
 
 
@@ -717,7 +731,7 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
 
     for column in input_data_df.columns:
         properties[column] = {
-            "type": "array",
+            "type": "string",
         }
         required.append(column)
     data_source_config = {
@@ -847,26 +861,16 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         for col_name in input_data_df.columns:
             if col_name not in processed_cols:
                 val = row.get(col_name, None)
-                str_val = _convert_value_to_string(val)
+                if isinstance(val, list):
+                    str_val = val
+                else:
+                    str_val = _convert_value_to_string(val)
                 item_root[col_name] = str_val
 
         content.append({WRAPPER_KEY: item_root})
 
     LOGGER.info(f"AOAI: Generated {len(content)} content items for data source.")
     return {
-        "type": "completions",
-        "model": "gpt-4o-audio-preview",
-        "input_messages": {
-            "type": "item_reference",
-            "item_reference": "item.messages"
-        },
-        "sampling_params": {
-            "temperature": 0.8
-        },
-        "modalities": [
-            "text",
-            "audio"
-        ],
         "source": {
             "type": "file_content",
             "content": content,
@@ -880,6 +884,7 @@ def _begin_eval_run(
     run_name: str,
     input_data_df: pd.DataFrame,
     column_mapping: Dict[str, str],
+    data_source_params: Optional[Dict[str, Any]]=None,
 ) -> str:
     """
     Given an eval group id and a dataset file path, use the AOAI API to
@@ -899,11 +904,15 @@ def _begin_eval_run(
     :rtype: str
     """
 
+    if data_source_params is None:
+        data_source_params = {}
+        
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
-    data_source = _get_data_source(input_data_df, column_mapping)
+    data_source_params.update(_get_data_source(input_data_df, column_mapping))
+    
     eval_run = client.evals.runs.create(
         eval_id=eval_group_id,
-        data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
+        data_source=cast(Any, data_source_params),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
         name=run_name,
         metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
         # TODO decide if we want to add our own timeout value?

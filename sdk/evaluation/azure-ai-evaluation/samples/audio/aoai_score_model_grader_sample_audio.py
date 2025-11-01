@@ -146,7 +146,7 @@ def demonstrate_score_model_grader():
     
     endpoint = os.getenv("ENDPOINT_URL", "https://waqas-mgyk3ma9-northcentralus.cognitiveservices.azure.com/")
     deployment = os.getenv("DEPLOYMENT_NAME", "gpt-4o-audio-preview")
-    api_key = os.getenv("AZURE_OPENAI_API_KEY", "")
+    api_key = os.getenv("API_KEY", "")
 
     print(f"Endpoint: {endpoint}")
     print(f"Deployment: {deployment}")
@@ -217,6 +217,36 @@ def demonstrate_score_model_grader():
                 "sample_size": "demo",
                 "automation_level": "full",
             },
+            data_source_config={
+                "type": "custom",
+                "item_schema": {
+                    "type": "object",
+                    "properties": {
+                        "messages": {
+                        "type": "array"
+                        }
+                    },
+                    "required": [
+                        "messages"
+                    ]
+                },
+                "include_sample_schema": True
+            },
+            data_source={
+                "type": "completions",
+                "model": "gpt-4o-audio-preview",
+                "input_messages": {
+                    "type": "item_reference",
+                    "item_reference": "item.messages"
+                },
+                "sampling_params": {
+                    "temperature": 0.8
+                },
+                "modalities": [
+                    "text",
+                    "audio"
+                ],
+            }
         )
 
         # 5. Display results
@@ -240,10 +270,7 @@ def demonstrate_score_model_grader():
             for col in df.columns:
                 if col.startswith("outputs."):
                     grader_name = col.split(".")[1]
-                    if "score" in col:
-                        print(f"  {grader_name} Score: {row[col]:.3f}")
-                    elif "passed" in col:
-                        print(f"  {grader_name} Passed: {row[col]}")
+                    print(f"  {grader_name} - {col} : {row[col]}")
 
         print("\n✅ Evaluation completed successfully!")
 
