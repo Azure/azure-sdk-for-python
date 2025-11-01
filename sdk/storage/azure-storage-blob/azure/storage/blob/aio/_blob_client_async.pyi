@@ -56,6 +56,10 @@ class BlobClient(  # type: ignore[misc]
     StorageAccountHostsMixin,
     StorageEncryptionMixin,
 ):
+    container_name: str
+    blob_name: str
+    snapshot: Optional[str]
+    version_id: Optional[str]
     def __init__(
         self,
         account_url: str,
