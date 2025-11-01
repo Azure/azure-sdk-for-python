@@ -144,9 +144,9 @@ def demonstrate_score_model_grader():
 
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
     
-    endpoint = os.getenv("ENDPOINT_URL", "https://waqas-mgyk3ma9-northcentralus.cognitiveservices.azure.com/")
-    deployment = os.getenv("DEPLOYMENT_NAME", "gpt-4o-audio-preview")
-    api_key = os.getenv("API_KEY", "")
+    endpoint = os.getenv("endpoint", "")
+    deployment = os.getenv("deployment_name", "gpt-4o-audio-preview")
+    api_key = os.getenv("api_key", "")
 
     print(f"Endpoint: {endpoint}")
     print(f"Deployment: {deployment}")

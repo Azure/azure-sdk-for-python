@@ -662,7 +662,6 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
                 "properties": {},
                 "required": [],
             },
-            "include_sample_schema": True,
         }
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
@@ -711,7 +710,7 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
     LOGGER.info(f"AOAI: Nested schema generated successfully with type '{nested_schema.get('type')}'")
     return {
         "type": "custom",
-        "item_schema": nested_schema
+        "item_schema": nested_schema,
     }
 
 
@@ -871,6 +870,7 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
 
     LOGGER.info(f"AOAI: Generated {len(content)} content items for data source.")
     return {
+        "type": "jsonl",
         "source": {
             "type": "file_content",
             "content": content,
@@ -904,15 +904,15 @@ def _begin_eval_run(
     :rtype: str
     """
 
-    if data_source_params is None:
-        data_source_params = {}
-        
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
-    data_source_params.update(_get_data_source(input_data_df, column_mapping))
+    data_source = _get_data_source(input_data_df, column_mapping)
     
+    if data_source_params is not None:
+        data_source.update(data_source_params)
+
     eval_run = client.evals.runs.create(
         eval_id=eval_group_id,
-        data_source=cast(Any, data_source_params),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
+        data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
         name=run_name,
         metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
         # TODO decide if we want to add our own timeout value?
