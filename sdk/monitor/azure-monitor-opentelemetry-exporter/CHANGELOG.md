@@ -3,6 +3,8 @@
 ## 1.0.0b45 (Unreleased)
 
 ### Features Added
+- Added local storage support for multiple users on the same Linux system
+  ([#43483](https://github.com/Azure/azure-sdk-for-python/pull/43483))
 
 ### Breaking Changes
 

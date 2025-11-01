@@ -369,7 +369,9 @@ class RedTeam:
 
             if custom_objectives:
                 # Use custom objectives for this risk category
-                return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key)
+                return await self._get_custom_attack_objectives(
+                    risk_cat_value, num_objectives, strategy, current_key, is_agent_target
+                )
             else:
                 # No custom objectives for this risk category, but risk_categories was specified
                 # Fetch from service if this risk category is in the requested list
@@ -412,7 +414,12 @@ class RedTeam:
             )
 
     async def _get_custom_attack_objectives(
-        self, risk_cat_value: str, num_objectives: int, strategy: str, current_key: tuple
+        self,
+        risk_cat_value: str,
+        num_objectives: int,
+        strategy: str,
+        current_key: tuple,
+        is_agent_target: Optional[bool] = None,
     ) -> List[str]:
         """Get attack objectives from custom seed prompts."""
         attack_objective_generator = self.attack_objective_generator
@@ -439,14 +446,28 @@ class RedTeam:
         else:
             selected_cat_objectives = custom_objectives
             self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
-
+        target_type_str = "agent" if is_agent_target else "model" if is_agent_target is not None else None
         # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
         if strategy == "jailbreak":
             selected_cat_objectives = await self._apply_jailbreak_prefixes(selected_cat_objectives)
+        elif strategy == "indirect_jailbreak":
+            selected_cat_objectives = await self._apply_xpia_prompts(selected_cat_objectives, target_type_str)
 
         # Extract content from selected objectives
         selected_prompts = []
         for obj in selected_cat_objectives:
+            risk_subtype = None
+            # Extract risk-subtype from target_harms if present
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
+            if target_harms and isinstance(target_harms, list):
+                for harm in target_harms:
+                    if isinstance(harm, dict) and "risk-subtype" in harm:
+                        subtype_value = harm.get("risk-subtype")
+                        # Only store non-empty risk-subtype values
+                        if subtype_value and subtype_value.strip():
+                            risk_subtype = subtype_value
+                            break  # Use the first non-empty risk-subtype found
+
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
@@ -455,6 +476,9 @@ class RedTeam:
                     selected_prompts.append(content)
                     # Store mapping of content to context for later evaluation
                     self.prompt_to_context[content] = context
+                    # Store risk_subtype mapping if it exists
+                    if risk_subtype:
+                        self.prompt_to_risk_subtype[content] = risk_subtype
 
         # Store in cache and return
         self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
@@ -489,34 +513,24 @@ class RedTeam:
             # Get objectives from RAI service
             target_type_str = "agent" if is_agent_target else "model" if is_agent_target is not None else None
 
-            if "tense" in strategy:
-                objectives_response = await self.generated_rai_client.get_attack_objectives(
-                    risk_type=content_harm_risk,
-                    risk_category=other_risk,
-                    application_scenario=application_scenario or "",
-                    strategy="tense",
-                    language=self.language.value,
-                    scan_session_id=self.scan_session_id,
-                    target=target_type_str,
-                    client_id=client_id,
-                )
-            else:
-                objectives_response = await self.generated_rai_client.get_attack_objectives(
-                    risk_type=content_harm_risk,
-                    risk_category=other_risk,
-                    application_scenario=application_scenario or "",
-                    strategy=None,
-                    language=self.language.value,
-                    scan_session_id=self.scan_session_id,
-                    target=target_type_str,
-                    client_id=client_id,
-                )
+            objectives_response = await self.generated_rai_client.get_attack_objectives(
+                risk_type=content_harm_risk,
+                risk_category=other_risk,
+                application_scenario=application_scenario or "",
+                strategy=None,
+                language=self.language.value,
+                scan_session_id=self.scan_session_id,
+                target=target_type_str,
+                client_id=client_id,
+            )
 
             if isinstance(objectives_response, list):
                 self.logger.debug(f"API returned {len(objectives_response)} objectives")
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
+            elif strategy == "indirect_jailbreak":
+                objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -535,28 +549,16 @@ class RedTeam:
                 )
                 try:
                     # Retry with model target type
-                    if "tense" in strategy:
-                        objectives_response = await self.generated_rai_client.get_attack_objectives(
-                            risk_type=content_harm_risk,
-                            risk_category=other_risk,
-                            application_scenario=application_scenario or "",
-                            strategy="tense",
-                            language=self.language.value,
-                            scan_session_id=self.scan_session_id,
-                            target="model",
-                            client_id=client_id,
-                        )
-                    else:
-                        objectives_response = await self.generated_rai_client.get_attack_objectives(
-                            risk_type=content_harm_risk,
-                            risk_category=other_risk,
-                            application_scenario=application_scenario or "",
-                            strategy=None,
-                            language=self.language.value,
-                            scan_session_id=self.scan_session_id,
-                            target="model",
-                            client_id=client_id,
-                        )
+                    objectives_response = await self.generated_rai_client.get_attack_objectives(
+                        risk_type=content_harm_risk,
+                        risk_category=other_risk,
+                        application_scenario=application_scenario or "",
+                        strategy=None,
+                        language=self.language.value,
+                        scan_session_id=self.scan_session_id,
+                        target="model",
+                        client_id=client_id,
+                    )
 
                     if isinstance(objectives_response, list):
                         self.logger.debug(f"Fallback API returned {len(objectives_response)} model-type objectives")
@@ -566,8 +568,7 @@ class RedTeam:
                     if strategy == "jailbreak":
                         objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
                     elif strategy == "indirect_jailbreak":
-                        # Try agent-type XPIA first, will fallback to model-type XPIA within the method
-                        objectives_response = await self._apply_xpia_prompts(objectives_response, "agent")
+                        objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
                     # Check if fallback response is also empty
                     if not objectives_response or (
@@ -894,7 +895,9 @@ class RedTeam:
 
                     # Check if any context has agent-specific fields
                     has_agent_fields = any(
-                        isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
+                        isinstance(ctx, dict)
+                        and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
+                        for ctx in contexts
                     )
 
                     # For contexts without agent fields, append them to the content
@@ -1038,7 +1041,9 @@ class RedTeam:
             tqdm.write(f"▶️ Starting task: {strategy_name} strategy for {risk_category.value} risk category")
 
             # Get converter and orchestrator function
-            converter = get_converter_for_strategy(strategy)
+            converter = get_converter_for_strategy(
+                strategy, self.generated_rai_client, self._one_dp_project, self.logger
+            )
             call_orchestrator = self.orchestrator_manager.get_orchestrator_for_attack_strategy(strategy)
 
             try:
@@ -1369,15 +1374,6 @@ class RedTeam:
                 "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
             )
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
-        if AttackStrategy.Tense in flattened_attack_strategies and (
-            RiskCategory.UngroundedAttributes in self.risk_categories
-        ):
-            self.logger.warning(
-                "Tense strategy is not compatible with UngroundedAttributes risk categories. Skipping Tense strategy."
-            )
-            raise ValueError(
-                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories."
-            )
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
