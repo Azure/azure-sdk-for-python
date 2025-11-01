@@ -4,7 +4,7 @@ import base64
 from openai import AzureOpenAI
 
 def demonstrate_score_model_grader():
-    endpoint = os.getenv("ENDPOINT_URL", "https://waqas-mgyk3ma9-northcentralus.cognitiveservices.azure.com/")
+    endpoint = os.getenv("ENDPOINT_URL", "")
     deployment = os.getenv("DEPLOYMENT_NAME", "gpt-4o-audio-preview")
     subscription_key = os.getenv("AZURE_OPENAI_API_KEY", "")
 
@@ -15,7 +15,7 @@ def demonstrate_score_model_grader():
         api_version="2025-01-01-preview",
     )
 
-    AUDIO_FILE_PATH = os.getcwd() + "/samples/audio/input_audio.wav"
+    AUDIO_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/input_audio.wav"
     encoded_audio = base64.b64encode(open(AUDIO_FILE_PATH, 'rb').read()).decode('utf-8')
 
     # Prepare the chat prompt
