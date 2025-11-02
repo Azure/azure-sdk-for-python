@@ -1,5 +1,11 @@
 # Release History
 
+## Unreleased
+
+### Other Changes
+
+  - Updated default API version to 2025-06-10-preview to align with latest REST specification (specification/confidentialledger/Confidentialledger.Management/main.tsp).
+
 ## 2.0.0b5 (2025-05-19)
 
 ### Features Added
