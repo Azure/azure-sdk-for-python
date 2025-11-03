@@ -44,7 +44,8 @@ load_dotenv()
 def create_sample_data() -> str:
     """Create sample conversation data for testing."""
     AUDIO_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/input_audio.wav"
-    encoded_audio = base64.b64encode(open(AUDIO_FILE_PATH, 'rb').read()).decode('utf-8')
+    with open(AUDIO_FILE_PATH, 'rb') as audio_file:
+        encoded_audio = base64.b64encode(audio_file.read()).decode('utf-8')
     sample_conversations = [
         {
             "audio_data": f"{encoded_audio}",
