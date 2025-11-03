@@ -28,7 +28,6 @@ async def sample_transcribe_from_url_async():
     # [START transcribe_from_url_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription.aio import TranscriptionClient
-    from azure.ai.transcription.models import TranscribeRequestContent, TranscriptionOptions
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
@@ -39,14 +38,9 @@ async def sample_transcribe_from_url_async():
         # URL to your audio file (must be publicly accessible)
         audio_url = "https://example.com/path/to/audio.wav"
 
-        # Create transcription options with audio URL
-        options = TranscriptionOptions(audio_url=audio_url, locales=["en-US"])  # Specify the language
-
-        # Create the request content (no audio file needed when using audio_url)
-        request_content = TranscribeRequestContent(options=options)
-
-        # Transcribe the audio
-        result = await client.transcribe(request_content)
+        # Transcribe the audio from URL
+        # The service will access and transcribe the audio directly from the URL
+        result = await client.transcribe_from_url(audio_url, locales=["en-US"])
 
         # Print the transcription result
         print(f"Transcription: {result.combined_phrases[0].text}")
