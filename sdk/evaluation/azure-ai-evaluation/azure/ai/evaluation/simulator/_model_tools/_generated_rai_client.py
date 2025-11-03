@@ -145,7 +145,7 @@ class GeneratedRAIClient:
             if client_id:
                 from azure.identity import DefaultAzureCredential
 
-                self.logger.info("Using client_id to set token in aml-aca-token header")
+                self.logger.info(f"Using client_id: {client_id} to set token in aml-aca-token header ")
 
                 # Get token using the client_id for managed identity
                 managed_identity_credential = DefaultAzureCredential(
