@@ -45,8 +45,8 @@ load_dotenv()
 def create_sample_data() -> str:
     """Create sample conversation data for testing."""
     IMAGE_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/image.jpg"
-    with open(IMAGE_FILE_PATH, 'rb') as f:
-        encoded_image = base64.b64encode(f.read()).decode('utf-8')
+    with open(IMAGE_FILE_PATH, "rb") as f:
+        encoded_image = base64.b64encode(f.read()).decode("utf-8")
     sample_conversations = [
         {
             "image_url": "https://en.wikipedia.org/wiki/Eiffel_Tower#/media/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg",
@@ -55,9 +55,9 @@ def create_sample_data() -> str:
         {
             "image_url": f"data:image/jpg;base64,{encoded_image}",
             "caption": "This is a photo of Eiffel Tower in Paris.",
-        }
+        },
     ]
-    
+
     # Create JSONL file
     filename = "sample_conversations.jsonl"
     with open(filename, "w") as f:
@@ -106,7 +106,7 @@ def demonstrate_score_model_grader():
     data_file = create_sample_data()
 
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
-    
+
     endpoint = os.getenv("endpoint", "")
     deployment = os.getenv("deployment", "gpt-4o-mini")
     api_key = os.getenv("api_key", "")
@@ -141,25 +141,19 @@ def demonstrate_score_model_grader():
             model="gpt-4o-mini",
             input=[
                 {
-                "role": "system",
-                "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if it's an excellent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0."
+                    "role": "system",
+                    "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if it's an excellent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0.",
                 },
                 {
                     "role": "user",
                     "content": [
-                        { 
-                            "type": "input_text", 
-                            "text": "Caption: {{ item.caption }}"
-                        },
-                        { 
-                            "type": "input_image", 
-                            "image_url": "{{ item.image_url }}"
-                        }
-                    ]
-                }
+                        {"type": "input_text", "text": "Caption: {{ item.caption }}"},
+                        {"type": "input_image", "image_url": "{{ item.image_url }}"},
+                    ],
+                },
             ],
             range=[0.0, 1.0],
-            pass_threshold=0.5
+            pass_threshold=0.5,
         )
 
         print("✅ Conversation quality grader created successfully")
@@ -182,19 +176,10 @@ def demonstrate_score_model_grader():
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "image_url": {
-                            "type": "string",
-                            "description": "The URL of the image to be evaluated."
-                        },
-                        "caption": {
-                            "type": "string",
-                            "description": "The caption describing the image."
-                        }
+                        "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
+                        "caption": {"type": "string", "description": "The caption describing the image."},
                     },
-                    "required": [
-                        "image_url",
-                        "caption"
-                    ]
+                    "required": ["image_url", "caption"],
                 },
                 "include_sample_schema": True,
             },
@@ -206,23 +191,17 @@ def demonstrate_score_model_grader():
                     "template": [
                         {
                             "role": "system",
-                            "content": "You are an assistant that analyzes images and provides captions that accurately describe the content of the image."
+                            "content": "You are an assistant that analyzes images and provides captions that accurately describe the content of the image.",
                         },
                         {
                             "role": "user",
                             "type": "message",
-                            "content": {
-                                "type": "input_image",
-                                "image_url": "{{ item.image_url }}",
-                                "detail": "auto"
-                            }
-                        }
-                    ]
+                            "content": {"type": "input_image", "image_url": "{{ item.image_url }}", "detail": "auto"},
+                        },
+                    ],
                 },
-                "sampling_params": {
-                    "temperature": 0.8
-                },
-            }
+                "sampling_params": {"temperature": 0.8},
+            },
         )
 
         # 5. Display results

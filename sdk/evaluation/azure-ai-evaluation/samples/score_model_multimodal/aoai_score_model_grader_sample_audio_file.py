@@ -40,12 +40,11 @@ from azure.ai.evaluation import AzureOpenAIModelConfiguration, AzureAIProject
 load_dotenv()
 
 
-
 def create_sample_data() -> str:
     """Create sample conversation data for testing."""
     AUDIO_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/input_audio.wav"
-    with open(AUDIO_FILE_PATH, 'rb') as audio_file:
-        encoded_audio = base64.b64encode(audio_file.read()).decode('utf-8')
+    with open(AUDIO_FILE_PATH, "rb") as audio_file:
+        encoded_audio = base64.b64encode(audio_file.read()).decode("utf-8")
     sample_conversations = [
         {
             "audio_data": f"{encoded_audio}",
@@ -101,7 +100,7 @@ def demonstrate_score_model_grader():
     data_file = create_sample_data()
 
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
-    
+
     endpoint = os.getenv("endpoint", "")
     deployment = os.getenv("deployment_name_audio", "gpt-4o-audio-preview")
     api_key = os.getenv("api_key", "")
@@ -137,23 +136,20 @@ def demonstrate_score_model_grader():
             input=[
                 {
                     "role": "system",
-                    "content": "You are an audio tone analyzer. Listen to the audio and provide an accurate primary emotion. Return a float score in [0,1] where 1 means the speaker tone/emotion is same as {{item.expected_emotion}}."
+                    "content": "You are an audio tone analyzer. Listen to the audio and provide an accurate primary emotion. Return a float score in [0,1] where 1 means the speaker tone/emotion is same as {{item.expected_emotion}}.",
                 },
                 {
                     "role": "user",
                     "content": [
                         {
-                        "type": "input_audio",
-                        "input_audio": {
-                            "data": "{{ sample.output_audio.data }}",
-                            "format": "wav"
+                            "type": "input_audio",
+                            "input_audio": {"data": "{{ sample.output_audio.data }}", "format": "wav"},
                         }
-                        }
-                    ]
-                }
+                    ],
+                },
             ],
             range=[0, 1],
-            pass_threshold=0.5
+            pass_threshold=0.5,
         )
 
         print("✅ Conversation quality grader created successfully")
@@ -174,63 +170,49 @@ def demonstrate_score_model_grader():
             data_source_config={
                 "type": "custom",
                 "item_schema": {
-                "type": "object",
-                "properties": {
-                    "audio_data": {
-                        "type": "string",
-                        "description": "Base64-encoded WAV audio data."
+                    "type": "object",
+                    "properties": {
+                        "audio_data": {"type": "string", "description": "Base64-encoded WAV audio data."},
+                        "expected_emotion": {
+                            "type": "string",
+                            "description": "The expected primary emotion in the audio.",
+                        },
                     },
-                    "expected_emotion": {
-                        "type": "string",
-                        "description": "The expected primary emotion in the audio."
-                    }
-                },
-                "required": [
-                    "audio_data",
-                    "expected_emotion"
-                ]
+                    "required": ["audio_data", "expected_emotion"],
                 },
                 "include_sample_schema": True,
             },
             data_source={
                 "type": "completions",
                 "model": "gpt-4o-audio-preview",
-                "sampling_params": {
-                    "temperature": 0.8
-                },
-                "modalities": [
-                    "text",
-                    "audio"
-                ],
+                "sampling_params": {"temperature": 0.8},
+                "modalities": ["text", "audio"],
                 "input_messages": {
                     "type": "template",
                     "template": [
                         {
                             "role": "system",
-                            "content": "You are an assistant that can analyze audio input for emotion and tone. You will be given an audio input to analyze."
+                            "content": "You are an assistant that can analyze audio input for emotion and tone. You will be given an audio input to analyze.",
                         },
                         {
                             "role": "user",
                             "type": "message",
                             "content": {
                                 "type": "input_text",
-                                "text": "Listen to the following audio and identify the primary emotion/tone. Respond with audio that matches the same emotion. Keep your response under 10 seconds."
-                            }
+                                "text": "Listen to the following audio and identify the primary emotion/tone. Respond with audio that matches the same emotion. Keep your response under 10 seconds.",
+                            },
                         },
                         {
                             "role": "user",
                             "type": "message",
                             "content": {
                                 "type": "input_audio",
-                                "input_audio": {
-                                "data": "{{item.audio_data}}",
-                                "format": "wav"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
+                                "input_audio": {"data": "{{item.audio_data}}", "format": "wav"},
+                            },
+                        },
+                    ],
+                },
+            },
         )
 
         # 5. Display results

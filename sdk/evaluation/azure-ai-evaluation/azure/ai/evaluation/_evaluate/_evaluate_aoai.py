@@ -123,7 +123,11 @@ def _begin_aoai_evaluation(
 
 
 def _begin_single_aoai_evaluation(
-    graders: Dict[str, AzureOpenAIGrader], data: pd.DataFrame, column_mapping: Optional[Dict[str, str]], run_name: str, **kwargs: Any
+    graders: Dict[str, AzureOpenAIGrader],
+    data: pd.DataFrame,
+    column_mapping: Optional[Dict[str, str]],
+    run_name: str,
+    **kwargs: Any,
 ) -> OAIEvalRunCreationInfo:
     """
     Use the AOAI SDK to start an evaluation of the inputted dataset against the supplied graders.
@@ -147,13 +151,13 @@ def _begin_single_aoai_evaluation(
     LOGGER.info(f"AOAI: Preparing evaluation for {len(graders)} grader(s): {list(graders.keys())}")
     grader_name_list = []
     grader_list = []
-    
+
     data_source = {}
     data_source_config = {}
-    
+
     if kwargs.get("data_source_config") is not None:
         data_source_config = kwargs.get("data_source_config")
-        
+
     if kwargs.get("data_source") is not None:
         data_source = kwargs.get("data_source")
 
@@ -884,7 +888,7 @@ def _begin_eval_run(
     run_name: str,
     input_data_df: pd.DataFrame,
     column_mapping: Dict[str, str],
-    data_source_params: Optional[Dict[str, Any]]=None,
+    data_source_params: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Given an eval group id and a dataset file path, use the AOAI API to
@@ -906,7 +910,7 @@ def _begin_eval_run(
 
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
     data_source = _get_data_source(input_data_df, column_mapping)
-    
+
     if data_source_params is not None:
         data_source.update(data_source_params)
 

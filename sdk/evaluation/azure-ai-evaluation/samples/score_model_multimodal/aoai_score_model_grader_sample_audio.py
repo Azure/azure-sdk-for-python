@@ -46,51 +46,30 @@ def create_sample_data() -> str:
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a cheerful assistant that speaks in audio with a natural style. Keep responses under 10 seconds."
+                    "content": "You are a cheerful assistant that speaks in audio with a natural style. Keep responses under 10 seconds.",
                 },
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "input_text",
-                            "text": "Introduce yourself in one sentence."
-                        }
-                    ]
-                }   
+                {"role": "user", "content": [{"type": "input_text", "text": "Introduce yourself in one sentence."}]},
             ]
         },
         {
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a flat, monotone, robotic assistant that speaks in audio. Avoid sounding cheerful or friendly. Keep responses under 10 seconds."
+                    "content": "You are a flat, monotone, robotic assistant that speaks in audio. Avoid sounding cheerful or friendly. Keep responses under 10 seconds.",
                 },
                 {
                     "role": "user",
-                    "content": [
-                    {
-                        "type": "input_text",
-                        "text": "Greet the listener and wish them a great day."
-                    }
-                    ]
-                }
+                    "content": [{"type": "input_text", "text": "Greet the listener and wish them a great day."}],
+                },
             ]
         },
         {
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are an enthusiastic assistant that speaks in audio with a fast pace. Keep responses under 10 seconds."
+                    "content": "You are an enthusiastic assistant that speaks in audio with a fast pace. Keep responses under 10 seconds.",
                 },
-                {
-                    "role": "user",
-                    "content": [
-                    {
-                        "type": "input_text",
-                        "text": "Tell a quick joke suitable for kids."
-                    }
-                    ]
-                }
+                {"role": "user", "content": [{"type": "input_text", "text": "Tell a quick joke suitable for kids."}]},
             ]
         },
     ]
@@ -143,7 +122,7 @@ def demonstrate_score_model_grader():
     data_file = create_sample_data()
 
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
-    
+
     endpoint = os.getenv("endpoint", "")
     deployment = os.getenv("deployment_name_audio", "gpt-4o-audio-preview")
     api_key = os.getenv("api_key", "")
@@ -179,27 +158,21 @@ def demonstrate_score_model_grader():
             input=[
                 {
                     "role": "system",
-                    "content": "Evaluate the provided audio for tone and emotion. Return a float score in [0,1] where 1 means the speaker sounds cheerful and friendly."
+                    "content": "Evaluate the provided audio for tone and emotion. Return a float score in [0,1] where 1 means the speaker sounds cheerful and friendly.",
                 },
                 {
                     "role": "user",
                     "content": [
-                        {
-                            "type": "input_text",
-                            "text": "Listen to this clip and score tone/emotion."
-                        },
+                        {"type": "input_text", "text": "Listen to this clip and score tone/emotion."},
                         {
                             "type": "input_audio",
-                            "input_audio": {
-                                "data": "{{ sample.output_audio.data }}",
-                                "format": "wav"
-                            }
-                        }
-                    ]
-                }
+                            "input_audio": {"data": "{{ sample.output_audio.data }}", "format": "wav"},
+                        },
+                    ],
+                },
             ],
             range=[0.0, 1.0],
-            pass_threshold=0.5
+            pass_threshold=0.5,
         )
 
         print("✅ Conversation quality grader created successfully")
@@ -221,32 +194,18 @@ def demonstrate_score_model_grader():
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
-                    "properties": {
-                        "messages": {
-                        "type": "array"
-                        }
-                    },
-                    "required": [
-                        "messages"
-                    ]
+                    "properties": {"messages": {"type": "array"}},
+                    "required": ["messages"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             },
             data_source={
                 "type": "completions",
                 "model": "gpt-4o-audio-preview",
-                "input_messages": {
-                    "type": "item_reference",
-                    "item_reference": "item.messages"
-                },
-                "sampling_params": {
-                    "temperature": 0.8
-                },
-                "modalities": [
-                    "text",
-                    "audio"
-                ],
-            }
+                "input_messages": {"type": "item_reference", "item_reference": "item.messages"},
+                "sampling_params": {"temperature": 0.8},
+                "modalities": ["text", "audio"],
+            },
         )
 
         # 5. Display results

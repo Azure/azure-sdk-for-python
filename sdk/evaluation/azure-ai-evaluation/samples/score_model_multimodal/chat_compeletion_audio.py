@@ -1,4 +1,3 @@
-
 import os
 import base64
 from openai import AzureOpenAI
@@ -6,6 +5,7 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+
 
 def demonstrate_score_model_grader():
     endpoint = os.getenv("endpoint", "")
@@ -20,26 +20,17 @@ def demonstrate_score_model_grader():
     )
 
     AUDIO_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/input_audio.wav"
-    with open(AUDIO_FILE_PATH, 'rb') as audio_file:
-        encoded_audio = base64.b64encode(audio_file.read()).decode('utf-8')
+    with open(AUDIO_FILE_PATH, "rb") as audio_file:
+        encoded_audio = base64.b64encode(audio_file.read()).decode("utf-8")
 
     # Prepare the chat prompt
     chat_prompt = [
         {
             "role": "user",
             "content": [
-                {
-                    "type": "text",
-                    "text": "You are an AI assistant that helps people find information."
-                },
-                {   
-                    "type": "input_audio", 
-                    "input_audio": { 
-                        "data": encoded_audio, 
-                        "format": "wav" 
-                    } 
-                }
-            ]
+                {"type": "text", "text": "You are an AI assistant that helps people find information."},
+                {"type": "input_audio", "input_audio": {"data": encoded_audio, "format": "wav"}},
+            ],
         }
     ]
 
@@ -48,13 +39,7 @@ def demonstrate_score_model_grader():
 
     # Generate the completion
     completion = client.chat.completions.create(
-        model=deployment,
-        modalities=["text", "audio"],
-        audio={ 
-               "voice": "alloy", 
-               "format": "wav" 
-            },
-        messages=messages
+        model=deployment, modalities=["text", "audio"], audio={"voice": "alloy", "format": "wav"}, messages=messages
     )
 
     print(completion.to_json())
