@@ -62,8 +62,6 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
                 delete_poller = client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
                 delete_poller.result()
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
-                if is_live():
-                    time.sleep(30)  # Wait for deletion to complete
         except Exception:
             test_logger.info(f"Collection '{test_collection_id}' does not exist, proceeding with creation")
 
@@ -89,10 +87,6 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
         result = create_poller.result()
 
         test_logger.info(f"Collection created: {result}")
-
-        # Verify creation
-        if is_live():
-            time.sleep(15)  # Wait for collection to be available
         created_collection = client.stac.get_collection(collection_id=test_collection_id)
         assert created_collection is not None
         assert created_collection.id == test_collection_id
@@ -126,10 +120,6 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
         updated_collection = client.stac.create_or_replace_collection(collection_id=test_collection_id, body=collection)
 
         test_logger.info(f"Collection updated: {updated_collection}")
-
-        # Verify update
-        if is_live():
-            time.sleep(10)
         updated_collection = client.stac.get_collection(collection_id=test_collection_id)
         assert updated_collection.description == "Test collection for lifecycle operations - UPDATED"
 
@@ -154,10 +144,6 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
         result = delete_poller.result()
 
         test_logger.info(f"Delete operation completed: {result}")
-
-        # Verify deletion
-        if is_live():
-            time.sleep(30)
 
         try:
             client.stac.get_collection(collection_id=test_collection_id)
@@ -189,8 +175,6 @@ class TestPlanetaryComputerCollectionLifecycle(PlanetaryComputerProClientTestBas
             test_logger.info("Checking if asset 'test-asset' already exists and deleting if found...")
             client.stac.delete_collection_asset(collection_id=planetarycomputer_collection_id, asset_id="test-asset")
             test_logger.info("Deleted existing 'test-asset'")
-            if is_live():
-                time.sleep(5)  # Wait for deletion to complete
         except Exception as e:
             if "404" in str(e) or "Not Found" in str(e) or "not found" in str(e).lower():
                 test_logger.info("Asset 'test-asset' does not exist, proceeding with creation")

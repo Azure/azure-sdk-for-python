@@ -99,7 +99,7 @@ async def crop_geo_json(client: PlanetaryComputerProClient, collection_id, item_
         body=geojson,
     )
     logging.info("Cropping with GeoJSON completed")
-    display_response(crop_geo_json_response, f"crop_geojson_{item_id}.png")
+    await display_response(crop_geo_json_response, f"crop_geojson_{item_id}.png")
 
 
 async def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
@@ -114,7 +114,7 @@ async def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, coll
         asset_band_indices="image|1,2,3",
         body=geojson,
     )
-    display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
+    await display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
 
 
 async def get_geo_json_statistics(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
@@ -146,7 +146,7 @@ async def get_part(client: PlanetaryComputerProClient, collection_id, item_id, b
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    display_response(get_part_response, f"part_{item_id}.png")
+    await display_response(get_part_response, f"part_{item_id}.png")
 
 
 async def get_part_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, bounds):
@@ -164,7 +164,7 @@ async def get_part_with_dimensions(client: PlanetaryComputerProClient, collectio
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    display_response(get_part_with_dimensions_response, f"part_dims_{item_id}.png")
+    await display_response(get_part_with_dimensions_response, f"part_dims_{item_id}.png")
 
 
 async def get_point(client: PlanetaryComputerProClient, collection_id, item_id, point):
@@ -191,7 +191,7 @@ async def get_preview(client: PlanetaryComputerProClient, collection_id, item_id
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    display_response(get_preview_response, f"preview_{item_id}.png")
+    await display_response(get_preview_response, f"preview_{item_id}.png")
 
 
 async def get_preview_with_format(client: PlanetaryComputerProClient, collection_id, item_id):
@@ -205,7 +205,7 @@ async def get_preview_with_format(client: PlanetaryComputerProClient, collection
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    display_response(get_preview_with_format_response, f"preview_format_{item_id}.png")
+    await display_response(get_preview_with_format_response, f"preview_format_{item_id}.png")
 
 
 async def list_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
@@ -244,7 +244,7 @@ async def get_tile(client: PlanetaryComputerProClient, collection_id, item_id):
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
+    await display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
 
 
 async def get_wmts_capabilities(client: PlanetaryComputerProClient, collection_id, item_id):

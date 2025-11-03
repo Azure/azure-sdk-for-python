@@ -762,10 +762,6 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         assert created_item.id == item_id, "Created item ID should match"
         logger.info(f"Verified item {created_item.id}")
 
-        # Wait for item to be fully available before replacing (only in live mode)
-        if is_live():
-          time.sleep(2)
-
         # Step 2: Now demonstrate create_or_replace (replace since item exists)
         logger.info(f"Replacing item {item_id} using create_or_replace...")
         stac_item.properties["platform"] = "Imagery Updated"
@@ -880,19 +876,11 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         assert existing_item.id == item_id, "Item ID should match"
         logger.info(f"Verified item {item_id} exists")
 
-        # Wait a moment for creation to complete (only in live mode)
-        if is_live():
-          time.sleep(2)
-
         # Delete the item
         logger.info(f"Deleting item {item_id}...")
         delete_poller = client.stac.begin_delete_item(collection_id=collection_id, item_id=item_id, polling=True)
         delete_poller.result()
         logger.info(f"Delete operation completed for item {item_id}")
-
-        # Wait for deletion to propagate (only in live mode)
-        if is_live():
-          time.sleep(2)
 
         # Verify deletion by attempting to retrieve the item
         logger.info(f"Verifying item {item_id} was deleted...")

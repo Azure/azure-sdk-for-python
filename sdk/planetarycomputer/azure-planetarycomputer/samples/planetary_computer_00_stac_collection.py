@@ -64,10 +64,6 @@ def create_collection(client: PlanetaryComputerProClient, collection_id):
         collection_delete_operation.result()
         logging.info(f"Deleted collection '{collection_id}'")
 
-        # Wait for deletion to complete
-        logging.info("Waiting 60 seconds for deletion to complete...")
-        time.sleep(60)
-
     # Define collection spatial and temporal extents (Georgia state bounds)
     spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-85.605165, 30.357851, -80.839729, 35.000659]])
     temporal_extent = StacCollectionTemporalExtent(
@@ -142,10 +138,6 @@ def create_collection(client: PlanetaryComputerProClient, collection_id):
     collection_create_operation = client.stac.begin_create_collection(body=collection_data, polling=False)
     collection_create_operation.result()
     logging.info(f"Collection '{collection_id}' created successfully")
-
-    # Wait for collection to be available
-    logging.info("Waiting 30 seconds for collection to be available...")
-    time.sleep(30)
 
     # Get the created collection to verify
     logging.info(f"Retrieving collection '{collection_id}'...")

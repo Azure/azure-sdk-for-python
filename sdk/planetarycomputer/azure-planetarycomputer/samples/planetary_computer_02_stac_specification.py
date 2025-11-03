@@ -211,9 +211,7 @@ def create_stac_item(client: PlanetaryComputerProClient, collection_id, item_id)
     if any(item.id == stac_item.id for item in stac_item_get_items_response.features):
         logging.info(f"Item {stac_item.id} already exists. Deleting it before creating a new one.")
         client.stac.begin_delete_item(collection_id=collection_id, item_id=stac_item.id, polling=True).result()
-        logging.info(f"Deleted item {stac_item.id}. Proceeding to create a new one.")
-        time.sleep(15)
-    else:
+        logging.info(f"Deleted item {stac_item.id}. Proceeding to create a new one.")    else:
         logging.info(f"Item {stac_item.id} does not exist. Proceeding to create it.")
 
     stac_item.collection = collection_id
@@ -267,9 +265,6 @@ def create_or_replace_stac_item(client: PlanetaryComputerProClient, collection_i
     created_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
     logging.info(f"Verified item {created_item.id}")
 
-    # Wait for item to be fully available before replacing
-    time.sleep(2)
-
     # Now demonstrate create_or_replace (replace since item exists)
     stac_item.properties["platform"] = "Imagery Updated"
     stac_item.properties["processing_level"] = "L2"
@@ -300,9 +295,6 @@ def delete_stac_item(client: PlanetaryComputerProClient, collection_id, item_id)
         delete_poller = client.stac.begin_delete_item(collection_id=collection_id, item_id=item_id, polling=True)
         delete_poller.result()
         logging.info(f"Successfully deleted item {item_id}")
-
-        # Wait a moment for deletion to complete
-        time.sleep(2)
 
         # Verify deletion by attempting to retrieve the item
         try:

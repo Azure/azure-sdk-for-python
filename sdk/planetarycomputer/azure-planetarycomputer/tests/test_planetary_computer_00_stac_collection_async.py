@@ -841,9 +841,6 @@ class TestPlanetaryComputerStacCollectionAsync(PlanetaryComputerProClientTestBas
                 delete_poller = await client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
                 delete_poller.result()
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
-                if is_live():
-                    # Wait for deletion to complete
-                    time.sleep(5)
         except Exception:
             test_logger.info(f"Collection '{test_collection_id}' does not exist, proceeding with creation")
 

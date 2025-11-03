@@ -130,9 +130,6 @@ async def create_or_replace_source(
     logging.info(f"First call to create_or_replace_source with existing source ID: {source_id}")
     first_result = await client.ingestion.replace_source(id=source_id, body=ingestion_source)
     logging.info(f"First call result: {first_result.id}")
-
-    time.sleep(1)
-
     # Second call - replaces again with modified token (demonstrates update capability)
     # Generate a valid SAS token format with required fields: permission, start, and expiration
     from datetime import datetime, timedelta
@@ -192,10 +189,6 @@ async def create_github_public_ingestion(client: PlanetaryComputerProClient, col
     )
 
     # Create the ingestion
-    # TODO: The SDK's ingestion.create() method behavior should be reviewed.
-    # Currently, calling create() on an existing ingestion only performs updates rather than
-    # failing or replacing the ingestion. This should be clarified or a separate create_or_update
-    # method should be provided for idempotent operations.
     logging.info("Creating ingestion for sample catalog...")
     ingestion_response = await client.ingestion.create(collection_id=collection_id, body=ingestion_definition)
     ingestion_id = ingestion_response.id
@@ -330,9 +323,6 @@ async def run_and_monitor_ingestion(client: PlanetaryComputerProClient, collecti
 
         if status in [OperationStatus.SUCCEEDED, OperationStatus.FAILED, OperationStatus.CANCELED]:
             break
-
-        time.sleep(2)
-
     # Check for errors in status history
     if run.operation.status_history:
         for status_item in run.operation.status_history:
