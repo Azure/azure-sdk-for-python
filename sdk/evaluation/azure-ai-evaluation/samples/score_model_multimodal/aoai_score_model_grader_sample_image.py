@@ -142,7 +142,7 @@ def demonstrate_score_model_grader():
             input=[
                 {
                 "role": "system",
-                "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if its an excelent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0."
+                "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if it's an excellent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0."
                 },
                 {
                     "role": "user",
