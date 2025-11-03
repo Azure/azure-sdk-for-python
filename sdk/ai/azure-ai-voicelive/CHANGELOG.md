@@ -7,6 +7,9 @@
 - Added support for Agent configuration through the new `AgentConfig` model
 - Added `agent` field to `ResponseSession` model to support agent-based conversations
 - The `AgentConfig` model includes properties for agent type, name, description, agent_id, and thread_id
+- Added support for Agent configuration through the new `AgentConfig` model
+- Added `agent` field to `ResponseSession` model to support agent-based conversations
+- The `AgentConfig` model includes properties for agent type, name, description, agent_id, and thread_id
 
 ## 1.0.0 (2025-10-01)
 
