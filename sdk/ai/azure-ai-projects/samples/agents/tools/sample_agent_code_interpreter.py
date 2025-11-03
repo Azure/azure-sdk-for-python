@@ -7,14 +7,14 @@
 """
 DESCRIPTION:
     This sample demonstrates how to run Prompt Agent operations
-    using the Code Interpreter Tool and a synchronous client.
+    using the Code Interpreter Tool and a synchronous client followed by downloading the generated file.
 
 USAGE:
     python sample_agent_code_interpreter.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity load_dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -73,7 +73,6 @@ with project_client:
 
     # Send request to create a chart and generate a file
     response = openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
         conversation=conversation.id,
         input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
@@ -83,6 +82,7 @@ with project_client:
     # Extract file information from response annotations
     file_id = ""
     filename = ""
+    container_id = ""
 
     # Get the last message which should contain file citations
     last_message = response.output[-1]  # ResponseOutputMessage
@@ -96,15 +96,16 @@ with project_client:
                 if isinstance(file_citation, AnnotationContainerFileCitation):
                     file_id = file_citation.file_id
                     filename = file_citation.filename
+                    container_id = file_citation.container_id
                     print(f"Found generated file: {filename} (ID: {file_id})")
 
     # Download the generated file if available
     if file_id and filename:
         # TODO: File download currently throws exception - needs investigation
-        # file_content = openai_client.files.content(file_id=file_id)
-        # with open(filename, "wb") as f:
-        #     f.write(file_content.read())
-        #     print(f"File {filename} downloaded successfully.")
+        file_content = openai_client.containers.files.content.retrieve(file_id=file_id, container_id=container_id)
+        with open(filename, "wb") as f:
+            f.write(file_content.read())
+            print(f"File {filename} downloaded successfully.")
         print(f"File ready for download: {filename}")
     else:
         print("No file generated in response")

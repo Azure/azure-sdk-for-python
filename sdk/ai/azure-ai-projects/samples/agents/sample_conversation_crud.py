@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity load_dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -49,11 +49,6 @@ with project_client:
     # Retrieve a conversation
     conversation = openai_client.conversations.retrieve(conversation_id=conversation1.id)
     print(f"Retrieved conversation (id: {conversation.id}, metadata: {conversation.metadata})")
-
-    # List conversations
-    # Disabled since OpenAI client does not have a conversation listing API.
-    # for conversation in openai_client.conversations.list():
-    #     print(f"Listed conversation (id: {conversation.id})")
 
     # Update conversation
     openai_client.conversations.update(conversation_id=conversation1.id, metadata={"key": "value"})

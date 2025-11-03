@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp load_dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -31,7 +31,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition
+from azure.ai.projects.models import AgentReference, PromptAgentDefinition
 
 load_dotenv()
 
@@ -41,7 +41,6 @@ async def main() -> None:
     credential = DefaultAzureCredential()
 
     async with credential:
-
         project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential)
 
         async with project_client:
@@ -57,28 +56,27 @@ async def main() -> None:
             )
             print(f"Agent created (name: {agent.name}, id: {agent.id}, version: {agent.version})")
 
+            # See https://platform.openai.com/docs/api-reference/conversations/create?lang=python
             conversation = await openai_client.conversations.create(
                 items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
             )
             print(f"Created conversation with initial user message (id: {conversation.id})")
 
+            # See https://platform.openai.com/docs/api-reference/responses/create?lang=python
             response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",  # TODO: Remove 'input' once service is fixed
+                conversation=conversation.id, extra_body={"agent": AgentReference(name=agent.name).as_dict()}, input=""
             )
             print(f"Response output: {response.output_text}")
 
+            # See https://platform.openai.com/docs/api-reference/conversations/create-items?lang=python
             await openai_client.conversations.items.create(
                 conversation_id=conversation.id,
                 items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
             )
-            print(f"Added a second user message to the conversation")
+            print(f"Added a second user message to  the conversation")
 
             response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",  # TODO: Remove 'input' once service is fixed
+                conversation=conversation.id, extra_body={"agent": AgentReference(name=agent.name).as_dict()}, input=[]
             )
             print(f"Response output: {response.output_text}")
 
@@ -87,6 +85,7 @@ async def main() -> None:
 
             await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
             print("Agent deleted")
+            # [END prompt_agent_basic]
 
 
 if __name__ == "__main__":
