@@ -132,6 +132,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Literal["New", "Restore"]] = None,
+        data: Optional[bytes] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
