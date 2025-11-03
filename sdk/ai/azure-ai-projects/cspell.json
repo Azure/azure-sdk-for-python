@@ -16,6 +16,7 @@
         "aread",
         "inpainting",
         "CSDL",
+        "fstring",
     ],
     "ignorePaths": [
       "*.csv",
