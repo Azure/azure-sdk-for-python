@@ -2146,20 +2146,32 @@ def _convert_results_to_aoai_evaluation_results(
                 # Create result object for this criteria
                 metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
                 for metric in metrics:
-                    result_obj = {
-                        "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
-                            "type", "azure_ai_evaluator"
-                        ),
-                        "name": criteria_name,  # Use criteria name as name
-                        "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
-                        "score": None,
-                        "label": None,
-                        "reason": None,
-                        "threshold": None,
-                        "passed": None,
-                        "sample": sample,
-                    }
-                    run_output_results.append(result_obj)
+                    should_add_error_summary = True
+                    for result in run_output_results:
+                        if result.get("name", None) == criteria_name and result.get("metric", None) == metric:
+                            if ((result.get("score", None) == None or (isinstance(result.get("score", None), float) and math.isnan(result.get("score", None)))) 
+                                and (result.get("threshold", None) == None or (isinstance(result.get("threshold", None), float) and math.isnan(result.get("threshold", None))))
+                                and (result.get("label", None) == None or result.get("label", None) == "NaN")
+                                and (result.get("reason", None) == None or result.get("reason", None) == "NaN")):
+                                run_output_results.remove(result)
+                            else:
+                                should_add_error_summary = False
+                            break  # Skip if already have result for this criteria and metric
+                    if should_add_error_summary:
+                        result_obj = {
+                            "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
+                                "type", "azure_ai_evaluator"
+                            ),
+                            "name": criteria_name,  # Use criteria name as name
+                            "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
+                            "score": None,
+                            "label": None,
+                            "reason": None,
+                            "threshold": None,
+                            "passed": None,
+                            "sample": sample,
+                        }
+                        run_output_results.append(result_obj)
 
         # Create RunOutputItem structure
         run_output_item = {
@@ -2372,7 +2384,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
                 usage_data = sample_data["usage"]
-                model_name = sample_data.get("model", "unknown")
+                model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
                 if model_name not in model_usage_stats:
                     model_usage_stats[model_name] = {
                         "invocation_count": 0,
@@ -2385,10 +2397,10 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 model_stats = model_usage_stats[model_name]
                 model_stats["invocation_count"] += 1
                 if isinstance(usage_data, dict):
-                    model_stats["total_tokens"] += usage_data.get("total_tokens", 0)
-                    model_stats["prompt_tokens"] += usage_data.get("prompt_tokens", 0)
-                    model_stats["completion_tokens"] += usage_data.get("completion_tokens", 0)
-                    model_stats["cached_tokens"] += usage_data.get("cached_tokens", 0)
+                    model_stats["total_tokens"] += usage_data.get("total_tokens", 0) if usage_data.get("total_tokens", 0) else 0
+                    model_stats["prompt_tokens"] += usage_data.get("prompt_tokens", 0) if usage_data.get("prompt_tokens", 0) else 0
+                    model_stats["completion_tokens"] += usage_data.get("completion_tokens", 0) if usage_data.get("completion_tokens", 0) else 0
+                    model_stats["cached_tokens"] += usage_data.get("cached_tokens", 0) if usage_data.get("cached_tokens", 0) else 0
 
     # Convert model usage stats to list format matching EvaluationRunPerModelUsage
     per_model_usage = []
