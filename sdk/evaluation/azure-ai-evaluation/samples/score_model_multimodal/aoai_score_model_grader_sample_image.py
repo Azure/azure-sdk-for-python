@@ -45,7 +45,8 @@ load_dotenv()
 def create_sample_data() -> str:
     """Create sample conversation data for testing."""
     IMAGE_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/image.jpg"
-    encoded_image = base64.b64encode(open(IMAGE_FILE_PATH, 'rb').read()).decode('utf-8')
+    with open(IMAGE_FILE_PATH, 'rb') as f:
+        encoded_image = base64.b64encode(f.read()).decode('utf-8')
     sample_conversations = [
         {
             "image_url": "https://en.wikipedia.org/wiki/Eiffel_Tower#/media/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg",
