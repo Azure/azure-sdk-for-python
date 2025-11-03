@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._ai_project_instrumentor import AIProjectInstrumentor
+from ._responses_instrumentor import ResponsesInstrumentor
 from ._trace_function import trace_function
 
 
