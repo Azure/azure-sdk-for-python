@@ -134,6 +134,7 @@ def main() -> None:
                 {
                     "role": "system",
                     "content": "You are an expert in literature and can provide book recommendations."
+
                 },
                 {
                     "createdAt": "2025-03-14T08:00:00Z",

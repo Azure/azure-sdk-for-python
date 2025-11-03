@@ -142,12 +142,12 @@ def main() -> None:
                     source=SourceFileContent(
                         type="file_content",
                         content= [
-                            # SourceFileContentContent(
-                            #     item= {
-                            #         "response": simple_response,
-                            #         "ground_truth": simple_ground_truth
-                            #     }
-                            # ),
+                            SourceFileContentContent(
+                                item= {
+                                    "response": simple_response,
+                                    "ground_truth": simple_ground_truth
+                                }
+                            ),
                             SourceFileContentContent(
                                 item= {
                                     "response": response,
