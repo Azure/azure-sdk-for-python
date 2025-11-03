@@ -54,7 +54,7 @@ INTERNAL_TASK_TIMEOUT = 120
 MAX_SAMPLING_ITERATIONS_MULTIPLIER = 100
 
 # Map of risk categories to their maximum number of subtypes
-# Used to calculate num_objectives_prime for adequate subtype coverage
+# Used to calculate num_objectives_with_subtypes for adequate subtype coverage
 RISK_TO_NUM_SUBTYPE_MAP = {
     RiskCategory.ProhibitedActions: 32,
     RiskCategory.TaskAdherence: 9,

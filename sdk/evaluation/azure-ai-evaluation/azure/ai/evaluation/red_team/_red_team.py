@@ -76,6 +76,7 @@ from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
 from ._utils.retry_utils import create_standard_retry_manager
 from ._utils.file_utils import create_file_manager
 from ._utils.metric_mapping import get_attack_objective_from_risk_category
+from ._utils.objective_utils import extract_risk_subtype, get_objective_id
 
 from ._orchestrator_manager import OrchestratorManager
 from ._evaluation_processor import EvaluationProcessor
@@ -319,46 +320,6 @@ class RedTeam:
             mlflow_integration=self.mlflow_integration,
         )
 
-    @staticmethod
-    def _extract_risk_subtype(objective: Dict) -> Optional[str]:
-        """Extract risk-subtype from an objective's target_harms metadata.
-
-        Searches through the target_harms list in the objective's metadata to find
-        the first non-empty risk-subtype value.
-
-        :param objective: The objective dictionary containing metadata with target_harms
-        :type objective: Dict
-        :return: The risk-subtype value if found, None otherwise
-        :rtype: Optional[str]
-        """
-        target_harms = objective.get("metadata", {}).get("target_harms", [])
-        if target_harms and isinstance(target_harms, list):
-            for harm in target_harms:
-                if isinstance(harm, dict) and "risk-subtype" in harm:
-                    subtype_value = harm.get("risk-subtype")
-                    if subtype_value:
-                        return subtype_value
-        return None
-
-    @staticmethod
-    def _get_objective_id(objective: Dict) -> str:
-        """Get a unique identifier for an objective.
-
-        Uses the objective's 'id' field if available. If not present, generates
-        a UUID-based identifier to ensure uniqueness. This avoids using Python's
-        id() which returns memory addresses that can be reused after garbage collection.
-
-        :param objective: The objective dictionary
-        :type objective: Dict
-        :return: A unique identifier for the objective
-        :rtype: str
-        """
-        obj_id = objective.get("id")
-        if obj_id is not None:
-            return str(obj_id)
-        # Generate a random UUID-based identifier if no 'id' field exists
-        return f"generated-{uuid.uuid4()}"
-
     async def _get_attack_objectives(
         self,
         risk_category: Optional[RiskCategory] = None,
@@ -392,18 +353,18 @@ class RedTeam:
         risk_cat_value = get_attack_objective_from_risk_category(risk_category).lower()
         num_objectives = attack_objective_generator.num_objectives
 
-        # Calculate num_objectives_prime based on max subtypes across all risk categories
+        # Calculate num_objectives_with_subtypes based on max subtypes across all risk categories
         max_num_subtypes = max((RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in self.risk_categories), default=0)
-        num_objectives_prime = max(num_objectives, max_num_subtypes)
+        num_objectives_with_subtypes = max(num_objectives, max_num_subtypes)
 
         self.logger.debug(
-            f"Calculated num_objectives_prime for {risk_cat_value}: "
-            f"max(num_objectives={num_objectives}, max_subtypes={max_num_subtypes}) = {num_objectives_prime}"
+            f"Calculated num_objectives_with_subtypes for {risk_cat_value}: "
+            f"max(num_objectives={num_objectives}, max_subtypes={max_num_subtypes}) = {num_objectives_with_subtypes}"
         )
 
         log_subsection_header(
             self.logger,
-            f"Getting attack objectives for {risk_cat_value}, strategy: {strategy}, num_objectives: {num_objectives}, num_objectives_prime: {num_objectives_prime}",
+            f"Getting attack objectives for {risk_cat_value}, strategy: {strategy}, num_objectives: {num_objectives}, num_objectives_with_subtypes: {num_objectives_with_subtypes}",
         )
 
         # Check if we already have baseline objectives for this risk category
@@ -419,7 +380,7 @@ class RedTeam:
             if custom_objectives:
                 # Use custom objectives for this risk category
                 return await self._get_custom_attack_objectives(
-                    risk_cat_value, num_objectives, num_objectives_prime, strategy, current_key, is_agent_target
+                    risk_cat_value, num_objectives, num_objectives_with_subtypes, strategy, current_key, is_agent_target
                 )
             else:
                 # No custom objectives for this risk category, but risk_categories was specified
@@ -440,7 +401,7 @@ class RedTeam:
                         baseline_key,
                         current_key,
                         num_objectives,
-                        num_objectives_prime,
+                        num_objectives_with_subtypes,
                         is_agent_target,
                         client_id,
                     )
@@ -460,7 +421,7 @@ class RedTeam:
                 baseline_key,
                 current_key,
                 num_objectives,
-                num_objectives_prime,
+                num_objectives_with_subtypes,
                 is_agent_target,
                 client_id,
             )
@@ -469,7 +430,7 @@ class RedTeam:
         self,
         risk_cat_value: str,
         num_objectives: int,
-        num_objectives_prime: int,
+        num_objectives_with_subtypes: int,
         strategy: str,
         current_key: tuple,
         is_agent_target: Optional[bool] = None,
@@ -490,12 +451,26 @@ class RedTeam:
 
         self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
 
+        # Deduplicate objectives by ID to avoid selecting the same logical objective multiple times
+        seen_ids = set()
+        deduplicated_objectives = []
+        for obj in custom_objectives:
+            obj_id = get_objective_id(obj)
+            if obj_id not in seen_ids:
+                seen_ids.add(obj_id)
+                deduplicated_objectives.append(obj)
+
+        if len(deduplicated_objectives) < len(custom_objectives):
+            self.logger.debug(
+                f"Deduplicated {len(custom_objectives)} objectives to {len(deduplicated_objectives)} unique objectives by ID"
+            )
+
         # Group objectives by risk_subtype if present
         objectives_by_subtype = {}
         objectives_without_subtype = []
 
-        for obj in custom_objectives:
-            risk_subtype = self._extract_risk_subtype(obj)
+        for obj in deduplicated_objectives:
+            risk_subtype = extract_risk_subtype(obj)
 
             if risk_subtype:
                 if risk_subtype not in objectives_by_subtype:
@@ -505,15 +480,15 @@ class RedTeam:
                 objectives_without_subtype.append(obj)
 
         # Determine sampling strategy based on risk_subtype presence
-        # Use num_objectives_prime for initial sampling to ensure coverage
+        # Use num_objectives_with_subtypes for initial sampling to ensure coverage
         if objectives_by_subtype:
             # We have risk subtypes - sample evenly across them
             num_subtypes = len(objectives_by_subtype)
-            objectives_per_subtype = max(1, num_objectives_prime // num_subtypes)
+            objectives_per_subtype = max(1, num_objectives_with_subtypes // num_subtypes)
 
             self.logger.info(
                 f"Found {num_subtypes} risk subtypes in custom objectives. "
-                f"Sampling {objectives_per_subtype} objectives per subtype to reach ~{num_objectives_prime} total."
+                f"Sampling {objectives_per_subtype} objectives per subtype to reach ~{num_objectives_with_subtypes} total."
             )
 
             selected_cat_objectives = []
@@ -526,30 +501,30 @@ class RedTeam:
                     f"({len(subtype_objectives)} available)"
                 )
 
-            # If we need more objectives to reach num_objectives_prime, sample from objectives without subtype
-            if len(selected_cat_objectives) < num_objectives_prime and objectives_without_subtype:
-                remaining = num_objectives_prime - len(selected_cat_objectives)
+            # If we need more objectives to reach num_objectives_with_subtypes, sample from objectives without subtype
+            if len(selected_cat_objectives) < num_objectives_with_subtypes and objectives_without_subtype:
+                remaining = num_objectives_with_subtypes - len(selected_cat_objectives)
                 num_to_sample = min(remaining, len(objectives_without_subtype))
                 selected_cat_objectives.extend(random.sample(objectives_without_subtype, num_to_sample))
                 self.logger.debug(f"Added {num_to_sample} objectives without risk_subtype to reach target count")
 
             # If we still need more, round-robin through subtypes again
-            if len(selected_cat_objectives) < num_objectives_prime:
-                remaining = num_objectives_prime - len(selected_cat_objectives)
+            if len(selected_cat_objectives) < num_objectives_with_subtypes:
+                remaining = num_objectives_with_subtypes - len(selected_cat_objectives)
                 subtype_list = list(objectives_by_subtype.keys())
                 # Track selected objective IDs in a set for O(1) membership checks
                 # Use the objective's 'id' field if available, generate UUID-based ID otherwise
-                selected_ids = {self._get_objective_id(obj) for obj in selected_cat_objectives}
+                selected_ids = {get_objective_id(obj) for obj in selected_cat_objectives}
                 idx = 0
                 while remaining > 0 and subtype_list:
                     subtype = subtype_list[idx % len(subtype_list)]
                     available = [
-                        obj for obj in objectives_by_subtype[subtype] if self._get_objective_id(obj) not in selected_ids
+                        obj for obj in objectives_by_subtype[subtype] if get_objective_id(obj) not in selected_ids
                     ]
                     if available:
                         selected_obj = random.choice(available)
                         selected_cat_objectives.append(selected_obj)
-                        selected_ids.add(self._get_objective_id(selected_obj))
+                        selected_ids.add(get_objective_id(selected_obj))
                         remaining -= 1
                     idx += 1
                     # Prevent infinite loop if we run out of unique objectives
@@ -558,11 +533,11 @@ class RedTeam:
 
             self.logger.info(f"Sampled {len(selected_cat_objectives)} objectives across {num_subtypes} risk subtypes")
         else:
-            # No risk subtypes - use num_objectives_prime for sampling
-            if len(custom_objectives) > num_objectives_prime:
-                selected_cat_objectives = random.sample(custom_objectives, num_objectives_prime)
+            # No risk subtypes - use num_objectives_with_subtypes for sampling
+            if len(custom_objectives) > num_objectives_with_subtypes:
+                selected_cat_objectives = random.sample(custom_objectives, num_objectives_with_subtypes)
                 self.logger.info(
-                    f"Sampled {num_objectives_prime} objectives from {len(custom_objectives)} available for {risk_cat_value}"
+                    f"Sampled {num_objectives_with_subtypes} objectives from {len(custom_objectives)} available for {risk_cat_value}"
                 )
             else:
                 selected_cat_objectives = custom_objectives
@@ -577,17 +552,8 @@ class RedTeam:
         # Extract content from selected objectives
         selected_prompts = []
         for obj in selected_cat_objectives:
-            risk_subtype = None
             # Extract risk-subtype from target_harms if present
-            target_harms = obj.get("metadata", {}).get("target_harms", [])
-            if target_harms and isinstance(target_harms, list):
-                for harm in target_harms:
-                    if isinstance(harm, dict) and "risk-subtype" in harm:
-                        subtype_value = harm.get("risk-subtype")
-                        # Only store non-empty risk-subtype values
-                        if subtype_value and subtype_value.strip():
-                            risk_subtype = subtype_value
-                            break  # Use the first non-empty risk-subtype found
+            risk_subtype = extract_risk_subtype(obj)
 
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
@@ -615,7 +581,7 @@ class RedTeam:
         baseline_key: tuple,
         current_key: tuple,
         num_objectives: int,
-        num_objectives_prime: int,
+        num_objectives_with_subtypes: int,
         is_agent_target: Optional[bool] = None,
         client_id: Optional[str] = None,
     ) -> List[str]:
@@ -707,9 +673,9 @@ class RedTeam:
                 self.logger.warning("Empty or invalid response, returning empty list")
                 return []
 
-        # Filter and select objectives using num_objectives_prime
+        # Filter and select objectives using num_objectives_with_subtypes
         selected_cat_objectives = self._filter_and_select_objectives(
-            objectives_response, strategy, baseline_objectives_exist, baseline_key, num_objectives_prime
+            objectives_response, strategy, baseline_objectives_exist, baseline_key, num_objectives_with_subtypes
         )
 
         # Extract content and cache
@@ -985,7 +951,7 @@ class RedTeam:
         """Extract content from selected objectives and build prompt-to-context mapping."""
         selected_prompts = []
         for obj in selected_objectives:
-            risk_subtype = self._extract_risk_subtype(obj)
+            risk_subtype = extract_risk_subtype(obj)
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
@@ -1074,7 +1040,7 @@ class RedTeam:
             obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
             content = ""
             context = ""
-            risk_subtype = self._extract_risk_subtype(obj)
+            risk_subtype = extract_risk_subtype(obj)
 
             if "messages" in obj and len(obj["messages"]) > 0:
 
@@ -1508,14 +1474,14 @@ class RedTeam:
         log_section_header(self.logger, "Fetching attack objectives")
         all_objectives = {}
 
-        # Calculate and log num_objectives_prime once globally
+        # Calculate and log num_objectives_with_subtypes once globally
         num_objectives = self.attack_objective_generator.num_objectives
         max_num_subtypes = max((RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in self.risk_categories), default=0)
-        num_objectives_prime = max(num_objectives, max_num_subtypes)
+        num_objectives_with_subtypes = max(num_objectives, max_num_subtypes)
 
-        if num_objectives_prime != num_objectives:
+        if num_objectives_with_subtypes != num_objectives:
             warning_msg = (
-                f"Using {num_objectives_prime} objectives per risk category instead of requested {num_objectives} "
+                f"Using {num_objectives_with_subtypes} objectives per risk category instead of requested {num_objectives} "
                 f"to ensure adequate coverage of {max_num_subtypes} subtypes"
             )
             self.logger.warning(warning_msg)
@@ -1534,8 +1500,8 @@ class RedTeam:
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
             all_objectives["baseline"][risk_category.value] = baseline_objectives
-            status_msg = f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)}/{num_objectives_prime} objectives"
-            if len(baseline_objectives) < num_objectives_prime:
+            status_msg = f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)}/{num_objectives_with_subtypes} objectives"
+            if len(baseline_objectives) < num_objectives_with_subtypes:
                 status_msg += f" (⚠️ fewer than expected)"
             tqdm.write(status_msg)
 

@@ -12,6 +12,7 @@ from datetime import datetime
 from azure.ai.evaluation.red_team._red_team import RedTeam, RiskCategory, AttackStrategy
 from azure.ai.evaluation.red_team._red_team_result import ScanResult, RedTeamResult
 from azure.ai.evaluation.red_team._attack_objective_generator import _AttackObjectiveGenerator
+from azure.ai.evaluation.red_team._utils.objective_utils import extract_risk_subtype
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
 
@@ -1627,7 +1628,7 @@ class TestRedTeamRoundRobinSampling:
 
         subtype_counts = {}
         for obj in selected_objectives:
-            subtype = RedTeam._extract_risk_subtype(obj)
+            subtype = extract_risk_subtype(obj)
             subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
 
         assert subtype_counts["subtype_a"] == 3
@@ -1767,7 +1768,7 @@ class TestRedTeamRoundRobinSampling:
 
         subtype_counts = {}
         for obj in selected_objectives:
-            subtype = RedTeam._extract_risk_subtype(obj)
+            subtype = extract_risk_subtype(obj)
             subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
 
         # Verify that we got objectives and exhausted smaller subtypes
