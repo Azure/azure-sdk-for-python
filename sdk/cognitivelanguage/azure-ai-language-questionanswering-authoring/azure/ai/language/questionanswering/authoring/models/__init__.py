@@ -49,7 +49,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    AssestKind,
+    AssetKind,
     ErrorCode,
     Format,
     InnerErrorCode,
@@ -95,7 +95,7 @@ __all__ = [
     "UpdateSourceFromFileOperationRecord",
     "UpdateSourceRecord",
     "WordAlterations",
-    "AssestKind",
+    "AssetKind",
     "ErrorCode",
     "Format",
     "InnerErrorCode",

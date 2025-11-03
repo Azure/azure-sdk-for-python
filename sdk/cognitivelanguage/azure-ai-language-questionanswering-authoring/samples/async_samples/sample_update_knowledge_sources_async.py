@@ -17,7 +17,7 @@ async def sample_update_knowledge_sources_async():
         project_name = "MicrosoftFAQProject"
         await client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "Test project for some Microsoft QnAs",
                 "language": "en",
                 "multilingualResource": True,
@@ -27,7 +27,7 @@ async def sample_update_knowledge_sources_async():
 
         sources_poller = await client.begin_update_sources(
             project_name=project_name,
-            body=[
+            sources=[
                 _models.UpdateSourceRecord(
                     op="add",
                     value=_models.UpdateQnaSourceRecord(
@@ -46,7 +46,7 @@ async def sample_update_knowledge_sources_async():
 
         qna_poller = await client.begin_update_qnas(
             project_name=project_name,
-            body=[
+            qnas=[
                 _models.UpdateQnaRecord(
                     op="add",
                     value=_models.QnaRecord(
@@ -63,14 +63,14 @@ async def sample_update_knowledge_sources_async():
 
         await client.update_synonyms(
             project_name=project_name,
-            body=_models.SynonymAssets(
+            synonyms=_models.SynonymAssets(
                 value=[
                     _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
                     _models.WordAlterations(alterations=["qna", "question and answer"]),
                 ]
             ),
         )
-        synonyms = client.get_synonyms(project_name=project_name)
+        synonyms = client.list_synonyms(project_name=project_name)
         async for item in synonyms:
             print("Synonyms group:")
             for alt in item["alterations"]:

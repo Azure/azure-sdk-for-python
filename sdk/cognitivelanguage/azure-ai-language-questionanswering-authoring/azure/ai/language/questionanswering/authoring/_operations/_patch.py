@@ -26,14 +26,14 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
     """Mixin class for patching methods with backward compatible parameter names."""
 
     # create_project overloads with 'options' parameter
-    @overload  # type: ignore
+    @overload  # type: ignore[override]
     def create_project(
         self,
         project_name: str,
         options: _models.QuestionAnsweringProject,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.QuestionAnsweringProject:
         """Create or update a project.
 
@@ -50,7 +50,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload  # type: ignore
+    @overload
     def create_project(
         self, project_name: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QuestionAnsweringProject:
@@ -69,7 +69,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload  # type: ignore
+    @overload
     def create_project(
         self, project_name: str, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QuestionAnsweringProject:
@@ -109,14 +109,14 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().create_project(project_name=project_name, body=options, **kwargs)
 
     # update_synonyms overloads with 'synonyms' parameter
-    @overload  # type: ignore
+    @overload  # type: ignore[override]
     def update_synonyms(
         self,
         project_name: str,
         synonyms: _models.SynonymAssets,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Updates all the synonyms of a project.
 
@@ -132,7 +132,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload  # type: ignore
+    @overload
     def update_synonyms(
         self, project_name: str, synonyms: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
@@ -150,7 +150,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload  # type: ignore
+    @overload
     def update_synonyms(
         self, project_name: str, synonyms: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
@@ -188,14 +188,14 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().update_synonyms(project_name=project_name, body=synonyms, **kwargs)
 
     # begin_update_qnas overloads with 'qnas' parameter
-    @overload  # type: ignore
+    @overload  # type: ignore[override]
     def begin_update_qnas(
         self,
         project_name: str,
         qnas: list[_models.UpdateQnaRecord],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Updates the QnAs of a project.
 
@@ -211,7 +211,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload  # type: ignore
+    @overload
     def begin_update_qnas(
         self, project_name: str, qnas: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
@@ -249,14 +249,14 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().begin_update_qnas(project_name=project_name, body=qnas, **kwargs)
 
     # begin_update_sources overloads with 'sources' parameter
-    @overload  # type: ignore
+    @overload  # type: ignore[override]
     def begin_update_sources(
         self,
         project_name: str,
         sources: list[_models.UpdateSourceRecord],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Updates the sources of a project.
 
@@ -272,7 +272,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload  # type: ignore
+    @overload
     def begin_update_sources(
         self, project_name: str, sources: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:

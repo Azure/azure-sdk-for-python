@@ -31,10 +31,10 @@ async def sample_export_import_project_async():
             }
         }
         import_poller = await client.begin_import_assets(
-            project_name=f"{project_name}-imported", body=minimal_assets, file_format="json"
+            project_name=project_name, body=minimal_assets, file_format="json"
         )
         await import_poller.result()
-        print(f"Imported project as {project_name}-imported (minimal assets)")
+        print(f"Imported project as {project_name} (minimal assets)")
     # [END export_import_project]
 
 

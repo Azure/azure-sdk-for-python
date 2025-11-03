@@ -541,7 +541,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         project_name: str,
         *,
         file_format: Optional[Union[str, _models.Format]] = None,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -602,7 +602,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         project_name: str,
         *,
         file_format: Optional[Union[str, _models.Format]] = None,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Export project metadata and assets.
@@ -614,7 +614,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -740,7 +740,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         body: Optional[Union[_models.ImportJobOptions, JSON, IO[bytes]]] = None,
         *,
         file_format: Optional[Union[str, _models.Format]] = None,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -816,7 +816,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         body: Optional[_models.ImportJobOptions] = None,
         *,
         file_format: Optional[Union[str, _models.Format]] = None,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -831,7 +831,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -847,7 +847,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         body: Optional[JSON] = None,
         *,
         file_format: Optional[Union[str, _models.Format]] = None,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -862,7 +862,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -878,7 +878,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         body: Optional[IO[bytes]] = None,
         *,
         file_format: Optional[Union[str, _models.Format]] = None,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -893,7 +893,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -909,7 +909,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         body: Optional[Union[_models.ImportJobOptions, JSON, IO[bytes]]] = None,
         *,
         file_format: Optional[Union[str, _models.Format]] = None,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Import project assets.
@@ -925,7 +925,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -990,7 +990,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         project_name: str,
         body: Union[_models.ImportFiles, JSON],
         *,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1057,7 +1057,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         project_name: str,
         body: _models.ImportFiles,
         *,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Import project assets from file.
@@ -1068,7 +1068,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :type body: ~azure.ai.language.questionanswering.authoring.models.ImportFiles
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1080,7 +1080,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         project_name: str,
         body: JSON,
         *,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Import project assets from file.
@@ -1091,7 +1091,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :type body: JSON
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1108,7 +1108,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         project_name: str,
         body: Union[_models.ImportFiles, JSON],
         *,
-        asset_kind: Optional[Union[str, _models.AssestKind]] = None,
+        asset_kind: Optional[Union[str, _models.AssetKind]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Import project assets from file.
@@ -1120,7 +1120,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :type body: ~azure.ai.language.questionanswering.authoring.models.ImportFiles or JSON
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
-        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
+        :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssetKind
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:

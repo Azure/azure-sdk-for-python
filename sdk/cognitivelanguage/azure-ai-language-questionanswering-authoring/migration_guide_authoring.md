@@ -65,8 +65,6 @@ Key changes from earlier previews or combined forms:
 
 | Area | Before | Now |
 |------|--------|-----|
-| Export/Import format arg | `file_format` | `format` |
-| Synonyms listing | `list_synonyms()` | `get_synonyms()` (returns iterable groups) |
 | Deployment poller result | Dict with metadata (assumed) | `None` (completion only) |
 | Export poller result | URL payload (assumed) | `None` (no payload yet) |
 
@@ -166,7 +164,7 @@ Use model classes instead of raw dictionaries for clarity and forward compatibil
 from azure.ai.language.questionanswering.authoring import models as qa_models
 client.begin_update_sources(
     project_name="MyProject",
-    body=[
+    sources=[
         qa_models.UpdateSourceRecord(
             op="add",
             value=qa_models.UpdateQnaSourceRecord(
@@ -191,17 +189,6 @@ client.begin_update_sources(
 | Export artifact access | No direct download URL surfaced yet |
 | Metadata evolution | Model names/fields may still change before GA |
 
- 
-## 14. Troubleshooting Checklist
-
-| Symptom | Likely Cause | Fix |
-|---------|-------------|-----|
-| `AttributeError: begin_import_assets` | Old method name | Use `begin_import_assets` |
-| `TypeError: unexpected keyword file_format` | Param rename | Replace with `format` |
-| `AttributeError: list_synonyms` | Method rename | Use `get_synonyms()` |
-| `TypeError: 'NoneType' object is not subscriptable` after deploy | Expecting payload | Treat `.result()` as completion only |
-
- 
 ## 15. Filing Issues
 
 Provide:

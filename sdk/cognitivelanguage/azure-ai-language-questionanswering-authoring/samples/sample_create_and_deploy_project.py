@@ -28,7 +28,7 @@ def sample_create_and_deploy_project():
         project_name = "IsaacNewton"
         project = client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "Biography of Sir Isaac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -48,7 +48,7 @@ def sample_create_and_deploy_project():
 
         update_sources_poller = client.begin_update_sources(
             project_name=project_name,
-            body=[
+            sources=[
                 _models.UpdateSourceRecord(
                     op="add",
                     value=_models.UpdateQnaSourceRecord(

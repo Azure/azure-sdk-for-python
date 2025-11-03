@@ -31,7 +31,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         options: _models.QuestionAnsweringProject,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.QuestionAnsweringProject:
         """Create or update a project.
 
@@ -113,7 +113,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         synonyms: _models.SynonymAssets,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Updates all the synonyms of a project.
 
@@ -192,7 +192,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         qnas: list[_models.UpdateQnaRecord],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[None]:
         """Updates the QnAs of a project.
 
@@ -253,7 +253,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         sources: list[_models.UpdateSourceRecord],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncLROPoller[None]:
         """Updates the sources of a project.
 

@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AssestKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AssetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of the asset of the project."""
 
     QNAS = "qnas"

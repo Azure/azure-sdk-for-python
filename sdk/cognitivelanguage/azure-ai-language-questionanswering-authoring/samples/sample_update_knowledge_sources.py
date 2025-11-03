@@ -28,7 +28,7 @@ def sample_update_knowledge_sources():
         project_name = "MicrosoftFAQProject"
         client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "Test project for some Microsoft QnAs",
                 "language": "en",
                 "multilingualResource": True,
@@ -38,7 +38,7 @@ def sample_update_knowledge_sources():
 
         sources_poller = client.begin_update_sources(
             project_name=project_name,
-            body=[
+            sources=[
                 _models.UpdateSourceRecord(
                     op="add",
                     value=_models.UpdateQnaSourceRecord(
@@ -57,7 +57,7 @@ def sample_update_knowledge_sources():
 
         qna_poller = client.begin_update_qnas(
             project_name=project_name,
-            body=[
+            qnas=[
                 _models.UpdateQnaRecord(
                     op="add",
                     value=_models.QnaRecord(
@@ -74,14 +74,14 @@ def sample_update_knowledge_sources():
 
         client.update_synonyms(
             project_name=project_name,
-            body=_models.SynonymAssets(
+            synonyms=_models.SynonymAssets(
                 value=[
                     _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
                     _models.WordAlterations(alterations=["qna", "question and answer"]),
                 ]
             ),
         )
-        synonyms = client.get_synonyms(project_name=project_name)
+        synonyms = client.list_synonyms(project_name=project_name)
         for item in synonyms:  # ItemPaged
             print("Synonyms group:")
             for alt in item["alterations"]:

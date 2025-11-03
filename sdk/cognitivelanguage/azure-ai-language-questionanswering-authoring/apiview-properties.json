@@ -37,7 +37,7 @@
         "azure.ai.language.questionanswering.authoring.models.InnerErrorCode": "Language.QuestionAnswering.Authoring.InnerErrorCode",
         "azure.ai.language.questionanswering.authoring.models.JobStatus": "Language.QuestionAnswering.Authoring.jobStatus",
         "azure.ai.language.questionanswering.authoring.models.Format": "Language.QuestionAnswering.Authoring.format",
-        "azure.ai.language.questionanswering.authoring.models.AssestKind": "Language.QuestionAnswering.Authoring.AssestKind",
+        "azure.ai.language.questionanswering.authoring.models.AssetKind": "Language.QuestionAnswering.Authoring.AssestKind",
         "azure.ai.language.questionanswering.authoring.models.SourceKind": "Language.QuestionAnswering.Authoring.sourceKind",
         "azure.ai.language.questionanswering.authoring.models.SourceContentStructureKind": "Language.QuestionAnswering.Authoring.sourceContentStructureKind",
         "azure.ai.language.questionanswering.authoring.models.UpdateOperationKind": "Language.QuestionAnswering.Authoring.updateOperationKind",

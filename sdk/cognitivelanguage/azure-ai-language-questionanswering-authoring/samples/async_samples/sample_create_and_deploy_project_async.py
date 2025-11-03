@@ -17,7 +17,7 @@ async def sample_create_and_deploy_project_async():
         project_name = "IsaacNewton"
         project = await client.create_project(
             project_name=project_name,
-            body={
+            options={
                 "description": "Biography of Sir Isaac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -33,7 +33,7 @@ async def sample_create_and_deploy_project_async():
 
         update_sources_poller = await client.begin_update_sources(
             project_name=project_name,
-            body=[
+            sources=[
                 _models.UpdateSourceRecord(
                     op="add",
                     value=_models.UpdateQnaSourceRecord(
