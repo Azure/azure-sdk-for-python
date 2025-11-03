@@ -354,7 +354,9 @@ class RedTeam:
         num_objectives = attack_objective_generator.num_objectives
 
         # Calculate num_objectives_with_subtypes based on max subtypes across all risk categories
-        max_num_subtypes = max((RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in self.risk_categories), default=0)
+        # Use attack_objective_generator.risk_categories as self.risk_categories may not be set yet
+        risk_categories = getattr(self, "risk_categories", None) or attack_objective_generator.risk_categories
+        max_num_subtypes = max((RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in risk_categories), default=0)
         num_objectives_with_subtypes = max(num_objectives, max_num_subtypes)
 
         self.logger.debug(
