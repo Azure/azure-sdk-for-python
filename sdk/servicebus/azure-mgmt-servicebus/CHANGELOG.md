@@ -46,6 +46,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `FailoverProperties` deleted or renamed its instance variable `is_safe_failover`
   - Model `ProxyResource` deleted or renamed its instance variable `location`
   - Model `Rule` instance variables `action`, `filter_type`, `sql_filter`, and `correlation_filter` have been moved under property `properties`
