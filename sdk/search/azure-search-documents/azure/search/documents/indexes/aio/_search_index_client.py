@@ -12,15 +12,12 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from .._generated.aio import SearchServiceClient as _SearchServiceClient
+from ..._generated.indexes.aio import SearchServiceClient as _SearchServiceClient
 from ...aio._search_client_async import SearchClient
-from .._utils import (
-    get_access_conditions,
-    normalize_endpoint,
-)
+from .._utils import normalize_endpoint
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
-from ..._utils import get_authentication_policy
+from ..._utils import DEFAULT_AUDIENCE
 from ..._version import SDK_MONIKER
 from ..models import (
     SearchIndex,
@@ -55,21 +52,19 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
         self._audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = _SearchServiceClient(
-                endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=self._audience, is_async=True)
-            self._client = _SearchServiceClient(
-                endpoint=endpoint,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        if not self._audience:
+            self._audience = DEFAULT_AUDIENCE
+        scope = self._audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = _SearchServiceClient(
+            endpoint=endpoint,
+            credential=credential,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     async def __aenter__(self) -> "SearchIndexClient":
         await self._client.__aenter__()  # pylint:disable=no-member
@@ -171,7 +166,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get_statistics(index_name, **kwargs)
-        return result.as_dict()
+        return result
 
     @distributed_trace_async
     async def delete_index(
@@ -200,13 +195,15 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(index, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(index, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         try:
             index_name = index.name  # type: ignore
+            etag = index.e_tag  # type: ignore
         except AttributeError:
             index_name = index
-        await self._client.indexes.delete(index_name=index_name, error_map=error_map, **kwargs)
+            etag = None
+        await self._client.indexes.delete(index_name=index_name, match_condition=match_condition, etag=etag, **kwargs)
 
     @distributed_trace_async
     async def create_index(self, index: SearchIndex, **kwargs: Any) -> SearchIndex:
@@ -271,15 +268,14 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Update an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(index, match_condition)
-        kwargs.update(access_condition)
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create_or_update(
             index_name=index.name,
             index=patched_index,
+            match_condition=match_condition,
             allow_index_downtime=allow_index_downtime,
             prefer="return=representation",
-            error_map=error_map,
+            etag=index.e_tag,
             **kwargs
         )
         return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
@@ -307,9 +303,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(
-            index_name=index_name,
-            request=analyze_request._to_analyze_request(),  # pylint:disable=protected-access
-            **kwargs
+            index_name=index_name, request=analyze_request._to_generated(), **kwargs  # pylint:disable=protected-access
         )
         return result
 
@@ -409,13 +403,17 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(synonym_map, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         try:
             name = synonym_map.name  # type: ignore
+            etag = synonym_map.e_tag  # type: ignore
         except AttributeError:
             name = synonym_map
-        await self._client.synonym_maps.delete(synonym_map_name=name, error_map=error_map, **kwargs)
+            etag = None
+        await self._client.synonym_maps.delete(
+            synonym_map_name=name, match_condition=match_condition, etag=etag, **kwargs
+        )
 
     @distributed_trace_async
     async def create_synonym_map(self, synonym_map: SynonymMap, **kwargs: Any) -> SynonymMap:
@@ -460,14 +458,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
-        kwargs.update(access_condition)
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
+            match_condition=match_condition,
             prefer="return=representation",
-            error_map=error_map,
+            etag=synonym_map.e_tag,
             **kwargs
         )
         return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
@@ -481,7 +478,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.get_service_statistics(**kwargs)
-        return result.as_dict()
+        return result
 
     @distributed_trace
     def list_index_stats_summary(self, **kwargs: Any) -> AsyncItemPaged[IndexStatisticsSummary]:
@@ -538,7 +535,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.aliases.get(name, **kwargs)
-        return result
+        return cast(SearchAlias, result)
 
     @distributed_trace_async
     async def delete_alias(
@@ -567,13 +564,15 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Delete an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(alias, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(alias, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         try:
             alias_name = alias.name  # type: ignore
+            etag = alias.e_tag  # type: ignore
         except AttributeError:
             alias_name = alias
-        await self._client.aliases.delete(alias_name=alias_name, error_map=error_map, **kwargs)
+            etag = None
+        await self._client.aliases.delete(alias_name=alias_name, match_condition=match_condition, etag=etag, **kwargs)
 
     @distributed_trace_async
     async def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
@@ -596,7 +595,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.aliases.create(alias, **kwargs)
-        return result  # pylint:disable=protected-access
+        return cast(SearchAlias, result)
 
     @distributed_trace_async
     async def create_or_update_alias(
@@ -626,12 +625,15 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Update an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(alias, match_condition)
-        kwargs.update(access_condition)
         result = await self._client.aliases.create_or_update(
-            alias_name=alias.name, alias=alias, prefer="return=representation", error_map=error_map, **kwargs
+            alias_name=alias.name,
+            alias=alias,
+            match_condition=match_condition,
+            prefer="return=representation",
+            etag=alias.e_tag,
+            **kwargs
         )
-        return result  # pylint:disable=protected-access
+        return cast(SearchAlias, result)
 
     @distributed_trace_async
     async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> AsyncHttpResponse:
@@ -644,7 +646,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
         request.headers = self._merge_client_headers(request.headers)
-        return await self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
+        return await self._client.send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_agent(
@@ -663,13 +665,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(agent, match_condition)
-        kwargs.update(access_condition)
         try:
             agent_name = agent.name  # type: ignore
+            etag = agent.e_tag  # type: ignore
         except AttributeError:
             agent_name = agent
-        await self._client.knowledge_agents.delete(agent_name=agent_name, error_map=error_map, **kwargs)
+            etag = None
+        await self._client.agents.delete(agent_name=agent_name, match_condition=match_condition, etag=etag, **kwargs)
 
     @distributed_trace_async
     async def create_agent(self, agent: KnowledgeAgent, **kwargs: Any) -> KnowledgeAgent:
@@ -682,7 +684,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_agents.create(agent, **kwargs)
+        result = await self._client.agents.create(agent, **kwargs)
         return result
 
     @distributed_trace_async
@@ -708,10 +710,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.ResourceExistsError: If the index already exists.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(agent, match_condition)
-        kwargs.update(access_condition)
-        result = await self._client.knowledge_agents.create_or_update(
-            agent_name=agent.name, knowledge_agent=agent, prefer="return=representation", error_map=error_map, **kwargs
+        result = await self._client.agents.create_or_update(
+            agent_name=agent.name,
+            knowledge_agent=agent,
+            match_condition=match_condition,
+            prefer="return=representation",
+            etag=agent.e_tag,
+            **kwargs
         )
         return result
 
@@ -726,8 +731,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_agents.get(name, **kwargs)
-        return result
+        result = await self._client.agents.get(name, **kwargs)
+        return cast(KnowledgeAgent, result)
 
     @distributed_trace
     def list_agents(self, **kwargs) -> AsyncItemPaged[KnowledgeAgent]:
@@ -739,7 +744,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
-        return cast(AsyncItemPaged[KnowledgeAgent], self._client.knowledge_agents.list(**kwargs))
+        return cast(AsyncItemPaged[KnowledgeAgent], self._client.agents.list(**kwargs))
 
     @distributed_trace_async
     async def delete_knowledge_source(
@@ -758,13 +763,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(knowledge_source, match_condition)
-        kwargs.update(access_condition)
         try:
             source_name = knowledge_source.name  # type: ignore
+            etag = knowledge_source.e_tag  # type: ignore
         except AttributeError:
             source_name = knowledge_source
-        await self._client.knowledge_sources.delete(source_name=source_name, error_map=error_map, **kwargs)
+            etag = None
+        await self._client.sources.delete(source_name=source_name, match_condition=match_condition, etag=etag, **kwargs)
 
     @distributed_trace_async
     async def create_knowledge_source(self, knowledge_source: KnowledgeSource, **kwargs: Any) -> KnowledgeSource:
@@ -777,7 +782,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_sources.create(knowledge_source, **kwargs)
+        result = await self._client.sources.create(knowledge_source, **kwargs)
         return result
 
     @distributed_trace_async
@@ -803,13 +808,12 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.ResourceExistsError: If the index already exists.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(knowledge_source, match_condition)
-        kwargs.update(access_condition)
-        result = await self._client.knowledge_sources.create_or_update(
+        result = await self._client.sources.create_or_update(
             source_name=knowledge_source.name,
             knowledge_source=knowledge_source,
+            match_condition=match_condition,
             prefer="return=representation",
-            error_map=error_map,
+            etag=knowledge_source.e_tag,
             **kwargs
         )
         return result
@@ -825,8 +829,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_sources.get(name, **kwargs)
-        return result
+        result = await self._client.sources.get(name, **kwargs)
+        return cast(KnowledgeSource, result)
 
     @distributed_trace
     def list_knowledge_sources(self, **kwargs: Any) -> AsyncItemPaged[KnowledgeSource]:
@@ -838,4 +842,4 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
-        return cast(AsyncItemPaged[KnowledgeSource], self._client.knowledge_sources.list(**kwargs))
+        return cast(AsyncItemPaged[KnowledgeSource], self._client.sources.list(**kwargs))

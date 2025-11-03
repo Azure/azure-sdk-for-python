@@ -98,7 +98,7 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
 
     # optionally load data into the index
     if index_batch and schema:
-        batch = IndexBatch.deserialize(index_batch)
+        batch = IndexBatch(index_batch)
         client = SearchClient(endpoint, index_name, cred)
         results = client.index_documents(batch)
         if not all(result.succeeded for result in results):

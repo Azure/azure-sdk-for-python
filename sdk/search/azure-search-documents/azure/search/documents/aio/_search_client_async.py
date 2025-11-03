@@ -3,18 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, Union, Any, Optional, Dict, MutableMapping
+from typing import cast, List, Union, Any, Optional, Dict
 
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
-from .._utils import get_authentication_policy, get_answer_query, get_rewrites_query
+from .._utils import DEFAULT_AUDIENCE, get_answer_query, get_rewrites_query
 from .._generated.aio import SearchIndexClient
 from .._generated.models import (
+    AutocompleteItem,
     AutocompleteMode,
     AutocompleteRequest,
+    HybridSearch,
     IndexAction,
     IndexBatch,
     IndexingResult,
@@ -31,7 +33,7 @@ from .._generated.models import (
     QueryRewritesType,
     QueryDebugMode,
     SuggestRequest,
-    HybridSearch,
+    SuggestResult,
 )
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
@@ -76,27 +78,21 @@ class SearchClient(HeadersMixin):
         self._endpoint: str = endpoint
         self._index_name: str = index_name
         self._credential = credential
-        audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._audience = kwargs.pop("audience", None)
+        if not self._audience:
+            self._audience = DEFAULT_AUDIENCE
+        scope = self._audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = SearchIndexClient(
+            endpoint=endpoint,
+            credential=credential,
+            index_name=index_name,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __repr__(self) -> str:
         return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
@@ -420,7 +416,7 @@ class SearchClient(HeadersMixin):
         select: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[MutableMapping[str, Any]]:
+    ) -> List[SuggestResult]:
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -454,7 +450,7 @@ class SearchClient(HeadersMixin):
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
             100. The default is 5.
         :return: List of suggestion results.
-        :rtype:  list[dict]
+        :rtype:  list[~azure.search.documents.models.SuggestResult]
 
         .. admonition:: Example:
 
@@ -488,7 +484,7 @@ class SearchClient(HeadersMixin):
         request = cast(SuggestRequest, query.request)
         response = await self._client.documents.suggest_post(suggest_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
-        results = [r.as_dict() for r in response.results]
+        results = response.results
         return results
 
     @distributed_trace_async
@@ -506,7 +502,7 @@ class SearchClient(HeadersMixin):
         search_fields: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[MutableMapping[str, Any]]:
+    ) -> List[AutocompleteItem]:
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.
@@ -536,7 +532,7 @@ class SearchClient(HeadersMixin):
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
             100. The default is 5.
         :return: List of auto-completion results.
-        :rtype:  list[Dict]
+        :rtype:  list[~azure.search.documents.models.AutocompleteItem]
 
         .. admonition:: Example:
 
@@ -545,7 +541,7 @@ class SearchClient(HeadersMixin):
                 :end-before: [END autocomplete_query_async]
                 :language: python
                 :dedent: 4
-                :caption: Get a auto-completions.
+                :caption: Get an auto-completions.
         """
         autocomplete_mode = mode
         filter_arg = filter
@@ -567,7 +563,7 @@ class SearchClient(HeadersMixin):
         request = cast(AutocompleteRequest, query.request)
         response = await self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
-        results = [r.as_dict() for r in response.results]
+        results = response.results
         return results
 
     # pylint:disable=client-method-missing-tracing-decorator-async
@@ -740,4 +736,4 @@ class SearchClient(HeadersMixin):
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
         request.headers = self._merge_client_headers(request.headers)
-        return await self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
+        return await self._client.send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
