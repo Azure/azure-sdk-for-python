@@ -84,7 +84,7 @@ def _clean_up_indexers(endpoint, cred):
 def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     from azure.search.documents import SearchClient
     from azure.search.documents.indexes.models import SearchIndex
-    from azure.search.documents._generated.models import IndexBatch
+    from azure.search.documents.models import IndexDocumentsBatch
     from azure.search.documents.indexes import SearchIndexClient
 
     schema = _load_schema(schema)
@@ -92,13 +92,13 @@ def _set_up_index(service_name, endpoint, cred, schema, index_batch):
     if schema:
         index_json = json.loads(schema)
         index_name = index_json["name"]
-        index = SearchIndex.from_dict(index_json)
+        index = SearchIndex(index_json)
         index_client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
         index_create = index_client.create_index(index)
 
     # optionally load data into the index
     if index_batch and schema:
-        batch = IndexBatch.deserialize(index_batch)
+        batch = IndexDocumentsBatch(index_batch)
         client = SearchClient(endpoint, index_name, cred)
         results = client.index_documents(batch)
         if not all(result.succeeded for result in results):

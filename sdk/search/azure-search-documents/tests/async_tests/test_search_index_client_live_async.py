@@ -44,8 +44,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     async def _test_get_service_statistics(self, client):
         result = await client.get_service_statistics()
-        assert isinstance(result, dict)
-        assert set(result.keys()) == {"counters", "limits"}
+        assert "counters" in set(result.keys())
+        assert "limits" in set(result.keys())
 
     async def _test_list_indexes_empty(self, client):
         result = client.list_indexes()
@@ -88,9 +88,9 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     async def _test_get_index_statistics(self, client, index_name):
         result = await client.get_index_statistics(index_name)
         keys = set(result.keys())
-        assert "document_count" in keys
-        assert "storage_size" in keys
-        assert "vector_index_size" in keys
+        assert "documentCount" in keys
+        assert "storageSize" in keys
+        assert "vectorIndexSize" in keys
 
     async def _test_delete_indexes_if_unchanged(self, client):
         # First create an index

@@ -45,8 +45,8 @@ def test_serialize_search_index():
     index = SearchIndex(
         name=new_index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
     )
-    search_index_serialized = index.serialize()
-    search_index = SearchIndex.deserialize(search_index_serialized)
+    search_index_serialized = index.as_dict()
+    search_index = SearchIndex(search_index_serialized)
     assert search_index
 
 
@@ -74,8 +74,8 @@ def test_serialize_search_indexer_skillset():
         name="Skillset", skills=skills, cognitive_services_account=cognitive_services_account
     )
 
-    serialized_skillset = skillset.serialize()
-    skillset = SearchIndexerSkillset.deserialize(serialized_skillset)
+    serialized_skillset = skillset.as_dict()
+    skillset = SearchIndexerSkillset(serialized_skillset)
     assert skillset
 
 
@@ -104,5 +104,5 @@ def test_serialize_search_index_dict():
         name=new_index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
     )
     search_index_serialized_dict = index.as_dict()
-    search_index = SearchIndex.from_dict(search_index_serialized_dict)
+    search_index = SearchIndex(search_index_serialized_dict)
     assert search_index
