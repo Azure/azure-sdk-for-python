@@ -38,7 +38,6 @@ async def main() -> None:
     credential = DefaultAzureCredential()
 
     async with credential:
-
         project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential)
 
         async with project_client:
@@ -84,12 +83,19 @@ async def main() -> None:
                     f"    latest version: id: {listed_agent.versions.latest.id} name: {listed_agent.versions.latest.name} version: {listed_agent.versions.latest.version}"
                 )
 
-            # Update Prompt Agents
-            # I don't see a way to do this..
+            # Update Prompt Agents that generate a different version
+            agent1_object = await project_client.agents.update(
+                agent_name=agent1.name,
+                definition=PromptAgentDefinition(model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]),
+                description="This is my updated agent description.",
+            )
+            print(
+                f"Updated Agent and now has: {agent1_object.id}, name: {agent1_object.name}, version: {agent1_object.versions.latest}, description: {agent1_object.versions.latest.description}"
+            )
 
             # Delete Agents
-            result = await project_client.agents.delete_version(agent_name=agent1.name, agent_version=agent1.version)
-            print(f"Agent deleted (name: {result.name}, version: {result.version}, deleted: {result.deleted})")
+            result = await project_client.agents.delete(agent_name=agent1_object.name)
+            print(f"Agent deleted (name: {result.name}")
             result = await project_client.agents.delete_version(agent_name=agent2.name, agent_version=agent2.version)
             print(f"Agent deleted (name: {result.name}, version: {result.version}, deleted: {result.deleted})")
 
