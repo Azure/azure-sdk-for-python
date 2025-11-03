@@ -301,7 +301,7 @@ class TestAoaiEvaluation:
                 input=[{"content": "{{item.query}}", "role": "user"}],
                 labels=["too short", "just right", "too long"],
                 passing_labels=["just right"],
-                model="gpt-4o-mini",
+                model="gpt-4.1",
                 name="label",
                 credential=credential,
             ),
@@ -325,7 +325,7 @@ class TestAoaiEvaluation:
             lambda model_config, credential: AzureOpenAIScoreModelGrader(
                 model_config=model_config,
                 name="Conversation Quality Assessment",
-                model="gpt-4o-mini",
+                model="gpt-4.1",
                 input=[
                     {
                         "role": "system",
