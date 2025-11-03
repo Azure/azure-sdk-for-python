@@ -30,7 +30,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition
+from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
@@ -53,27 +53,28 @@ with project_client:
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    # See https://platform.openai.com/docs/api-reference/conversations/create?lang=python
     conversation = openai_client.conversations.create(
         items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
     )
     print(f"Created conversation with initial user message (id: {conversation.id})")
 
-    # See https://platform.openai.com/docs/api-reference/responses/create?lang=python
     response = openai_client.responses.create(
-        conversation=conversation.id, extra_body={"agent": AgentReference(name=agent.name).as_dict()}, input=""
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
     )
     print(f"Response output: {response.output_text}")
 
-    # See https://platform.openai.com/docs/api-reference/conversations/create-items?lang=python
     openai_client.conversations.items.create(
         conversation_id=conversation.id,
         items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
     )
-    print(f"Added a second user message to  the conversation")
+    print(f"Added a second user message to the conversation")
 
     response = openai_client.responses.create(
-        conversation=conversation.id, extra_body={"agent": AgentReference(name=agent.name).as_dict()}, input=[]
+        conversation=conversation.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="",
     )
     print(f"Response output: {response.output_text}")
 

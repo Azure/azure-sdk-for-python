@@ -26,13 +26,9 @@ USAGE:
 import os
 import httpx
 from dotenv import load_dotenv
-
-# Azure AI imports
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto
-
-# OpenAI response type imports for type checking
 from openai.types.responses import ResponseOutputMessage, ResponseOutputText
 from openai.types.responses.response_output_text import AnnotationContainerFileCitation
 
