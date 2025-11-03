@@ -90,7 +90,7 @@ def _resolve_version() -> str:
     if date is None:
         date = _current_date_code()
 
-    return _format_version(BASE_VERSION, commit, date)
+    return _format_version(VERSION, commit, date)
 
 
 VERSION = _resolve_version()
