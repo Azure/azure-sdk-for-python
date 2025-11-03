@@ -2149,10 +2149,24 @@ def _convert_results_to_aoai_evaluation_results(
                     should_add_error_summary = True
                     for result in run_output_results:
                         if result.get("name", None) == criteria_name and result.get("metric", None) == metric:
-                            if ((result.get("score", None) == None or (isinstance(result.get("score", None), float) and math.isnan(result.get("score", None)))) 
-                                and (result.get("threshold", None) == None or (isinstance(result.get("threshold", None), float) and math.isnan(result.get("threshold", None))))
+                            if (
+                                (
+                                    result.get("score", None) == None
+                                    or (
+                                        isinstance(result.get("score", None), float)
+                                        and math.isnan(result.get("score", None))
+                                    )
+                                )
+                                and (
+                                    result.get("threshold", None) == None
+                                    or (
+                                        isinstance(result.get("threshold", None), float)
+                                        and math.isnan(result.get("threshold", None))
+                                    )
+                                )
                                 and (result.get("label", None) == None or result.get("label", None) == "NaN")
-                                and (result.get("reason", None) == None or result.get("reason", None) == "NaN")):
+                                and (result.get("reason", None) == None or result.get("reason", None) == "NaN")
+                            ):
                                 run_output_results.remove(result)
                             else:
                                 should_add_error_summary = False
@@ -2397,10 +2411,18 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 model_stats = model_usage_stats[model_name]
                 model_stats["invocation_count"] += 1
                 if isinstance(usage_data, dict):
-                    model_stats["total_tokens"] += usage_data.get("total_tokens", 0) if usage_data.get("total_tokens", 0) else 0
-                    model_stats["prompt_tokens"] += usage_data.get("prompt_tokens", 0) if usage_data.get("prompt_tokens", 0) else 0
-                    model_stats["completion_tokens"] += usage_data.get("completion_tokens", 0) if usage_data.get("completion_tokens", 0) else 0
-                    model_stats["cached_tokens"] += usage_data.get("cached_tokens", 0) if usage_data.get("cached_tokens", 0) else 0
+                    model_stats["total_tokens"] += (
+                        usage_data.get("total_tokens", 0) if usage_data.get("total_tokens", 0) else 0
+                    )
+                    model_stats["prompt_tokens"] += (
+                        usage_data.get("prompt_tokens", 0) if usage_data.get("prompt_tokens", 0) else 0
+                    )
+                    model_stats["completion_tokens"] += (
+                        usage_data.get("completion_tokens", 0) if usage_data.get("completion_tokens", 0) else 0
+                    )
+                    model_stats["cached_tokens"] += (
+                        usage_data.get("cached_tokens", 0) if usage_data.get("cached_tokens", 0) else 0
+                    )
 
     # Convert model usage stats to list format matching EvaluationRunPerModelUsage
     per_model_usage = []
