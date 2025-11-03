@@ -621,9 +621,8 @@ class RedTeam:
                 objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
         except Exception as e:
-            self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
-            self.logger.warning("API call failed, returning empty objectives list")
-            return []
+            self.logger.warning(f"Error calling get_attack_objectives: {str(e)}")
+            objectives_response = {}
 
         # Check if the response is valid
         if not objectives_response or (
