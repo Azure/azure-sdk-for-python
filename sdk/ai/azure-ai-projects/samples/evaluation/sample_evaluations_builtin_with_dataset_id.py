@@ -11,11 +11,11 @@ DESCRIPTION:
     using a dataset by ID.
 
 USAGE:
-    python sample_evaluations_with_dataset_id.py
+    python sample_evaluations_builtin_with_dataset_id.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -46,7 +46,7 @@ from azure.ai.projects.models import (
 )
 from dotenv import load_dotenv
 from pprint import pprint
-
+from datetime import datetime
 
 load_dotenv()
 
@@ -58,7 +58,7 @@ connection_name = os.environ.get("CONNECTION_NAME", "")
 model_endpoint = os.environ.get("MODEL_ENDPOINT", "")  # Sample: https://<account_name>.openai.azure.com.
 model_api_key = os.environ.get("MODEL_API_KEY", "")
 model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
-dataset_name = os.environ.get("DATASET_NAME", "eval-data-2025-10-28_060550_UTC")
+dataset_name = os.environ.get("DATASET_NAME", "")
 dataset_version = os.environ.get("DATASET_VERSION", "1")
 
 # Construct the paths to the data folder and data file used in this sample
@@ -72,7 +72,7 @@ with DefaultAzureCredential() as credential:
 
         print("Upload a single file and create a new Dataset to reference the file.")
         dataset: DatasetVersion = project_client.datasets.upload_file(
-            name=dataset_name,
+            name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
             version=dataset_version,
             file_path=data_file
         )
