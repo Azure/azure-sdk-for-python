@@ -35,8 +35,8 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerSharedAccessSignatureAsync(PlanetaryComputerProClientTestBaseAsync):
-    """Test suite for Shared Access Signature operations."""
+class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
+    """Test suite for Shared Access Signature (SAS) operations."""
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async

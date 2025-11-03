@@ -60,7 +60,7 @@ words:
   - colorinterp # Color interpretation
   - drcog     # Data provider/organization
   - dtype     # Data type
-  - inma      # Planetary Computey IngestionManagement Service
+  - inma      # Planetary Computer IngestionManagement Service
   - jsons     # JSON objects (plural)
   - lanczos   # Lanczos resampling algorithm
   - lulc      # Land Use/Land Cover

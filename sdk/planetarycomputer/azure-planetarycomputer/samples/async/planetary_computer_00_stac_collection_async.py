@@ -423,7 +423,7 @@ async def main():
     logging.info(f"Collection ID: {collection_id}\n")
 
     # Get credential token
-    credential.get_token("https://geocatalog.spatio.azure.com/.default")
+    await credential.get_token("https://geocatalog.spatio.azure.com/.default")
 
     # List all collections
     await client.stac.list_collections()

@@ -33,8 +33,8 @@ file_handler.setFormatter(formatter)
 test_logger.addHandler(file_handler)
 
 
-class TestPlanetaryComputerSharedAccessSignature(PlanetaryComputerProClientTestBase):
-    """Test suite for Shared Access Signature operations."""
+class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
+    """Test suite for Shared Access Signature (SAS) operations."""
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
