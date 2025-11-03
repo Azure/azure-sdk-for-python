@@ -3,7 +3,6 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
