@@ -1,0 +1,46 @@
+[project]
+name = "azure-ai-agentserver-core"
+# Keep using your _version.py; setuptools reads it via [tool.setuptools.dynamic] below
+dynamic = ["version", "readme"]
+description = "Agents server adapter for Azure AI"
+requires-python = ">=3.10"
+authors = [{ name = "Microsoft Corporation" }]
+classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10"]
+
+dependencies = [
+    "azure-monitor-opentelemetry",
+    "azure-ai-projects",
+    "azure-ai-agents>=1.2.0b5",
+    "azure-identity",
+    "openai",
+    "opentelemetry-api",
+    "starlette",
+    "uvicorn",
+]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# Auto-discover packages under the code root, including namespace packages (PEP 420)
+packages = { find = { include = ["azure*"] } }
+
+[tool.setuptools.dynamic]
+# read version from your module (see Step 2 file layout)
+version = { attr = "azure.ai.agentserver.core._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+lint.select = ["E", "F", "B", "I"]   # E=pycodestyle errors, F=Pyflakes, B=bugbear, I=import sort
+lint.ignore = []
+fix = false
+exclude = [
+    "**/azure/ai/agentserver/core/models/",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["azure.ai.agentserver.core"]  # Your package/module name
+combine-as-imports = true
