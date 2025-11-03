@@ -53,6 +53,14 @@ INTERNAL_TASK_TIMEOUT = 120
 # With N subtypes, this allows up to N * MAX_SAMPLING_ITERATIONS_MULTIPLIER total iterations.
 MAX_SAMPLING_ITERATIONS_MULTIPLIER = 100
 
+# Map of risk categories to their maximum number of subtypes
+# Used to calculate num_objectives_prime for adequate subtype coverage
+RISK_TO_NUM_SUBTYPE_MAP = {
+    RiskCategory.ProhibitedActions: 32,
+    RiskCategory.TaskAdherence: 9,
+    RiskCategory.SensitiveDataLeakage: 19,
+}
+
 # Task status definitions
 TASK_STATUS = {
     "PENDING": "pending",
