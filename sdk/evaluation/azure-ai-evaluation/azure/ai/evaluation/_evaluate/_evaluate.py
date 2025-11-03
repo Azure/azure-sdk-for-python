@@ -2149,23 +2149,15 @@ def _convert_results_to_aoai_evaluation_results(
                     should_add_error_summary = True
                     for result in run_output_results:
                         if result.get("name", None) == criteria_name and result.get("metric", None) == metric:
+                            rs_score = result.get("score", None)
+                            rs_threshold = result.get("threshold", None)
+                            rs_label = result.get("label", None)
+                            rs_reason = result.get("reason", None)
                             if (
-                                (
-                                    result.get("score", None) == None
-                                    or (
-                                        isinstance(result.get("score", None), float)
-                                        and math.isnan(result.get("score", None))
-                                    )
-                                )
-                                and (
-                                    result.get("threshold", None) == None
-                                    or (
-                                        isinstance(result.get("threshold", None), float)
-                                        and math.isnan(result.get("threshold", None))
-                                    )
-                                )
-                                and (result.get("label", None) == None or result.get("label", None) == "NaN")
-                                and (result.get("reason", None) == None or result.get("reason", None) == "NaN")
+                                _is_none_or_nan(rs_score)
+                                and _is_none_or_nan(rs_threshold)
+                                and _is_none_or_nan(rs_label)
+                                and _is_none_or_nan(rs_reason)
                             ):
                                 run_output_results.remove(result)
                             else:
@@ -2215,6 +2207,24 @@ def _convert_results_to_aoai_evaluation_results(
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
+
+
+def _is_none_or_nan(value: Any) -> bool:
+    """
+    Check if a value is None or NaN.
+
+    :param value: The value to check
+    :type value: Any
+    :return: True if the value is None or NaN, False otherwise
+    :rtype: bool
+    """
+    if value is None:
+        return True
+    if isinstance(value, float) and math.isnan(value):
+        return True
+    if isinstance(value, str) and value.lower() in ["nan", "null", "none"]:
+        return True
+    return False
 
 
 def _append_indirect_attachments_to_results(
