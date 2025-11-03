@@ -49,7 +49,7 @@ These options are available for all perf tests:
 The options are available for all SB perf tests:
 - `--size=100` Size in bytes of data to be transferred in upload or download tests. Default is 10240.
 - `--max-concurrency=1` Number of threads to concurrently upload/download a single operation using the SDK API parameter. Default is 1.
-- `--max-range-size`Maximum size of data uploading in single HTTP PUT. Default is 4*1024*1024.
+- `--max-range-size`Maximum size of data uploading in single HTTP PUT.
 
 ### T2 Tests
 The tests currently written for the T2 SDK:

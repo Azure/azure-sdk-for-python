@@ -63,7 +63,9 @@ class _CallbackChatTarget(PromptChatTarget):
 
                 # Check if any context has agent-specific fields for logging
                 has_agent_fields = any(
-                    isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
+                    isinstance(ctx, dict)
+                    and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
+                    for ctx in contexts
                 )
 
                 if has_agent_fields:
