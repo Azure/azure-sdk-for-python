@@ -3627,7 +3627,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Arrange
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
-        self.bsc.create_container(self.container_name)
         blob = BlobClient(
             account_url=self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,

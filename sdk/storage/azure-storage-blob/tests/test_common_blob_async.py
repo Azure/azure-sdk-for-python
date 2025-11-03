@@ -3560,7 +3560,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
-        await self.bsc.create_container(self.container_name)
         blob = BlobClient(
             account_url=self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
