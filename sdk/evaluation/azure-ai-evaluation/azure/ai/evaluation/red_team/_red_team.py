@@ -456,6 +456,18 @@ class RedTeam:
         # Extract content from selected objectives
         selected_prompts = []
         for obj in selected_cat_objectives:
+            risk_subtype = None
+            # Extract risk-subtype from target_harms if present
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
+            if target_harms and isinstance(target_harms, list):
+                for harm in target_harms:
+                    if isinstance(harm, dict) and "risk-subtype" in harm:
+                        subtype_value = harm.get("risk-subtype")
+                        # Only store non-empty risk-subtype values
+                        if subtype_value and subtype_value.strip():
+                            risk_subtype = subtype_value
+                            break  # Use the first non-empty risk-subtype found
+
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
@@ -464,6 +476,9 @@ class RedTeam:
                     selected_prompts.append(content)
                     # Store mapping of content to context for later evaluation
                     self.prompt_to_context[content] = context
+                    # Store risk_subtype mapping if it exists
+                    if risk_subtype:
+                        self.prompt_to_risk_subtype[content] = risk_subtype
 
         # Store in cache and return
         self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
