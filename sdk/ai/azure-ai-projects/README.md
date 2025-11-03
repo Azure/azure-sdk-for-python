@@ -152,7 +152,7 @@ print(f"Created conversation with initial user message (id: {conversation.id})")
 response = openai_client.responses.create(
     conversation=conversation.id,
     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",  # TODO: Remove 'input' once service is fixed
+    input="",
 )
 print(f"Response output: {response.output_text}")
 
@@ -165,7 +165,7 @@ print(f"Added a second user message to the conversation")
 response = openai_client.responses.create(
     conversation=conversation.id,
     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",  # TODO: Remove 'input' once service is fixed
+    input="",
 )
 print(f"Response output: {response.output_text}")
 
