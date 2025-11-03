@@ -7,23 +7,20 @@
 """
 DESCRIPTION:
     This sample demonstrates how to run Prompt Agent operations
-    using MCP (Model Context Protocol) tools and a synchronous client using a project connection.
+    using MCP (Model Context Protocol) tools and a synchronous client.
 
 USAGE:
-    python sample_responses_mcp_with_project_connection.py
+    python sample_agent_mcp.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity load_dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Azure AI Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys
-       with key equals to "Authorization" and value to be "Bear <your GitHub PAT token>".
-       Token can be created in https://github.com/settings/personal-access-tokens/new
 """
 
 import os
@@ -44,28 +41,21 @@ project_client = AIProjectClient(
 # Get the OpenAI client for responses and conversations
 openai_client = project_client.get_openai_client()
 
-
-# Define MCP tool that connects to Azure REST API specifications GitHub repository
-# The tool requires approval for each operation to ensure user control over external requests
 mcp_tool = MCPTool(
     server_label="api-specs",
-    server_url="https://api.githubcopilot.com/mcp",
+    server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
     require_approval="always",
-    project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
 )
 
 # Create tools list with proper typing for the agent definition
 tools: list[Tool] = [mcp_tool]
 
 with project_client:
-
-    # Create a prompt agent with MCP tool capabilities
-    # The agent will be able to access external GitHub repositories through the MCP protocol
     agent = project_client.agents.create_version(
-        agent_name="MyAgent7",
+        agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="Use MCP tools as needed",
+            instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
             tools=tools,
         ),
     )
@@ -75,16 +65,14 @@ with project_client:
     conversation = openai_client.conversations.create()
     print(f"Created conversation (id: {conversation.id})")
 
-    # Send initial request that will trigger the MCP tool to access Azure REST API specs
-    # This will generate an approval request since require_approval="always"
+    # Send initial request that will trigger the MCP tool
     response = openai_client.responses.create(
         conversation=conversation.id,
-        input="What is my username in Github profile?",
+        input="Please summarize the Azure REST API specifications Readme",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 
     # Process any MCP approval requests that were generated
-    # When require_approval="always", the agent will request permission before accessing external resources
     input_list: ResponseInputParam = []
     for item in response.output:
         if item.type == "mcp_approval_request":

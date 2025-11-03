@@ -105,7 +105,6 @@ async def main() -> None:
 
                 # Download the generated file if available
                 if file_id and filename:
-                    # TODO: File download currently throws exception - needs investigation
                     file_content = await openai_client.containers.files.content.retrieve(
                         file_id=file_id, container_id=container_id
                     )

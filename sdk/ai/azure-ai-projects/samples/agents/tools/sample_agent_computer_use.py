@@ -16,7 +16,7 @@ DESCRIPTION:
     taking screenshots in a controlled environment.
 
 USAGE:
-    python sample_responses_computer_use.py
+    python sample_agent_computer_use.py
 
     Before running the sample:
 
