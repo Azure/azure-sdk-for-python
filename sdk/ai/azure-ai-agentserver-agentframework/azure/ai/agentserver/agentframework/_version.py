@@ -4,7 +4,7 @@ import subprocess
 from datetime import datetime, timezone
 from typing import Optional
 
-BASE_VERSION = "0.0.1"
+BASE_VERSION = "1.0.0"
 
 
 def _from_buildinfo() -> tuple[Optional[str], Optional[str]]:
