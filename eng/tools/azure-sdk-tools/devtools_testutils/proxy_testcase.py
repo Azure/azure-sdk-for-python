@@ -126,7 +126,7 @@ def stop_record_or_playback(test_id: str, recording_id: str, test_variables: "Di
                 "Content-Type": "application/json",
             },
             # tests don't record successfully unless test_variables is a dictionary
-            body=json.dumps(test_variables).encode("utf-8") if test_variables else "{}",
+            body=json.dumps(test_variables or {}).encode("utf-8"),
         )
     else:
         response = http_client.request(
