@@ -2,4 +2,4 @@
 ../azure-ai-agentserver-core
 ../../identity/azure-identity
 python-dotenv
-pypiwin3
+pypiwin32
