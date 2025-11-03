@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python update_metric_alert.py
+    python create_or_update_metric_alert_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,10 +31,11 @@ def main():
         subscription_id="14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7",
     )
 
-    response = client.metric_alerts.update(
-        resource_group_name="gigtest",
-        rule_name="chiricutin",
+    response = client.metric_alerts.create_or_update(
+        resource_group_name="gigtest1",
+        rule_name="MetricAlertAtResourceGroupLevel",
         parameters={
+            "location": "global",
             "properties": {
                 "actions": [
                     {
@@ -48,22 +49,26 @@ def main():
                         {
                             "criterionType": "StaticThresholdCriterion",
                             "dimensions": [],
-                            "metricName": "\\Processor(_Total)\\% Processor Time",
+                            "metricName": "Percentage CPU",
+                            "metricNamespace": "microsoft.compute/virtualmachines",
                             "name": "High_CPU_80",
                             "operator": "GreaterThan",
                             "threshold": 80.5,
                             "timeAggregation": "Average",
                         }
                     ],
-                    "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+                    "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
                 },
                 "description": "This is the description of the rule1",
                 "enabled": True,
                 "evaluationFrequency": "PT1M",
                 "scopes": [
-                    "/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7/resourceGroups/gigtest/providers/Microsoft.Compute/virtualMachines/gigwadme"
+                    "/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7/resourceGroups/gigtest1",
+                    "/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7/resourceGroups/gigtest2",
                 ],
                 "severity": 3,
+                "targetResourceRegion": "southcentralus",
+                "targetResourceType": "Microsoft.Compute/virtualMachines",
                 "windowSize": "PT15M",
             },
             "tags": {},
@@ -72,6 +77,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2018-03-01/examples/UpdateMetricAlert.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-03-01-preview/examples/createOrUpdateMetricAlertResourceGroup.json
 if __name__ == "__main__":
     main()

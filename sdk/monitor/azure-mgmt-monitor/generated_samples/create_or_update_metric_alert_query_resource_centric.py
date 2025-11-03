@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python create_or_update_dynamic_metric_alert_single_resource.py
+    python create_or_update_metric_alert_query_resource_centric.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,47 +28,47 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7",
     )
 
     response = client.metric_alerts.create_or_update(
         resource_group_name="gigtest",
         rule_name="chiricutin",
         parameters={
-            "location": "global",
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/2f1a501a-6e1d-4f37-a445-462d7f8a563d/resourceGroups/AdisTest/providers/Microsoft.ManagedIdentity/userAssignedIdentities/msi-test-euap": {}
+                },
+            },
+            "location": "eastus",
             "properties": {
+                "actionProperties": {"Email.Sujbect": "my custom email subject"},
                 "actions": [
                     {
-                        "actionGroupId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/gigtest/providers/microsoft.insights/actiongroups/group2",
-                        "webHookProperties": {"key11": "value11", "key12": "value12"},
+                        "actionGroupId": "/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7/resourcegroups/gigtest/providers/microsoft.insights/actiongroups/group2"
                     }
                 ],
-                "autoMitigate": True,
                 "criteria": {
                     "allOf": [
                         {
-                            "alertSensitivity": "Medium",
-                            "criterionType": "DynamicThresholdCriterion",
-                            "dimensions": [],
-                            "failingPeriods": {"minFailingPeriodsToAlert": 4, "numberOfEvaluationPeriods": 4},
-                            "ignoreDataBefore": "2019-04-04T21:00:00.000Z",
-                            "metricName": "Percentage CPU",
-                            "metricNamespace": "microsoft.compute/virtualmachines",
-                            "name": "High_CPU_80",
-                            "operator": "GreaterOrLessThan",
-                            "timeAggregation": "Average",
+                            "criterionType": "StaticThresholdCriterion",
+                            "name": "Metric1",
+                            "query": 'avg({"system.cpu.utilization"}) > 90',
                         }
                     ],
-                    "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
+                    "failingPeriods": {"for": "PT5M"},
+                    "odata.type": "Microsoft.Azure.Monitor.PromQLCriteria",
                 },
+                "customProperties": {"key11": "value11", "key12": "value12"},
                 "description": "This is the description of the rule1",
                 "enabled": True,
                 "evaluationFrequency": "PT1M",
+                "resolveConfiguration": {"autoResolved": True, "timeToResolve": "PT10M"},
                 "scopes": [
-                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/gigtest/providers/Microsoft.Compute/virtualMachines/gigwadme"
+                    "/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7/resourceGroups/gigtest/providers/microsoft.compute/virtualMachines/myVmName"
                 ],
                 "severity": 3,
-                "windowSize": "PT15M",
             },
             "tags": {},
         },
@@ -76,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2018-03-01/examples/createOrUpdateDynamicMetricAlertSingleResource.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-03-01-preview/examples/createOrUpdateMetricAlertQueryResourceCentric.json
 if __name__ == "__main__":
     main()

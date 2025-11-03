@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python create_or_update_metric_alert_subscription.py
+    python create_or_update_metric_alert_multiple_resource.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -33,7 +33,7 @@ def main():
 
     response = client.metric_alerts.create_or_update(
         resource_group_name="gigtest",
-        rule_name="MetricAlertAtSubscriptionLevel",
+        rule_name="MetricAlertOnMultipleResources",
         parameters={
             "location": "global",
             "properties": {
@@ -62,7 +62,10 @@ def main():
                 "description": "This is the description of the rule1",
                 "enabled": True,
                 "evaluationFrequency": "PT1M",
-                "scopes": ["/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7"],
+                "scopes": [
+                    "/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7/resourceGroups/gigtest/providers/Microsoft.Compute/virtualMachines/gigwadme1",
+                    "/subscriptions/14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7/resourceGroups/gigtest/providers/Microsoft.Compute/virtualMachines/gigwadme2",
+                ],
                 "severity": 3,
                 "targetResourceRegion": "southcentralus",
                 "targetResourceType": "Microsoft.Compute/virtualMachines",
@@ -74,6 +77,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2018-03-01/examples/createOrUpdateMetricAlertSubscription.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-03-01-preview/examples/createOrUpdateMetricAlertMultipleResource.json
 if __name__ == "__main__":
     main()

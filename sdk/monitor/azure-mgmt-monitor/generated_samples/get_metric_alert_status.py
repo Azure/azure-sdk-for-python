@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_metric_alert_multiple_resource.py
+    python get_metric_alert_status.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,13 @@ def main():
         subscription_id="14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7",
     )
 
-    response = client.metric_alerts.get(
+    response = client.metric_alerts_status.list(
         resource_group_name="gigtest",
-        rule_name="MetricAlertOnMultipleResources",
+        rule_name="chiricutin",
     )
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2018-03-01/examples/getMetricAlertMultipleResource.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-03-01-preview/examples/getMetricAlertStatus.json
 if __name__ == "__main__":
     main()
