@@ -5059,7 +5059,7 @@ class EvaluationRule(_Model):
     :ivar filter: Filter condition of the evaluation rule.
     :vartype filter: ~azure.ai.projects.models.EvaluationRuleFilter
     :ivar event_type: Event type that the evaluation rule applies to. Required. Known values are:
-     "response.completed" and "manual".
+     "responseCompleted" and "manual".
     :vartype event_type: str or ~azure.ai.projects.models.EvaluationRuleEventType
     :ivar enabled: Indicates whether the evaluation rule is enabled. Default is true. Required.
     :vartype enabled: bool
@@ -5085,7 +5085,7 @@ class EvaluationRule(_Model):
         name="eventType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Event type that the evaluation rule applies to. Required. Known values are:
-     \"response.completed\" and \"manual\"."""
+     \"responseCompleted\" and \"manual\"."""
     enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the evaluation rule is enabled. Default is true. Required."""
     system_data: dict[str, str] = rest_field(name="systemData", visibility=["read"])
@@ -5456,15 +5456,13 @@ class EvaluatorVersion(_Model):
      need to be unique."""
     metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata about the evaluator."""
-    evaluator_type: Union[str, "_models.EvaluatorType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    evaluator_type: Union[str, "_models.EvaluatorType"] = rest_field(visibility=["read", "create"])
     """The type of the evaluator. Required. Known values are: \"builtin\" and \"custom\"."""
     categories: list[Union[str, "_models.EvaluatorCategory"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The categories of the evaluator. Required."""
-    definition: "_models.EvaluatorDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    definition: "_models.EvaluatorDefinition" = rest_field(visibility=["read", "create"])
     """Definition of the evaluator. Required."""
     created_by: str = rest_field(visibility=["read"])
     """Creator of the evaluator. Required."""
@@ -14814,18 +14812,25 @@ class WebSearchActionSearch(WebSearchAction, discriminator="search"):
     :vartype type: str or ~azure.ai.projects.models.SEARCH
     :ivar query: The search query. Required.
     :vartype query: str
+    :ivar sources: Web search sources.
+    :vartype sources: list[~azure.ai.projects.models.WebSearchActionSearchSources]
     """
 
     type: Literal[WebSearchActionType.SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The action type. Required."""
     query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The search query. Required."""
+    sources: Optional[list["_models.WebSearchActionSearchSources"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Web search sources."""
 
     @overload
     def __init__(
         self,
         *,
         query: str,
+        sources: Optional[list["_models.WebSearchActionSearchSources"]] = None,
     ) -> None: ...
 
     @overload
@@ -14838,6 +14843,39 @@ class WebSearchActionSearch(WebSearchAction, discriminator="search"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = WebSearchActionType.SEARCH  # type: ignore
+
+
+class WebSearchActionSearchSources(_Model):
+    """WebSearchActionSearchSources.
+
+    :ivar type: Required. Default value is "url".
+    :vartype type: str
+    :ivar url: Required.
+    :vartype url: str
+    """
+
+    type: Literal["url"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"url\"."""
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["url"] = "url"
 
 
 class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):

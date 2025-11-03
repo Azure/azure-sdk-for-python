@@ -271,7 +271,7 @@ class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the evaluation rule event."""
 
-    RESPONSE_COMPLETED = "response.completed"
+    RESPONSE_COMPLETED = "responseCompleted"
     """Response completed."""
     MANUAL = "manual"
     """Manual trigger."""
@@ -689,18 +689,20 @@ class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the processing type used for serving the request.
 
-    * If set to 'auto', then the request will be processed with the service tier configured in the
-    Project settings. Unless otherwise configured, the Project will use 'default'.
-    * If set to 'default', then the request will be processed with the standard pricing and
-    performance for the selected model.
-    * If set to '[flex](https://platform.openai.com/docs/guides/flex-processing)' or 'priority',
-    then the request will be processed with the corresponding service tier. [Contact
-    sales](https://openai.com/contact-sales) to learn more about Priority processing.
+    * If set to 'auto', then the request will be processed with the service tier
+    configured in the Project settings. Unless otherwise configured, the Project will use
+    'default'.
+    * If set to 'default', then the request will be processed with the standard
+    pricing and performance for the selected model.
+    * If set to '[flex](https://platform.openai.com/docs/guides/flex-processing)'
+    or 'priority', then the request will be processed with the corresponding service
+    tier. [Contact sales](https://openai.com/contact-sales) to learn more about Priority
+    processing.
     * When not set, the default behavior is 'auto'.
 
     When the ``service_tier`` parameter is set, the response body will include the ``service_tier``
-    value based on the processing mode actually used to serve the request. This response value may
-    be different from the value set in the parameter.
+    value based on the processing mode actually used to serve the request. This response value
+    may be different from the value set in the parameter.
     """
 
     AUTO = "auto"
