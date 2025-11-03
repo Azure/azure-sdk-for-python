@@ -86,7 +86,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/f9d80e62-acef-417f-9cce-526729d8c542?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/166a2016-bf26-4de5-acd2-bb17c7ec7785?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -101,11 +101,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T11:32:04.0329239Z"
+            "timestamp": "2025-11-03T16:38:31.4907997Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T11:32:04.0329221Z",
+        "creationTime": "2025-11-03T16:38:31.4907989Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -143,11 +143,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T11:32:04.0329239Z"
+            "timestamp": "2025-11-03T16:38:31.4907997Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T11:32:04.0329221Z",
+        "creationTime": "2025-11-03T16:38:31.4907989Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -185,19 +185,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T11:32:04.0329239Z"
+            "timestamp": "2025-11-03T16:38:31.4907997Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-29T11:32:20.2626327Z"
+            "timestamp": "2025-11-03T16:38:46.6006755Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-29T11:32:20.493724Z"
+            "timestamp": "2025-11-03T16:38:46.8869387Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T11:32:04.0329221Z",
+        "creationTime": "2025-11-03T16:38:31.4907989Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -235,19 +235,19 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-10-29T11:32:04.0329239Z"
+            "timestamp": "2025-11-03T16:38:31.4907997Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-10-29T11:32:20.2626327Z"
+            "timestamp": "2025-11-03T16:38:46.6006755Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-10-29T11:32:20.493724Z"
+            "timestamp": "2025-11-03T16:38:46.8869387Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-10-29T11:32:04.0329221Z",
+        "creationTime": "2025-11-03T16:38:31.4907989Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -271,7 +271,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1057",
+        "Content-Length": "1055",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -330,8 +330,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-29T11:32:20.3377192Z",
-        "msft:_updated": "2025-10-29T11:32:20.3377192Z"
+        "msft:_created": "2025-11-03T16:38:46.693807Z",
+        "msft:_updated": "2025-11-03T16:38:46.693807Z"
       }
     }
   ],

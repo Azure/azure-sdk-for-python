@@ -7,21 +7,21 @@
         "Accept": "application/json",
         "Connection": "keep-alive",
         "Content-Length": "449",
-        "Content-Type": "multipart/form-data; boundary=c16975850a88c04a3a15e9d91828e57d",
+        "Content-Type": "multipart/form-data; boundary=e8f6fff93742245f69d5db8ea58eb969",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--c16975850a88c04a3a15e9d91828e57d\r\n",
+        "--e8f6fff93742245f69d5db8ea58eb969\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "b64:eyJrZXkiOiAidGVzdC1hc3NldC10by1iZS1kZWxldGVkIiwgImhyZWYiOiAiaHR0cHM6Ly9leGFtcGxlLmNvbS90ZXN0LWFzc2V0LXRvLWRlbGV0ZS50eHQiLCAidHlwZSI6ICJ0ZXh0L3BsYWluIiwgInJvbGVzIjogWyJtZXRhZGF0YSJdLCAidGl0bGUiOiAiVGVzdCBBc3NldCBUbyBCZSBEZWxldGVkIn0=",
         "\r\n",
-        "--c16975850a88c04a3a15e9d91828e57d\r\n",
+        "--e8f6fff93742245f69d5db8ea58eb969\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset-to-delete.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50IGZvciBkZWxldGlvbg==",
         "\r\n",
-        "--c16975850a88c04a3a15e9d91828e57d--\r\n"
+        "--e8f6fff93742245f69d5db8ea58eb969--\r\n"
       ],
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -33,7 +33,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "3106",
+        "Content-Length": "2991",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -46,7 +46,7 @@
         "type": "Collection",
         "id": "naip-atl",
         "stac_version": "1.0.0",
-        "description": "A Subset of NAIP imagery for sample MPC Pro GeoCatalog deployments. Includes multiple city and national park focus areas, useful for quick product evaluation. - Updated for testing",
+        "description": "A Subset of imagery for sample MPC Pro GeoCatalog deployments. - Updated for testing",
         "links": [
           {
             "rel": "items",
@@ -115,9 +115,9 @@
             "title": "Thumbnail"
           }
         },
-        "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-29T11:34:20.304880Z",
-        "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
+        "msft:_created": "2025-11-03T14:16:10.3539672Z",
+        "msft:_updated": "2025-11-03T16:41:06.242914Z",
+        "title": "MPC Pro Sample Datasets",
         "extent": {
           "spatial": {
             "bbox": [
@@ -132,8 +132,8 @@
           "temporal": {
             "interval": [
               [
-                "2010-01-01T00:00:00Z",
-                "2023-12-31T00:00:00Z"
+                "2020-01-01T00:00:00Z",
+                "2099-12-31T23:59:59Z"
               ]
             ]
           }
@@ -197,7 +197,7 @@
           "thumbnail": {
             "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
-            "title": "NAIP thumbnail",
+            "title": "Thumbnail",
             "roles": [
               "thumbnail"
             ]
@@ -242,7 +242,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2866",
+        "Content-Length": "2751",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -255,7 +255,7 @@
         "type": "Collection",
         "id": "naip-atl",
         "stac_version": "1.0.0",
-        "description": "A Subset of NAIP imagery for sample MPC Pro GeoCatalog deployments. Includes multiple city and national park focus areas, useful for quick product evaluation. - Updated for testing",
+        "description": "A Subset of imagery for sample MPC Pro GeoCatalog deployments. - Updated for testing",
         "links": [
           {
             "rel": "items",
@@ -324,9 +324,9 @@
             "title": "Thumbnail"
           }
         },
-        "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-29T11:34:20.571986Z",
-        "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
+        "msft:_created": "2025-11-03T14:16:10.3539672Z",
+        "msft:_updated": "2025-11-03T16:41:06.549791Z",
+        "title": "MPC Pro Sample Datasets",
         "extent": {
           "spatial": {
             "bbox": [
@@ -341,8 +341,8 @@
           "temporal": {
             "interval": [
               [
-                "2010-01-01T00:00:00Z",
-                "2023-12-31T00:00:00Z"
+                "2020-01-01T00:00:00Z",
+                "2099-12-31T23:59:59Z"
               ]
             ]
           }
@@ -406,7 +406,7 @@
           "thumbnail": {
             "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
             "type": "image/png",
-            "title": "NAIP thumbnail",
+            "title": "Thumbnail",
             "roles": [
               "thumbnail"
             ]
@@ -442,7 +442,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2866",
+        "Content-Length": "2751",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -477,7 +477,7 @@
             "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
           }
         ],
-        "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
+        "title": "MPC Pro Sample Datasets",
         "assets": {
           "thumbnail": {
             "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
@@ -485,7 +485,7 @@
             "roles": [
               "thumbnail"
             ],
-            "title": "NAIP thumbnail"
+            "title": "Thumbnail"
           },
           "test-asset": {
             "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
@@ -510,8 +510,8 @@
           "temporal": {
             "interval": [
               [
-                "2010-01-01T00:00:00Z",
-                "2023-12-31T00:00:00Z"
+                "2020-01-01T00:00:00Z",
+                "2099-12-31T23:59:59Z"
               ]
             ]
           }
@@ -571,7 +571,7 @@
             }
           ]
         },
-        "description": "A Subset of NAIP imagery for sample MPC Pro GeoCatalog deployments. Includes multiple city and national park focus areas, useful for quick product evaluation. - Updated for testing",
+        "description": "A Subset of imagery for sample MPC Pro GeoCatalog deployments. - Updated for testing",
         "item_assets": {
           "image": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -615,8 +615,8 @@
           }
         },
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-29T11:34:20.571986Z",
+        "msft:_created": "2025-11-03T14:16:10.3539672Z",
+        "msft:_updated": "2025-11-03T16:41:06.549791Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"

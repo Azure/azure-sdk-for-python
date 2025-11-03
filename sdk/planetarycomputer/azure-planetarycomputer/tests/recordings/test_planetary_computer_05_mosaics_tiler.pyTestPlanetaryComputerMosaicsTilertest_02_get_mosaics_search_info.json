@@ -169,8 +169,8 @@
           },
           "_where": "(collection = 'naip-atl' AND datetime >= '2021-01-01T00:00:00Z' AND datetime <= '2022-12-31T23:59:59Z')",
           "orderby": "datetime DESC, id DESC",
-          "lastused": "2025-10-29T11:31:20.560959Z",
-          "usecount": 163,
+          "lastused": "2025-11-03T16:27:55.074273Z",
+          "usecount": 238,
           "metadata": {
             "type": "mosaic"
           }

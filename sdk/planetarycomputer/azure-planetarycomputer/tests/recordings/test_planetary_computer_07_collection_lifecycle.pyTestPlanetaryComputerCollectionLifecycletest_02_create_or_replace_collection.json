@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1057",
+        "Content-Length": "1055",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -79,8 +79,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-29T11:32:20.3377192Z",
-        "msft:_updated": "2025-10-29T11:32:20.3377192Z"
+        "msft:_created": "2025-11-03T16:38:46.693807Z",
+        "msft:_updated": "2025-11-03T16:38:46.693807Z"
       }
     },
     {
@@ -89,7 +89,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "1118",
+        "Content-Length": "1116",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
@@ -142,8 +142,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-29T11:32:20.3377192Z",
-        "msft:_updated": "2025-10-29T11:32:20.3377192Z"
+        "msft:_created": "2025-11-03T16:38:46.693807Z",
+        "msft:_updated": "2025-11-03T16:38:46.693807Z"
       },
       "StatusCode": 200,
       "ResponseHeaders": {
@@ -213,8 +213,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-29T11:32:20.3377192Z",
-        "msft:_updated": "2025-10-29T11:32:52.6305843Z"
+        "msft:_created": "2025-11-03T16:38:46.693807Z",
+        "msft:_updated": "2025-11-03T16:39:22.0458552Z"
       }
     },
     {
@@ -237,7 +237,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "1067",
+        "Content-Length": "1066",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -296,8 +296,8 @@
         "license": "proprietary",
         "description": "Test collection for lifecycle operations - UPDATED",
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-29T11:32:20.3377192Z",
-        "msft:_updated": "2025-10-29T11:32:52.6305843Z"
+        "msft:_created": "2025-11-03T16:38:46.693807Z",
+        "msft:_updated": "2025-11-03T16:39:22.0458552Z"
       }
     }
   ],

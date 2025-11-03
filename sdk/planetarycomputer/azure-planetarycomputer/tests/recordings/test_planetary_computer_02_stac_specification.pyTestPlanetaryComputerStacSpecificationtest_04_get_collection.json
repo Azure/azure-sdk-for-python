@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "2866",
+        "Content-Length": "2751",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -55,7 +55,7 @@
             "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip-atl"
           }
         ],
-        "title": "NAIP Atlanta (MPC Pro Sample Datasets)",
+        "title": "MPC Pro Sample Datasets",
         "assets": {
           "thumbnail": {
             "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png",
@@ -63,7 +63,7 @@
             "roles": [
               "thumbnail"
             ],
-            "title": "NAIP thumbnail"
+            "title": "Thumbnail"
           },
           "test-asset": {
             "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/test-asset/test-asset.txt",
@@ -88,8 +88,8 @@
           "temporal": {
             "interval": [
               [
-                "2010-01-01T00:00:00Z",
-                "2023-12-31T00:00:00Z"
+                "2020-01-01T00:00:00Z",
+                "2099-12-31T23:59:59Z"
               ]
             ]
           }
@@ -149,7 +149,7 @@
             }
           ]
         },
-        "description": "A Subset of NAIP imagery for sample MPC Pro GeoCatalog deployments. Includes multiple city and national park focus areas, useful for quick product evaluation. - Updated for testing",
+        "description": "A Subset of imagery for sample MPC Pro GeoCatalog deployments. - Updated for testing",
         "item_assets": {
           "image": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
@@ -193,8 +193,8 @@
           }
         },
         "stac_version": "1.0.0",
-        "msft:_created": "2025-10-22T11:14:31.811918Z",
-        "msft:_updated": "2025-10-29T01:14:26.035129Z",
+        "msft:_created": "2025-11-03T14:16:10.3539672Z",
+        "msft:_updated": "2025-11-03T16:41:06.549791Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"

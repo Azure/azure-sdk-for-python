@@ -19,7 +19,7 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "public, max-age=3600",
-        "Connection": "keep-alive",
+        "Connection": "close",
         "Content-Length": "714799",
         "Content-Type": "image/png",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",

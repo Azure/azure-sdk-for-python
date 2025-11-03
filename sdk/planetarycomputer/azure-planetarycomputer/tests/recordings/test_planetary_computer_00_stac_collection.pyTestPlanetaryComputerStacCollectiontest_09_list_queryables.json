@@ -20,7 +20,7 @@
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
-        "Content-Length": "843",
+        "Content-Length": "803",
         "Content-Type": "application/schema+json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -53,8 +53,7 @@
             "description": "Item Geometry"
           },
           "test:property": {
-            "data_type": "number",
-            "description": "Test property - updated"
+            "data_type": "number"
           },
           "eo:cloud_cover": {
             "data_type": "number",
