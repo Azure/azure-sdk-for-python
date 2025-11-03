@@ -21,6 +21,8 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.storage.blob.aio import BlobClient
+from .._generated import AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeResult,
     AccessControlChanges,
@@ -36,6 +38,12 @@ from ._data_lake_lease_async import DataLakeLeaseClient
 class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     file_system_name: str
     path_name: str
+    _blob_client: BlobClient
+    _datalake_client_for_blob_operation: AzureDataLakeStorageRESTAPI
+    _query_str: str
+    _raw_credential: Optional[
+        Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+    ]
     def __init__(
         self,
         account_url: str,
@@ -54,6 +62,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
     async def close(self) -> None: ...
+    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
     async def _create(
         self,
         resource_type: str,
