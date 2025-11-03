@@ -2155,6 +2155,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self.trace_conversations_create(function, *args, **kwargs)
             if _name == "list" and _trace_type == TraceType.CONVERSATIONS:
                 return self.trace_list_conversation_items(function, *args, **kwargs)
+            # pylint: disable=no-else-return
             else:  # pylint: disable=no-else-return
                 return function(*args, **kwargs)
 
@@ -2191,6 +2192,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return await self.trace_conversations_create_async(function, *args, **kwargs)
             if _name == "list" and _trace_type == TraceType.CONVERSATIONS:
                 return await self.trace_list_conversation_items_async(function, *args, **kwargs)
+            # pylint: disable=no-else-return
             else:  # pylint: disable=no-else-return
                 return await function(*args, **kwargs)
 
