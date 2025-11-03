@@ -11,7 +11,7 @@ DESCRIPTION:
     using inline dataset content.
 
 USAGE:
-    python sample_coherence.py
+    python sample_fluency.py
 
     Before running the sample:
 
@@ -82,7 +82,7 @@ def main() -> None:
             
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Coherence Evaluator with inline data",
+                name="Test Fluency Evaluator with inline data",
                 data_source_config=data_source_config,
                 testing_criteria=testing_criteria,
             )
@@ -94,12 +94,8 @@ def main() -> None:
             pprint(eval_object_response)
 
             # Sample inline data
-            success_query = "What is the capital of France?"
-            success_response = "The capital of France is Paris."
-
-            # Failure example - incoherent response
-            failure_query = "What is the capital of France?"
-            failure_response = "France capital is... well, the city where government sits is Paris but no wait, Lyon is bigger actually maybe Rome? The French people live in many cities but the main one, I think it's definitely Paris or maybe not, depends on what you mean by capital."
+            query = "What is the capital of France?"
+            response = "The capital of France is Paris."
 
             print("Creating Eval Run with Inline Data")
             eval_run_object = client.evals.runs.create(
@@ -114,18 +110,10 @@ def main() -> None:
                     source=SourceFileContent(
                         type="file_content",
                         content= [
-                            # Success example - coherent response
                             SourceFileContentContent(
                                 item= {
-                                    "query": success_query,
-                                    "response": success_response
-                                }
-                            ),
-                            # Failure example - incoherent response
-                            SourceFileContentContent(
-                                item= {
-                                    "query": failure_query,
-                                    "response": failure_response
+                                    "query": query,
+                                    "response": response
                                 }
                             )
                         ]

@@ -21,6 +21,22 @@ evaluator_to_data_source_config = {
                 },
         "include_sample_schema": True
     },
+    "fluency": {
+        "type": "custom",
+        "item_schema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string"
+                },
+                "response": {
+                    "type": "string"
+                }
+            },
+            "required": []
+        },
+        "include_sample_schema": True
+    },
     "groundedness": {
         "type": "custom",
                 "item_schema": {
@@ -459,6 +475,10 @@ evaluator_to_data_source_config = {
 
 evaluator_to_data_mapping = {
     "coherence": {
+        "query": "{{item.query}}",
+        "response": "{{item.response}}"
+    },
+    "fluency": {
         "query": "{{item.query}}",
         "response": "{{item.response}}"
     },
