@@ -44,18 +44,14 @@ async def main() -> None:
         os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
     )
 
-    # Use async context manager for credential to ensure proper cleanup
     async with DefaultAzureCredential() as credential:
-        # Create project client with async credential
         project_client = AIProjectClient(
             endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
             credential=credential,
         )
 
         try:
-            # Use async context manager for project client
             async with project_client:
-                # Get the async OpenAI client
                 openai_client = await project_client.get_openai_client()
 
                 # Upload the CSV file for the code interpreter to use
