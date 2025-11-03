@@ -18,13 +18,15 @@ from .. import models as _models
 from ._operations import (
     _QuestionAnsweringAuthoringClientOperationsMixin as _QuestionAnsweringAuthoringClientOperationsMixinGenerated,
 )
+
 JSON = MutableMapping[str, Any]
+
 
 class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthoringClientOperationsMixinGenerated):
     """Mixin class for patching methods with backward compatible parameter names."""
 
     # create_project overloads with 'options' parameter
-    @overload # type: ignore
+    @overload  # type: ignore
     def create_project(
         self,
         project_name: str,
@@ -48,7 +50,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload # type: ignore
+    @overload  # type: ignore
     def create_project(
         self, project_name: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QuestionAnsweringProject:
@@ -67,7 +69,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload # type: ignore
+    @overload  # type: ignore
     def create_project(
         self, project_name: str, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QuestionAnsweringProject:
@@ -87,7 +89,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         """
 
     @distributed_trace
-    def create_project( # pyright: ignore[reportIncompatibleMethodOverride]
+    def create_project(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, project_name: str, options: Union[_models.QuestionAnsweringProject, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.QuestionAnsweringProject:
         """Create or update a project.
@@ -107,9 +109,14 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().create_project(project_name=project_name, body=options, **kwargs)
 
     # update_synonyms overloads with 'synonyms' parameter
-    @overload # type: ignore
+    @overload  # type: ignore
     def update_synonyms(
-        self, project_name: str, synonyms: _models.SynonymAssets, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        project_name: str,
+        synonyms: _models.SynonymAssets,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Updates all the synonyms of a project.
 
@@ -125,7 +132,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload # type: ignore
+    @overload  # type: ignore
     def update_synonyms(
         self, project_name: str, synonyms: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
@@ -143,7 +150,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload # type: ignore
+    @overload  # type: ignore
     def update_synonyms(
         self, project_name: str, synonyms: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
@@ -181,7 +188,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().update_synonyms(project_name=project_name, body=synonyms, **kwargs)
 
     # begin_update_qnas overloads with 'qnas' parameter
-    @overload # type: ignore
+    @overload  # type: ignore
     def begin_update_qnas(
         self,
         project_name: str,
@@ -204,7 +211,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload # type: ignore
+    @overload  # type: ignore
     def begin_update_qnas(
         self, project_name: str, qnas: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
@@ -223,7 +230,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         """
 
     @distributed_trace
-    def begin_update_qnas( # pyright: ignore[reportIncompatibleMethodOverride]
+    def begin_update_qnas(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, project_name: str, qnas: Union[list[_models.UpdateQnaRecord], IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Updates the QnAs of a project.
@@ -242,7 +249,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         return super().begin_update_qnas(project_name=project_name, body=qnas, **kwargs)
 
     # begin_update_sources overloads with 'sources' parameter
-    @overload # type: ignore
+    @overload  # type: ignore
     def begin_update_sources(
         self,
         project_name: str,
@@ -265,7 +272,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload # type: ignore
+    @overload  # type: ignore
     def begin_update_sources(
         self, project_name: str, sources: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
@@ -284,7 +291,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         """
 
     @distributed_trace
-    def begin_update_sources( # pyright: ignore[reportIncompatibleMethodOverride]
+    def begin_update_sources(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, project_name: str, sources: Union[list[_models.UpdateSourceRecord], IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Updates the sources of a project.
@@ -300,9 +307,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(_QuestionAnsweringAuthori
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Call the parent implementation with 'body' parameter for backward compatibility
-        return super().begin_update_sources(
-            project_name=project_name, body=sources, **kwargs
-        )
+        return super().begin_update_sources(project_name=project_name, body=sources, **kwargs)
 
 
 __all__: list[str] = [
@@ -317,3 +322,41 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    # Hide the generated get_*_status LRO status peek methods from the public surface
+    # without editing the generated _operations.py file. We do this by:
+    # 1. Capturing references to the original methods.
+    # 2. Deleting those attributes from the generated mixin class so normal attribute
+    #    resolution on the public client no longer finds them.
+    # 3. Exposing private underscore-prefixed versions on our patch subclass for
+    #    internal/testing use if ever needed.
+    #
+    # NOTE: This is a breaking change for any user code calling these methods directly.
+    #       Provide release notes / changelog entry accordingly.
+    original_methods: dict[str, Any] = {}
+    to_hide = [
+        "get_delete_status",
+        "get_export_status",
+        "get_import_status",
+        "get_deploy_status",
+    ]
+    generated_cls = _QuestionAnsweringAuthoringClientOperationsMixinGenerated
+    for name in to_hide:
+        if hasattr(generated_cls, name):
+            original_methods[name] = getattr(generated_cls, name)
+            try:
+                delattr(generated_cls, name)
+            except AttributeError:
+                pass  # Already removed
+
+    # Attach private replicas to the patch subclass so internal code could still call them
+    patch_cls = _QuestionAnsweringAuthoringClientOperationsMixin
+    for public_name, func in original_methods.items():
+        private_name = f"_{public_name}"  # e.g. _get_delete_status
+        # Avoid overwriting if already defined.
+        if not hasattr(patch_cls, private_name):
+            # Bind function so it behaves like an instance method on patch_cls.
+            setattr(patch_cls, private_name, func)
+
+    # Ensure they are not exported via __all__ even if someone adds them later.
+    # (__all__ currently only lists the mixin class.)
+    # No action needed unless we want to explicitly assert.
