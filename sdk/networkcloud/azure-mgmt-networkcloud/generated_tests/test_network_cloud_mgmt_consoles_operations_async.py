@@ -25,7 +25,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.consoles.list_by_virtual_machine(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
             console_name="str",
-            api_version="2025-02-01",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "virtualMachineAccessId": "str",
                 },
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +92,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
                 console_name="str",
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -107,7 +107,7 @@ class TestNetworkCloudMgmtConsolesOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 virtual_machine_name="str",
                 console_name="str",
-                api_version="2025-02-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

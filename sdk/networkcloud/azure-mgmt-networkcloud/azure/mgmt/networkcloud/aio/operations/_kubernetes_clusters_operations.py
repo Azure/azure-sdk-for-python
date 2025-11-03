@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -46,7 +46,8 @@ from ...operations._kubernetes_clusters_operations import (
 from .._configuration import NetworkCloudMgmtClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class KubernetesClustersOperations:
@@ -69,11 +70,20 @@ class KubernetesClustersOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.KubernetesCluster"]:
+    def list_by_subscription(
+        self, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.KubernetesCluster"]:
         """List Kubernetes clusters in the subscription.
 
         Get a list of Kubernetes clusters in the provided subscription.
 
+        :param top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :type top: int
+        :param skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :type skip_token: str
         :return: An iterator like instance of either KubernetesCluster or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -98,6 +108,8 @@ class KubernetesClustersOperations:
 
                 _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -148,8 +160,8 @@ class KubernetesClustersOperations:
 
     @distributed_trace
     def list_by_resource_group(
-        self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.KubernetesCluster"]:
+        self, resource_group_name: str, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.KubernetesCluster"]:
         """List Kubernetes clusters in the resource group.
 
         Get a list of Kubernetes clusters in the provided resource group.
@@ -157,6 +169,13 @@ class KubernetesClustersOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :param top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :type top: int
+        :param skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :type skip_token: str
         :return: An iterator like instance of either KubernetesCluster or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -182,6 +201,8 @@ class KubernetesClustersOperations:
                 _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -701,9 +722,10 @@ class KubernetesClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if kubernetes_cluster_update_parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if kubernetes_cluster_update_parameters else None
         _json = None
         _content = None
         if isinstance(kubernetes_cluster_update_parameters, (IOBase, bytes)):
@@ -887,6 +909,7 @@ class KubernetesClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if kubernetes_cluster_update_parameters else None
         cls: ClsType[_models.KubernetesCluster] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
