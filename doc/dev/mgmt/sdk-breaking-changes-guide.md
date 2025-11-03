@@ -242,7 +242,7 @@ Multiple removals of unreferenced models that are typically not used in the SDK:
 
 **Changelog Pattern**:
 
-Multiple removals of models in a pattern like ```xxxList`:
+Multiple removals of models following the pattern `xxxList`:
 
 ```md
 - Deleted or renamed model `ElasticSanList`
