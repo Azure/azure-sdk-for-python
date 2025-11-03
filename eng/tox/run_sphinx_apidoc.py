@@ -66,7 +66,7 @@ def sphinx_apidoc(working_directory: str, namespace: str) -> None:
             while namespace:
                 rst_file_to_delete = base_path / f"{namespace}.rst"
                 logging.info(f"Removing {rst_file_to_delete}")
-                rst_file_to_delete.unlink()
+                rst_file_to_delete.unlink(missing_ok=True)
                 namespace = namespace.rpartition('.')[0]
     except CalledProcessError as e:
         logging.error(
