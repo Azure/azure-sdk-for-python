@@ -421,15 +421,7 @@ class EvaluationEvaluateSamples(object):
             {"role": "assistant", "content": [{"type": "text", "text": "Your order #123 has been shipped."}]},
         ]
 
-        tool_definitions = [
-            {
-                "name": "get_order",
-                "description": "Get order details.",
-                "parameters": {"type": "object", "properties": {"order_id": {"type": "string"}}},
-            }
-        ]
-
-        task_adherence_evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        task_adherence_evaluator(query=query, response=response)
         # [END task_adherence_evaluator]
 
         # [START task_completion_evaluator]
