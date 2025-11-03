@@ -666,7 +666,7 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
         for key in column_mapping.keys():
-            if input_data_df[key] is not None and len(input_data_df[key]) > 0 and isinstance(input_data_df[key].iloc[0], list):
+            if key in input_data_df and len(input_data_df[key]) > 0 and isinstance(input_data_df[key].iloc[0], list):
                 props[key] = {"type": "array"}
             else:
                 props[key] = {"type": "string"}

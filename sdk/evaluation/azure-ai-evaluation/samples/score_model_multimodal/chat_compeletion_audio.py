@@ -2,11 +2,15 @@
 import os
 import base64
 from openai import AzureOpenAI
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 def demonstrate_score_model_grader():
-    endpoint = os.getenv("ENDPOINT_URL", "")
-    deployment = os.getenv("DEPLOYMENT_NAME", "gpt-4o-audio-preview")
-    subscription_key = os.getenv("AZURE_OPENAI_API_KEY", "")
+    endpoint = os.getenv("endpoint", "")
+    deployment = os.getenv("deployment_name_audio", "gpt-4o-audio-preview")
+    subscription_key = os.getenv("api_key", "")
 
     # Initialize Azure OpenAI client with key-based authentication
     client = AzureOpenAI(
@@ -57,8 +61,19 @@ def demonstrate_score_model_grader():
 
 
 if __name__ == "__main__":
-    print("🚀 Starting Azure OpenAI Score Model Grader Demo\n")
+    print("🚀 Starting Chat Completion Audio Demo\n")
 
-    demonstrate_score_model_grader()
+    # Check if environment variables are set
+    required_vars = ["endpoint", "api_key", "deployment_name_audio"]
+
+    missing_vars = [var for var in required_vars if not os.environ.get(var)]
+
+    if missing_vars:
+        print("⚠️  Missing environment variables:")
+        for var in missing_vars:
+            print(f"   - {var}")
+    else:
+        print("✅ All environment variables found")
+        demonstrate_score_model_grader()
 
     print("\n🎉 Demo completed!")

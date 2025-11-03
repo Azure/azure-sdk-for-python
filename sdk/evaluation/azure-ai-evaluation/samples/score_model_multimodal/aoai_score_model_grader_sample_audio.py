@@ -145,7 +145,7 @@ def demonstrate_score_model_grader():
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
     
     endpoint = os.getenv("endpoint", "")
-    deployment = os.getenv("deployment_name", "gpt-4o-audio-preview")
+    deployment = os.getenv("deployment_name_audio", "gpt-4o-audio-preview")
     api_key = os.getenv("api_key", "")
 
     print(f"Endpoint: {endpoint}")
@@ -287,7 +287,7 @@ if __name__ == "__main__":
     print("🚀 Starting Azure OpenAI Score Model Grader Demo\n")
 
     # Check if environment variables are set
-    required_vars = ["endpoint", "api_key", "deployment_name"]
+    required_vars = ["endpoint", "api_key", "deployment_name_audio"]
 
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
 
