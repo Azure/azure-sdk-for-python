@@ -22,7 +22,6 @@
     "*.avro",
     "*.tgz",
     "*.pfx",
-    "*.wav",
     "sdk/**/azure-mgmt**/**",
     "sdk/**/ci.yml",
     "sdk/**/azure-cognitiveservices**",
@@ -531,8 +530,7 @@
     "pyaudio",
     "PyAudio",
 	"libasound",
-    "ingraph",
-    "diarization"
+    "ingraph"
   ],
   "overrides": [
     {
@@ -1211,8 +1209,6 @@
         "ikey",
         "msecs",
         "mycontainer",
-        "pclp",
-        "pcsp",
         "semconv",
         "updown",
         "uvicorn"
@@ -1678,26 +1674,7 @@
         "getopenidmetadata",
         "getopenidmetadataasync",
         "aikcert",
-        "shareduks",
-        "PKIX",
-        "tcbbaselines",
-        "Iiwg",
-        "Ijog",
-        "Ghvc",
-        "MCIs",
-        "Mdxl",
-        "Dxxf",
-        "PYSN",
-        "Aiandr",
-        "Ijoic",
-        "Jjcn",
-        "QLTI",
-        "Hhnc",
-        "Mkxzellr",
-        "Sjhual",
-        "Inki",
-        "NGZZN",
-        "Igog",
+        "shareduks"
       ]
     },
     {
@@ -1892,14 +1869,6 @@
         "moduleid",
         "onvif",
         "Onvif"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
-      "words": [
-        "mrenclave",
-        "MRENCLAVE",
-        "oeverify"
       ]
     },
     {
