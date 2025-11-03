@@ -9,9 +9,8 @@
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 200,
+      "StatusCode": 404,
       "ResponseHeaders": {
-        "Accept-Ranges": "bytes",
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
         "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
@@ -19,43 +18,36 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Encoding": "gzip",
-        "Content-Length": "1084",
+        "Content-Length": "151",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "traceparent": "00-00000000000000000000000000000000-0000000000000000-00",
-        "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
+        "X-Ms-Error-Code": "ResourceNotFound",
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
+        "error": {
+          "code": "ResourceNotFound",
+          "message": "Collection 'test-partition-type-collection' not found. Please verify the collection ID and try again."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "370",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
         "id": "test-partition-type-collection",
-        "type": "Collection",
-        "links": [
-          {
-            "rel": "items",
-            "type": "application/geo+json",
-            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection/items"
-          },
-          {
-            "rel": "parent",
-            "type": "application/json",
-            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
-          },
-          {
-            "rel": "root",
-            "type": "application/json",
-            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
-          },
-          {
-            "rel": "self",
-            "type": "application/json",
-            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection"
-          }
-        ],
-        "title": "Test Partition Type Collection",
+        "description": "Temporary collection for partition type testing",
         "extent": {
           "spatial": {
             "bbox": [
@@ -77,22 +69,11 @@
           }
         },
         "license": "proprietary",
-        "description": "Temporary collection for partition type testing",
+        "links": [],
         "stac_version": "1.0.0",
-        "msft:_created": "2025-11-03T16:07:14.5531249Z",
-        "msft:_updated": "2025-11-03T16:07:14.5531249Z"
-      }
-    },
-    {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection?api-version=2025-04-30-preview",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+        "title": "Test Partition Type Collection",
+        "type": "Collection"
       },
-      "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Access-Control-Allow-Credentials": "true",
@@ -105,7 +86,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/dc414537-9d37-4497-ac0e-7845b4085182?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/5859b484-52dc-4306-9e4e-c39b465d0805?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -120,11 +101,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-11-03T16:20:20.2473312Z"
+            "timestamp": "2025-11-03T18:39:05.5148618Z"
           }
         ],
-        "type": "DeleteCollection",
-        "creationTime": "2025-11-03T16:20:20.24733Z",
+        "type": "AddCollection",
+        "creationTime": "2025-11-03T18:39:05.5148571Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -162,11 +143,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-11-03T16:20:20.2473312Z"
+            "timestamp": "2025-11-03T18:39:05.5148618Z"
           }
         ],
-        "type": "DeleteCollection",
-        "creationTime": "2025-11-03T16:20:20.24733Z",
+        "type": "AddCollection",
+        "creationTime": "2025-11-03T18:39:05.5148571Z",
         "collectionId": "test-partition-type-collection"
       }
     },
@@ -204,63 +185,88 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-11-03T16:20:20.2473312Z"
+            "timestamp": "2025-11-03T18:39:05.5148618Z"
           },
           {
             "status": "Running",
-            "timestamp": "2025-11-03T16:20:44.9909383Z"
+            "timestamp": "2025-11-03T18:39:22.8000427Z"
           },
           {
             "status": "Finished",
-            "timestamp": "2025-11-03T16:20:45.2300814Z"
+            "timestamp": "2025-11-03T18:39:23.0321656Z"
           }
         ],
-        "type": "DeleteCollection",
-        "creationTime": "2025-11-03T16:20:20.24733Z",
+        "type": "AddCollection",
+        "creationTime": "2025-11-03T18:39:05.5148571Z",
         "collectionId": "test-partition-type-collection"
       }
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
-      "RequestMethod": "POST",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Connection": "keep-alive",
-        "Content-Length": "370",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-11-03T18:39:05.5148618Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-11-03T18:39:22.8000427Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-11-03T18:39:23.0321656Z"
+          }
+        ],
+        "type": "AddCollection",
+        "creationTime": "2025-11-03T18:39:05.5148571Z",
+        "collectionId": "test-partition-type-collection"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection/configurations/partition-type?api-version=2025-04-30-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
-        "id": "test-partition-type-collection",
-        "description": "Temporary collection for partition type testing",
-        "extent": {
-          "spatial": {
-            "bbox": [
-              [
-                -180,
-                -90,
-                180,
-                90
-              ]
-            ]
-          },
-          "temporal": {
-            "interval": [
-              [
-                "2020-01-01T00:00:00Z",
-                "2099-12-31T23:59:59Z"
-              ]
-            ]
-          }
-        },
-        "license": "proprietary",
-        "links": [],
-        "stac_version": "1.0.0",
-        "title": "Test Partition Type Collection",
-        "type": "Collection"
+        "scheme": "year"
       },
-      "StatusCode": 500,
+      "StatusCode": 200,
       "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
         "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
@@ -272,51 +278,23 @@
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE"
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
-      "RequestMethod": "POST",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection/configurations/partition-type?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "370",
-        "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
-      "RequestBody": {
-        "id": "test-partition-type-collection",
-        "description": "Temporary collection for partition type testing",
-        "extent": {
-          "spatial": {
-            "bbox": [
-              [
-                -180,
-                -90,
-                180,
-                90
-              ]
-            ]
-          },
-          "temporal": {
-            "interval": [
-              [
-                "2020-01-01T00:00:00Z",
-                "2099-12-31T23:59:59Z"
-              ]
-            ]
-          }
-        },
-        "license": "proprietary",
-        "links": [],
-        "stac_version": "1.0.0",
-        "title": "Test Partition Type Collection",
-        "type": "Collection"
-      },
-      "StatusCode": 500,
+      "RequestBody": null,
+      "StatusCode": 200,
       "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
         "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
@@ -324,54 +302,29 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "0",
+        "Content-Length": "17",
+        "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE"
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "scheme": "year"
+      }
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
-      "RequestMethod": "POST",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-partition-type-collection?api-version=2025-04-30-preview",
+      "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "370",
-        "Content-Type": "application/json",
+        "Content-Length": "0",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
-      "RequestBody": {
-        "id": "test-partition-type-collection",
-        "description": "Temporary collection for partition type testing",
-        "extent": {
-          "spatial": {
-            "bbox": [
-              [
-                -180,
-                -90,
-                180,
-                90
-              ]
-            ]
-          },
-          "temporal": {
-            "interval": [
-              [
-                "2020-01-01T00:00:00Z",
-                "2099-12-31T23:59:59Z"
-              ]
-            ]
-          }
-        },
-        "license": "proprietary",
-        "links": [],
-        "stac_version": "1.0.0",
-        "title": "Test Partition Type Collection",
-        "type": "Collection"
-      },
-      "StatusCode": 500,
+      "RequestBody": null,
+      "StatusCode": 202,
       "ResponseHeaders": {
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
@@ -379,55 +332,43 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
-        "Content-Length": "0",
+        "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/8b1db7ca-fe62-4140-9ed0-b37f50d9577c?api-version=2025-04-30-preview",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE"
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Pending",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-11-03T18:39:37.5344951Z"
+          }
+        ],
+        "type": "DeleteCollection",
+        "creationTime": "2025-11-03T18:39:37.5344919Z",
+        "collectionId": "test-partition-type-collection"
+      }
     },
     {
-      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections?api-version=2025-04-30-preview",
-      "RequestMethod": "POST",
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Connection": "keep-alive",
-        "Content-Length": "370",
-        "Content-Type": "application/json",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
-      "RequestBody": {
-        "id": "test-partition-type-collection",
-        "description": "Temporary collection for partition type testing",
-        "extent": {
-          "spatial": {
-            "bbox": [
-              [
-                -180,
-                -90,
-                180,
-                90
-              ]
-            ]
-          },
-          "temporal": {
-            "interval": [
-              [
-                "2020-01-01T00:00:00Z",
-                "2099-12-31T23:59:59Z"
-              ]
-            ]
-          }
-        },
-        "license": "proprietary",
-        "links": [],
-        "stac_version": "1.0.0",
-        "title": "Test Partition Type Collection",
-        "type": "Collection"
-      },
-      "StatusCode": 500,
+      "RequestBody": null,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
@@ -435,14 +376,80 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
         "Connection": "keep-alive",
-        "Content-Length": "0",
+        "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
         "x-azure-ref": "Sanitized",
-        "X-Cache": "CONFIG_NOCACHE"
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Pending",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-11-03T18:39:37.5344951Z"
+          }
+        ],
+        "type": "DeleteCollection",
+        "creationTime": "2025-11-03T18:39:37.5344919Z",
+        "collectionId": "test-partition-type-collection"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Location",
+        "Access-Control-Max-Age": "1728000",
+        "api-supported-versions": "2024-01-31-preview, 2025-04-30-preview",
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Request-ID": "00000000000000000000000000000000"
+      },
+      "ResponseBody": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Succeeded",
+        "statusHistory": [
+          {
+            "status": "Pending",
+            "timestamp": "2025-11-03T18:39:37.5344951Z"
+          },
+          {
+            "status": "Running",
+            "timestamp": "2025-11-03T18:39:53.0561861Z"
+          },
+          {
+            "status": "Finished",
+            "timestamp": "2025-11-03T18:39:53.1713952Z"
+          }
+        ],
+        "type": "DeleteCollection",
+        "creationTime": "2025-11-03T18:39:37.5344919Z",
+        "collectionId": "test-partition-type-collection"
+      }
     }
   ],
   "Variables": {}
