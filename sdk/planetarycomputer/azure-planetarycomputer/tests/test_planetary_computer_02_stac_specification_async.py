@@ -554,7 +554,7 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
                 delete_poller = await client.stac.begin_delete_item(
                     collection_id=collection_id, item_id=item_id, polling=True
                 )
-                delete_poller.result()
+                await delete_poller.result()
                 logger.info(f"Deleted existing item {item_id}")
         except Exception as e:
             logger.warning(f"Error checking/deleting existing item: {str(e)}")
@@ -562,7 +562,7 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
         # Create the item
         try:
             create_poller = await client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
-            create_result = create_poller.result()
+            create_result = await create_poller.result()
             logger.info(f"Successfully created item {item_id}")
             logger.info(f"Create operation result: {create_result}")
 
@@ -622,7 +622,7 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
             update_poller = await client.stac.begin_update_item(
                 collection_id=collection_id, item_id=item_id, body=updated_stac_item, polling=True
             )
-            update_result = update_poller.result()
+            update_result = await update_poller.result()
             logger.info(f"Successfully updated item {item_id}")
             logger.info(f"Update operation result: {update_result}")
 
