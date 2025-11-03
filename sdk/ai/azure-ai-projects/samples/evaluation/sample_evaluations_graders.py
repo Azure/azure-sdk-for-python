@@ -10,7 +10,7 @@ DESCRIPTION:
     `openai.evals.*` methods to create, get and list eval group and and eval runs.
 
 USAGE:
-    python sample_evaluations_v2.py
+    python sample_evaluations_graders.py
 
     Before running the sample:
 

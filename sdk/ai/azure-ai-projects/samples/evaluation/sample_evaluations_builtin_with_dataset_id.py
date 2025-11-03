@@ -18,7 +18,7 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) CONNECTION_NAME - Required. The name of the connection of type Azure Storage Account, to use for the dataset upload.
     3) MODEL_ENDPOINT - Required. The Azure OpenAI endpoint associated with your Foundry project.
@@ -40,6 +40,9 @@ import time
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileID
+)
+from azure.ai.projects.models import (
+    DatasetVersion,
 )
 from dotenv import load_dotenv
 from pprint import pprint
@@ -67,6 +70,14 @@ with DefaultAzureCredential() as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
+        print("Upload a single file and create a new Dataset to reference the file.")
+        dataset: DatasetVersion = project_client.datasets.upload_file(
+            name=dataset_name,
+            version=dataset_version,
+            file_path=data_file
+        )
+        pprint(dataset)
+        
         print("Creating an OpenAI client from the AI Project client")
         
         client = project_client.get_openai_client()
