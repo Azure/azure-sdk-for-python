@@ -1,8 +1,15 @@
 # Release History
 
-## 1.1.0b5 (Unreleased)
+## 2.0.0b1 (Unreleased)
 
 ### Features added
+
+* New Agent operations (now built on top OpenAI's "Responses" protocol) were added to the `AIProjectClient`.
+This package no longer depends on the `azure-ai-agents` package. See `samples\agents` folder.
+
+### Sample updates
+
+* Added `files` samples for operations create, delete, list, retrieve and content.
 
 ## 1.1.0b4 (2025-09-12)
 
@@ -116,7 +123,7 @@ AI models deployed to the Project's AI Services. This is in addition to the exis
 * Evaluator Ids are available using the Enum `EvaluatorIds` and no longer require `azure-ai-evaluation` package to be installed.
 * Property `scope` on `AIProjectClient` is removed, use AI Foundry Project endpoint instead.
 * Property `id` on Evaluation is replaced with `name`.
-* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
+* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/release/azure-ai-projects/1.0.0/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
 
 ### Sample updates
 

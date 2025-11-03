@@ -20,7 +20,7 @@ class TestSamples:
     To run this test:
     * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
     * set AZURE_AI_PROJECT_ENDPOINT=<your-project-endpoint> - Define your Azure AI Foundry project endpoint used by the test.
-    * set ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
+    * set AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
     * Uncomment the two lines that start with "@pytest.mark.skip" below.
     * Run:  pytest tests\samples\test_samples.py::TestSamples
     * Load the resulting report in Excel: tests\samples\samples_report.csv
