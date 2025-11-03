@@ -13,7 +13,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from urllib.parse import urlparse
-from azure.ai.projects.models._models import (
+from ..models._models import (
     Tool,
     ItemResource,
 )
