@@ -338,6 +338,7 @@
         "azure.ai.projects.models.WebSearchActionFind": "OpenAI.WebSearchActionFind",
         "azure.ai.projects.models.WebSearchActionOpenPage": "OpenAI.WebSearchActionOpenPage",
         "azure.ai.projects.models.WebSearchActionSearch": "OpenAI.WebSearchActionSearch",
+        "azure.ai.projects.models.WebSearchActionSearchSources": "OpenAI.WebSearchActionSearchSources",
         "azure.ai.projects.models.WebSearchPreviewTool": "OpenAI.WebSearchPreviewTool",
         "azure.ai.projects.models.WebSearchToolCallItemParam": "OpenAI.WebSearchToolCallItemParam",
         "azure.ai.projects.models.WebSearchToolCallItemResource": "OpenAI.WebSearchToolCallItemResource",
