@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-01-preview/Grafana_FetchAvailablePlugins.json
+# x-ms-original-file: 2025-08-01/Grafana_FetchAvailablePlugins.json
 if __name__ == "__main__":
     main()
