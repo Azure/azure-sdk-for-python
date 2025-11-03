@@ -52,7 +52,7 @@ logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(l
 logging.basicConfig(level=logging.INFO)
 
 
-def create_collection(client, collection_id):
+def create_collection(client: PlanetaryComputerProClient, collection_id):
     """Create a new STAC collection with item assets."""
     # Check if collection already exists
     logging.info(f"Checking if collection '{collection_id}' exists...")
@@ -156,7 +156,7 @@ def create_collection(client, collection_id):
     return collection
 
 
-def update_collection(client, collection_id):
+def update_collection(client: PlanetaryComputerProClient, collection_id):
     """Update an existing collection's metadata."""
     # Get the current collection
     logging.info(f"Getting collection '{collection_id}'...")
@@ -176,7 +176,7 @@ def update_collection(client, collection_id):
     logging.info(f"Updated description: {updated_collection.description}")
 
 
-def manage_partition_type(client, collection_id):
+def manage_partition_type(client: PlanetaryComputerProClient, collection_id):
     """Get and update collection partition type."""
     # Get current partition type
     logging.info(f"Getting partition type for collection '{collection_id}'...")
@@ -193,7 +193,7 @@ def manage_partition_type(client, collection_id):
         logging.info("Partition type updated successfully")
 
 
-def manage_render_options(client, collection_id):
+def manage_render_options(client: PlanetaryComputerProClient, collection_id):
     """Create and manage render options for a collection."""
     # Define render options
     render_option = RenderOption(
@@ -240,7 +240,7 @@ def manage_render_options(client, collection_id):
     logging.info(f"Retrieved: {retrieved_option.name}")
 
 
-def manage_mosaics(client, collection_id):
+def manage_mosaics(client: PlanetaryComputerProClient, collection_id):
     """Create and manage collection mosaics."""
     # Define a mosaic
     mosaic = StacMosaic(
@@ -278,7 +278,7 @@ def manage_mosaics(client, collection_id):
     logging.info(retrieved_mosaic)
 
 
-def manage_tile_settings(client, collection_id):
+def manage_tile_settings(client: PlanetaryComputerProClient, collection_id):
     """Get and update tile settings for a collection."""
     # Get current tile settings
     logging.info(f"Getting tile settings for collection '{collection_id}'...")
@@ -298,19 +298,19 @@ def manage_tile_settings(client, collection_id):
     logging.info(stac_collection_tile_settings_response)
 
 
-def get_conformance_class(client):
+def get_conformance_class(client: PlanetaryComputerProClient):
     """Get STAC conformance classes."""
     result = client.stac.get_conformance_class()
     logging.info(result)
 
 
-def get_stac_landing_page(client):
+def get_landing_page(client: PlanetaryComputerProClient):
     """Get STAC landing page."""
-    result = client.stac.get_stac_landing_page()
+    result = client.stac.get_landing_page()
     logging.info(result)
 
 
-def manage_queryables(client, collection_id):
+def manage_queryables(client: PlanetaryComputerProClient, collection_id):
     """Create and manage queryables for a collection."""
     stac_queryables_get_all_response = client.stac.get_collection_queryables(collection_id=collection_id)
 
@@ -347,13 +347,13 @@ def manage_queryables(client, collection_id):
     client.stac.list_queryables()
 
 
-def get_collection_configuration(client, collection_id):
+def get_collection_configuration(client: PlanetaryComputerProClient, collection_id):
     """Get collection configuration."""
     result = client.stac.get_collection_configuration(collection_id=collection_id)
     logging.info(result)
 
 
-def manage_collection_assets(client, collection_id):
+def manage_collection_assets(client: PlanetaryComputerProClient, collection_id):
     """Create and manage collection assets like thumbnails."""
     thumbnail_url = "https://ai4edatasetspublicassets.blob.core.windows.net/assets/pc_thumbnails/naip.png"
 
@@ -429,7 +429,7 @@ def main():
     manage_partition_type(client, collection_id)
     manage_render_options(client, collection_id)
     get_conformance_class(client)
-    get_stac_landing_page(client)
+    get_landing_page(client)
     manage_queryables(client, collection_id)
     manage_tile_settings(client, collection_id)
     manage_mosaics(client, collection_id)

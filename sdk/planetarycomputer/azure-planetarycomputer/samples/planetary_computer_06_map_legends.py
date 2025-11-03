@@ -28,23 +28,23 @@ logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(l
 logging.basicConfig(level=logging.INFO)
 
 
-def get_class_map_legend(client):
+def get_class_map_legend(client: PlanetaryComputerProClient):
     """Get a class map legend (categorical color map)."""
-    result = client.tiler.get_class_map_legend(
+    result = client.data.get_class_map_legend(
         classmap_name=ColorMapNames.MTBS_SEVERITY,
     )
     logging.info(result)
 
 
-def get_interval_legend(client):
+def get_interval_legend(client: PlanetaryComputerProClient):
     """Get an interval legend (continuous color map)."""
-    result = client.tiler.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
+    result = client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
     logging.info(result)
 
 
-def get_legend(client):
+def get_legend(client: PlanetaryComputerProClient):
     """Get a legend as a PNG image and save it locally."""
-    legend_response = client.tiler.get_legend(color_map_name="rdylgn")
+    legend_response = client.data.get_legend(color_map_name="rdylgn")
 
     # Save the legend to a file
     legend_bytes = b"".join(legend_response)

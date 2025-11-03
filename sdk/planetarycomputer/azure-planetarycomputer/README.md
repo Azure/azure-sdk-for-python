@@ -1,15 +1,19 @@
 # Azure Planetary Computer client library for Python
 
-The Azure Planetary Computer client library provides access to Microsoft's planetary-scale geospatial data platform. The Planetary Computer includes petabytes of environmental monitoring data, processing APIs, and applications designed to make global environmental data easily accessible.
+The Azure Planetary Computer client library provides programmatic access to Microsoft Planetary Computer Pro, a geospatial data management service built on Azure's hyperscale infrastructure. Microsoft Planetary Computer Pro empowers organizations to unlock the full potential of geospatial data by providing foundational capabilities to ingest, manage, search, and distribute geospatial datasets using the SpatioTemporal Asset Catalog (STAC) open specification.
 
-Key capabilities include:
+This client library enables developers to interact with GeoCatalog resources, supporting workflows from gigabytes to tens of petabytes of geospatial data.
 
-- **STAC Catalog Management**: Create, read, update, and delete STAC (SpatioTemporal Asset Catalog) collections and items
-- **Geospatial Data Ingestion**: Manage data ingestion pipelines and sources
-- **Tiling Services**: Access map tiles, tile matrix sets, and WMTS capabilities
-- **Mosaicing Operations**: Create and manage mosaics from geospatial datasets
-- **Data Analysis**: Statistical analysis and bounds calculation for geospatial assets
-- **Authentication & Authorization**: Secure access with SAS tokens and Azure Maps integration
+## Key capabilities
+
+- **STAC Collection Management**: Create, read, update, and delete STAC collections and items to organize your geospatial datasets
+- **Collection Configuration**: Configure render options, mosaics, tile settings, and queryables to optimize query performance and visualization
+- **Data Visualization**: Generate map tiles (XYZ, TileJSON, WMTS), preview images, crop by GeoJSON or bounding box, extract point values, compute statistics for regions, and access tile matrix sets and asset metadata
+- **Mosaic Operations**: Register STAC search-based mosaics for pixel-wise data query and retrieval, generate tiles from multiple items, get TileJSON and WMTS capabilities, and query mosaic assets for points and tiles
+- **Map Legends**: Retrieve class map legends (categorical) and interval legends (continuous) as JSON or PNG images with predefined color maps
+- **Data Ingestion**: Set up ingestion sources (Managed Identity or SAS token), define ingestions from STAC catalogs, create and monitor ingestion runs with detailed operation tracking for automated catalog ingestion
+- **STAC API Operations**: Use the managed STAC API for full CRUD operations on items, search with spatial/temporal filters and sorting, retrieve queryable properties, check API conformance classes, and access landing page information
+- **Secure Access**: Generate SAS tokens with configurable duration for collections, sign asset HREFs for secure downloads of managed storage assets, and revoke tokens when needed—all secured via Microsoft Entra ID
 
 [Source code][source_code]
 | [Package (PyPI)][pc_pypi]
@@ -22,7 +26,7 @@ Key capabilities include:
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- Access to Azure Planetary Computer services or an Azure Planetary Computer instance.
+- A deployed Microsoft Planetary Computer Pro GeoCatalog resource in your Azure subscription.
 
 ### Install the package
 
@@ -32,11 +36,9 @@ python -m pip install azure-planetarycomputer
 
 ### Authenticate the client
 
-In order to interact with the Planetary Computer service, you will need to create an instance of a client.
-A **credential** is necessary to instantiate the client object.
+To interact with your GeoCatalog resource, create an instance of the client with your GeoCatalog endpoint and credentials.
 
-Microsoft Entra ID credential is supported to authenticate the client.
-For enhanced security, we strongly recommend utilizing Microsoft Entra ID credential for authentication.
+Microsoft Entra ID authentication is required to ensure secure, unified enterprise identity and access management for your geospatial data.
 
 #### Create the client with Microsoft Entra ID credential
 
@@ -46,7 +48,7 @@ To use the [DefaultAzureCredential][azure_sdk_python_default_azure_credential] t
 pip install azure-identity
 ```
 
-You will also need to [register a new Microsoft Entra ID application and grant access][register_aad_app] to Planetary Computer by assigning appropriate roles to your service principal.
+You will also need to [register a new Microsoft Entra ID application and grant access][register_aad_app] to your GeoCatalog by assigning the appropriate role to your service principal.
 
 Once completed, set the values of the client ID, tenant ID, and client secret of the Microsoft Entra ID application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
@@ -55,69 +57,109 @@ Once completed, set the values of the client ID, tenant ID, and client secret of
 """DefaultAzureCredential will use the values from these environment
 variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 """
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
 credential = DefaultAzureCredential()
-pc_client = PlanetaryComputerClient(credential=credential)
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential)
 ```
 
 ## Key concepts
 
-### PlanetaryComputerClient
+### PlanetaryComputerProClient
 
-`PlanetaryComputerClient` provides operations for interacting with the Azure Planetary Computer platform, including:
+`PlanetaryComputerProClient` provides operations for interacting with Microsoft Planetary Computer Pro GeoCatalog resources through these main operation groups:
 
-#### STAC Operations
-- **STAC Items**: Manage individual data items in STAC collections
-- **STAC Collections**: Create and manage STAC collections and their configurations
-- **STAC Search**: Search for geospatial data using STAC API standards
-- **STAC Conformance**: Check API conformance classes
+#### STAC Operations (`client.stac`)
 
-#### Data Ingestion
-- **Ingestions**: Manage data ingestion jobs and operations
-- **Ingestion Sources**: Configure and manage data sources for ingestion
+- **Collection Management**: Create, update, list, and delete STAC collections to organize your geospatial datasets
+- **Item Management**: Create, read, update, and delete individual STAC items within collections
+- **Search API**: Search for items using spatial and temporal filters, sorting, and queryable properties through the managed STAC API
+- **API Conformance**: Retrieve STAC API conformance classes and landing page information
 
-#### Tiling and Visualization
-- **Tiler Operations**: Generate tiles, previews, and static images from geospatial data
-- **Mosaics**: Create and manage mosaics from multiple datasets
-- **Maps and Legends**: Generate map legends and visualizations
-- **Tile Matrix Sets**: Manage tile matrix definitions and operations
+#### Data Operations (`client.data`)
 
-#### Geospatial Analysis
-- **Statistics**: Calculate statistics for geospatial assets and regions
-- **Bounds**: Determine spatial bounds of datasets
-- **Points and Parts**: Extract data at specific geographic points or regions
+- **Tile Generation**: Generate map tiles (XYZ, TileJSON, WMTS) from collections, items, and mosaics using the powerful mosaic and tiling API
+- **Data Visualization**: Create preview images, crop by GeoJSON or bounding box, extract point values, and compute statistics for regions
+- **Asset Metadata**: Retrieve tile matrix sets and asset metadata for collections and items
+- **Map Legends**: Retrieve class map legends (categorical) and interval legends (continuous) as JSON or PNG images with predefined color maps
 
-#### Authentication and Security
-- **SAS Operations**: Generate and manage Shared Access Signatures for secure data access
-- **Azure Maps Integration**: Integration with Azure Maps services
+#### Ingestion Operations (`client.ingestion`)
+
+- **Ingestion Sources**: Set up ingestion sources using Managed Identity or SAS token authentication
+- **Ingestion Definitions**: Define automated STAC catalog ingestion from public and private data sources
+- **Ingestion Runs**: Create and monitor ingestion runs with detailed operation tracking
+- **Partition Configuration**: Configure how data is partitioned and processed during ingestion
+
+#### Shared Access Signature Operations (`client.shared_access_signature`)
+
+- **Token Generation**: Generate SAS tokens with configurable duration for collections to enable secure access
+- **Asset Signing**: Sign asset HREFs for secure downloads of managed storage assets
+- **Token Revocation**: Revoke tokens when needed to control access, all secured via Microsoft Entra ID
 
 ## Examples
 
-The following section provides several code snippets covering some of the most common Planetary Computer tasks:
+The following section provides several code snippets covering common GeoCatalog workflows. For complete working examples, see the [samples][pc_samples] directory.
 
-### Search for STAC Items
+### List STAC Collections
 
-Search for geospatial data using STAC API standards:
+List all available STAC collections:
 
 ```python
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 
 # Create client
-pc_client = PlanetaryComputerClient(credential=DefaultAzureCredential())
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Search for items in a collection with spatial and temporal filters
-search_body = {
-    "collections": ["landsat-c2-l2"],
-    "bbox": [-122.5, 37.7, -122.3, 37.9],  # San Francisco Bay Area
-    "datetime": "2023-01-01/2023-12-31",
-    "limit": 10
-}
+# List all collections
+collections_response = client.stac.list_collections()
 
-search_result = pc_client.stac_search_operations.create(body=search_body)
-print(f"Found {len(search_result.get('features', []))} items")
+for collection in collections_response.collections:
+    print(f"Collection: {collection.id}")
+    print(f"  Title: {collection.title}")
+    print(f"  Description: {collection.description[:100]}...")
+```
+
+### Search for STAC Items
+
+Search for geospatial data items with spatial and temporal filters:
+
+```python
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.planetarycomputer.models import StacSearchParameters, FilterLanguage
+from azure.identity import DefaultAzureCredential
+
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
+
+# Search with spatial filter
+search_params = StacSearchParameters(
+    collections=["naip"],
+    filter_lang=FilterLanguage.CQL2_JSON,
+    filter={
+        "op": "s_intersects",
+        "args": [
+            {"property": "geometry"},
+            {
+                "type": "Polygon",
+                "coordinates": [[
+                    [-84.39, 33.76],
+                    [-84.37, 33.76],
+                    [-84.37, 33.78],
+                    [-84.39, 33.78],
+                    [-84.39, 33.76]
+                ]]
+            }
+        ]
+    },
+    limit=10
+)
+
+search_result = client.stac.search_items(body=search_params)
+print(f"Found {len(search_result.features)} items")
 ```
 
 ### Get STAC Item Details
@@ -125,20 +167,21 @@ print(f"Found {len(search_result.get('features', []))} items")
 Retrieve detailed information about a specific STAC item:
 
 ```python
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 
-pc_client = PlanetaryComputerClient(credential=DefaultAzureCredential())
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
 # Get a specific STAC item
-item = pc_client.stac_items.get(
-    collection_id="landsat-c2-l2",
-    item_id="LC08_L2SP_044034_20231015_02_T1"
+item = client.stac.get_item(
+    collection_id="naip",
+    item_id="ga_m_3308421_se_16_060_20211114"
 )
 
-print(f"Item: {item.get('id')}")
-print(f"Geometry: {item.get('geometry')}")
-print(f"Properties: {item.get('properties')}")
+print(f"Item ID: {item.id}")
+print(f"Geometry type: {item.geometry.type}")
+print(f"Assets: {list(item.assets.keys())}")
 ```
 
 ### Create STAC Collection
@@ -146,33 +189,42 @@ print(f"Properties: {item.get('properties')}")
 Create a new STAC collection for organizing geospatial data:
 
 ```python
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.planetarycomputer.models import (
+    StacCollection,
+    StacExtensionSpatialExtent,
+    StacExtensionTemporalExtent,
+    StacExtent
+)
 from azure.identity import DefaultAzureCredential
 
-pc_client = PlanetaryComputerClient(credential=DefaultAzureCredential())
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Define collection metadata
-collection_data = {
-    "id": "my-collection",
-    "title": "My Geospatial Collection",
-    "description": "A collection of geospatial data",
-    "extent": {
-        "spatial": {
-            "bbox": [[-180, -90, 180, 90]]
-        },
-        "temporal": {
-            "interval": [["2023-01-01T00:00:00Z", "2023-12-31T23:59:59Z"]]
-        }
-    },
-    "license": "CC-BY-4.0"
-}
+# Define collection with proper extent
+spatial_extent = StacExtensionSpatialExtent(bbox=[[-180.0, -90.0, 180.0, 90.0]])
+temporal_extent = StacExtensionTemporalExtent(interval=[["2023-01-01T00:00:00Z", None]])
+
+collection = StacCollection(
+    id="my-collection",
+    type="Collection",
+    stac_version="1.0.0",
+    description="A collection of geospatial data",
+    license="proprietary",
+    extent=StacExtent(
+        spatial=spatial_extent,
+        temporal=temporal_extent
+    ),
+    links=[]
+)
 
 # Create the collection
-collection = pc_client.stac_collection_operations.create(
+created_collection = client.stac.create_or_update_collection(
     collection_id="my-collection",
-    body=collection_data
+    body=collection
 )
-print(f"Created collection: {collection.get('id')}")
+
+print(f"Created collection: {created_collection.id}")
 ```
 
 ### Generate Map Tiles
@@ -180,25 +232,30 @@ print(f"Created collection: {collection.get('id')}")
 Generate map tiles from geospatial data:
 
 ```python
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 
-pc_client = PlanetaryComputerClient(credential=DefaultAzureCredential())
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Get tile data for specific coordinates
-tile_data = pc_client.tiler_tiles.get(
-    z=10,  # Zoom level
-    x=256,  # Tile X coordinate
-    y=384,  # Tile Y coordinate
-    scale=1,  # Scale factor
-    format="png",  # Output format
-    collection="landsat-c2-l2",
-    item="LC08_L2SP_044034_20231015_02_T1"
+collection_id = "naip"
+item_id = "ga_m_3308421_se_16_060_20211114"
+
+# Get a specific tile for the item
+tile_response = client.data.get_item_tile(
+    collection_id=collection_id,
+    item_id=item_id,
+    tile_matrix_set_id="WebMercatorQuad",
+    z=14,  # Zoom level
+    x=4322,  # Tile X coordinate
+    y=6463,  # Tile Y coordinate
+    assets=["image"]
 )
 
 # Save tile to file
 with open("tile.png", "wb") as f:
-    f.write(tile_data)
+    for chunk in tile_response:
+        f.write(chunk)
 ```
 
 ### Data Ingestion Management
@@ -206,45 +263,32 @@ with open("tile.png", "wb") as f:
 Manage data ingestion operations:
 
 ```python
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.planetarycomputer.models import IngestionJob, PartitionType
 from azure.identity import DefaultAzureCredential
 
-pc_client = PlanetaryComputerClient(credential=DefaultAzureCredential())
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Create an ingestion source
-source_config = {
-    "id": "my-data-source",
-    "type": "blob-storage",
-    "configuration": {
-        "container": "data-container",
-        "path": "geotiff-files/"
-    }
-}
-
-ingestion_source = pc_client.ingestion_sources.create(
-    source_id="my-data-source",
-    body=source_config
+# Create an ingestion job
+ingestion_job = IngestionJob(
+    collection_id="my-collection",
+    partition_type=PartitionType.YEAR_MONTH,
+    description="Ingestion job for geospatial data"
 )
 
-# Start an ingestion job
-ingestion_config = {
-    "sourceId": "my-data-source",
-    "collectionId": "my-collection",
-    "configuration": {
-        "processingOptions": {
-            "overviewGeneration": True,
-            "cogOptimization": True
-        }
-    }
-}
-
-ingestion = pc_client.ingestions.create(
-    ingestion_id="my-ingestion-job",
-    body=ingestion_config
+created_job = client.ingestion.create_or_update_job(
+    job_id="ingestion-job-001",
+    body=ingestion_job
 )
 
-print(f"Started ingestion job: {ingestion.get('id')}")
-print(f"Status: {ingestion.get('status')}")
+print(f"Created job: {created_job.id}")
+print(f"Status: {created_job.status}")
+
+# List all ingestion jobs
+jobs = client.ingestion.list_jobs()
+for job in jobs.value:
+    print(f"Job: {job.id} - Status: {job.status}")
 ```
 
 ### Generate SAS Token for Secure Access
@@ -252,29 +296,35 @@ print(f"Status: {ingestion.get('status')}")
 Generate Shared Access Signatures for secure data access:
 
 ```python
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.planetarycomputer.models import SignedUrlRequest, AccessPermission
 from azure.identity import DefaultAzureCredential
+from datetime import datetime, timedelta
 
-pc_client = PlanetaryComputerClient(credential=DefaultAzureCredential())
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Generate SAS token for accessing data
-sas_request = {
-    "permissions": "r",  # Read permission
-    "expiryTime": "2024-12-31T23:59:59Z",
-    "resources": ["collection:landsat-c2-l2"]
-}
+# Generate a SAS token for a collection
+sas_request = SignedUrlRequest(
+    permissions=[AccessPermission.READ],
+    expires_on=datetime.utcnow() + timedelta(hours=1)
+)
 
-sas_token = pc_client.sas.get_token(body=sas_request)
-print(f"SAS Token: {sas_token.get('token')}")
-print(f"Expires: {sas_token.get('expiry')}")
+sas_response = client.shared_access_signature.generate_collection_signed_url(
+    collection_id="naip",
+    body=sas_request
+)
+
+print(f"SAS URL: {sas_response.url}")
+print(f"Expires on: {sas_response.expires_on}")
 ```
 
-## Troubleshooting
+### Troubleshooting
 
 ### General
 
 Planetary Computer client library will raise exceptions defined in [Azure Core][python_azure_core_exceptions].
-Error codes and messages raised by the Planetary Computer service can be found in the service documentation.
+Error codes and messages raised by the GeoCatalog service can be found in the service documentation.
 
 ### Logging
 
@@ -291,18 +341,23 @@ See full SDK logging documentation with examples in the [Azure SDK documentation
 import sys
 import logging
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     stream=sys.stdout)
 
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
 credential = DefaultAzureCredential()
-pc_client = PlanetaryComputerClient(credential=credential)
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential)
 
 # Enable logging for a specific operation
-response = pc_client.stac_items.get(..., logging_enable=True)
+item = client.stac.get_item(
+    collection_id="naip",
+    item_id="ga_m_3308421_se_16_060_20211114",
+    logging_enable=True
+)
 ```
 
 ### Optional Configuration
@@ -314,11 +369,11 @@ The azure-core [reference documentation][azure_core_ref_docs] describes availabl
 
 ### More sample code
 
-See the `samples` directory for several code snippets illustrating common patterns used in the Planetary Computer Python API.
+See the `samples` directory for several code snippets illustrating common patterns for working with GeoCatalog resources.
 
 ### Additional documentation
 
-For more extensive documentation on Azure Planetary Computer, see the [Planetary Computer documentation][pc_product_docs] on Microsoft Learn.
+For more extensive documentation on Microsoft Planetary Computer Pro, see the [Planetary Computer documentation][pc_product_docs] on Microsoft Learn.
 
 ## Contributing
 

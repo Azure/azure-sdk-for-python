@@ -38,31 +38,31 @@ def display_response(response, filename):
     logging.info(f"Image saved as: {filename} ({len(image_bytes)} bytes)")
 
 
-def get_tile_matrix_definitions(client):
+def get_tile_matrix_definitions(client: PlanetaryComputerProClient):
     """Get tile matrix definitions for WebMercatorQuad."""
-    result = client.tiler.get_tile_matrix_definitions(tile_matrix_set_id="WebMercatorQuad")
+    result = client.data.get_tile_matrix_definitions(tile_matrix_set_id="WebMercatorQuad")
     logging.info(result)
 
 
-def list_tile_matrices(client):
+def list_tile_matrices(client: PlanetaryComputerProClient):
     """List all available tile matrices."""
-    result = client.tiler.list_tile_matrices()
+    result = client.data.list_tile_matrices()
     logging.info(result)
 
 
-def get_asset_statistics(client, collection_id, item_id):
+def get_asset_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get asset statistics for an item."""
-    result = client.tiler.get_asset_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result = client.data.get_asset_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
-def list_available_assets(client, collection_id, item_id):
+def list_available_assets(client: PlanetaryComputerProClient, collection_id, item_id):
     """List available assets for an item."""
-    result = client.tiler.list_available_assets(collection_id=collection_id, item_id=item_id)
+    result = client.data.list_available_assets(collection_id=collection_id, item_id=item_id)
     logging.info(result)
 
 
-def get_item_asset_details(client, collection_id, item_id):
+def get_item_asset_details(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get basic info for dataset's assets.
 
     Returns dataset's basic information including data types, bounds, and other metadata
@@ -70,22 +70,22 @@ def get_item_asset_details(client, collection_id, item_id):
     """
 
     # Get info for specific assets
-    result_specific = client.tiler.get_item_asset_details(
+    result_specific = client.data.get_item_asset_details(
         collection_id=collection_id, item_id=item_id, assets=["image"]
     )
     logging.info("Assets info (image asset only):")
     logging.info(f"  Dataset: {result_specific}")
 
 
-def get_bounds(client, collection_id, item_id):
+def get_bounds(client: PlanetaryComputerProClient, collection_id, item_id):
     """List bounds for an item."""
-    result = client.tiler.get_bounds(collection_id=collection_id, item_id=item_id)
+    result = client.data.get_bounds(collection_id=collection_id, item_id=item_id)
     logging.info(result)
 
 
-def crop_geo_json(client, collection_id, item_id, geojson):
+def crop_geo_json(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry."""
-    crop_geo_json_response = client.tiler.crop_geo_json(
+    crop_geo_json_response = client.data.crop_geo_json(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -97,9 +97,9 @@ def crop_geo_json(client, collection_id, item_id, geojson):
     display_response(crop_geo_json_response, f"crop_geojson_{item_id}.png")
 
 
-def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson):
+def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry with specific dimensions."""
-    crop_geo_json_with_dimensions_response = client.tiler.crop_geo_json_with_dimensions(
+    crop_geo_json_with_dimensions_response = client.data.crop_geo_json_with_dimensions(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -112,23 +112,23 @@ def crop_geo_json_with_dimensions(client, collection_id, item_id, geojson):
     display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
 
 
-def get_geo_json_statistics(client, collection_id, item_id, geojson):
+def get_geo_json_statistics(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Get statistics for a GeoJSON area."""
-    result = client.tiler.get_geo_json_statistics(
+    result = client.data.get_geo_json_statistics(
         collection_id=collection_id, item_id=item_id, body=geojson, assets=["image"]
     )
     logging.info(result)
 
 
-def get_info_geo_json(client, collection_id, item_id):
+def get_info_geo_json(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get info for GeoJSON."""
-    result = client.tiler.get_info_geo_json(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result = client.data.get_info_geo_json(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
-def get_part(client, collection_id, item_id, bounds):
+def get_part(client: PlanetaryComputerProClient, collection_id, item_id, bounds):
     """Get a part of an item with specific bounds."""
-    get_part_response = client.tiler.get_part(
+    get_part_response = client.data.get_part(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -144,9 +144,9 @@ def get_part(client, collection_id, item_id, bounds):
     display_response(get_part_response, f"part_{item_id}.png")
 
 
-def get_part_with_dimensions(client, collection_id, item_id, bounds):
+def get_part_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, bounds):
     """Get a part of an item with specific bounds and dimensions."""
-    get_part_with_dimensions_response = client.tiler.get_part_with_dimensions(
+    get_part_with_dimensions_response = client.data.get_part_with_dimensions(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -162,9 +162,9 @@ def get_part_with_dimensions(client, collection_id, item_id, bounds):
     display_response(get_part_with_dimensions_response, f"part_dims_{item_id}.png")
 
 
-def get_point(client, collection_id, item_id, point):
+def get_point(client: PlanetaryComputerProClient, collection_id, item_id, point):
     """Get point value at a specific location."""
-    result = client.tiler.get_point(
+    result = client.data.get_point(
         collection_id=collection_id,
         item_id=item_id,
         assets=["image"],
@@ -175,9 +175,9 @@ def get_point(client, collection_id, item_id, point):
     logging.info(f"Point values at ({point[0]}, {point[1]}): {result}")
 
 
-def get_preview(client, collection_id, item_id):
+def get_preview(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get a preview of an item."""
-    get_preview_response = client.tiler.get_preview(
+    get_preview_response = client.data.get_preview(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -189,9 +189,9 @@ def get_preview(client, collection_id, item_id):
     display_response(get_preview_response, f"preview_{item_id}.png")
 
 
-def get_preview_with_format(client, collection_id, item_id):
+def get_preview_with_format(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get a preview of an item with specific format."""
-    get_preview_with_format_response = client.tiler.get_preview_with_format(
+    get_preview_with_format_response = client.data.get_preview_with_format(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -203,15 +203,15 @@ def get_preview_with_format(client, collection_id, item_id):
     display_response(get_preview_with_format_response, f"preview_format_{item_id}.png")
 
 
-def list_statistics(client, collection_id, item_id):
+def list_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
     """List statistics for an item."""
-    result = client.tiler.list_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result = client.data.list_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
-def get_tile_json(client, collection_id, item_id):
+def get_tile_json(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get TileJSON for an item."""
-    result = client.tiler.get_tile_json(
+    result = client.data.get_tile_json(
         collection_id=collection_id,
         item_id=item_id,
         tile_matrix_set_id="WebMercatorQuad",
@@ -225,9 +225,9 @@ def get_tile_json(client, collection_id, item_id):
     logging.info(result)
 
 
-def get_tile(client, collection_id, item_id):
+def get_tile(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get a specific tile and save it locally."""
-    get_tile_with_matrix_set_response = client.tiler.get_tile(
+    get_tile_with_matrix_set_response = client.data.get_tile(
         collection_id=collection_id,
         item_id=item_id,
         tile_matrix_set_id="WebMercatorQuad",
@@ -242,9 +242,9 @@ def get_tile(client, collection_id, item_id):
     display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
 
 
-def get_wmts_capabilities(client, collection_id, item_id):
+def get_wmts_capabilities(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get WMTS capabilities and save it locally."""
-    get_wmts_capabilities_response = client.tiler.get_wmts_capabilities(
+    get_wmts_capabilities_response = client.data.get_wmts_capabilities(
         collection_id=collection_id,
         item_id=item_id,
         tile_matrix_set_id="WebMercatorQuad",

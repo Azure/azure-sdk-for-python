@@ -36,7 +36,7 @@ logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(l
 logging.basicConfig(level=logging.INFO)
 
 
-def register_mosaics_search(client, collection_id):
+def register_mosaics_search(client: PlanetaryComputerProClient, collection_id):
     """Register a search for mosaics filtered to 2021-2022."""
     register_search_request = StacSearchParameters(
         filter={
@@ -50,21 +50,21 @@ def register_mosaics_search(client, collection_id):
         filter_lang=FilterLanguage.CQL2_JSON,
         sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
     )
-    register_search_response = client.tiler.register_mosaics_search(register_search_request)
+    register_search_response = client.data.register_mosaics_search(register_search_request)
     logging.info(register_search_response)
     return register_search_response
 
 
-def get_mosaics_search_info(client, search_id):
+def get_mosaics_search_info(client: PlanetaryComputerProClient, search_id):
     """Get mosaics search info."""
-    mosaics_info_search_response = client.tiler.get_mosaics_search_info(search_id=search_id)
+    mosaics_info_search_response = client.data.get_mosaics_search_info(search_id=search_id)
     search = mosaics_info_search_response.search
     return search
 
 
-def get_mosaics_tile_json(client, search_id, collection_id):
+def get_mosaics_tile_json(client: PlanetaryComputerProClient, search_id, collection_id):
     """Get mosaics tile JSON."""
-    get_mosaics_tile_json_response = client.tiler.get_mosaics_tile_json(
+    get_mosaics_tile_json_response = client.data.get_mosaics_tile_json(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         assets=["image"],
@@ -77,9 +77,9 @@ def get_mosaics_tile_json(client, search_id, collection_id):
     logging.info(get_mosaics_tile_json_response.as_dict())
 
 
-def get_mosaics_tile(client, search_id, collection_id):
+def get_mosaics_tile(client: PlanetaryComputerProClient, search_id, collection_id):
     """Get a mosaic tile and save it locally."""
-    mosaics_tile_matrix_sets_response = client.tiler.get_mosaics_tile(
+    mosaics_tile_matrix_sets_response = client.data.get_mosaics_tile(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         z=13,
@@ -100,9 +100,9 @@ def get_mosaics_tile(client, search_id, collection_id):
     logging.info(f"Tile saved as: {filename} ({len(mosaics_tile_matrix_sets_bytes)} bytes)")
 
 
-def get_mosaics_wmts_capabilities(client, search_id):
+def get_mosaics_wmts_capabilities(client: PlanetaryComputerProClient, search_id):
     """Get WMTS capabilities for mosaics and save it locally."""
-    get_capabilities_xml_response = client.tiler.get_mosaics_wmts_capabilities(
+    get_capabilities_xml_response = client.data.get_mosaics_wmts_capabilities(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         tile_format=TilerImageFormat.PNG,
@@ -122,10 +122,10 @@ def get_mosaics_wmts_capabilities(client, search_id):
     logging.info(f"WMTS capabilities saved as: {filename}")
 
 
-def get_mosaics_assets_for_point(client, search_id):
+def get_mosaics_assets_for_point(client: PlanetaryComputerProClient, search_id):
     """Get mosaic assets for a specific point (center of the bbox)."""
     # Using center point from the coordinate bbox: -84.43202751899601, 33.639647639722273
-    get_lon_lat_assets_response = client.tiler.get_mosaics_assets_for_point(
+    get_lon_lat_assets_response = client.data.get_mosaics_assets_for_point(
         search_id=search_id,
         longitude=-84.43202751899601,
         latitude=33.639647639722273,
@@ -139,9 +139,9 @@ def get_mosaics_assets_for_point(client, search_id):
     logging.info(f"Assets for point: {get_lon_lat_assets_response[0]['id']}")
 
 
-def get_mosaics_assets_for_tile(client, search_id, collection_id):
+def get_mosaics_assets_for_tile(client: PlanetaryComputerProClient, search_id, collection_id):
     """Get mosaic assets for a specific tile."""
-    result = client.tiler.get_mosaics_assets_for_tile(
+    result = client.data.get_mosaics_assets_for_tile(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         z=13,
@@ -152,7 +152,7 @@ def get_mosaics_assets_for_tile(client, search_id, collection_id):
     logging.info(f"Assets for tile: {result}")
 
 
-def create_static_image(client, collection_id):
+def create_static_image(client: PlanetaryComputerProClient, collection_id):
     """Create a static image from a STAC item.
 
     This demonstrates creating a static image tile with specific rendering parameters.
@@ -196,7 +196,7 @@ def create_static_image(client, collection_id):
     )
 
     # Create static image
-    image_response = client.tiler.create_static_image(collection_id=collection_id, body=image_request)
+    image_response = client.data.create_static_image(collection_id=collection_id, body=image_request)
 
     # Extract image ID from the response URL
     image_id = image_response.url.split("?")[0].split("/")[-1]
@@ -206,14 +206,14 @@ def create_static_image(client, collection_id):
     return image_id
 
 
-def get_static_image(client, collection_id, image_id):
+def get_static_image(client: PlanetaryComputerProClient, collection_id, image_id):
     """Retrieve a static image by its ID.
 
     This demonstrates fetching the actual image data from a previously created static image.
     The image data is returned as an iterator of bytes.
     """
     # Get static image data
-    image_data = client.tiler.get_static_image(collection_id=collection_id, id=image_id)
+    image_data = client.data.get_static_image(collection_id=collection_id, id=image_id)
 
     # Join the generator to get bytes
     image_bytes = b"".join(image_data)

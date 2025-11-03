@@ -47,15 +47,15 @@ logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(l
 logging.basicConfig(level=logging.INFO)
 
 
-def get_landing_page(client):
+def get_landing_page(client: PlanetaryComputerProClient):
     """Get the STAC landing page."""
-    landing_page = client.stac.get_stac_landing_page()
+    landing_page = client.stac.get_landing_page()
 
     for link in landing_page.links[:5]:  # Show first 5 links
         logging.info(f"  - {link.rel}: {link.href}")
 
 
-def search_collections(client):
+def search_collections(client: PlanetaryComputerProClient):
     """Search and list STAC collections."""
     collections = client.stac.list_collections()
 
@@ -66,7 +66,7 @@ def search_collections(client):
             logging.info(f"  - {collection.id}: {desc}")
 
 
-def search_items(client, collection_id):
+def search_items(client: PlanetaryComputerProClient, collection_id):
     """Search STAC items with filters and sorting."""
     # Create Search using StacSearchParameters
     # Using date_time with range format instead of CQL2-JSON temporal filter
@@ -200,7 +200,7 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
     )
 
 
-def create_stac_item(client, collection_id, item_id):
+def create_stac_item(client: PlanetaryComputerProClient, collection_id, item_id):
     """Create a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
     stac_item_get_items_response = client.stac.get_item_collection(collection_id=collection_id)
@@ -229,7 +229,7 @@ def create_stac_item(client, collection_id, item_id):
         pass
 
 
-def update_stac_item(client, collection_id, item_id):
+def update_stac_item(client: PlanetaryComputerProClient, collection_id, item_id):
     """Update a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
     stac_item.properties["platform"] = "Imagery"
@@ -242,7 +242,7 @@ def update_stac_item(client, collection_id, item_id):
     logging.info(f"Updated item {stac_item.id}, platform: {stac_item.properties['platform']}")
 
 
-def create_or_replace_stac_item(client, collection_id, item_id):
+def create_or_replace_stac_item(client: PlanetaryComputerProClient, collection_id, item_id):
     """Create or replace a STAC item (idempotent operation).
 
     This demonstrates using begin_create_or_replace_item which is idempotent:
@@ -285,7 +285,7 @@ def create_or_replace_stac_item(client, collection_id, item_id):
     logging.info(f"Verified replaced item, platform: {replaced_item.properties.get('platform', 'N/A')}")
 
 
-def delete_stac_item(client, collection_id, item_id):
+def delete_stac_item(client: PlanetaryComputerProClient, collection_id, item_id):
     """Delete a STAC item.
 
     This demonstrates using begin_delete_item to remove an item from a collection.
@@ -322,13 +322,13 @@ def delete_stac_item(client, collection_id, item_id):
             raise
 
 
-def get_collection(client, collection_id):
+def get_collection(client: PlanetaryComputerProClient, collection_id):
     """Get a STAC collection."""
     collection = client.stac.get_collection(collection_id=collection_id)
     logging.info(f"Retrieved collection: {collection.id}")
 
 
-def query_items(client, collection_id):
+def query_items(client: PlanetaryComputerProClient, collection_id):
     """Query items using CQL2 filters."""
     # Query with filter
     query_options = StacSearchParameters(
@@ -359,7 +359,7 @@ def query_items(client, collection_id):
                 logging.info(f"  - {item.id}: {item.properties.date_time}")
 
 
-def get_queryables(client, collection_id):
+def get_queryables(client: PlanetaryComputerProClient, collection_id):
     """Get queryable properties for a collection."""
     queryables = client.stac.get_collection_queryables(collection_id=collection_id)
     properties = queryables.get("properties")
