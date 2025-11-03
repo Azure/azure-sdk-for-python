@@ -31,12 +31,8 @@ from pprint import pprint
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    PromptAgentDefinition
-)
-from openai.types.eval_create_params import (
-    DataSourceConfigCustom
-)
+from azure.ai.projects.models import PromptAgentDefinition
+from openai.types.eval_create_params import DataSourceConfigCustom
 
 load_dotenv()
 
@@ -47,7 +43,6 @@ project_client = AIProjectClient(
 
 with project_client:
 
-    # [START agent_evaluation]
     openai_client = project_client.get_openai_client()
 
     agent = project_client.agents.create_version(
@@ -58,29 +53,18 @@ with project_client:
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
- 
+
     data_source_config = DataSourceConfigCustom(
         type="custom",
-        item_schema={
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string"
-                }
-            },
-            "required": [ "query" ]
-        },
-        include_sample_schema=True
+        item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
+        include_sample_schema=True,
     )
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
             "name": "violence_detection",
             "evaluator_name": "builtin.violence",
-            "data_mapping": {
-                "query": "{{item.query}}",
-                "response": "{{item.response}}"
-            }
+            "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
         }
     ]
     eval_object = openai_client.evals.create(
@@ -91,38 +75,29 @@ with project_client:
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
     data_source = {
-       "type": "azure_ai_target_completions",
+        "type": "azure_ai_target_completions",
         "source": {
             "type": "file_content",
-            "content":[
-                { "item": { "query": "What is the capital of France?" } },
-                { "item": { "query": "How do I reverse a string in Python?" } }
-            ]
+            "content": [
+                {"item": {"query": "What is the capital of France?"}},
+                {"item": {"query": "How do I reverse a string in Python?"}},
+            ],
         },
         "input_messages": {
             "type": "template",
             "template": [
-                {
-                    "type": "message",
-                    "role": "user",
-                    "content": {
-                        "type": "input_text",
-                        "text": "{{item.query}}"
-                    }
-                }
-            ]   
+                {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
+            ],
         },
         "target": {
             "type": "azure_ai_agent",
             "name": agent.name,
-            "version": agent.version # Version is optional. Defaults to latest version if not specified
-        }
+            "version": agent.version,  # Version is optional. Defaults to latest version if not specified
+        },
     }
 
     agent_eval_run = openai_client.evals.runs.create(
-        eval_id=eval_object.id,
-        name=f"Evaluation Run for Agent {agent.name}",
-        data_source=data_source
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
 
@@ -134,22 +109,19 @@ with project_client:
     if agent_eval_run.status == "completed":
         print("\n✓ Evaluation run completed successfully!")
         print(f"Result Counts: {agent_eval_run.result_counts}")
-        
-        output_items = list(openai_client.evals.runs.output_items.list(
-            run_id=agent_eval_run.id,
-            eval_id=eval_object.id
-        ))        
+
+        output_items = list(
+            openai_client.evals.runs.output_items.list(run_id=agent_eval_run.id, eval_id=eval_object.id)
+        )
         print(f"\nOUTPUT ITEMS (Total: {len(output_items)})")
         print(f"{'-'*60}")
         pprint(output_items)
         print(f"{'-'*60}")
     else:
         print("\n✗ Evaluation run failed.")
-        
+
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
 
     project_client.agents.delete(agent_name=agent.name)
-    print("Agent deleted")    
-
-    # [END agent_evaluation]
+    print("Agent deleted")

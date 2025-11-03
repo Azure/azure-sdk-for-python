@@ -13,7 +13,7 @@ DESCRIPTION:
     for more information.
 
 USAGE:
-    python sample_continuous_eval_rule.py
+    python sample_continuous_evaluation_rule.py
 
     Before running the sample:
 
@@ -31,11 +31,11 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    PromptAgentDefinition, 
-    EvaluationRule, 
-    ContinuousEvaluationRuleAction, 
+    PromptAgentDefinition,
+    EvaluationRule,
+    ContinuousEvaluationRuleAction,
     EvaluationRuleFilter,
-    EvaluationRuleEventType
+    EvaluationRuleEventType,
 )
 
 load_dotenv()
@@ -47,7 +47,6 @@ project_client = AIProjectClient(
 
 with project_client:
 
-    # [START continuous_evaluation_rule]
     openai_client = project_client.get_openai_client()
 
     agent = project_client.agents.create_version(
@@ -58,17 +57,10 @@ with project_client:
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
- 
-    data_source_config = {
-        "type": "azure_ai_source",
-        "scenario": "responses"
-    }    
+
+    data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "violence_detection",
-            "evaluator_name": "builtin.violence"
-        }
+        {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
     ]
     eval_object = openai_client.evals.create(
         name="Continuous Evaluation",
@@ -82,28 +74,21 @@ with project_client:
         evaluation_rule=EvaluationRule(
             display_name="My Continuous Eval Rule",
             description="An eval rule that runs on agent response completions",
-            action=ContinuousEvaluationRuleAction(
-                eval_id=eval_object.id,
-                max_hourly_runs=100
-            ),
+            action=ContinuousEvaluationRuleAction(eval_id=eval_object.id, max_hourly_runs=100),
             event_type=EvaluationRuleEventType.RESPONSE_COMPLETED,
-            filter=EvaluationRuleFilter(
-                agent_name=agent.name
-            ),
-            enabled=True
-        )
+            filter=EvaluationRuleFilter(agent_name=agent.name),
+            enabled=True,
+        ),
     )
-    print(f"Continuous Evaluation Rule created (id: {continuous_eval_rule.id}, name: {continuous_eval_rule.display_name})")
+    print(
+        f"Continuous Evaluation Rule created (id: {continuous_eval_rule.id}, name: {continuous_eval_rule.display_name})"
+    )
 
-    continuous_eval_rule = project_client.evaluation_rules.delete(
-        id=continuous_eval_rule.id
-    )
+    continuous_eval_rule = project_client.evaluation_rules.delete(id=continuous_eval_rule.id)
     print("Continuous Evaluation Rule deleted")
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
 
     project_client.agents.delete(agent_name=agent.name)
-    print("Agent deleted")    
-
-    # [END continuous_evaluation_rule]
+    print("Agent deleted")

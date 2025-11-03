@@ -36,14 +36,8 @@ from azure.ai.projects.models._enums import OperationState
 from azure.ai.projects.models._models import EvaluationComparisonRequest, EvaluationRunClusterInsightsRequest, Insight
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from openai.types.eval_create_params import (
-    DataSourceConfigCustom, 
-    TestingCriterionLabelModel
-)
-from openai.types.evals.create_eval_jsonl_run_data_source_param import (
-    CreateEvalJSONLRunDataSourceParam,
-    SourceFileID
-)
+from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
+from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
 
 load_dotenv()
 
@@ -54,39 +48,27 @@ project_client = AIProjectClient(
 
 with project_client:
 
-    # [START evaluation_cluster_insights]
     openai_client = project_client.get_openai_client()
 
     # Create an evaluation
     data_source_config = DataSourceConfigCustom(
         type="custom",
-        item_schema={
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string"
-                }
-            },
-            "required": [ "query" ]
-        }
+        item_schema={"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
     )
     testing_criteria = [
         TestingCriterionLabelModel(
             type="label_model",
             name="sentiment_analysis",
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            input = [
+            input=[
                 {
                     "role": "developer",
-                    "content": "Classify the sentiment of the following statement as one of 'positive', 'neutral', or 'negative'"
+                    "content": "Classify the sentiment of the following statement as one of 'positive', 'neutral', or 'negative'",
                 },
-                {
-                    "role": "user",
-                    "content": "Statement: {{item.query}}"
-                }
+                {"role": "user", "content": "Statement: {{item.query}}"},
             ],
             passing_labels=["positive", "neutral"],
-            labels=["positive", "neutral", "negative"]
+            labels=["positive", "neutral", "negative"],
         )
     ]
     eval_object = openai_client.evals.create(
@@ -102,14 +84,14 @@ with project_client:
         {"item": {"query": "I hate bugs."}},
         {"item": {"query": "The weather is nice today."}},
         {"item": {"query": "This is the worst movie ever."}},
-        {"item": {"query": "Python is an amazing language."}}
+        {"item": {"query": "Python is an amazing language."}},
     ]
-    
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False) as f:
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f:
         for item in eval_data:
-            f.write(json.dumps(item) + '\n')
+            f.write(json.dumps(item) + "\n")
         temp_file_path = f.name
-    
+
     dataset = project_client.datasets.upload_file(
         name="sentiment-eval-data",
         version=str(int(time.time())),
@@ -125,13 +107,7 @@ with project_client:
     eval_run = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name="Eval Run",
-        data_source=CreateEvalJSONLRunDataSourceParam(
-            source=SourceFileID(
-                id=dataset.id,
-                type="file_id"
-            ),
-            type="jsonl"
-        )
+        data_source=CreateEvalJSONLRunDataSourceParam(source=SourceFileID(id=dataset.id, type="file_id"), type="jsonl"),
     )
     print(f"Evaluation run created (id: {eval_run.id})")
 
@@ -139,7 +115,7 @@ with project_client:
         print("Waiting for eval run to complete...")
         eval_run = openai_client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
         print(f"Evaluation run status: {eval_run.status}")
-        time.sleep(5)        
+        time.sleep(5)
 
     # If the eval run completed successfully, generate cluster insights
     if eval_run.status == "completed":
@@ -149,10 +125,7 @@ with project_client:
         clusterInsight = project_client.insights.generate(
             Insight(
                 display_name="Cluster analysis",
-                request=EvaluationRunClusterInsightsRequest(
-                    eval_id=eval_object.id,
-                    run_ids=[eval_run.id]
-                )
+                request=EvaluationRunClusterInsightsRequest(eval_id=eval_object.id, run_ids=[eval_run.id]),
             )
         )
         print(f"Started insight generation (id: {clusterInsight.id})")
@@ -175,6 +148,3 @@ with project_client:
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
-
-    # [END evaluation_cluster_insights]
-    

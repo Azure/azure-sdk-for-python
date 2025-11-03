@@ -31,9 +31,7 @@ from pprint import pprint
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    PromptAgentDefinition
-)
+from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
@@ -44,7 +42,6 @@ project_client = AIProjectClient(
 
 with project_client:
 
-    # [START agent_response_evaluation]
     openai_client = project_client.get_openai_client()
 
     agent = project_client.agents.create_version(
@@ -67,17 +64,10 @@ with project_client:
         input="",  # TODO: Remove 'input' once service is fixed
     )
     print(f"Response output: {response.output_text} (id: {response.id})")
- 
-    data_source_config = {
-        "type": "azure_ai_source",
-        "scenario": "responses"
-    }
+
+    data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "violence_detection",
-            "evaluator_name": "builtin.violence"
-        }
+        {"type": "azure_ai_evaluator", "name": "violence_detection", "evaluator_name": "builtin.violence"}
     ]
     eval_object = openai_client.evals.create(
         name="Agent Response Evaluation",
@@ -90,22 +80,13 @@ with project_client:
         "type": "azure_ai_responses",
         "item_generation_params": {
             "type": "response_retrieval",
-            "data_mapping": {
-                "response_id": "{{item.resp_id}}"
-            },
-            "source": {
-                "type": "file_content",
-                "content": [
-                    { "item": { "resp_id": response.id } }
-                ]
-            }
-        }
+            "data_mapping": {"response_id": "{{item.resp_id}}"},
+            "source": {"type": "file_content", "content": [{"item": {"resp_id": response.id}}]},
+        },
     }
 
     response_eval_run = openai_client.evals.runs.create(
-        eval_id=eval_object.id,
-        name=f"Evaluation Run for Agent {agent.name}",
-        data_source=data_source
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source
     )
     print(f"Evaluation run created (id: {response_eval_run.id})")
 
@@ -117,22 +98,19 @@ with project_client:
     if response_eval_run.status == "completed":
         print("\n✓ Evaluation run completed successfully!")
         print(f"Result Counts: {response_eval_run.result_counts}")
-        
-        output_items = list(openai_client.evals.runs.output_items.list(
-            run_id=response_eval_run.id,
-            eval_id=eval_object.id
-        ))        
+
+        output_items = list(
+            openai_client.evals.runs.output_items.list(run_id=response_eval_run.id, eval_id=eval_object.id)
+        )
         print(f"\nOUTPUT ITEMS (Total: {len(output_items)})")
         print(f"{'-'*60}")
         pprint(output_items)
         print(f"{'-'*60}")
     else:
         print("\n✗ Evaluation run failed.")
-        
+
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")
 
     project_client.agents.delete(agent_name=agent.name)
-    print("Agent deleted")    
-
-    # [END agent_response_evaluation]
+    print("Agent deleted")
