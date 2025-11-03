@@ -40,7 +40,6 @@ class FileSystemSamples(object):
 
         # Instantiate a FileSystemClient
         file_system_client = datalake_service_client.get_file_system_client("mynewfilesystem")
-        file_system_client.url
         # [END create_file_system_client_from_service]
 
         try:
