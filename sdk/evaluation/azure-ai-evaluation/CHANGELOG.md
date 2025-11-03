@@ -1,5 +1,15 @@
 # Release History
 
+## 1.13.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.13.0 (2025-10-30)
 
 ### Features Added
@@ -20,6 +30,12 @@
 
 - `image_tag` parameter in `AzureOpenAIPythonGrader` is now optional.
 
+## 1.11.2 (2025-10-09)
+
+### Bugs Fixed
+
+- **kwargs in an evaluator signature receives input columns that are not otherwise named in the evaluator's signature
+
 ## 1.12.0 (2025-10-02)
 
 ### Features Added
@@ -28,12 +44,6 @@
 
 ### Bugs Fixed
 - Support for multi-level nesting in OpenAI grader (experimental)
-
-## 1.11.2 (2025-10-09)
-
-### Bugs Fixed
-
-- **kwargs in an evaluator signature receives input columns that are not otherwise named in the evaluator's signature
 
 ## 1.11.1 (2025-09-19)
 
