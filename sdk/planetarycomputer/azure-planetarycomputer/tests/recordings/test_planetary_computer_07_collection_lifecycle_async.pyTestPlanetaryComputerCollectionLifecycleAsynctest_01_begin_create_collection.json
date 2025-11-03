@@ -84,7 +84,7 @@
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
-        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00d784d8-b1bd-4145-baef-0ad10efb37fc?api-version=2025-04-30-preview",
+        "Location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/600b955c-bc9e-490d-9d06-46b0bdd3a2a7?api-version=2025-04-30-preview",
         "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
         "operation-location": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/inma/operations/00000000-0000-0000-0000-000000000000?api-version=2025-04-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -99,11 +99,11 @@
         "statusHistory": [
           {
             "status": "Pending",
-            "timestamp": "2025-11-03T16:12:45.6836046Z"
+            "timestamp": "2025-11-03T17:41:13.7326384Z"
           }
         ],
         "type": "AddCollection",
-        "creationTime": "2025-11-03T16:12:45.6836015Z",
+        "creationTime": "2025-11-03T17:41:13.7326351Z",
         "collectionId": "test-collection-lifecycle"
       }
     },
@@ -115,8 +115,9 @@
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 404,
+      "StatusCode": 200,
       "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
         "Access-Control-Allow-Credentials": "true",
         "Access-Control-Allow-Headers": "X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,Location",
         "Access-Control-Allow-Methods": "PUT, GET, POST, OPTIONS, DELETE, PATCH",
@@ -124,21 +125,68 @@
         "Access-Control-Expose-Headers": "Location",
         "Access-Control-Max-Age": "1728000",
         "Connection": "keep-alive",
-        "Content-Length": "146",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1057",
         "Content-Type": "application/json",
         "Date": "Mon, 01 Jan 2024 00:00:00 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "traceparent": "00-00000000000000000000000000000000-0000000000000000-00",
+        "Vary": "Accept-Encoding",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Ms-Error-Code": "ResourceNotFound",
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "error": {
-          "code": "ResourceNotFound",
-          "message": "Collection 'test-collection-lifecycle' not found. Please verify the collection ID and try again."
-        }
+        "id": "test-collection-lifecycle",
+        "type": "Collection",
+        "links": [
+          {
+            "rel": "items",
+            "type": "application/geo+json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle/items"
+          },
+          {
+            "rel": "parent",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "root",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/"
+          },
+          {
+            "rel": "self",
+            "type": "application/json",
+            "href": "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/test-collection-lifecycle"
+          }
+        ],
+        "title": "Test Collection Lifecycle",
+        "extent": {
+          "spatial": {
+            "bbox": [
+              [
+                -180,
+                -90,
+                180,
+                90
+              ]
+            ]
+          },
+          "temporal": {
+            "interval": [
+              [
+                "2020-01-01T00:00:00Z",
+                "2024-12-31T23:59:59Z"
+              ]
+            ]
+          }
+        },
+        "license": "proprietary",
+        "description": "Test collection for lifecycle operations",
+        "stac_version": "1.0.0",
+        "msft:_created": "2025-11-03T17:41:20.3218122Z",
+        "msft:_updated": "2025-11-03T17:41:20.3218122Z"
       }
     }
   ],

@@ -6,23 +6,23 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Content-Length": "497",
-        "Content-Type": "multipart/form-data; boundary=3a2d5f2f6b4a4dbebd7170c07cc9027e",
+        "Content-Type": "multipart/form-data; boundary=64c462430a7546129adebc70c7bbf440",
         "User-Agent": "azsdk-python-planetarycomputer/1.0.0b1 Python/3.13.9 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": [
-        "--3a2d5f2f6b4a4dbebd7170c07cc9027e\r\n",
+        "--64c462430a7546129adebc70c7bbf440\r\n",
         "Content-Type: text/plain; charset=utf-8\r\n",
         "Content-Disposition: form-data; name=\"data\"\r\n",
         "\r\n",
         "{\"key\": \"test-asset\", \"href\": \"https://example.com/test-asset-updated.txt\", \"type\": \"text/plain\", \"roles\": [\"metadata\"], \"title\": \"Test Asset - Updated\"}",
         "\r\n",
-        "--3a2d5f2f6b4a4dbebd7170c07cc9027e\r\n",
+        "--64c462430a7546129adebc70c7bbf440\r\n",
         "Content-Type: application/octet-stream\r\n",
         "Content-Disposition: form-data; name=\"file\"; filename=\"test-asset.txt\"\r\n",
         "\r\n",
         "b64:VGVzdCBhc3NldCBjb250ZW50IC0gdXBkYXRlZA==",
         "\r\n",
-        "--3a2d5f2f6b4a4dbebd7170c07cc9027e--\r\n"
+        "--64c462430a7546129adebc70c7bbf440--\r\n"
       ],
       "StatusCode": 200,
       "ResponseHeaders": {
@@ -118,7 +118,7 @@
           }
         },
         "msft:_created": "2025-11-03T14:16:10.3539672Z",
-        "msft:_updated": "2025-11-03T16:13:25.794470Z",
+        "msft:_updated": "2025-11-03T17:42:34.568037Z",
         "title": "MPC Pro Sample Datasets",
         "extent": {
           "spatial": {

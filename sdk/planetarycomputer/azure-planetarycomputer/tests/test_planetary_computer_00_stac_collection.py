@@ -802,7 +802,8 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
                 delete_poller.result()
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
                 if is_live():
-                    time.sleep(5)  # Wait for deletion to complete
+                    # Wait for deletion to complete
+                    time.sleep(5)
         except Exception:
             test_logger.info(f"Collection '{test_collection_id}' does not exist, proceeding with creation")
 

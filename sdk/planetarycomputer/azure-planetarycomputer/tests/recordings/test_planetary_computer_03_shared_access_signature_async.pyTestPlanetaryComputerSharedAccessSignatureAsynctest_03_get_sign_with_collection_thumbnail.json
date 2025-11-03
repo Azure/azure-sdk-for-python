@@ -193,7 +193,7 @@
         },
         "stac_version": "1.0.0",
         "msft:_created": "2025-11-03T14:16:10.3539672Z",
-        "msft:_updated": "2025-11-03T15:10:12.732115Z",
+        "msft:_updated": "2025-11-03T17:09:57.122829Z",
         "stac_extensions": [
           "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
           "https://stac-extensions.github.io/table/v1.2.0/schema.json"
@@ -227,8 +227,8 @@
         "X-Request-ID": "00000000000000000000000000000000"
       },
       "ResponseBody": {
-        "msft:expiry": "2025-11-04T16:09:54Z",
-        "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-11-03T15%3A06%3A19Z&ske=2025-11-10T15%3A05%3A19Z&sks=b&skv=2025-01-05&sig=Sanitized"
+        "msft:expiry": "2025-11-04T17:38:36Z",
+        "href": "https://SANITIZED.blob.core.windows.net/naip-atl-bde3e846/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=f3267c15-016e-4c75-af2c-24daf0bc92e4&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2025-11-03T17%3A06%3A05Z&ske=2025-11-10T17%3A05%3A05Z&sks=b&skv=2025-01-05&sig=Sanitized"
       }
     }
   ],

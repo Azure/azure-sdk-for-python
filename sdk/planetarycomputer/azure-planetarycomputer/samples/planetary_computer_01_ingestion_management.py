@@ -92,7 +92,7 @@ def create_managed_identity_ingestion_sources(
 
     # List managed identities
     logging.info("Listing available managed identities:")
-    managed_identities = client.ingestion.list_managed_identities()
+    managed_identities = list(client.ingestion.list_managed_identities())
     for identity in managed_identities:
         logging.info(f"  - Object ID: {identity.object_id}")
         logging.info(f"    Resource ID: {identity.resource_id}")

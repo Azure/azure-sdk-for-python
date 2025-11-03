@@ -11,10 +11,15 @@ from devtools_testutils import AzureRecordedTestCase
 
 class PlanetaryComputerProClientTestBaseAsync(AzureRecordedTestCase):
 
-    def create_async_client(self, endpoint):
+    def create_client(self, endpoint):
         credential = self.get_credential(PlanetaryComputerProClient, is_async=True)
         return self.create_client_from_credential(
             PlanetaryComputerProClient,
             credential=credential,
             endpoint=endpoint,
         )
+    
+    async def close_client(self):
+        """Close the async client and credential."""
+        # The test framework manages client lifecycle
+        pass

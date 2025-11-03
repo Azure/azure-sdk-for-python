@@ -764,7 +764,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Wait for item to be fully available before replacing (only in live mode)
         if is_live():
-            time.sleep(2)
+          time.sleep(2)
 
         # Step 2: Now demonstrate create_or_replace (replace since item exists)
         logger.info(f"Replacing item {item_id} using create_or_replace...")
@@ -882,7 +882,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Wait a moment for creation to complete (only in live mode)
         if is_live():
-            time.sleep(2)
+          time.sleep(2)
 
         # Delete the item
         logger.info(f"Deleting item {item_id}...")
@@ -892,7 +892,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Wait for deletion to propagate (only in live mode)
         if is_live():
-            time.sleep(2)
+          time.sleep(2)
 
         # Verify deletion by attempting to retrieve the item
         logger.info(f"Verifying item {item_id} was deleted...")
