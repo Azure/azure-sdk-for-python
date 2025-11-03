@@ -4,8 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
+from dotenv import load_dotenv
 import json
+import os
 import time
 
 from azure.identity import DefaultAzureCredential
@@ -17,9 +18,12 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 
 
+load_dotenv()
+
+
 def run_evaluator(evaluator_name: str, evaluation_contents: list[SourceFileContentContent], data_source_config: dict, initialization_parameters: dict[str, str], data_mapping: dict[str, str]) -> None:
     endpoint = os.environ[
-        "PROJECT_ENDPOINT"
+        "AZURE_AI_PROJECT_ENDPOINT"
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 
     with DefaultAzureCredential() as credential:
