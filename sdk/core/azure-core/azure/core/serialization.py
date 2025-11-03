@@ -379,8 +379,8 @@ def attribute_list(obj: Any) -> List[str]:
         if flattened_attribute == attr_name:
             retval.extend(attribute_list(rest_field._class_type))  # pylint: disable=protected-access
         else:
-            attr_name_from_rest_name = ''.join(w.capitalize() if i else w for i, w in enumerate(attr_name.split('_')))
-            if f"{rest_field._rest_name}Property" == attr_name_from_rest_name:
+            rest_name_from_attr_name = ''.join(w.capitalize() if i else w for i, w in enumerate(attr_name.split('_')))
+            if f"{rest_field._rest_name}Property" == rest_name_from_attr_name:
                 retval.append(attr_name.removesuffix("_property"))
             else:
                 retval.append(attr_name)
