@@ -24,6 +24,33 @@ from ._constants import (
     FEATURE_FLAG_USES_TELEMETRY_TAG,
 )
 
+# Feature flag constants for telemetry
+LOAD_BALANCING_FEATURE = "LB"
+AI_CONFIGURATION_FEATURE = "AI"
+AI_CHAT_COMPLETION_FEATURE = "AICC"
+AI_FOUNDRY_SDK_FEATURE = "USE_AI_FOUNDRY_SDK"
+
+# Package name constants
+AZURE_AI_PROJECTS_PACKAGE = "azure-ai-projects"
+
+# MIME profile constants
+AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai"
+CHAT_COMPLETION_PROFILE = "chat-completion"
+
+# Correlation context constants
+FEATUREMANAGEMENT_PACKAGE = "featuremanagement"
+CORRELATION_CONTEXT_HEADER = "Correlation-Context"
+REQUEST_TYPE_KEY = "RequestType"
+REPLICA_COUNT_KEY = "ReplicaCount"
+HOST_KEY = "Host"
+FILTER_KEY = "Filter"
+MAX_VARIANTS_KEY = "MaxVariants"
+FF_FEATURES_KEY = "FFFeatures"
+FM_PY_VER_KEY = "FMPyVer"
+FEATURES_KEY = "Features"
+USES_KEY_VAULT_TAG = "UsesKeyVault"
+FAILOVER_TAG = "Failover"
+
 
 class HostType:
     UNIDENTIFIED = ""
@@ -86,13 +113,13 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         features_list = []
 
         if self.uses_load_balancing:
-            features_list.append("LB")
+            features_list.append(LOAD_BALANCING_FEATURE)
         if self.uses_ai_configuration:
-            features_list.append("AI")
+            features_list.append(AI_CONFIGURATION_FEATURE)
         if self.uses_aicc_configuration:
-            features_list.append("AICC")
-        if self.get_assembly_version("azure-ai-projects"):
-            features_list.append("USE_AI")
+            features_list.append(AI_CHAT_COMPLETION_FEATURE)
+        if self.get_assembly_version(AZURE_AI_PROJECTS_PACKAGE):
+            features_list.append(AI_FOUNDRY_SDK_FEATURE)
 
         return Delimiter.join(features_list)
 
@@ -172,9 +199,9 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             return
 
         # Check for AI mime profiles in content type
-        if "https://azconfig.io/mime-profiles/ai" in content_type:
+        if AI_MIME_PROFILE in content_type:
             self.uses_ai_configuration = True
-            if "chat-completion" in content_type:
+            if CHAT_COMPLETION_PROFILE in content_type:
                 self.uses_aicc_configuration = True
 
     def update_correlation_context_header(
@@ -214,55 +241,55 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
 
         # Update feature management version if needed and feature flags are enabled
         if feature_flag_enabled and not self.feature_management_version:
-            self.feature_management_version = self.get_assembly_version("featuremanagement")
+            self.feature_management_version = self.get_assembly_version(FEATUREMANAGEMENT_PACKAGE)
 
         # Key-value pairs for the correlation context
         key_values: List[Tuple[str, str]] = []
         tags: List[str] = []
 
         # Add request type
-        key_values.append(("RequestType", request_type))
+        key_values.append((REQUEST_TYPE_KEY, request_type))
 
         # Add replica count if configured
         if self.replica_count > 0:
-            key_values.append(("ReplicaCount", str(self.replica_count)))
+            key_values.append((REPLICA_COUNT_KEY, str(self.replica_count)))
 
         # Add host type if identified
         if self.host_type != HostType.UNIDENTIFIED:
-            key_values.append(("Host", self.host_type))
+            key_values.append((HOST_KEY, self.host_type))
 
         # Add feature filter information
         if len(self.feature_filter_usage) > 0:
             filters_string = self._create_filters_string()
             if filters_string:
-                key_values.append(("Filter", filters_string))
+                key_values.append((FILTER_KEY, filters_string))
 
         # Add max variants if present
         if self.max_variants and self.max_variants > 0:
-            key_values.append(("MaxVariants", str(self.max_variants)))
+            key_values.append((MAX_VARIANTS_KEY, str(self.max_variants)))
 
         # Add feature flag features if present
         if self.uses_seed or self.uses_telemetry:
             ff_features_string = self._create_features_string()
             if ff_features_string:
-                key_values.append(("FFFeatures", ff_features_string))
+                key_values.append((FF_FEATURES_KEY, ff_features_string))
 
         # Add version information
         if self.feature_management_version:
-            key_values.append(("FMPyVer", self.feature_management_version))
+            key_values.append((FM_PY_VER_KEY, self.feature_management_version))
 
         # Add general features if present
         if self.uses_load_balancing or self.uses_ai_configuration or self.uses_aicc_configuration:
             features_string = self._get_features_string()
             if features_string:
-                key_values.append(("Features", features_string))
+                key_values.append((FEATURES_KEY, features_string))
 
         # Add tags
         if self.is_key_vault_configured:
-            tags.append("UsesKeyVault")
+            tags.append(USES_KEY_VAULT_TAG)
 
         if self.is_failover_request:
-            tags.append("Failover")
+            tags.append(FAILOVER_TAG)
 
         # Build the correlation context string
         context_parts: List[str] = []
@@ -277,7 +304,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         correlation_context = ",".join(context_parts)
 
         if correlation_context:
-            headers["Correlation-Context"] = correlation_context
+            headers[CORRELATION_CONTEXT_HEADER] = correlation_context
 
         return headers
 
