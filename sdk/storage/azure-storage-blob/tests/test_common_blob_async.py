@@ -3541,7 +3541,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
-        await blob.upload_blob(data=compressed_data, content_settings=content_settings)
+        await blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
 
         downloaded = await blob.download_blob(decompress=True)
         result = await downloaded.readall()
@@ -3572,7 +3572,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
-        await blob.upload_blob(data=compressed_data, content_settings=content_settings)
+        await blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
 
         result = await (await blob.download_blob(decompress=False)).readall()
         assert result == compressed_data

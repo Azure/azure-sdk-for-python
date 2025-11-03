@@ -3610,7 +3610,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
-        blob.upload_blob(data=compressed_data, content_settings=content_settings)
+        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
 
         result = blob.download_blob(decompress=True).readall()
         assert result == decompressed_data
@@ -3639,7 +3639,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
-        blob.upload_blob(data=compressed_data, content_settings=content_settings)
+        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
 
         result = blob.download_blob(decompress=False).readall()
         assert result == compressed_data
