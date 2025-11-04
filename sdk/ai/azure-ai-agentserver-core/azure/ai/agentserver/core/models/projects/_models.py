@@ -11,7 +11,7 @@
 import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
     AgentKind,
     AnnotationType,
