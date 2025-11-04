@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-class ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Success evaluator determines whether tool calls done by an AI agent includes failures or not.
 
     This evaluator focuses solely on tool call results and tool definitions, disregarding user's query to
@@ -40,7 +40,7 @@ class ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END tool_success_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a ToolSuccessEvaluator with a tool definitions and response.
+            :caption: Initialize and call a _ToolSuccessEvaluator with a tool definitions and response.
 
     .. admonition:: Example using Azure AI Project URL:
 
@@ -49,7 +49,7 @@ class ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :end-before: [END tool_success_evaluator]
         :language: python
         :dedent: 8
-        :caption: Initialize and call ToolSuccessEvaluator using Azure AI Project URL in the following
+        :caption: Initialize and call a _ToolSuccessEvaluator using Azure AI Project URL in the following
             format https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
@@ -86,7 +86,7 @@ class ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """Evaluate tool call success for a given response, and optionally tool definitions.
 
         Example with list of messages:
-            evaluator = ToolSuccessEvaluator(model_config)
+            evaluator = _ToolSuccessEvaluator(model_config)
             response = [{'createdAt': 1700000070, 'run_id': '0', 'role': 'assistant',
             'content': [{'type': 'text', 'text': '**Day 1:** Morning: Visit Louvre Museum (9 AM - 12 PM)...'}]}]
 

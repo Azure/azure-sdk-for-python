@@ -80,7 +80,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -314,7 +314,7 @@ def build_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -377,7 +377,7 @@ def build_read_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -442,7 +442,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -498,7 +498,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -558,7 +558,7 @@ def build_set_access_control_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["setAccessControl"] = kwargs.pop("action", _params.pop("action", "setAccessControl"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -619,7 +619,7 @@ def build_set_access_control_recursive_request(  # pylint: disable=name-too-long
     action: Literal["setAccessControlRecursive"] = kwargs.pop(
         "action", _params.pop("action", "setAccessControlRecursive")
     )
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -685,7 +685,7 @@ def build_flush_data_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["flush"] = kwargs.pop("action", _params.pop("action", "flush"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -781,7 +781,7 @@ def build_append_data_request(
 
     action: Literal["append"] = kwargs.pop("action", _params.pop("action", "append"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -857,7 +857,7 @@ def build_set_expiry_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -897,7 +897,7 @@ def build_undelete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
