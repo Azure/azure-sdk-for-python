@@ -7,10 +7,6 @@ DESCRIPTION:
     This sample demonstrates how to create and run an evaluation for an Azure AI agent response
     using the synchronous AIProjectClient.
 
-    The OpenAI compatible Evals calls in this sample are made using
-    the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
-    for more information.
-
 USAGE:
     python sample_agent_response_evaluation.py
 
@@ -23,6 +19,7 @@ USAGE:
        page of your Azure AI Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AZURE_AI_AGENT_NAME - The name for the agent to be created.
 """
 
 import os

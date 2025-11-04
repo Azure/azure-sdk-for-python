@@ -23,6 +23,7 @@ USAGE:
        page of your Azure AI Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AZURE_AI_AGENT_NAME - The name of the agent to create and evaluate.
 """
 
 import os
