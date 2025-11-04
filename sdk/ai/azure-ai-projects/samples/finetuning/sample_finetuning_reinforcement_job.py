@@ -33,10 +33,13 @@ from pathlib import Path
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
+# Supported Models: o4-mini
 model_name = os.environ.get("MODEL_NAME", "o4-mini")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "rft_training_set.jsonl"))
-validation_file_path = os.environ.get("VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "rft_validation_set.jsonl"))
+validation_file_path = os.environ.get(
+    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "rft_validation_set.jsonl")
+)
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -53,19 +56,20 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             with open(validation_file_path, "rb") as f:
                 validation_file = openai_client.files.create(file=f, purpose="fine-tune")
             print(f"Uploaded validation file with ID: {validation_file.id}")
-            
+
             grader = {
+                "name": "Response Quality Grader",
                 "type": "score_model",
                 "model": "o3-mini",
                 "input": [
                     {
                         "role": "user",
-                        "content": "Evaluate the model's response based on correctness and quality. Rate from 0 to 10."
+                        "content": "Evaluate the model's response based on correctness and quality. Rate from 0 to 10.",
                     }
                 ],
-                "range": [0.0, 10.0]
+                "range": [0.0, 10.0],
             }
-            
+
             print("Creating reinforcement fine-tuning job")
             fine_tuning_job = openai_client.fine_tuning.jobs.create(
                 training_file=train_file.id,
@@ -81,9 +85,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                             "learning_rate_multiplier": 2,
                             "eval_interval": 5,
                             "eval_samples": 2,
-                            "reasoning_effort": "medium"
-                        }
-                    }
-                }
+                            "reasoning_effort": "medium",
+                        },
+                    },
+                },
             )
             print(fine_tuning_job)

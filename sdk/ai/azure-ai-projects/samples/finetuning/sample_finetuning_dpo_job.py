@@ -33,10 +33,13 @@ from pathlib import Path
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-model_name = os.environ.get("MODEL_NAME", "gpt-4o")
+# Supported Models: GPT 4o, 4.1, 4.1-mini, 4.1-nano, gpt-4o-mini
+model_name = os.environ.get("MODEL_NAME", "gpt-4o-mini")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "dpo_training_set.jsonl"))
-validation_file_path = os.environ.get("VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "dpo_validation_set.jsonl"))
+validation_file_path = os.environ.get(
+    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "dpo_validation_set.jsonl")
+)
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -53,7 +56,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             with open(validation_file_path, "rb") as f:
                 validation_file = openai_client.files.create(file=f, purpose="fine-tune")
             print(f"Uploaded validation file with ID: {validation_file.id}")
-            
+
             print("Creating DPO fine-tuning job")
             fine_tuning_job = openai_client.fine_tuning.jobs.create(
                 training_file=train_file.id,
@@ -61,13 +64,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 model=model_name,
                 method={
                     "type": "dpo",
-                    "dpo": {
-                        "hyperparameters": {
-                            "n_epochs": 3,
-                            "batch_size": 1,
-                            "learning_rate_multiplier": 1.0
-                        }
-                    }
-                }
+                    "dpo": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
+                },
             )
             print(fine_tuning_job)

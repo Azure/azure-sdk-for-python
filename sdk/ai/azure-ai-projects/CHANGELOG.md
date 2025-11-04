@@ -10,6 +10,7 @@ This package no longer depends on the `azure-ai-agents` package. See `samples\ag
 ### Sample updates
 
 * Added `files` samples for operations create, delete, list, retrieve and content.
+* Added `finetuning` samples for operations create, retrieve, list, list_events, list_checkpoints, cancel, pause and resume. Also, these samples includes various finetuning techniques like Supervised (SFT), Reinforcement (RFT) and Direct performance optimization (DPO).
 
 ## 1.1.0b4 (2025-09-12)
 

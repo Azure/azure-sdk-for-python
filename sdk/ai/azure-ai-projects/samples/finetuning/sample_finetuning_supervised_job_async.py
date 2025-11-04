@@ -34,10 +34,15 @@ from pathlib import Path
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
+# Supported Models: GPT 4o, 4o-mini, 4.1, 4.1-mini, 4.1-nano;
+# Llama 2 and Llama 3.1; Phi 4, Phi-4-mini-instruct; Mistral Nemo, Ministral-3B, Mistral Large (2411); NTT Tsuzumi-7b
 model_name = os.environ.get("MODEL_NAME", "gpt-4.1")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "sft_training_set.jsonl"))
-validation_file_path = os.environ.get("VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl"))
+validation_file_path = os.environ.get(
+    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl")
+)
+
 
 async def main():
     async with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
@@ -55,7 +60,7 @@ async def main():
                 with open(validation_file_path, "rb") as f:
                     validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
                 print(f"Uploaded validation file with ID: {validation_file.id}")
-            
+
                 print("Creating supervised fine-tuning job")
                 fine_tuning_job = await openai_client.fine_tuning.jobs.create(
                     training_file=train_file.id,
@@ -64,16 +69,12 @@ async def main():
                     method={
                         "type": "supervised",
                         "supervised": {
-                            "hyperparameters": {
-                                "n_epochs": 3,
-                                "batch_size": 1,
-                                "learning_rate_multiplier": 1.0
-                            }
-                        }
-                    }
+                            "hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}
+                        },
+                    },
                 )
                 print(fine_tuning_job)
-            
+
                 print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
                 retrieved_job = await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
                 print(retrieved_job)
@@ -96,7 +97,9 @@ async def main():
 
                 # Note that to retrieve the checkpoints, job needs to be in terminal state.
                 print(f"Listing checkpoints for fine-tuning job: {fine_tuning_job.id}")
-                async for checkpoint in await openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id, limit=10):
+                async for checkpoint in await openai_client.fine_tuning.jobs.checkpoints.list(
+                    fine_tuning_job.id, limit=10
+                ):
                     print(checkpoint)
 
                 print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")

@@ -338,6 +338,73 @@ print(f"Successfully deleted file: {deleted_file.id}")
 
 <!-- END SNIPPET -->
 
+### Fine-tuning operations
+
+The code below shows Fine-tuning operations using the OpenAI client, which allow you to create, retrieve, list, cancel, pause, resume, and manage fine-tuning jobs. These operations support various fine-tuning techniques like Supervised Fine-Tuning (SFT), Reinforcement Fine-Tuning (RFT), and Direct Performance Optimization (DPO). Full samples can be found under the "finetuning" folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_finetuning_supervised_job.finetuning_supervised_job_sample-->
+
+```python
+print("Uploading training file...")
+with open(training_file_path, "rb") as f:
+    train_file = openai_client.files.create(file=f, purpose="fine-tune")
+print(f"Uploaded training file with ID: {train_file.id}")
+
+print("Uploading validation file...")
+with open(validation_file_path, "rb") as f:
+    validation_file = openai_client.files.create(file=f, purpose="fine-tune")
+print(f"Uploaded validation file with ID: {validation_file.id}")
+
+print("Creating supervised fine-tuning job")
+fine_tuning_job = openai_client.fine_tuning.jobs.create(
+    training_file=train_file.id,
+    validation_file=validation_file.id,
+    model=model_name,
+    method={
+        "type": "supervised",
+        "supervised": {
+            "hyperparameters": {
+                "n_epochs": 3,
+                "batch_size": 1,
+                "learning_rate_multiplier": 1.0
+            }
+        }
+    }
+)
+print(fine_tuning_job)
+
+print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
+retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+print(retrieved_job)
+
+print("Listing all fine-tuning jobs:")
+for job in openai_client.fine_tuning.jobs.list():
+    print(job)
+
+print(f"Pausing fine-tuning job with ID: {fine_tuning_job.id}")
+paused_job = openai_client.fine_tuning.jobs.pause(fine_tuning_job.id)
+print(paused_job)
+
+print(f"Resuming fine-tuning job with ID: {fine_tuning_job.id}")
+resumed_job = openai_client.fine_tuning.jobs.resume(fine_tuning_job.id)
+print(resumed_job)
+
+print(f"Listing events of fine-tuning job: {fine_tuning_job.id}")
+for event in openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id):
+    print(event)
+
+# Note that to retrieve the checkpoints, job needs to be in terminal state.
+print(f"Listing checkpoints of fine-tuning job: {fine_tuning_job.id}")
+for checkpoint in openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id):
+    print(checkpoint)
+
+print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
+cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
+```
+
+<!-- END SNIPPET -->
+
 ### Indexes operations
 
 The code below shows some Indexes operations. Full samples can be found under the "indexes"

@@ -105,7 +105,7 @@ class TestBase(AzureRecordedTestCase):
             "validation_file_name": "sft_validation_set.jsonl",
         },
         "dpo": {
-            "model_name": "gpt-4o",
+            "model_name": "gpt-4o-mini",
             "training_file_name": "dpo_training_set.jsonl",
             "validation_file_name": "dpo_validation_set.jsonl",
         },

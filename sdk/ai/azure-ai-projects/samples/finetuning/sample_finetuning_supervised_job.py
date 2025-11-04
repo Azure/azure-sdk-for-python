@@ -33,10 +33,14 @@ from pathlib import Path
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
+# Supported Models: GPT 4o, 4o-mini, 4.1, 4.1-mini, 4.1-nano;
+# Llama 2 and Llama 3.1; Phi 4, Phi-4-mini-instruct; Mistral Nemo, Ministral-3B, Mistral Large (2411); NTT Tsuzumi-7b
 model_name = os.environ.get("MODEL_NAME", "gpt-4.1")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "sft_training_set.jsonl"))
-validation_file_path = os.environ.get("VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl"))
+validation_file_path = os.environ.get(
+    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl")
+)
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
@@ -54,7 +58,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             with open(validation_file_path, "rb") as f:
                 validation_file = openai_client.files.create(file=f, purpose="fine-tune")
             print(f"Uploaded validation file with ID: {validation_file.id}")
-            
+
             print("Creating supervised fine-tuning job")
             fine_tuning_job = openai_client.fine_tuning.jobs.create(
                 training_file=train_file.id,
@@ -63,16 +67,11 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 method={
                     "type": "supervised",
                     "supervised": {
-                        "hyperparameters": {
-                            "n_epochs": 3,
-                            "batch_size": 1,
-                            "learning_rate_multiplier": 1.0
-                        }
-                    }
-                }
+                        "hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}
+                    },
+                },
             )
             print(fine_tuning_job)
-            
 
             print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
             retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
@@ -90,13 +89,13 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             resumed_job = openai_client.fine_tuning.jobs.resume(fine_tuning_job.id)
             print(resumed_job)
 
-            print(f"Listing events for fine-tuning job: {fine_tuning_job.id}")
-            for event in openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id, limit=10):
+            print(f"Listing events of fine-tuning job: {fine_tuning_job.id}")
+            for event in openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id):
                 print(event)
 
             # Note that to retrieve the checkpoints, job needs to be in terminal state.
-            print(f"Listing checkpoints for fine-tuning job: {fine_tuning_job.id}")
-            for checkpoint in openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id, limit=10):
+            print(f"Listing checkpoints of fine-tuning job: {fine_tuning_job.id}")
+            for checkpoint in openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id):
                 print(checkpoint)
 
             print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
