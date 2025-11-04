@@ -57,9 +57,6 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
-    :keyword bool use_token_proxy: Whether or not to read token proxy configuration from environment variables and use
-        a token proxy to acquire tokens. If this value is True and proxy configuration isn't present or this value is
-        False, the credential will request tokens directly from Entra ID. Defaults to False.
 
     .. admonition:: Example:
 
@@ -77,7 +74,6 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
         token_file_path: Optional[str] = None,
-        use_token_proxy: bool = False,
         **kwargs: Any,
     ) -> None:
         tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
@@ -104,7 +100,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
         self._token_file_path = token_file_path
 
-        if use_token_proxy:
+        if kwargs.pop("use_token_proxy", False):
             token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
             if token_proxy_endpoint:
                 sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
