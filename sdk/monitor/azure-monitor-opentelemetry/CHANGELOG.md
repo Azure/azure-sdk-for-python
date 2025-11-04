@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.2 (Unreleased)
+## 1.8.2 (2025-11-05)
 
 ### Features Added
 
@@ -8,8 +8,6 @@
   ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
 - Adding more diagnostic log message IDs
   ([#43183](https://github.com/Azure/azure-sdk-for-python/pull/43183))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
