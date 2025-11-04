@@ -158,7 +158,7 @@ with DefaultAzureCredential() as credential:
                 type="jsonl", 
                 source=SourceFileID(
                     type ="file_id",
-                    id=dataset_id
+                    id=dataset.id if dataset.id else ""
                 )
             )
         )
