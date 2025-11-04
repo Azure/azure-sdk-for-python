@@ -52,17 +52,25 @@ class TestConverterForStrategy:
 
     def test_get_converter_for_strategy_single(self):
         """Test getting converter for a single strategy."""
-        converter = get_converter_for_strategy(AttackStrategy.Base64)
+        # Create mock dependencies
+        mock_rai_client = MagicMock()
+        mock_logger = MagicMock()
+
+        converter = get_converter_for_strategy(AttackStrategy.Base64, mock_rai_client, False, mock_logger)
         assert isinstance(converter, Base64Converter)
 
         # Test strategy with no converter
-        converter = get_converter_for_strategy(AttackStrategy.Baseline)
+        converter = get_converter_for_strategy(AttackStrategy.Baseline, mock_rai_client, False, mock_logger)
         assert converter is None
 
     def test_get_converter_for_strategy_list(self):
         """Test getting converters for a list of strategies."""
+        # Create mock dependencies
+        mock_rai_client = MagicMock()
+        mock_logger = MagicMock()
+
         strategies = [AttackStrategy.Base64, AttackStrategy.Flip]
-        converters = get_converter_for_strategy(strategies)
+        converters = get_converter_for_strategy(strategies, mock_rai_client, False, mock_logger)
 
         assert isinstance(converters, list)
         assert len(converters) == 2
