@@ -378,7 +378,9 @@ class TestFineTuning(TestBase):
                 # Wait for files to be processed
                 time.sleep(10)
 
-                fine_tuning_job = self._create_sft_finetuning_job(openai_client, train_file.id, validation_file.id, "oss")
+                fine_tuning_job = self._create_sft_finetuning_job(
+                    openai_client, train_file.id, validation_file.id, "oss"
+                )
                 print(f"[test_finetuning_sft_oss] Created fine-tuning job: {fine_tuning_job.id}")
 
                 TestBase.validate_fine_tuning_job(fine_tuning_job)
@@ -392,4 +394,3 @@ class TestFineTuning(TestBase):
                 print(f"[test_finetuning_sft_oss] Cancelled job: {fine_tuning_job.id}")
 
                 self._cleanup_test_files(openai_client, train_file, validation_file)
-

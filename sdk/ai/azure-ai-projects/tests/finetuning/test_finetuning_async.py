@@ -17,7 +17,9 @@ from devtools_testutils import is_live_and_not_recording
 )
 class TestFineTuningAsync(TestBase):
 
-    async def _create_sft_finetuning_job_async(self, openai_client, train_file_id, validation_file_id, model_type="openai"):
+    async def _create_sft_finetuning_job_async(
+        self, openai_client, train_file_id, validation_file_id, model_type="openai"
+    ):
         """Helper method to create a supervised fine-tuning job asynchronously."""
         return await openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
@@ -411,7 +413,9 @@ class TestFineTuningAsync(TestBase):
                 TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
                 assert fine_tuning_job.method is not None, "Method should not be None for SFT job"
                 TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "supervised")
-                print(f"[test_finetuning_sft_oss_async] SFT method validation passed - type: {fine_tuning_job.method.type}")
+                print(
+                    f"[test_finetuning_sft_oss_async] SFT method validation passed - type: {fine_tuning_job.method.type}"
+                )
 
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_sft_oss_async] Cancelled job: {fine_tuning_job.id}")
