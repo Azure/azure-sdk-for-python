@@ -426,7 +426,11 @@ class TestContentSafetyEvaluator:
         result = await evaluate_with_rai_service_sync(
             data={"query": "what is the weather outside?", "response": "test response"},
             metric_name=EvaluationMetrics.HATE_UNFAIRNESS,
-            project_scope={"subscription_id": "fake-id", "project_name": "fake-name", "resource_group_name": "fake-group"},
+            project_scope={
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
             credential=DefaultAzureCredential(),
             annotation_task="content harm",
         )

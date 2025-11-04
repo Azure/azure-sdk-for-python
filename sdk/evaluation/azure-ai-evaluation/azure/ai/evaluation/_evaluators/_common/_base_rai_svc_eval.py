@@ -130,7 +130,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         messages = conversation["messages"]
         # Run score computation based on supplied metric.
         # Convert enum to string value for the multimodal endpoint
-        metric_value = self._eval_metric.value if hasattr(self._eval_metric, 'value') else self._eval_metric
+        metric_value = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
         result = await evaluate_with_rai_service_multimodal(
             messages=messages,
             metric_name=metric_value,
@@ -217,7 +217,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                             f"{self._eval_metric.value}_label": label,
                             f"{self._eval_metric.value}_reason": reason,
                         }
-                        
+
                         # Code vulnerability and ungrounded attributes also include details
                         if self._eval_metric in [
                             EvaluationMetrics.CODE_VULNERABILITY,
@@ -225,9 +225,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                         ]:
                             details = result_dict.get("details", {})
                             parsed_result[f"{self._eval_metric.value}_details"] = details
-                        
+
                         return parsed_result
-                    
+
                     # Standard handling for harm severity evaluators
                     # Convert score to severity label if needed
                     severity_label = result_dict.get("label")
@@ -244,21 +244,26 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                         f"{self._eval_metric.value}_reason": reason,
                     }
 
-        # If we can't parse as EvalRunOutputItem or no matching result found, 
+        # If we can't parse as EvalRunOutputItem or no matching result found,
         # check if it's already in the correct format (might be legacy response)
         if isinstance(eval_result, dict):
             # Check if it already has the expected keys
-            expected_key = f"{self._eval_metric.value}_label" if self._eval_metric in [
-                EvaluationMetrics.CODE_VULNERABILITY,
-                EvaluationMetrics.PROTECTED_MATERIAL,
-                EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
-                EvaluationMetrics.XPIA,
-                _InternalEvaluationMetrics.ECI,
-            ] else self._eval_metric.value
-            
+            expected_key = (
+                f"{self._eval_metric.value}_label"
+                if self._eval_metric
+                in [
+                    EvaluationMetrics.CODE_VULNERABILITY,
+                    EvaluationMetrics.PROTECTED_MATERIAL,
+                    EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                    EvaluationMetrics.XPIA,
+                    _InternalEvaluationMetrics.ECI,
+                ]
+                else self._eval_metric.value
+            )
+
             if expected_key in eval_result:
                 return eval_result
-        
+
         # Return empty dict if we can't parse
         return {}
 

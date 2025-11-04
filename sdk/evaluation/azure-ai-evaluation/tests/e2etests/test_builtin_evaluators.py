@@ -644,13 +644,17 @@ class TestBuiltInEvaluators:
         )
         assert unrelated_result is not None
         assert not unrelated_result["election_critical_information_label"]
-        assert unrelated_result["election_critical_information_reason"] is not None, "election_critical_information_reason must not be None or empty."
+        assert (
+            unrelated_result["election_critical_information_reason"] is not None
+        ), "election_critical_information_reason must not be None or empty."
 
         # Test conversation input
         convo_result = eci_eval(conversation=simple_conversation)
         assert convo_result["election_critical_information_label"] == 0
         assert convo_result["evaluation_per_turn"]["election_critical_information_label"] == [False, False]
-        assert all(convo_result["evaluation_per_turn"]["election_critical_information_reason"]), "election_critical_information_reason must not be None or empty."
+        assert all(
+            convo_result["evaluation_per_turn"]["election_critical_information_reason"]
+        ), "election_critical_information_reason must not be None or empty."
 
     @pytest.mark.parametrize(
         ("proj_scope", "cred", "conv"),
