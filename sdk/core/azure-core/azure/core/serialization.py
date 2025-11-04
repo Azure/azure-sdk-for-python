@@ -383,6 +383,36 @@ def attribute_list(obj: Any) -> List[str]:
     return retval
 
 
+def to_camel_case(snake_str: str) -> str:
+    if not snake_str or "_" not in snake_str:
+        return snake_str
+    components = snake_str.split("_")
+    return components[0] + "".join(word.capitalize() for word in components[1:])
+
+
+def attribute_rest_name_list(obj: Any) -> List[Tuple[str, str]]:
+    """Get a list of (attribute name, rest field name) tuples for a generated SDK model.
+
+    :param obj: The object to get attributes from.
+    :type obj: any
+    :return: A list of (attribute name, rest field name) tuples.
+    :rtype: List[Tuple[str, str]]
+    """
+    if not is_generated_model(obj):
+        raise TypeError("Object is not a generated SDK model.")
+    if hasattr(obj, "_attribute_map"):
+        # msrest model
+        return [(k, to_camel_case(k)) for k in obj._attribute_map.keys()]  # pylint: disable=protected-access
+    flattened_attribute = _get_flattened_attribute(obj)
+    retval: List[Tuple[str, str]] = []
+    for attr_name, rest_field in obj._attr_to_rest_field.items():  # pylint: disable=protected-access
+        if flattened_attribute == attr_name:
+            retval.extend(attribute_rest_name_list(rest_field._class_type))  # pylint: disable=protected-access
+        else:
+            retval.append((attr_name, rest_field._rest_name))  # pylint: disable=protected-access
+    return retval
+
+
 def as_attribute_dict(obj: Any, *, exclude_readonly: bool = False) -> Dict[str, Any]:
     """Convert an object to a dictionary of its attributes.
 
