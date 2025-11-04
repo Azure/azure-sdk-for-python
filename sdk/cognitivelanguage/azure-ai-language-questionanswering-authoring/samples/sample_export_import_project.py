@@ -46,9 +46,7 @@ def sample_export_import_project():
                 ]
             }
         }
-        import_poller = client.begin_import_assets(
-            project_name=project_name, body=minimal_assets, file_format="json"
-        )
+        import_poller = client.begin_import_assets(project_name=project_name, body=minimal_assets, file_format="json")
         import_poller.result()  # completes; no result payload
         print(f"Imported project as {project_name} (minimal assets)")
     # [END export_import_project]

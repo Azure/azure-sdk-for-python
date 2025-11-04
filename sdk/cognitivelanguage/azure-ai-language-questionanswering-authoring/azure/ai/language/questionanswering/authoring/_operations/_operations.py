@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,duplicate-code
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1095,7 +1095,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_delete_status(
+    def _get_delete_status(
         self, job_id: str, **kwargs: Any
     ) -> _models.QuestionAnsweringAuthoringProjectDeletionJobState:
         """Gets the status of a Project delete job.
@@ -1288,7 +1288,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_export_status(
+    def _get_export_status(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> _models.QuestionAnsweringAuthoringExportJobState:
         """Gets the status of an Export job, once job completes, returns the project
@@ -1792,7 +1792,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_import_status(
+    def _get_import_status(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> _models.QuestionAnsweringAuthoringImportJobState:
         """Gets the status of an Import job.
@@ -1968,7 +1968,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_deploy_status(
+    def _get_deploy_status(
         self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
     ) -> _models.QuestionAnsweringAuthoringProjectDeploymentJobState:
         """Gets the status of a Deploy job.
@@ -2773,7 +2773,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_update_sources_status(
+    def _get_update_sources_status(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> _models.QuestionAnsweringAuthoringUpdateSourcesJobState:
         """Gets the status of update sources job.
@@ -3115,7 +3115,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_update_qnas_status(
+    def _get_update_qnas_status(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> _models.QuestionAnsweringAuthoringUpdateQnasJobState:
         """Gets the status of update QnAs job.

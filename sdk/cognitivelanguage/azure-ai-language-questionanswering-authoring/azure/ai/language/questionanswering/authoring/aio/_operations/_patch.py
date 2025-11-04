@@ -319,28 +319,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    # Hide the generated async get_*_status methods (status peek endpoints) without editing
-    # the generated _operations.py file. Same approach as sync variant.
-    original_methods: dict[str, Any] = {}
-    to_hide = [
-        "get_delete_status",
-        "get_export_status",
-        "get_import_status",
-        "get_deploy_status",
-    ]
-    generated_cls = _QuestionAnsweringAuthoringClientOperationsMixinGenerated
-    for name in to_hide:
-        if hasattr(generated_cls, name):
-            original_methods[name] = getattr(generated_cls, name)
-            try:
-                delattr(generated_cls, name)
-            except AttributeError:
-                pass
-
-    patch_cls = _QuestionAnsweringAuthoringClientOperationsMixin
-    for public_name, func in original_methods.items():
-        private_name = f"_{public_name}"  # e.g. _get_delete_status
-        if not hasattr(patch_cls, private_name):
-            setattr(patch_cls, private_name, func)
-
-    # Do not export these private replicas; __all__ only includes the mixin class currently.
