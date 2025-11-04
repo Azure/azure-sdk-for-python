@@ -149,7 +149,7 @@ For more extensive examples including speaker diarization, multi-language detect
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.transcription import TranscriptionClient
-from azure.ai.transcription.models import TranscribeRequestContent, TranscriptionOptions
+from azure.ai.transcription.models import TranscriptionContent, TranscriptionOptions
 
 # Get configuration from environment variables
 endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
@@ -169,7 +169,7 @@ with open(audio_file_path, "rb") as audio_file:
     options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
     # Create the request content
-    request_content = TranscribeRequestContent(options=options, audio=audio_file)
+    request_content = TranscriptionContent(options=options, audio=audio_file)
 
     # Transcribe the audio
     result = client.transcribe(request_content)
@@ -232,7 +232,7 @@ Enhanced mode provides advanced capabilities such as translation or summarizatio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.transcription import TranscriptionClient
 from azure.ai.transcription.models import (
-    TranscribeRequestContent,
+    TranscriptionContent,
     TranscriptionOptions,
     EnhancedModeProperties,
 )
@@ -266,7 +266,7 @@ with open(audio_file_path, "rb") as audio_file:
     options = TranscriptionOptions(locales=["en-US"], enhanced_mode=enhanced_mode)
 
     # Create the request content
-    request_content = TranscribeRequestContent(options=options, audio=audio_file)
+    request_content = TranscriptionContent(options=options, audio=audio_file)
 
     # Transcribe the audio with enhanced mode
     result = client.transcribe(request_content)
@@ -293,7 +293,7 @@ The library also provides an async client for asynchronous operations:
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.transcription.aio import TranscriptionClient
-from azure.ai.transcription.models import TranscribeRequestContent, TranscriptionOptions
+from azure.ai.transcription.models import TranscriptionContent, TranscriptionOptions
 
 # Get configuration from environment variables
 endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
@@ -312,7 +312,7 @@ async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(
         options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
         # Create the request content
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = await client.transcribe(request_content)
@@ -436,3 +436,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [opencode_email]: mailto:opencode@microsoft.com
+

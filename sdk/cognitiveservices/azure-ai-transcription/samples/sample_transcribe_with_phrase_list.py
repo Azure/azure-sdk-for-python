@@ -28,7 +28,7 @@ def sample_transcribe_with_phrase_list():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription import TranscriptionClient
     from azure.ai.transcription.models import (
-        TranscribeRequestContent,
+        TranscriptionContent,
         TranscriptionOptions,
         PhraseListProperties,
     )
@@ -58,7 +58,7 @@ def sample_transcribe_with_phrase_list():
         options = TranscriptionOptions(locales=["en-US"], phrase_list=phrase_list)
 
         # Create the request content
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

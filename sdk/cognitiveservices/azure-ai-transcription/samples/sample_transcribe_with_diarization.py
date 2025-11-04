@@ -29,7 +29,7 @@ def sample_transcribe_with_diarization():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription import TranscriptionClient
     from azure.ai.transcription.models import (
-        TranscribeRequestContent,
+        TranscriptionContent,
         TranscriptionOptions,
         TranscriptionDiarizationOptions,
     )
@@ -57,7 +57,7 @@ def sample_transcribe_with_diarization():
         options = TranscriptionOptions(locales=["en-US"], diarization_options=diarization_options)
 
         # Create the request content
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

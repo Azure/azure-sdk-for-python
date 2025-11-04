@@ -12,7 +12,9 @@ from typing import Any, Optional, Union
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-from ._operations import _TranscriptionClientOperationsMixin as _TranscriptionClientOperationsMixinGenerated
+from ._operations import (
+    _TranscriptionClientOperationsMixin as _TranscriptionClientOperationsMixinGenerated,
+)
 
 JSON = MutableMapping[str, Any]
 
@@ -47,11 +49,13 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
         :paramtype locales: list[str]
         :keyword models: Maps candidate locales to a model URI to be used for transcription.
         :paramtype models: dict[str, str]
-        :keyword profanity_filter_mode: Mode of profanity filtering. Known values are: "None",
-         "Removed", "Tags", and "Masked".
-        :paramtype profanity_filter_mode: str or ~azure.ai.transcription.models.ProfanityFilterMode
+        :keyword profanity_filter_mode: Mode of profanity filtering. Known values are:
+         "None", "Removed", "Tags", and "Masked".
+        :paramtype profanity_filter_mode: str or
+         ~azure.ai.transcription.models.ProfanityFilterMode
         :keyword diarization_options: Speaker diarization settings.
-        :paramtype diarization_options: ~azure.ai.transcription.models.TranscriptionDiarizationOptions
+        :paramtype diarization_options:
+         ~azure.ai.transcription.models.TranscriptionDiarizationOptions
         :keyword active_channels: The 0-based indices of channels to transcribe separately.
         :paramtype active_channels: list[int]
         :keyword enhanced_mode: Enhanced mode properties.
@@ -75,7 +79,7 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
         )
 
         # Create request content without audio file (service will fetch from URL)
-        body = _models.TranscribeRequestContent(options=options, audio=None)
+        body = _models.TranscriptionContent(options=options, audio=None)
 
         # Call the underlying protocol method
         return super().transcribe(body, **kwargs)

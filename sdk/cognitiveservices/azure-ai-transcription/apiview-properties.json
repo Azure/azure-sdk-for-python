@@ -6,7 +6,7 @@
         "azure.ai.transcription.models.PhraseListProperties": "Azure.Ai.Speech.Transcription.PhraseListProperties",
         "azure.ai.transcription.models.TranscribedPhrase": "Azure.Ai.Speech.Transcription.TranscribedPhrase",
         "azure.ai.transcription.models.TranscribedWord": "Azure.Ai.Speech.Transcription.TranscribedWord",
-        "azure.ai.transcription.models.TranscribeRequestContent": "Azure.Ai.Speech.Transcription.TranscribeRequestContent",
+        "azure.ai.transcription.models.TranscriptionContent": "Azure.Ai.Speech.Transcription.TranscriptionContent",
         "azure.ai.transcription.models.TranscriptionDiarizationOptions": "Azure.Ai.Speech.Transcription.TranscriptionDiarizationOptions",
         "azure.ai.transcription.models.TranscriptionOptions": "Azure.Ai.Speech.Transcription.TranscriptionOptions",
         "azure.ai.transcription.models.TranscriptionResult": "Azure.Ai.Speech.Transcription.TranscriptionResult",

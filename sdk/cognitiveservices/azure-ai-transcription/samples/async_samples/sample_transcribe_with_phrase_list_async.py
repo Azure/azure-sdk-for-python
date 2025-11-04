@@ -30,7 +30,7 @@ async def sample_transcribe_with_phrase_list_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription.aio import TranscriptionClient
     from azure.ai.transcription.models import (
-        TranscribeRequestContent,
+        TranscriptionContent,
         TranscriptionOptions,
         PhraseListProperties,
     )
@@ -66,7 +66,7 @@ async def sample_transcribe_with_phrase_list_async():
             options = TranscriptionOptions(locales=["en-US"], phrase_list=phrase_list)
 
             # Create the request content
-            request_content = TranscribeRequestContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(options=options, audio=audio_file)
 
             # Transcribe the audio
             result = await client.transcribe(request_content)

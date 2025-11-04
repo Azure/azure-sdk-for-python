@@ -29,7 +29,7 @@ async def sample_transcribe_multiple_languages_async():
     # [START transcribe_multiple_languages_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription.aio import TranscriptionClient
-    from azure.ai.transcription.models import TranscribeRequestContent, TranscriptionOptions
+    from azure.ai.transcription.models import TranscriptionContent, TranscriptionOptions
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
@@ -46,10 +46,10 @@ async def sample_transcribe_multiple_languages_async():
         with open(audio_file_path, "rb") as audio_file:
             # Create transcription options with multiple language candidates
             # The service will detect which language is being spoken
-            options = TranscriptionOptions(locales=["en-US", "es-ES", "fr-FR", "de-DE"])  # Multiple language candidates
+            options = TranscriptionOptions(locales=["en-US", "es-ES", "fr-FR", "de-DE"])  # Multiple candidates
 
             # Create the request content
-            request_content = TranscribeRequestContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(options=options, audio=audio_file)
 
             # Transcribe the audio
             result = await client.transcribe(request_content)

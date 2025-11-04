@@ -30,7 +30,7 @@ async def sample_transcribe_with_enhanced_mode_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription.aio import TranscriptionClient
     from azure.ai.transcription.models import (
-        TranscribeRequestContent,
+        TranscriptionContent,
         TranscriptionOptions,
         EnhancedModeProperties,
     )
@@ -63,7 +63,7 @@ async def sample_transcribe_with_enhanced_mode_async():
             options = TranscriptionOptions(locales=["en-US"], enhanced_mode=enhanced_mode)
 
             # Create the request content
-            request_content = TranscribeRequestContent(options=options, audio=audio_file)
+            request_content = TranscriptionContent(options=options, audio=audio_file)
 
             # Transcribe the audio with enhanced mode
             result = await client.transcribe(request_content)

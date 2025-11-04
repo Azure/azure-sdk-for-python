@@ -244,7 +244,7 @@ class TranscribedWord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TranscribeRequestContent(_Model):
+class TranscriptionContent(_Model):
     """Request model for transcription operation.
 
     :ivar options: Metadata for a transcription request. This field contains a JSON-serialized

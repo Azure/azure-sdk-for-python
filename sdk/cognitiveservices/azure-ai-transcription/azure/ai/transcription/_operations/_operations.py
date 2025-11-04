@@ -62,11 +62,11 @@ class _TranscriptionClientOperationsMixin(
 ):
 
     @overload
-    def transcribe(self, body: _models.TranscribeRequestContent, **kwargs: Any) -> _models.TranscriptionResult:
+    def transcribe(self, body: _models.TranscriptionContent, **kwargs: Any) -> _models.TranscriptionResult:
         """Transcribes the provided audio stream.
 
         :param body: The body of the multipart request. Required.
-        :type body: ~azure.ai.transcription.models.TranscribeRequestContent
+        :type body: ~azure.ai.transcription.models.TranscriptionContent
         :return: TranscriptionResult. The TranscriptionResult is compatible with MutableMapping
         :rtype: ~azure.ai.transcription.models.TranscriptionResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -84,14 +84,12 @@ class _TranscriptionClientOperationsMixin(
         """
 
     @distributed_trace
-    def transcribe(
-        self, body: Union[_models.TranscribeRequestContent, JSON], **kwargs: Any
-    ) -> _models.TranscriptionResult:
+    def transcribe(self, body: Union[_models.TranscriptionContent, JSON], **kwargs: Any) -> _models.TranscriptionResult:
         """Transcribes the provided audio stream.
 
-        :param body: The body of the multipart request. Is either a TranscribeRequestContent type or a
-         JSON type. Required.
-        :type body: ~azure.ai.transcription.models.TranscribeRequestContent or JSON
+        :param body: The body of the multipart request. Is either a TranscriptionContent type or a JSON
+         type. Required.
+        :type body: ~azure.ai.transcription.models.TranscriptionContent or JSON
         :return: TranscriptionResult. The TranscriptionResult is compatible with MutableMapping
         :rtype: ~azure.ai.transcription.models.TranscriptionResult
         :raises ~azure.core.exceptions.HttpResponseError:

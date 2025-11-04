@@ -28,7 +28,7 @@ def sample_transcribe_multiple_languages():
     # [START transcribe_multiple_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription import TranscriptionClient
-    from azure.ai.transcription.models import TranscribeRequestContent, TranscriptionOptions
+    from azure.ai.transcription.models import TranscriptionContent, TranscriptionOptions
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
@@ -49,7 +49,7 @@ def sample_transcribe_multiple_languages():
         options = TranscriptionOptions(locales=["en-US", "es-ES", "fr-FR", "de-DE"])  # Multiple language candidates
 
         # Create the request content
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

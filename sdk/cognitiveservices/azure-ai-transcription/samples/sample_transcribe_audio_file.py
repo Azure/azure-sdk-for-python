@@ -27,7 +27,7 @@ def sample_transcribe_audio_file():
     # [START transcribe_audio_file]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription import TranscriptionClient
-    from azure.ai.transcription.models import TranscribeRequestContent, TranscriptionOptions
+    from azure.ai.transcription.models import TranscriptionContent, TranscriptionOptions
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
@@ -47,7 +47,7 @@ def sample_transcribe_audio_file():
         options = TranscriptionOptions(locales=["en-US"])  # Specify the language
 
         # Create the request content
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)

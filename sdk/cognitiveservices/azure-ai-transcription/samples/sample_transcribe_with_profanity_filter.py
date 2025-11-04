@@ -28,7 +28,7 @@ def sample_transcribe_with_profanity_filter():
     # [START transcribe_with_profanity_filter]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.transcription import TranscriptionClient
-    from azure.ai.transcription.models import TranscribeRequestContent, TranscriptionOptions
+    from azure.ai.transcription.models import TranscriptionContent, TranscriptionOptions
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
@@ -51,7 +51,7 @@ def sample_transcribe_with_profanity_filter():
         )
 
         # Create the request content
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         # Transcribe the audio
         result = client.transcribe(request_content)
@@ -63,7 +63,7 @@ def sample_transcribe_with_profanity_filter():
     with open(audio_file_path, "rb") as audio_file:
         options = TranscriptionOptions(locales=["en-US"], profanity_filter_mode="Removed")  # Remove profanity entirely
 
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         result = client.transcribe(request_content)
         print(f"\nTranscription (with profanity removed): {result.combined_phrases[0].text}")
@@ -74,7 +74,7 @@ def sample_transcribe_with_profanity_filter():
             locales=["en-US"], profanity_filter_mode="Tags"  # Wrap profanity in <profanity> tags
         )
 
-        request_content = TranscribeRequestContent(options=options, audio=audio_file)
+        request_content = TranscriptionContent(options=options, audio=audio_file)
 
         result = client.transcribe(request_content)
         print(f"\nTranscription (with profanity tagged): {result.combined_phrases[0].text}")
