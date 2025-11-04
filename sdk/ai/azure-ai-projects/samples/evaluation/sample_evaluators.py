@@ -29,11 +29,26 @@ from azure.ai.projects.models import (
     EvaluatorVersion,
     EvaluatorCategory,
     EvaluatorDefinitionType,
+    PromptBasedEvaluatorDefinition,
+    CodeBasedEvaluatorDefinition,
+    EvaluatorType,
+    EvaluatorMetric,
+    EvaluatorMetricDirection,
+    EvaluatorMetricType
 )
+
+from openai.types.evals.create_eval_jsonl_run_data_source_param import (
+    CreateEvalJSONLRunDataSourceParam,
+    SourceFileContent,
+    SourceFileContentContent
+)
+
 from azure.core.paging import ItemPaged
 from pprint import pprint
+import time
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 endpoint = os.environ[
@@ -44,270 +59,165 @@ with DefaultAzureCredential() as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
     
+        print("Creating Prompt based custom evaluator version (object style)")
+        evaluator_version = EvaluatorVersion(
+            evaluator_type=EvaluatorType.CUSTOM,
+            categories=[EvaluatorCategory.QUALITY],
+            display_name="my_custom_evaluator",
+            description="Custom evaluator to detect violent content",
+            definition=PromptBasedEvaluatorDefinition(
+                prompt_text="""You are an evaluator.
+                    Rate the GROUNDEDNESS (factual correctness without unsupported claims) of the system response to the customer query.
+                    
+                    Scoring (1–5):
+                    1 = Mostly fabricated/incorrect
+                    2 = Many unsupported claims
+                    3 = Mixed: some facts but notable errors/guesses
+                    4 = Mostly factual; minor issues
+                    5 = Fully factual; no unsupported claims
+                    
+                    Return ONLY a single integer 1–5 as score in valid json response e.g {\"score\": int}.
+                    
+                    Query:
+                    {query}
+                    
+                    Response:
+                    {response}
+                    """,
+                init_parameters= {
+                    "type": "object",
+                    "properties": {
+                        "deployment_name": {
+                            "type": "string"
+                        },
+                        "threshold": {
+                            "type": "number"
+                        }
+                    },
+                    "required": ["deployment_name", "threshold"],
+                },
+                data_schema={
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string"
+                        },
+                        "response": {
+                            "type": "string"
+                        },
+                    },
+                    "required": ["query", "response"],
+                },
+                metrics= {
+                    "tool_selection": EvaluatorMetric(
+                        type= EvaluatorMetricType.ORDINAL,
+                        desirable_direction= EvaluatorMetricDirection.INCREASE,
+                        min_value= 1,
+                        max_value= 5
+                    )
+                },   
+            )
+        )
         prompt_evaluator = project_client.evaluators.create_version(
-            name="my_custom_evaluator_prompt",
-            evaluator_version= {
-                "name": "my_custom_evaluator_prompt",
-                "categories": [EvaluatorCategory.QUALITY],
-                "display_name": "my_custom_evaluator_prompt",
-                "description": "Custom evaluator to detect violent content",
-                "definition": {
-                    "type": EvaluatorDefinitionType.PROMPT,
-                    "prompt_text": "Detect violent content in the text.",
-                    "init_parameters": {
-                        "required": [
-                            "deployment_name"
-                        ],
-                        "type": "object",
-                        "properties": {
-                            "deployment_name": {
+            name="my_custom_evaluator_code_prompt_based",
+            evaluator_version=evaluator_version,
+        )
+        pprint(prompt_evaluator)
+
+        print("Creating Code based custom evaluator version (object style)")
+        evaluator_version = EvaluatorVersion(
+            evaluator_type=EvaluatorType.CUSTOM,
+            categories=[EvaluatorCategory.QUALITY],
+            display_name="my_custom_evaluator",
+            description="Custom evaluator to detect violent content",
+            definition=CodeBasedEvaluatorDefinition(
+                code_text="def grade(sample, item):\n    return 1.0",
+                init_parameters= {
+                    "type": "object",
+                    "properties": {
+                        "deployment_name": {
                             "type": "string"
-                            },
-                            "threshold": {
-                            "type": "number"
-                            },
-                            "credential": {
-                            "type": "object"
-                            }
                         }
                     },
-                    "metrics": {
-                        "tool_selection": {
-                            "type": "ordinal",
-                            "desirable_direction": "increase",
-                            "min_value": 0,
-                            "max_value": 1
-                        }
-                    },
-                    "data_schema": {
-                        "required": [
-                            "query",
-                            "response",
-                            "tool_definitions"
-                        ],
-                        "type": "object",
-                        "properties": {
-                            "query": {
-                            "anyOf": [
-                                {
-                                "type": "string"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            },
-                            "response": {
-                            "anyOf": [
-                                {
-                                "type": "string"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            },
-                            "tool_calls": {
-                            "anyOf": [
-                                {
-                                "type": "object"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            },
-                            "tool_definitions": {
-                            "anyOf": [
-                                {
-                                "type": "object"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            }
+                    "required": ["deployment_name"],
+                },
+                data_schema={
+                    "type": "object",
+                    "properties": {
+                        "item": {
+                            "type": "string"
+                        },
+                        "response": {
+                            "type": "string"
                         },
                     },
+                    "required": ["query", "response"],
                 },
-            }
+                metrics= {
+                    "tool_selection": EvaluatorMetric(
+                        type= EvaluatorMetricType.ORDINAL,
+                        desirable_direction= EvaluatorMetricDirection.INCREASE,
+                        min_value= 0,
+                        max_value= 5
+                    )
+                }, 
+            )
         )
-        
-        # Get a single evaluator version
-        print("Get a single evaluator version")
-        evaluator = project_client.evaluators.get_version(
-            name=prompt_evaluator.name,
-            version="latest",
+        code_evaluator= project_client.evaluators.create_version(
+            name="my_custom_evaluator_code_based",
+            evaluator_version=evaluator_version
         )
-        pprint(evaluator)
+        pprint(code_evaluator)
         
-        code_evaluator = project_client.evaluators.create_version(
-            name="my_custom_evaluator_code",
-            evaluator_version= {
-                "name": "my_custom_evaluator_code",
-                "categories": [EvaluatorCategory.QUALITY],
-                "display_name": "my_custom_evaluator_code",
-                "description": "Custom evaluator to detect violent content",
-                "definition": {
-                    "type": EvaluatorDefinitionType.CODE,
-                    "code_text": "def grade(sample, item) -> float:\n    \"\"\"\n    Evaluate response quality based on multiple criteria.\n    Note: All data is in the 'item' parameter, 'sample' is empty.\n    \"\"\"\n    # Extract data from item (not sample!)\n    response = item.get(\"response\", \"\").lower() if isinstance(item, dict) else \"\"\n    ground_truth = item.get(\"ground_truth\", \"\").lower() if isinstance(item, dict) else \"\"\n    query = item.get(\"query\", \"\").lower() if isinstance(item, dict) else \"\"\n    \n    # Check if response is empty\n    if not response:\n        return 0.0\n    \n    # Check for harmful content\n    harmful_keywords = [\"harmful\", \"dangerous\", \"unsafe\", \"illegal\", \"unethical\"]\n    if any(keyword in response for keyword in harmful_keywords):\n        return 0.0\n    \n    # Length check\n    if len(response) < 10:\n        return 0.1\n    elif len(response) < 50:\n        return 0.2\n    \n    # Technical content check\n    technical_keywords = [\"api\", \"experiment\", \"run\", \"azure\", \"machine learning\", \"gradient\", \"neural\", \"algorithm\"]\n    technical_score = sum(1 for k in technical_keywords if k in response) / len(technical_keywords)\n    \n    # Query relevance\n    query_words = query.split()[:3] if query else []\n    relevance_score = 0.7 if any(word in response for word in query_words) else 0.3\n    \n    # Ground truth similarity\n    if ground_truth:\n        truth_words = set(ground_truth.split())\n        response_words = set(response.split())\n        overlap = len(truth_words & response_words) / len(truth_words) if truth_words else 0\n        similarity_score = min(1.0, overlap)\n    else:\n        similarity_score = 0.5\n    \n    return min(1.0, (technical_score * 0.3) + (relevance_score * 0.3) + (similarity_score * 0.4))",
-                    "init_parameters": {
-                        "required": [
-                            "deployment_name"
-                        ],
-                        "type": "object",
-                        "properties": {
-                            "deployment_name": {
-                            "type": "string"
-                            },
-                            "threshold": {
-                            "type": "number"
-                            },
-                            "credential": {
-                            "type": "object"
-                            }
-                        }
-                    },
-                    "metrics": {
-                        "tool_selection": {
-                            "type": "ordinal",
-                            "desirable_direction": "increase",
-                            "min_value": 0,
-                            "max_value": 1
-                        }
-                    },
-                    "data_schema": {
-                        "required": [
-                            "query",
-                            "response",
-                            "tool_definitions"
-                        ],
-                        "type": "object",
-                        "properties": {
-                            "query": {
-                            "anyOf": [
-                                {
-                                "type": "string"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            },
-                            "response": {
-                            "anyOf": [
-                                {
-                                "type": "string"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            },
-                            "tool_calls": {
-                            "anyOf": [
-                                {
-                                "type": "object"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            },
-                            "tool_definitions": {
-                            "anyOf": [
-                                {
-                                "type": "object"
-                                },
-                                {
-                                "type": "array",
-                                "items": {
-                                    "type": "object"
-                                }
-                                }
-                            ]
-                            }
-                        },
-                    },
-                },
-            }
-        )
-        
-        # Get a single evaluator version
-        print("Get a single evaluator version")
-        evaluator = project_client.evaluators.get_version(
+        print("Get code based evaluator version")
+        code_evaluator_latest = project_client.evaluators.get_version(
             name=code_evaluator.name,
             version="latest",
         )
-        pprint(evaluator)
+        pprint(code_evaluator_latest)
         
-        # evaluator = EvaluatorVersion(
-        #     evaluator_type=EvaluatorType.CUSTOM,
-        #     categories=[EvaluatorCategory.QUALITY],
-        #     display_name="my_custom_evaluator",
-        #     description="Custom evaluator to detect violent content",
-        #     definition=PromptBasedEvaluatorDefinition(
-        #         prompt_text="Detect violent content in the text.",
-        #         init_parameters={},
-        #         data_schema={},
-        #         metrics={}
-        #     )
-        # )
+        print("Get prompt based evaluator version")
+        prompt_evaluator_latest = project_client.evaluators.get_version(
+            name=prompt_evaluator.name,
+            version="latest",
+        )
+        pprint(prompt_evaluator_latest)
         
-        # new_evaluator = project_client.evaluators.create_version(
-        #     name="my_custom_evaluator",
-        #     evaluator_version=evaluator
-        # )
-        
-        # Update an existing evaluator version
-
+        print("Updating code based evaluator version")
         updated_evaluator = project_client.evaluators.update_version(
             name=code_evaluator.name,
             version=code_evaluator.version,
             evaluator_version={
                 "categories": [EvaluatorCategory.SAFETY],
                 "display_name": "my_custom_evaluator_updated",
-                "description": "Custom evaluator to detect violent content"
+                "description": "Custom evaluator description changed"
             }
         )
+        pprint(updated_evaluator)
+        
+        print("Deleting code based evaluator version")
         project_client.evaluators.delete_version(
-            name=code_evaluator.name,
-            version=code_evaluator.version,
+            name=code_evaluator_latest.name,
+            version=code_evaluator_latest.version,
         )
 
-        # Get a list of evaluator versions
+        project_client.evaluators.delete_version(
+            name=prompt_evaluator_latest.name,
+            version=prompt_evaluator_latest.version,
+        )
+
+        print("Getting list of builtin evaluator versions")
         evaluators: ItemPaged[EvaluatorVersion] = project_client.evaluators.list_latest_versions(type="builtin")
         print("List of builtin evaluator versions")
         for evaluator in evaluators:
             pprint(evaluator)
 
+        print("Getting list of custom evaluator versions")
         evaluators: ItemPaged[EvaluatorVersion] = project_client.evaluators.list_latest_versions(type="custom")
         print("List of custom evaluator versions")
         for evaluator in evaluators:
             pprint(evaluator)
+            
+        print("Sample completed successfully")
         
-        evaluators: ItemPaged[EvaluatorVersion] = project_client.evaluators.list_versions(name="custom.violence")
-        print("List of custom evaluator versions")
-        for evaluator in evaluators:
-            pprint(evaluator)
+            
