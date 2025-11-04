@@ -380,6 +380,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.data, "https://www.wikipedia.org/wiki/Rabbit")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
         self.assertEqual(envelope.data.base_data.type, "HTTP")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(
@@ -584,6 +585,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.success)
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "db2 system")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(envelope.data.base_data.data, "SELECT * from test")
@@ -703,6 +705,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "rpc.system")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
@@ -748,6 +751,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "messaging")
         self.assertEqual(envelope.data.base_data.target, "celery")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
@@ -791,6 +795,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
@@ -880,6 +885,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "Microsoft.EventHub")
         self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
         self.assertEqual(len(envelope.data.base_data.properties), 2)
@@ -924,6 +930,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "Queue Message | messaging")
         self.assertEqual(envelope.data.base_data.target, "celery")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
@@ -978,6 +985,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.success)
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.type, "InProc")
         self.assertEqual(envelope.data.base_data.result_code, "0")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
