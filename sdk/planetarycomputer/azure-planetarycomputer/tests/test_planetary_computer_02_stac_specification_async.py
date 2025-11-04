@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer_async import PlanetaryComputerProClientTestBaseAsync
 from testpreparer import PlanetaryComputerPreparer
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.planetarycomputer.models import (
     StacSearchParameters,
     FilterLanguage,
@@ -769,16 +769,20 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
 
         logger.info(f"Creating initial STAC item: {item_id}")
 
+        # Delete the item if it already exists to ensure idempotency
         try:
-            # Step 1: Create the item using begin_create_item
-            create_poller = await client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
-            await create_poller.result()
-            logger.info(f"Created item {item_id}")
-        except HttpResponseError as e:
-            if "already exists" in str(e).lower():
-                logger.info(f"Item {item_id} already exists, continuing...")
-            else:
-                raise
+            await client.stac.get_item(collection_id=collection_id, item_id=item_id)
+            logger.info(f"Item {item_id} already exists, deleting it first...")
+            delete_poller = await client.stac.begin_delete_item(collection_id=collection_id, item_id=item_id, polling=True)
+            await delete_poller.result()
+            logger.info(f"Deleted existing item {item_id}")
+        except ResourceNotFoundError:
+            logger.info(f"Item {item_id} does not exist, proceeding with creation")
+
+        # Step 1: Create the item using begin_create_item
+        create_poller = await client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
+        await create_poller.result()
+        logger.info(f"Created item {item_id}")
 
         # Verify creation
         created_item = await client.stac.get_item(collection_id=collection_id, item_id=item_id)
@@ -890,11 +894,8 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
             create_poller = await client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
             await create_poller.result()
             logger.info(f"Created item {item_id}")
-        except HttpResponseError as e:
-            if "already exists" in str(e).lower():
-                logger.info(f"Item {item_id} already exists, will proceed to delete it")
-            else:
-                raise
+        except ResourceExistsError:
+            logger.info(f"Item {item_id} already exists, will proceed to delete it")
 
         # Verify the item exists
         existing_item = await client.stac.get_item(collection_id=collection_id, item_id=item_id)
@@ -914,12 +915,8 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
             await client.stac.get_item(collection_id=collection_id, item_id=item_id)
             logger.warning(f"Item {item_id} still exists after deletion (may take time to propagate)")
             # In some cases, deletion may take time to propagate, so we don't fail the test
-        except HttpResponseError as e:
-            if "not found" in str(e).lower() or e.status_code == 404:
-                logger.info(f"Verified item {item_id} was successfully deleted")
-            else:
-                # Re-raise if it's a different error
-                raise
+        except ResourceNotFoundError:
+            logger.info(f"Verified item {item_id} was successfully deleted")
 
         logger.info(f"Successfully completed delete test for item {item_id}")
 

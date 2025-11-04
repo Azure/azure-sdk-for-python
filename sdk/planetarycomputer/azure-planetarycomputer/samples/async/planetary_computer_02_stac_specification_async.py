@@ -39,7 +39,7 @@ from azure.planetarycomputer.models import (
     StacSortExtension,
     StacItem,
 )
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 
 import logging
 
@@ -212,7 +212,8 @@ async def create_stac_item(client: PlanetaryComputerProClient, collection_id, it
     if any(item.id == stac_item.id for item in stac_item_get_items_response.features):
         logging.info(f"Item {stac_item.id} already exists. Deleting it before creating a new one.")
         await (await client.stac.begin_delete_item(collection_id=collection_id, item_id=stac_item.id, polling=True)).result()
-        logging.info(f"Deleted item {stac_item.id}. Proceeding to create a new one.")    else:
+        logging.info(f"Deleted item {stac_item.id}. Proceeding to create a new one.")
+    else:
         logging.info(f"Item {stac_item.id} does not exist. Proceeding to create it.")
 
     stac_item.collection = collection_id
@@ -256,11 +257,8 @@ async def create_or_replace_stac_item(client: PlanetaryComputerProClient, collec
         create_poller = await client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
         await create_poller.result()
         logging.info(f"Created item {item_id}")
-    except HttpResponseError as e:
-        if "already exists" in str(e).lower():
-            logging.info(f"Item {item_id} already exists, continuing...")
-        else:
-            raise
+    except ResourceExistsError:
+        logging.info(f"Item {item_id} already exists, continuing...")
 
     # Verify creation
     created_item = await client.stac.get_item(collection_id=collection_id, item_id=item_id)
@@ -301,18 +299,14 @@ async def delete_stac_item(client: PlanetaryComputerProClient, collection_id, it
         try:
             await client.stac.get_item(collection_id=collection_id, item_id=item_id)
             logging.warning(f"Item {item_id} still exists after deletion (may take time to propagate)")
-        except HttpResponseError as e:
-            if "not found" in str(e).lower() or e.status_code == 404:
-                logging.info(f"Verified item {item_id} was successfully deleted")
-            else:
-                raise
+        except ResourceNotFoundError:
+            logging.info(f"Verified item {item_id} was successfully deleted")
 
+    except ResourceNotFoundError:
+        logging.info(f"Item {item_id} does not exist, nothing to delete")
     except HttpResponseError as e:
-        if "not found" in str(e).lower() or e.status_code == 404:
-            logging.info(f"Item {item_id} does not exist, nothing to delete")
-        else:
-            logging.error(f"Failed to delete item {item_id}: {e.message}")
-            raise
+        logging.error(f"Failed to delete item {item_id}: {e.message}")
+        raise
 
 
 async def get_collection(client: PlanetaryComputerProClient, collection_id):

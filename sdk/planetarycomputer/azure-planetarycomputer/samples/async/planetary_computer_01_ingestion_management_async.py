@@ -77,8 +77,7 @@ async def create_managed_identity_ingestion_sources(
         )
 
     # Clean up existing sources
-    existing_sources = [item async for item in client.ingestion.list_sources()]
-    for source in existing_sources:
+    async for source in client.ingestion.list_sources():
         await client.ingestion.delete_source(id=source.id)
         logging.info(f"Deleted existing source: {source.id}")
 
@@ -93,8 +92,7 @@ async def create_managed_identity_ingestion_sources(
 
     # List managed identities
     logging.info("Listing available managed identities:")
-    managed_identities = [item async for item in client.ingestion.list_managed_identities()]
-    for identity in managed_identities:
+    async for identity in client.ingestion.list_managed_identities():
         logging.info(f"  - Object ID: {identity.object_id}")
         logging.info(f"    Resource ID: {identity.resource_id}")
 
@@ -174,8 +172,7 @@ async def create_github_public_ingestion(client: PlanetaryComputerProClient, col
 
     # Delete all existing ingestions
     logging.info("Deleting all existing ingestions...")
-    existing_ingestions = [item async for item in client.ingestion.list(collection_id=collection_id)]
-    for ingestion in existing_ingestions:
+    async for ingestion in client.ingestion.list(collection_id=collection_id):
         await client.ingestion.begin_delete(collection_id=collection_id, ingestion_id=ingestion.id, polling=True)
         logging.info(f"Deleted existing ingestion: {ingestion.id}")
 
@@ -238,11 +235,7 @@ async def list_ingestion_runs(client: PlanetaryComputerProClient, collection_id:
     logging.info(f"Listing runs for ingestion: {ingestion_id}")
 
     try:
-        runs = [item async for item in client.ingestion.list_runs(collection_id=collection_id, ingestion_id=ingestion_id)]
-
-        logging.info(f"Found {len(runs)} run(s) for ingestion {ingestion_id}")
-
-        for run in runs:
+        async for run in client.ingestion.list_runs(collection_id=collection_id, ingestion_id=ingestion_id):
             operation = run.operation
             logging.info(f"  Run ID: {run.id}")
             logging.info(f"    Status: {operation.status}")
@@ -257,11 +250,8 @@ async def list_ingestion_runs(client: PlanetaryComputerProClient, collection_id:
                 for status_item in operation.status_history:
                     if status_item.error_code:
                         logging.info(f"    Error: {status_item.error_code} - {status_item.error_message}")
-
-        return runs
     except Exception as e:
         logging.error(f"Failed to list runs for ingestion {ingestion_id}: {str(e)}")
-        return []
 
 
 async def create_sas_token_ingestion_source(client: PlanetaryComputerProClient, sas_container_uri: str, sas_token: str):
@@ -333,12 +323,14 @@ async def run_and_monitor_ingestion(client: PlanetaryComputerProClient, collecti
 async def manage_operations(client: "PlanetaryComputerProClient"):
     """List, get, and cancel ingestion operations."""
 
-    # List operations
-    operations = [item async for item in client.ingestion.list_operations()]
+    # List operations and get the first one if available
+    operation_id = None
+    async for operation in client.ingestion.list_operations():
+        operation_id = operation.id
+        break
 
-    if operations:
+    if operation_id:
         # Get a specific operation
-        operation_id = operations[0].id
         operation = await client.ingestion.get_operation(operation_id)
 
         # Try to cancel the operation

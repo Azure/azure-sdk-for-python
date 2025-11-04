@@ -55,17 +55,10 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List managed identities
-        managed_identities = [item async for item in client.ingestion.list_managed_identities()]
-        logger.info(f"Found {len(managed_identities)} managed identities")
-
-        for identity in managed_identities:
+        async for identity in client.ingestion.list_managed_identities():
             logger.info("  Identity:")
             logger.info(f"    - Object ID: {identity.object_id}")
             logger.info(f"    - Resource ID: {identity.resource_id}")
-
-        # Assertions
-        assert managed_identities is not None, "Managed identities list should not be None"
-        assert isinstance(managed_identities, list), "Managed identities should be a list"
 
 
         await self.close_client()
@@ -83,20 +76,20 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         container_uri = os.environ.get("AZURE_INGESTION_CONTAINER_URI", "https://test.blob.core.windows.net/container")
 
         # Get a valid managed identity object ID from the service
-        managed_identities = [item async for item in client.ingestion.list_managed_identities()]
-        if not managed_identities:
+        managed_identity_object_id = None
+        async for identity in client.ingestion.list_managed_identities():
+            managed_identity_object_id = identity.object_id
+            break
+
+        if not managed_identity_object_id:
             logger.warning("No managed identities found. Skipping test.")
             return
-
-        managed_identity_object_id = managed_identities[0].object_id
 
         logger.info(f"Container URI: {container_uri}")
         logger.info(f"Managed Identity Object ID: {managed_identity_object_id}")
 
         # Clean up existing sources first
-        existing_sources = [item async for item in client.ingestion.list_sources()]
-        logger.info(f"Found {len(existing_sources)} existing sources to clean up")
-        for source in existing_sources:
+        async for source in client.ingestion.list_sources():
             source_id = source["id"] if isinstance(source, dict) else source.id
             await client.ingestion.delete_source(id=source_id)
             logger.info(f"  Deleted source: {source_id}")
@@ -114,13 +107,15 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         logger.info(f"  - Type: {type(created_source).__name__}")
 
         # List sources to verify creation
-        sources = [item async for item in client.ingestion.list_sources()]
-        logger.info(f"Total sources after creation: {len(sources)}")
+        found_source = False
+        async for source in client.ingestion.list_sources():
+            found_source = True
+            break
 
         # Assertions
         assert created_source is not None, "Created source should not be None"
         assert hasattr(created_source, "id"), "Created source should have an id"
-        assert len(sources) > 0, "Should have at least one source after creation"
+        assert found_source, "Should have at least one source after creation"
 
 
         await self.close_client()
@@ -199,8 +194,7 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
 
         # Delete all existing ingestions first
         logger.info("Deleting all existing ingestions...")
-        existing_ingestions = [item async for item in client.ingestion.list(collection_id=planetarycomputer_collection_id)]
-        for ingestion in existing_ingestions:
+        async for ingestion in client.ingestion.list(collection_id=planetarycomputer_collection_id):
             await client.ingestion.begin_delete(
                 collection_id=planetarycomputer_collection_id, ingestion_id=ingestion.id, polling=True
             )
@@ -438,11 +432,8 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List operations
-        operations = [item async for item in client.ingestion.list_operations()]
-        logger.info(f"Found {len(operations)} operations")
-
-        for i, operation in enumerate(operations[:5]):  # Log first 5 operations
-            logger.info(f"  Operation {i+1}:")
+        async for operation in client.ingestion.list_operations():
+            logger.info(f"  Operation:")
             logger.info(f"    - ID: {operation.id}")
             logger.info(f"    - Status: {operation.status}")
             logger.info(f"    - Type: {operation.type}")
@@ -452,10 +443,6 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
                 logger.info(f"    - Successful: {operation.total_successful_items}")
             if hasattr(operation, "total_failed_items") and operation.total_failed_items is not None:
                 logger.info(f"    - Failed: {operation.total_failed_items}")
-
-        # Assertions
-        assert operations is not None, "Operations list should not be None"
-        assert isinstance(operations, list), "Operations should be a list"
 
 
         await self.close_client()
@@ -533,12 +520,14 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         container_uri = f"https://test.blob.core.windows.net/test-container-{test_container_id}"
 
         # Get a valid managed identity object ID from the service
-        managed_identities = [item async for item in client.ingestion.list_managed_identities()]
-        if not managed_identities:
+        managed_identity_object_id = None
+        async for identity in client.ingestion.list_managed_identities():
+            managed_identity_object_id = identity.object_id
+            break
+
+        if not managed_identity_object_id:
             logger.warning("No managed identities found. Skipping test.")
             return
-
-        managed_identity_object_id = managed_identities[0].object_id
 
         logger.info(f"Using unique container URI: {container_uri}")
 
@@ -557,10 +546,9 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         logger.info(f"Deleted source: {source_id}")
 
         # List sources to verify deletion
-        sources = [item async for item in client.ingestion.list_sources()]
-        source_ids = [s["id"] if isinstance(s, dict) else s.id for s in sources]
-
-        logger.info(f"Remaining sources: {len(sources)}")
+        source_ids = []
+        async for source in client.ingestion.list_sources():
+            source_ids.append(source["id"] if isinstance(source, dict) else source.id)
 
         # Assertions - only check in live mode because in playback mode all UUIDs are sanitized to the same value
         from devtools_testutils import is_live
@@ -672,12 +660,14 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get managed identity
-        managed_identities = [item async for item in client.ingestion.list_managed_identities()]
-        if not managed_identities:
+        managed_identity_object_id = None
+        async for identity in client.ingestion.list_managed_identities():
+            managed_identity_object_id = identity.object_id
+            break
+
+        if not managed_identity_object_id:
             logger.warning("No managed identities found. Skipping test.")
             return
-
-        managed_identity_object_id = managed_identities[0].object_id
 
         # Create a source
         test_container_id = str(uuid.uuid4())
@@ -802,11 +792,8 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         logger.info("Created ingestion")
 
         # List ingestions
-        ingestions = [item async for item in client.ingestion.list(collection_id=planetarycomputer_collection_id)]
-
-        logger.info(f"Found {len(ingestions)} ingestions")
-        for i, ingestion in enumerate(ingestions[:5]):
-            logger.info(f"  Ingestion {i+1}:")
+        async for ingestion in client.ingestion.list(collection_id=planetarycomputer_collection_id):
+            logger.info(f"  Ingestion:")
             logger.info(f"    - ID: {ingestion.id}")
             logger.info(f"    - Display Name: {ingestion.display_name}")
             logger.info(f"    - Import Type: {ingestion.import_type}")
@@ -908,11 +895,8 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         logger.info(f"Created run with ID: {run_response.id}")
 
         # List runs
-        runs = [item async for item in client.ingestion.list_runs(collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id)]
-
-        logger.info(f"Found {len(runs)} runs")
-        for i, run in enumerate(runs[:5]):
-            logger.info(f"  Run {i+1}:")
+        async for run in client.ingestion.list_runs(collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id):
+            logger.info(f"  Run:")
             logger.info(f"    - ID: {run.id}")
             logger.info(f"    - Status: {run.operation.status}")
             logger.info(f"    - Total Items: {run.operation.total_items}")
@@ -930,13 +914,15 @@ class TestPlanetaryComputerIngestionManagementAsync(PlanetaryComputerProClientTe
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # List existing operations
-        operations = [item async for item in client.ingestion.list_operations()]
+        operation_id = None
+        async for operation in client.ingestion.list_operations():
+            operation_id = operation.id
+            break
 
-        if not operations:
+        if not operation_id:
             logger.info("No operations found. Skipping test.")
             return
 
-        operation_id = operations[0].id
         logger.info(f"Testing with operation ID: {operation_id}")
 
         # Get the operation
