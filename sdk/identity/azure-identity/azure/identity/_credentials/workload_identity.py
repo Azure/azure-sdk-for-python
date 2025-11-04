@@ -58,7 +58,8 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
     :keyword bool use_token_proxy: Whether or not to read token proxy configuration from environment variables and use
-        a token proxy to acquire tokens. Defaults to False.
+        a token proxy to acquire tokens. If this value is True and proxy configuration isn't present or this value is
+        False, the credential will request tokens directly from Entra ID. Defaults to False.
 
     .. admonition:: Example:
 
@@ -105,35 +106,30 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
         if use_token_proxy:
             token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
-            if not token_proxy_endpoint:
-                raise ValueError(
-                    "use_token_proxy is True, but no token proxy endpoint was found. "
-                    f"Ensure that the {EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY} environment variable is set."
+            if token_proxy_endpoint:
+                sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
+                ca_file = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_FILE)
+                ca_data = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_DATA)
+
+                if ca_file and ca_data:
+                    raise ValueError(
+                        "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set."
+                    )
+
+                transport = _get_transport(
+                    sni=sni,
+                    token_proxy_endpoint=token_proxy_endpoint,
+                    ca_file=ca_file,
+                    ca_data=ca_data,
                 )
 
-            sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
-            ca_file = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_FILE)
-            ca_data = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_DATA)
-
-            if ca_file and ca_data:
-                raise ValueError(
-                    "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set."
-                )
-
-            transport = _get_transport(
-                sni=sni,
-                token_proxy_endpoint=token_proxy_endpoint,
-                ca_file=ca_file,
-                ca_data=ca_data,
-            )
-
-            if transport:
-                kwargs["transport"] = transport
-            else:
-                raise ValueError(
-                    "Transport creation failed. Ensure that the requests package is installed to enable token "
-                    "proxy usage in this credential."
-                )
+                if transport:
+                    kwargs["transport"] = transport
+                else:
+                    raise ValueError(
+                        "Transport creation failed. Ensure that the requests package is installed to enable token "
+                        "proxy usage in this credential."
+                    )
 
         super(WorkloadIdentityCredential, self).__init__(
             tenant_id=tenant_id,

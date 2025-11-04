@@ -248,9 +248,6 @@ class TokenProxyTestServer:
             context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             if self.cert_file and self.key_file:
                 context.load_cert_chain(self.cert_file, self.key_file)
-            # Disable certificate verification for testing
-            context.check_hostname = False
-            context.verify_mode = ssl.CERT_NONE
 
             self.server.socket = context.wrap_socket(self.server.socket, server_side=True)
 

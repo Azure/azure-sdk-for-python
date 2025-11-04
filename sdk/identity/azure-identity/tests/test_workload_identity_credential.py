@@ -163,8 +163,8 @@ class TestWorkloadIdentityCredentialTokenProxy:
                     ca_data=None,
                 )
 
-    def test_use_token_proxy_missing_proxy_endpoint_raises_error(self):
-        """Test that use_token_proxy=True without proxy endpoint raises ValueError."""
+    def test_use_token_proxy_missing_proxy_endpoint(self):
+        """Test that use_token_proxy=True without proxy endpoint uses the normal transport."""
         tenant_id = "tenant-id"
         client_id = "client-id"
         token_file_path = "foo-path"
@@ -174,13 +174,14 @@ class TestWorkloadIdentityCredentialTokenProxy:
             if "AZURE_KUBERNETES_TOKEN_PROXY" in os.environ:
                 del os.environ["AZURE_KUBERNETES_TOKEN_PROXY"]
 
-            with pytest.raises(ValueError, match="use_token_proxy is True, but no token proxy endpoint was found"):
+            with patch("azure.identity._credentials.workload_identity._get_transport") as mock_get_transport:
                 WorkloadIdentityCredential(
                     tenant_id=tenant_id,
                     client_id=client_id,
                     token_file_path=token_file_path,
                     use_token_proxy=True,
                 )
+                mock_get_transport.assert_not_called()
 
     def test_use_token_proxy_both_ca_file_and_data_raises_error(self):
         """Test that setting both CA file and CA data raises ValueError."""
