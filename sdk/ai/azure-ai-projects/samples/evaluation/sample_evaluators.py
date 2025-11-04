@@ -103,7 +103,7 @@ with DefaultAzureCredential() as credential:
                     "required": ["query", "response"],
                 },
                 metrics= {
-                    "tool_selection": EvaluatorMetric(
+                    "score": EvaluatorMetric(
                         type= EvaluatorMetricType.ORDINAL,
                         desirable_direction= EvaluatorMetricDirection.INCREASE,
                         min_value= 1,
@@ -201,13 +201,13 @@ with DefaultAzureCredential() as credential:
         )
 
         print("Getting list of builtin evaluator versions")
-        evaluators: ItemPaged[EvaluatorVersion] = project_client.evaluators.list_latest_versions(type="builtin")
+        evaluators = project_client.evaluators.list_latest_versions(type="builtin")
         print("List of builtin evaluator versions")
         for evaluator in evaluators:
             pprint(evaluator)
 
         print("Getting list of custom evaluator versions")
-        evaluators: ItemPaged[EvaluatorVersion] = project_client.evaluators.list_latest_versions(type="custom")
+        evaluators = project_client.evaluators.list_latest_versions(type="custom")
         print("List of custom evaluator versions")
         for evaluator in evaluators:
             pprint(evaluator)
