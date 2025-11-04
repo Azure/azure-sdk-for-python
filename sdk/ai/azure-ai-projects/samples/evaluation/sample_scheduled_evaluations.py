@@ -14,15 +14,17 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity azure-ai-projects>=2.0.0b1 python-dotenv
+    pip install azure-ai-projects azure-identity azure-ai-projects>=2.0.0b1 python-dotenv azure-mgmt-authorization azure-mgmt-resource
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
-    3) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
-    4) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
-    5) AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    2) AZURE_SUBSCRIPTION_ID - Required for RBAC assignment. The Azure subscription ID where the project is located.
+    3) AZURE_RESOURCE_GROUP_NAME - Required for RBAC assignment. The resource group name where the project is located.
+    4) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
+    5) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
+    6) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
+    7) AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 from datetime import datetime
@@ -32,6 +34,9 @@ from dotenv import load_dotenv
 from pprint import pprint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.resource import ResourceManagementClient
+import uuid
 from azure.ai.projects.models import (
     AgentVersionObject,
     EvaluationTaxonomy,
@@ -53,11 +58,150 @@ from azure.ai.projects.models import EvaluationTaxonomy
 
 
 def main() -> None:
+    print("Assigning RBAC permissions...")
+    assign_rbac()
     print("Scheduling Dataset based Evaluation...")
     schedule_dataset_evaluation()
     print("Scheduling RedTeam based Evaluation...")
     schedule_redteam_evaluation()
 
+def assign_rbac():
+    """
+    Assign the "Azure AI User" role to the Azure AI Foundry project's Managed Identity.
+    """
+    load_dotenv()
+    
+    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "")
+    resource_group_name = os.environ.get("AZURE_RESOURCE_GROUP_NAME", "")
+    
+    if not endpoint or not subscription_id or not resource_group_name:
+        print("Error: AZURE_AI_PROJECT_ENDPOINT, AZURE_SUBSCRIPTION_ID, and AZURE_RESOURCE_GROUP_NAME environment variables are required")
+        return
+    
+    # Parse project information from the endpoint
+    # Format: https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+    try:
+        import re
+        pattern = r"https://(.+)\.services\.ai\.azure\.com/api/projects/(.+)"
+        match = re.match(pattern, endpoint)
+        if not match:
+            print("Error: Invalid project endpoint format")
+            return
+        account_name = match.group(1)
+        project_name = match.group(2)
+    except Exception as e:
+        print(f"Error parsing endpoint: {e}")
+        return
+    
+    with DefaultAzureCredential() as credential:
+        # Initialize clients
+        auth_client = AuthorizationManagementClient(credential, subscription_id)
+        resource_client = ResourceManagementClient(credential, subscription_id)
+        
+        try:
+            # Get the AI Foundry project resource
+            # Based on resource ID pattern: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.CognitiveServices/accounts/{account}/projects/{project}
+            
+            # Try to find the resource group and project
+            print(f"Searching for project: {project_name} under account: {account_name} in resource group: {resource_group_name}")
+            
+            # Get the project's managed identity principal ID
+            try:
+                # Get the AI project resource
+                project_resource = resource_client.resources.get(
+                    resource_group_name=resource_group_name,
+                    resource_provider_namespace="Microsoft.CognitiveServices",
+                    parent_resource_path=f"accounts/{account_name}",
+                    resource_type="projects",
+                    resource_name=project_name,
+                    api_version="2025-06-01"
+                )
+                
+                # Extract the managed identity principal ID
+                if project_resource.identity and project_resource.identity.principal_id:
+                    principal_id = project_resource.identity.principal_id
+                    print(f"Found project managed identity principal ID: {principal_id}")
+                else:
+                    print("Error: Project does not have a managed identity enabled")
+                    return
+                    
+            except Exception as e:
+                print(f"Error retrieving project resource: {e}")
+                return
+            
+            # Define the Azure AI User role definition ID
+            # This is the built-in role ID for "Azure AI User"
+            azure_ai_user_role_id = "64702f94-c441-49e6-a78b-ef80e0188fee"
+            
+            # Create the scope (project level)
+            scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.CognitiveServices/accounts/{account_name}/projects/{project_name}"
+            
+            # Create role assignment
+            role_assignment_name = str(uuid.uuid4())
+            
+            print(f"Assigning 'Azure AI User' role to managed identity...")
+            
+            role_assignment = auth_client.role_assignments.create(
+                scope=scope,
+                role_assignment_name=role_assignment_name,
+                parameters={
+                    "role_definition_id": f"{scope}/providers/Microsoft.Authorization/roleDefinitions/{azure_ai_user_role_id}",
+                    "principal_id": principal_id,
+                    "principal_type": "ServicePrincipal"
+                }
+            )
+            
+            print(f"Successfully assigned 'Azure AI User' role to project managed identity")
+            print(f"Role assignment ID: {role_assignment.name}")
+            
+        except Exception as e:
+            print(f"Error during role assignment: {e}")
+            
+            # Check for specific error types and provide helpful guidance
+            error_message = str(e)
+            if "AuthorizationFailed" in error_message:
+                print("\n🔒 AUTHORIZATION ERROR:")
+                print("You don't have sufficient permissions to assign roles at this scope.")
+                print("\n📋 REQUIRED PERMISSIONS:")
+                print("To assign roles, you need one of the following roles:")
+                print("  • Owner - Full access including role assignments")
+                print("  • User Access Administrator - Can manage user access to Azure resources")
+                print("  • Custom role with 'Microsoft.Authorization/roleAssignments/write' permission")
+                print("\n🎯 SCOPE:")
+                project_scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.CognitiveServices/accounts/{account_name}/projects/{project_name}"
+                print(f"  Resource: {project_scope}")
+                print("\n💡 SOLUTIONS:")
+                print("1. Ask your Azure administrator to grant you 'Owner' or 'User Access Administrator' role")
+                print("2. Ask your admin to assign the 'Azure AI User' role to the project's managed identity")
+                print("3. Run this script with an account that has the required permissions")
+                print("4. If you recently got permissions, try refreshing your credentials:")
+                print("   - Run 'az logout && az login' in Azure CLI")
+                print("   - Or restart this application")
+                raise
+                
+            elif "RoleAssignmentExists" in error_message:
+                print("\n✅ ROLE ASSIGNMENT ALREADY EXISTS:")
+                print("The 'Azure AI User' role is already assigned to the project's managed identity.")
+                print("No action needed - the required permissions are already in place.")
+                
+            elif "InvalidResourceTypeNameFormat" in error_message:
+                print("\n🔧 RESOURCE FORMAT ERROR:")
+                print("The resource path format is incorrect. Please check:")
+                print("  • Resource group name is correct")
+                print("  • Project endpoint format matches expected pattern")
+                print("  • Account and project names are properly extracted")
+                raise ValueError("Invalid resource type name format")
+                
+            elif "NoRegisteredProviderFound" in error_message:
+                print("\n🌐 API VERSION ERROR:")
+                print("The API version or resource type is not supported in this region.")
+                print("This usually indicates a service availability issue.")
+                
+            else:
+                print(f"\n❌ UNEXPECTED ERROR:")
+                print("An unexpected error occurred. Please check the error details above.")
+                raise
 
 def schedule_dataset_evaluation() -> None:
     endpoint = os.environ[
