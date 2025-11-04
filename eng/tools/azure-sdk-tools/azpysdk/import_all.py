@@ -3,7 +3,7 @@ import os
 import sys
 import tempfile
 
-from typing import Optional,List
+from typing import Optional, List
 from subprocess import check_call
 
 from .Check import Check
@@ -17,16 +17,20 @@ from ci_tools.logging import logger
 excluded_packages = [
     "azure",
     "azure-mgmt",
-    ]
+]
+
 
 def should_run_import_all(package_name: str) -> bool:
     return not (package_name in excluded_packages or "nspkg" in package_name)
+
 
 class import_all(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
         """Register the `import_all` check. The import_all check checks dependencies of a package
         by installing just the package + its dependencies, then attempts to import * from the base namespace.
 
@@ -46,14 +50,13 @@ class import_all(Check):
 
         targeted = self.get_targeted_directories(args)
 
-        # {[tox]pip_command} freeze
-        # python {repository_root}/eng/tox/import_all.py -t {tox_root}
-
         outcomes: List[int] = []
 
         for parsed in targeted:
             pkg = parsed.folder
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
+
+            self.install_dev_reqs(executable, args, pkg)
 
             create_package_and_install(
                 distribution_directory=staging_directory,
@@ -64,22 +67,14 @@ class import_all(Check):
                 force_create=False,
                 package_type="wheel",
                 pre_download_disabled=False,
-                python_executable=executable
+                python_executable=executable,
             )
 
             if should_run_import_all(parsed.name):
                 # import all modules from current package
-                logger.info(
-                    "Importing all modules from namespace [{0}] to verify dependency".format(
-                        parsed.namespace
-                    )
-                )
+                logger.info("Importing all modules from namespace [{0}] to verify dependency".format(parsed.namespace))
                 import_script_all = "from {0} import *".format(parsed.namespace)
-                commands = [
-                    executable,
-                    "-c",
-                    import_script_all
-                ]
+                commands = [executable, "-c", import_script_all]
 
                 outcomes.append(check_call(commands))
                 logger.info("Verified module dependency, no issues found")

@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AaddsResourceDetails(_serialization.Model):
@@ -98,7 +92,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -122,9 +116,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class ProxyResource(Resource):
@@ -134,7 +128,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -150,7 +144,7 @@ class Application(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -188,7 +182,7 @@ class Application(ProxyResource):
         self,
         *,
         etag: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ApplicationProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -204,7 +198,7 @@ class Application(ProxyResource):
         self.etag = etag
         self.tags = tags
         self.properties = properties
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ApplicationGetEndpoint(_serialization.Model):
@@ -292,7 +286,7 @@ class ApplicationGetHttpsEndpoint(_serialization.Model):
     def __init__(
         self,
         *,
-        access_modes: Optional[List[str]] = None,
+        access_modes: Optional[list[str]] = None,
         destination_port: Optional[int] = None,
         private_ip_address: Optional[str] = None,
         sub_domain_suffix: Optional[str] = None,
@@ -313,9 +307,9 @@ class ApplicationGetHttpsEndpoint(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.access_modes = access_modes
-        self.location = None
+        self.location: Optional[str] = None
         self.destination_port = destination_port
-        self.public_port = None
+        self.public_port: Optional[int] = None
         self.private_ip_address = private_ip_address
         self.sub_domain_suffix = sub_domain_suffix
         self.disable_gateway_auth = disable_gateway_auth
@@ -342,17 +336,17 @@ class ApplicationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Application"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Application"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of HDInsight applications installed on HDInsight cluster.
         :paramtype value: list[~azure.mgmt.hdinsight.models.Application]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
-class ApplicationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ApplicationProperties(_serialization.Model):
     """The HDInsight cluster application GET response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -410,13 +404,13 @@ class ApplicationProperties(_serialization.Model):  # pylint: disable=too-many-i
         self,
         *,
         compute_profile: Optional["_models.ComputeProfile"] = None,
-        install_script_actions: Optional[List["_models.RuntimeScriptAction"]] = None,
-        uninstall_script_actions: Optional[List["_models.RuntimeScriptAction"]] = None,
-        https_endpoints: Optional[List["_models.ApplicationGetHttpsEndpoint"]] = None,
-        ssh_endpoints: Optional[List["_models.ApplicationGetEndpoint"]] = None,
+        install_script_actions: Optional[list["_models.RuntimeScriptAction"]] = None,
+        uninstall_script_actions: Optional[list["_models.RuntimeScriptAction"]] = None,
+        https_endpoints: Optional[list["_models.ApplicationGetHttpsEndpoint"]] = None,
+        ssh_endpoints: Optional[list["_models.ApplicationGetEndpoint"]] = None,
         application_type: Optional[str] = None,
-        errors: Optional[List["_models.Errors"]] = None,
-        private_link_configurations: Optional[List["_models.PrivateLinkConfiguration"]] = None,
+        errors: Optional[list["_models.Errors"]] = None,
+        private_link_configurations: Optional[list["_models.PrivateLinkConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -444,12 +438,12 @@ class ApplicationProperties(_serialization.Model):  # pylint: disable=too-many-i
         self.uninstall_script_actions = uninstall_script_actions
         self.https_endpoints = https_endpoints
         self.ssh_endpoints = ssh_endpoints
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.application_type = application_type
-        self.application_state = None
+        self.application_state: Optional[str] = None
         self.errors = errors
-        self.created_date = None
-        self.marketplace_identifier = None
+        self.created_date: Optional[str] = None
+        self.marketplace_identifier: Optional[str] = None
         self.private_link_configurations = private_link_configurations
 
 
@@ -585,7 +579,7 @@ class AutoscaleRecurrence(_serialization.Model):
         self,
         *,
         time_zone: Optional[str] = None,
-        schedule: Optional[List["_models.AutoscaleSchedule"]] = None,
+        schedule: Optional[list["_models.AutoscaleSchedule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -617,7 +611,7 @@ class AutoscaleSchedule(_serialization.Model):
     def __init__(
         self,
         *,
-        days: Optional[List[Union[str, "_models.DaysOfWeek"]]] = None,
+        days: Optional[list[Union[str, "_models.DaysOfWeek"]]] = None,
         time_and_capacity: Optional["_models.AutoscaleTimeAndCapacity"] = None,
         **kwargs: Any
     ) -> None:
@@ -774,8 +768,8 @@ class AzureMonitorSelectedConfigurations(_serialization.Model):
         self,
         *,
         configuration_version: Optional[str] = None,
-        global_configurations: Optional[Dict[str, str]] = None,
-        table_list: Optional[List["_models.AzureMonitorTableConfiguration"]] = None,
+        global_configurations: Optional[dict[str, str]] = None,
+        table_list: Optional[list["_models.AzureMonitorTableConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -872,8 +866,8 @@ class BillingResources(_serialization.Model):
         self,
         *,
         region: Optional[str] = None,
-        billing_meters: Optional[List["_models.BillingMeters"]] = None,
-        disk_billing_meters: Optional[List["_models.DiskBillingMeters"]] = None,
+        billing_meters: Optional[list["_models.BillingMeters"]] = None,
+        disk_billing_meters: Optional[list["_models.DiskBillingMeters"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -923,10 +917,10 @@ class BillingResponseListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        vm_sizes: Optional[List[str]] = None,
-        vm_sizes_with_encryption_at_host: Optional[List[str]] = None,
-        vm_size_filters: Optional[List["_models.VmSizeCompatibilityFilterV2"]] = None,
-        billing_resources: Optional[List["_models.BillingResources"]] = None,
+        vm_sizes: Optional[list[str]] = None,
+        vm_sizes_with_encryption_at_host: Optional[list[str]] = None,
+        vm_size_filters: Optional[list["_models.VmSizeCompatibilityFilterV2"]] = None,
+        billing_resources: Optional[list["_models.BillingResources"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -944,7 +938,7 @@ class BillingResponseListResult(_serialization.Model):
         self.vm_sizes = vm_sizes
         self.vm_sizes_with_encryption_at_host = vm_sizes_with_encryption_at_host
         self.vm_size_filters = vm_size_filters
-        self.vm_size_properties = None
+        self.vm_size_properties: Optional[list["_models.VmSizeProperty"]] = None
         self.billing_resources = billing_resources
 
 
@@ -977,9 +971,9 @@ class CapabilitiesResult(_serialization.Model):
     def __init__(
         self,
         *,
-        versions: Optional[Dict[str, "_models.VersionsCapability"]] = None,
-        regions: Optional[Dict[str, "_models.RegionsCapability"]] = None,
-        features: Optional[List[str]] = None,
+        versions: Optional[dict[str, "_models.VersionsCapability"]] = None,
+        regions: Optional[dict[str, "_models.RegionsCapability"]] = None,
+        features: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -994,7 +988,7 @@ class CapabilitiesResult(_serialization.Model):
         self.versions = versions
         self.regions = regions
         self.features = features
-        self.quota = None
+        self.quota: Optional["_models.QuotaCapability"] = None
 
 
 class ClientGroupInfo(_serialization.Model):
@@ -1029,7 +1023,7 @@ class ResourceAutoGenerated(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1053,9 +1047,9 @@ class ResourceAutoGenerated(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class TrackedResource(ResourceAutoGenerated):
@@ -1067,7 +1061,7 @@ class TrackedResource(ResourceAutoGenerated):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1095,7 +1089,7 @@ class TrackedResource(ResourceAutoGenerated):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1115,7 +1109,7 @@ class Cluster(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1163,9 +1157,9 @@ class Cluster(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
         properties: Optional["_models.ClusterGetProperties"] = None,
         identity: Optional["_models.ClusterIdentity"] = None,
         **kwargs: Any
@@ -1189,7 +1183,7 @@ class Cluster(TrackedResource):
         self.zones = zones
         self.properties = properties
         self.identity = identity
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ClusterConfigurations(_serialization.Model):
@@ -1204,7 +1198,7 @@ class ClusterConfigurations(_serialization.Model):
         "configurations": {"key": "configurations", "type": "{{str}}"},
     }
 
-    def __init__(self, *, configurations: Optional[Dict[str, Dict[str, str]]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, configurations: Optional[dict[str, dict[str, str]]] = None, **kwargs: Any) -> None:
         """
         :keyword configurations: The configuration object for the specified configuration for the
          specified cluster.
@@ -1241,8 +1235,8 @@ class ClusterCreateParametersExtended(_serialization.Model):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
         properties: Optional["_models.ClusterCreateProperties"] = None,
         identity: Optional["_models.ClusterIdentity"] = None,
         **kwargs: Any
@@ -1267,7 +1261,7 @@ class ClusterCreateParametersExtended(_serialization.Model):
         self.identity = identity
 
 
-class ClusterCreateProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ClusterCreateProperties(_serialization.Model):
     """The cluster create parameters.
 
     :ivar cluster_version: The version of the cluster.
@@ -1338,7 +1332,7 @@ class ClusterCreateProperties(_serialization.Model):  # pylint: disable=too-many
         min_supported_tls_version: Optional[str] = None,
         network_properties: Optional["_models.NetworkProperties"] = None,
         compute_isolation_properties: Optional["_models.ComputeIsolationProperties"] = None,
-        private_link_configurations: Optional[List["_models.PrivateLinkConfiguration"]] = None,
+        private_link_configurations: Optional[list["_models.PrivateLinkConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1430,8 +1424,8 @@ class ClusterCreateRequestValidationParameters(ClusterCreateParametersExtended):
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
         properties: Optional["_models.ClusterCreateProperties"] = None,
         identity: Optional["_models.ClusterIdentity"] = None,
         name: Optional[str] = None,
@@ -1490,10 +1484,10 @@ class ClusterCreateValidationResult(_serialization.Model):
     def __init__(
         self,
         *,
-        validation_errors: Optional[List["_models.ValidationErrorInfo"]] = None,
-        validation_warnings: Optional[List["_models.ValidationErrorInfo"]] = None,
+        validation_errors: Optional[list["_models.ValidationErrorInfo"]] = None,
+        validation_warnings: Optional[list["_models.ValidationErrorInfo"]] = None,
         estimated_creation_duration: Optional[datetime.timedelta] = None,
-        aadds_resources_details: Optional[List["_models.AaddsResourceDetails"]] = None,
+        aadds_resources_details: Optional[list["_models.AaddsResourceDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1538,7 +1532,7 @@ class ClusterDefinition(_serialization.Model):
         *,
         blueprint: Optional[str] = None,
         kind: Optional[str] = None,
-        component_version: Optional[Dict[str, str]] = None,
+        component_version: Optional[dict[str, str]] = None,
         configurations: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -1600,7 +1594,7 @@ class ClusterDiskEncryptionParameters(_serialization.Model):
         self.key_version = key_version
 
 
-class ClusterGetProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ClusterGetProperties(_serialization.Model):
     """The properties of cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1713,8 +1707,8 @@ class ClusterGetProperties(_serialization.Model):  # pylint: disable=too-many-in
         created_date: Optional[str] = None,
         cluster_state: Optional[str] = None,
         quota_info: Optional["_models.QuotaInfo"] = None,
-        errors: Optional[List["_models.Errors"]] = None,
-        connectivity_endpoints: Optional[List["_models.ConnectivityEndpoint"]] = None,
+        errors: Optional[list["_models.Errors"]] = None,
+        connectivity_endpoints: Optional[list["_models.ConnectivityEndpoint"]] = None,
         disk_encryption_properties: Optional["_models.DiskEncryptionProperties"] = None,
         encryption_in_transit_properties: Optional["_models.EncryptionInTransitProperties"] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
@@ -1722,7 +1716,7 @@ class ClusterGetProperties(_serialization.Model):  # pylint: disable=too-many-in
         excluded_services_config: Optional["_models.ExcludedServicesConfig"] = None,
         network_properties: Optional["_models.NetworkProperties"] = None,
         compute_isolation_properties: Optional["_models.ComputeIsolationProperties"] = None,
-        private_link_configurations: Optional[List["_models.PrivateLinkConfiguration"]] = None,
+        private_link_configurations: Optional[list["_models.PrivateLinkConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1802,7 +1796,7 @@ class ClusterGetProperties(_serialization.Model):  # pylint: disable=too-many-in
         self.network_properties = network_properties
         self.compute_isolation_properties = compute_isolation_properties
         self.private_link_configurations = private_link_configurations
-        self.private_endpoint_connections = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
 
 
 class ClusterIdentity(_serialization.Model):
@@ -1822,7 +1816,7 @@ class ClusterIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.hdinsight.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the cluster. The
      user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.hdinsight.models.UserAssignedIdentity]
     """
 
@@ -1842,7 +1836,7 @@ class ClusterIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1853,13 +1847,13 @@ class ClusterIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.hdinsight.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the cluster. The
          user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.hdinsight.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -1884,14 +1878,14 @@ class ClusterListPersistedScriptActionsResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RuntimeScriptAction"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RuntimeScriptAction"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Persisted Script Actions.
         :paramtype value: list[~azure.mgmt.hdinsight.models.RuntimeScriptAction]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ClusterListResult(_serialization.Model):
@@ -1914,14 +1908,14 @@ class ClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Cluster"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Clusters.
         :paramtype value: list[~azure.mgmt.hdinsight.models.Cluster]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ClusterMonitoringRequest(_serialization.Model):
@@ -1983,7 +1977,8 @@ class ClusterPatchParameters(_serialization.Model):
 
     :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: The identity of the cluster, if configured.
+    :ivar identity: The identity of the cluster, if configured. Setting this property will override
+     the existing identity configuration of the cluster.
     :vartype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
     """
 
@@ -1995,14 +1990,15 @@ class ClusterPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ClusterIdentity"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: The identity of the cluster, if configured.
+        :keyword identity: The identity of the cluster, if configured. Setting this property will
+         override the existing identity configuration of the cluster.
         :paramtype identity: ~azure.mgmt.hdinsight.models.ClusterIdentity
         """
         super().__init__(**kwargs)
@@ -2069,7 +2065,7 @@ class ComputeProfile(_serialization.Model):
         "roles": {"key": "roles", "type": "[Role]"},
     }
 
-    def __init__(self, *, roles: Optional[List["_models.Role"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, roles: Optional[list["_models.Role"]] = None, **kwargs: Any) -> None:
         """
         :keyword roles: The list of roles in the cluster.
         :paramtype roles: list[~azure.mgmt.hdinsight.models.Role]
@@ -2162,8 +2158,8 @@ class DataDisksGroups(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.disks_per_node = disks_per_node
-        self.storage_account_type = None
-        self.disk_size_gb = None
+        self.storage_account_type: Optional[str] = None
+        self.disk_size_gb: Optional[int] = None
 
 
 class Dimension(_serialization.Model):
@@ -2343,6 +2339,49 @@ class EncryptionInTransitProperties(_serialization.Model):
         self.is_encryption_in_transit_enabled = is_encryption_in_transit_enabled
 
 
+class EntraUserInfo(_serialization.Model):
+    """Details of an Entra user for gateway access.
+
+    :ivar object_id: The unique object ID of the Entra user or client ID of the enterprise
+     applications.
+    :vartype object_id: str
+    :ivar display_name: The display name of the Entra user.
+    :vartype display_name: str
+    :ivar upn: The User Principal Name (UPN) of the Entra user. It may be empty in certain cases,
+     such as for enterprise applications.
+    :vartype upn: str
+    """
+
+    _attribute_map = {
+        "object_id": {"key": "objectId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "upn": {"key": "upn", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        object_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        upn: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword object_id: The unique object ID of the Entra user or client ID of the enterprise
+         applications.
+        :paramtype object_id: str
+        :keyword display_name: The display name of the Entra user.
+        :paramtype display_name: str
+        :keyword upn: The User Principal Name (UPN) of the Entra user. It may be empty in certain
+         cases, such as for enterprise applications.
+        :paramtype upn: str
+        """
+        super().__init__(**kwargs)
+        self.object_id = object_id
+        self.display_name = display_name
+        self.upn = upn
+
+
 class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
@@ -2451,7 +2490,7 @@ class ExecuteScriptActionParameters(_serialization.Model):
         self,
         *,
         persist_on_success: bool,
-        script_actions: Optional[List["_models.RuntimeScriptAction"]] = None,
+        script_actions: Optional[list["_models.RuntimeScriptAction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2503,6 +2542,8 @@ class GatewaySettings(_serialization.Model):
     :vartype user_name: str
     :ivar password: The gateway settings user password.
     :vartype password: str
+    :ivar rest_auth_entra_users: List of Entra users for gateway access.
+    :vartype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
     """
 
     _validation = {
@@ -2515,14 +2556,19 @@ class GatewaySettings(_serialization.Model):
         "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "str"},
         "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
         "password": {"key": "restAuthCredential\\.password", "type": "str"},
+        "rest_auth_entra_users": {"key": "restAuthEntraUsers", "type": "[EntraUserInfo]"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, rest_auth_entra_users: Optional[list["_models.EntraUserInfo"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword rest_auth_entra_users: List of Entra users for gateway access.
+        :paramtype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
+        """
         super().__init__(**kwargs)
-        self.is_credential_enabled = None
-        self.user_name = None
-        self.password = None
+        self.is_credential_enabled: Optional[str] = None
+        self.user_name: Optional[str] = None
+        self.password: Optional[str] = None
+        self.rest_auth_entra_users = rest_auth_entra_users
 
 
 class HardwareProfile(_serialization.Model):
@@ -2659,10 +2705,10 @@ class IPConfiguration(_serialization.Model):
         :paramtype subnet: ~azure.mgmt.hdinsight.models.ResourceId
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.name = name
-        self.type = None
-        self.provisioning_state = None
+        self.type: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateLinkConfigurationProvisioningState"]] = None
         self.primary = primary
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
@@ -2722,7 +2768,7 @@ class KafkaRestProperties(_serialization.Model):
         self,
         *,
         client_group_info: Optional["_models.ClientGroupInfo"] = None,
-        configuration_override: Optional[Dict[str, str]] = None,
+        configuration_override: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2801,7 +2847,7 @@ class LocalizedName(_serialization.Model):
         self.localized_value = localized_value
 
 
-class MetricSpecifications(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MetricSpecifications(_serialization.Model):
     """The details of metric specifications.
 
     :ivar name: The name of the metric specification.
@@ -2869,8 +2915,8 @@ class MetricSpecifications(_serialization.Model):  # pylint: disable=too-many-in
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
         aggregation_type: Optional[str] = None,
-        supported_aggregation_types: Optional[List[str]] = None,
-        supported_time_grain_types: Optional[List[str]] = None,
+        supported_aggregation_types: Optional[list[str]] = None,
+        supported_time_grain_types: Optional[list[str]] = None,
         enable_regional_mdm_account: Optional[bool] = None,
         source_mdm_account: Optional[str] = None,
         source_mdm_namespace: Optional[str] = None,
@@ -2880,7 +2926,7 @@ class MetricSpecifications(_serialization.Model):  # pylint: disable=too-many-in
         resource_id_dimension_name_override: Optional[str] = None,
         is_internal: Optional[bool] = None,
         delegate_metric_name_override: Optional[str] = None,
-        dimensions: Optional[List["_models.Dimension"]] = None,
+        dimensions: Optional[list["_models.Dimension"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2999,8 +3045,8 @@ class NameAvailabilityCheckResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name_available = name_available
-        self.reason = None
-        self.message = None
+        self.reason: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class NetworkProperties(_serialization.Model):
@@ -3167,7 +3213,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of HDInsight operations supported by the HDInsight resource provider.
@@ -3254,7 +3300,7 @@ class PrivateEndpointConnection(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3312,11 +3358,11 @@ class PrivateEndpointConnection(Resource):
          ~azure.mgmt.hdinsight.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.system_data = None
-        self.private_endpoint = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.private_endpoint: Optional["_models.PrivateEndpoint"] = None
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.link_identifier = None
-        self.provisioning_state = None
+        self.link_identifier: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -3339,14 +3385,14 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of private endpoint connections.
         :paramtype value: list[~azure.mgmt.hdinsight.models.PrivateEndpointConnection]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateLinkConfiguration(_serialization.Model):
@@ -3393,7 +3439,7 @@ class PrivateLinkConfiguration(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, group_id: str, ip_configurations: List["_models.IPConfiguration"], **kwargs: Any
+        self, *, name: str, group_id: str, ip_configurations: list["_models.IPConfiguration"], **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of private link configuration. Required.
@@ -3405,11 +3451,11 @@ class PrivateLinkConfiguration(_serialization.Model):
         :paramtype ip_configurations: list[~azure.mgmt.hdinsight.models.IPConfiguration]
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.name = name
-        self.type = None
+        self.type: Optional[str] = None
         self.group_id = group_id
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateLinkConfigurationProvisioningState"]] = None
         self.ip_configurations = ip_configurations
 
 
@@ -3419,7 +3465,7 @@ class PrivateLinkResource(ResourceAutoGenerated):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3455,15 +3501,15 @@ class PrivateLinkResource(ResourceAutoGenerated):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.system_data = None
-        self.group_id = None
-        self.required_members = None
+        self.system_data: Optional["_models.SystemData"] = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -3478,7 +3524,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.hdinsight.models.PrivateLinkResource]
@@ -3556,7 +3602,7 @@ class QuotaCapability(_serialization.Model):
         *,
         cores_used: Optional[int] = None,
         max_cores_allowed: Optional[int] = None,
-        regional_quotas: Optional[List["_models.RegionalQuotaCapability"]] = None,
+        regional_quotas: Optional[list["_models.RegionalQuotaCapability"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3643,7 +3689,7 @@ class RegionsCapability(_serialization.Model):
         "available": {"key": "available", "type": "[str]"},
     }
 
-    def __init__(self, *, available: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, available: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword available: The list of region capabilities.
         :paramtype available: list[str]
@@ -3672,7 +3718,7 @@ class ResourceId(_serialization.Model):
         self.id = id
 
 
-class Role(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class Role(_serialization.Model):
     """Describes a role on the cluster.
 
     :ivar name: The name of the role.
@@ -3724,8 +3770,8 @@ class Role(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         hardware_profile: Optional["_models.HardwareProfile"] = None,
         os_profile: Optional["_models.OsProfile"] = None,
         virtual_network_profile: Optional["_models.VirtualNetworkProfile"] = None,
-        data_disks_groups: Optional[List["_models.DataDisksGroups"]] = None,
-        script_actions: Optional[List["_models.ScriptAction"]] = None,
+        data_disks_groups: Optional[list["_models.DataDisksGroups"]] = None,
+        script_actions: Optional[list["_models.ScriptAction"]] = None,
         encrypt_data_disks: bool = False,
         **kwargs: Any
     ) -> None:
@@ -3802,7 +3848,7 @@ class RuntimeScriptAction(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, uri: str, roles: List[str], parameters: Optional[str] = None, **kwargs: Any
+        self, *, name: str, uri: str, roles: list[str], parameters: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the script action. Required.
@@ -3819,10 +3865,10 @@ class RuntimeScriptAction(_serialization.Model):
         self.uri = uri
         self.parameters = parameters
         self.roles = roles
-        self.application_name = None
+        self.application_name: Optional[str] = None
 
 
-class RuntimeScriptActionDetail(RuntimeScriptAction):  # pylint: disable=too-many-instance-attributes
+class RuntimeScriptActionDetail(RuntimeScriptAction):
     """The execution details of a script action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3885,7 +3931,7 @@ class RuntimeScriptActionDetail(RuntimeScriptAction):  # pylint: disable=too-man
     }
 
     def __init__(
-        self, *, name: str, uri: str, roles: List[str], parameters: Optional[str] = None, **kwargs: Any
+        self, *, name: str, uri: str, roles: list[str], parameters: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the script action. Required.
@@ -3898,13 +3944,13 @@ class RuntimeScriptActionDetail(RuntimeScriptAction):  # pylint: disable=too-man
         :paramtype roles: list[str]
         """
         super().__init__(name=name, uri=uri, parameters=parameters, roles=roles, **kwargs)
-        self.script_execution_id = None
-        self.start_time = None
-        self.end_time = None
-        self.status = None
-        self.operation = None
-        self.execution_summary = None
-        self.debug_information = None
+        self.script_execution_id: Optional[int] = None
+        self.start_time: Optional[str] = None
+        self.end_time: Optional[str] = None
+        self.status: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.execution_summary: Optional[list["_models.ScriptActionExecutionSummary"]] = None
+        self.debug_information: Optional[str] = None
 
 
 class ScriptAction(_serialization.Model):
@@ -3971,8 +4017,8 @@ class ScriptActionExecutionHistoryList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.RuntimeScriptActionDetail"]] = None
+        self.next_link: Optional[str] = None
 
 
 class ScriptActionExecutionSummary(_serialization.Model):
@@ -3999,8 +4045,8 @@ class ScriptActionExecutionSummary(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.instance_count = None
+        self.status: Optional[str] = None
+        self.instance_count: Optional[int] = None
 
 
 class ScriptActionPersistedGetResponseSpec(_serialization.Model):
@@ -4032,7 +4078,7 @@ class ScriptActionPersistedGetResponseSpec(_serialization.Model):
         name: Optional[str] = None,
         uri: Optional[str] = None,
         parameters: Optional[str] = None,
-        roles: Optional[List[str]] = None,
+        roles: Optional[list[str]] = None,
         application_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4076,14 +4122,14 @@ class ScriptActionsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RuntimeScriptActionDetail"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RuntimeScriptActionDetail"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of persisted script action details for the cluster.
         :paramtype value: list[~azure.mgmt.hdinsight.models.RuntimeScriptActionDetail]
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class SecurityProfile(_serialization.Model):
@@ -4129,10 +4175,10 @@ class SecurityProfile(_serialization.Model):
         directory_type: Optional[Union[str, "_models.DirectoryType"]] = None,
         domain: Optional[str] = None,
         organizational_unit_dn: Optional[str] = None,
-        ldaps_urls: Optional[List[str]] = None,
+        ldaps_urls: Optional[list[str]] = None,
         domain_username: Optional[str] = None,
         domain_user_password: Optional[str] = None,
-        cluster_users_group_d_ns: Optional[List[str]] = None,
+        cluster_users_group_d_ns: Optional[list[str]] = None,
         aadds_resource_id: Optional[str] = None,
         msi_resource_id: Optional[str] = None,
         **kwargs: Any
@@ -4185,7 +4231,7 @@ class ServiceSpecification(_serialization.Model):
     }
 
     def __init__(
-        self, *, metric_specifications: Optional[List["_models.MetricSpecifications"]] = None, **kwargs: Any
+        self, *, metric_specifications: Optional[list["_models.MetricSpecifications"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword metric_specifications: The metric specifications.
@@ -4206,7 +4252,7 @@ class SshProfile(_serialization.Model):
         "public_keys": {"key": "publicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(self, *, public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, public_keys: Optional[list["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
         """
         :keyword public_keys: The list of SSH public keys.
         :paramtype public_keys: list[~azure.mgmt.hdinsight.models.SshPublicKey]
@@ -4342,7 +4388,7 @@ class StorageProfile(_serialization.Model):
         "storageaccounts": {"key": "storageaccounts", "type": "[StorageAccount]"},
     }
 
-    def __init__(self, *, storageaccounts: Optional[List["_models.StorageAccount"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, storageaccounts: Optional[list["_models.StorageAccount"]] = None, **kwargs: Any) -> None:
         """
         :keyword storageaccounts: The list of storage accounts in the cluster.
         :paramtype storageaccounts: list[~azure.mgmt.hdinsight.models.StorageAccount]
@@ -4455,7 +4501,8 @@ class UpdateClusterIdentityCertificateParameters(_serialization.Model):  # pylin
 
 
 class UpdateGatewaySettingsParameters(_serialization.Model):
-    """The update gateway settings request parameters.
+    """The update gateway settings request parameters. Note either basic or entra user should be
+    provided at a time.
 
     :ivar is_credential_enabled: Indicates whether or not the gateway settings based authorization
      is enabled.
@@ -4464,12 +4511,15 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
     :vartype user_name: str
     :ivar password: The gateway settings user password.
     :vartype password: str
+    :ivar rest_auth_entra_users: List of Entra users for gateway access.
+    :vartype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
     """
 
     _attribute_map = {
         "is_credential_enabled": {"key": "restAuthCredential\\.isEnabled", "type": "bool"},
         "user_name": {"key": "restAuthCredential\\.username", "type": "str"},
         "password": {"key": "restAuthCredential\\.password", "type": "str"},
+        "rest_auth_entra_users": {"key": "restAuthEntraUsers", "type": "[EntraUserInfo]"},
     }
 
     def __init__(
@@ -4478,6 +4528,7 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
         is_credential_enabled: bool = True,
         user_name: Optional[str] = None,
         password: Optional[str] = None,
+        rest_auth_entra_users: Optional[list["_models.EntraUserInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4488,11 +4539,14 @@ class UpdateGatewaySettingsParameters(_serialization.Model):
         :paramtype user_name: str
         :keyword password: The gateway settings user password.
         :paramtype password: str
+        :keyword rest_auth_entra_users: List of Entra users for gateway access.
+        :paramtype rest_auth_entra_users: list[~azure.mgmt.hdinsight.models.EntraUserInfo]
         """
         super().__init__(**kwargs)
         self.is_credential_enabled = is_credential_enabled
         self.user_name = user_name
         self.password = password
+        self.rest_auth_entra_users = rest_auth_entra_users
 
 
 class Usage(_serialization.Model):
@@ -4541,7 +4595,7 @@ class Usage(_serialization.Model):
         self.unit = unit
         self.current_value = current_value
         self.limit = limit
-        self.name = None
+        self.name: Optional["_models.LocalizedName"] = None
 
 
 class UsagesListResult(_serialization.Model):
@@ -4555,7 +4609,7 @@ class UsagesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of usages.
         :paramtype value: list[~azure.mgmt.hdinsight.models.Usage]
@@ -4594,8 +4648,8 @@ class UserAssignedIdentity(_serialization.Model):
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
         self.tenant_id = tenant_id
 
 
@@ -4625,7 +4679,7 @@ class ValidationErrorInfo(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         error_resource: Optional[str] = None,
-        message_arguments: Optional[List[str]] = None,
+        message_arguments: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4656,7 +4710,7 @@ class VersionsCapability(_serialization.Model):
         "available": {"key": "available", "type": "[VersionSpec]"},
     }
 
-    def __init__(self, *, available: Optional[List["_models.VersionSpec"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, available: Optional[list["_models.VersionSpec"]] = None, **kwargs: Any) -> None:
         """
         :keyword available: The list of version capabilities.
         :paramtype available: list[~azure.mgmt.hdinsight.models.VersionSpec]
@@ -4691,7 +4745,7 @@ class VersionSpec(_serialization.Model):
         friendly_name: Optional[str] = None,
         display_name: Optional[str] = None,
         is_default: Optional[bool] = None,
-        component_versions: Optional[Dict[str, str]] = None,
+        component_versions: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4789,12 +4843,12 @@ class VmSizeCompatibilityFilterV2(_serialization.Model):
         self,
         *,
         filter_mode: Optional[Union[str, "_models.FilterMode"]] = None,
-        regions: Optional[List[str]] = None,
-        cluster_flavors: Optional[List[str]] = None,
-        node_types: Optional[List[str]] = None,
-        cluster_versions: Optional[List[str]] = None,
-        os_type: Optional[List[Union[str, "_models.OSType"]]] = None,
-        vm_sizes: Optional[List[str]] = None,
+        regions: Optional[list[str]] = None,
+        cluster_flavors: Optional[list[str]] = None,
+        node_types: Optional[list[str]] = None,
+        cluster_versions: Optional[list[str]] = None,
+        os_type: Optional[list[Union[str, "_models.OSType"]]] = None,
+        vm_sizes: Optional[list[str]] = None,
         esp_applied: Optional[str] = None,
         compute_isolation_supported: Optional[str] = None,
         **kwargs: Any

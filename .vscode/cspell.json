@@ -197,6 +197,8 @@
     "avroencoder",
     "Avs",
     "azcmagent",
+    "azpysdk",
+    "pyenv",
     "azsdk",
     "azurecr",
     "azuremgmtcore",
@@ -245,6 +247,7 @@
     "dpkg",
     "dtlk",
     "dtlksd",
+    "duckdb",
     "DWORD",
     "eastus",
     "Easm",
@@ -643,7 +646,8 @@
     {
       "filename": "sdk/identity/azure-identity/tests/*.py",
       "words": [
-        "infile"
+        "infile",
+        "acrs"
       ]
     },
     {
@@ -817,6 +821,74 @@
       "words": [ "ctxt", "somethingstuid" ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics/**",
+      "words": [
+        "fhir",
+        "BRCPF",
+        "IDRG",
+        "EUGPS",
+        "PLREGON",
+        "REGON",
+        "ESDNI",
+        "USUK",
+        "ARMN",
+        "Bangla",
+        "ETHI",
+        "Ethi",
+        "GEOR",
+        "Geor",
+        "GREK",
+        "Grek",
+        "GUJR",
+        "Gujr",
+        "HANI",
+        "Hani",
+        "HEBR",
+        "Hebr",
+        "JPAN",
+        "Jpan",
+        "KHMR",
+        "Khmr",
+        "KNDA",
+        "Knda",
+        "LAOO",
+        "Laoo",
+        "MLYM",
+        "Mlym",
+        "MTEI",
+        "Mtei",
+        "Meitei",
+        "MYMR",
+        "Mymr",
+        "OLCK",
+        "Olck",
+        "ORYA",
+        "Orya",
+        "SHRD",
+        "Shrd",
+        "Sharada",
+        "TAML",
+        "Taml",
+        "TELU",
+        "Telu",
+        "THAA",
+        "Thaa",
+        "Thaana",
+        "TIBT",
+        "Tibt",
+        "UMLS",
+        "Effile",
+        "gont",
+        "mundo",
+        "naam",
+        "DBAUTH",
+        "Kelvey",
+        "CMLC",
+        "Absractive"
+      ],
+      "caseSensitive": false
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
       "words": [ "conv", "summ", "Enviar", "presentación", "CLU's"],
       "caseSensitive": false
@@ -828,6 +900,15 @@
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
       "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics-authoring/**",
+      "words": [ "unassigning", "Customtextummarization", "cmatrix", "accb" ]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
+      "words": [ "unassigning" ],
+      "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
@@ -1092,7 +1173,12 @@
         "nbconvert",
         "rollupby",
         "milli",
-        "resourceid"
+        "resourceid",
+        "Exceps",
+        "processiorate",
+        "processiobytessec",
+        "iowait",
+        "softirq"
       ]
     },
     {
@@ -1112,7 +1198,8 @@
         "psutil",
         "psycopg",
         "uninstrument",
-        "uninstrumented"
+        "uninstrumented",
+        "scputimes"
       ]
     },
     {
@@ -1122,6 +1209,8 @@
         "ikey",
         "msecs",
         "mycontainer",
+        "pclp",
+        "pcsp",
         "semconv",
         "updown",
         "uvicorn"
@@ -1587,7 +1676,26 @@
         "getopenidmetadata",
         "getopenidmetadataasync",
         "aikcert",
-        "shareduks"
+        "shareduks",
+        "PKIX",
+        "tcbbaselines",
+        "Iiwg",
+        "Ijog",
+        "Ghvc",
+        "MCIs",
+        "Mdxl",
+        "Dxxf",
+        "PYSN",
+        "Aiandr",
+        "Ijoic",
+        "Jjcn",
+        "QLTI",
+        "Hhnc",
+        "Mkxzellr",
+        "Sjhual",
+        "Inki",
+        "NGZZN",
+        "Igog",
       ]
     },
     {
@@ -1782,6 +1890,14 @@
         "moduleid",
         "onvif",
         "Onvif"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
       ]
     },
     {
