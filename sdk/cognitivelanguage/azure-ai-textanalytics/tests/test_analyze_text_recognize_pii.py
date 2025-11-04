@@ -24,7 +24,6 @@ class TestTextAnalysis(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
         return TextAnalysisClient(endpoint, AzureKeyCredential(key))
 
-
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy
