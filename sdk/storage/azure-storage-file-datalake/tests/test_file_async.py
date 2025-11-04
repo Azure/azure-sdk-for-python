@@ -1650,6 +1650,47 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         result = await file_data.readall()
         assert result == compressed_data
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_download_file_no_decompress_chunks(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        file_name = self._get_file_reference()
+        file_client = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            self.file_system_name,
+            file_name,
+            credential=datalake_storage_account_key
+        )
+        await file_client.create_file()
+
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await file_client.upload_data(
+            data=compressed_data,
+            length=len(compressed_data),
+            overwrite=True,
+            content_settings=content_settings
+        )
+
+        stream = await file_client.download_file(decompress=False)
+        result = bytearray()
+        read_size = 4
+        num_chunks = int(ceil(len(compressed_data) / read_size))
+        for i in range(num_chunks):
+            content = await stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert compressed_data[start:end] == content
+            result.extend(content)
+
+        assert result == compressed_data
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
