@@ -24,7 +24,7 @@ class TestContainerServiceIdentityBindingsOperations(AzureMgmtRecordedTestCase):
         response = self.client.identity_bindings.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServiceIdentityBindingsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             identity_binding_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestContainerServiceIdentityBindingsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestContainerServiceIdentityBindingsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             identity_binding_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-02-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

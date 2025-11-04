@@ -59,9 +59,21 @@ def main():
                 "securityProfile": {
                     "defender": {
                         "logAnalyticsWorkspaceResourceId": "/subscriptions/SUB_ID/resourcegroups/RG_NAME/providers/microsoft.operationalinsights/workspaces/WORKSPACE_NAME",
+                        "securityGating": {
+                            "allowSecretAccess": True,
+                            "enabled": True,
+                            "identities": [
+                                {
+                                    "azureContainerRegistry": "registry1",
+                                    "identity": {
+                                        "clientId": "client1",
+                                        "resourceId": "/subscriptions/SUB_ID/resourceGroups/RG_NAME/providers/Microsoft.ManagedIdentity/userAssignedIdentities/IDENTITY_NAME",
+                                    },
+                                }
+                            ],
+                        },
                         "securityMonitoring": {"enabled": True},
-                    },
-                    "workloadIdentity": {"enabled": True},
+                    }
                 },
             },
             "sku": {"name": "Basic", "tier": "Free"},
@@ -71,6 +83,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-09-01/examples/ManagedClustersCreate_SecurityProfile.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/preview/2025-09-02-preview/examples/ManagedClustersCreate_SecurityProfile.json
 if __name__ == "__main__":
     main()
