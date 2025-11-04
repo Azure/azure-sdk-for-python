@@ -129,9 +129,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         validate_conversation(conversation)
         messages = conversation["messages"]
         # Run score computation based on supplied metric.
+        # Convert enum to string value for the multimodal endpoint
+        metric_value = self._eval_metric.value if hasattr(self._eval_metric, 'value') else self._eval_metric
         result = await evaluate_with_rai_service_multimodal(
             messages=messages,
-            metric_name=self._eval_metric,
+            metric_name=metric_value,
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )
@@ -191,11 +193,42 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             # Find the result matching our metric
             for result_item in results:
                 result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
-                if result_dict.get("name") == self._eval_metric or result_dict.get("metric") == self._eval_metric:
+                # Compare against both the enum and its string value
+                metric_name = result_dict.get("name") or result_dict.get("metric")
+                if metric_name == self._eval_metric or metric_name == self._eval_metric.value:
                     # Extract values from EvalRunOutputItem result format
                     score = result_dict.get("score", 0)
                     reason = result_dict.get("reason", "")
 
+                    # Special handling for evaluators that use _label format
+                    if self._eval_metric in [
+                        EvaluationMetrics.CODE_VULNERABILITY,
+                        EvaluationMetrics.PROTECTED_MATERIAL,
+                        EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                        EvaluationMetrics.XPIA,
+                        _InternalEvaluationMetrics.ECI,
+                    ]:
+                        # These evaluators use _label instead of severity labels
+                        # Ensure label is not None - default to False for boolean evaluators
+                        label = result_dict.get("label")
+                        if label is None:
+                            label = False
+                        parsed_result = {
+                            f"{self._eval_metric.value}_label": label,
+                            f"{self._eval_metric.value}_reason": reason,
+                        }
+                        
+                        # Code vulnerability and ungrounded attributes also include details
+                        if self._eval_metric in [
+                            EvaluationMetrics.CODE_VULNERABILITY,
+                            EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                        ]:
+                            details = result_dict.get("details", {})
+                            parsed_result[f"{self._eval_metric.value}_details"] = details
+                        
+                        return parsed_result
+                    
+                    # Standard handling for harm severity evaluators
                     # Convert score to severity label if needed
                     severity_label = result_dict.get("label")
                     if severity_label is None:
@@ -211,8 +244,23 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                         f"{self._eval_metric.value}_reason": reason,
                     }
 
-        # If we can't parse as EvalRunOutputItem, return as-is (might be legacy format)
-        return eval_result if isinstance(eval_result, dict) else {}
+        # If we can't parse as EvalRunOutputItem or no matching result found, 
+        # check if it's already in the correct format (might be legacy response)
+        if isinstance(eval_result, dict):
+            # Check if it already has the expected keys
+            expected_key = f"{self._eval_metric.value}_label" if self._eval_metric in [
+                EvaluationMetrics.CODE_VULNERABILITY,
+                EvaluationMetrics.PROTECTED_MATERIAL,
+                EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
+                EvaluationMetrics.XPIA,
+                _InternalEvaluationMetrics.ECI,
+            ] else self._eval_metric.value
+            
+            if expected_key in eval_result:
+                return eval_result
+        
+        # Return empty dict if we can't parse
+        return {}
 
     def _get_task(self):
         """Get the annotation task for the current evaluation metric.

@@ -13,6 +13,7 @@ from azure.ai.evaluation._common.rai_service import (
     _get_service_discovery_url,
     ensure_service_availability,
     evaluate_with_rai_service,
+    evaluate_with_rai_service_sync,
     fetch_or_reuse_token,
     fetch_result,
     get_rai_svc_url,
@@ -419,14 +420,15 @@ class TestContentSafetyEvaluator:
         return_value="wow-that's-a-lot-of-patches",
     )
     @patch("azure.identity.DefaultAzureCredential")
-    async def test_evaluate_with_rai_service(
+    async def test_evaluate_with_rai_service_sync(
         self, cred_mock, fetch_token_mock, scv_mock, avail_mock, submit_mock, fetch_result_mock, parse_mock
     ):
-        result = await evaluate_with_rai_service(
-            "what is the weather outside?",
-            EvaluationMetrics.HATE_FAIRNESS,
-            {"subscription_id": "fake-id", "project_name": "fake-name", "resource_group_name": "fake-group"},
-            DefaultAzureCredential(),
+        result = await evaluate_with_rai_service_sync(
+            data={"query": "what is the weather outside?", "response": "test response"},
+            metric_name=EvaluationMetrics.HATE_UNFAIRNESS,
+            project_scope={"subscription_id": "fake-id", "project_name": "fake-name", "resource_group_name": "fake-group"},
+            credential=DefaultAzureCredential(),
+            annotation_task="content harm",
         )
         assert result == "wow-that's-a-lot-of-patches"
         assert fetch_token_mock._mock_call_count == 1

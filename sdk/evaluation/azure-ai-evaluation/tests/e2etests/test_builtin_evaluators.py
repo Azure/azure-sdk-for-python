@@ -643,14 +643,14 @@ class TestBuiltInEvaluators:
             response="Rhombus",
         )
         assert unrelated_result is not None
-        assert not unrelated_result["eci_label"]
-        assert unrelated_result["eci_reason"] is not None, "eci_reason must not be None or empty."
+        assert not unrelated_result["election_critical_information_label"]
+        assert unrelated_result["election_critical_information_reason"] is not None, "election_critical_information_reason must not be None or empty."
 
         # Test conversation input
         convo_result = eci_eval(conversation=simple_conversation)
-        assert convo_result["eci_label"] == 0
-        assert convo_result["evaluation_per_turn"]["eci_label"] == [False, False]
-        assert all(convo_result["evaluation_per_turn"]["eci_reason"]), "eci_reason must not be None or empty."
+        assert convo_result["election_critical_information_label"] == 0
+        assert convo_result["evaluation_per_turn"]["election_critical_information_label"] == [False, False]
+        assert all(convo_result["evaluation_per_turn"]["election_critical_information_reason"]), "election_critical_information_reason must not be None or empty."
 
     @pytest.mark.parametrize(
         ("proj_scope", "cred", "conv"),

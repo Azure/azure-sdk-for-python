@@ -935,7 +935,18 @@ def _build_sync_eval_payload(
     # Prepare context if available
     context = None
     if data.get("context") is not None:
-        context = " ".join(c["content"] for c in data["context"]["contexts"])
+        # Handle both string context and dict with contexts list
+        context_data = data["context"]
+        if isinstance(context_data, str):
+            # Context is already a string
+            context = context_data
+        elif isinstance(context_data, dict) and "contexts" in context_data:
+            # Context is a dict with contexts list
+            context = " ".join(c["content"] for c in context_data["contexts"])
+        elif isinstance(context_data, dict):
+            # Context is a dict but might be in a different format
+            # Try to get content directly or convert to string
+            context = context_data.get("content", str(context_data))
 
     # Build QueryResponseInlineMessage object
     item_content = QueryResponseInlineMessage(
