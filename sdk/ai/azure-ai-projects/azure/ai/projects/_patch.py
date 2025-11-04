@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def _patch_user_agent(user_agent: Optional[str]) -> str:
     # All authenticated external clients exposed by this client will have this application id
     # set on their user-agent. For more info on user-agent HTTP header, see:
@@ -82,7 +83,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
 
-        self._console_logging_enabled: bool = (os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true")
+        self._console_logging_enabled: bool = (
+            os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
+        )
 
         if self._console_logging_enabled:
             import sys
@@ -208,7 +211,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                         print(f"  {key}: {value}")
 
                     content = response.read()
-                    if content is None or content == b'':
+                    if content is None or content == b"":
                         print("Body: [No content]")
                     else:
                         try:
@@ -244,7 +247,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                         print(f"Body: [Cannot access content: {access_error}]")
                         return
 
-                    if content is None or content == b'':
+                    if content is None or content == b"":
                         print("Body: [No content]")
                         return
 

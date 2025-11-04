@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
@@ -67,7 +68,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
 
-        self._console_logging_enabled: bool = (os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true")
+        self._console_logging_enabled: bool = (
+            os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
+        )
 
         if self._console_logging_enabled:
             import sys
@@ -130,7 +133,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 "azure.identity package not installed. Please install it using 'pip install azure.identity'"
             ) from e
 
-        # TODO: Test the case where input endpoint URL has "/" at the end
         base_url = self._config.endpoint + "/openai"  # pylint: disable=protected-access
 
         if "default_query" not in kwargs:
@@ -194,7 +196,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                         print(f"  {key}: {value}")
 
                     content = await response.aread()
-                    if content is None or content == b'':
+                    if content is None or content == b"":
                         print("Body: [No content]")
                     else:
                         try:
@@ -230,7 +232,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                         print(f"Body: [Cannot access content: {access_error}]")
                         return
 
-                    if content is None or content == b'':
+                    if content is None or content == b"":
                         print("Body: [No content]")
                         return
 
