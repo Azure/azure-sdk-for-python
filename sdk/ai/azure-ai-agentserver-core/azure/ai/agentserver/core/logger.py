@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 import contextvars
 import logging
 import os
@@ -53,7 +56,7 @@ def get_project_endpoint():
         return None
 
 
-def get_application_insights_connection_string():
+def get_application_insights_connstr():
     try:
         conn_str = os.environ.get(Constants.APPLICATION_INSIGHTS_CONNECTION_STRING)
         if not conn_str:
@@ -97,7 +100,7 @@ def configure(log_config: dict = default_log_config):
     try:
         config.dictConfig(log_config)
 
-        application_insights_connection_string = get_application_insights_connection_string()
+        application_insights_connection_string = get_application_insights_connstr()
         enable_application_insights_logger = (
             os.environ.get(Constants.ENABLE_APPLICATION_INSIGHTS_LOGGER, "true").lower() == "true"
         )

@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 class Constants:
     # well-known environment variables
     APPLICATION_INSIGHTS_CONNECTION_STRING = "_AGENT_RUNTIME_APP_INSIGHTS_CONNECTION_STRING"
