@@ -3480,7 +3480,8 @@ class ComputerActionWait(ComputerAction, discriminator="wait"):
 
 class ComputerToolCallItemParam(ItemParam, discriminator="computer_call"):
     """A tool call to a computer use tool. See the
-    `computer use guide </docs/guides/tools-computer-use>`_ for more information.
+    `computer use guide <https://platform.openai.com/docs/guides/tools-computer-use>`_ for more
+    information.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.COMPUTER_CALL
@@ -3526,7 +3527,8 @@ class ComputerToolCallItemParam(ItemParam, discriminator="computer_call"):
 
 class ComputerToolCallItemResource(ItemResource, discriminator="computer_call"):
     """A tool call to a computer use tool. See the
-    `computer use guide </docs/guides/tools-computer-use>`_ for more information.
+    `computer use guide <https://platform.openai.com/docs/guides/tools-computer-use>`_ for more
+    information.
 
     :ivar id: Required.
     :vartype id: str
@@ -5057,7 +5059,7 @@ class EvaluationRule(_Model):
     :ivar filter: Filter condition of the evaluation rule.
     :vartype filter: ~azure.ai.projects.models.EvaluationRuleFilter
     :ivar event_type: Event type that the evaluation rule applies to. Required. Known values are:
-     "response.completed" and "manual".
+     "responseCompleted" and "manual".
     :vartype event_type: str or ~azure.ai.projects.models.EvaluationRuleEventType
     :ivar enabled: Indicates whether the evaluation rule is enabled. Default is true. Required.
     :vartype enabled: bool
@@ -5083,7 +5085,7 @@ class EvaluationRule(_Model):
         name="eventType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Event type that the evaluation rule applies to. Required. Known values are:
-     \"response.completed\" and \"manual\"."""
+     \"responseCompleted\" and \"manual\"."""
     enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the evaluation rule is enabled. Default is true. Required."""
     system_data: dict[str, str] = rest_field(name="systemData", visibility=["read"])
@@ -5454,15 +5456,13 @@ class EvaluatorVersion(_Model):
      need to be unique."""
     metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata about the evaluator."""
-    evaluator_type: Union[str, "_models.EvaluatorType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    evaluator_type: Union[str, "_models.EvaluatorType"] = rest_field(visibility=["read", "create"])
     """The type of the evaluator. Required. Known values are: \"builtin\" and \"custom\"."""
     categories: list[Union[str, "_models.EvaluatorCategory"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The categories of the evaluator. Required."""
-    definition: "_models.EvaluatorDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    definition: "_models.EvaluatorDefinition" = rest_field(visibility=["read", "create"])
     """Definition of the evaluator. Required."""
     created_by: str = rest_field(visibility=["read"])
     """Creator of the evaluator. Required."""
@@ -5698,7 +5698,8 @@ class FileSearchTool(Tool, discriminator="file_search"):
 
 class FileSearchToolCallItemParam(ItemParam, discriminator="file_search_call"):
     """The results of a file search tool call. See the
-    `file search guide </docs/guides/tools-file-search>`_ for more information.
+    `file search guide <https://platform.openai.com/docs/guides/tools-file-search>`_ for more
+    information.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH_CALL
@@ -5788,7 +5789,8 @@ class FileSearchToolCallItemParamResult(_Model):
 
 class FileSearchToolCallItemResource(ItemResource, discriminator="file_search_call"):
     """The results of a file search tool call. See the
-    `file search guide </docs/guides/tools-file-search>`_ for more information.
+    `file search guide <https://platform.openai.com/docs/guides/tools-file-search>`_ for more
+    information.
 
     :ivar id: Required.
     :vartype id: str
@@ -5951,7 +5953,8 @@ class FunctionTool(Tool, discriminator="function"):
 
 class FunctionToolCallItemParam(ItemParam, discriminator="function_call"):
     """A tool call to run a function. See the
-    `function calling guide </docs/guides/function-calling>`_ for more information.
+    `function calling guide <https://platform.openai.com/docs/guides/function-calling>`_ for more
+    information.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.FUNCTION_CALL
@@ -5995,7 +5998,8 @@ class FunctionToolCallItemParam(ItemParam, discriminator="function_call"):
 
 class FunctionToolCallItemResource(ItemResource, discriminator="function_call"):
     """A tool call to run a function. See the
-    `function calling guide </docs/guides/function-calling>`_ for more information.
+    `function calling guide <https://platform.openai.com/docs/guides/function-calling>`_ for more
+    information.
 
     :ivar id: Required.
     :vartype id: str
@@ -6607,6 +6611,8 @@ class InsightCluster(_Model):
     :vartype label: str
     :ivar suggestion: Suggestion for the cluster. Required.
     :vartype suggestion: str
+    :ivar suggestion_title: The title of the suggestion for the cluster. Required.
+    :vartype suggestion_title: str
     :ivar description: Description of the analysis cluster. Required.
     :vartype description: str
     :ivar weight: The weight of the analysis cluster. This indicate number of samples in the
@@ -6625,6 +6631,10 @@ class InsightCluster(_Model):
     """Label for the cluster. Required."""
     suggestion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Suggestion for the cluster. Required."""
+    suggestion_title: str = rest_field(
+        name="suggestionTitle", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The title of the suggestion for the cluster. Required."""
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the analysis cluster. Required."""
     weight: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6645,6 +6655,7 @@ class InsightCluster(_Model):
         id: str,  # pylint: disable=redefined-builtin
         label: str,
         suggestion: str,
+        suggestion_title: str,
         description: str,
         weight: int,
         sub_clusters: Optional[list["_models.InsightCluster"]] = None,
@@ -7078,7 +7089,8 @@ class ItemContentInputFile(ItemContent, discriminator="input_file"):
 
 
 class ItemContentInputImage(ItemContent, discriminator="input_image"):
-    """An image input to the model. Learn about `image inputs </docs/guides/vision>`_.
+    """An image input to the model. Learn about `image inputs
+    <https://platform.openai.com/docs/guides/vision>`_.
 
     :ivar type: The type of the input item. Always ``input_image``. Required.
     :vartype type: str or ~azure.ai.projects.models.INPUT_IMAGE
@@ -8082,7 +8094,8 @@ class MCPListToolsTool(_Model):
 
 class MCPTool(Tool, discriminator="mcp"):
     """Give the model access to additional tools via remote Model Context Protocol
-    (MCP) servers. `Learn more about MCP </docs/guides/tools-remote-mcp>`_.
+    (MCP) servers. `Learn more about MCP
+    <https://platform.openai.com/docs/guides/tools-remote-mcp>`_.
 
     :ivar type: The type of the MCP tool. Always ``mcp``. Required.
     :vartype type: str or ~azure.ai.projects.models.MCP
@@ -8381,9 +8394,9 @@ class MemorySearchTool(Tool, discriminator="memory_search"):
     :vartype scope: str
     :ivar search_options: Options for searching the memory store.
     :vartype search_options: ~azure.ai.projects.models.MemorySearchOptions
-    :ivar update_delay: The amount of time to wait after inactivity before updating memories with
-     messages from the call (e.g., '0s', '5m'). Defaults to '60s'.
-    :vartype update_delay: ~datetime.timedelta
+    :ivar update_delay: Time to wait before updating memories after inactivity (seconds). Default
+     300.
+    :vartype update_delay: int
     """
 
     type: Literal[ToolType.MEMORY_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -8398,9 +8411,8 @@ class MemorySearchTool(Tool, discriminator="memory_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Options for searching the memory store."""
-    update_delay: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The amount of time to wait after inactivity before updating memories with messages from the
-     call (e.g., '0s', '5m'). Defaults to '60s'."""
+    update_delay: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Time to wait before updating memories after inactivity (seconds). Default 300."""
 
     @overload
     def __init__(
@@ -8409,7 +8421,7 @@ class MemorySearchTool(Tool, discriminator="memory_search"):
         memory_store_name: str,
         scope: str,
         search_options: Optional["_models.MemorySearchOptions"] = None,
-        update_delay: Optional[datetime.timedelta] = None,
+        update_delay: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -8811,13 +8823,13 @@ class MemoryStoreOperationUsageInputTokensDetails(_Model):  # pylint: disable=na
     """MemoryStoreOperationUsageInputTokensDetails.
 
     :ivar cached_tokens: The number of tokens that were retrieved from the cache.
-     `More on prompt caching </docs/guides/prompt-caching>`_. Required.
+     `More on prompt caching <https://platform.openai.com/docs/guides/prompt-caching>`_. Required.
     :vartype cached_tokens: int
     """
 
     cached_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of tokens that were retrieved from the cache.
-     `More on prompt caching </docs/guides/prompt-caching>`_. Required."""
+     `More on prompt caching <https://platform.openai.com/docs/guides/prompt-caching>`_. Required."""
 
     @overload
     def __init__(
@@ -9728,7 +9740,8 @@ class PendingUploadResponse(_Model):
 
 class Prompt(_Model):
     """Reference to a prompt template and its variables.
-    `Learn more </docs/guides/text?api-mode=responses#reusable-prompts>`_.
+    `Learn more
+    <https://platform.openai.com/docs/guides/text?api-mode=responses#reusable-prompts>`_.
 
     :ivar id: The unique identifier of the prompt template to use. Required.
     :vartype id: str
@@ -10051,7 +10064,7 @@ class Reasoning(_Model):
      One of ``auto``, ``concise``, or ``detailed``. Is one of the following types: Literal["auto"],
      Literal["concise"], Literal["detailed"]
     :vartype summary: str or str or str
-    :ivar generate_summary: **Deprecated:** use ``summary`` instead. A summary of the reasoning
+    :ivar generate_summary: **Deprecated**: use ``summary`` instead. A summary of the reasoning
      performed by the model. This can be useful for debugging and understanding the model's
      reasoning process. One of ``auto``, ``concise``, or ``detailed``. Is one of the following
      types: Literal["auto"], Literal["concise"], Literal["detailed"]
@@ -10072,7 +10085,7 @@ class Reasoning(_Model):
     generate_summary: Optional[Literal["auto", "concise", "detailed"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """**Deprecated:** use ``summary`` instead. A summary of the reasoning performed by the model.
+    """**Deprecated**: use ``summary`` instead. A summary of the reasoning performed by the model.
      This can be useful for debugging and understanding the model's reasoning process. One of
      ``auto``, ``concise``, or ``detailed``. Is one of the following types: Literal[\"auto\"],
      Literal[\"concise\"], Literal[\"detailed\"]"""
@@ -10101,7 +10114,7 @@ class ReasoningItemParam(ItemParam, discriminator="reasoning"):
     """A description of the chain of thought used by a reasoning model while generating
     a response. Be sure to include these items in your ``input`` to the Responses API
     for subsequent turns of a conversation if you are manually
-    `managing context </docs/guides/conversation-state>`_.
+    `managing conversation state <https://platform.openai.com/docs/guides/conversation-state>`_.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.REASONING
@@ -10147,7 +10160,7 @@ class ReasoningItemResource(ItemResource, discriminator="reasoning"):
     """A description of the chain of thought used by a reasoning model while generating
     a response. Be sure to include these items in your ``input`` to the Responses API
     for subsequent turns of a conversation if you are manually
-    `managing context </docs/guides/conversation-state>`_.
+    `managing conversation state <https://platform.openai.com/docs/guides/conversation-state>`_.
 
     :ivar id: Required.
     :vartype id: str
@@ -10427,7 +10440,8 @@ class Response(_Model):
          We generally recommend altering this or ``temperature`` but not both. Required.
         :vartype top_p: float
         :ivar user: A unique identifier representing your end-user, which can help OpenAI to monitor
-         and detect abuse. `Learn more </docs/guides/safety-best-practices#end-user-ids>`_. Required.
+         and detect abuse. `Learn more about safety best practices
+         <https://platform.openai.com/docs/guides/safety-best-practices#end-user-ids>`_. Required.
         :vartype user: str
         :ivar service_tier: Note: service_tier is not applicable to Azure OpenAI. Known values are:
          "auto", "default", "flex", "scale", and "priority".
@@ -10437,25 +10451,27 @@ class Response(_Model):
         :vartype top_logprobs: int
         :ivar previous_response_id: The unique ID of the previous response to the model. Use this to
          create multi-turn conversations. Learn more about
-         `conversation state </docs/guides/conversation-state>`_.
+         `managing conversation state <https://platform.openai.com/docs/guides/conversation-state>`_.
         :vartype previous_response_id: str
         :ivar model: The model deployment to use for the creation of this response.
         :vartype model: str
         :ivar reasoning:
         :vartype reasoning: ~azure.ai.projects.models.Reasoning
         :ivar background: Whether to run the model response in the background.
-         `Learn more </docs/guides/background>`_.
+         `Learn more about background responses <https://platform.openai.com/docs/guides/background>`_.
         :vartype background: bool
         :ivar max_output_tokens: An upper bound for the number of tokens that can be generated for a
-         response, including visible output tokens and `reasoning tokens </docs/guides/reasoning>`_.
+         response, including visible output tokens and `reasoning tokens
+         <https://platform.openai.com/docs/guides/reasoning>`_.
         :vartype max_output_tokens: int
         :ivar max_tool_calls: The maximum number of total calls to built-in tools that can be processed
          in a response. This maximum number applies across all built-in tool calls, not per individual
          tool. Any further attempts to call a tool by the model will be ignored.
         :vartype max_tool_calls: int
         :ivar text: Configuration options for a text response from the model. Can be plain
-         text or structured JSON data. See `Text inputs and outputs </docs/guides/text>`_
-         and `Structured Outputs </docs/guides/structured-outputs>`_.
+         text or structured JSON data. See `Text inputs and outputs
+         <https://platform.openai.com/docs/guides/text>`_
+         and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_.
         :vartype text: ~azure.ai.projects.models.ResponseText
         :ivar tools: An array of tools the model may call while generating a response. You
     can specify which tool to use by setting the ``tool_choice`` parameter.
@@ -10465,12 +10481,13 @@ class Response(_Model):
 
 
          * **Built-in tools**: Tools that are provided by OpenAI that extend the
-    model's capabilities, like [web search](/docs/guides/tools-web-search)
-    or [file search](/docs/guides/tools-file-search). Learn more about
-    [built-in tools](/docs/guides/tools).
+    model's capabilities, like [web
+        search](https://platform.openai.com/docs/guides/tools-web-search)
+    or [file search](https://platform.openai.com/docs/guides/tools-file-search). Learn more about
+    [built-in tools](https://platform.openai.com/docs/guides/tools).
          * **Function calls (custom tools)**: Functions that are defined by you,
     enabling the model to call your own code. Learn more about
-    [function calling](/docs/guides/function-calling).
+    [function calling](https://platform.openai.com/docs/guides/function-calling).
         :vartype tools: list[~azure.ai.projects.models.Tool]
         :ivar tool_choice: How the model should select which tool (or tools) to use when generating
          a response. See the ``tools`` parameter to see how to specify which tools
@@ -10561,7 +10578,8 @@ class Response(_Model):
      We generally recommend altering this or ``temperature`` but not both. Required."""
     user: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier representing your end-user, which can help OpenAI to monitor and detect
-     abuse. `Learn more </docs/guides/safety-best-practices#end-user-ids>`_. Required."""
+     abuse. `Learn more about safety best practices
+     <https://platform.openai.com/docs/guides/safety-best-practices#end-user-ids>`_. Required."""
     service_tier: Optional[Union[str, "_models.ServiceTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10573,24 +10591,25 @@ class Response(_Model):
     previous_response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique ID of the previous response to the model. Use this to
      create multi-turn conversations. Learn more about
-     `conversation state </docs/guides/conversation-state>`_."""
+     `managing conversation state <https://platform.openai.com/docs/guides/conversation-state>`_."""
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model deployment to use for the creation of this response."""
     reasoning: Optional["_models.Reasoning"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     background: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to run the model response in the background.
-     `Learn more </docs/guides/background>`_."""
+     `Learn more about background responses <https://platform.openai.com/docs/guides/background>`_."""
     max_output_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An upper bound for the number of tokens that can be generated for a response, including visible
-     output tokens and `reasoning tokens </docs/guides/reasoning>`_."""
+     output tokens and `reasoning tokens <https://platform.openai.com/docs/guides/reasoning>`_."""
     max_tool_calls: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of total calls to built-in tools that can be processed in a response. This
      maximum number applies across all built-in tool calls, not per individual tool. Any further
      attempts to call a tool by the model will be ignored."""
     text: Optional["_models.ResponseText"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Configuration options for a text response from the model. Can be plain
-     text or structured JSON data. See `Text inputs and outputs </docs/guides/text>`_
-     and `Structured Outputs </docs/guides/structured-outputs>`_."""
+     text or structured JSON data. See `Text inputs and outputs
+     <https://platform.openai.com/docs/guides/text>`_
+     and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of tools the model may call while generating a response. You
  can specify which tool to use by setting the ``tool_choice`` parameter.
@@ -10600,12 +10619,13 @@ class Response(_Model):
  
  
       * **Built-in tools**: Tools that are provided by OpenAI that extend the
- model's capabilities, like [web search](/docs/guides/tools-web-search)
- or [file search](/docs/guides/tools-file-search). Learn more about
- [built-in tools](/docs/guides/tools).
+ model's capabilities, like [web
+     search](https://platform.openai.com/docs/guides/tools-web-search)
+ or [file search](https://platform.openai.com/docs/guides/tools-file-search). Learn more about
+ [built-in tools](https://platform.openai.com/docs/guides/tools).
       * **Function calls (custom tools)**: Functions that are defined by you,
  enabling the model to call your own code. Learn more about
- [function calling](/docs/guides/function-calling)."""
+ [function calling](https://platform.openai.com/docs/guides/function-calling)."""
     tool_choice: Optional[Union[str, "_models.ToolChoiceOptions", "_models.ToolChoiceObject"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13506,7 +13526,8 @@ class ResponseTextFormatConfigurationJsonSchema(
     ResponseTextFormatConfiguration, discriminator="json_schema"
 ):  # pylint: disable=name-too-long
     """JSON Schema response format. Used to generate structured JSON responses.
-    Learn more about `Structured Outputs </docs/guides/structured-outputs>`_.
+    Learn more about `Structured Outputs
+    <https://platform.openai.com/docs/guides/structured-outputs>`_.
 
     :ivar type: The type of response format being defined. Always ``json_schema``. Required.
     :vartype type: str or ~azure.ai.projects.models.JSON_SCHEMA
@@ -13522,7 +13543,7 @@ class ResponseTextFormatConfigurationJsonSchema(
      If set to true, the model will always follow the exact schema defined
      in the ``schema`` field. Only a subset of JSON Schema is supported when
      ``strict`` is ``true``. To learn more, read the `Structured Outputs
-     guide </docs/guides/structured-outputs>`_.
+     guide <https://platform.openai.com/docs/guides/structured-outputs>`_.
     :vartype strict: bool
     """
 
@@ -13543,7 +13564,7 @@ class ResponseTextFormatConfigurationJsonSchema(
      If set to true, the model will always follow the exact schema defined
      in the ``schema`` field. Only a subset of JSON Schema is supported when
      ``strict`` is ``true``. To learn more, read the `Structured Outputs
-     guide </docs/guides/structured-outputs>`_."""
+     guide <https://platform.openai.com/docs/guides/structured-outputs>`_."""
 
     @overload
     def __init__(
@@ -14791,18 +14812,25 @@ class WebSearchActionSearch(WebSearchAction, discriminator="search"):
     :vartype type: str or ~azure.ai.projects.models.SEARCH
     :ivar query: The search query. Required.
     :vartype query: str
+    :ivar sources: Web search sources.
+    :vartype sources: list[~azure.ai.projects.models.WebSearchActionSearchSources]
     """
 
     type: Literal[WebSearchActionType.SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The action type. Required."""
     query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The search query. Required."""
+    sources: Optional[list["_models.WebSearchActionSearchSources"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Web search sources."""
 
     @overload
     def __init__(
         self,
         *,
         query: str,
+        sources: Optional[list["_models.WebSearchActionSearchSources"]] = None,
     ) -> None: ...
 
     @overload
@@ -14815,6 +14843,39 @@ class WebSearchActionSearch(WebSearchAction, discriminator="search"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = WebSearchActionType.SEARCH  # type: ignore
+
+
+class WebSearchActionSearchSources(_Model):
+    """WebSearchActionSearchSources.
+
+    :ivar type: Required. Default value is "url".
+    :vartype type: str
+    :ivar url: Required.
+    :vartype url: str
+    """
+
+    type: Literal["url"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"url\"."""
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["url"] = "url"
 
 
 class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):
@@ -14865,7 +14926,8 @@ class WebSearchPreviewTool(Tool, discriminator="web_search_preview"):
 
 class WebSearchToolCallItemParam(ItemParam, discriminator="web_search_call"):
     """The results of a web search tool call. See the
-    `web search guide </docs/guides/tools-web-search>`_ for more information.
+    `web search guide <https://platform.openai.com/docs/guides/tools-web-search>`_ for more
+    information.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_CALL
@@ -14901,7 +14963,8 @@ class WebSearchToolCallItemParam(ItemParam, discriminator="web_search_call"):
 
 class WebSearchToolCallItemResource(ItemResource, discriminator="web_search_call"):
     """The results of a web search tool call. See the
-    `web search guide </docs/guides/tools-web-search>`_ for more information.
+    `web search guide <https://platform.openai.com/docs/guides/tools-web-search>`_ for more
+    information.
 
     :ivar id: Required.
     :vartype id: str

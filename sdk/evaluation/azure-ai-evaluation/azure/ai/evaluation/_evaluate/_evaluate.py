@@ -1109,7 +1109,7 @@ def _build_internal_log_attributes(
 
 
 def _log_events_to_app_insights(
-    otel_logger,
+    event_logger,
     events: List[Dict[str, Any]],
     log_attributes: Dict[str, Any],
     app_insights_config: AppInsightsConfig,
@@ -1117,11 +1117,10 @@ def _log_events_to_app_insights(
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
     """
-    Log independent events directly to App Insights using OpenTelemetry logging.
-    No spans are created - events are sent as pure log records.
+    Log independent events directly to App Insights using OpenTelemetry event logging.
 
-    :param otel_logger: OpenTelemetry logger instance
-    :type otel_logger: Logger
+    :param event_logger: OpenTelemetry event logger instance
+    :type event_logger: EventLogger
     :param events: List of event data dictionaries to log
     :type events: List[Dict[str, Any]]
     :param log_attributes: Attributes dict to use for each event (already includes extra_attributes if present)
@@ -1132,8 +1131,7 @@ def _log_events_to_app_insights(
     :type data_source_item: Optional[Dict[str, Any]]
     """
 
-    from opentelemetry import trace
-    from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
+    from opentelemetry._events import Event
 
     try:
         # Initialize values from AppInsights config as defaults
@@ -1179,6 +1177,7 @@ def _log_events_to_app_insights(
                 # The standard attributes are already in https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md#event-eventgen_aievaluationresult
                 metric_name = event_data.get("metric")
                 standard_log_attributes = {}
+                # This attributes makes evaluation events to go into customEvents table in App Insights
                 standard_log_attributes["microsoft.custom_event.name"] = EVALUATION_EVENT_NAME
                 standard_log_attributes["gen_ai.evaluation.name"] = metric_name
                 if event_data.get("score") is not None:
@@ -1241,24 +1240,14 @@ def _log_events_to_app_insights(
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
                 standard_log_attributes["http.client_ip"] = "0.0.0.0"
 
-                # Create context with trace_id and span_id if present (for distributed tracing correlation)
-                ctx = None
-                if trace_id:
-                    span_context = SpanContext(
-                        trace_id=trace_id,
-                        span_id=span_id if span_id else 0,  # Use extracted span_id or 0 if not available
-                        is_remote=False,
-                        trace_flags=TraceFlags(0x01),
+                event_logger.emit(
+                    Event(
+                        name=EVALUATION_EVENT_NAME,
+                        attributes=standard_log_attributes,
+                        body=EVALUATION_EVENT_NAME,
+                        trace_id=trace_id if trace_id is not None else None,
+                        span_id=span_id if span_id is not None else None,
                     )
-                    span = NonRecordingSpan(span_context)
-                    ctx = trace.set_span_in_context(span)
-
-                otel_logger.emit(
-                    timestamp=time.time_ns(),
-                    observed_timestamp=time.time_ns(),
-                    body=EVALUATION_EVENT_NAME,
-                    attributes=standard_log_attributes,
-                    context=ctx,
                 )
 
             except Exception as e:
@@ -1289,6 +1278,8 @@ def emit_eval_result_events_to_app_insights(
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.semconv.resource import ResourceAttributes
     from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+    from opentelemetry._events import get_event_logger
+    from opentelemetry.sdk._events import EventLoggerProvider
 
     if not results:
         LOGGER.debug("No results to log to App Insights")
@@ -1316,9 +1307,9 @@ def emit_eval_result_events_to_app_insights(
         # Add the Azure Monitor exporter to the logger provider
         logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
 
-        # Create a logger from OUR configured logger_provider (not the global one)
-        # This ensures the logger uses our anonymized resource
-        otel_logger = logger_provider.get_logger(__name__)
+        # Create event logger
+        event_provider = EventLoggerProvider(logger_provider)
+        event_logger = get_event_logger(__name__, event_logger_provider=event_provider)
 
         # Initialize base log attributes with extra_attributes if present, otherwise empty dict
         base_log_attributes = app_insights_config.get("extra_attributes", {})
@@ -1338,7 +1329,7 @@ def emit_eval_result_events_to_app_insights(
             log_attributes = base_log_attributes.copy()
 
             _log_events_to_app_insights(
-                otel_logger=otel_logger,
+                event_logger=event_logger,
                 events=result["results"],
                 log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
@@ -2146,20 +2137,38 @@ def _convert_results_to_aoai_evaluation_results(
                 # Create result object for this criteria
                 metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
                 for metric in metrics:
-                    result_obj = {
-                        "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
-                            "type", "azure_ai_evaluator"
-                        ),
-                        "name": criteria_name,  # Use criteria name as name
-                        "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
-                        "score": None,
-                        "label": None,
-                        "reason": None,
-                        "threshold": None,
-                        "passed": None,
-                        "sample": sample,
-                    }
-                    run_output_results.append(result_obj)
+                    should_add_error_summary = True
+                    for result in run_output_results:
+                        if result.get("name", None) == criteria_name and result.get("metric", None) == metric:
+                            rs_score = result.get("score", None)
+                            rs_threshold = result.get("threshold", None)
+                            rs_label = result.get("label", None)
+                            rs_reason = result.get("reason", None)
+                            if (
+                                _is_none_or_nan(rs_score)
+                                and _is_none_or_nan(rs_threshold)
+                                and _is_none_or_nan(rs_label)
+                                and _is_none_or_nan(rs_reason)
+                            ):
+                                run_output_results.remove(result)
+                            else:
+                                should_add_error_summary = False
+                            break  # Skip if already have result for this criteria and metric
+                    if should_add_error_summary:
+                        result_obj = {
+                            "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
+                                "type", "azure_ai_evaluator"
+                            ),
+                            "name": criteria_name,  # Use criteria name as name
+                            "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
+                            "score": None,
+                            "label": None,
+                            "reason": None,
+                            "threshold": None,
+                            "passed": None,
+                            "sample": sample,
+                        }
+                        run_output_results.append(result_obj)
 
         # Create RunOutputItem structure
         run_output_item = {
@@ -2189,6 +2198,24 @@ def _convert_results_to_aoai_evaluation_results(
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
+
+
+def _is_none_or_nan(value: Any) -> bool:
+    """
+    Check if a value is None or NaN.
+
+    :param value: The value to check
+    :type value: Any
+    :return: True if the value is None or NaN, False otherwise
+    :rtype: bool
+    """
+    if value is None:
+        return True
+    if isinstance(value, float) and math.isnan(value):
+        return True
+    if isinstance(value, str) and value.lower() in ["nan", "null", "none"]:
+        return True
+    return False
 
 
 def _append_indirect_attachments_to_results(
@@ -2372,7 +2399,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
                 usage_data = sample_data["usage"]
-                model_name = sample_data.get("model", "unknown")
+                model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
                 if model_name not in model_usage_stats:
                     model_usage_stats[model_name] = {
                         "invocation_count": 0,
@@ -2385,10 +2412,18 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 model_stats = model_usage_stats[model_name]
                 model_stats["invocation_count"] += 1
                 if isinstance(usage_data, dict):
-                    model_stats["total_tokens"] += usage_data.get("total_tokens", 0)
-                    model_stats["prompt_tokens"] += usage_data.get("prompt_tokens", 0)
-                    model_stats["completion_tokens"] += usage_data.get("completion_tokens", 0)
-                    model_stats["cached_tokens"] += usage_data.get("cached_tokens", 0)
+                    model_stats["total_tokens"] += (
+                        usage_data.get("total_tokens", 0) if usage_data.get("total_tokens", 0) else 0
+                    )
+                    model_stats["prompt_tokens"] += (
+                        usage_data.get("prompt_tokens", 0) if usage_data.get("prompt_tokens", 0) else 0
+                    )
+                    model_stats["completion_tokens"] += (
+                        usage_data.get("completion_tokens", 0) if usage_data.get("completion_tokens", 0) else 0
+                    )
+                    model_stats["cached_tokens"] += (
+                        usage_data.get("cached_tokens", 0) if usage_data.get("cached_tokens", 0) else 0
+                    )
 
     # Convert model usage stats to list format matching EvaluationRunPerModelUsage
     per_model_usage = []
