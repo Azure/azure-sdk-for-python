@@ -27,6 +27,7 @@ from dotenv import load_dotenv
 import os
 import json
 import time
+from utils import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -320,28 +321,5 @@ def main() -> None:
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
             
-            # [END evaluations_sample]
-
-
-def _to_json_primitive(obj):
-    if obj is None or isinstance(obj, (str, int, float, bool)):
-        return obj
-    if isinstance(obj, (list, tuple)):
-        return [_to_json_primitive(i) for i in obj]
-    if isinstance(obj, dict):
-        return {k: _to_json_primitive(v) for k, v in obj.items()}
-    for method in ("to_dict", "as_dict", "dict", "serialize"):
-        if hasattr(obj, method):
-            try:
-                return _to_json_primitive(getattr(obj, method)())
-            except Exception:
-                pass
-    if hasattr(obj, "__dict__"):
-        return _to_json_primitive({k: v for k, v in vars(obj).items() if not k.startswith("_")})
-    return str(obj)
-
-def pprint(str) -> None:
-    print(json.dumps(_to_json_primitive(str), indent=2))
-
 if __name__ == "__main__":
     main()

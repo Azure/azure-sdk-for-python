@@ -38,8 +38,8 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 
 from azure.core.paging import ItemPaged
-from pprint import pprint
 import time
+from utils import pprint
 
 from dotenv import load_dotenv
 
@@ -227,6 +227,8 @@ with DefaultAzureCredential() as credential:
                     run_id=run.id, eval_id=eval_object.id
                 ))
                 pprint(output_items)
+                print(f"Eval Run Report URL: {run.report_url}")
+                print(f"Eval Run Legacy URL: {run.properties['AiStudioEvaluationUri']}")
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")

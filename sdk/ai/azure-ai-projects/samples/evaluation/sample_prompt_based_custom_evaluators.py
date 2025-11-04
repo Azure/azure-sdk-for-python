@@ -37,7 +37,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 
 from azure.core.paging import ItemPaged
-from pprint import pprint
+from utils import pprint
 import time
 
 from dotenv import load_dotenv
@@ -47,7 +47,7 @@ load_dotenv()
 endpoint = os.environ[
     "AZURE_AI_PROJECT_ENDPOINT"
 ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "waqas-mgyk3ma9-northcentralus/gpt-4o")
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
 
 with DefaultAzureCredential() as credential:
 
@@ -93,10 +93,8 @@ with DefaultAzureCredential() as credential:
 
                             ---
 
-                            ### Output Format (JSON):
-                            {
-                                "score": <integer from 1 to 5>
-                            }
+                            ### Output should be Integer:
+                            <integer from 1 to 5>
                     """,
                     "init_parameters": {
                         "type": "object",
@@ -136,6 +134,8 @@ with DefaultAzureCredential() as credential:
                 },
             }
         )
+        
+        pprint(prompt_evaluator)
         
         print("Creating an OpenAI client from the AI Project client")
         client = project_client.get_openai_client()
@@ -183,7 +183,8 @@ with DefaultAzureCredential() as credential:
             testing_criteria=testing_criteria,
         )
         print(f"Eval Group created")
-
+        pprint(eval_object)
+        
         print("Get Eval Group by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
         print("Eval Run Response:")
@@ -250,6 +251,8 @@ with DefaultAzureCredential() as credential:
                     run_id=run.id, eval_id=eval_object.id
                 ))
                 pprint(output_items)
+                print(f"Eval Run Report URL: {run.report_url}")
+                print(f"Eval Run Legacy URL: {run.properties['AiStudioEvaluationUri']}")
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")

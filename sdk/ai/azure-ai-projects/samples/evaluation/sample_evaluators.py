@@ -37,14 +37,8 @@ from azure.ai.projects.models import (
     EvaluatorMetricType
 )
 
-from openai.types.evals.create_eval_jsonl_run_data_source_param import (
-    CreateEvalJSONLRunDataSourceParam,
-    SourceFileContent,
-    SourceFileContentContent
-)
-
 from azure.core.paging import ItemPaged
-from pprint import pprint
+from utils import pprint
 import time
 
 from dotenv import load_dotenv

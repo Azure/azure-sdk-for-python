@@ -37,6 +37,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 import json
 import time
+from utils import pprint
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileID
@@ -45,7 +46,6 @@ from azure.ai.projects.models import (
     DatasetVersion,
 )
 from dotenv import load_dotenv
-from pprint import pprint
 from datetime import datetime
 
 load_dotenv()
@@ -178,6 +178,8 @@ with DefaultAzureCredential() as credential:
                     run_id=run.id, eval_id=eval_object.id
                 ))
                 pprint(output_items)
+                print(f"Eval Run Report URL: {run.report_url}")
+                print(f"Eval Run Legacy URL: {run.properties['AiStudioEvaluationUri']}")
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
