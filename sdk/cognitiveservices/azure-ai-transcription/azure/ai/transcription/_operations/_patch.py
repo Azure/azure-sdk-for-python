@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from collections.abc import MutableMapping
-from typing import Any, Optional, Union
+from typing import Any, Optional
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models

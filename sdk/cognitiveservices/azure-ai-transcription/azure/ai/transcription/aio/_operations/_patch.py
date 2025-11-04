@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from collections.abc import MutableMapping
-from typing import Any, Optional, Union
+from typing import Any, Optional
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
@@ -47,9 +47,9 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/async_samples/sample_transcribe_from_url_async.py
-                :start-after: [START transcribe_from_url]
-                :end-before: [END transcribe_from_url]
+            .. literalinclude:: ../samples/async_samples/sample_transcribe_from_url_async.py
+                :start-after: [START transcribe_from_url_async]
+                :end-before: [END transcribe_from_url_async]
                 :language: python
                 :dedent: 4
                 :caption: Transcribe audio from a URL asynchronously.
