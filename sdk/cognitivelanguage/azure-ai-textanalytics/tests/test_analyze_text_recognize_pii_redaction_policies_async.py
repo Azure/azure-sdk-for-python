@@ -18,7 +18,7 @@ from azure.ai.textanalytics.models import (
     PiiActionContent,
     EntityMaskPolicyType,
     CharacterMaskPolicyType,
-    SyntheticReplacementPolicyType
+    SyntheticReplacementPolicyType,
 )
 
 TextAnalysisPreparer = functools.partial(
@@ -27,6 +27,7 @@ TextAnalysisPreparer = functools.partial(
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
     text_analysis_key="fake_key",
 )
+
 
 class TestTextAnalysis(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
@@ -42,39 +43,39 @@ class TestTextAnalysisCase(TestTextAnalysis):
 
             # Documents
             documents = [
-                MultiLanguageInput(id="1", text="My name is John Doe. My ssn is 123-45-6789. My email is john@example.com..", language="en"),
-                MultiLanguageInput(id="2", text="My name is John Doe. My ssn is 123-45-6789. My email is john@example.com..", language="en"),
+                MultiLanguageInput(
+                    id="1",
+                    text="My name is John Doe. My ssn is 123-45-6789. My email is john@example.com..",
+                    language="en",
+                ),
+                MultiLanguageInput(
+                    id="2",
+                    text="My name is John Doe. My ssn is 123-45-6789. My email is john@example.com..",
+                    language="en",
+                ),
             ]
 
             text_input = MultiLanguageTextInput(multi_language_inputs=documents)
 
             # Redaction Policies
-            default_policy = EntityMaskPolicyType(
-                policy_name="defaultPolicy",
-                is_default_policy=True
-            )
+            default_policy = EntityMaskPolicyType(policy_name="defaultPolicy", is_default_policy=True)
 
             ssn_policy = CharacterMaskPolicyType(
                 policy_name="customMaskForSSN",
                 unmask_length=4,
                 unmask_from_end=False,
-                entity_types=["USSocialSecurityNumber"]
+                entity_types=["USSocialSecurityNumber"],
             )
 
             synthetic_policy = SyntheticReplacementPolicyType(
-                policy_name="syntheticMaskForPerson",
-                entity_types=["Person", "Email"]
+                policy_name="syntheticMaskForPerson", entity_types=["Person", "Email"]
             )
 
             parameters = PiiActionContent(
-                pii_categories=["All"],
-                redaction_policies=[default_policy, ssn_policy, synthetic_policy]
+                pii_categories=["All"], redaction_policies=[default_policy, ssn_policy, synthetic_policy]
             )
 
-            body = TextPiiEntitiesRecognitionInput(
-                text_input=text_input,
-                action_content=parameters
-            )
+            body = TextPiiEntitiesRecognitionInput(text_input=text_input, action_content=parameters)
 
             # Async (non-LRO) call
             result = await client.analyze_text(body=body)

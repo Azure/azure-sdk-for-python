@@ -1465,7 +1465,7 @@ class ConfidenceScoreThresholdOverride(_Model):
     :ivar value: The confidence score threshold for the specified PII category. Required.
     :vartype value: float
     :ivar language: The 2 letter ISO 639-1 language for which the override applies. If not
-     specified, the override applies to all languages. Required.
+     specified, the override applies to all languages.
     :vartype language: str
     """
 
@@ -1535,9 +1535,9 @@ class ConfidenceScoreThresholdOverride(_Model):
      \"USMedicareBeneficiaryId\", \"Location\", \"City\", \"State\", \"Airport\", and \"GPE\"."""
     value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The confidence score threshold for the specified PII category. Required."""
-    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The 2 letter ISO 639-1 language for which the override applies. If not specified, the override
-     applies to all languages. Required."""
+     applies to all languages."""
 
     @overload
     def __init__(
@@ -1545,7 +1545,7 @@ class ConfidenceScoreThresholdOverride(_Model):
         *,
         entity: Union[str, "_models.PiiCategoriesExclude"],
         value: float,
-        language: str,
+        language: Optional[str] = None,
     ) -> None: ...
 
     @overload
