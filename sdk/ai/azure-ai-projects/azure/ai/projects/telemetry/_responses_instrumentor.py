@@ -1984,7 +1984,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Extract conversation_id from kwargs
         conversation_id = kwargs.get("conversation_id")
 
-        # Create and return the span
         return self.start_list_conversation_items_span(
             server_address=server_address,
             port=port,
@@ -2156,9 +2155,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return self.trace_conversations_create(function, *args, **kwargs)
             if _name == "list" and _trace_type == TraceType.CONVERSATIONS:
                 return self.trace_list_conversation_items(function, *args, **kwargs)
-            # pylint: disable=no-else-return
-            else:  # pylint: disable=no-else-return
-                return function(*args, **kwargs)
+
+            return function(*args, **kwargs)
 
         return inner
 
@@ -2193,9 +2191,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 return await self.trace_conversations_create_async(function, *args, **kwargs)
             if _name == "list" and _trace_type == TraceType.CONVERSATIONS:
                 return await self.trace_list_conversation_items_async(function, *args, **kwargs)
-            # pylint: disable=no-else-return
-            else:  # pylint: disable=no-else-return
-                return await function(*args, **kwargs)
+
+            return await function(*args, **kwargs)
 
         return inner
 
