@@ -1,3 +1,4 @@
+# pylint: disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------

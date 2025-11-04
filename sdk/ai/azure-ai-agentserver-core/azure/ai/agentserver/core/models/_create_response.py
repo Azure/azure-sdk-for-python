@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Optional
 
-from .openai import response_create_params
+from .openai import response_create_params #pylint: disable=no-name-in-module
 from . import projects as _azure_ai_projects_models
 
 class CreateResponse(response_create_params.ResponseCreateParamsBase, total=False):

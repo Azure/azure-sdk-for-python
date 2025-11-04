@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------

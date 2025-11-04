@@ -1,3 +1,7 @@
+# pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 import inspect
 import json
 import os
@@ -132,7 +136,7 @@ class FoundryCBAgent:
                             logger.error("Async generator initialization failed: %s\n%s", e, traceback.format_exc())
                             return JSONResponse({"error": err_msg}, status_code=500)
 
-                        async def gen():
+                        async def gen_async():
                             ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
                             token = otel_context.attach(ctx)
                             error_sent = False
@@ -154,7 +158,7 @@ class FoundryCBAgent:
                                 if not error_sent:
                                     yield "data: [DONE]\n\n"
 
-                        return StreamingResponse(gen(), media_type="text/event-stream")
+                        return StreamingResponse(gen_async(), media_type="text/event-stream")
                     logger.info("End of processing CreateResponse request.")
                     return JSONResponse(resp.as_dict())
                 except Exception as e:
