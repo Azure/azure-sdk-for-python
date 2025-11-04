@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
-    SourceFileContentContent
+    SourceFileContentContent,
 )
 
 
@@ -48,72 +48,44 @@ def main() -> None:
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client:
+        with AIProjectClient(
+            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+        ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
-            
+
             client = project_client.get_openai_client()
             client._custom_query = {"api-version": "2025-11-15-preview"}
-            
+
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "query": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
-                        "response": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
+                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         "tool_definitions": {
-                            "anyOf": [
-                                {"type": "object"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        }
+                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                        },
                     },
-                    "required": ["query", "response"]
+                    "required": ["query", "response"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             }
-            
+
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
                     "name": "tool_output_utilization",
                     "evaluator_name": "builtin.tool_output_utilization",
-                    "initialization_parameters": {
-                        "deployment_name": f"{model_deployment_name}"
-                    },
+                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
                         "response": "{{item.response}}",
-                        "tool_definitions": "{{item.tool_definitions}}"
-                    }
+                        "tool_definitions": "{{item.tool_definitions}}",
+                    },
                 }
             ]
-            
+
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Tool Output Utilization Evaluator with inline data",
@@ -134,11 +106,8 @@ def main() -> None:
                     "run_id": "run_ToolOutput123",
                     "role": "user",
                     "content": [
-                        {
-                            "type": "text",
-                            "text": "What's the weather like in Paris and should I bring an umbrella?"
-                        }
-                    ]
+                        {"type": "text", "text": "What's the weather like in Paris and should I bring an umbrella?"}
+                    ],
                 }
             ]
             response1 = [
@@ -151,11 +120,9 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "call_WeatherParis456",
                             "name": "get_weather",
-                            "arguments": {
-                                "location": "Paris"
-                            }
+                            "arguments": {"location": "Paris"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:37Z",
@@ -168,10 +135,10 @@ def main() -> None:
                             "tool_result": {
                                 "weather": "Rainy, 16°C",
                                 "humidity": "85%",
-                                "precipitation": "Heavy rain expected"
-                            }
+                                "precipitation": "Heavy rain expected",
+                            },
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:39Z",
@@ -180,10 +147,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "The weather in Paris is currently rainy with a temperature of 16°C and high humidity at 85%. Heavy rain is expected, so yes, you should definitely bring an umbrella!"
+                            "text": "The weather in Paris is currently rainy with a temperature of 16°C and high humidity at 85%. Heavy rain is expected, so yes, you should definitely bring an umbrella!",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
             tool_definitions1 = [
                 {
@@ -191,10 +158,8 @@ def main() -> None:
                     "description": "Get detailed weather information for a location",
                     "parameters": {
                         "type": "object",
-                        "properties": {
-                            "location": {"type": "string", "description": "The city name"}
-                        }
-                    }
+                        "properties": {"location": {"type": "string", "description": "The city name"}},
+                    },
                 }
             ]
 
@@ -204,12 +169,7 @@ def main() -> None:
                     "createdAt": "2025-03-26T17:28:00Z",
                     "run_id": "run_ToolOutputPoor789",
                     "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "What's the current stock price of AAPL and should I buy?"
-                        }
-                    ]
+                    "content": [{"type": "text", "text": "What's the current stock price of AAPL and should I buy?"}],
                 }
             ]
             response2 = [
@@ -222,11 +182,9 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "call_StockPrice101",
                             "name": "get_stock_price",
-                            "arguments": {
-                                "symbol": "AAPL"
-                            }
+                            "arguments": {"symbol": "AAPL"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:28:07Z",
@@ -240,10 +198,10 @@ def main() -> None:
                                 "price": "$190.50",
                                 "change": "+2.5%",
                                 "volume": "50M",
-                                "market_cap": "$2.9T"
-                            }
+                                "market_cap": "$2.9T",
+                            },
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:28:09Z",
@@ -252,10 +210,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "I can't provide investment advice. Please consult with a financial advisor for investment decisions."
+                            "text": "I can't provide investment advice. Please consult with a financial advisor for investment decisions.",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
             tool_definitions2 = [
                 {
@@ -263,10 +221,8 @@ def main() -> None:
                     "description": "Get current stock price and market data",
                     "parameters": {
                         "type": "object",
-                        "properties": {
-                            "symbol": {"type": "string", "description": "Stock symbol (e.g., AAPL)"}
-                        }
-                    }
+                        "properties": {"symbol": {"type": "string", "description": "Stock symbol (e.g., AAPL)"}},
+                    },
                 }
             ]
 
@@ -274,36 +230,25 @@ def main() -> None:
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="inline_data_run",
-                metadata={
-                    "team": "eval-exp",
-                    "scenario": "inline-data-v1"
-                },
+                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
                 data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", 
+                    type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content= [
+                        content=[
                             # Example 1: Good tool output utilization
                             SourceFileContentContent(
-                                item= {
-                                    "query": query1,
-                                    "response": response1,
-                                    "tool_definitions": tool_definitions1
-                                }
+                                item={"query": query1, "response": response1, "tool_definitions": tool_definitions1}
                             ),
                             # Example 2: Poor tool output utilization
                             SourceFileContentContent(
-                                item= {
-                                    "query": query2,
-                                    "response": response2,
-                                    "tool_definitions": tool_definitions2
-                                }
-                            )
-                        ]
-                    )
-                )
+                                item={"query": query2, "response": response2, "tool_definitions": tool_definitions2}
+                            ),
+                        ],
+                    ),
+                ),
             )
-            
+
             print(f"Eval Run created")
             pprint(eval_run_object)
 
@@ -316,16 +261,15 @@ def main() -> None:
 
             while True:
                 run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed": 
-                    output_items = list(client.evals.runs.output_items.list(
-                        run_id=run.id, eval_id=eval_object.id
-                    ))
+                if run.status == "completed" or run.status == "failed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                     pprint(output_items)
                     print(f"Eval Run Status: {run.status}")
                     print(f"Eval Run Report URL: {run.report_url}")
                     break
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
-            
+
+
 if __name__ == "__main__":
     main()

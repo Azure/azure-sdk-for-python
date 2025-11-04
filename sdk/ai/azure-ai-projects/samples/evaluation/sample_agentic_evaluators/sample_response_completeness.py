@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
-    SourceFileContentContent
+    SourceFileContentContent,
 )
 
 
@@ -48,44 +48,34 @@ def main() -> None:
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client:
+        with AIProjectClient(
+            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+        ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
-            
+
             client = project_client.get_openai_client()
             client._custom_query = {"api-version": "2025-11-15-preview"}
-            
+
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
-                    "properties": {
-                        "ground_truth": {
-                            "type": "string"
-                        },
-                        "response": {
-                            "type": "string"
-                        }
-                    },
-                    "required": ["ground_truth", "response"]
+                    "properties": {"ground_truth": {"type": "string"}, "response": {"type": "string"}},
+                    "required": ["ground_truth", "response"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             }
-            
+
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
                     "name": "response_completeness",
                     "evaluator_name": "builtin.response_completeness",
-                    "initialization_parameters": {
-                        "deployment_name": f"{model_deployment_name}"
-                    },
-                    "data_mapping": {
-                        "ground_truth": "{{item.ground_truth}}",
-                        "response": "{{item.response}}"
-                    }
+                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                    "data_mapping": {"ground_truth": "{{item.ground_truth}}", "response": "{{item.response}}"},
                 }
             ]
-            
+
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Response Completeness Evaluator with inline data",
@@ -100,8 +90,12 @@ def main() -> None:
             pprint(eval_object_response)
 
             # Complete response example
-            complete_response = "Itinery: Day 1 check out the downtown district of the city on train; for Day 2, we can rest in hotel."
-            complete_ground_truth = "Itinery: Day 1 take a train to visit the downtown area for city sightseeing; Day 2 rests in hotel."
+            complete_response = (
+                "Itinery: Day 1 check out the downtown district of the city on train; for Day 2, we can rest in hotel."
+            )
+            complete_ground_truth = (
+                "Itinery: Day 1 take a train to visit the downtown area for city sightseeing; Day 2 rests in hotel."
+            )
 
             # Incomplete response example
             incomplete_response = "The order with ID 124 is delayed and should now arrive by March 20, 2025."
@@ -111,34 +105,25 @@ def main() -> None:
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="inline_data_run",
-                metadata={
-                    "team": "eval-exp",
-                    "scenario": "inline-data-v1"
-                },
+                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
                 data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", 
+                    type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content= [
+                        content=[
                             # Complete response example
                             SourceFileContentContent(
-                                item= {
-                                    "ground_truth": complete_ground_truth,
-                                    "response": complete_response
-                                }
+                                item={"ground_truth": complete_ground_truth, "response": complete_response}
                             ),
                             # Incomplete response example
                             SourceFileContentContent(
-                                item= {
-                                    "ground_truth": incomplete_ground_truth,
-                                    "response": incomplete_response
-                                }
-                            )
-                        ]
-                    )
-                )
+                                item={"ground_truth": incomplete_ground_truth, "response": incomplete_response}
+                            ),
+                        ],
+                    ),
+                ),
             )
-            
+
             print(f"Eval Run created")
             pprint(eval_run_object)
 
@@ -151,16 +136,15 @@ def main() -> None:
 
             while True:
                 run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed": 
-                    output_items = list(client.evals.runs.output_items.list(
-                        run_id=run.id, eval_id=eval_object.id
-                    ))
+                if run.status == "completed" or run.status == "failed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                     pprint(output_items)
                     print(f"Eval Run Status: {run.status}")
                     print(f"Eval Run Report URL: {run.report_url}")
                     break
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
-            
+
+
 if __name__ == "__main__":
     main()

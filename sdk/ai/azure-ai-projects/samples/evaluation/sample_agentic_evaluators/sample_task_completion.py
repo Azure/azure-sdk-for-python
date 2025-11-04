@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
-    SourceFileContentContent
+    SourceFileContentContent,
 )
 
 
@@ -48,72 +48,44 @@ def main() -> None:
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client:
+        with AIProjectClient(
+            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+        ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
-            
+
             client = project_client.get_openai_client()
             client._custom_query = {"api-version": "2025-11-15-preview"}
-            
+
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "query": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
-                        "response": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
+                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         "tool_definitions": {
-                            "anyOf": [
-                                {"type": "object"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        }
+                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                        },
                     },
-                    "required": ["query", "response"]
+                    "required": ["query", "response"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             }
-            
+
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
                     "name": "task_completion",
                     "evaluator_name": "builtin.task_completion",
-                    "initialization_parameters": {
-                        "deployment_name": f"{model_deployment_name}"
-                    },
+                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
                         "response": "{{item.response}}",
-                        "tool_definitions": "{{item.tool_definitions}}"
-                    }
+                        "tool_definitions": "{{item.tool_definitions}}",
+                    },
                 }
             ]
-            
+
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Task Completion Evaluator with inline data",
@@ -144,9 +116,9 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "I need to transfer $500 from my checking account to my savings account"
+                            "text": "I need to transfer $500 from my checking account to my savings account",
                         }
-                    ]
+                    ],
                 }
             ]
             complex_response = [
@@ -159,13 +131,9 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "call_TransferMoney456",
                             "name": "transfer_money",
-                            "arguments": {
-                                "from_account": "checking",
-                                "to_account": "savings",
-                                "amount": 500
-                            }
+                            "arguments": {"from_account": "checking", "to_account": "savings", "amount": 500},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:42Z",
@@ -179,10 +147,10 @@ def main() -> None:
                                 "status": "success",
                                 "transaction_id": "TXN789",
                                 "new_checking_balance": 2500.00,
-                                "new_savings_balance": 8500.00
-                            }
+                                "new_savings_balance": 8500.00,
+                            },
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:45Z",
@@ -191,10 +159,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "I've successfully transferred $500 from your checking account to your savings account. Transaction ID: TXN789. Your new checking balance is $2,500.00 and your savings balance is $8,500.00."
+                            "text": "I've successfully transferred $500 from your checking account to your savings account. Transaction ID: TXN789. Your new checking balance is $2,500.00 and your savings balance is $8,500.00.",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
 
             complex_tool_definitions = [
@@ -206,18 +174,15 @@ def main() -> None:
                         "properties": {
                             "from_account": {
                                 "type": "string",
-                                "description": "The source account type (checking, savings, etc.)"
+                                "description": "The source account type (checking, savings, etc.)",
                             },
                             "to_account": {
                                 "type": "string",
-                                "description": "The destination account type (checking, savings, etc.)"
+                                "description": "The destination account type (checking, savings, etc.)",
                             },
-                            "amount": {
-                                "type": "number",
-                                "description": "The amount to transfer"
-                            }
-                        }
-                    }
+                            "amount": {"type": "number", "description": "The amount to transfer"},
+                        },
+                    },
                 }
             ]
 
@@ -227,12 +192,7 @@ def main() -> None:
                     "createdAt": "2025-03-26T17:30:00Z",
                     "run_id": "run_SimpleTask789",
                     "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "Please calculate 15% tip on a $80 dinner bill"
-                        }
-                    ]
+                    "content": [{"type": "text", "text": "Please calculate 15% tip on a $80 dinner bill"}],
                 }
             ]
             query_conversation_response = [
@@ -243,9 +203,9 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "The 15% tip on an $80 dinner bill is $12.00. Your total bill including tip would be $92.00."
+                            "text": "The 15% tip on an $80 dinner bill is $12.00. Your total bill including tip would be $92.00.",
                         }
-                    ]
+                    ],
                 }
             ]
 
@@ -253,52 +213,41 @@ def main() -> None:
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="inline_data_run",
-                metadata={
-                    "team": "eval-exp",
-                    "scenario": "inline-data-v1"
-                },
+                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
                 data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", 
+                    type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content= [
+                        content=[
                             # Success example - task completed
                             SourceFileContentContent(
-                                item= {
-                                    "query": success_query,
-                                    "response": success_response,
-                                    "tool_definitions": None
-                                }
+                                item={"query": success_query, "response": success_response, "tool_definitions": None}
                             ),
                             # Failure example - task not completed
                             SourceFileContentContent(
-                                item= {
-                                    "query": failure_query,
-                                    "response": failure_response,
-                                    "tool_definitions": None
-                                }
+                                item={"query": failure_query, "response": failure_response, "tool_definitions": None}
                             ),
                             # Complex example - conversation format with tool usage
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": complex_query,
                                     "response": complex_response,
-                                    "tool_definitions": complex_tool_definitions
+                                    "tool_definitions": complex_tool_definitions,
                                 }
                             ),
                             # Another complex example - conversation format without tool calls
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": query_conversation_query,
                                     "response": query_conversation_response,
-                                    "tool_definitions": None
+                                    "tool_definitions": None,
                                 }
-                            )
-                        ]
-                    )
-                )
+                            ),
+                        ],
+                    ),
+                ),
             )
-            
+
             print(f"Eval Run created")
             pprint(eval_run_object)
 
@@ -311,16 +260,15 @@ def main() -> None:
 
             while True:
                 run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed": 
-                    output_items = list(client.evals.runs.output_items.list(
-                        run_id=run.id, eval_id=eval_object.id
-                    ))
+                if run.status == "completed" or run.status == "failed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                     pprint(output_items)
                     print(f"Eval Run Status: {run.status}")
                     print(f"Eval Run Report URL: {run.report_url}")
                     break
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
-            
+
+
 if __name__ == "__main__":
     main()

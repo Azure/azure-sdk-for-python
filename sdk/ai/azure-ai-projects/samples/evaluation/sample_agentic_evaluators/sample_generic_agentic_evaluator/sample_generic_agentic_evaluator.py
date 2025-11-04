@@ -35,15 +35,10 @@ load_dotenv()
 
 def _get_evaluator_initialization_parameters(evaluator_name: str) -> dict[str, str]:
     if evaluator_name == "task_navigation_efficiency":
-        return {
-            "matching_mode": "exact_match"  #  Can be "exact_match", "in_order_match", or "any_order_match"
-        }
+        return {"matching_mode": "exact_match"}  #  Can be "exact_match", "in_order_match", or "any_order_match"
     else:
-        model_deployment_name = os.environ.get(
-            "AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
-        return {
-            "deployment_name": model_deployment_name
-        }
+        model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+        return {"deployment_name": model_deployment_name}
 
 
 def _get_evaluation_contents() -> list[SourceFileContentContent]:
@@ -53,14 +48,10 @@ def _get_evaluation_contents() -> list[SourceFileContentContent]:
     success_query = "What is the capital of France?"
     success_response = "The capital of France is Paris."
 
-    evaluation_contents = [SourceFileContentContent(
-        item={
-            "query": success_query,
-            "response": success_response
-        }
-    )]
+    evaluation_contents = [SourceFileContentContent(item={"query": success_query, "response": success_response})]
 
     return evaluation_contents
+
 
 def main() -> None:
     evaluator_name = "coherence"  # Change to any agentic evaluator name like "relevance", "response_completeness", "task_navigation_efficiency"

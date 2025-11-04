@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
-    SourceFileContentContent
+    SourceFileContentContent,
 )
 
 
@@ -48,60 +48,39 @@ def main() -> None:
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client:
+        with AIProjectClient(
+            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+        ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
-            
+
             client = project_client.get_openai_client()
             client._custom_query = {"api-version": "2025-11-15-preview"}
-            
+
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
                     "properties": {
                         "tool_definitions": {
-                            "anyOf": [
-                                {"type": "object"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
+                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
                         },
-                        "response": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        }
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                     },
-                    "required": ["response"]
+                    "required": ["response"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             }
-            
+
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
                     "name": "tool_success",
                     "evaluator_name": "builtin.tool_success",
-                    "initialization_parameters": {
-                        "deployment_name": f"{model_deployment_name}"
-                    },
-                    "data_mapping": {
-                        "tool_definitions": "{{item.tool_definitions}}",
-                        "response": "{{item.response}}"
-                    }
+                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                    "data_mapping": {"tool_definitions": "{{item.tool_definitions}}", "response": "{{item.response}}"},
                 }
             ]
-            
+
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Tool Success Evaluator with inline data",
@@ -126,12 +105,9 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "call_FileUpload456",
                             "name": "upload_file",
-                            "arguments": {
-                                "file_path": "/documents/report.pdf",
-                                "destination": "cloud_storage"
-                            }
+                            "arguments": {"file_path": "/documents/report.pdf", "destination": "cloud_storage"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:37Z",
@@ -145,10 +121,10 @@ def main() -> None:
                                 "status": "success",
                                 "file_id": "file_12345",
                                 "upload_url": "https://storage.example.com/file_12345",
-                                "message": "File uploaded successfully"
-                            }
+                                "message": "File uploaded successfully",
+                            },
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:39Z",
@@ -157,10 +133,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "I've successfully uploaded your report.pdf to cloud storage. The file ID is file_12345 and it's available at the provided URL."
+                            "text": "I've successfully uploaded your report.pdf to cloud storage. The file ID is file_12345 and it's available at the provided URL.",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
             tool_definitions1 = [
                 {
@@ -170,9 +146,9 @@ def main() -> None:
                         "type": "object",
                         "properties": {
                             "file_path": {"type": "string", "description": "Path to the file to upload"},
-                            "destination": {"type": "string", "description": "Destination storage location"}
-                        }
-                    }
+                            "destination": {"type": "string", "description": "Destination storage location"},
+                        },
+                    },
                 }
             ]
 
@@ -187,12 +163,9 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "call_DatabaseQuery101",
                             "name": "query_database",
-                            "arguments": {
-                                "table": "users",
-                                "query": "SELECT * FROM users WHERE age > 25"
-                            }
+                            "arguments": {"table": "users", "query": "SELECT * FROM users WHERE age > 25"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:28:12Z",
@@ -205,10 +178,10 @@ def main() -> None:
                             "tool_result": {
                                 "status": "error",
                                 "error_code": "DB_CONNECTION_FAILED",
-                                "message": "Unable to connect to database. Connection timeout after 30 seconds."
-                            }
+                                "message": "Unable to connect to database. Connection timeout after 30 seconds.",
+                            },
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:28:14Z",
@@ -217,10 +190,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "I encountered an error while trying to query the database. The connection timed out after 30 seconds. Please try again later or contact your database administrator."
+                            "text": "I encountered an error while trying to query the database. The connection timed out after 30 seconds. Please try again later or contact your database administrator.",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
             tool_definitions2 = [
                 {
@@ -230,9 +203,9 @@ def main() -> None:
                         "type": "object",
                         "properties": {
                             "table": {"type": "string", "description": "Database table name"},
-                            "query": {"type": "string", "description": "SQL query to execute"}
-                        }
-                    }
+                            "query": {"type": "string", "description": "SQL query to execute"},
+                        },
+                    },
                 }
             ]
 
@@ -240,34 +213,25 @@ def main() -> None:
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="inline_data_run",
-                metadata={
-                    "team": "eval-exp",
-                    "scenario": "inline-data-v1"
-                },
+                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
                 data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", 
+                    type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content= [
+                        content=[
                             # Example 1: Successful tool execution
                             SourceFileContentContent(
-                                item= {
-                                    "tool_definitions": tool_definitions1,
-                                    "response": response1
-                                }
+                                item={"tool_definitions": tool_definitions1, "response": response1}
                             ),
                             # Example 2: Failed tool execution
                             SourceFileContentContent(
-                                item= {
-                                    "tool_definitions": tool_definitions2,
-                                    "response": response2
-                                }
-                            )
-                        ]
-                    )
-                )
+                                item={"tool_definitions": tool_definitions2, "response": response2}
+                            ),
+                        ],
+                    ),
+                ),
             )
-            
+
             print(f"Eval Run created")
             pprint(eval_run_object)
 
@@ -280,16 +244,15 @@ def main() -> None:
 
             while True:
                 run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed": 
-                    output_items = list(client.evals.runs.output_items.list(
-                        run_id=run.id, eval_id=eval_object.id
-                    ))
+                if run.status == "completed" or run.status == "failed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                     pprint(output_items)
                     print(f"Eval Run Status: {run.status}")
                     print(f"Eval Run Report URL: {run.report_url}")
                     break
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
-            
+
+
 if __name__ == "__main__":
     main()

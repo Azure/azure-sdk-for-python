@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
-    SourceFileContentContent
+    SourceFileContentContent,
 )
 
 
@@ -48,72 +48,44 @@ def main() -> None:
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client:
+        with AIProjectClient(
+            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+        ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
-            
+
             client = project_client.get_openai_client()
             client._custom_query = {"api-version": "2025-11-15-preview"}
-            
+
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "query": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
-                        "response": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
+                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         "tool_definitions": {
-                            "anyOf": [
-                                {"type": "object"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        }
+                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                        },
                     },
-                    "required": ["query", "response", "tool_definitions"]
+                    "required": ["query", "response", "tool_definitions"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             }
-            
+
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
                     "name": "tool_input_accuracy",
                     "evaluator_name": "builtin.tool_input_accuracy",
-                    "initialization_parameters": {
-                        "deployment_name": f"{model_deployment_name}"
-                    },
+                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
                         "response": "{{item.response}}",
-                        "tool_definitions": "{{item.tool_definitions}}"
-                    }
+                        "tool_definitions": "{{item.tool_definitions}}",
+                    },
                 }
             ]
-            
+
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Tool Input Accuracy Evaluator with inline data",
@@ -139,37 +111,25 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "call_WeatherBoston456",
                             "name": "get_weather",
-                            "arguments": {
-                                "location": "Boston"
-                            }
+                            "arguments": {"location": "Boston"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:37Z",
                     "run_id": "run_ToolInputAccuracy123",
                     "tool_call_id": "call_WeatherBoston456",
                     "role": "tool",
-                    "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_result": {
-                                "weather": "Sunny, 22°C"
-                            }
-                        }
-                    ]
+                    "content": [{"type": "tool_result", "tool_result": {"weather": "Sunny, 22°C"}}],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:39Z",
                     "run_id": "run_ToolInputAccuracy123",
                     "role": "assistant",
                     "content": [
-                        {
-                            "type": "text",
-                            "text": "The current weather in Boston is sunny with a temperature of 22°C."
-                        }
-                    ]
-                }
+                        {"type": "text", "text": "The current weather in Boston is sunny with a temperature of 22°C."}
+                    ],
+                },
             ]
             success_tool_definitions = [
                 {
@@ -177,10 +137,8 @@ def main() -> None:
                     "description": "Get weather information for a location",
                     "parameters": {
                         "type": "object",
-                        "properties": {
-                            "location": {"type": "string", "description": "The city name"}
-                        }
-                    }
+                        "properties": {"location": {"type": "string", "description": "The city name"}},
+                    },
                 }
             ]
 
@@ -196,11 +154,9 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "call_EmailFail101",
                             "name": "send_email",
-                            "arguments": {
-                                "recipient": "john@example.com"
-                            }
+                            "arguments": {"recipient": "john@example.com"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:28:12Z",
@@ -208,13 +164,8 @@ def main() -> None:
                     "tool_call_id": "call_EmailFail101",
                     "role": "tool",
                     "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_result": {
-                                "error": "Missing required fields: subject and body"
-                            }
-                        }
-                    ]
+                        {"type": "tool_result", "tool_result": {"error": "Missing required fields: subject and body"}}
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:28:14Z",
@@ -223,10 +174,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "I encountered an error sending the email. Please provide the subject and message content."
+                            "text": "I encountered an error sending the email. Please provide the subject and message content.",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
             failure_tool_definitions = [
                 {
@@ -237,9 +188,9 @@ def main() -> None:
                         "properties": {
                             "recipient": {"type": "string", "description": "Recipient email address"},
                             "subject": {"type": "string", "description": "Email subject line"},
-                            "body": {"type": "string", "description": "Email message body"}
-                        }
-                    }
+                            "body": {"type": "string", "description": "Email message body"},
+                        },
+                    },
                 }
             ]
 
@@ -252,9 +203,9 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "Book a meeting room for Friday from 2 PM to 4 PM for the project review"
+                            "text": "Book a meeting room for Friday from 2 PM to 4 PM for the project review",
                         }
-                    ]
+                    ],
                 }
             ]
             complex_response = [
@@ -271,10 +222,10 @@ def main() -> None:
                                 "date": "2025-03-29",
                                 "start_time": "14:00",
                                 "end_time": "16:00",
-                                "purpose": "project review"
-                            }
+                                "purpose": "project review",
+                            },
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:29:07Z",
@@ -284,12 +235,9 @@ def main() -> None:
                     "content": [
                         {
                             "type": "tool_result",
-                            "tool_result": {
-                                "room_id": "Conference Room B",
-                                "confirmation": "Room booked successfully"
-                            }
+                            "tool_result": {"room_id": "Conference Room B", "confirmation": "Room booked successfully"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-26T17:29:09Z",
@@ -298,10 +246,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "I've successfully booked Conference Room B for Friday, March 29th from 2:00 PM to 4:00 PM for your project review."
+                            "text": "I've successfully booked Conference Room B for Friday, March 29th from 2:00 PM to 4:00 PM for your project review.",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
             complex_tool_definitions = [
                 {
@@ -313,9 +261,9 @@ def main() -> None:
                             "date": {"type": "string", "description": "Date in YYYY-MM-DD format"},
                             "start_time": {"type": "string", "description": "Start time in HH:MM format"},
                             "end_time": {"type": "string", "description": "End time in HH:MM format"},
-                            "purpose": {"type": "string", "description": "Meeting purpose"}
-                        }
-                    }
+                            "purpose": {"type": "string", "description": "Meeting purpose"},
+                        },
+                    },
                 }
             ]
 
@@ -323,44 +271,41 @@ def main() -> None:
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="inline_data_run",
-                metadata={
-                    "team": "eval-exp",
-                    "scenario": "inline-data-v1"
-                },
+                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
                 data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", 
+                    type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content= [
+                        content=[
                             # Success example - accurate tool inputs
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": success_query,
                                     "response": success_response,
-                                    "tool_definitions": success_tool_definitions
+                                    "tool_definitions": success_tool_definitions,
                                 }
                             ),
                             # Failure example - inaccurate tool inputs
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": failure_query,
                                     "response": failure_response,
-                                    "tool_definitions": failure_tool_definitions
+                                    "tool_definitions": failure_tool_definitions,
                                 }
                             ),
                             # Complex example - conversation format with accurate tool inputs
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": complex_query,
                                     "response": complex_response,
-                                    "tool_definitions": complex_tool_definitions
+                                    "tool_definitions": complex_tool_definitions,
                                 }
-                            )
-                        ]
-                    )
-                )
+                            ),
+                        ],
+                    ),
+                ),
             )
-            
+
             print(f"Eval Run created")
             pprint(eval_run_object)
 
@@ -373,16 +318,15 @@ def main() -> None:
 
             while True:
                 run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed": 
-                    output_items = list(client.evals.runs.output_items.list(
-                        run_id=run.id, eval_id=eval_object.id
-                    ))
+                if run.status == "completed" or run.status == "failed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                     pprint(output_items)
                     print(f"Eval Run Status: {run.status}")
                     print(f"Eval Run Report URL: {run.report_url}")
                     break
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
-            
+
+
 if __name__ == "__main__":
     main()
