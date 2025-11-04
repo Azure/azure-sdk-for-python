@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2025-10-30)
+## 2.0.0 (2025-11-04)
 
 ### Features Added
 
@@ -49,9 +49,7 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Method `LocalRulestacksOperations.list_app_ids` changed from `asynchronous` to `synchronous`
-  - Method `LocalRulestacksOperations.list_countries` changed from `asynchronous` to `synchronous`
-  - Method `LocalRulestacksOperations.list_predefined_url_categories` changed from `asynchronous` to `synchronous`
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `CertificateObjectGlobalRulestackResource` instance variables `certificate_signer_resource_id`, `certificate_self_signed`, `audit_comment`, `description`, `etag`, and `provisioning_state` have been moved under property `properties`
   - Model `CertificateObjectLocalRulestackResource` instance variables `certificate_signer_resource_id`, `certificate_self_signed`, `audit_comment`, `description`, `etag`, and `provisioning_state` have been moved under property `properties`
   - Model `FirewallResource` instance variables `pan_etag`, `network_profile`, `is_panorama_managed`, `panorama_config`, `associated_rulestack`, `dns_settings`, `front_end_settings`, `provisioning_state`, `plan_data`, and `marketplace_details` have been moved under property `properties`
