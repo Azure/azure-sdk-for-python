@@ -210,7 +210,8 @@ async def create_stac_item(client: PlanetaryComputerProClient, collection_id, it
 
     if any(item.id == stac_item.id for item in stac_item_get_items_response.features):
         logging.info(f"Item {stac_item.id} already exists. Deleting it before creating a new one.")
-        await (await client.stac.begin_delete_item(collection_id=collection_id, item_id=stac_item.id, polling=True)).result()
+        delete_poller = await client.stac.begin_delete_item(collection_id=collection_id, item_id=stac_item.id, polling=True)
+        await delete_poller.result()
         logging.info(f"Deleted item {stac_item.id}. Proceeding to create a new one.")
     else:
         logging.info(f"Item {stac_item.id} does not exist. Proceeding to create it.")
