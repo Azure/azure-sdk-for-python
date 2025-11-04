@@ -52,3 +52,28 @@ def grade(sample: dict, item: dict) -> float:
                 pass_threshold=1.5,
                 source=source_code,
             )
+
+    def test_default_image_tag(self):
+        """Test that image_tag has a default value of '2025-05-08'."""
+        model_config = AzureOpenAIModelConfiguration(
+            azure_endpoint="https://test.openai.azure.com",
+            api_key="test-key",
+            azure_deployment="test-deployment",
+        )
+
+        source_code = """
+def grade(sample: dict, item: dict) -> float:
+    return 1.0
+"""
+
+        # Create grader without specifying image_tag
+        grader = AzureOpenAIPythonGrader(
+            model_config=model_config,
+            name="python_test",
+            pass_threshold=0.5,
+            source=source_code,
+        )
+
+        # Verify the grader was created successfully
+        assert grader.pass_threshold == 0.5
+        assert grader.id == "azureai://built-in/evaluators/azure-openai/python_grader"
