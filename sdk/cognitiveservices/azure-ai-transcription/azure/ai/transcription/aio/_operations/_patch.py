@@ -27,13 +27,7 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
         self,
         audio_url: str,
         *,
-        locales: Optional[list[str]] = None,
-        models: Optional[dict[str, str]] = None,
-        profanity_filter_mode: Optional[Union[str, _models.ProfanityFilterMode]] = None,
-        diarization_options: Optional[_models.TranscriptionDiarizationOptions] = None,
-        active_channels: Optional[list[int]] = None,
-        enhanced_mode: Optional[_models.EnhancedModeProperties] = None,
-        phrase_list: Optional[_models.PhraseListProperties] = None,
+        options: Optional[_models.TranscriptionOptions] = None,
         **kwargs: Any
     ) -> _models.TranscriptionResult:
         """Transcribes audio from a URL.
@@ -44,39 +38,27 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
         :param audio_url: The URL of the audio file to transcribe. The audio must be shorter than 2
          hours in duration and smaller than 250 MB in size. Required.
         :type audio_url: str
-        :keyword locales: A list of possible locales for the transcription. If not specified, the
-         locale is detected automatically.
-        :paramtype locales: list[str]
-        :keyword models: Maps candidate locales to a model URI to be used for transcription.
-        :paramtype models: dict[str, str]
-        :keyword profanity_filter_mode: Mode of profanity filtering. Known values are:
-         "None", "Removed", "Tags", and "Masked".
-        :paramtype profanity_filter_mode: str or
-         ~azure.ai.transcription.models.ProfanityFilterMode
-        :keyword diarization_options: Speaker diarization settings.
-        :paramtype diarization_options:
-         ~azure.ai.transcription.models.TranscriptionDiarizationOptions
-        :keyword active_channels: The 0-based indices of channels to transcribe separately.
-        :paramtype active_channels: list[int]
-        :keyword enhanced_mode: Enhanced mode properties.
-        :paramtype enhanced_mode: ~azure.ai.transcription.models.EnhancedModeProperties
-        :keyword phrase_list: Phrase list properties.
-        :paramtype phrase_list: ~azure.ai.transcription.models.PhraseListProperties
+        :keyword options: Optional transcription configuration. If provided, the audio_url parameter
+         will override the audio_url field in the options object.
+        :paramtype options: ~azure.ai.transcription.models.TranscriptionOptions
         :return: TranscriptionResult with the transcription text and phrases.
         :rtype: ~azure.ai.transcription.models.TranscriptionResult
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../samples/async_samples/sample_transcribe_from_url_async.py
+                :start-after: [START transcribe_from_url]
+                :end-before: [END transcribe_from_url]
+                :language: python
+                :dedent: 4
+                :caption: Transcribe audio from a URL asynchronously.
         """
-        # Create options with the audio URL
-        options = _models.TranscriptionOptions(
-            audio_url=audio_url,
-            locales=locales,
-            models=models,
-            profanity_filter_mode=profanity_filter_mode,
-            diarization_options=diarization_options,
-            active_channels=active_channels,
-            enhanced_mode=enhanced_mode,
-            phrase_list=phrase_list,
-        )
+        # Create or update options with the audio URL
+        if options is None:
+            options = _models.TranscriptionOptions(audio_url=audio_url)
+        else:
+            options.audio_url = audio_url
 
         # Create request content without audio file (service will fetch from URL)
         body = _models.TranscriptionContent(options=options, audio=None)
