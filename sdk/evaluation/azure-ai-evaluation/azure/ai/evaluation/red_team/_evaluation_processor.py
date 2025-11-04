@@ -333,10 +333,10 @@ class EvaluationProcessor:
                     f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {error_msg}"
                 )
                 # Return a row with error information AND conversation data so it can be matched
+                # The error field will be picked up by result processing to populate sample.error
                 return {
                     "inputs.conversation": {"messages": messages},
                     "error": error_msg,
-                    "evaluation_failed": True,
                 }
 
         return {}

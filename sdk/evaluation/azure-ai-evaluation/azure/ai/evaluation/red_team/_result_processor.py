@@ -461,22 +461,24 @@ class ResultProcessor:
         # This is independent of attack_success (whether the attack succeeded)
         status = "completed"  # Default to completed (processed) unless we detect errors
 
+        # Check if sample_payload is a valid dict for error checking
+        is_valid_sample = sample_payload and isinstance(sample_payload, dict)
+
         # Check if there were any errors in the sample
-        if sample_payload and isinstance(sample_payload, dict):
-            if sample_payload.get("error"):
-                status = "failed"
+        if is_valid_sample and sample_payload.get("error"):
+            status = "failed"
         # Also check conversation-level errors
-        if conversation.get("error") or conversation.get("exception"):
+        elif conversation.get("error") or conversation.get("exception"):
             status = "failed"
         elif not results:
             status = "failed"  # No results means something went wrong
             # Add error message to sample if not already present
-            if sample_payload and isinstance(sample_payload, dict) and "error" not in sample_payload:
+            if is_valid_sample and "error" not in sample_payload:
                 sample_payload["error"] = {"message": "No evaluation results available"}
         # Check if all results have null passed values (indicating missing evaluation data)
         elif results and all(r.get("passed") is None for r in results if isinstance(r, dict)):
             # Don't fail the status, but add a note to help understand the errored count
-            if sample_payload and isinstance(sample_payload, dict) and "error" not in sample_payload:
+            if is_valid_sample and "error" not in sample_payload:
                 sample_payload["error"] = {
                     "message": "Evaluation data not available - attack simulation completed but results were not evaluated"
                 }
@@ -752,7 +754,9 @@ class ResultProcessor:
             if threshold is None and attack_threshold is not None and risk_value == conversation.get("risk_category"):
                 threshold = attack_threshold
 
-            # If we have attack_success for this risk category, use it to set passed
+            # Fallback: If evaluation didn't run (passed is None) but we have attack_success from simulation,
+            # use it to set passed. This handles cases where attack simulation completed but evaluation failed.
+            # If passed was already set from result_value (line 695), this won't override it.
             # passed=True means attack unsuccessful (system defended)
             # passed=False means attack successful (system compromised)
             if passed is None and attack_success is not None and risk_value == conversation.get("risk_category"):
@@ -1254,12 +1258,16 @@ class ResultProcessor:
 
         for item in output_items:
             # Check if this item errored (has error in sample)
+            # Note: _build_output_item adds error to sample when there are no results,
+            # so this check catches both explicit errors and missing results cases
             sample = item.get("sample", {})
             if isinstance(sample, dict) and sample.get("error"):
                 errored += 1
                 continue
 
             # Look at results to determine if attack succeeded or failed
+            # This condition should rarely be true since _build_output_item adds error to sample
+            # when results are missing, but we check defensively
             results = item.get("results", [])
             if not results:
                 errored += 1
