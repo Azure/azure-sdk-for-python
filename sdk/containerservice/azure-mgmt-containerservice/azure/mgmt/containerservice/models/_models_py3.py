@@ -7,13 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class AbsoluteMonthlySchedule(_serialization.Model):
@@ -127,20 +129,44 @@ class AdvancedNetworkingSecurity(_serialization.Model):
     :ivar enabled: This feature allows user to configure network policy based on DNS (FQDN) names.
      It can be enabled only on cilium based clusters. If not specified, the default is false.
     :vartype enabled: bool
+    :ivar advanced_network_policies: Enable advanced network policies. This allows users to
+     configure Layer 7 network policies (FQDN, HTTP, Kafka). Policies themselves must be configured
+     via the Cilium Network Policy resources, see
+     https://docs.cilium.io/en/latest/security/policy/index.html. This can be enabled only on
+     cilium-based clusters. If not specified, the default value is FQDN if security.enabled is set
+     to true. Known values are: "L7", "FQDN", and "None".
+    :vartype advanced_network_policies: str or
+     ~azure.mgmt.containerservice.models.AdvancedNetworkPolicies
     """
 
     _attribute_map = {
         "enabled": {"key": "enabled", "type": "bool"},
+        "advanced_network_policies": {"key": "advancedNetworkPolicies", "type": "str"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        advanced_network_policies: Optional[Union[str, "_models.AdvancedNetworkPolicies"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: This feature allows user to configure network policy based on DNS (FQDN)
          names. It can be enabled only on cilium based clusters. If not specified, the default is false.
         :paramtype enabled: bool
+        :keyword advanced_network_policies: Enable advanced network policies. This allows users to
+         configure Layer 7 network policies (FQDN, HTTP, Kafka). Policies themselves must be configured
+         via the Cilium Network Policy resources, see
+         https://docs.cilium.io/en/latest/security/policy/index.html. This can be enabled only on
+         cilium-based clusters. If not specified, the default value is FQDN if security.enabled is set
+         to true. Known values are: "L7", "FQDN", and "None".
+        :paramtype advanced_network_policies: str or
+         ~azure.mgmt.containerservice.models.AdvancedNetworkPolicies
         """
         super().__init__(**kwargs)
         self.enabled = enabled
+        self.advanced_network_policies = advanced_network_policies
 
 
 class SubResource(_serialization.Model):
@@ -191,7 +217,7 @@ class AgentPool(SubResource):
     :vartype type: str
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
@@ -217,7 +243,7 @@ class AgentPool(SubResource):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer" and "WasmWasi".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -379,6 +405,10 @@ class AgentPool(SubResource):
      list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
     :ivar status: Contains read-only information about the Agent Pool.
     :vartype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+    :ivar local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS overrides.
+     LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
+     more details see aka.ms/aks/localdns.
+    :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
     """
 
     _validation = {
@@ -452,6 +482,7 @@ class AgentPool(SubResource):
             "type": "[VirtualMachineNodes]",
         },
         "status": {"key": "properties.status", "type": "AgentPoolStatus"},
+        "local_dns_profile": {"key": "properties.localDNSProfile", "type": "LocalDNSProfile"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -479,15 +510,15 @@ class AgentPool(SubResource):
         orchestrator_version: Optional[str] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         power_state: Optional["_models.PowerState"] = None,
-        availability_zones: Optional[List[str]] = None,
+        availability_zones: Optional[list[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
         node_public_ip_prefix_id: Optional[str] = None,
         scale_set_priority: Union[str, "_models.ScaleSetPriority"] = "Regular",
         scale_set_eviction_policy: Union[str, "_models.ScaleSetEvictionPolicy"] = "Delete",
         spot_max_price: float = -1,
-        tags: Optional[Dict[str, str]] = None,
-        node_labels: Optional[Dict[str, str]] = None,
-        node_taints: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        node_labels: Optional[dict[str, str]] = None,
+        node_taints: Optional[list[str]] = None,
         proximity_placement_group_id: Optional[str] = None,
         kubelet_config: Optional["_models.KubeletConfig"] = None,
         linux_os_config: Optional["_models.LinuxOSConfig"] = None,
@@ -504,8 +535,9 @@ class AgentPool(SubResource):
         gpu_profile: Optional["_models.GPUProfile"] = None,
         gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
-        virtual_machine_nodes_status: Optional[List["_models.VirtualMachineNodes"]] = None,
+        virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
+        local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -533,7 +565,7 @@ class AgentPool(SubResource):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer" and "WasmWasi".
+         "OCIContainer", "WasmWasi", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -690,6 +722,10 @@ class AgentPool(SubResource):
          list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
         :keyword status: Contains read-only information about the Agent Pool.
         :paramtype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+        :keyword local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS
+         overrides. LocalDNS helps improve performance and reliability of DNS resolution in an AKS
+         cluster. For more details see aka.ms/aks/localdns.
+        :paramtype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
         """
         super().__init__(**kwargs)
         self.e_tag: Optional[str] = None
@@ -745,6 +781,7 @@ class AgentPool(SubResource):
         self.virtual_machines_profile = virtual_machines_profile
         self.virtual_machine_nodes_status = virtual_machine_nodes_status
         self.status = status
+        self.local_dns_profile = local_dns_profile
 
 
 class AgentPoolAvailableVersions(_serialization.Model):
@@ -782,7 +819,7 @@ class AgentPoolAvailableVersions(_serialization.Model):
     def __init__(
         self,
         *,
-        agent_pool_versions: Optional[List["_models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem"]] = None,
+        agent_pool_versions: Optional[list["_models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -853,7 +890,7 @@ class AgentPoolDeleteMachinesParameter(_serialization.Model):
         "machine_names": {"key": "machineNames", "type": "[str]"},
     }
 
-    def __init__(self, *, machine_names: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, machine_names: list[str], **kwargs: Any) -> None:
         """
         :keyword machine_names: The agent pool machine names. Required.
         :paramtype machine_names: list[str]
@@ -916,7 +953,7 @@ class AgentPoolListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AgentPool"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.AgentPool"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of agent pools.
         :paramtype value: list[~azure.mgmt.containerservice.models.AgentPool]
@@ -948,9 +985,9 @@ class AgentPoolNetworkProfile(_serialization.Model):
     def __init__(
         self,
         *,
-        node_public_ip_tags: Optional[List["_models.IPTag"]] = None,
-        allowed_host_ports: Optional[List["_models.PortRange"]] = None,
-        application_security_groups: Optional[List[str]] = None,
+        node_public_ip_tags: Optional[list["_models.IPTag"]] = None,
+        allowed_host_ports: Optional[list["_models.PortRange"]] = None,
+        application_security_groups: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -980,15 +1017,24 @@ class AgentPoolSecurityProfile(_serialization.Model):
      signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
      If not specified, the default is false.
     :vartype enable_secure_boot: bool
+    :ivar ssh_access: SSH access method of an agent pool. Known values are: "LocalUser" and
+     "Disabled".
+    :vartype ssh_access: str or ~azure.mgmt.containerservice.models.AgentPoolSSHAccess
     """
 
     _attribute_map = {
         "enable_vtpm": {"key": "enableVTPM", "type": "bool"},
         "enable_secure_boot": {"key": "enableSecureBoot", "type": "bool"},
+        "ssh_access": {"key": "sshAccess", "type": "str"},
     }
 
     def __init__(
-        self, *, enable_vtpm: Optional[bool] = None, enable_secure_boot: Optional[bool] = None, **kwargs: Any
+        self,
+        *,
+        enable_vtpm: Optional[bool] = None,
+        enable_secure_boot: Optional[bool] = None,
+        ssh_access: Optional[Union[str, "_models.AgentPoolSSHAccess"]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
@@ -999,10 +1045,14 @@ class AgentPoolSecurityProfile(_serialization.Model):
          signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
          If not specified, the default is false.
         :paramtype enable_secure_boot: bool
+        :keyword ssh_access: SSH access method of an agent pool. Known values are: "LocalUser" and
+         "Disabled".
+        :paramtype ssh_access: str or ~azure.mgmt.containerservice.models.AgentPoolSSHAccess
         """
         super().__init__(**kwargs)
         self.enable_vtpm = enable_vtpm
         self.enable_secure_boot = enable_secure_boot
+        self.ssh_access = ssh_access
 
 
 class AgentPoolStatus(_serialization.Model):
@@ -1012,7 +1062,7 @@ class AgentPoolStatus(_serialization.Model):
 
     :ivar provisioning_error: The error detail information of the agent pool. Preserves the
      detailed info of failure. If there was no error, this field is omitted.
-    :vartype provisioning_error: ~azure.mgmt.containerservice.models.CloudErrorBody
+    :vartype provisioning_error: ~azure.mgmt.containerservice.models.ErrorDetail
     """
 
     _validation = {
@@ -1020,13 +1070,13 @@ class AgentPoolStatus(_serialization.Model):
     }
 
     _attribute_map = {
-        "provisioning_error": {"key": "provisioningError", "type": "CloudErrorBody"},
+        "provisioning_error": {"key": "provisioningError", "type": "ErrorDetail"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_error: Optional["_models.CloudErrorBody"] = None
+        self.provisioning_error: Optional["_models.ErrorDetail"] = None
 
 
 class AgentPoolUpgradeProfile(_serialization.Model):
@@ -1077,7 +1127,7 @@ class AgentPoolUpgradeProfile(_serialization.Model):
         *,
         kubernetes_version: str,
         os_type: Union[str, "_models.OSType"] = "Linux",
-        upgrades: Optional[List["_models.AgentPoolUpgradeProfilePropertiesUpgradesItem"]] = None,
+        upgrades: Optional[list["_models.AgentPoolUpgradeProfilePropertiesUpgradesItem"]] = None,
         latest_node_image_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1322,58 +1372,6 @@ class AzureKeyVaultKms(_serialization.Model):
         self.key_vault_resource_id = key_vault_resource_id
 
 
-class CloudErrorBody(_serialization.Model):
-    """An error response from the Container service.
-
-    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
-     programmatically.
-    :vartype code: str
-    :ivar message: A message describing the error, intended to be suitable for display in a user
-     interface.
-    :vartype message: str
-    :ivar target: The target of the particular error. For example, the name of the property in
-     error.
-    :vartype target: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list[~azure.mgmt.containerservice.models.CloudErrorBody]
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[CloudErrorBody]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
-         programmatically.
-        :paramtype code: str
-        :keyword message: A message describing the error, intended to be suitable for display in a user
-         interface.
-        :paramtype message: str
-        :keyword target: The target of the particular error. For example, the name of the property in
-         error.
-        :paramtype target: str
-        :keyword details: A list of additional details about the error.
-        :paramtype details: list[~azure.mgmt.containerservice.models.CloudErrorBody]
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-
-
 class ClusterUpgradeSettings(_serialization.Model):
     """Settings for upgrading a cluster.
 
@@ -1408,7 +1406,7 @@ class CompatibleVersions(_serialization.Model):
         "versions": {"key": "versions", "type": "[str]"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, versions: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, name: Optional[str] = None, versions: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The product/service name.
         :paramtype name: str
@@ -1564,9 +1562,9 @@ class ContainerServiceNetworkProfile(_serialization.Model):
         load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = None,
         nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = None,
         static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = None,
-        pod_cidrs: Optional[List[str]] = None,
-        service_cidrs: Optional[List[str]] = None,
-        ip_families: Optional[List[Union[str, "_models.IpFamily"]]] = None,
+        pod_cidrs: Optional[list[str]] = None,
+        service_cidrs: Optional[list[str]] = None,
+        ip_families: Optional[list[Union[str, "_models.IpFamily"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1667,7 +1665,7 @@ class ContainerServiceSshConfiguration(_serialization.Model):
         "public_keys": {"key": "publicKeys", "type": "[ContainerServiceSshPublicKey]"},
     }
 
-    def __init__(self, *, public_keys: List["_models.ContainerServiceSshPublicKey"], **kwargs: Any) -> None:
+    def __init__(self, *, public_keys: list["_models.ContainerServiceSshPublicKey"], **kwargs: Any) -> None:
         """
         :keyword public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. A
          maximum of 1 key may be specified. Required.
@@ -1775,7 +1773,7 @@ class CredentialResults(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kubeconfigs: Optional[List["_models.CredentialResult"]] = None
+        self.kubeconfigs: Optional[list["_models.CredentialResult"]] = None
 
 
 class DailySchedule(_serialization.Model):
@@ -1903,7 +1901,7 @@ class EndpointDependency(_serialization.Model):
         self,
         *,
         domain_name: Optional[str] = None,
-        endpoint_details: Optional[List["_models.EndpointDetail"]] = None,
+        endpoint_details: Optional[list["_models.EndpointDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2030,8 +2028,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -2173,8 +2171,8 @@ class IstioComponents(_serialization.Model):
     def __init__(
         self,
         *,
-        ingress_gateways: Optional[List["_models.IstioIngressGateway"]] = None,
-        egress_gateways: Optional[List["_models.IstioEgressGateway"]] = None,
+        ingress_gateways: Optional[list["_models.IstioIngressGateway"]] = None,
+        egress_gateways: Optional[list["_models.IstioEgressGateway"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2195,23 +2193,56 @@ class IstioEgressGateway(_serialization.Model):
 
     :ivar enabled: Whether to enable the egress gateway. Required.
     :vartype enabled: bool
+    :ivar name: Name of the Istio add-on egress gateway. Required.
+    :vartype name: str
+    :ivar namespace: Namespace that the Istio add-on egress gateway should be deployed in. If
+     unspecified, the default is aks-istio-egress.
+    :vartype namespace: str
+    :ivar gateway_configuration_name: Name of the gateway configuration custom resource for the
+     Istio add-on egress gateway. Must be specified when enabling the Istio egress gateway. Must be
+     deployed in the same namespace that the Istio egress gateway will be deployed in.
+    :vartype gateway_configuration_name: str
     """
 
     _validation = {
         "enabled": {"required": True},
+        "name": {"required": True, "pattern": r"[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"},
     }
 
     _attribute_map = {
         "enabled": {"key": "enabled", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "gateway_configuration_name": {"key": "gatewayConfigurationName", "type": "str"},
     }
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        name: str,
+        namespace: Optional[str] = None,
+        gateway_configuration_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Whether to enable the egress gateway. Required.
         :paramtype enabled: bool
+        :keyword name: Name of the Istio add-on egress gateway. Required.
+        :paramtype name: str
+        :keyword namespace: Namespace that the Istio add-on egress gateway should be deployed in. If
+         unspecified, the default is aks-istio-egress.
+        :paramtype namespace: str
+        :keyword gateway_configuration_name: Name of the gateway configuration custom resource for the
+         Istio add-on egress gateway. Must be specified when enabling the Istio egress gateway. Must be
+         deployed in the same namespace that the Istio egress gateway will be deployed in.
+        :paramtype gateway_configuration_name: str
         """
         super().__init__(**kwargs)
         self.enabled = enabled
+        self.name = name
+        self.namespace = namespace
+        self.gateway_configuration_name = gateway_configuration_name
 
 
 class IstioIngressGateway(_serialization.Model):
@@ -2333,7 +2364,7 @@ class IstioServiceMesh(_serialization.Model):
         *,
         components: Optional["_models.IstioComponents"] = None,
         certificate_authority: Optional["_models.IstioCertificateAuthority"] = None,
-        revisions: Optional[List[str]] = None,
+        revisions: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2424,7 +2455,7 @@ class KubeletConfig(_serialization.Model):
         image_gc_high_threshold: Optional[int] = None,
         image_gc_low_threshold: Optional[int] = None,
         topology_manager_policy: Optional[str] = None,
-        allowed_unsafe_sysctls: Optional[List[str]] = None,
+        allowed_unsafe_sysctls: Optional[list[str]] = None,
         fail_swap_on: Optional[bool] = None,
         container_log_max_size_mb: Optional[int] = None,
         container_log_max_files: Optional[int] = None,
@@ -2496,7 +2527,7 @@ class KubernetesPatchVersion(_serialization.Model):
         "upgrades": {"key": "upgrades", "type": "[str]"},
     }
 
-    def __init__(self, *, upgrades: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, upgrades: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword upgrades: Possible upgrade path for given patch version.
         :paramtype upgrades: list[str]
@@ -2535,7 +2566,7 @@ class KubernetesVersion(_serialization.Model):
         capabilities: Optional["_models.KubernetesVersionCapabilities"] = None,
         is_default: Optional[bool] = None,
         is_preview: Optional[bool] = None,
-        patch_versions: Optional[Dict[str, "_models.KubernetesPatchVersion"]] = None,
+        patch_versions: Optional[dict[str, "_models.KubernetesPatchVersion"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2571,7 +2602,7 @@ class KubernetesVersionCapabilities(_serialization.Model):
     }
 
     def __init__(
-        self, *, support_plan: Optional[List[Union[str, "_models.KubernetesSupportPlan"]]] = None, **kwargs: Any
+        self, *, support_plan: Optional[list[Union[str, "_models.KubernetesSupportPlan"]]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword support_plan:
@@ -2592,7 +2623,7 @@ class KubernetesVersionListResult(_serialization.Model):
         "values": {"key": "values", "type": "[KubernetesVersion]"},
     }
 
-    def __init__(self, *, values: Optional[List["_models.KubernetesVersion"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, values: Optional[list["_models.KubernetesVersion"]] = None, **kwargs: Any) -> None:
         """
         :keyword values: Array of AKS supported Kubernetes versions.
         :paramtype values: list[~azure.mgmt.containerservice.models.KubernetesVersion]
@@ -2662,6 +2693,159 @@ class LinuxOSConfig(_serialization.Model):
         self.swap_file_size_mb = swap_file_size_mb
 
 
+class LocalDNSOverride(_serialization.Model):
+    """Overrides for localDNS profile.
+
+    :ivar query_logging: Log level for DNS queries in localDNS. Known values are: "Error" and
+     "Log".
+    :vartype query_logging: str or ~azure.mgmt.containerservice.models.LocalDNSQueryLogging
+    :ivar protocol: Enforce TCP or prefer UDP protocol for connections from localDNS to upstream
+     DNS server. Known values are: "PreferUDP" and "ForceTCP".
+    :vartype protocol: str or ~azure.mgmt.containerservice.models.LocalDNSProtocol
+    :ivar forward_destination: Destination server for DNS queries to be forwarded from localDNS.
+     Known values are: "ClusterCoreDNS" and "VnetDNS".
+    :vartype forward_destination: str or
+     ~azure.mgmt.containerservice.models.LocalDNSForwardDestination
+    :ivar forward_policy: Forward policy for selecting upstream DNS server. See `forward plugin
+     <https://coredns.io/plugins/forward>`_ for more information. Known values are: "Sequential",
+     "RoundRobin", and "Random".
+    :vartype forward_policy: str or ~azure.mgmt.containerservice.models.LocalDNSForwardPolicy
+    :ivar max_concurrent: Maximum number of concurrent queries. See `forward plugin
+     <https://coredns.io/plugins/forward>`_ for more information.
+    :vartype max_concurrent: int
+    :ivar cache_duration_in_seconds: Cache max TTL in seconds. See `cache plugin
+     <https://coredns.io/plugins/cache>`_ for more information.
+    :vartype cache_duration_in_seconds: int
+    :ivar serve_stale_duration_in_seconds: Serve stale duration in seconds. See `cache plugin
+     <https://coredns.io/plugins/cache>`_ for more information.
+    :vartype serve_stale_duration_in_seconds: int
+    :ivar serve_stale: Policy for serving stale data. See `cache plugin
+     <https://coredns.io/plugins/cache>`_ for more information. Known values are: "Verify",
+     "Immediate", and "Disable".
+    :vartype serve_stale: str or ~azure.mgmt.containerservice.models.LocalDNSServeStale
+    """
+
+    _attribute_map = {
+        "query_logging": {"key": "queryLogging", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "forward_destination": {"key": "forwardDestination", "type": "str"},
+        "forward_policy": {"key": "forwardPolicy", "type": "str"},
+        "max_concurrent": {"key": "maxConcurrent", "type": "int"},
+        "cache_duration_in_seconds": {"key": "cacheDurationInSeconds", "type": "int"},
+        "serve_stale_duration_in_seconds": {"key": "serveStaleDurationInSeconds", "type": "int"},
+        "serve_stale": {"key": "serveStale", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        query_logging: Union[str, "_models.LocalDNSQueryLogging"] = "Error",
+        protocol: Union[str, "_models.LocalDNSProtocol"] = "PreferUDP",
+        forward_destination: Union[str, "_models.LocalDNSForwardDestination"] = "ClusterCoreDNS",
+        forward_policy: Union[str, "_models.LocalDNSForwardPolicy"] = "Sequential",
+        max_concurrent: int = 1000,
+        cache_duration_in_seconds: int = 3600,
+        serve_stale_duration_in_seconds: int = 3600,
+        serve_stale: Union[str, "_models.LocalDNSServeStale"] = "Immediate",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword query_logging: Log level for DNS queries in localDNS. Known values are: "Error" and
+         "Log".
+        :paramtype query_logging: str or ~azure.mgmt.containerservice.models.LocalDNSQueryLogging
+        :keyword protocol: Enforce TCP or prefer UDP protocol for connections from localDNS to upstream
+         DNS server. Known values are: "PreferUDP" and "ForceTCP".
+        :paramtype protocol: str or ~azure.mgmt.containerservice.models.LocalDNSProtocol
+        :keyword forward_destination: Destination server for DNS queries to be forwarded from localDNS.
+         Known values are: "ClusterCoreDNS" and "VnetDNS".
+        :paramtype forward_destination: str or
+         ~azure.mgmt.containerservice.models.LocalDNSForwardDestination
+        :keyword forward_policy: Forward policy for selecting upstream DNS server. See `forward plugin
+         <https://coredns.io/plugins/forward>`_ for more information. Known values are: "Sequential",
+         "RoundRobin", and "Random".
+        :paramtype forward_policy: str or ~azure.mgmt.containerservice.models.LocalDNSForwardPolicy
+        :keyword max_concurrent: Maximum number of concurrent queries. See `forward plugin
+         <https://coredns.io/plugins/forward>`_ for more information.
+        :paramtype max_concurrent: int
+        :keyword cache_duration_in_seconds: Cache max TTL in seconds. See `cache plugin
+         <https://coredns.io/plugins/cache>`_ for more information.
+        :paramtype cache_duration_in_seconds: int
+        :keyword serve_stale_duration_in_seconds: Serve stale duration in seconds. See `cache plugin
+         <https://coredns.io/plugins/cache>`_ for more information.
+        :paramtype serve_stale_duration_in_seconds: int
+        :keyword serve_stale: Policy for serving stale data. See `cache plugin
+         <https://coredns.io/plugins/cache>`_ for more information. Known values are: "Verify",
+         "Immediate", and "Disable".
+        :paramtype serve_stale: str or ~azure.mgmt.containerservice.models.LocalDNSServeStale
+        """
+        super().__init__(**kwargs)
+        self.query_logging = query_logging
+        self.protocol = protocol
+        self.forward_destination = forward_destination
+        self.forward_policy = forward_policy
+        self.max_concurrent = max_concurrent
+        self.cache_duration_in_seconds = cache_duration_in_seconds
+        self.serve_stale_duration_in_seconds = serve_stale_duration_in_seconds
+        self.serve_stale = serve_stale
+
+
+class LocalDNSProfile(_serialization.Model):
+    """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
+    performance and reliability of DNS resolution in an AKS cluster. For more details see
+    aka.ms/aks/localdns.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: Mode of enablement for localDNS. Known values are: "Preferred", "Required", and
+     "Disabled".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.LocalDNSMode
+    :ivar state: System-generated state of localDNS. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.containerservice.models.LocalDNSState
+    :ivar vnet_dns_overrides: VnetDNS overrides apply to DNS traffic from pods with
+     dnsPolicy:default or kubelet (referred to as VnetDNS traffic).
+    :vartype vnet_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+    :ivar kube_dns_overrides: KubeDNS overrides apply to DNS traffic from pods with
+     dnsPolicy:ClusterFirst (referred to as KubeDNS traffic).
+    :vartype kube_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+    """
+
+    _validation = {
+        "state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "vnet_dns_overrides": {"key": "vnetDNSOverrides", "type": "{LocalDNSOverride}"},
+        "kube_dns_overrides": {"key": "kubeDNSOverrides", "type": "{LocalDNSOverride}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Union[str, "_models.LocalDNSMode"] = "Preferred",
+        vnet_dns_overrides: Optional[dict[str, "_models.LocalDNSOverride"]] = None,
+        kube_dns_overrides: Optional[dict[str, "_models.LocalDNSOverride"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: Mode of enablement for localDNS. Known values are: "Preferred", "Required", and
+         "Disabled".
+        :paramtype mode: str or ~azure.mgmt.containerservice.models.LocalDNSMode
+        :keyword vnet_dns_overrides: VnetDNS overrides apply to DNS traffic from pods with
+         dnsPolicy:default or kubelet (referred to as VnetDNS traffic).
+        :paramtype vnet_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+        :keyword kube_dns_overrides: KubeDNS overrides apply to DNS traffic from pods with
+         dnsPolicy:ClusterFirst (referred to as KubeDNS traffic).
+        :paramtype kube_dns_overrides: dict[str, ~azure.mgmt.containerservice.models.LocalDNSOverride]
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.state: Optional[Union[str, "_models.LocalDNSState"]] = None
+        self.vnet_dns_overrides = vnet_dns_overrides
+        self.kube_dns_overrides = kube_dns_overrides
+
+
 class Machine(SubResource):
     """A machine. Contains details about the underlying virtual machine. A machine may be visible here
     but not in kubectl get nodes; if so it may be because the machine has not been registered with
@@ -2701,7 +2885,7 @@ class Machine(SubResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.zones: Optional[List[str]] = None
+        self.zones: Optional[list[str]] = None
         self.properties: Optional["_models.MachineProperties"] = None
 
 
@@ -2754,7 +2938,7 @@ class MachineListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Machine]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Machine"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Machine"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Machines in cluster.
         :paramtype value: list[~azure.mgmt.containerservice.models.Machine]
@@ -2784,7 +2968,7 @@ class MachineNetworkProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.ip_addresses: Optional[List["_models.MachineIpAddress"]] = None
+        self.ip_addresses: Optional[list["_models.MachineIpAddress"]] = None
 
 
 class MachineProperties(_serialization.Model):
@@ -2862,8 +3046,8 @@ class MaintenanceConfiguration(SubResource):
     def __init__(
         self,
         *,
-        time_in_week: Optional[List["_models.TimeInWeek"]] = None,
-        not_allowed_time: Optional[List["_models.TimeSpan"]] = None,
+        time_in_week: Optional[list["_models.TimeInWeek"]] = None,
+        not_allowed_time: Optional[list["_models.TimeSpan"]] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
         **kwargs: Any
     ) -> None:
@@ -2904,7 +3088,7 @@ class MaintenanceConfigurationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MaintenanceConfiguration"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.MaintenanceConfiguration"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of maintenance configurations.
         :paramtype value: list[~azure.mgmt.containerservice.models.MaintenanceConfiguration]
@@ -2965,7 +3149,7 @@ class MaintenanceWindow(_serialization.Model):
         start_time: str,
         utc_offset: Optional[str] = None,
         start_date: Optional[datetime.date] = None,
-        not_allowed_dates: Optional[List["_models.DateSpan"]] = None,
+        not_allowed_dates: Optional[list["_models.DateSpan"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3082,7 +3266,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3118,7 +3302,7 @@ class ManagedCluster(TrackedResource):
     :vartype location: str
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar sku: The managed cluster SKU.
@@ -3368,7 +3552,7 @@ class ManagedCluster(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.ManagedClusterSKU"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         identity: Optional["_models.ManagedClusterIdentity"] = None,
@@ -3376,11 +3560,11 @@ class ManagedCluster(TrackedResource):
         kubernetes_version: Optional[str] = None,
         dns_prefix: Optional[str] = None,
         fqdn_subdomain: Optional[str] = None,
-        agent_pool_profiles: Optional[List["_models.ManagedClusterAgentPoolProfile"]] = None,
+        agent_pool_profiles: Optional[list["_models.ManagedClusterAgentPoolProfile"]] = None,
         linux_profile: Optional["_models.ContainerServiceLinuxProfile"] = None,
         windows_profile: Optional["_models.ManagedClusterWindowsProfile"] = None,
         service_principal_profile: Optional["_models.ManagedClusterServicePrincipalProfile"] = None,
-        addon_profiles: Optional[Dict[str, "_models.ManagedClusterAddonProfile"]] = None,
+        addon_profiles: Optional[dict[str, "_models.ManagedClusterAddonProfile"]] = None,
         pod_identity_profile: Optional["_models.ManagedClusterPodIdentityProfile"] = None,
         oidc_issuer_profile: Optional["_models.ManagedClusterOIDCIssuerProfile"] = None,
         node_resource_group: Optional[str] = None,
@@ -3394,8 +3578,8 @@ class ManagedCluster(TrackedResource):
         auto_scaler_profile: Optional["_models.ManagedClusterPropertiesAutoScalerProfile"] = None,
         api_server_access_profile: Optional["_models.ManagedClusterAPIServerAccessProfile"] = None,
         disk_encryption_set_id: Optional[str] = None,
-        identity_profile: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        private_link_resources: Optional[List["_models.PrivateLinkResource"]] = None,
+        identity_profile: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+        private_link_resources: Optional[list["_models.PrivateLinkResource"]] = None,
         disable_local_accounts: Optional[bool] = None,
         http_proxy_config: Optional["_models.ManagedClusterHTTPProxyConfig"] = None,
         security_profile: Optional["_models.ManagedClusterSecurityProfile"] = None,
@@ -3637,7 +3821,7 @@ class ManagedClusterAADProfile(_serialization.Model):
         *,
         managed: Optional[bool] = None,
         enable_azure_rbac: Optional[bool] = None,
-        admin_group_object_i_ds: Optional[List[str]] = None,
+        admin_group_object_i_ds: Optional[list[str]] = None,
         client_app_id: Optional[str] = None,
         server_app_id: Optional[str] = None,
         server_app_secret: Optional[str] = None,
@@ -3723,7 +3907,7 @@ class ManagedClusterAccessProfile(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         kube_config: Optional[bytes] = None,
         **kwargs: Any
     ) -> None:
@@ -3765,7 +3949,7 @@ class ManagedClusterAddonProfile(_serialization.Model):
         "identity": {"key": "identity", "type": "ManagedClusterAddonProfileIdentity"},
     }
 
-    def __init__(self, *, enabled: bool, config: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, enabled: bool, config: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Whether the add-on is enabled or not. Required.
         :paramtype enabled: bool
@@ -3836,7 +4020,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
@@ -3862,7 +4046,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer" and "WasmWasi".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -4024,6 +4208,10 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
      list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
     :ivar status: Contains read-only information about the Agent Pool.
     :vartype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+    :ivar local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS overrides.
+     LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
+     more details see aka.ms/aks/localdns.
+    :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
     """
 
     _validation = {
@@ -4088,6 +4276,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         "virtual_machines_profile": {"key": "virtualMachinesProfile", "type": "VirtualMachinesProfile"},
         "virtual_machine_nodes_status": {"key": "virtualMachineNodesStatus", "type": "[VirtualMachineNodes]"},
         "status": {"key": "status", "type": "AgentPoolStatus"},
+        "local_dns_profile": {"key": "localDNSProfile", "type": "LocalDNSProfile"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -4115,15 +4304,15 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         orchestrator_version: Optional[str] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         power_state: Optional["_models.PowerState"] = None,
-        availability_zones: Optional[List[str]] = None,
+        availability_zones: Optional[list[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
         node_public_ip_prefix_id: Optional[str] = None,
         scale_set_priority: Union[str, "_models.ScaleSetPriority"] = "Regular",
         scale_set_eviction_policy: Union[str, "_models.ScaleSetEvictionPolicy"] = "Delete",
         spot_max_price: float = -1,
-        tags: Optional[Dict[str, str]] = None,
-        node_labels: Optional[Dict[str, str]] = None,
-        node_taints: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        node_labels: Optional[dict[str, str]] = None,
+        node_taints: Optional[list[str]] = None,
         proximity_placement_group_id: Optional[str] = None,
         kubelet_config: Optional["_models.KubeletConfig"] = None,
         linux_os_config: Optional["_models.LinuxOSConfig"] = None,
@@ -4140,8 +4329,9 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         gpu_profile: Optional["_models.GPUProfile"] = None,
         gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
-        virtual_machine_nodes_status: Optional[List["_models.VirtualMachineNodes"]] = None,
+        virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
+        local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4169,7 +4359,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer" and "WasmWasi".
+         "OCIContainer", "WasmWasi", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -4326,6 +4516,10 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
          list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
         :keyword status: Contains read-only information about the Agent Pool.
         :paramtype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+        :keyword local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS
+         overrides. LocalDNS helps improve performance and reliability of DNS resolution in an AKS
+         cluster. For more details see aka.ms/aks/localdns.
+        :paramtype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
         """
         super().__init__(**kwargs)
         self.e_tag: Optional[str] = None
@@ -4381,6 +4575,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
         self.virtual_machines_profile = virtual_machines_profile
         self.virtual_machine_nodes_status = virtual_machine_nodes_status
         self.status = status
+        self.local_dns_profile = local_dns_profile
 
 
 class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
@@ -4392,7 +4587,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
      will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal etag
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
      convention.
     :vartype e_tag: str
     :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
@@ -4418,7 +4613,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer" and "WasmWasi".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -4580,6 +4775,10 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
     :ivar status: Contains read-only information about the Agent Pool.
     :vartype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+    :ivar local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS overrides.
+     LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
+     more details see aka.ms/aks/localdns.
+    :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
     :ivar name: Unique name of the agent pool profile in the context of the subscription and
      resource group. Windows agent pool names must be 6 characters or less. Required.
     :vartype name: str
@@ -4648,6 +4847,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         "virtual_machines_profile": {"key": "virtualMachinesProfile", "type": "VirtualMachinesProfile"},
         "virtual_machine_nodes_status": {"key": "virtualMachineNodesStatus", "type": "[VirtualMachineNodes]"},
         "status": {"key": "status", "type": "AgentPoolStatus"},
+        "local_dns_profile": {"key": "localDNSProfile", "type": "LocalDNSProfile"},
         "name": {"key": "name", "type": "str"},
     }
 
@@ -4677,15 +4877,15 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         orchestrator_version: Optional[str] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         power_state: Optional["_models.PowerState"] = None,
-        availability_zones: Optional[List[str]] = None,
+        availability_zones: Optional[list[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
         node_public_ip_prefix_id: Optional[str] = None,
         scale_set_priority: Union[str, "_models.ScaleSetPriority"] = "Regular",
         scale_set_eviction_policy: Union[str, "_models.ScaleSetEvictionPolicy"] = "Delete",
         spot_max_price: float = -1,
-        tags: Optional[Dict[str, str]] = None,
-        node_labels: Optional[Dict[str, str]] = None,
-        node_taints: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        node_labels: Optional[dict[str, str]] = None,
+        node_taints: Optional[list[str]] = None,
         proximity_placement_group_id: Optional[str] = None,
         kubelet_config: Optional["_models.KubeletConfig"] = None,
         linux_os_config: Optional["_models.LinuxOSConfig"] = None,
@@ -4702,8 +4902,9 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         gpu_profile: Optional["_models.GPUProfile"] = None,
         gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
-        virtual_machine_nodes_status: Optional[List["_models.VirtualMachineNodes"]] = None,
+        virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
+        local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4731,7 +4932,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
          data root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
         :paramtype kubelet_disk_type: str or ~azure.mgmt.containerservice.models.KubeletDiskType
         :keyword workload_runtime: Determines the type of workload a node can run. Known values are:
-         "OCIContainer" and "WasmWasi".
+         "OCIContainer", "WasmWasi", and "KataVmIsolation".
         :paramtype workload_runtime: str or ~azure.mgmt.containerservice.models.WorkloadRuntime
         :keyword message_of_the_day: Message of the day for Linux nodes, base64-encoded. A
          base64-encoded string which will be written to /etc/motd after decoding. This allows
@@ -4888,6 +5089,10 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
          list[~azure.mgmt.containerservice.models.VirtualMachineNodes]
         :keyword status: Contains read-only information about the Agent Pool.
         :paramtype status: ~azure.mgmt.containerservice.models.AgentPoolStatus
+        :keyword local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS
+         overrides. LocalDNS helps improve performance and reliability of DNS resolution in an AKS
+         cluster. For more details see aka.ms/aks/localdns.
+        :paramtype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
         :keyword name: Unique name of the agent pool profile in the context of the subscription and
          resource group. Windows agent pool names must be 6 characters or less. Required.
         :paramtype name: str
@@ -4942,6 +5147,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
             virtual_machines_profile=virtual_machines_profile,
             virtual_machine_nodes_status=virtual_machine_nodes_status,
             status=status,
+            local_dns_profile=local_dns_profile,
             **kwargs
         )
         self.name = name
@@ -5016,7 +5222,7 @@ class ManagedClusterAPIServerAccessProfile(_serialization.Model):
     def __init__(
         self,
         *,
-        authorized_ip_ranges: Optional[List[str]] = None,
+        authorized_ip_ranges: Optional[list[str]] = None,
         enable_private_cluster: Optional[bool] = None,
         private_dns_zone: Optional[str] = None,
         enable_private_cluster_public_fqdn: Optional[bool] = None,
@@ -5321,7 +5527,7 @@ class ManagedClusterHTTPProxyConfig(_serialization.Model):
         *,
         http_proxy: Optional[str] = None,
         https_proxy: Optional[str] = None,
-        no_proxy: Optional[List[str]] = None,
+        no_proxy: Optional[list[str]] = None,
         trusted_ca: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5389,9 +5595,9 @@ class ManagedClusterIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        delegated_resources: Optional[Dict[str, "_models.DelegatedResource"]] = None,
+        delegated_resources: Optional[dict[str, "_models.DelegatedResource"]] = None,
         user_assigned_identities: Optional[
-            Dict[str, "_models.ManagedServiceIdentityUserAssignedIdentitiesValue"]
+            dict[str, "_models.ManagedServiceIdentityUserAssignedIdentitiesValue"]
         ] = None,
         **kwargs: Any
     ) -> None:
@@ -5516,7 +5722,7 @@ class ManagedClusterIngressProfileWebAppRouting(_serialization.Model):  # pylint
         self,
         *,
         enabled: Optional[bool] = None,
-        dns_zone_resource_ids: Optional[List[str]] = None,
+        dns_zone_resource_ids: Optional[list[str]] = None,
         nginx: Optional["_models.ManagedClusterIngressProfileNginx"] = None,
         **kwargs: Any
     ) -> None:
@@ -5559,7 +5765,7 @@ class ManagedClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ManagedCluster"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ManagedCluster"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of managed clusters.
         :paramtype value: list[~azure.mgmt.containerservice.models.ManagedCluster]
@@ -5665,7 +5871,7 @@ class ManagedClusterLoadBalancerProfile(_serialization.Model):
         self.managed_outbound_i_ps = managed_outbound_i_ps
         self.outbound_ip_prefixes = outbound_ip_prefixes
         self.outbound_i_ps = outbound_i_ps
-        self.effective_outbound_i_ps: Optional[List["_models.ResourceReference"]] = None
+        self.effective_outbound_i_ps: Optional[list["_models.ResourceReference"]] = None
         self.allocated_outbound_ports = allocated_outbound_ports
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.enable_multiple_standard_load_balancers = enable_multiple_standard_load_balancers
@@ -5723,7 +5929,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):
     }
 
     def __init__(
-        self, *, public_ip_prefixes: Optional[List["_models.ResourceReference"]] = None, **kwargs: Any
+        self, *, public_ip_prefixes: Optional[list["_models.ResourceReference"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword public_ip_prefixes: A list of public IP prefix resources.
@@ -5744,7 +5950,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPs(_serialization.Model):  # pyl
         "public_i_ps": {"key": "publicIPs", "type": "[ResourceReference]"},
     }
 
-    def __init__(self, *, public_i_ps: Optional[List["_models.ResourceReference"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, public_i_ps: Optional[list["_models.ResourceReference"]] = None, **kwargs: Any) -> None:
         """
         :keyword public_i_ps: A list of public IP resources.
         :paramtype public_i_ps: list[~azure.mgmt.containerservice.models.ResourceReference]
@@ -5847,7 +6053,7 @@ class ManagedClusterNATGatewayProfile(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.managed_outbound_ip_profile = managed_outbound_ip_profile
-        self.effective_outbound_i_ps: Optional[List["_models.ResourceReference"]] = None
+        self.effective_outbound_i_ps: Optional[list["_models.ResourceReference"]] = None
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
 
 
@@ -6052,7 +6258,7 @@ class ManagedClusterPodIdentityException(_serialization.Model):
         "pod_labels": {"key": "podLabels", "type": "{str}"},
     }
 
-    def __init__(self, *, name: str, namespace: str, pod_labels: Dict[str, str], **kwargs: Any) -> None:
+    def __init__(self, *, name: str, namespace: str, pod_labels: dict[str, str], **kwargs: Any) -> None:
         """
         :keyword name: The name of the pod identity exception. Required.
         :paramtype name: str
@@ -6104,8 +6310,8 @@ class ManagedClusterPodIdentityProfile(_serialization.Model):
         *,
         enabled: Optional[bool] = None,
         allow_network_plugin_kubenet: Optional[bool] = None,
-        user_assigned_identities: Optional[List["_models.ManagedClusterPodIdentity"]] = None,
-        user_assigned_identity_exceptions: Optional[List["_models.ManagedClusterPodIdentityException"]] = None,
+        user_assigned_identities: Optional[list["_models.ManagedClusterPodIdentity"]] = None,
+        user_assigned_identity_exceptions: Optional[list["_models.ManagedClusterPodIdentityException"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6186,7 +6392,7 @@ class ManagedClusterPodIdentityProvisioningErrorBody(_serialization.Model):  # p
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.ManagedClusterPodIdentityProvisioningErrorBody"]] = None,
+        details: Optional[list["_models.ManagedClusterPodIdentityProvisioningErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6268,7 +6474,7 @@ class ManagedClusterPoolUpgradeProfile(_serialization.Model):
         kubernetes_version: str,
         os_type: Union[str, "_models.OSType"] = "Linux",
         name: Optional[str] = None,
-        upgrades: Optional[List["_models.ManagedClusterPoolUpgradeProfileUpgradesItem"]] = None,
+        upgrades: Optional[list["_models.ManagedClusterPoolUpgradeProfileUpgradesItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6598,7 +6804,7 @@ class ManagedClusterSecurityProfile(_serialization.Model):
         azure_key_vault_kms: Optional["_models.AzureKeyVaultKms"] = None,
         workload_identity: Optional["_models.ManagedClusterSecurityProfileWorkloadIdentity"] = None,
         image_cleaner: Optional["_models.ManagedClusterSecurityProfileImageCleaner"] = None,
-        custom_ca_trust_certificates: Optional[List[bytes]] = None,
+        custom_ca_trust_certificates: Optional[list[bytes]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6839,7 +7045,7 @@ class ManagedClusterStatus(_serialization.Model):
 
     :ivar provisioning_error: The error details information of the managed cluster. Preserves the
      detailed info of failure. If there was no error, this field is omitted.
-    :vartype provisioning_error: ~azure.mgmt.containerservice.models.CloudErrorBody
+    :vartype provisioning_error: ~azure.mgmt.containerservice.models.ErrorDetail
     """
 
     _validation = {
@@ -6847,13 +7053,13 @@ class ManagedClusterStatus(_serialization.Model):
     }
 
     _attribute_map = {
-        "provisioning_error": {"key": "provisioningError", "type": "CloudErrorBody"},
+        "provisioning_error": {"key": "provisioningError", "type": "ErrorDetail"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provisioning_error: Optional["_models.CloudErrorBody"] = None
+        self.provisioning_error: Optional["_models.ErrorDetail"] = None
 
 
 class ManagedClusterStorageProfile(_serialization.Model):
@@ -7032,7 +7238,7 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
         self,
         *,
         control_plane_profile: "_models.ManagedClusterPoolUpgradeProfile",
-        agent_pool_profiles: List["_models.ManagedClusterPoolUpgradeProfile"],
+        agent_pool_profiles: list["_models.ManagedClusterPoolUpgradeProfile"],
         **kwargs: Any
     ) -> None:
         """
@@ -7239,6 +7445,108 @@ class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(
         self.enabled = enabled
 
 
+class ManagedNamespace(SubResource):
+    """Namespace managed by ARM.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource that is unique within a resource group. This name can be
+     used to access the resource.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: The system metadata relating to this resource.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar tags: The tags to be persisted on the managed cluster namespace.
+    :vartype tags: dict[str, str]
+    :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
+     will change when the resource is updated. Specify an if-match or if-none-match header with the
+     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
+     convention.
+    :vartype e_tag: str
+    :ivar location: The location of the namespace.
+    :vartype location: str
+    :ivar properties: Properties of a namespace.
+    :vartype properties: ~azure.mgmt.containerservice.models.NamespaceProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "e_tag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "NamespaceProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        location: Optional[str] = None,
+        properties: Optional["_models.NamespaceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The tags to be persisted on the managed cluster namespace.
+        :paramtype tags: dict[str, str]
+        :keyword location: The location of the namespace.
+        :paramtype location: str
+        :keyword properties: Properties of a namespace.
+        :paramtype properties: ~azure.mgmt.containerservice.models.NamespaceProperties
+        """
+        super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.tags = tags
+        self.e_tag: Optional[str] = None
+        self.location = location
+        self.properties = properties
+
+
+class ManagedNamespaceListResult(_serialization.Model):
+    """The result of a request to list managed namespaces in a managed cluster.
+
+    :ivar value: The list of managed namespaces.
+    :vartype value: list[~azure.mgmt.containerservice.models.ManagedNamespace]
+    :ivar next_link: The URI to fetch the next page of results, if any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ManagedNamespace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.ManagedNamespace"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of managed namespaces.
+        :paramtype value: list[~azure.mgmt.containerservice.models.ManagedNamespace]
+        :keyword next_link: The URI to fetch the next page of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class ManagedServiceIdentityUserAssignedIdentitiesValue(_serialization.Model):  # pylint: disable=name-too-long
     """ManagedServiceIdentityUserAssignedIdentitiesValue.
 
@@ -7317,8 +7625,8 @@ class MeshRevision(_serialization.Model):
         self,
         *,
         revision: Optional[str] = None,
-        upgrades: Optional[List[str]] = None,
-        compatible_with: Optional[List["_models.CompatibleVersions"]] = None,
+        upgrades: Optional[list[str]] = None,
+        compatible_with: Optional[list["_models.CompatibleVersions"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7420,7 +7728,7 @@ class MeshRevisionProfileList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MeshRevisionProfile"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.MeshRevisionProfile"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of service mesh add-on revision profiles for all supported mesh modes.
         :paramtype value: list[~azure.mgmt.containerservice.models.MeshRevisionProfile]
@@ -7441,7 +7749,7 @@ class MeshRevisionProfileProperties(_serialization.Model):
         "mesh_revisions": {"key": "meshRevisions", "type": "[MeshRevision]"},
     }
 
-    def __init__(self, *, mesh_revisions: Optional[List["_models.MeshRevision"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, mesh_revisions: Optional[list["_models.MeshRevision"]] = None, **kwargs: Any) -> None:
         """
         :keyword mesh_revisions:
         :paramtype mesh_revisions: list[~azure.mgmt.containerservice.models.MeshRevision]
@@ -7514,7 +7822,7 @@ class MeshUpgradeProfileList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MeshUpgradeProfile"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.MeshUpgradeProfile"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of supported service mesh add-on upgrade profiles.
         :paramtype value: list[~azure.mgmt.containerservice.models.MeshUpgradeProfile]
@@ -7537,6 +7845,138 @@ class MeshUpgradeProfileProperties(MeshRevision):
     """
 
 
+class NamespaceProperties(_serialization.Model):
+    """Properties of a namespace managed by ARM.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: The current provisioning state of the namespace. Known values are:
+     "Updating", "Deleting", "Creating", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.NamespaceProvisioningState
+    :ivar labels: The labels of managed namespace.
+    :vartype labels: dict[str, str]
+    :ivar annotations: The annotations of managed namespace.
+    :vartype annotations: dict[str, str]
+    :ivar portal_fqdn: The special FQDN used by the Azure Portal to access the Managed Cluster.
+     This FQDN is for use only by the Azure Portal and should not be used by other clients. The
+     Azure Portal requires certain Cross-Origin Resource Sharing (CORS) headers to be sent in some
+     responses, which Kubernetes APIServer doesn't handle by default. This special FQDN supports
+     CORS, allowing the Azure Portal to function properly.
+    :vartype portal_fqdn: str
+    :ivar default_resource_quota: The default resource quota enforced upon the namespace. Customers
+     can have other Kubernetes resource quota objects under the namespace. Resource quotas are
+     additive; if multiple resource quotas are applied to a given namespace, then the effective
+     limit will be one such that all quotas on the namespace can be satisfied.
+    :vartype default_resource_quota: ~azure.mgmt.containerservice.models.ResourceQuota
+    :ivar default_network_policy: The default network policy enforced upon the namespace. Customers
+     can have other Kubernetes network policy objects under the namespace. Network policies are
+     additive; if a policy or policies apply to a given pod for a given direction, the connections
+     allowed in that direction for the pod is the union of what all applicable policies allow.
+    :vartype default_network_policy: ~azure.mgmt.containerservice.models.NetworkPolicies
+    :ivar adoption_policy: Action if Kubernetes namespace with same name already exists. Known
+     values are: "Never", "IfIdentical", and "Always".
+    :vartype adoption_policy: str or ~azure.mgmt.containerservice.models.AdoptionPolicy
+    :ivar delete_policy: Delete options of a namespace. Known values are: "Keep" and "Delete".
+    :vartype delete_policy: str or ~azure.mgmt.containerservice.models.DeletePolicy
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "portal_fqdn": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "labels": {"key": "labels", "type": "{str}"},
+        "annotations": {"key": "annotations", "type": "{str}"},
+        "portal_fqdn": {"key": "portalFqdn", "type": "str"},
+        "default_resource_quota": {"key": "defaultResourceQuota", "type": "ResourceQuota"},
+        "default_network_policy": {"key": "defaultNetworkPolicy", "type": "NetworkPolicies"},
+        "adoption_policy": {"key": "adoptionPolicy", "type": "str"},
+        "delete_policy": {"key": "deletePolicy", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        labels: Optional[dict[str, str]] = None,
+        annotations: Optional[dict[str, str]] = None,
+        default_resource_quota: Optional["_models.ResourceQuota"] = None,
+        default_network_policy: Optional["_models.NetworkPolicies"] = None,
+        adoption_policy: Optional[Union[str, "_models.AdoptionPolicy"]] = None,
+        delete_policy: Optional[Union[str, "_models.DeletePolicy"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword labels: The labels of managed namespace.
+        :paramtype labels: dict[str, str]
+        :keyword annotations: The annotations of managed namespace.
+        :paramtype annotations: dict[str, str]
+        :keyword default_resource_quota: The default resource quota enforced upon the namespace.
+         Customers can have other Kubernetes resource quota objects under the namespace. Resource quotas
+         are additive; if multiple resource quotas are applied to a given namespace, then the effective
+         limit will be one such that all quotas on the namespace can be satisfied.
+        :paramtype default_resource_quota: ~azure.mgmt.containerservice.models.ResourceQuota
+        :keyword default_network_policy: The default network policy enforced upon the namespace.
+         Customers can have other Kubernetes network policy objects under the namespace. Network
+         policies are additive; if a policy or policies apply to a given pod for a given direction, the
+         connections allowed in that direction for the pod is the union of what all applicable policies
+         allow.
+        :paramtype default_network_policy: ~azure.mgmt.containerservice.models.NetworkPolicies
+        :keyword adoption_policy: Action if Kubernetes namespace with same name already exists. Known
+         values are: "Never", "IfIdentical", and "Always".
+        :paramtype adoption_policy: str or ~azure.mgmt.containerservice.models.AdoptionPolicy
+        :keyword delete_policy: Delete options of a namespace. Known values are: "Keep" and "Delete".
+        :paramtype delete_policy: str or ~azure.mgmt.containerservice.models.DeletePolicy
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.NamespaceProvisioningState"]] = None
+        self.labels = labels
+        self.annotations = annotations
+        self.portal_fqdn: Optional[str] = None
+        self.default_resource_quota = default_resource_quota
+        self.default_network_policy = default_network_policy
+        self.adoption_policy = adoption_policy
+        self.delete_policy = delete_policy
+
+
+class NetworkPolicies(_serialization.Model):
+    """Default network policy of the namespace, specifying ingress and egress rules.
+
+    :ivar ingress: Ingress policy for the network. Known values are: "DenyAll", "AllowAll", and
+     "AllowSameNamespace".
+    :vartype ingress: str or ~azure.mgmt.containerservice.models.PolicyRule
+    :ivar egress: Egress policy for the network. Known values are: "DenyAll", "AllowAll", and
+     "AllowSameNamespace".
+    :vartype egress: str or ~azure.mgmt.containerservice.models.PolicyRule
+    """
+
+    _attribute_map = {
+        "ingress": {"key": "ingress", "type": "str"},
+        "egress": {"key": "egress", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ingress: Optional[Union[str, "_models.PolicyRule"]] = None,
+        egress: Optional[Union[str, "_models.PolicyRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ingress: Ingress policy for the network. Known values are: "DenyAll", "AllowAll", and
+         "AllowSameNamespace".
+        :paramtype ingress: str or ~azure.mgmt.containerservice.models.PolicyRule
+        :keyword egress: Egress policy for the network. Known values are: "DenyAll", "AllowAll", and
+         "AllowSameNamespace".
+        :paramtype egress: str or ~azure.mgmt.containerservice.models.PolicyRule
+        """
+        super().__init__(**kwargs)
+        self.ingress = ingress
+        self.egress = egress
+
+
 class OperationListResult(_serialization.Model):
     """The List Operation response.
 
@@ -7557,7 +7997,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.OperationValue"]] = None
+        self.value: Optional[list["_models.OperationValue"]] = None
 
 
 class OperationValue(_serialization.Model):
@@ -7627,7 +8067,7 @@ class OutboundEnvironmentEndpoint(_serialization.Model):
         self,
         *,
         category: Optional[str] = None,
-        endpoints: Optional[List["_models.EndpointDependency"]] = None,
+        endpoints: Optional[list["_models.EndpointDependency"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7665,7 +8105,7 @@ class OutboundEnvironmentEndpointCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.OutboundEnvironmentEndpoint"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.OutboundEnvironmentEndpoint"], **kwargs: Any) -> None:
         """
         :keyword value: Collection of resources. Required.
         :paramtype value: list[~azure.mgmt.containerservice.models.OutboundEnvironmentEndpoint]
@@ -7842,7 +8282,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerservice.models.PrivateEndpointConnection]
@@ -7891,7 +8331,7 @@ class PrivateLinkResource(_serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         group_id: Optional[str] = None,
-        required_members: Optional[List[str]] = None,
+        required_members: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7926,7 +8366,7 @@ class PrivateLinkResourcesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerservice.models.PrivateLinkResource]
@@ -8022,6 +8462,75 @@ class RelativeMonthlySchedule(_serialization.Model):
         self.interval_months = interval_months
         self.week_index = week_index
         self.day_of_week = day_of_week
+
+
+class ResourceQuota(_serialization.Model):
+    """Resource quota for the namespace.
+
+    :ivar cpu_request: CPU request of the namespace in one-thousandth CPU form. See `CPU resource
+     units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+     for more details.
+    :vartype cpu_request: str
+    :ivar cpu_limit: CPU limit of the namespace in one-thousandth CPU form. See `CPU resource units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+     for more details.
+    :vartype cpu_limit: str
+    :ivar memory_request: Memory request of the namespace in the power-of-two equivalents form: Ei,
+     Pi, Ti, Gi, Mi, Ki. See `Memory resource units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+     for more details.
+    :vartype memory_request: str
+    :ivar memory_limit: Memory limit of the namespace in the power-of-two equivalents form: Ei, Pi,
+     Ti, Gi, Mi, Ki. See `Memory resource units
+     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+     for more details.
+    :vartype memory_limit: str
+    """
+
+    _attribute_map = {
+        "cpu_request": {"key": "cpuRequest", "type": "str"},
+        "cpu_limit": {"key": "cpuLimit", "type": "str"},
+        "memory_request": {"key": "memoryRequest", "type": "str"},
+        "memory_limit": {"key": "memoryLimit", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cpu_request: Optional[str] = None,
+        cpu_limit: Optional[str] = None,
+        memory_request: Optional[str] = None,
+        memory_limit: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cpu_request: CPU request of the namespace in one-thousandth CPU form. See `CPU
+         resource units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+         for more details.
+        :paramtype cpu_request: str
+        :keyword cpu_limit: CPU limit of the namespace in one-thousandth CPU form. See `CPU resource
+         units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu>`_
+         for more details.
+        :paramtype cpu_limit: str
+        :keyword memory_request: Memory request of the namespace in the power-of-two equivalents form:
+         Ei, Pi, Ti, Gi, Mi, Ki. See `Memory resource units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+         for more details.
+        :paramtype memory_request: str
+        :keyword memory_limit: Memory limit of the namespace in the power-of-two equivalents form: Ei,
+         Pi, Ti, Gi, Mi, Ki. See `Memory resource units
+         <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory>`_
+         for more details.
+        :paramtype memory_limit: str
+        """
+        super().__init__(**kwargs)
+        self.cpu_request = cpu_request
+        self.cpu_limit = cpu_limit
+        self.memory_request = memory_request
+        self.memory_limit = memory_limit
 
 
 class ResourceReference(_serialization.Model):
@@ -8148,7 +8657,7 @@ class ScaleProfile(_serialization.Model):
         "manual": {"key": "manual", "type": "[ManualScaleProfile]"},
     }
 
-    def __init__(self, *, manual: Optional[List["_models.ManualScaleProfile"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, manual: Optional[list["_models.ManualScaleProfile"]] = None, **kwargs: Any) -> None:
         """
         :keyword manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
         :paramtype manual: list[~azure.mgmt.containerservice.models.ManualScaleProfile]
@@ -8327,7 +8836,7 @@ class Snapshot(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         creation_data: Optional["_models.CreationData"] = None,
         snapshot_type: Union[str, "_models.SnapshotType"] = "NodePool",
         **kwargs: Any
@@ -8374,7 +8883,7 @@ class SnapshotListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Snapshot"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Snapshot"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of snapshots.
         :paramtype value: list[~azure.mgmt.containerservice.models.Snapshot]
@@ -8679,7 +9188,7 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -8710,7 +9219,7 @@ class TimeInWeek(_serialization.Model):
         self,
         *,
         day: Optional[Union[str, "_models.WeekDay"]] = None,
-        hour_slots: Optional[List[int]] = None,
+        hour_slots: Optional[list[int]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8788,7 +9297,7 @@ class TrustedAccessRole(_serialization.Model):
         super().__init__(**kwargs)
         self.source_resource_type: Optional[str] = None
         self.name: Optional[str] = None
-        self.rules: Optional[List["_models.TrustedAccessRoleRule"]] = None
+        self.rules: Optional[list["_models.TrustedAccessRoleRule"]] = None
 
 
 class TrustedAccessRoleBinding(Resource):
@@ -8841,7 +9350,7 @@ class TrustedAccessRoleBinding(Resource):
         "roles": {"key": "properties.roles", "type": "[str]"},
     }
 
-    def __init__(self, *, source_resource_id: str, roles: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, source_resource_id: str, roles: list[str], **kwargs: Any) -> None:
         """
         :keyword source_resource_id: The ARM resource ID of source resource that trusted access is
          configured for. Required.
@@ -8876,7 +9385,7 @@ class TrustedAccessRoleBindingListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.TrustedAccessRoleBinding"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.TrustedAccessRoleBinding"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Role binding list.
         :paramtype value: list[~azure.mgmt.containerservice.models.TrustedAccessRoleBinding]
@@ -8910,7 +9419,7 @@ class TrustedAccessRoleListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.TrustedAccessRole"]] = None
+        self.value: Optional[list["_models.TrustedAccessRole"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -8950,11 +9459,11 @@ class TrustedAccessRoleRule(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.verbs: Optional[List[str]] = None
-        self.api_groups: Optional[List[str]] = None
-        self.resources: Optional[List[str]] = None
-        self.resource_names: Optional[List[str]] = None
-        self.non_resource_ur_ls: Optional[List[str]] = None
+        self.verbs: Optional[list[str]] = None
+        self.api_groups: Optional[list[str]] = None
+        self.resources: Optional[list[str]] = None
+        self.resource_names: Optional[list[str]] = None
+        self.non_resource_ur_ls: Optional[list[str]] = None
 
 
 class UpgradeOverrideSettings(_serialization.Model):

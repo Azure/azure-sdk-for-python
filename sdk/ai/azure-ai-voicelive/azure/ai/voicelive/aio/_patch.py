@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -12,7 +13,7 @@ import json
 import logging
 from contextlib import AbstractAsyncContextManager
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
-from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
+from typing import Any, Mapping, Optional, Union, AsyncIterator, cast
 
 # === Third-party ===
 from typing_extensions import TypedDict
@@ -31,19 +32,20 @@ from azure.ai.voicelive.models._models import (
     ConversationRequestItem,
     ResponseCreateParams,
 )
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import AzureError
 from azure.core.pipeline import policies
 
 # === Local ===
 from ..models import ClientEvent, ServerEvent, RequestSession
-from .._patch import ConnectionError, ConnectionClosed
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired  # noqa: F401
 else:
     from typing_extensions import NotRequired  # noqa: F401
 
-__all__: List[str] = [
+__all__: list[str] = [
     "connect",
     "WebsocketConnectionOptions",
     "VoiceLiveConnection",
@@ -51,6 +53,8 @@ __all__: List[str] = [
     "ResponseResource",
     "InputAudioBufferResource",
     "OutputAudioBufferResource",
+    "ConnectionError",
+    "ConnectionClosed",
     "ConversationResource",
     "ConversationItemResource",
     "TranscriptionSessionResource",
@@ -81,6 +85,19 @@ def _json_default(o: Any) -> Any:
         # Strip private attributes
         return {k: v for k, v in vars(o).items() if not k.startswith("_")}
     raise TypeError(f"{type(o).__name__} is not JSON serializable")
+
+
+class ConnectionError(AzureError):
+    """Base exception for Voice Live WebSocket connection errors."""
+
+
+class ConnectionClosed(ConnectionError):
+    """Raised when a WebSocket connection is closed."""
+
+    def __init__(self, code: int, reason: str) -> None:
+        self.code = code
+        self.reason = reason
+        super().__init__(f"WebSocket connection closed with code {code}: {reason}")
 
 
 class SessionResource:
@@ -246,7 +263,7 @@ class OutputAudioBufferResource:
         :keyword str event_id: Optional ID for the event.
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "output_audio_buffer.clear"}
+        event: dict[str, Any] = {"type": "output_audio_buffer.clear"}
         if event_id:
             event["event_id"] = event_id
         await self._connection.send(event)
@@ -268,7 +285,7 @@ class ConversationItemResource:
         *,
         item: Union[ConversationRequestItem, Mapping[str, Any]],
         previous_item_id: Optional[str] = None,
-        event_id: Optional[str] = None
+        event_id: Optional[str] = None,
     ) -> None:
         """Create a new conversation item.
 
@@ -368,7 +385,7 @@ class TranscriptionSessionResource:
         :keyword str event_id: Optional ID for the event.
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
+        event: dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
         if event_id:
             event["event_id"] = event_id
         await self._connection.send(event)
@@ -558,47 +575,56 @@ class VoiceLiveConnection:
 
 class WebsocketConnectionOptions(TypedDict, total=False):
     """
-    Advanced WebSocket connection options for VoiceLive API connections.
+    Transport-agnostic WebSocket connection options for VoiceLive.
 
-    These options correspond to parameters accepted by :mod:`aiohttp`'s
-    `ws_connect` method and control low-level WebSocket behavior.
-    All keys are optional — if omitted, default values will be applied.
+    These control common WS behaviors (compression, message size limits,
+    timeouts, ping/pong handling). Unless specified, defaults are determined
+    by the underlying WebSocket library.
 
-    :keyword compression: Enable per-message compression.
-        - ``True`` enables compression.
-        - ``False`` disables compression.
-        If omitted, defaults to the aiohttp default.
-    :type compression: bool
+    :keyword compression: Enable per-message compression. Use ``True`` to enable,
+        ``False`` to disable. Advanced users may pass an ``int`` to select a zlib
+        window value if supported by the transport.
+    :type compression: bool | int
 
-    :keyword max_msg_size: Maximum message size in bytes.
-        Messages larger than this limit will cause the connection to close.
-        If omitted, defaults to 10 MiB (10 * 1024 * 1024).
+    :keyword max_msg_size: Maximum message size in bytes before the client closes
+        the connection.
     :type max_msg_size: int
 
-    :keyword timeout: Close timeout in seconds.
-        Maximum time to wait for the connection to close gracefully.
-        If omitted, defaults to aiohttp's internal default.
-    :type timeout: float
-
-    :keyword heartbeat: Interval in seconds for sending ping frames to keep
-        the connection alive. If omitted, defaults to 30 seconds.
+    :keyword heartbeat: Interval in seconds between keep-alive pings.
     :type heartbeat: float
 
-    :keyword autoclose: Automatically close the connection when a close frame
-        is received. Defaults to True if omitted.
+    :keyword autoclose: Automatically close when a close frame is received.
     :type autoclose: bool
 
     :keyword autoping: Automatically respond to ping frames with pong frames.
-        Defaults to True if omitted.
     :type autoping: bool
+
+    :keyword receive_timeout: Max seconds to wait for a single incoming message
+        on an established WebSocket.
+    :type receive_timeout: float
+
+    :keyword close_timeout: Max seconds to wait for a graceful close handshake.
+    :type close_timeout: float
+
+    :keyword handshake_timeout: Max seconds for connection establishment
+        (DNS/TCP/TLS + WS upgrade). Note: with aiohttp this is applied on the
+        ClientSession (not a ws_connect kwarg), so must be handled by the caller.
+    :type handshake_timeout: float
+
+    :keyword vendor_options: Optional implementation-specific options passed
+        through as-is to the underlying library (not part of the stable API).
+    :type vendor_options: Mapping[str, Any]
     """
 
-    compression: NotRequired[bool]
+    compression: NotRequired[Union[bool, int]]
     max_msg_size: NotRequired[int]
-    timeout: NotRequired[float]
     heartbeat: NotRequired[float]
     autoclose: NotRequired[bool]
     autoping: NotRequired[bool]
+    receive_timeout: NotRequired[float]
+    close_timeout: NotRequired[float]
+    handshake_timeout: NotRequired[float]
+    vendor_options: NotRequired[Mapping[str, Any]]
 
 
 class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnection"]):
@@ -607,10 +633,10 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
     def __init__(
         self,
         *,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         endpoint: str,
-        model: str,
-        api_version: str = "2025-05-01-preview",
+        api_version: str = "2025-10-01",
+        model: Optional[str] = None,
         extra_query: Mapping[str, Any],
         extra_headers: Mapping[str, Any],
         connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -618,40 +644,82 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
     ) -> None:
         self._credential = credential
         self._endpoint = endpoint
-        self.__credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
-        self.__model = model
+        raw_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
+        self.__credential_scopes = [raw_scopes] if isinstance(raw_scopes, str) else list(raw_scopes)
         self.__api_version = api_version
-        self.__connection: Optional[VoiceLiveConnection] = None
+        self.__model = model
+
+        self.__connection: Optional["VoiceLiveConnection"] = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
-        self.__connection_options = self._map_websocket_options(connection_options or {})
+        self.__connection_options = self._map_to_aiohttp_ws_options(connection_options or {})
         self.__proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
 
-    def _map_websocket_options(self, options: WebsocketConnectionOptions) -> Dict[str, Any]:
+    def _map_to_aiohttp_ws_options(self, options: WebsocketConnectionOptions) -> dict[str, Any]:
         """
-        Map user options to :mod:`aiohttp` ``ws_connect`` kwargs (accept both TypedDict keys and common aliases).
+        Map neutral WebSocket options to :mod:`aiohttp` ``ClientSession.ws_connect`` kwargs.
 
-        :param options: The user-provided WebSocket options.
+        NOTE:
+        - ``receive_timeout`` and ``close_timeout`` are mapped into a single
+          ``aiohttp.ClientWSTimeout`` instance passed as the ``timeout=`` kwarg.
+        - ``handshake_timeout`` is NOT an ``ws_connect`` kwarg in aiohttp; it must be
+          applied via ``aiohttp.ClientTimeout`` on the session by the caller.
+
+        :param options: User-provided WebSocket options.
         :type options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
-        :return: Mapped options suitable for ``aiohttp.ClientSession.ws_connect``.
-        :rtype: Dict[str, Any]
+        :return: Options suitable for ``aiohttp.ClientSession.ws_connect``.
+        :rtype: dict[str, Any]
         """
-        # copy to a plain dict so we can safely check/pop alias keys without mypy complaints
-        src: Dict[str, Any] = dict(options)
-        mapped: Dict[str, Any] = {}
-        # aliases commonly used by other libs
-        if "max_size" in src:
-            mapped["max_msg_size"] = src.pop("max_size")
-        if "close_timeout" in src:
-            mapped["timeout"] = src.pop("close_timeout")
-        if "ping_interval" in src:
-            mapped["heartbeat"] = src.pop("ping_interval")
-        if "compression" in src:
-            mapped["compress"] = src.pop("compression")
-        # pass through supported aiohttp-style keys from our TypedDict
-        for key in ("max_msg_size", "timeout", "heartbeat", "autoclose", "autoping"):
-            if key in src:
-                mapped[key] = src[key]
+        src: dict[str, Any] = dict(options)
+        mapped: dict[str, Any] = {}
+
+        # --- Neutral -> aiohttp mapping ---
+
+        # compression (neutral) -> compress (aiohttp expects int or None)
+        comp = src.pop("compression", None)
+        if comp is True:
+            mapped["compress"] = -1  # enable compression with default window bits
+        elif comp is False:
+            mapped["compress"] = None  # disable compression
+        elif isinstance(comp, int):
+            mapped["compress"] = comp  # power user provided zlib window value
+
+        # max message size
+        if "max_msg_size" in src:
+            mapped["max_msg_size"] = int(src.pop("max_msg_size"))
+
+        # ping interval
+        if "heartbeat" in src:
+            mapped["heartbeat"] = float(src.pop("heartbeat"))
+
+        # autoclose / autoping
+        if "autoclose" in src:
+            mapped["autoclose"] = bool(src.pop("autoclose"))
+        if "autoping" in src:
+            mapped["autoping"] = bool(src.pop("autoping"))
+
+        # Build ClientWSTimeout for receive/close timeouts
+        ws_timeout_kwargs: dict[str, float] = {}
+        recv_to = src.pop("receive_timeout", None)
+        if recv_to is not None:
+            ws_timeout_kwargs["ws_receive"] = float(recv_to)
+        close_to = src.pop("close_timeout", None)
+        if close_to is not None:
+            ws_timeout_kwargs["ws_close"] = float(close_to)
+        if ws_timeout_kwargs:
+            mapped["timeout"] = aiohttp.ClientWSTimeout(**ws_timeout_kwargs)
+
+        # handshake_timeout is not a ws_connect kwarg; caller must apply it on session
+        _ = src.pop("handshake_timeout", None)  # intentionally ignored here
+
+        # --- Vendor-specific passthrough (escape hatch) ---
+        vendor = src.pop("vendor_options", None)
+        if isinstance(vendor, Mapping):
+            for k, v in vendor.items():
+                mapped.setdefault(k, v)
+
+        # Any leftover keys in `src` are intentionally ignored to avoid leaking
+        # transport-specific names into our public surface.
         return mapped
 
     async def __aenter__(self) -> VoiceLiveConnection:
@@ -665,7 +733,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             url = self._prepare_url()
             log.debug("Connecting to %s", url)
 
-            self.__connection_options.setdefault("max_msg_size", 10 * 1024 * 1024)
+            self.__connection_options.setdefault("max_msg_size", 4 * 1024 * 1024)
             self.__connection_options.setdefault("heartbeat", 30)
 
             if self.__proxy_policy:
@@ -674,7 +742,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
                     "https": "http://localhost:8888",
                 }
 
-            auth_headers = self._get_auth_headers()
+            auth_headers = await self._get_auth_headers()
             headers = {**auth_headers, **dict(self.__extra_headers)}
 
             session = aiohttp.ClientSession()
@@ -688,16 +756,21 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         except (aiohttp.ClientError, ValueError) as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
-    def _get_auth_headers(self) -> Dict[str, str]:
+    async def _get_auth_headers(self) -> dict[str, str]:
         """
         Get authentication headers for WebSocket connection.
 
         :return: A dict of HTTP headers for authentication.
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str]
         """
         if isinstance(self._credential, AzureKeyCredential):
             return {"api-key": self._credential.key}
-        token = self._credential.get_token(self.__credential_scopes)
+
+        if isinstance(self._credential, AsyncTokenCredential):
+            token = await self._credential.get_token(*self.__credential_scopes)
+        else:  # sync TokenCredential
+            token = self._credential.get_token(*self.__credential_scopes)
+
         return {"Authorization": f"Bearer {token.token}"}
 
     def _prepare_url(self) -> str:
@@ -714,7 +787,9 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             else ("ws" if parsed.scheme.startswith("http") else parsed.scheme)
         )
 
-        params: Dict[str, Any] = {"model": self.__model, "api-version": self.__api_version}
+        params: dict[str, Any] = {"api-version": self.__api_version}
+        if self.__model is not None:
+            params["model"] = self.__model
         params.update(dict(self.__extra_query))
 
         existing_params = parse_qs(parsed.query)
@@ -722,7 +797,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             if key not in params:
                 params[key] = value_list[0] if value_list else ""
 
-        path = parsed.path.rstrip("/") + "/voice-agent/realtime"
+        path = parsed.path.rstrip("/") + "/voice-live/realtime"
         url = urlunparse((scheme, parsed.netloc, path, parsed.params, urlencode(params), parsed.fragment))
         return url
 
@@ -744,10 +819,10 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
 
 def connect(
     *,
-    credential: Union[AzureKeyCredential, TokenCredential],
+    credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    model: str,
-    api_version: str = "2025-05-01-preview",
+    api_version: str = "2025-10-01",
+    model: Optional[str] = None,
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -763,13 +838,16 @@ def connect(
     - Automatically cleans up the connection when the context exits.
 
     :keyword credential: The credential used to authenticate with the service.
-    :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :paramtype type endpoint: str
-    :keyword model: The model identifier to use for the session.
-    :paramtype type model: str
-    :keyword api_version: The API version to use. Defaults to ``"2025-05-01-preview"``.
+    :keyword api_version: The API version to use. Defaults to ``"2025-10-01"``.
     :paramtype type api_version: str
+    :keyword model: Model identifier to use for the session.
+     In most scenarios, this parameter is required.
+     It may be omitted only when connecting through an **Agent** scenario,
+     in which case the service will use the model associated with the Agent.
+    :paramtype model: str
     :keyword query: Optional query parameters to include in the WebSocket URL.
     :paramtype type query: Mapping[str, Any]
     :keyword headers: Optional HTTP headers to include in the WebSocket handshake.
@@ -785,8 +863,8 @@ def connect(
     return _VoiceLiveConnectionManager(
         credential=credential,
         endpoint=endpoint,
-        model=model,
         api_version=api_version,
+        model=model,
         extra_query=query or {},
         extra_headers=headers or {},
         connection_options=connection_options or {},

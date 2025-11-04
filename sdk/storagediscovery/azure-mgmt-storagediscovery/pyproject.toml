@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Storagediscovery Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -30,7 +30,7 @@ keywords = [
 ]
 dependencies = [
     "isodate>=0.6.1",
-    "azure-mgmt-core>=1.5.0",
+    "azure-mgmt-core>=1.6.0",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [
@@ -55,6 +55,8 @@ content-type = "text/markdown"
 exclude = [
     "tests*",
     "samples*",
+    "generated_tests*",
+    "generated_samples*",
     "doc*",
     "azure",
     "azure.mgmt",
@@ -75,7 +77,7 @@ package_name = "azure-mgmt-storagediscovery"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Storagediscovery Management"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true

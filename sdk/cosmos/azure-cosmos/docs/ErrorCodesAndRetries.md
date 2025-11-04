@@ -16,3 +16,46 @@ The Cosmos DB Python SDK has several default policies that will deal with retryi
 | 449  | <ul><li>For Write Operations: </br><ul><li>This exception is encountered when a resource is concurrently updated on the server, which can happen due to concurrent writes, user triggered while conflicts are concurrently being resolved etc. </li><li>Only one update can be executed at a time per item. The other concurrent requests will fail with a Concurrent Execution Exception (449). </li><li>The client does NOT retry requests that failed with a 449. </li></ul></li><li>For Query and point read Operations: </br><ul><li>N/A as this exception is only encountered for Create/Insert/Replace/Upsert operations. </li></ul></li></ul>                                                                                                                                                                                                                                                                                                                                                                          |
 | 500  | For all Operations: </br><ul><li>The occurrence of an Invalid Exception (500) is extremely rare, and the client will retry a request that encounters this exception on the next preferred regions. </li></ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 503  | When a Service Unavailable exception is encountered:  </br><ul><li>The request will be retried by the SDK on the next preferred regions.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+
+### Connection Issues Retry Flow And Marking Unavailable
+
+```mermaid
+flowchart TD
+    A[Request] --> B(fails due to connection issues. ex. ServiceRequestErrors)
+    B --> C{ has there been 3 retries for this endpoint? }
+    C --> K(Mark endpoint as unavailable)
+    K -->|Yes| I{Is there another region available?} 
+    I --> |No| J(Bubble up failure to customer)
+    I --> |Yes| D[read or write request?]
+    C -->|No| E(Retries in same region)
+    E --> A
+    D -->|Read| F(Retry on another region)
+    D -->|Write| G{multi-write account?}
+    G --> |Yes| F
+    G --> |No| H(Bubble up failure to customer)
+    H --> A
+    F --> A
+```
+
+### Transient Issues Retry Flow And Marking Unavailable
+
+```mermaid
+flowchart TD
+    A[Request] --> B(fails due to ServiceResponseErrors or 5xx errors excluding 503s)
+    B --> C{Is there another region available?} 
+    C --> |No| E(Try only one more time in initial region)
+    C --> |Yes| D[read or write request?]
+    D -->|Read| F(Retry on another region)
+    D -->|Write| G{retry write enabled?}
+    G --> |Yes| F(Retry on another region)
+    G --> |No| H(Bubble up failure to customer)
+    F --> A
+    E --> A
+```
+
+### SDK Health Checks
+The SDK performs health checks on the account regions to perform decisions on where to route requests. These requests happen 
+every 5 minutes in the background and concurrently. A call will be made to all the endpoints the SDK can use based on the preferred locations.
+If the health check call fails after three retries, the endpoint will be marked as unavailable. If the health check call succeeds, the endpoint will be marked as available. 
+The health check retries are performed in following sequence after 500 ms, 1 second, and finally 2 seconds and for each retry we increase the `read_timeout`. 
+This is the only way the SDK can mark an endpoint as available. 

@@ -1,14 +1,11 @@
 # Release History
 
-## 7.14.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.14.3 (2025-11-11)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug where batched messages couldn't be sent to a queue that had session & partitions enabled. ([#42598](https://github.com/Azure/azure-sdk-for-python/pull/42598))
+- Fixed a bug in the Service Bus client where the maximum message size negotiation during the AMQP attach frame was handled incorrectly. The client now correctly sends a max message size of 0 (unlimited), allowing the server to apply its internal limit as intended. ([#43383](https://github.com/Azure/azure-sdk-for-python/pull/43383))
 
 ## 7.14.2 (2025-04-09)
 

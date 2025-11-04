@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2024-01-01/examples/OperationsList.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2025-06-01/examples/OperationsList.json
 if __name__ == "__main__":
     main()
