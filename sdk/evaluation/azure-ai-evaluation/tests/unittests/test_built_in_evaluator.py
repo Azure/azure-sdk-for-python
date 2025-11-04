@@ -13,7 +13,7 @@ from azure.ai.evaluation import (
 
 
 async def quality_response_async_mock(*args, **kwargs):
-    return (
+    llm_output = (
         "<S0>Let's think step by step: The response 'Honolulu' is a single word. "
         "It does not form a complete sentence, lacks grammatical structure, and does not "
         "convey any clear idea or message. It is not possible to assess vocabulary range, "
@@ -23,10 +23,11 @@ async def quality_response_async_mock(*args, **kwargs):
         " fluency. It is largely incomprehensible and does not meet the criteria for higher fluency "
         "levels.</S1><S2>1</S2>"
     )
+    return {"llm_output": llm_output}
 
 
 async def quality_no_response_async_mock():
-    return "1"
+    return {"llm_output": "1"}
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -72,9 +73,21 @@ class TestBuiltInEvaluators:
         )
         assert result["similarity"] == result["gpt_similarity"] == 1
         # Updated assertion to expect 4 keys instead of 2
-        assert len(result) == 4
+        assert len(result) == 11
         # Verify all expected keys are present
-        assert set(result.keys()) == {"similarity", "gpt_similarity", "similarity_result", "similarity_threshold"}
+        assert set(result.keys()) == {
+            "similarity",
+            "gpt_similarity",
+            "similarity_result",
+            "similarity_threshold",
+            "similarity_prompt_tokens",
+            "similarity_completion_tokens",
+            "similarity_total_tokens",
+            "similarity_finish_reason",
+            "similarity_model",
+            "similarity_sample_input",
+            "similarity_sample_output",
+        }
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
@@ -201,27 +214,6 @@ class TestBuiltInEvaluators:
         assert result["groundedness"] == result["gpt_groundedness"] == 1
         assert "groundedness_reason" in result
 
-    def test_groundedness_evaluator_no_supported_tools(self, mock_model_config):
-        """Test GroundednessEvaluator when no supported tools are used"""
-        groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
-        groundedness_eval._flow = MagicMock(return_value=quality_response_async_mock())
-
-        result = groundedness_eval(
-            query="What is the capital of Japan?",
-            response=[
-                {"role": "user", "content": "What is the capital of Japan?"},
-                {"role": "assistant", "content": "The capital of Japan is Tokyo."},
-            ],
-            tool_definitions=[
-                {"name": "unsupported_tool", "type": "unsupported", "description": "An unsupported tool"}
-            ],
-        )
-
-        # When no supported tools are used, it should return "not applicable" result
-        assert result["groundedness"] == "not applicable"
-        assert result["groundedness_result"] == "pass"
-        assert "Supported tools for groundedness are" in result["groundedness_reason"]
-
     def test_groundedness_evaluator_with_context(self, mock_model_config):
         """Test GroundednessEvaluator with direct context (traditional use)"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
@@ -244,11 +236,10 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             groundedness_eval(
                 query="What is the capital of Japan?",
-                response=[{"role": "assistant", "content": "The capital of Japan is Tokyo."}],
-                # Missing tool_definitions
+                # Missing response
             )
 
         assert (
-            "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query', 'response' and 'tool_definitions' are required."
+            "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
             in exc_info.value.args[0]
         )

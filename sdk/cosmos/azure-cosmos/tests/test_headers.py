@@ -23,6 +23,12 @@ def request_raw_response_hook(response):
         assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
                 == str(request_throughput_bucket_number))
 
+def partition_merge_support_response_hook(raw_response):
+    header = raw_response.http_request.headers
+    assert http_constants.HttpHeaders.SDKSupportedCapabilities in header
+    assert header[http_constants.HttpHeaders.SDKSupportedCapabilities] == \
+           http_constants.SDKSupportedCapabilities.PARTITION_MERGE
+
 @pytest.mark.cosmosEmulator
 class TestHeaders(unittest.TestCase):
     database: DatabaseProxy = None
@@ -278,6 +284,11 @@ class TestHeaders(unittest.TestCase):
             assert "specified for the header 'x-ms-cosmos-throughput-bucket' is invalid." in e.http_error_message
 
     """
+
+    def test_partition_merge_support_header(self):
+        # This test only runs read API to verify if the header was set correctly, because all APIs are using the same
+        # base method to set the header(GetHeaders).
+        self.container.read(raw_response_hook=partition_merge_support_response_hook)
 
 if __name__ == "__main__":
     unittest.main()

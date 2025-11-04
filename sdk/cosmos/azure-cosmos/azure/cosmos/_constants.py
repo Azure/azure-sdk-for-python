@@ -23,7 +23,6 @@
 """
 
 
-from typing import Dict
 from typing_extensions import Literal
 
 # cspell:ignore reranker
@@ -41,7 +40,6 @@ class _Constants:
     Name: Literal["name"] = "name"
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
     DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
-    UnavailableEndpointDBATimeouts: int = 1 # seconds
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
@@ -62,11 +60,11 @@ class _Constants:
     INFERENCE_SERVICE_DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
     SEMANTIC_RERANKER_INFERENCE_ENDPOINT: str = "AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"
 
-    # Database Account Retry Policy constants
+    # Health Check Retry Policy constants
     AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES: str = "AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES"
     AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT: int = 3
     AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS: str = "AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS"
-    AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT: int = 100
+    AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT: int = 500
 
     # Only applicable when circuit breaker is enabled -------------------------
     CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"
@@ -78,7 +76,7 @@ class _Constants:
     # -------------------------------------------------------------------------
 
     # Error code translations
-    ERROR_TRANSLATIONS: Dict[int, str] = {
+    ERROR_TRANSLATIONS: dict[int, str] = {
         400: "BAD_REQUEST - Request being sent is invalid.",
         401: "UNAUTHORIZED - The input authorization token can't serve the request.",
         403: "FORBIDDEN",
