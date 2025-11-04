@@ -10,20 +10,19 @@ DESCRIPTION:
     `openai.evals.*` methods to create, get and list eval group and and eval runs.
 
 USAGE:
-    python sample_redteam_evaluations_v2.py
+    python sample_scheduled_evaluations.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity azure-ai-projects>=2.0.0b1 python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) MODEL_ENDPOINT - Required. The Azure OpenAI endpoint associated with your Foundry project.
-       It can be found in the Foundry overview page. It has the form https://<account_name>.openai.azure.com.
-    3) MODEL_API_KEY - Required. The API key for the model endpoint. Can be found under "key" in the model details page
-       (click "Models + endpoints" and select your model to get to the model details page).
-    4) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
+    3) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
+    4) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
+    5) AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 from datetime import datetime
