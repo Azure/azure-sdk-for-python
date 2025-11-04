@@ -2,7 +2,6 @@
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
-aiofiles
 python-dotenv
 azure.ai.inference
 openai

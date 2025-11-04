@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp aiofiles python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -25,7 +25,6 @@ USAGE:
 
 import os
 import asyncio
-import aiofiles
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
@@ -108,8 +107,8 @@ async def main() -> None:
                     file_content = await openai_client.containers.files.content.retrieve(
                         file_id=file_id, container_id=container_id
                     )
-                    async with aiofiles.open(filename, "wb") as f:
-                        await f.write(file_content.read())
+                    with open(filename, "wb") as f:
+                        f.write(file_content.read())
                         print(f"File {filename} downloaded successfully.")
                     print(f"File ready for download: {filename}")
                 else:
