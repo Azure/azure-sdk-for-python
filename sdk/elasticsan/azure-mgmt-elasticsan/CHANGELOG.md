@@ -22,7 +22,7 @@
 ### Breaking Changes
 
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed model `ElasticSanList`/`SkuInformationList`/`SnapshotList`/`VolumeGroupList`/`VolumeList` which actually were not used by SDK users
+  - Deleted model `ElasticSanList`/`SkuInformationList`/`SnapshotList`/`VolumeGroupList`/`VolumeList` which actually were not used by SDK users
   - Method `VolumesOperations.begin_delete` changed its parameter `x_ms_delete_snapshots` from `positional_or_keyword` to `keyword_only`
   - Method `VolumesOperations.begin_delete` changed its parameter `x_ms_force_delete` from `positional_or_keyword` to `keyword_only`
 
