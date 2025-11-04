@@ -63,7 +63,7 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
         name: str,
         pass_threshold: float,
         source: str,
-        image_tag: Optional[str] = None,
+        image_tag: Optional[str] = "2025-05-08",
         credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
