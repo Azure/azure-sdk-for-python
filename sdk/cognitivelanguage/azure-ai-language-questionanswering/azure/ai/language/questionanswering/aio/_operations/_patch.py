@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,8 +33,8 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
-        :param options: Positional only. POST body of the request. 
-         Provide either `options`, OR individual keyword arguments. 
+        :param options: Positional only. POST body of the request.
+         Provide either `options`, OR individual keyword arguments.
          If both are provided, only the options object will be used.
         :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
         :keyword project_name: The name of the knowledge base project to use.
@@ -150,9 +151,7 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
         return await super().get_answers(options, **kwargs)  # type: ignore
 
     @overload  # type: ignore
-    async def get_answers_from_text(
-        self, options: AnswersFromTextOptions, **kwargs: Any
-    ) -> AnswersFromTextResult:
+    async def get_answers_from_text(self, options: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 
         :param options: Positional only. POST body of the request. Provide either `options`, OR

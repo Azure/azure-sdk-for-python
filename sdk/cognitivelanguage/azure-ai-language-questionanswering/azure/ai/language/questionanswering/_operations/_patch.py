@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -95,7 +96,7 @@ def _handle_metadata_filter_conversion(options_input):
     # Handle both MetadataRecord objects and tuples
     metadata_modified = []
     for m in metadata_input:
-        if hasattr(m, 'key') and hasattr(m, 'value'):
+        if hasattr(m, "key") and hasattr(m, "value"):
             # MetadataRecord object
             metadata_modified.append({"key": m.key, "value": m.value})
         else:
@@ -231,9 +232,7 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
     # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword,arguments-renamed
     @distributed_trace
     def get_answers(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        *args: AnswersOptions,
-        **kwargs: Any
+        self, *args: AnswersOptions, **kwargs: Any
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
@@ -321,9 +320,7 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
     # pylint: disable=arguments-renamed
     @distributed_trace
     def get_answers_from_text(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        *args: AnswersFromTextOptions,
-        **kwargs: Any
+        self, *args: AnswersFromTextOptions, **kwargs: Any
     ) -> AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 

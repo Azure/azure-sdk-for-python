@@ -20,6 +20,7 @@ TEST_ENDPOINT = "https://test-resource.cognitiveservices.azure.com/"
 TEST_KEY = "0000000000000000"
 TEST_PROJECT = "test-project"
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, environment_variables):  # pylint: disable=unused-argument
     """Configure sanitization for recordings.
@@ -38,6 +39,7 @@ def add_sanitizers(test_proxy, environment_variables):  # pylint: disable=unused
 
     # Keep id fields (previously removed by AZSDK3430) since assertions validate them.
     remove_batch_sanitizers(["AZSDK3430"])  # ensure it's not applied
+
 
 @pytest.fixture(scope="session")
 def qna_creds(environment_variables):

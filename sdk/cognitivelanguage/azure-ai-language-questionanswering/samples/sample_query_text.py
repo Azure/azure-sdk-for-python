@@ -26,10 +26,7 @@ def sample_query_text():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering import QuestionAnsweringClient
-    from azure.ai.language.questionanswering.models import (
-        AnswersFromTextOptions,
-        TextDocument
-    )
+    from azure.ai.language.questionanswering.models import AnswersFromTextOptions, TextDocument
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]

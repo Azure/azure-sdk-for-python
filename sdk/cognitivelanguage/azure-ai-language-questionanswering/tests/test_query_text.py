@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # -------------------------------------------------------------------------
 # Runtime tests: text records querying (authoring removed)
@@ -38,8 +39,14 @@ class TestQueryText(QuestionAnsweringTestCase):
             "question": "How long it takes to charge surface?",
             # Wire field must be 'records' per AnswersFromTextOptions (text_documents -> records)
             "records": [
-                {"text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.", "id": "r1"},
-                {"text": "You can use the USB port on your Surface Pro 4 power supply to charge other devices.", "id": "r2"},
+                {
+                    "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.",
+                    "id": "r1",
+                },
+                {
+                    "text": "You can use the USB port on your Surface Pro 4 power supply to charge other devices.",
+                    "id": "r2",
+                },
             ],
             "language": "en",
         }
@@ -54,7 +61,8 @@ class TestQueryText(QuestionAnsweringTestCase):
             with pytest.raises(TypeError):
                 client.get_answers_from_text("positional_options_bag", options="options bag by name")  # type: ignore[arg-type]
             params = AnswersFromTextOptions(
-                question="Meaning?", text_documents=[TextDocument(text="foo", id="doc1"), TextDocument(text="bar", id="doc2")]
+                question="Meaning?",
+                text_documents=[TextDocument(text="foo", id="doc1"), TextDocument(text="bar", id="doc2")],
             )
             with pytest.raises(TypeError):
                 client.get_answers_from_text(options=params)  # type: ignore[arg-type]
@@ -73,7 +81,10 @@ class TestQueryText(QuestionAnsweringTestCase):
                 "question": "How long it takes to charge surface?",
                 "language": "es",
                 "records": [
-                    {"text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.", "id": "doc1"}
+                    {
+                        "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.",
+                        "id": "doc1",
+                    }
                 ],
             },
             raw_response_hook=lambda r: _assert_request_language(r, "es"),
@@ -84,7 +95,10 @@ class TestQueryText(QuestionAnsweringTestCase):
                 "question": "How long it takes to charge surface?",
                 "language": "en",
                 "records": [
-                    {"text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.", "id": "doc1"}
+                    {
+                        "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully.",
+                        "id": "doc1",
+                    }
                 ],
             },
             raw_response_hook=lambda r: _assert_request_language(r, "en"),
@@ -94,5 +108,6 @@ class TestQueryText(QuestionAnsweringTestCase):
 
 def _assert_request_language(response, expected):
     import json
+
     body = json.loads(response.http_request.content)
     assert body.get("language") == expected

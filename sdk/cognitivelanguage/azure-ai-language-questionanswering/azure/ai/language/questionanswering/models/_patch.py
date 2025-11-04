@@ -49,9 +49,7 @@ def _normalize_metadata_sequence(
         try:
             metadata_iterable = iter(metadata)
         except TypeError as exc:  # pragma: no cover - defensive guard
-            raise ValueError(
-                "'metadata' must be an iterable of key/value pairs or MetadataRecord instances."
-            ) from exc
+            raise ValueError("'metadata' must be an iterable of key/value pairs or MetadataRecord instances.") from exc
 
     normalized: list[MetadataRecord] = []
     for entry in metadata_iterable:
@@ -71,9 +69,7 @@ def _normalize_metadata_sequence(
                 )
         else:
             if isinstance(entry, (str, bytes)):
-                raise ValueError(
-                    "Invalid metadata entry; expected a 2-item tuple but received a string/bytes value."
-                )
+                raise ValueError("Invalid metadata entry; expected a 2-item tuple but received a string/bytes value.")
             try:
                 key, value = entry  # type: ignore[assignment]
             except (TypeError, ValueError) as exc:
@@ -107,11 +103,17 @@ class MetadataFilter(_GeneratedMetadataFilter):
     @overload
     def __init__(self, *, metadata: None = ..., logical_operation: Optional[str] = ...) -> None: ...  # noqa: D401,E701
     @overload
-    def __init__(self, *, metadata: Sequence[Tuple[str, str]], logical_operation: Optional[str] = ...) -> None: ...  # noqa: E701
+    def __init__(
+        self, *, metadata: Sequence[Tuple[str, str]], logical_operation: Optional[str] = ...
+    ) -> None: ...  # noqa: E701
     @overload
-    def __init__(self, *, metadata: Sequence[MetadataRecord], logical_operation: Optional[str] = ...) -> None: ...  # noqa: E701
+    def __init__(
+        self, *, metadata: Sequence[MetadataRecord], logical_operation: Optional[str] = ...
+    ) -> None: ...  # noqa: E701
     @overload
-    def __init__(self, *, metadata: TypingMapping[str, str], logical_operation: Optional[str] = ...) -> None: ...  # noqa: E701
+    def __init__(
+        self, *, metadata: TypingMapping[str, str], logical_operation: Optional[str] = ...
+    ) -> None: ...  # noqa: E701
     @overload
     def __init__(
         self,

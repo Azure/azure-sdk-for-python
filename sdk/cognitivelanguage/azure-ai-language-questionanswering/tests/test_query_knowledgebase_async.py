@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # -------------------------------------------------------------------------
 # Runtime async tests: knowledge base querying (authoring removed)
@@ -28,9 +29,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
         async with client:
-            output = await client.get_answers(
-                params, project_name=qna_creds["qna_project"], deployment_name="test"
-            )
+            output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="test")
         assert output.answers
         for answer in output.answers:
             assert answer.answer
@@ -49,9 +48,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.1, top=2),
         )
         async with client:
-            output = await client.get_answers(
-                params, project_name=qna_creds["qna_project"], deployment_name="test"
-            )
+            output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="test")
         assert output.answers
         assert any(a.short_answer for a in output.answers if a.short_answer and a.short_answer.text)
 
@@ -81,10 +78,18 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             )
             assert response.answers
             assert any(
-                [a for a in response.answers if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"]
+                [
+                    a
+                    for a in response.answers
+                    if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
+                ]
             )
             assert any(
-                [a for a in response.answers if (a.metadata or {}).get("explicitlytaggedheading") == "make your battery last"]
+                [
+                    a
+                    for a in response.answers
+                    if (a.metadata or {}).get("explicitlytaggedheading") == "make your battery last"
+                ]
             )
 
     @pytest.mark.asyncio

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # -------------------------------------------------------------------------
 # Runtime tests: knowledge base querying (authoring removed)

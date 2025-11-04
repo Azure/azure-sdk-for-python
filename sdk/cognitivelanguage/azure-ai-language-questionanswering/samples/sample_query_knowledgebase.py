@@ -20,15 +20,13 @@ Environment variables:
     4) AZURE_QUESTIONANSWERING_DEPLOYMENT - (optional) deployment name (defaults to 'production')
 """
 
+
 def sample_query_knowledgebase():
     # [START query_knowledgebase]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering import QuestionAnsweringClient
-    from azure.ai.language.questionanswering.models import (
-        AnswersOptions,
-        ShortAnswerOptions
-    )
+    from azure.ai.language.questionanswering.models import AnswersOptions, ShortAnswerOptions
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
