@@ -1087,12 +1087,12 @@ async def evaluate_with_rai_service_sync(
 
         # Submit annotation request and fetch result
         url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
-        headers = {"aml-user-token": token, "Authorization": "Bearer " + token}
+        headers = {"aml-user-token": token, "Authorization": "Bearer " + token, "Content-Type": "application/json"}
         sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
         sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
 
         with get_http_client() as client:
-            http_response = client.post(url, json=sync_eval_payload_json, headers=headers)
+            http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
 
         if http_response.status_code != 200:
             LOGGER.error("Fail evaluating with error message: %s", http_response.text())
