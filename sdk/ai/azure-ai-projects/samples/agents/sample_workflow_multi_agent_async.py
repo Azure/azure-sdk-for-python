@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ResponseStreamEventType, WorkflowDefinition
+from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ResponseStreamEventType, WorkflowAgentDefinition
 
 load_dotenv()
 
@@ -139,7 +139,7 @@ trigger:
 
             workflow = await project_client.agents.create_version(
                 agent_name="student-teacherworkflow",
-                definition=WorkflowDefinition(workflow=workflow_yaml),
+                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
             print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")
