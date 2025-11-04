@@ -2,6 +2,4 @@
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp
-pytest
-python-dotenv
 pillow
