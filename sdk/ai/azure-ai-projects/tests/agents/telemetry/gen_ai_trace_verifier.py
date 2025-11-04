@@ -187,6 +187,7 @@ class GenAiTraceVerifier:
                 raise AssertionError("check_span_events: event not found")
 
         if len(span_events) > 0:  # If there are any additional events in the span_events
-            raise AssertionError("check_span_events: unexpected event found")
+            unexpected_event_names = [event.name for event in span_events]
+            raise AssertionError(f"check_span_events: unexpected event(s) found: {unexpected_event_names}")
 
         return True
