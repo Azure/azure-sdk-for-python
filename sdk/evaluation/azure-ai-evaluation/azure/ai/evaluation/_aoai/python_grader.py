@@ -30,8 +30,8 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param name: The name of the grader.
     :type name: str
-    :param image_tag: The image tag for the Python execution environment.
-    :type image_tag: str
+    :param image_tag: The image tag for the Python execution environment. Defaults to "2025-05-08".
+    :type image_tag: Optional[str]
     :param pass_threshold: Score threshold for pass/fail classification. Scores >= threshold are considered passing.
     :type pass_threshold: float
     :param source: Python source code containing the grade function.
