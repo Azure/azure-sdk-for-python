@@ -1,0 +1,38 @@
+[project]
+name = "azure-ai-agentserver-langgraph"
+dynamic = ["version", "readme"]
+description = "LangGraph adapter for Azure AI Agent Server"
+requires-python = ">=3.10"
+authors = [{ name = "Microsoft Corporation" }]
+classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10"]
+
+dependencies = [
+    "azure-ai-agentserver-core",
+    "langchain",
+    "langchain-openai",
+    "langchain-azure-ai[opentelemetry]",
+    "langgraph",
+    "opentelemetry-exporter-otlp-proto-http",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = { find = { include = ["azure*"] } }
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.langgraph._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+lint.select = ["E", "F", "B", "I"]   # E=pycodestyle errors, F=Pyflakes, B=bugbear, I=import sort
+lint.ignore = []
+fix = false
+
+[tool.ruff.lint.isort]
+known-first-party = ["azure.ai.agentserver.langgraph"]
+combine-as-imports = true
