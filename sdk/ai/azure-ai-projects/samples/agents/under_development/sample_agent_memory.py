@@ -10,9 +10,9 @@ USAGE:
     python sample_agent_memory.py
 
     Before running the sample:
-        pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1 
-    
-        Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small). 
+        pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1
+
+        Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
         Once you have deployed models, set the deployment name in the variables below.
 
         Set these environment variables with your own values:
@@ -22,7 +22,7 @@ USAGE:
         the "Models + endpoints" tab in your Azure AI Foundry project.
         3) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory, as found under the "Name" column in
         the "Models + endpoints" tab in your Azure AI Foundry project.
-        4) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory, as found under the 
+        4) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory, as found under the
             "Name" column in the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
@@ -36,15 +36,12 @@ from azure.ai.projects.models import (
     MemorySearchOptions,
     ResponsesUserMessageItemParam,
     MemorySearchTool,
-    PromptAgentDefinition
+    PromptAgentDefinition,
 )
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential()
-)
+project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
 
 with project_client:
 
@@ -52,8 +49,8 @@ with project_client:
 
     # Create a memory store
     definition = MemoryStoreDefaultDefinition(
-        chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"], 
-        embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"]
+        chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
+        embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
     )
     memory_store = project_client.memory_stores.create(
         name="my_memory_store",
@@ -71,12 +68,12 @@ with project_client:
         ),
         tools=[
             MemorySearchTool(
-                memory_store_name=memory_store.name, 
-                scope="{{$userId}}", 
-                update_delay=10  # Wait 5 seconds of inactivity before updating memories
-                                 # In a real application, set this to a higher value like 300 (5 minutes, default)
+                memory_store_name=memory_store.name,
+                scope="{{$userId}}",
+                update_delay=10,  # Wait 5 seconds of inactivity before updating memories
+                # In a real application, set this to a higher value like 300 (5 minutes, default)
             )
-        ]
+        ],
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
@@ -86,9 +83,9 @@ with project_client:
 
     # Create an agent response to initial user message
     response = openai_client.responses.create(
-        conversation=conversation.id, 
-        extra_body={"agent": AgentReference(name=agent.name).as_dict()}, 
-        input=[ResponsesUserMessageItemParam(content="I prefer dark roast coffee")]
+        conversation=conversation.id,
+        extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+        input=[ResponsesUserMessageItemParam(content="I prefer dark roast coffee")],
     )
     print(f"Response output: {response.output_text}")
 
@@ -101,9 +98,9 @@ with project_client:
 
     # Create an agent response with stored memories
     new_response = openai_client.responses.create(
-        conversation=new_conversation.id, 
-        extra_body={"agent": AgentReference(name=agent.name).as_dict()}, 
-        input=[ResponsesUserMessageItemParam(content="Please order my usual coffee")]
+        conversation=new_conversation.id,
+        extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+        input=[ResponsesUserMessageItemParam(content="Please order my usual coffee")],
     )
     print(f"Response output: {new_response.output_text}")
 
@@ -114,6 +111,6 @@ with project_client:
 
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
-    
+
     project_client.memory_stores.delete(memory_store.name)
     print("Memory store deleted")

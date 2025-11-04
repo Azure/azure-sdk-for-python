@@ -10,9 +10,9 @@ USAGE:
     python sample_memory_basic.py
 
     Before running the sample:
-        pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1 
-    
-        Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small). 
+        pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1
+
+        Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
         Once you have deployed models, set the deployment name in the variables below.
 
         Set these environment variables with your own values:
@@ -20,7 +20,7 @@ USAGE:
         page of your Azure AI Foundry portal.
         2) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model, as found under the "Name" column in
         the "Models + endpoints" tab in your Azure AI Foundry project.
-        3) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model, as found under the 
+        3) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model, as found under the
             "Name" column in the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
@@ -34,22 +34,19 @@ from azure.ai.projects.models import (
     MemorySearchOptions,
     ResponsesUserMessageItemParam,
     MemorySearchTool,
-    PromptAgentDefinition
+    PromptAgentDefinition,
 )
 
 load_dotenv()
 
-project_client = AIProjectClient(
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential()
-)
+project_client = AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
 
 with project_client:
 
     # Create a memory store
     definition = MemoryStoreDefaultDefinition(
-        chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"], 
-        embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"]
+        chat_model=os.environ["AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME"],
+        embedding_model=os.environ["AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
     )
     memory_store = project_client.memory_stores.create(
         name="my_memory_store",
@@ -69,35 +66,29 @@ with project_client:
     update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
-        items=[user_message] # Pass conversation items that you want to add to memory
-        update_delay=0 # Trigger update immediately without waiting for inactivity
+        items=[user_message],  # Pass conversation items that you want to add to memory
+        update_delay=0,  # Trigger update immediately without waiting for inactivity
     )
 
     # Wait for the update operation to complete, but can also fire and forget
     update_result = update_poller.result()
     print(f"Updated with {len(update_result.memory_operations)} memory operations")
     for operation in update_result.memory_operations:
-        print(f"  - Operation: {operation.kind}, Memory ID: {operation.memory_item.memory_id}, Content: {operation.memory_item.content}")
+        print(
+            f"  - Operation: {operation.kind}, Memory ID: {operation.memory_item.memory_id}, Content: {operation.memory_item.content}"
+        )
 
     # Retrieve memories from the memory store
-    query_message = ResponsesUserMessageItemParam(
-        content="What are my coffee preferences?"
-    )
+    query_message = ResponsesUserMessageItemParam(content="What are my coffee preferences?")
     search_response = project_client.memory_stores.search_memories(
-        name=memory_store.name,
-        scope=scope,
-        items=[query_message],
-        options=MemorySearchOptions(max_memories=5)
+        name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
     )
     print(f"Found {len(search_response.memories)} memories")
     for memory in search_response.memories:
         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
     # Delete memories for a specific scope
-    delete_scope_response = project_client.memory_stores.delete_scope(
-        name=memory_store.name,
-        scope=scope
-    )
+    delete_scope_response = project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
     print(f"Deleted memories for scope '{scope}': {delete_scope_response.deleted}")
 
     # Delete memory store

@@ -11,7 +11,7 @@ USAGE:
 
     Before running the sample:
         pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1 mcp
-    
+
         Set these environment variables with your own values:
         1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
         page of your Azure AI Foundry portal.
@@ -28,6 +28,7 @@ from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
 load_dotenv()
+
 
 async def main():
     credential = DefaultAzureCredential()
@@ -54,23 +55,25 @@ async def main():
                 # Run the code interpreter tool
                 code_interpreter_result = await session.call_tool(
                     name="code_interpreter",
-                    arguments={"code": "print('Hello from Azure AI Foundry MCP Code Interpreter tool!')"})
+                    arguments={"code": "print('Hello from Azure AI Foundry MCP Code Interpreter tool!')"},
+                )
                 print(f"\n\nCode Interpreter Output: {code_interpreter_result.content}")
 
                 # Run the image_generation tool
                 image_generation_result = await session.call_tool(
                     name="image_generation",
                     arguments={"prompt": "Draw a cute puppy riding a skateboard"},
-                    meta={"imagegen_model_deployment_name": os.getenv("IMAGE_GEN_DEPLOYMENT_NAME", "")})
+                    meta={"imagegen_model_deployment_name": os.getenv("IMAGE_GEN_DEPLOYMENT_NAME", "")},
+                )
                 print(f"\n\nImage Generation Output: {image_generation_result.content}")
 
                 # Run the file_search tool
                 # Create a project client
                 project_client = AIProjectClient(
-                        endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
-                        credential=credential,
-                        api_version="2025-05-15-preview"
-                    )
+                    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+                    credential=credential,
+                    api_version="2025-05-15-preview",
+                )
                 async with project_client:
                     # Create a vector store
                     openai_client = await project_client.get_openai_client()
@@ -80,7 +83,10 @@ async def main():
 
                     vector_store_file = await openai_client.vector_stores.files.upload_and_poll(
                         vector_store_id=vector_store.id,
-                        file=open(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../assets/product_info_1.md")), "rb")
+                        file=open(
+                            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../assets/product_info_1.md")),
+                            "rb",
+                        ),
                     )
 
                     print(f"\n\nUploaded file, file ID: {vector_store_file.id} to vector store ID: {vector_store.id}")
@@ -89,7 +95,7 @@ async def main():
                     file_search_result = await session.call_tool(
                         name="file_search",
                         arguments={"queries": ["What feature does Smart Eyewear offer?"]},
-                        meta={"vector_store_ids": [vector_store.id]}
+                        meta={"vector_store_ids": [vector_store.id]},
                     )
                     print(f"\n\nFile Search Output: {file_search_result.content}")
     finally:
