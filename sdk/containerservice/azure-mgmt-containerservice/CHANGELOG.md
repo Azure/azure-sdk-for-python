@@ -1,5 +1,37 @@
 # Release History
 
+## 40.1.0 (2025-10-31)
+
+### Features Added
+
+  - Client `ContainerServiceClient` added operation group `managed_namespaces`
+  - Model `AgentPool` added property `local_dns_profile`
+  - Model `IstioEgressGateway` added property `name`
+  - Model `IstioEgressGateway` added property `namespace`
+  - Model `IstioEgressGateway` added property `gateway_configuration_name`
+  - Model `ManagedClusterAgentPoolProfile` added property `local_dns_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `local_dns_profile`
+  - Enum `WorkloadRuntime` added member `KATA_VM_ISOLATION`
+  - Added enum `AdoptionPolicy`
+  - Added enum `DeletePolicy`
+  - Added enum `LocalDNSForwardDestination`
+  - Added enum `LocalDNSForwardPolicy`
+  - Added enum `LocalDNSMode`
+  - Added model `LocalDNSOverride`
+  - Added model `LocalDNSProfile`
+  - Added enum `LocalDNSProtocol`
+  - Added enum `LocalDNSQueryLogging`
+  - Added enum `LocalDNSServeStale`
+  - Added enum `LocalDNSState`
+  - Added model `ManagedNamespace`
+  - Added model `ManagedNamespaceListResult`
+  - Added model `NamespaceProperties`
+  - Added enum `NamespaceProvisioningState`
+  - Added model `NetworkPolicies`
+  - Added enum `PolicyRule`
+  - Added model `ResourceQuota`
+  - Added operation group `ManagedNamespacesOperations`
+
 ## 41.0.0b1 (2025-10-24)
 
 ### Features Added

@@ -1,3 +1,4 @@
+import sys
 import os
 import ast
 import time
@@ -25,7 +26,7 @@ _LOGGER = logging.getLogger(__name__)
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
 def create_package(prefolder, name):
     absdirpath = Path(prefolder, name).absolute()
-    check_call(["python", "-m", "build"], cwd=absdirpath)
+    check_call([sys.executable, "-m", "build"], cwd=absdirpath)
 
 
 @return_origin_path

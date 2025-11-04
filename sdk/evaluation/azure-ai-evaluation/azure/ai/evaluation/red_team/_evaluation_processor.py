@@ -122,8 +122,13 @@ class EvaluationProcessor:
             }
 
             # Add context to query_response if found
-            if context[0] is not None:
-                query_response["context"] = context[0]
+            if context and context[0] is not None:
+                # If context is a string, wrap it in the expected format for the RAI service
+                context_value = context[0]
+                if isinstance(context_value, str):
+                    query_response["context"] = {"contexts": [{"content": context_value}]}
+                else:
+                    query_response["context"] = context_value
 
             if tool_calls and any(tool_calls):
                 query_response["tool_calls"] = [call for sublist in tool_calls for call in sublist if call]
