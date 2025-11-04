@@ -95,24 +95,33 @@ class TestBase(AzureRecordedTestCase):
 
     test_files_params = {
         "test_file_name": "test_file.jsonl",
-        "file_purpose": "fine-tune",
+        "file_purpose": "fine-tune"
     }
 
     test_finetuning_params = {
         "sft": {
-            "model_name": "gpt-4.1",
+            "openai": {
+                "model_name": "gpt-4.1"
+            },
+            "oss": {
+                "model_name": "Ministral-3B"
+            },
             "training_file_name": "sft_training_set.jsonl",
-            "validation_file_name": "sft_validation_set.jsonl",
+            "validation_file_name": "sft_validation_set.jsonl"
         },
         "dpo": {
-            "model_name": "gpt-4o-mini",
+            "openai": {
+                "model_name": "gpt-4o-mini"
+            },
             "training_file_name": "dpo_training_set.jsonl",
-            "validation_file_name": "dpo_validation_set.jsonl",
+            "validation_file_name": "dpo_validation_set.jsonl"
         },
         "rft": {
-            "model_name": "o4-mini",
+            "openai": {
+                "model_name": "o4-mini"
+            },
             "training_file_name": "rft_training_set.jsonl",
-            "validation_file_name": "rft_validation_set.jsonl",
+            "validation_file_name": "rft_validation_set.jsonl"
         },
         "n_epochs": 1,
         "batch_size": 1,

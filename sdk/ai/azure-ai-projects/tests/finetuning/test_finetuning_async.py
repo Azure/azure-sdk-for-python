@@ -17,12 +17,12 @@ from devtools_testutils import is_live_and_not_recording
 )
 class TestFineTuningAsync(TestBase):
 
-    async def _create_sft_finetuning_job_async(self, openai_client, train_file_id, validation_file_id):
+    async def _create_sft_finetuning_job_async(self, openai_client, train_file_id, validation_file_id, model_type="openai"):
         """Helper method to create a supervised fine-tuning job asynchronously."""
         return await openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
             validation_file=validation_file_id,
-            model=self.test_finetuning_params["sft"]["model_name"],
+            model=self.test_finetuning_params["sft"][model_type]["model_name"],
             method={
                 "type": "supervised",
                 "supervised": {
@@ -40,7 +40,7 @@ class TestFineTuningAsync(TestBase):
         return await openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
             validation_file=validation_file_id,
-            model=self.test_finetuning_params["dpo"]["model_name"],
+            model=self.test_finetuning_params["dpo"]["openai"]["model_name"],
             method={
                 "type": "dpo",
                 "dpo": {
@@ -71,7 +71,7 @@ class TestFineTuningAsync(TestBase):
         return await openai_client.fine_tuning.jobs.create(
             training_file=train_file_id,
             validation_file=validation_file_id,
-            model=self.test_finetuning_params["rft"]["model_name"],
+            model=self.test_finetuning_params["rft"]["openai"]["model_name"],
             method={
                 "type": "reinforcement",
                 "reinforcement": {
@@ -385,5 +385,35 @@ class TestFineTuningAsync(TestBase):
 
                 await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"[test_finetuning_resume_async] Cancelled job: {fine_tuning_job.id}")
+
+                await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_sft_finetuning_create_job_oss_model_async(self, **kwargs):
+
+        async with self.create_async_client(**kwargs) as project_client:
+
+            async with await project_client.get_openai_client() as openai_client:
+
+                train_file, validation_file = await self._upload_test_files_async(openai_client, "sft")
+
+                # Wait for files to be processed
+                time.sleep(10)
+
+                fine_tuning_job = await self._create_sft_finetuning_job_async(
+                    openai_client, train_file.id, validation_file.id, "oss"
+                )
+                print(f"[test_finetuning_sft_oss_async] Created fine-tuning job: {fine_tuning_job.id}")
+
+                TestBase.validate_fine_tuning_job(fine_tuning_job)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(fine_tuning_job.validation_file, validation_file.id)
+                assert fine_tuning_job.method is not None, "Method should not be None for SFT job"
+                TestBase.assert_equal_or_not_none(fine_tuning_job.method.type, "supervised")
+                print(f"[test_finetuning_sft_oss_async] SFT method validation passed - type: {fine_tuning_job.method.type}")
+
+                await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_sft_oss_async] Cancelled job: {fine_tuning_job.id}")
 
                 await self._cleanup_test_files_async(openai_client, train_file, validation_file)
