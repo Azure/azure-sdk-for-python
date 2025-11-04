@@ -34,7 +34,7 @@ from azure.ai.projects.models import (
     EvaluatorType,
     EvaluatorMetric,
     EvaluatorMetricDirection,
-    EvaluatorMetricType
+    EvaluatorMetricType,
 )
 
 from azure.core.paging import ItemPaged
@@ -52,7 +52,7 @@ endpoint = os.environ[
 with DefaultAzureCredential() as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-    
+
         print("Creating Prompt based custom evaluator version (object style)")
         evaluator_version = EvaluatorVersion(
             evaluator_type=EvaluatorType.CUSTOM,
@@ -78,39 +78,28 @@ with DefaultAzureCredential() as credential:
                     Response:
                     {response}
                     """,
-                init_parameters= {
+                init_parameters={
                     "type": "object",
-                    "properties": {
-                        "deployment_name": {
-                            "type": "string"
-                        },
-                        "threshold": {
-                            "type": "number"
-                        }
-                    },
+                    "properties": {"deployment_name": {"type": "string"}, "threshold": {"type": "number"}},
                     "required": ["deployment_name", "threshold"],
                 },
                 data_schema={
                     "type": "object",
                     "properties": {
-                        "query": {
-                            "type": "string"
-                        },
-                        "response": {
-                            "type": "string"
-                        },
+                        "query": {"type": "string"},
+                        "response": {"type": "string"},
                     },
                     "required": ["query", "response"],
                 },
-                metrics= {
+                metrics={
                     "score": EvaluatorMetric(
-                        type= EvaluatorMetricType.ORDINAL,
-                        desirable_direction= EvaluatorMetricDirection.INCREASE,
-                        min_value= 1,
-                        max_value= 5
+                        type=EvaluatorMetricType.ORDINAL,
+                        desirable_direction=EvaluatorMetricDirection.INCREASE,
+                        min_value=1,
+                        max_value=5,
                     )
-                },   
-            )
+                },
+            ),
         )
         prompt_evaluator = project_client.evaluators.create_version(
             name="my_custom_evaluator_code_prompt_based",
@@ -126,57 +115,48 @@ with DefaultAzureCredential() as credential:
             description="Custom evaluator to detect violent content",
             definition=CodeBasedEvaluatorDefinition(
                 code_text="def grade(sample, item):\n    return 1.0",
-                init_parameters= {
+                init_parameters={
                     "type": "object",
-                    "properties": {
-                        "deployment_name": {
-                            "type": "string"
-                        }
-                    },
+                    "properties": {"deployment_name": {"type": "string"}},
                     "required": ["deployment_name"],
                 },
                 data_schema={
                     "type": "object",
                     "properties": {
-                        "item": {
-                            "type": "string"
-                        },
-                        "response": {
-                            "type": "string"
-                        },
+                        "item": {"type": "string"},
+                        "response": {"type": "string"},
                     },
                     "required": ["query", "response"],
                 },
-                metrics= {
+                metrics={
                     "tool_selection": EvaluatorMetric(
-                        type= EvaluatorMetricType.ORDINAL,
-                        desirable_direction= EvaluatorMetricDirection.INCREASE,
-                        min_value= 0,
-                        max_value= 5
+                        type=EvaluatorMetricType.ORDINAL,
+                        desirable_direction=EvaluatorMetricDirection.INCREASE,
+                        min_value=0,
+                        max_value=5,
                     )
-                }, 
-            )
+                },
+            ),
         )
-        code_evaluator= project_client.evaluators.create_version(
-            name="my_custom_evaluator_code_based",
-            evaluator_version=evaluator_version
+        code_evaluator = project_client.evaluators.create_version(
+            name="my_custom_evaluator_code_based", evaluator_version=evaluator_version
         )
         pprint(code_evaluator)
-        
+
         print("Get code based evaluator version")
         code_evaluator_latest = project_client.evaluators.get_version(
             name=code_evaluator.name,
             version="latest",
         )
         pprint(code_evaluator_latest)
-        
+
         print("Get prompt based evaluator version")
         prompt_evaluator_latest = project_client.evaluators.get_version(
             name=prompt_evaluator.name,
             version="latest",
         )
         pprint(prompt_evaluator_latest)
-        
+
         print("Updating code based evaluator version")
         updated_evaluator = project_client.evaluators.update_version(
             name=code_evaluator.name,
@@ -184,11 +164,11 @@ with DefaultAzureCredential() as credential:
             evaluator_version={
                 "categories": [EvaluatorCategory.SAFETY],
                 "display_name": "my_custom_evaluator_updated",
-                "description": "Custom evaluator description changed"
-            }
+                "description": "Custom evaluator description changed",
+            },
         )
         pprint(updated_evaluator)
-        
+
         print("Deleting code based evaluator version")
         project_client.evaluators.delete_version(
             name=code_evaluator_latest.name,
@@ -211,7 +191,5 @@ with DefaultAzureCredential() as credential:
         print("List of custom evaluator versions")
         for evaluator in evaluators:
             pprint(evaluator)
-            
+
         print("Sample completed successfully")
-        
-            

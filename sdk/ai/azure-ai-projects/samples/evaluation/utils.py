@@ -6,6 +6,7 @@
 
 import json
 
+
 def _to_json_primitive(obj):
     if obj is None or isinstance(obj, (str, int, float, bool)):
         return obj
@@ -22,6 +23,7 @@ def _to_json_primitive(obj):
     if hasattr(obj, "__dict__"):
         return _to_json_primitive({k: v for k, v in vars(obj).items() if not k.startswith("_")})
     return str(obj)
+
 
 def pprint(str) -> None:
     print(json.dumps(_to_json_primitive(str), indent=2))
