@@ -4,7 +4,7 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to create and run an evaluation for an Azure AI agent
+    This sample demonstrates how to create and run an evaluation for an Azure AI model
     using the synchronous AIProjectClient.
 
     The OpenAI compatible Evals calls in this sample are made using

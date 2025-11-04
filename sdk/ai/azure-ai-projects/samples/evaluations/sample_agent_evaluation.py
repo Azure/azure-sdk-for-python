@@ -46,7 +46,7 @@ with project_client:
     openai_client = project_client.get_openai_client()
 
     agent = project_client.agents.create_version(
-        agent_name="EvalTestAgent",
+        agent_name=os.environ["AZURE_AI_AGENT_NAME"],
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that answers general questions",
