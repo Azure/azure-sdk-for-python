@@ -15,6 +15,7 @@ dependencies = [
     "azure-identity",
     "openai",
     "opentelemetry-api",
+    "opentelemetry-exporter-otlp-proto-http",
     "starlette",
     "uvicorn",
 ]
