@@ -36,7 +36,6 @@ USAGE:
 """
 
 import os
-import time
 from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -47,7 +46,6 @@ from azure.planetarycomputer.models import (
     SharedAccessSignatureTokenIngestionSource,
     IngestionDefinition,
     IngestionType,
-    OperationStatus,
 )
 import uuid
 
@@ -129,13 +127,9 @@ def create_or_replace_source(
     logging.info(f"First call to create_or_replace_source with existing source ID: {source_id}")
     first_result = client.ingestion.replace_source(id=source_id, body=ingestion_source)
     logging.info(f"First call result: {first_result.id}")
-    # Second call - replaces again with modified token (demonstrates update capability)
-    # Generate a valid SAS token format with required fields: permission, start, and expiration
-    from datetime import datetime, timedelta
 
-    start_time = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-    expiry_time = (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    updated_token = f"sp=rl&st={start_time}&se={expiry_time}&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    # Second call - replaces again with modified token (demonstrates update capability)
+    updated_token = "sp=rl&st=2024-01-01T00:00:00Z&se=2024-12-31T23:59:59Z&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
 
     updated_connection_info = SharedAccessSignatureTokenConnection(
         container_uri=sas_container_uri, shared_access_signature_token=updated_token
@@ -296,36 +290,13 @@ def create_sas_token_ingestion_source(client: PlanetaryComputerProClient, sas_co
     return created_sas_source.id
 
 
-def run_and_monitor_ingestion(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
-    """Create an ingestion run and monitor its progress."""
+def create_ingestion_run(client: PlanetaryComputerProClient, collection_id: str, ingestion_id: str):
+    """Create an ingestion run."""
 
     # Create ingestion run
     run_response = client.ingestion.create_run(collection_id=collection_id, ingestion_id=ingestion_id)
-    run_id = run_response.id
-
-    # Monitor the run status
-    status = None
-    while True:
-        run = client.ingestion.get_run(collection_id=collection_id, ingestion_id=ingestion_id, run_id=run_id)
-
-        operation = run.operation
-        status = operation.status
-
-        logging.info(
-            f"  Status: {status} | "
-            f"Success: {operation.total_successful_items} | "
-            f"Failed: {operation.total_failed_items} | "
-            f"Pending: {operation.total_pending_items} | "
-            f"Total: {operation.total_items}"
-        )
-
-        if status in [OperationStatus.SUCCEEDED, OperationStatus.FAILED, OperationStatus.CANCELED]:
-            break
-    # Check for errors in status history
-    if run.operation.status_history:
-        for status_item in run.operation.status_history:
-            if status_item.error_code:
-                logging.error(f"Ingestion error: {status_item.error_code} - {status_item.error_message}")
+    logging.info(f"Created ingestion run: {run_response.id}")
+    return run_response.id
 
 
 def manage_operations(client: PlanetaryComputerProClient):
@@ -402,8 +373,8 @@ def main():
     # 4. Demonstrate advanced ingestion operations
     get_ingestion_by_id(client, collection_id, public_ingestion_id)
 
-    # 5. Monitor the ingestion
-    run_and_monitor_ingestion(client, collection_id, public_ingestion_id)
+    # 5. Create an ingestion run
+    create_ingestion_run(client, collection_id, public_ingestion_id)
 
     # 6. List all runs for the ingestion
     list_ingestion_runs(client, collection_id, public_ingestion_id)
