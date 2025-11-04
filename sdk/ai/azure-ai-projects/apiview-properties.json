@@ -343,7 +343,7 @@
         "azure.ai.projects.models.WebSearchToolCallItemParam": "OpenAI.WebSearchToolCallItemParam",
         "azure.ai.projects.models.WebSearchToolCallItemResource": "OpenAI.WebSearchToolCallItemResource",
         "azure.ai.projects.models.WeeklyRecurrenceSchedule": "Azure.AI.Projects.WeeklyRecurrenceSchedule",
-        "azure.ai.projects.models.WorkflowDefinition": "Azure.AI.Projects.WorkflowDefinition",
+        "azure.ai.projects.models.WorkflowAgentDefinition": "Azure.AI.Projects.WorkflowAgentDefinition",
         "azure.ai.projects.models.AgentKind": "Azure.AI.Projects.AgentKind",
         "azure.ai.projects.models.AgentProtocol": "Azure.AI.Projects.AgentProtocol",
         "azure.ai.projects.models.ToolType": "OpenAI.ToolType",

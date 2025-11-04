@@ -356,7 +356,7 @@ from ._models import (  # type: ignore
     WebSearchToolCallItemResource,
     WeeklyRecurrenceSchedule,
     WorkflowActionOutputItemResource,
-    WorkflowDefinition,
+    WorkflowAgentDefinition,
 )
 
 from ._enums import (  # type: ignore
@@ -761,7 +761,7 @@ __all__ = [
     "WebSearchToolCallItemResource",
     "WeeklyRecurrenceSchedule",
     "WorkflowActionOutputItemResource",
-    "WorkflowDefinition",
+    "WorkflowAgentDefinition",
     "AgentContainerOperationStatus",
     "AgentContainerStatus",
     "AgentKind",
