@@ -55,7 +55,10 @@ PATHS_EXCLUDED_FROM_DISCOVERY = [
     "sdk/textanalytics/azure-ai-textanalytics",
 ]
 
-TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
+TEST_COMPATIBILITY_MAP = {
+    "azure-ai-ml": ">=3.7",
+    "azure-ai-agentserver-core": ">=3.9", # override to allow build with python 3.9
+}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
     "azure-storage-queue": "pypy",
