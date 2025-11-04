@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
-    SourceFileContentContent
+    SourceFileContentContent,
 )
 
 
@@ -48,72 +48,44 @@ def main() -> None:
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client:
+        with AIProjectClient(
+            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+        ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
-            
+
             client = project_client.get_openai_client()
             client._custom_query = {"api-version": "2025-11-15-preview"}
-            
+
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "query": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
-                        "response": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
+                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         "tool_definitions": {
-                            "anyOf": [
-                                {"type": "object"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        }
+                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                        },
                     },
-                    "required": ["query", "response"]
+                    "required": ["query", "response"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             }
-            
+
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
                     "name": "intent_resolution",
                     "evaluator_name": "builtin.intent_resolution",
-                    "initialization_parameters": {
-                        "deployment_name": f"{model_deployment_name}"
-                    },
+                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
                         "response": "{{item.response}}",
-                        "tool_definitions": "{{item.tool_definitions}}"
-                    }
+                        "tool_definitions": "{{item.tool_definitions}}",
+                    },
                 }
             ]
-            
+
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Intent Resolution Evaluator with inline data",
@@ -126,15 +98,17 @@ def main() -> None:
             eval_object_response = client.evals.retrieve(eval_object.id)
             print("Eval Run Response:")
             pprint(eval_object_response)
-            
+
             # Success example - Intent is identified and understood and the response correctly resolves user intent
             success_query = "What are the opening hours of the Eiffel Tower?"
             success_response = "Opening hours of the Eiffel Tower are 9:00 AM to 11:00 PM."
-            
+
             # Failure example - Even though intent is correctly identified, the response does not resolve the user intent
             failure_query = "What is the opening hours of the Eiffel Tower?"
-            failure_response = "Please check the official website for the up-to-date information on Eiffel Tower opening hours."
-            
+            failure_response = (
+                "Please check the official website for the up-to-date information on Eiffel Tower opening hours."
+            )
+
             # Complex conversation example with tool calls
             complex_query = [
                 {"role": "system", "content": "You are a friendly and helpful customer service agent."},
@@ -221,7 +195,9 @@ def main() -> None:
                     "description": "Get the details of a specific order.",
                     "parameters": {
                         "type": "object",
-                        "properties": {"order_id": {"type": "string", "description": "The order ID to get the details for."}},
+                        "properties": {
+                            "order_id": {"type": "string", "description": "The order ID to get the details for."}
+                        },
                     },
                 },
                 {
@@ -229,75 +205,61 @@ def main() -> None:
                     "description": "Get tracking information for an order.",
                     "parameters": {
                         "type": "object",
-                        "properties": {"order_id": {"type": "string", "description": "The order ID to get tracking for."}},
+                        "properties": {
+                            "order_id": {"type": "string", "description": "The order ID to get tracking for."}
+                        },
                     },
                 },
             ]
 
             tool_definition = {
-                    "name": "get_order",
-                    "description": "Get the details of a specific order.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"order_id": {"type": "string", "description": "The order ID to get the details for."}},
+                "name": "get_order",
+                "description": "Get the details of a specific order.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "order_id": {"type": "string", "description": "The order ID to get the details for."}
                     },
-                }
-                
+                },
+            }
+
             print("Creating Eval Run with Inline Data")
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="inline_data_run",
-                metadata={
-                    "team": "eval-exp",
-                    "scenario": "inline-data-v1"
-                },
+                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
                 data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", 
+                    type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content= [
+                        content=[
                             # Example 1: Success case - simple string query and response
-                            SourceFileContentContent(
-                                item= {
-                                    "query": success_query,
-                                    "response": success_response
-                                }
-                            ),
+                            SourceFileContentContent(item={"query": success_query, "response": success_response}),
                             # Example 2: Failure case - simple string query and response
-                            SourceFileContentContent(
-                                item= {
-                                    "query": failure_query,
-                                    "response": failure_response
-                                }
-                            ),
+                            SourceFileContentContent(item={"query": failure_query, "response": failure_response}),
                             # Example 3: Complex conversation with tool calls and tool definitions
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": complex_query,
                                     "response": complex_response,
-                                    "tool_definitions": tool_definitions
+                                    "tool_definitions": tool_definitions,
                                 }
                             ),
                             # Example 4: Complex conversation without tool definitions
-                            SourceFileContentContent(
-                                item= {
-                                    "query": complex_query,
-                                    "response": complex_response
-                                }
-                            ),
+                            SourceFileContentContent(item={"query": complex_query, "response": complex_response}),
                             # Example 5: Complex conversation with single tool definition
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": complex_query,
                                     "response": complex_response,
-                                    "tool_definitions": tool_definition
+                                    "tool_definitions": tool_definition,
                                 }
-                            )
-                        ]
-                    )
-                )
+                            ),
+                        ],
+                    ),
+                ),
             )
-            
+
             print(f"Eval Run created")
             pprint(eval_run_object)
 
@@ -310,16 +272,15 @@ def main() -> None:
 
             while True:
                 run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed": 
-                    output_items = list(client.evals.runs.output_items.list(
-                        run_id=run.id, eval_id=eval_object.id
-                    ))
+                if run.status == "completed" or run.status == "failed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                     pprint(output_items)
                     print(f"Eval Run Status: {run.status}")
                     print(f"Eval Run Report URL: {run.report_url}")
                     break
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
-            
+
+
 if __name__ == "__main__":
     main()

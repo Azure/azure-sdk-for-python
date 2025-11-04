@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
-    SourceFileContentContent
+    SourceFileContentContent,
 )
 
 
@@ -48,72 +48,44 @@ def main() -> None:
     model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client:
+        with AIProjectClient(
+            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+        ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
-            
+
             client = project_client.get_openai_client()
             client._custom_query = {"api-version": "2025-11-15-preview"}
-            
+
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
                     "properties": {
-                        "query": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
-                        "response": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        },
+                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         "tool_definitions": {
-                            "anyOf": [
-                                {"type": "object"},
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object"
-                                    }
-                                }
-                            ]
-                        }
+                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                        },
                     },
-                    "required": ["query", "response"]
+                    "required": ["query", "response"],
                 },
-                "include_sample_schema": True
+                "include_sample_schema": True,
             }
-            
+
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
                     "name": "task_adherence",
                     "evaluator_name": "builtin.task_adherence",
-                    "initialization_parameters": {
-                        "deployment_name": f"{model_deployment_name}"
-                    },
+                    "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
                         "response": "{{item.response}}",
-                        "tool_definitions": "{{item.tool_definitions}}"
-                    }
+                        "tool_definitions": "{{item.tool_definitions}}",
+                    },
                 }
             ]
-            
+
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Task Adherence Evaluator with inline data",
@@ -137,33 +109,24 @@ def main() -> None:
 
             # Complex conversation example with tool calls
             complex_query = [
-                {
-                    "role": "system",
-                    "content": "You are an expert in literature and can provide book recommendations."
-
-                },
+                {"role": "system", "content": "You are an expert in literature and can provide book recommendations."},
                 {
                     "createdAt": "2025-03-14T08:00:00Z",
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": "I love historical fiction. Can you recommend a good book from that genre?"
+                            "text": "I love historical fiction. Can you recommend a good book from that genre?",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
 
             complex_response = [
                 {
                     "createdAt": "2025-03-14T08:00:05Z",
                     "role": "assistant",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "Let me fetch a recommendation for historical fiction."
-                        }
-                    ]
+                    "content": [{"type": "text", "text": "Let me fetch a recommendation for historical fiction."}],
                 },
                 {
                     "createdAt": "2025-03-14T08:00:10Z",
@@ -173,11 +136,9 @@ def main() -> None:
                             "type": "tool_call",
                             "tool_call_id": "tool_call_20250314_001",
                             "name": "get_book",
-                            "arguments": {
-                                "genre": "historical fiction"
-                            }
+                            "arguments": {"genre": "historical fiction"},
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-14T08:00:15Z",
@@ -186,9 +147,9 @@ def main() -> None:
                     "content": [
                         {
                             "type": "tool_result",
-                            "tool_result": "{ \"book\": { \"title\": \"The Pillars of the Earth\", \"author\": \"Ken Follett\", \"summary\": \"A captivating tale set in medieval England that weaves historical events with personal drama.\" } }"
+                            "tool_result": '{ "book": { "title": "The Pillars of the Earth", "author": "Ken Follett", "summary": "A captivating tale set in medieval England that weaves historical events with personal drama." } }',
                         }
-                    ]
+                    ],
                 },
                 {
                     "createdAt": "2025-03-14T08:00:20Z",
@@ -196,10 +157,10 @@ def main() -> None:
                     "content": [
                         {
                             "type": "text",
-                            "text": "Based on our records, I recommend 'The Pillars of the Earth' by Ken Follett. This novel is an excellent example of historical fiction with a rich narrative and well-developed characters. Would you like more details or another suggestion?"
+                            "text": "Based on our records, I recommend 'The Pillars of the Earth' by Ken Follett. This novel is an excellent example of historical fiction with a rich narrative and well-developed characters. Would you like more details or another suggestion?",
                         }
-                    ]
-                }
+                    ],
+                },
             ]
 
             complex_tool_definitions = [
@@ -211,10 +172,10 @@ def main() -> None:
                         "properties": {
                             "genre": {
                                 "type": "string",
-                                "description": "The genre for which a book recommendation is requested."
+                                "description": "The genre for which a book recommendation is requested.",
                             }
-                        }
-                    }
+                        },
+                    },
                 }
             ]
 
@@ -222,44 +183,33 @@ def main() -> None:
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
                 name="inline_data_run",
-                metadata={
-                    "team": "eval-exp",
-                    "scenario": "inline-data-v1"
-                },
+                metadata={"team": "eval-exp", "scenario": "inline-data-v1"},
                 data_source=CreateEvalJSONLRunDataSourceParam(
-                    type="jsonl", 
+                    type="jsonl",
                     source=SourceFileContent(
                         type="file_content",
-                        content= [
+                        content=[
                             # Failure example - vague adherence
                             SourceFileContentContent(
-                                item= {
-                                    "query": failure_query,
-                                    "response": failure_response,
-                                    "tool_definitions": None
-                                }
+                                item={"query": failure_query, "response": failure_response, "tool_definitions": None}
                             ),
                             # Success example - full adherence
                             SourceFileContentContent(
-                                item= {
-                                    "query": success_query,
-                                    "response": success_response,
-                                    "tool_definitions": None
-                                }
+                                item={"query": success_query, "response": success_response, "tool_definitions": None}
                             ),
                             # Complex conversation example with tool calls
                             SourceFileContentContent(
-                                item= {
+                                item={
                                     "query": complex_query,
                                     "response": complex_response,
-                                    "tool_definitions": complex_tool_definitions
+                                    "tool_definitions": complex_tool_definitions,
                                 }
-                            )
-                        ]
-                    )
-                )
+                            ),
+                        ],
+                    ),
+                ),
             )
-            
+
             print(f"Eval Run created")
             pprint(eval_run_object)
 
@@ -272,16 +222,15 @@ def main() -> None:
 
             while True:
                 run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-                if run.status == "completed" or run.status == "failed": 
-                    output_items = list(client.evals.runs.output_items.list(
-                        run_id=run.id, eval_id=eval_object.id
-                    ))
+                if run.status == "completed" or run.status == "failed":
+                    output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                     pprint(output_items)
                     print(f"Eval Run Status: {run.status}")
                     print(f"Eval Run Report URL: {run.report_url}")
                     break
                 time.sleep(5)
                 print("Waiting for eval run to complete...")
-            
+
+
 if __name__ == "__main__":
     main()

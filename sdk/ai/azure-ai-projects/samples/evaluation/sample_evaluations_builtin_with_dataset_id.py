@@ -38,10 +38,7 @@ from azure.ai.projects import AIProjectClient
 import json
 import time
 from utils import pprint
-from openai.types.evals.create_eval_jsonl_run_data_source_param import (
-    CreateEvalJSONLRunDataSourceParam,
-    SourceFileID
-)
+from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
 from azure.ai.projects.models import (
     DatasetVersion,
 )
@@ -74,65 +71,46 @@ with DefaultAzureCredential() as credential:
         dataset: DatasetVersion = project_client.datasets.upload_file(
             name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
             version=dataset_version,
-            file_path=data_file
+            file_path=data_file,
         )
         pprint(dataset)
-        
+
         print("Creating an OpenAI client from the AI Project client")
-        
+
         client = project_client.get_openai_client()
-        
+
         data_source_config = {
             "type": "custom",
             "item_schema": {
                 "type": "object",
                 "properties": {
-                    "query": {
-                        "type": "string"
-                    },
-                    "response": {
-                        "type": "string"
-                    },
-                    "context": {
-                        "type": "string"
-                    },
-                    "ground_truth": {
-                        "type": "string"
-                    }
+                    "query": {"type": "string"},
+                    "response": {"type": "string"},
+                    "context": {"type": "string"},
+                    "ground_truth": {"type": "string"},
                 },
-                "required": []
+                "required": [],
             },
-            "include_sample_schema": True
+            "include_sample_schema": True,
         }
-        
+
         testing_criteria = [
             {
                 "type": "azure_ai_evaluator",
                 "name": "violence",
                 "evaluator_name": "builtin.violence",
-                "data_mapping": {
-                    "query": "{{item.query}}",
-                    "response": "{{item.response}}"
-                },
-                "initialization_parameters": {
-                    "deployment_name": "{{aoai_deployment_and_model}}"
-                }
+                "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
+                "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
             },
-            {
-                "type": "azure_ai_evaluator",
-                "name": "f1",
-                "evaluator_name": "builtin.f1_score"
-            },
+            {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
             {
                 "type": "azure_ai_evaluator",
                 "name": "coherence",
                 "evaluator_name": "builtin.coherence",
-                "initialization_parameters": {
-                    "deployment_name": "{{aoai_deployment_and_model}}"
-                }
-            }
+                "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
+            },
         ]
-        
+
         print("Creating Eval Group")
         eval_object = client.evals.create(
             name="label model test with dataset ID",
@@ -150,19 +128,12 @@ with DefaultAzureCredential() as credential:
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name="dataset_id_run",
-            metadata={
-                "team": "eval-exp",
-                "scenario": "dataset-id-v1"
-            },
+            metadata={"team": "eval-exp", "scenario": "dataset-id-v1"},
             data_source=CreateEvalJSONLRunDataSourceParam(
-                type="jsonl", 
-                source=SourceFileID(
-                    type ="file_id",
-                    id=dataset.id if dataset.id else ""
-                )
-            )
+                type="jsonl", source=SourceFileID(type="file_id", id=dataset.id if dataset.id else "")
+            ),
         )
-        
+
         print(f"Eval Run created")
         pprint(eval_run_object)
 
@@ -173,14 +144,11 @@ with DefaultAzureCredential() as credential:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status == "completed" or run.status == "failed": 
-                output_items = list(client.evals.runs.output_items.list(
-                    run_id=run.id, eval_id=eval_object.id
-                ))
+            if run.status == "completed" or run.status == "failed":
+                output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Report URL: {run.report_url}")
                 print(f"Eval Run Legacy URL: {run.properties['AiStudioEvaluationUri']}")
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
-        
