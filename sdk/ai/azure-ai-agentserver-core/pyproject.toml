@@ -26,7 +26,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 # Auto-discover packages under the code root, including namespace packages (PEP 420)
-packages = { find = { include = ["azure*"] } }
+packages = { find = { include = ["azure*", "doc*"] } }
 
 [tool.setuptools.dynamic]
 # read version from your module (see Step 2 file layout)
