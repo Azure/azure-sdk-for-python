@@ -121,7 +121,6 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
-        logging.info(f"checking package for compatibility: {pkg}")
         try:
             spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
         except RuntimeError as e:
@@ -135,16 +134,14 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
 
         distro_compat = True
         distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(os.path.basename(pkg), None)
-        logging.info(f"distro_incompat for package {pkg}: {distro_incompat}")
         if distro_incompat and distro_incompat in platform.python_implementation().lower():
             distro_compat = False
 
-        logging.info(f"Package {pkg}, running_major_version: {running_major_version}, spec_set: {spec_set}, distro_compat: {distro_compat}")
         if running_major_version in spec_set and distro_compat:
             collected_packages.append(pkg)
 
-    logging.info("Target packages after applying compatibility filter: {}".format(collected_packages))
-    logging.info(
+    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
+    logging.debug(
         "Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages))
     )
 
@@ -250,25 +247,25 @@ def discover_targeted_packages(
 
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
-    logger.info(
+    logger.debug(
         f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
     )
 
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
-    logger.info(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
+    logger.debug(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
-        logger.info(f"Results after compatibility filter: {collected_packages}")
+        logger.debug(f"Results after compatibility filter: {collected_packages}")
 
     if not include_inactive:
         collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
-    logger.info(f"Results after business filter: {collected_packages}")
+    logger.debug(f"Results after business filter: {collected_packages}")
 
     return sorted(collected_packages)
 
