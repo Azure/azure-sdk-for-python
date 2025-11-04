@@ -15,7 +15,6 @@ USAGE:
 
     pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp
 
-
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Azure AI Foundry portal.
