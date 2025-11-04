@@ -16,8 +16,6 @@
 - Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
   ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
 
-### Other Changes
-
 ## 1.8.1 (2025-09-17)
 
 ### Bugs Fixed
