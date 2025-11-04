@@ -1,5 +1,16 @@
 ## Release History
 
+### 4.14.1 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+* Fixed bug where queries using `feed_range` and `continuation` options would not work as expected. See [PR 43700](https://github.com/Azure/azure-sdk-for-python/pull/43700).
+
+#### Other Changes
+ 
 ### 4.14.0 (2025-10-13)
 This version and all future versions will require Python 3.9+.
 
