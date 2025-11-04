@@ -1,6 +1,6 @@
-# Azure SDK Python Mgmt Migration Instructions for LLMs
+# Azure SDK Python Migration Instructions for LLMs
 
-**File: AzureSdkPythonMgmtMigration.instructions.md**
+**File: AzureSdkPythonMigration.instructions.md**
 
 ## Purpose
 
@@ -19,11 +19,11 @@ Example: `azsdk upgrade azure-mgmt-compute 30.0.0`
 When starting the migration, create a TODO list with these items:
 
 1. **Pre-migration assessment** - Detect Python environment and run initial tests
-2. **Package upgrade** - Update requirements/setup.py and install dependencies
+2. **Package upgrade** - Update dependencies and install with uv
 3. **Post-upgrade test** - Run tests/linting to identify breaking changes
 4. **Fix parameter signatures** - Update positional vs keyword-only parameters
-5. **Fix hybrid model usage** - Update model instantiation patterns
-6. **Fix LRO patterns** - Add begin\_ prefixes and handle pollers
+5. **Fix hybrid model usage** - Update model access patterns (dictionary, hierarchy, serialization)
+6. **Fix LRO patterns** - Add begin_ prefixes and handle pollers
 7. **Fix authentication** - Update credential imports and usage
 8. **Final validation** - Run tests to ensure all issues resolved
 9. **Summary and documentation** - Report changes to user
@@ -36,84 +36,94 @@ Mark each todo as `in-progress` when starting work on it, and `completed` when f
 
 **Use `manage_todo_list` to mark "Pre-migration assessment" as in-progress**
 
-1. **Identify the Python environment** by checking for these files in order:
-
-   - `pyproject.toml` with Poetry → Use `poetry` commands
-   - `pyproject.toml` without Poetry → Use `uv` commands (if `uv` exists) else system `pip`
-   - `Pipfile` → Use `pipenv` commands
-   - `requirements.txt` → Use `uv pip` with requirements file if `uv` exists, else system `pip`
-   - `setup.py` or `setup.cfg` → Use `uv pip install -e .` if `uv` exists, else system `pip install -e .`
-   - Default to `uv pip` if none found and `uv` exists, else use system `pip`
-
-2. **Determine test command** by checking for:
-
-   - `tox.ini` → Use `tox` for testing
-   - `pytest.ini` or `pytest` in dependencies → Use `pytest`
-   - `unittest` in test files → Use `python -m unittest`
-   - Check `setup.py` or `pyproject.toml` for test commands
-
-3. **Run initial tests** to establish baseline:
+1. **Check for uv or install it** for faster package management:
 
    ```bash
-   # Use the appropriate command based on environment detected
-   pytest                    # for pytest
-   python -m unittest        # for unittest
-   tox                      # for tox
-   python -m pytest tests/   # common pattern
+   # Check if uv is installed
+   uv --version
+   
+   # If not installed, install it
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   # or
+   pip install uv
+   ```
+
+2. **Identify the Python package configuration**:
+   - `pyproject.toml` → Modern format, use with uv
+   - `requirements.txt` → Consider migrating to pyproject.toml with uv
+   - `setup.py` or `setup.cfg` → Legacy, migrate to pyproject.toml
+   - `Pipfile` → Replace with pyproject.toml and uv
+
+3. **Determine test command** by checking for:
+   - `pytest` in dependencies → Use `uv run pytest`
+   - `unittest` in test files → Use `uv run python -m unittest`
+   - `tox.ini` → Use `uv run tox`
+   - Default to `uv run pytest` if tests exist
+
+4. **Run initial tests** to establish baseline:
+
+   ```bash
+   # Using uv for consistent environment
+   uv run pytest                    # for pytest
+   uv run python -m unittest        # for unittest
+   uv run python -m pytest tests/   # common pattern
    ```
 
    - If tests fail, note the errors but continue (existing issues)
-   - If linting is configured, run: `pylint` or `flake8` or `mypy`
+   - If linting is configured: `uv run mypy` or `uv run flake8`
 
 **Mark "Pre-migration assessment" as completed and "Package upgrade" as in-progress**
 
 ### Phase 2: Package Upgrade
 
-4. **Update package version** in appropriate file:
+**If not using pyproject.toml, migrate first:**
 
-   For `requirements.txt`:
+```bash
+# Quick migration to pyproject.toml with uv
+uv init --name azure-project --python 3.9
 
-   ```txt
-   # OLD
-   azure-mgmt-compute==29.1.0
+# Add existing dependencies
+# From requirements.txt:
+uv add $(cat requirements.txt | grep -v '^#' | tr '\n' ' ')
 
-   # NEW
-   azure-mgmt-compute==30.0.0
-   ```
+# From setup.py (extract manually or use):
+uv add azure-mgmt-xxx azure-identity  # Add your packages
+```
 
-   For `setup.py`:
+4. **Update package version** in pyproject.toml:
 
-   ```python
-   install_requires=[
-       "azure-mgmt-compute>=30.0.0,<31.0.0",
+   ```toml
+   # pyproject.toml
+   [project]
+   dependencies = [
+       "azure-mgmt-compute>=30.0.0,<31.0.0",  # Updated version
+       "azure-identity>=1.15.0",
+       "azure-core>=1.30.0",  # Required for hybrid models
    ]
    ```
 
-   For `pyproject.toml`:
-
-   ```toml
-   [tool.poetry.dependencies]
-   azure-mgmt-compute = "^30.0.0"
-   ```
-
-5. **Install dependencies** using detected package manager:
+5. **Install dependencies** with uv:
 
    ```bash
-   pip install -r requirements.txt     # for requirements.txt
-   pip install -e .                     # for setup.py
-   poetry install                       # for Poetry
-   pipenv install                       # for Pipenv
+   # Fast installation with uv
+   uv sync
+   
+   # Or if adding new package
+   uv add azure-mgmt-compute@">=30.0.0"
    ```
 
 6. **Run post-upgrade tests** to identify breaking changes:
 
    ```bash
-   # Use same test command as step 3
-   pytest
+   # Use uv run for consistent environment
+   uv run pytest
    ```
 
-   - Capture all errors, especially TypeError and AttributeError
-   - Note import errors and missing modules
+   - Capture all errors, especially:
+     - TypeError (parameter signature issues)
+     - AttributeError (model property access issues)
+     - KeyError (dictionary access issues)
+     - ImportError (authentication changes)
 
 **Mark "Package upgrade" as completed and start marking specific fix categories as in-progress**
 
@@ -126,7 +136,6 @@ Apply fixes based on TypeSpec migration patterns for Python:
 **Mark "Fix parameter signatures" as in-progress when working on these**
 
 **Pattern Detection:** Look for TypeErrors about positional arguments:
-
 - `TypeError: xxx() takes n positional arguments but m were given`
 - `TypeError: xxx() got multiple values for argument`
 - Methods with many positional arguments (>3)
@@ -166,7 +175,6 @@ client.resource_groups.create_or_update(
 ```
 
 **Rules for Parameter Migration:**
-
 - **Path parameters** (in URL path): Remain positional
 - **Body parameters** (request body): Remain positional (usually as dict)
 - **Query parameters** (in URL query string): Become keyword-only
@@ -192,7 +200,7 @@ resources = client.resources.list(
 # OLD
 resource = client.resources.get(resource_group, name, api_version)
 
-# NEW
+# NEW  
 resource = client.resources.get(
     resource_group,  # Path param
     name,           # Path param
@@ -204,57 +212,253 @@ resource = client.resources.get(
 
 **Mark "Fix hybrid model usage" as in-progress when working on these**
 
-**Pattern Detection:** Look for:
+Hybrid models have a dual dictionary and model nature with several breaking changes:
 
-- Direct model instantiation with many parameters
-- `AttributeError: 'dict' object has no attribute`
-- Model constructor TypeErrors
+##### 3.2.1 Dictionary Access Pattern Changes
+
+**Pattern Detection:** Look for:
+- `.as_dict()` method calls with `keep_readonly` parameter
+- Code expecting `snake_case` keys in dictionary output
+- Direct dictionary operations on models
 
 **Fixes:**
 
 ```python
-# OLD: Using model classes directly
-from azure.mgmt.compute.models import VirtualMachine, StorageProfile
+# OLD: Using as_dict() with keep_readonly
+model = Model(my_name="example")
+json_model = model.as_dict(keep_readonly=True)
+print(json_model["my_name"])  # snake_case key
+
+# NEW: Direct dictionary access (PREFERRED)
+model = Model(my_name="example")
+print(model["myName"])  # Direct access, camelCase key
+
+# NEW: If as_dict() still needed
+json_model = model.as_dict(exclude_readonly=False)  # Parameter renamed
+print(json_model["myName"])  # Returns camelCase
+
+# BACKCOMPAT: If you need snake_case keys
+from azure.core.serialization import as_attribute_dict
+json_model = as_attribute_dict(model, exclude_readonly=False)
+print(json_model["my_name"])  # Preserves snake_case
+```
+
+**Migration Rules:**
+- Replace `keep_readonly=True` → `exclude_readonly=False`
+- Replace `keep_readonly=False` → `exclude_readonly=True`
+- Update `snake_case` keys → `camelCase` keys
+- Prefer direct dictionary access: `model["key"]` over `model.as_dict()["key"]`
+
+##### 3.2.2 Model Hierarchy (Flattened Properties)
+
+**Pattern Detection:** Look for:
+- Properties with multiple underscores (e.g., `properties_properties_name`)
+- AttributeError on nested property access
+- KeyError when accessing flattened properties
+
+**Fixes:**
+
+```python
+# OLD: Artificially flattened properties
+model.properties_name                    # Single-level flattening
+model.properties_properties_name         # Multi-level flattening
+json_model["properties_properties_name"] # Flattened in dict
+
+# NEW: Actual REST API hierarchy
+model.properties_name                    # Still works (backcompat for single-level)
+model.properties.name                    # PREFERRED: mirrors API structure
+model.properties.properties.name         # Multi-level: use actual nesting
+model["properties"]["properties"]["name"] # Dictionary access
+
+# BACKCOMPAT: For complex flattened access
+from azure.core.serialization import as_attribute_dict
+model_dict = as_attribute_dict(model)
+print(model_dict["properties_properties_name"])  # Works with flattened
+```
+
+**Migration Rules:**
+- Single underscore properties: May still work but prefer nested access
+- Multiple underscore properties: Must use nested dot notation
+- Replace `obj.level1_level2_prop` → `obj.level1.level2.prop`
+- For dict access: `obj["level1_level2_prop"]` → `obj["level1"]["level2"]["prop"]`
+
+##### 3.2.3 Additional Properties Handling
+
+**Pattern Detection:** Look for:
+- `TypeError` with `additional_properties` parameter
+- Access to `.additional_properties` attribute
+- Setting custom properties on models
+
+**Fixes:**
+
+```python
+# OLD: Using additional_properties parameter
+model = Model(additional_properties={"custom": "value"})
+print(model.additional_properties)
+
+# NEW: Direct dictionary syntax
+# Option 1: Pass in constructor
+model = Model({"custom": "value"})
+
+# Option 2: Use update
+model = Model()
+model.update({"custom": "value"})
+
+# Option 3: Direct assignment
+model = Model()
+model["custom"] = "value"
+
+# Access is direct
+print(model["custom"])  # No .additional_properties needed
+```
+
+##### 3.2.4 Serialization/Deserialization Changes
+
+**Pattern Detection:** Look for:
+- `.serialize()` method calls
+- `.deserialize()` static method calls
+- Custom serialization workflows
+
+**Fixes:**
+
+```python
+# OLD: Explicit serialize/deserialize methods
+import json
+
+# Serialization
+model = Model(name="example")
+serialized = model.serialize()
+json_string = json.dumps(serialized)
+
+# Deserialization
+data = json.loads(json_string)
+model = Model.deserialize(data)
+
+# NEW: Models are inherently serializable
+import json
+
+# Serialization (multiple options)
+model = Model(name="example")
+json_string = json.dumps(model.as_dict())  # Explicit
+# or
+json_string = json.dumps(dict(model))      # Convert to dict
+
+# Deserialization - direct constructor
+data = json.loads(json_string)
+model = Model(data)  # Constructor handles it
+
+# BACKCOMPAT: For exact old serialize() format
+from azure.core.serialization import as_attribute_dict
+serialized = as_attribute_dict(model, exclude_readonly=False)
+```
+
+**Migration Rules:**
+- `model.serialize()` → `model.as_dict()` or `dict(model)`
+- `Model.deserialize(data)` → `Model(data)`
+- `serialize(keep_readonly=True)` → `as_dict(exclude_readonly=False)`
+- `serialize(keep_readonly=False)` → `as_dict(exclude_readonly=True)`
+
+##### 3.2.5 String Representation Changes
+
+**Pattern Detection:** Look for:
+- Test assertions comparing model string output
+- Code parsing model string representations
+- Logging that expects specific format
+
+**Fixes:**
+
+```python
+# OLD: String output in snake_case
+model = Model(type_name="example")
+print(model)  # {"type_name": "example"}
+
+# NEW: String output in camelCase (matches REST API)
+model = Model(type_name="example")
+print(model)  # {"typeName": "example"}
+
+# If you need snake_case for compatibility
+from azure.core.serialization import as_attribute_dict
+print(as_attribute_dict(model))  # {"type_name": "example"}
+```
+
+##### 3.2.6 Model Instantiation Patterns
+
+**Pattern Detection:** Look for:
+- Complex nested model construction
+- Models with many parameters
+- TypeError about unexpected keyword arguments
+
+**Fixes:**
+
+```python
+# OLD: Deep nesting with model classes
+from azure.mgmt.compute.models import (
+    VirtualMachine, StorageProfile, OSDisk, ImageReference
+)
 
 vm = VirtualMachine(
     location="eastus",
-    hardware_profile=HardwareProfile(vm_size="Standard_D2s_v3"),
-    storage_profile=StorageProfile(...)
+    hardware_profile=HardwareProfile(
+        vm_size="Standard_D2s_v3"
+    ),
+    storage_profile=StorageProfile(
+        os_disk=OSDisk(
+            create_option="FromImage",
+            managed_disk=ManagedDisk(
+                storage_account_type="Premium_LRS"
+            )
+        ),
+        image_reference=ImageReference(
+            publisher="Canonical",
+            offer="UbuntuServer",
+            sku="18.04-LTS",
+            version="latest"
+        )
+    )
 )
 
-# NEW: Option 1 - Use dictionaries (preferred for TypeSpec)
+# NEW: Prefer dictionary for nested structures
 vm = {
     "location": "eastus",
     "properties": {
-        "hardwareProfile": {"vmSize": "Standard_D2s_v3"},
-        "storageProfile": {...}
+        "hardwareProfile": {
+            "vmSize": "Standard_D2s_v3"
+        },
+        "storageProfile": {
+            "osDisk": {
+                "createOption": "FromImage",
+                "managedDisk": {
+                    "storageAccountType": "Premium_LRS"
+                }
+            },
+            "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+            }
+        }
     }
 }
 
-# NEW: Option 2 - Models with keyword arguments
+# Can still use top-level model if needed
 from azure.mgmt.compute.models import VirtualMachine
-
-vm = VirtualMachine(
-    location="eastus",
-    properties={
-        "hardwareProfile": {"vmSize": "Standard_D2s_v3"},
-        "storageProfile": {...}
-    }
-)
+vm = VirtualMachine(vm)  # Pass dict to constructor
 ```
 
-**Dictionary vs Model Rules:**
-
-- Prefer dictionaries for nested structures
-- Use models when type hints are needed
-- Mix approaches based on code readability
+**Quick Reference - Model Migration Priority:**
+1. Fix dictionary access (`.as_dict()` parameters, key casing)
+2. Fix property flattening (multi-level underscore properties)
+3. Remove `additional_properties` usage
+4. Update serialization/deserialization
+5. Handle string representation changes
+6. Simplify nested model construction with dictionaries
 
 #### 3.3 Long Running Operations (LRO) Fixes
 
 **Mark "Fix LRO patterns" as in-progress when working on these**
 
 **Pattern Detection:** Look for:
-
 - Methods without `begin_` that should have it
 - `AttributeError: 'NoneType' object has no attribute 'result'`
 - Timeout errors or hanging operations
@@ -292,7 +496,7 @@ poller = client.deployments.begin_create_or_update(
 # NEW - consolidate into body parameter
 poller = client.deployments.begin_create_or_update(
     resource_group,     # Path param
-    deployment_name,    # Path param
+    deployment_name,    # Path param  
     {                   # Body param
         "properties": properties,
         "mode": mode,
@@ -303,7 +507,6 @@ poller = client.deployments.begin_create_or_update(
 ```
 
 **LRO Method Patterns:**
-
 - Add `begin_` if missing for: create, update, delete operations
 - Keep poller.result() pattern unchanged
 - Update parameter signatures per rules above
@@ -313,7 +516,6 @@ poller = client.deployments.begin_create_or_update(
 **Mark "Fix authentication" as in-progress when working on these**
 
 **Pattern Detection:** Look for:
-
 - `ImportError: cannot import name 'ServicePrincipalCredentials'`
 - `azure.common.credentials` imports
 - Credential parameter as positional argument
@@ -355,7 +557,6 @@ client = ResourceManagementClient(
 ```
 
 **Credential Migration Map:**
-
 - `ServicePrincipalCredentials` → `ClientSecretCredential`
 - `UserPassCredentials` → `UsernamePasswordCredential`
 - `MSIAuthentication` → `ManagedIdentityCredential`
@@ -429,15 +630,15 @@ for resource in client.resources.list():
 7. **Run final tests** after applying all fixes:
 
    ```bash
-   # Run tests
-   pytest
-
+   # Run tests with uv
+   uv run pytest
+   
    # Run type checking if available
-   mypy .
-
+   uv run mypy .
+   
    # Run linting if configured
-   pylint src/
-   flake8
+   uv run pylint src/
+   uv run flake8
    ```
 
 8. **Verify success:**
@@ -445,6 +646,7 @@ for resource in client.resources.list():
    - No import errors
    - No TypeErrors or AttributeErrors
    - Type checking passes (if using mypy)
+   - Model access patterns work correctly
 
 **Mark "Final validation" as completed**
 
@@ -472,11 +674,29 @@ for resource in client.resources.list():
 **`TypeError: xxx() got multiple values for argument 'yyy'`**
 → Parameter is now keyword-only, remove positional usage
 
+**`TypeError: __init__() got an unexpected keyword argument 'additional_properties'`**
+→ Remove `additional_properties` parameter, use direct dict syntax instead
+
 **`AttributeError: 'dict' object has no attribute 'xxx'`**
 → Use dictionary access: `obj['xxx']` instead of `obj.xxx`
 
-**`AttributeError: module 'azure.mgmt.xxx' has no attribute 'YyyClient'`**
-→ Client class may be renamed or moved, check new imports
+**`AttributeError: 'Model' object has no attribute 'properties_properties_xxx'`**
+→ Multi-level flattening removed, use `obj.properties.properties.xxx`
+
+**`AttributeError: 'Model' object has no attribute 'additional_properties'`**
+→ Access additional properties directly: `model["custom_key"]`
+
+**`AttributeError: 'Model' object has no attribute 'serialize'`**
+→ Use `model.as_dict()` or `dict(model)` instead
+
+**`AttributeError: type object 'Model' has no attribute 'deserialize'`**
+→ Use `Model(data)` constructor instead of `Model.deserialize(data)`
+
+**`KeyError: 'my_property'`**
+→ Keys are now camelCase: use `'myProperty'` instead of `'my_property'`
+
+**`KeyError: 'properties_nested_value'`**
+→ Flattened keys don't work in dict access: use `obj["properties"]["nested"]["value"]`
 
 **`ImportError: cannot import name 'ServicePrincipalCredentials'`**
 → Replace with azure-identity credential classes
@@ -487,43 +707,71 @@ for resource in client.resources.list():
 → Update to use dictionary or correct model type
 
 **`Unexpected keyword argument`**
-→ Parameter might now be part of body dict
+→ Parameter might now be part of body dict or renamed
 
 **`Missing positional argument`**
 → Some parameters now keyword-only
 
+**`error: "dict[str, Any]" has no attribute "xxx"`**
+→ Model is being used as dict, either use `model.xxx` for attribute or `model["xxx"]` for dict
+
+### Model-Specific Error Patterns
+
+**Error when calling `.as_dict(keep_readonly=True)`**
+```python
+# Fix: Parameter renamed
+model.as_dict(exclude_readonly=False)
+```
+
+**Error accessing nested properties with underscores**
+```python
+# OLD: model.properties_vm_size
+# NEW: model.properties.vm_size
+```
+
+**Error with model string comparison in tests**
+```python
+# OLD: assert str(model) == '{"my_field": "value"}'
+# NEW: assert str(model) == '{"myField": "value"}'
+```
+
+**Error with additional properties**
+```python
+# OLD: Model(name="test", additional_properties={"custom": "value"})
+# NEW: Model(name="test", custom="value") or Model({"name": "test", "custom": "value"})
+```
+
 ## Python Environment Commands Reference
 
 ```bash
-# pip
-pip install -r requirements.txt
-pip install -e .
-pip install azure-mgmt-xxx==version
+# uv (recommended - 10-100x faster than pip)
+uv init --name project --python 3.9
+uv add azure-mgmt-xxx@">=version"
+uv sync
+uv run pytest
+uv run python script.py
+uv pip list
+uv pip show azure-mgmt-xxx
 
-# Poetry
-poetry add azure-mgmt-xxx@^version
-poetry install
-poetry run pytest
+# Quick migration from requirements.txt
+uv init
+uv add $(cat requirements.txt | grep -v '^#' | tr '\n' ' ')
 
-# Pipenv
-pipenv install azure-mgmt-xxx==version
-pipenv install --dev
-pipenv run pytest
-
-# Testing
-pytest
-python -m unittest discover
-tox
-python -m pytest --cov=src tests/
+# Testing with uv
+uv run pytest
+uv run python -m unittest discover
+uv run mypy src/
+uv run black . --check
+uv run ruff check
 
 # Type checking
-mypy src/
-pyright
+uv run mypy src/
+uv run pyright
 
 # Linting
-pylint src/
-flake8
-black . --check
+uv run pylint src/
+uv run flake8
+uv run black . --check
 ```
 
 ## Safety Guidelines
@@ -544,12 +792,20 @@ black . --check
 ✅ Tests pass (if present)  
 ✅ Type checking passes (if configured)  
 ✅ Existing functionality preserved  
-✅ Migration follows TypeSpec Python patterns
+✅ Migration follows TypeSpec Python patterns  
 
 ## Notes for LLMs
 
 - **Use TODO tracking:** Always use the `manage_todo_list` tool to track migration phases
 - **Parameter rules are critical:** Remember only path and body params are positional
+- **Hybrid model patterns:** Apply all 6 model migration patterns systematically:
+  1. Dictionary access changes (`.as_dict()` parameters, camelCase keys)
+  2. Property flattening fixes (nested dot notation for multi-level)
+  3. Additional properties (remove parameter, use dict syntax)
+  4. Serialization updates (no `.serialize()/.deserialize()` methods)
+  5. String representation (expect camelCase in output)
+  6. Model instantiation (prefer dicts for nested structures)
+- **Use uv for speed:** Always prefer uv over pip/poetry for 10-100x faster operations
 - **Prefer dictionaries:** TypeSpec SDKs work well with dict representations
 - **Check imports carefully:** Many imports change between versions
 - **Test incrementally:** Run tests after each major change category
@@ -557,6 +813,10 @@ black . --check
 - **Add type hints:** When updating function signatures, preserve/add type hints
 - **Handle None values:** Use `.get()` or check for None before accessing nested properties
 - **Be precise with errors:** Match error messages exactly to apply correct fixes
+- **Use backcompat helpers:** When needed, use `azure.core.serialization` utilities:
+  - `as_attribute_dict()` for snake_case compatibility
+  - `is_generated_model()` to detect SDK models
+  - `attribute_list()` to get model attributes
 - **Document breaking changes:** Keep notes on what changed for the summary
 
 ## Common Migration Patterns Reference
@@ -571,6 +831,18 @@ To determine if a parameter should be positional or keyword-only:
 4. **Header parameters** (HTTP headers like `If-Match`): **KEYWORD-ONLY**
 5. **Optional parameters**: **KEYWORD-ONLY**
 
+### Quick Reference: Hybrid Model Migration
+
+| Old Pattern | New Pattern | Backcompat Option |
+|------------|-------------|-------------------|
+| `model.as_dict(keep_readonly=True)` | `model.as_dict(exclude_readonly=False)` | `as_attribute_dict(model, exclude_readonly=False)` |
+| `json["my_property"]` | `json["myProperty"]` | Use `as_attribute_dict()` for snake_case |
+| `model.properties_nested_prop` | `model.properties.nested.prop` | `as_attribute_dict(model)["properties_nested_prop"]` |
+| `Model(additional_properties={...})` | `Model({...})` or `model.update({...})` | N/A |
+| `model.serialize()` | `model.as_dict()` or `dict(model)` | `as_attribute_dict(model)` |
+| `Model.deserialize(data)` | `Model(data)` | N/A |
+| `str(model)` returns snake_case | `str(model)` returns camelCase | `str(as_attribute_dict(model))` |
+
 ### Quick Fix Patterns
 
 ```python
@@ -579,13 +851,23 @@ To determine if a parameter should be positional or keyword-only:
 # Check if a, b are path params and combine rest into body:
 client.method(a, b, {"c": c, "d": d, "e": e})
 
-# If you see: resource.some_property
+# If you see: resource.some_nested_property
 # And get: AttributeError
-# Try: resource['some_property'] or resource.get('some_property')
+# Try: resource.some.nested.property
+
+# If you see: model.as_dict(keep_readonly=True)
+# Replace with: model.as_dict(exclude_readonly=False)
 
 # If you see: from azure.common.credentials import X
 # Replace with: from azure.identity import Y
 # Use the credential migration map above
+
+# If you see: Model.deserialize(json_data)
+# Replace with: Model(json_data)
+
+# If you need snake_case for compatibility:
+from azure.core.serialization import as_attribute_dict
+snake_case_dict = as_attribute_dict(model)
 ```
 
 This migration should be **fully automated** with minimal user intervention beyond the initial command.
