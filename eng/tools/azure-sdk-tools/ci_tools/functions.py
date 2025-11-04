@@ -118,6 +118,7 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
+        logging.info(f"checking package for compatibility: {pkg}")
         try:
             spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
         except RuntimeError as e:
@@ -131,14 +132,16 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
 
         distro_compat = True
         distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+        logging.info(f"distro_incompat for package {pkg}: {distro_incompat}")
         if distro_incompat and distro_incompat in platform.python_implementation().lower():
             distro_compat = False
 
+        logging.info(f"Package {pkg}, running_major_version: {running_major_version}, spec_set: {spec_set}, distro_compat: {distro_compat}")
         if running_major_version in spec_set and distro_compat:
             collected_packages.append(pkg)
 
-    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
-    logging.debug(
+    logging.info("Target packages after applying compatibility filter: {}".format(collected_packages))
+    logging.info(
         "Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages))
     )
 
