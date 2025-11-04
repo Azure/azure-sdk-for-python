@@ -3,7 +3,7 @@ name = "azure-ai-agentserver-core"
 # Keep using your _version.py; setuptools reads it via [tool.setuptools.dynamic] below
 dynamic = ["version", "readme"]
 description = "Agents server adapter for Azure AI"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [{ name = "Microsoft Corporation" }]
 classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10"]
 
