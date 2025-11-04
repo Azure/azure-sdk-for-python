@@ -167,3 +167,31 @@ steps:
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages_${{ parameters.ArtifactSuffix }}'
+
+  - pwsh: |
+      Get-ChildItem -Path "/" -Force -Recurse
+    displayName: 'List All Files on disk'
+    continueOnError: True
+    condition: succeededOrFailed()
+
+  - pwsh: |
+      $root = "/"
+
+      Get-ChildItem -Path $root -Directory -Recurse -ErrorAction SilentlyContinue |
+        ForEach-Object {
+            try {
+                $size = (Get-ChildItem -Path $_.FullName -Recurse -File -ErrorAction SilentlyContinue |
+                    Measure-Object -Property Length -Sum).Sum
+            }
+            catch {
+                $size = $null
+            }
+
+            [PSCustomObject]@{
+                Path = $_.FullName
+                SizeBytes = $size
+            }
+        } | Sort-Object SizeBytes -Descending | Format-Table -AutoSize
+    displayName: 'List All Folders by Size Descending'
+    continueOnError: True
+    condition: succeededOrFailed()
