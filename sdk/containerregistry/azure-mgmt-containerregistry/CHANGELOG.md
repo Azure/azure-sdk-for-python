@@ -53,11 +53,11 @@
   - Deleted or renamed model `RunFilter`
   - Deleted or renamed model `SoftDeletePolicy`
   - Deleted or renamed model `StorageAccountProperties`
-  - Deleted or renamed model `ArchiveVersionsOperations`
-  - Deleted or renamed model `ArchivesOperations`
-  - Deleted or renamed model `ExportPipelinesOperations`
-  - Deleted or renamed model `ImportPipelinesOperations`
-  - Deleted or renamed model `PipelineRunsOperations`
+  - Deleted or renamed operation group `ArchiveVersionsOperations`
+  - Deleted or renamed operation group `ArchivesOperations`
+  - Deleted or renamed operation group `ExportPipelinesOperations`
+  - Deleted or renamed operation group `ImportPipelinesOperations`
+  - Deleted or renamed operation group `PipelineRunsOperations`
 
 ## 14.1.0b2 (2025-08-15)
 
