@@ -207,7 +207,6 @@ def create_stac_item(client: PlanetaryComputerProClient, collection_id, item_id)
     for item in stac_item_get_items_response.features:
         logging.error(item.id)
 
-    # TODO List items doesn't return all items and is not reliable
     if any(item.id == stac_item.id for item in stac_item_get_items_response.features):
         logging.info(f"Item {stac_item.id} already exists. Deleting it before creating a new one.")
         client.stac.begin_delete_item(collection_id=collection_id, item_id=stac_item.id, polling=True).result()
