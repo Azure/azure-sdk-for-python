@@ -12,7 +12,11 @@ from pathlib import Path
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPreparer
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError, HttpResponseError
+from azure.core.exceptions import (
+    ResourceExistsError,
+    ResourceNotFoundError,
+    HttpResponseError,
+)
 from azure.planetarycomputer.models import (
     StacSearchParameters,
     FilterLanguage,
@@ -33,7 +37,9 @@ log_dir.mkdir(exist_ok=True)
 log_file = log_dir / "stac_specification_test_results.log"
 file_handler = logging.FileHandler(log_file, mode="w")
 file_handler.setLevel(logging.INFO)
-file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+file_formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
@@ -54,8 +60,12 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Validate conformance response
         assert conformance is not None, "Conformance should not be None"
-        assert hasattr(conformance, "conforms_to"), "Conformance should have conforms_to property"
-        assert len(conformance.conforms_to) > 0, "Conformance should have at least one URI"
+        assert hasattr(
+            conformance, "conforms_to"
+        ), "Conformance should have conforms_to property"
+        assert (
+            len(conformance.conforms_to) > 0
+        ), "Conformance should have at least one URI"
 
         # Based on log: Retrieved 15 conformance classes
         assert (
@@ -104,11 +114,15 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Validate collections response
         assert collections is not None, "Collections should not be None"
-        assert hasattr(collections, "collections"), "Response should have collections property"
+        assert hasattr(
+            collections, "collections"
+        ), "Response should have collections property"
         assert len(collections.collections) > 0, "Should have at least one collection"
 
         # Based on log: Retrieved 10 collections
-        assert len(collections.collections) >= 5, f"Expected at least 5 collections, got {len(collections.collections)}"
+        assert (
+            len(collections.collections) >= 5
+        ), f"Expected at least 5 collections, got {len(collections.collections)}"
 
         logger.info(f"Retrieved {len(collections.collections)} collections")
 
@@ -131,12 +145,16 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         # Validate collection structure
         first_collection = collections.collections[0]
         assert hasattr(first_collection, "id"), "Collection should have id"
-        assert first_collection.id is not None and len(first_collection.id) > 0, "Collection ID should not be empty"
+        assert (
+            first_collection.id is not None and len(first_collection.id) > 0
+        ), "Collection ID should not be empty"
         assert hasattr(first_collection, "extent"), "Collection should have extent"
 
         # Validate that the collection is in the list
         collection_ids = [c.id for c in collections.collections]
-        assert collection_id in collection_ids, f"{collection_id} collection should be present"
+        assert (
+            collection_id in collection_ids
+        ), f"{collection_id} collection should be present"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -160,7 +178,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Validate title is present
         assert hasattr(collection, "title"), "Collection should have title"
-        assert collection.title is not None and len(collection.title) > 0, "Collection title should not be empty"
+        assert (
+            collection.title is not None and len(collection.title) > 0
+        ), "Collection title should not be empty"
 
         logger.info(f"Retrieved collection: {collection.id}")
         if hasattr(collection, "title") and collection.title:
@@ -178,17 +198,25 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
             logger.info("  Extent:")
             if hasattr(collection.extent, "spatial") and collection.extent.spatial:
                 # Log available attributes instead of assuming bbox exists
-                spatial_attrs = [attr for attr in dir(collection.extent.spatial) if not attr.startswith("_")]
+                spatial_attrs = [
+                    attr
+                    for attr in dir(collection.extent.spatial)
+                    if not attr.startswith("_")
+                ]
                 logger.info(f"    Spatial attributes: {spatial_attrs}")
                 # Try to access bbox if it exists
                 if hasattr(collection.extent.spatial, "bbox"):
                     logger.info(f"    Spatial bbox: {collection.extent.spatial.bbox}")
             if hasattr(collection.extent, "temporal") and collection.extent.temporal:
-                logger.info(f"    Temporal interval: {collection.extent.temporal.interval}")
+                logger.info(
+                    f"    Temporal interval: {collection.extent.temporal.interval}"
+                )
 
         # Validate links
         assert hasattr(collection, "links"), "Collection should have links"
-        assert collection.links is not None and len(collection.links) > 0, "Collection should have at least one link"
+        assert (
+            collection.links is not None and len(collection.links) > 0
+        ), "Collection should have at least one link"
 
         if hasattr(collection, "links") and collection.links:
             logger.info(f"  Links count: {len(collection.links)}")
@@ -229,7 +257,11 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                 ],
             },
             date_time="2021-01-01T00:00:00Z/2022-12-31T00:00:00Z",
-            sort_by=[StacSortExtension(field="datetime", direction=StacSearchSortingDirection.DESC)],
+            sort_by=[
+                StacSortExtension(
+                    field="datetime", direction=StacSearchSortingDirection.DESC
+                )
+            ],
             limit=50,
         )
 
@@ -265,7 +297,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
             first_item = search_response.features[0]
             assert hasattr(first_item, "id"), "Item should have id"
             assert hasattr(first_item, "collection"), "Item should have collection"
-            assert first_item.collection == collection_id, "Item collection should match search collection"
+            assert (
+                first_item.collection == collection_id
+            ), "Item collection should match search collection"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -277,16 +311,22 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
-        items_response = client.stac.get_item_collection(collection_id=collection_id, limit=10)
+        items_response = client.stac.get_item_collection(
+            collection_id=collection_id, limit=10
+        )
 
         # Validate response
         assert items_response is not None, "Items response should not be None"
         assert hasattr(items_response, "features"), "Response should have features"
 
         # Based on log: Retrieved 10 items with 4 asset types each
-        assert len(items_response.features) >= 5, f"Expected at least 5 items, got {len(items_response.features)}"
+        assert (
+            len(items_response.features) >= 5
+        ), f"Expected at least 5 items, got {len(items_response.features)}"
 
-        logger.info(f"Retrieved {len(items_response.features)} items from collection {collection_id}")
+        logger.info(
+            f"Retrieved {len(items_response.features)} items from collection {collection_id}"
+        )
 
         # Log first few items
         for i, item in enumerate(items_response.features[:5]):
@@ -302,11 +342,15 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
             first_item = items_response.features[0]
             assert hasattr(first_item, "assets"), "Item should have assets"
             asset_keys = list(first_item.assets.keys())
-            assert len(asset_keys) >= 2, f"Expected at least 2 assets, got {len(asset_keys)}"
+            assert (
+                len(asset_keys) >= 2
+            ), f"Expected at least 2 assets, got {len(asset_keys)}"
             # Check for common assets
             common_assets = ["image", "tilejson", "thumbnail", "rendered_preview"]
             found_assets = [asset for asset in common_assets if asset in asset_keys]
-            assert len(found_assets) >= 1, f"Expected at least one common asset type, found: {found_assets}"
+            assert (
+                len(found_assets) >= 1
+            ), f"Expected at least one common asset type, found: {found_assets}"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -330,14 +374,18 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         properties = queryables["properties"]
 
         # Based on log: Found 4 queryable properties (id, datetime, geometry, eo:cloud_cover)
-        assert len(properties) >= 3, f"Expected at least 3 queryable properties, got {len(properties)}"
+        assert (
+            len(properties) >= 3
+        ), f"Expected at least 3 queryable properties, got {len(properties)}"
 
         logger.info(f"Found {len(properties)} queryable properties")
 
         # Validate common STAC queryables are present
         common_queryables = ["id", "datetime", "geometry"]
         for queryable in common_queryables:
-            assert queryable in properties, f"Expected queryable '{queryable}' not found"
+            assert (
+                queryable in properties
+            ), f"Expected queryable '{queryable}' not found"
 
             # Log first 15 queryable properties
             for i, (prop_name, prop_info) in enumerate(list(properties.items())[:15]):
@@ -369,7 +417,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Search with temporal range using date_time parameter
         search_params = StacSearchParameters(
-            collections=[collection_id], date_time="2021-01-01T00:00:00Z/2022-12-31T00:00:00Z", limit=10
+            collections=[collection_id],
+            date_time="2021-01-01T00:00:00Z/2022-12-31T00:00:00Z",
+            limit=10,
         )
 
         search_response = client.stac.search(body=search_params)
@@ -392,7 +442,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
             # Properties is a dictionary
             properties = item.properties
             if isinstance(properties, dict):
-                assert "datetime" in properties, "Item should have datetime property in dict"
+                assert (
+                    "datetime" in properties
+                ), "Item should have datetime property in dict"
                 logger.info(f"  Datetime: {properties['datetime']}")
             elif hasattr(properties, "__getitem__"):
                 # It's a dict-like object
@@ -400,7 +452,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                 logger.info(f"  Datetime: {properties['datetime']}")
             else:
                 # It's an object with attributes
-                assert hasattr(properties, "datetime"), "Item should have datetime attribute"
+                assert hasattr(
+                    properties, "datetime"
+                ), "Item should have datetime attribute"
                 logger.info(f"  Datetime: {properties.datetime}")
 
     @PlanetaryComputerPreparer()
@@ -417,21 +471,29 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         # Search with descending sort by datetime
         search_params_desc = StacSearchParameters(
             collections=[collection_id],
-            sort_by=[StacSortExtension(field="datetime", direction=StacSearchSortingDirection.DESC)],
+            sort_by=[
+                StacSortExtension(
+                    field="datetime", direction=StacSearchSortingDirection.DESC
+                )
+            ],
             limit=5,
         )
 
         search_response_desc = client.stac.search(body=search_params_desc)
 
         assert search_response_desc is not None, "Search response should not be None"
-        assert hasattr(search_response_desc, "features"), "Response should have features"
+        assert hasattr(
+            search_response_desc, "features"
+        ), "Response should have features"
 
         # Based on log: DESC sorting returned 5 items
         assert (
             len(search_response_desc.features) >= 3
         ), f"Expected at least 3 items in DESC sort, got {len(search_response_desc.features)}"
 
-        logger.info(f"Search with DESC sorting returned {len(search_response_desc.features)} items")
+        logger.info(
+            f"Search with DESC sorting returned {len(search_response_desc.features)} items"
+        )
 
         # Log sorted results
         for i, item in enumerate(search_response_desc.features):
@@ -443,21 +505,29 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         # Search with ascending sort
         search_params_asc = StacSearchParameters(
             collections=[collection_id],
-            sort_by=[StacSortExtension(field="datetime", direction=StacSearchSortingDirection.ASC)],
+            sort_by=[
+                StacSortExtension(
+                    field="datetime", direction=StacSearchSortingDirection.ASC
+                )
+            ],
             limit=5,
         )
 
         search_response_asc = client.stac.search(body=search_params_asc)
 
         assert search_response_asc is not None, "ASC search response should not be None"
-        assert hasattr(search_response_asc, "features"), "ASC response should have features"
+        assert hasattr(
+            search_response_asc, "features"
+        ), "ASC response should have features"
 
         # Based on log: ASC sorting returned 5 items
         assert (
             len(search_response_asc.features) >= 3
         ), f"Expected at least 3 items in ASC sort, got {len(search_response_asc.features)}"
 
-        logger.info(f"\nSearch with ASC sorting returned {len(search_response_asc.features)} items")
+        logger.info(
+            f"\nSearch with ASC sorting returned {len(search_response_asc.features)} items"
+        )
 
         for i, item in enumerate(search_response_asc.features):
             logger.info(f"Item {i+1}: {item.id}")
@@ -505,7 +575,17 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                     "proj:epsg": 26916,
                     "naip:state": "ga",
                     "proj:shape": [12460, 10620],
-                    "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0],
+                    "proj:transform": [
+                        0.6,
+                        0.0,
+                        737334.0,
+                        0.0,
+                        -0.6,
+                        3730800.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                    ],
                 },
                 "links": [
                     {
@@ -522,7 +602,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                         "title": "RGBIR COG tile",
                     }
                 },
-                "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json"],
+                "stac_extensions": [
+                    "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+                ],
             }
         )
 
@@ -530,7 +612,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Check if item already exists and delete if necessary
         try:
-            items_response = client.stac.get_item_collection(collection_id=collection_id)
+            items_response = client.stac.get_item_collection(
+                collection_id=collection_id
+            )
             if any(item.id == item_id for item in items_response.features):
                 logger.info(f"Item {item_id} already exists. Deleting it first...")
                 delete_poller = client.stac.begin_delete_item(
@@ -543,23 +627,33 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         # Create the item
         try:
-            create_poller = client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
+            create_poller = client.stac.begin_create_item(
+                collection_id=collection_id, body=stac_item, polling=True
+            )
             create_result = create_poller.result()
             logger.info(f"Successfully created item {item_id}")
             logger.info(f"Create operation result: {create_result}")
 
             # Verify the item was created
-            created_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+            created_item = client.stac.get_item(
+                collection_id=collection_id, item_id=item_id
+            )
             assert created_item is not None, "Created item should be retrievable"
             assert created_item.id == item_id, "Created item ID should match"
 
             # Validate structure of created item
-            assert hasattr(created_item, "geometry"), "Created item should have geometry"
-            assert hasattr(created_item, "properties"), "Created item should have properties"
+            assert hasattr(
+                created_item, "geometry"
+            ), "Created item should have geometry"
+            assert hasattr(
+                created_item, "properties"
+            ), "Created item should have properties"
             assert hasattr(created_item, "assets"), "Created item should have assets"
 
             # Based on log: item has image asset
-            assert "image" in created_item.assets, "Created item should have image asset"
+            assert (
+                "image" in created_item.assets
+            ), "Created item should have image asset"
 
             logger.info(f"Verified item creation: {created_item.id}")
             logger.info(f"Created item has {len(created_item.assets)} assets")
@@ -583,11 +677,15 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         try:
             # Get existing item first
-            stac_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+            stac_item = client.stac.get_item(
+                collection_id=collection_id, item_id=item_id
+            )
             logger.info(f"Retrieved item for update: {item_id}")
 
             # Update properties - use the item as-is and modify it
-            stac_item_dict = stac_item.as_dict() if hasattr(stac_item, "as_dict") else stac_item
+            stac_item_dict = (
+                stac_item.as_dict() if hasattr(stac_item, "as_dict") else stac_item
+            )
             if "properties" not in stac_item_dict:
                 stac_item_dict["properties"] = {}
 
@@ -600,14 +698,19 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
             # Update the item
             update_poller = client.stac.begin_update_item(
-                collection_id=collection_id, item_id=item_id, body=updated_stac_item, polling=True
+                collection_id=collection_id,
+                item_id=item_id,
+                body=updated_stac_item,
+                polling=True,
             )
             update_result = update_poller.result()
             logger.info(f"Successfully updated item {item_id}")
             logger.info(f"Update operation result: {update_result}")
 
             # Verify the update
-            updated_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+            updated_item = client.stac.get_item(
+                collection_id=collection_id, item_id=item_id
+            )
             logger.info(f"Verified item update: {updated_item.id}")
 
             # Based on log: Update actually failed due to PublicAccessRestricted
@@ -617,8 +720,12 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
             logger.error(f"Failed to update item: {str(e)}")
             # Based on log: Update fails with "PublicAccessRestricted: Public access is not permitted on this storage account"
             # This is expected in the test environment
-            logger.info("Item update may not be supported in this environment or item doesn't exist")
-            logger.info("This is expected if public access is restricted on the storage account")
+            logger.info(
+                "Item update may not be supported in this environment or item doesn't exist"
+            )
+            logger.info(
+                "This is expected if public access is restricted on the storage account"
+            )
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -632,7 +739,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
 
         # First, get an item ID from the collection
-        items_response = client.stac.get_item_collection(collection_id=collection_id, limit=1)
+        items_response = client.stac.get_item_collection(
+            collection_id=collection_id, limit=1
+        )
 
         if len(items_response.features) > 0:
             item_id = items_response.features[0].id
@@ -652,7 +761,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
             assert hasattr(item, "assets"), "Item should have assets"
 
             # Based on log: items have 4 asset types (image, tilejson, thumbnail, rendered_preview)
-            assert len(item.assets) >= 2, f"Expected at least 2 assets, got {len(item.assets)}"
+            assert (
+                len(item.assets) >= 2
+            ), f"Expected at least 2 assets, got {len(item.assets)}"
 
             logger.info(f"Retrieved item: {item.id}")
             logger.info(f"  Collection: {item.collection}")
@@ -721,7 +832,17 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                     "proj:epsg": 26916,
                     "naip:state": "ga",
                     "proj:shape": [12460, 10620],
-                    "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0],
+                    "proj:transform": [
+                        0.6,
+                        0.0,
+                        737334.0,
+                        0.0,
+                        -0.6,
+                        3730800.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                    ],
                     "platform": "Imagery Original",
                 },
                 "links": [
@@ -739,7 +860,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                         "title": "RGBIR COG tile",
                     }
                 },
-                "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json"],
+                "stac_extensions": [
+                    "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+                ],
             }
         )
 
@@ -749,19 +872,25 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         try:
             client.stac.get_item(collection_id=collection_id, item_id=item_id)
             logger.info(f"Item {item_id} already exists, deleting it first...")
-            delete_poller = client.stac.begin_delete_item(collection_id=collection_id, item_id=item_id, polling=True)
+            delete_poller = client.stac.begin_delete_item(
+                collection_id=collection_id, item_id=item_id, polling=True
+            )
             delete_poller.result()
             logger.info(f"Deleted existing item {item_id}")
         except ResourceNotFoundError:
             logger.info(f"Item {item_id} does not exist, proceeding with creation")
 
         # Step 1: Create the item using begin_create_item
-        create_poller = client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
+        create_poller = client.stac.begin_create_item(
+            collection_id=collection_id, body=stac_item, polling=True
+        )
         create_poller.result()
         logger.info(f"Created item {item_id}")
 
         # Verify creation
-        created_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        created_item = client.stac.get_item(
+            collection_id=collection_id, item_id=item_id
+        )
         assert created_item is not None, "Created item should be retrievable"
         assert created_item.id == item_id, "Created item ID should match"
         logger.info(f"Verified item {created_item.id}")
@@ -778,7 +907,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         logger.info(f"Replaced item {item_id} using create_or_replace")
 
         # Verify replacement
-        replaced_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        replaced_item = client.stac.get_item(
+            collection_id=collection_id, item_id=item_id
+        )
         assert replaced_item is not None, "Replaced item should be retrievable"
         assert replaced_item.id == item_id, "Replaced item ID should match"
 
@@ -786,15 +917,23 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         if hasattr(replaced_item, "properties") and replaced_item.properties:
             platform = replaced_item.properties.get("platform", "N/A")
             processing_level = replaced_item.properties.get("processing_level", "N/A")
-            logger.info(f"Verified replaced item, platform: {platform}, processing_level: {processing_level}")
+            logger.info(
+                f"Verified replaced item, platform: {platform}, processing_level: {processing_level}"
+            )
 
             # Assert the properties were updated
-            assert platform == "Imagery Updated", f"Expected platform 'Imagery Updated', got '{platform}'"
-            assert processing_level == "L2", f"Expected processing_level 'L2', got '{processing_level}'"
+            assert (
+                platform == "Imagery Updated"
+            ), f"Expected platform 'Imagery Updated', got '{platform}'"
+            assert (
+                processing_level == "L2"
+            ), f"Expected processing_level 'L2', got '{processing_level}'"
         else:
             logger.warning("Replaced item has no properties to verify")
 
-        logger.info(f"Successfully verified create_or_replace operation for item {item_id}")
+        logger.info(
+            f"Successfully verified create_or_replace operation for item {item_id}"
+        )
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -840,7 +979,17 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                     "proj:epsg": 26916,
                     "naip:state": "ga",
                     "proj:shape": [12460, 10620],
-                    "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0],
+                    "proj:transform": [
+                        0.6,
+                        0.0,
+                        737334.0,
+                        0.0,
+                        -0.6,
+                        3730800.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                    ],
                 },
                 "links": [
                     {
@@ -857,7 +1006,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
                         "title": "RGBIR COG tile",
                     }
                 },
-                "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json"],
+                "stac_extensions": [
+                    "https://stac-extensions.github.io/projection/v1.0.0/schema.json"
+                ],
             }
         )
 
@@ -865,21 +1016,27 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
 
         try:
             # First, create an item to delete
-            create_poller = client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
+            create_poller = client.stac.begin_create_item(
+                collection_id=collection_id, body=stac_item, polling=True
+            )
             create_poller.result()
             logger.info(f"Created item {item_id}")
         except ResourceExistsError:
             logger.info(f"Item {item_id} already exists, will proceed to delete it")
 
         # Verify the item exists
-        existing_item = client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        existing_item = client.stac.get_item(
+            collection_id=collection_id, item_id=item_id
+        )
         assert existing_item is not None, "Item should exist before deletion"
         assert existing_item.id == item_id, "Item ID should match"
         logger.info(f"Verified item {item_id} exists")
 
         # Delete the item
         logger.info(f"Deleting item {item_id}...")
-        delete_poller = client.stac.begin_delete_item(collection_id=collection_id, item_id=item_id, polling=True)
+        delete_poller = client.stac.begin_delete_item(
+            collection_id=collection_id, item_id=item_id, polling=True
+        )
         delete_poller.result()
         logger.info(f"Delete operation completed for item {item_id}")
 
@@ -887,7 +1044,9 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         logger.info(f"Verifying item {item_id} was deleted...")
         try:
             client.stac.get_item(collection_id=collection_id, item_id=item_id)
-            logger.warning(f"Item {item_id} still exists after deletion (may take time to propagate)")
+            logger.warning(
+                f"Item {item_id} still exists after deletion (may take time to propagate)"
+            )
             # In some cases, deletion may take time to propagate, so we don't fail the test
         except ResourceNotFoundError:
             logger.info(f"Verified item {item_id} was successfully deleted")

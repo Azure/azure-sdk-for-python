@@ -18,7 +18,7 @@ class PlanetaryComputerProClientTestBaseAsync(AzureRecordedTestCase):
             credential=credential,
             endpoint=endpoint,
         )
-    
+
     async def close_client(self):
         """Close the async client and credential."""
         # The test framework manages client lifecycle

@@ -35,7 +35,9 @@ log_dir.mkdir(exist_ok=True)
 log_file = log_dir / "ingestion_test_results.log"
 file_handler = logging.FileHandler(log_file, mode="w")
 file_handler.setLevel(logging.INFO)
-file_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+file_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+)
 logger.addHandler(file_handler)
 
 
@@ -62,8 +64,12 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
             logger.info(f"    - Resource ID: {identity.resource_id}")
 
         # Assertions
-        assert managed_identities is not None, "Managed identities list should not be None"
-        assert isinstance(managed_identities, list), "Managed identities should be a list"
+        assert (
+            managed_identities is not None
+        ), "Managed identities list should not be None"
+        assert isinstance(
+            managed_identities, list
+        ), "Managed identities should be a list"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
@@ -76,7 +82,10 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # Get test configuration - must use real managed identity from the environment
-        container_uri = os.environ.get("AZURE_INGESTION_CONTAINER_URI", "https://test.blob.core.windows.net/container")
+        container_uri = os.environ.get(
+            "AZURE_INGESTION_CONTAINER_URI",
+            "https://test.blob.core.windows.net/container",
+        )
 
         # Get a valid managed identity object ID from the service
         managed_identities = list(client.ingestion.list_managed_identities())
@@ -98,11 +107,15 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
             logger.info(f"  Deleted source: {source_id}")
 
         # Create connection info with managed identity
-        connection_info = ManagedIdentityConnection(container_uri=container_uri, object_id=managed_identity_object_id)
+        connection_info = ManagedIdentityConnection(
+            container_uri=container_uri, object_id=managed_identity_object_id
+        )
 
         # Create ingestion source (id must be a valid GUID)
         source_id = str(uuid.uuid4())
-        ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
+        ingestion_source = ManagedIdentityIngestionSource(
+            id=source_id, connection_info=connection_info
+        )
         created_source = client.ingestion.create_source(body=ingestion_source)
 
         logger.info("Created ingestion source:")
@@ -130,7 +143,8 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # Get test configuration - SAS token values
         sas_container_uri = os.environ.get(
-            "AZURE_INGESTION_SAS_CONTAINER_URI", "https://test.blob.core.windows.net/sas-container"
+            "AZURE_INGESTION_SAS_CONTAINER_URI",
+            "https://test.blob.core.windows.net/sas-container",
         )
         # SAS token must include 'st' (start time) parameter - API requirement
         sas_token = os.environ.get(
@@ -139,7 +153,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         )
 
         logger.info(f"SAS Container URI: {sas_container_uri}")
-        logger.info(f"SAS Token: {sas_token[:20]}...")  # Log only first 20 chars for security
+        logger.info(
+            f"SAS Token: {sas_token[:20]}..."
+        )  # Log only first 20 chars for security
 
         # Create connection info with SAS token
         sas_connection_info = SharedAccessSignatureTokenConnection(
@@ -172,7 +188,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_03_create_ingestion_definition(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_03_create_ingestion_definition(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test creating an ingestion definition."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Create Ingestion Definition")
@@ -191,10 +209,14 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # Delete all existing ingestions first
         logger.info("Deleting all existing ingestions...")
-        existing_ingestions = list(client.ingestion.list(collection_id=planetarycomputer_collection_id))
+        existing_ingestions = list(
+            client.ingestion.list(collection_id=planetarycomputer_collection_id)
+        )
         for ingestion in existing_ingestions:
             client.ingestion.begin_delete(
-                collection_id=planetarycomputer_collection_id, ingestion_id=ingestion.id, polling=True
+                collection_id=planetarycomputer_collection_id,
+                ingestion_id=ingestion.id,
+                polling=True,
             )
             logger.info(f"  Deleted existing ingestion: {ingestion.id}")
 
@@ -210,9 +232,15 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         logger.info("Ingestion definition created:")
         logger.info(f"  - Import Type: {ingestion_definition.import_type}")
         logger.info(f"  - Display Name: {ingestion_definition.display_name}")
-        logger.info(f"  - Source Catalog URL: {ingestion_definition.source_catalog_url}")
-        logger.info(f"  - Keep Original Assets: {ingestion_definition.keep_original_assets}")
-        logger.info(f"  - Skip Existing Items: {ingestion_definition.skip_existing_items}")
+        logger.info(
+            f"  - Source Catalog URL: {ingestion_definition.source_catalog_url}"
+        )
+        logger.info(
+            f"  - Keep Original Assets: {ingestion_definition.keep_original_assets}"
+        )
+        logger.info(
+            f"  - Skip Existing Items: {ingestion_definition.skip_existing_items}"
+        )
 
         # Create the ingestion
         ingestion_response = client.ingestion.create(
@@ -233,7 +261,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_04_update_ingestion_definition(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_04_update_ingestion_definition(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test updating an existing ingestion definition."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Update Ingestion Definition")
@@ -275,7 +305,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         )
 
         updated_ingestion = client.ingestion.update(
-            collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id, body=updated_definition
+            collection_id=planetarycomputer_collection_id,
+            ingestion_id=ingestion_id,
+            body=updated_definition,
         )
 
         logger.info("Updated ingestion:")
@@ -285,12 +317,18 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # Assertions
         assert updated_ingestion is not None, "Updated ingestion should not be None"
-        assert updated_ingestion.id == ingestion_id, "Ingestion ID should remain the same"
-        assert updated_ingestion.display_name == "Updated Ingestion Name", "Display name should be updated"
+        assert (
+            updated_ingestion.id == ingestion_id
+        ), "Ingestion ID should remain the same"
+        assert (
+            updated_ingestion.display_name == "Updated Ingestion Name"
+        ), "Display name should be updated"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_05_create_ingestion_run(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_05_create_ingestion_run(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test creating an ingestion run."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Create Ingestion Run")
@@ -341,7 +379,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_06_get_ingestion_run_status(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_06_get_ingestion_run_status(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test getting the status of an ingestion run."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Get Ingestion Run Status")
@@ -384,7 +424,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # Get run status
         run = client.ingestion.get_run(
-            collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id, run_id=run_id
+            collection_id=planetarycomputer_collection_id,
+            ingestion_id=ingestion_id,
+            run_id=run_id,
         )
 
         operation = run.operation
@@ -397,8 +439,12 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # Log status history if available
         if run.operation.status_history:
-            logger.info(f"  - Status History Entries: {len(run.operation.status_history)}")
-            for i, status_item in enumerate(run.operation.status_history[:5]):  # Log first 5
+            logger.info(
+                f"  - Status History Entries: {len(run.operation.status_history)}"
+            )
+            for i, status_item in enumerate(
+                run.operation.status_history[:5]
+            ):  # Log first 5
                 logger.info(f"    Entry {i+1}:")
                 if hasattr(status_item, "error_code") and status_item.error_code:
                     logger.info(f"      Error Code: {status_item.error_code}")
@@ -432,9 +478,15 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
             logger.info(f"    - Type: {operation.type}")
             if hasattr(operation, "total_items") and operation.total_items is not None:
                 logger.info(f"    - Total Items: {operation.total_items}")
-            if hasattr(operation, "total_successful_items") and operation.total_successful_items is not None:
+            if (
+                hasattr(operation, "total_successful_items")
+                and operation.total_successful_items is not None
+            ):
                 logger.info(f"    - Successful: {operation.total_successful_items}")
-            if hasattr(operation, "total_failed_items") and operation.total_failed_items is not None:
+            if (
+                hasattr(operation, "total_failed_items")
+                and operation.total_failed_items is not None
+            ):
                 logger.info(f"    - Failed: {operation.total_failed_items}")
 
         # Assertions
@@ -443,7 +495,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_08_get_operation_by_id(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_08_get_operation_by_id(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test getting a specific operation by ID."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Get Operation by ID")
@@ -510,7 +564,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         # Get test configuration - must use real managed identity from the environment
         # Use a unique container URI to avoid conflicts
         test_container_id = str(uuid.uuid4())
-        container_uri = f"https://test.blob.core.windows.net/test-container-{test_container_id}"
+        container_uri = (
+            f"https://test.blob.core.windows.net/test-container-{test_container_id}"
+        )
 
         # Get a valid managed identity object ID from the service
         managed_identities = list(client.ingestion.list_managed_identities())
@@ -523,10 +579,14 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         logger.info(f"Using unique container URI: {container_uri}")
 
         # Create a source to delete
-        connection_info = ManagedIdentityConnection(container_uri=container_uri, object_id=managed_identity_object_id)
+        connection_info = ManagedIdentityConnection(
+            container_uri=container_uri, object_id=managed_identity_object_id
+        )
 
         source_id = str(uuid.uuid4())
-        ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
+        ingestion_source = ManagedIdentityIngestionSource(
+            id=source_id, connection_info=connection_info
+        )
         created_source = client.ingestion.create_source(body=ingestion_source)
         source_id = created_source.id
 
@@ -546,11 +606,15 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         from devtools_testutils import is_live
 
         if is_live():
-            assert source_id not in source_ids, "Deleted source should not be in the list"
+            assert (
+                source_id not in source_ids
+            ), "Deleted source should not be in the list"
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_10_cancel_operation(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_10_cancel_operation(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test canceling an operation."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Cancel Operation")
@@ -596,7 +660,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         # Try to cancel the operation
         try:
             client.ingestion.cancel_operation(operation_id)
-            logger.info(f"Successfully requested cancellation for operation: {operation_id}")
+            logger.info(
+                f"Successfully requested cancellation for operation: {operation_id}"
+            )
             cancel_succeeded = True
         except HttpResponseError as e:
             logger.info(f"Failed to cancel operation {operation_id}: {e.message}")
@@ -655,12 +721,18 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # Create a source
         test_container_id = str(uuid.uuid4())
-        container_uri = f"https://test.blob.core.windows.net/test-container-{test_container_id}"
+        container_uri = (
+            f"https://test.blob.core.windows.net/test-container-{test_container_id}"
+        )
 
-        connection_info = ManagedIdentityConnection(container_uri=container_uri, object_id=managed_identity_object_id)
+        connection_info = ManagedIdentityConnection(
+            container_uri=container_uri, object_id=managed_identity_object_id
+        )
 
         source_id = str(uuid.uuid4())
-        ingestion_source = ManagedIdentityIngestionSource(id=source_id, connection_info=connection_info)
+        ingestion_source = ManagedIdentityIngestionSource(
+            id=source_id, connection_info=connection_info
+        )
         created_source = client.ingestion.create_source(body=ingestion_source)
 
         logger.info(f"Created source with ID: {created_source.id}")
@@ -692,38 +764,52 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # Generate test SAS token data
         test_container_id = str(uuid.uuid4())
-        sas_container_uri = f"https://test.blob.core.windows.net/test-container-{test_container_id}"
+        sas_container_uri = (
+            f"https://test.blob.core.windows.net/test-container-{test_container_id}"
+        )
 
         # Generate a valid SAS token format with required fields
         start_time = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-        expiry_time = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        expiry_time = (datetime.now(timezone.utc) + timedelta(days=7)).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
         sas_token = f"sp=rl&st={start_time}&se={expiry_time}&sv=2023-01-03&sr=c&sig=InitialRandomSignature123456"
 
         # Step 1: Create initial source using create_source (like create_sas_token_ingestion_source in sample)
-        logger.info("Step 1: Creating initial SAS token ingestion source with create_source...")
+        logger.info(
+            "Step 1: Creating initial SAS token ingestion source with create_source..."
+        )
         sas_connection_info = SharedAccessSignatureTokenConnection(
             container_uri=sas_container_uri, shared_access_signature_token=sas_token
         )
 
-        sas_ingestion_source = SharedAccessSignatureTokenIngestionSource(connection_info=sas_connection_info)
+        sas_ingestion_source = SharedAccessSignatureTokenIngestionSource(
+            connection_info=sas_connection_info
+        )
 
         created_source = client.ingestion.create_source(body=sas_ingestion_source)
         source_id = created_source.id
         logger.info(f"Created SAS token ingestion source: {source_id}")
 
         # Step 2: First call to create_or_replace_source - replaces the existing source with original token
-        logger.info(f"Step 2: First call to create_or_replace_source with existing source ID: {source_id}")
+        logger.info(
+            f"Step 2: First call to create_or_replace_source with existing source ID: {source_id}"
+        )
 
         # Update the ingestion_source object with the actual ID
         sas_ingestion_source_for_replace = SharedAccessSignatureTokenIngestionSource(
             id=source_id, connection_info=sas_connection_info
         )
 
-        first_result = client.ingestion.replace_source(id=source_id, body=sas_ingestion_source_for_replace)
+        first_result = client.ingestion.replace_source(
+            id=source_id, body=sas_ingestion_source_for_replace
+        )
         logger.info(f"First call result: {first_result.id}")
 
         # Step 3: Second call to create_or_replace_source - replaces again with updated token
-        logger.info("Step 3: Second call to create_or_replace_source with updated SAS token")
+        logger.info(
+            "Step 3: Second call to create_or_replace_source with updated SAS token"
+        )
         updated_token = f"sp=rl&st={start_time}&se={expiry_time}&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
 
         updated_connection_info = SharedAccessSignatureTokenConnection(
@@ -733,7 +819,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
             id=source_id, connection_info=updated_connection_info
         )
 
-        second_result = client.ingestion.replace_source(id=source_id, body=updated_ingestion_source)
+        second_result = client.ingestion.replace_source(
+            id=source_id, body=updated_ingestion_source
+        )
 
         logger.info("Second create_or_replace result (replacement):")
         logger.info(f"  - Response type: {type(second_result)}")
@@ -744,7 +832,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_14_lists_ingestions(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_14_lists_ingestions(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test listing ingestions for a collection."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Lists Ingestions")
@@ -767,12 +857,16 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
             skip_existing_items=True,
         )
 
-        client.ingestion.create(collection_id=planetarycomputer_collection_id, body=ingestion_definition)
+        client.ingestion.create(
+            collection_id=planetarycomputer_collection_id, body=ingestion_definition
+        )
 
         logger.info("Created ingestion")
 
         # List ingestions
-        ingestions = list(client.ingestion.list(collection_id=planetarycomputer_collection_id))
+        ingestions = list(
+            client.ingestion.list(collection_id=planetarycomputer_collection_id)
+        )
 
         logger.info(f"Found {len(ingestions)} ingestions")
         for i, ingestion in enumerate(ingestions[:5]):
@@ -783,7 +877,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_15_get_ingestion(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_15_get_ingestion(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test getting a specific ingestion by ID."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Get Ingestion")
@@ -831,7 +927,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_16_list_runs(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_16_list_runs(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test listing runs for an ingestion."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: List Runs")
@@ -875,7 +973,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
         # List runs
         runs = list(
-            client.ingestion.list_runs(collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id)
+            client.ingestion.list_runs(
+                collection_id=planetarycomputer_collection_id, ingestion_id=ingestion_id
+            )
         )
 
         logger.info(f"Found {len(runs)} runs")
@@ -887,7 +987,9 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_17_get_operation(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_17_get_operation(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test getting a specific operation (duplicate of test_08 but for completeness)."""
         logger.info("\n" + "=" * 80)
         logger.info("TEST: Get Operation (Additional Coverage)")
@@ -914,7 +1016,10 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         logger.info(f"  - Type: {operation.type}")
         if hasattr(operation, "total_items") and operation.total_items is not None:
             logger.info(f"  - Total Items: {operation.total_items}")
-        if hasattr(operation, "total_successful_items") and operation.total_successful_items is not None:
+        if (
+            hasattr(operation, "total_successful_items")
+            and operation.total_successful_items is not None
+        ):
             logger.info(f"  - Successful Items: {operation.total_successful_items}")
 
     @PlanetaryComputerPreparer()

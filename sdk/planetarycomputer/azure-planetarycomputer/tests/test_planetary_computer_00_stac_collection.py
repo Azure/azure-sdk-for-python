@@ -62,10 +62,14 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Validate response structure
         assert response is not None, "Response should not be None"
-        assert hasattr(response, "collections"), "Response should have 'collections' attribute"
+        assert hasattr(
+            response, "collections"
+        ), "Response should have 'collections' attribute"
 
         collections = response.collections
-        assert isinstance(collections, list), f"Collections should be a list, got {type(collections)}"
+        assert isinstance(
+            collections, list
+        ), f"Collections should be a list, got {type(collections)}"
 
         test_logger.info(f"Number of collections: {len(collections)}")
 
@@ -103,10 +107,14 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Validate response structure
         assert response is not None, "Response should not be None"
-        assert hasattr(response, "conforms_to"), "Response should have 'conforms_to' attribute"
+        assert hasattr(
+            response, "conforms_to"
+        ), "Response should have 'conforms_to' attribute"
 
         conforms_to = response.conforms_to
-        assert isinstance(conforms_to, list), f"conformsTo should be a list, got {type(conforms_to)}"
+        assert isinstance(
+            conforms_to, list
+        ), f"conformsTo should be a list, got {type(conforms_to)}"
         assert len(conforms_to) > 0, "Should have at least one conformance class"
 
         test_logger.info(f"Number of conformance classes: {len(conforms_to)}")
@@ -117,7 +125,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_03_get_collection(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_03_get_collection(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting a specific STAC collection.
 
@@ -133,8 +143,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: get_collection(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.get_collection(collection_id=planetarycomputer_collection_id)
+        test_logger.info(
+            f"Calling: get_collection(collection_id='{planetarycomputer_collection_id}')"
+        )
+        response = client.stac.get_collection(
+            collection_id=planetarycomputer_collection_id
+        )
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Collection ID: {response.id}")
@@ -143,8 +157,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Validate response structure
         assert response is not None, "Response should not be None"
-        assert response.id == planetarycomputer_collection_id, "Collection ID should match requested ID"
-        assert response.title is not None and len(response.title) > 0, "Collection should have a title"
+        assert (
+            response.id == planetarycomputer_collection_id
+        ), "Collection ID should match requested ID"
+        assert (
+            response.title is not None and len(response.title) > 0
+        ), "Collection should have a title"
         assert response.description is not None, "Collection should have a description"
         assert response.extent is not None, "Collection should have extent"
         assert response.license is not None, "Collection should have license"
@@ -153,7 +171,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_04_get_partition_type(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_04_get_partition_type(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting partition type for a collection.
 
@@ -169,7 +189,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: get_partition_type(collection_id='{planetarycomputer_collection_id}')")
+        test_logger.info(
+            f"Calling: get_partition_type(collection_id='{planetarycomputer_collection_id}')"
+        )
         response = client.stac.get_partition_type(planetarycomputer_collection_id)
 
         test_logger.info(f"Response type: {type(response)}")
@@ -182,13 +204,17 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Validate scheme is a valid PartitionTypeScheme
         valid_schemes = [s.value for s in PartitionTypeScheme]
-        assert response.scheme in valid_schemes, f"Partition scheme should be one of {valid_schemes}"
+        assert (
+            response.scheme in valid_schemes
+        ), f"Partition scheme should be one of {valid_schemes}"
 
         test_logger.info("Test PASSED\n")
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_05_list_render_options(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_05_list_render_options(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test listing render options for a collection.
 
@@ -204,14 +230,20 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: list_render_options(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.list_render_options(collection_id=planetarycomputer_collection_id)
+        test_logger.info(
+            f"Calling: list_render_options(collection_id='{planetarycomputer_collection_id}')"
+        )
+        response = client.stac.list_render_options(
+            collection_id=planetarycomputer_collection_id
+        )
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Number of render options: {len(response)}")
 
         # Validate response structure
-        assert isinstance(response, list), f"Response should be a list, got {type(response)}"
+        assert isinstance(
+            response, list
+        ), f"Response should be a list, got {type(response)}"
 
         if len(response) > 0:
             first_option = response[0]
@@ -227,7 +259,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_06_get_tile_settings(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_06_get_tile_settings(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting tile settings for a collection.
 
@@ -243,8 +277,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: get_tile_settings(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.get_tile_settings(collection_id=planetarycomputer_collection_id)
+        test_logger.info(
+            f"Calling: get_tile_settings(collection_id='{planetarycomputer_collection_id}')"
+        )
+        response = client.stac.get_tile_settings(
+            collection_id=planetarycomputer_collection_id
+        )
 
         test_logger.info(f"Response type: {type(response)}")
         if hasattr(response, "as_dict"):
@@ -266,7 +304,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_07_list_mosaics(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_07_list_mosaics(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test listing mosaics for a collection.
 
@@ -282,14 +322,20 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: list_mosaics(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.list_mosaics(collection_id=planetarycomputer_collection_id)
+        test_logger.info(
+            f"Calling: list_mosaics(collection_id='{planetarycomputer_collection_id}')"
+        )
+        response = client.stac.list_mosaics(
+            collection_id=planetarycomputer_collection_id
+        )
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Number of mosaics: {len(response)}")
 
         # Validate response structure
-        assert isinstance(response, list), f"Response should be a list, got {type(response)}"
+        assert isinstance(
+            response, list
+        ), f"Response should be a list, got {type(response)}"
 
         if len(response) > 0:
             first_mosaic = response[0]
@@ -303,7 +349,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_08_get_collection_queryables(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_08_get_collection_queryables(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting queryables for a collection.
 
@@ -319,14 +367,22 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: get_collection_queryables(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
+        test_logger.info(
+            f"Calling: get_collection_queryables(collection_id='{planetarycomputer_collection_id}')"
+        )
+        response = client.stac.get_collection_queryables(
+            collection_id=planetarycomputer_collection_id
+        )
 
         test_logger.info(f"Response type: {type(response)}")
-        test_logger.info(f"Response keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}")
+        test_logger.info(
+            f"Response keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}"
+        )
 
         # Validate response structure
-        assert isinstance(response, dict), f"Response should be a dict, got {type(response)}"
+        assert isinstance(
+            response, dict
+        ), f"Response should be a dict, got {type(response)}"
         assert "properties" in response, "Response should have 'properties' key"
 
         properties = response["properties"]
@@ -360,10 +416,14 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         response = client.stac.list_queryables()
 
         test_logger.info(f"Response type: {type(response)}")
-        test_logger.info(f"Response keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}")
+        test_logger.info(
+            f"Response keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}"
+        )
 
         # Validate response structure
-        assert isinstance(response, dict), f"Response should be a dict, got {type(response)}"
+        assert isinstance(
+            response, dict
+        ), f"Response should be a dict, got {type(response)}"
         assert "properties" in response, "Response should have 'properties' key"
 
         properties = response["properties"]
@@ -373,7 +433,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_10_get_collection_configuration(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_10_get_collection_configuration(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting collection configuration.
 
@@ -389,8 +451,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: get_collection_configuration(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.get_collection_configuration(collection_id=planetarycomputer_collection_id)
+        test_logger.info(
+            f"Calling: get_collection_configuration(collection_id='{planetarycomputer_collection_id}')"
+        )
+        response = client.stac.get_collection_configuration(
+            collection_id=planetarycomputer_collection_id
+        )
 
         test_logger.info(f"Response type: {type(response)}")
         if hasattr(response, "as_dict"):
@@ -404,7 +470,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_11_get_collection_thumbnail(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_11_get_collection_thumbnail(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting collection thumbnail.
 
@@ -421,13 +489,23 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         # First check if collection has thumbnail asset
-        collection = client.stac.get_collection(collection_id=planetarycomputer_collection_id)
+        collection = client.stac.get_collection(
+            collection_id=planetarycomputer_collection_id
+        )
 
-        if not hasattr(collection, "assets") or collection.assets is None or "thumbnail" not in collection.assets:
+        if (
+            not hasattr(collection, "assets")
+            or collection.assets is None
+            or "thumbnail" not in collection.assets
+        ):
             assert False, "Collection does not have a thumbnail asset"
 
-        test_logger.info(f"Calling: get_collection_thumbnail(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.get_collection_thumbnail(collection_id=planetarycomputer_collection_id)
+        test_logger.info(
+            f"Calling: get_collection_thumbnail(collection_id='{planetarycomputer_collection_id}')"
+        )
+        response = client.stac.get_collection_thumbnail(
+            collection_id=planetarycomputer_collection_id
+        )
 
         test_logger.info(f"Response type: {type(response)}")
 
@@ -438,7 +516,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Validate image data
         assert len(thumbnail_bytes) > 0, "Thumbnail bytes should not be empty"
-        assert len(thumbnail_bytes) > 100, f"Thumbnail should be substantial, got only {len(thumbnail_bytes)} bytes"
+        assert (
+            len(thumbnail_bytes) > 100
+        ), f"Thumbnail should be substantial, got only {len(thumbnail_bytes)} bytes"
 
         # Check for common image format magic bytes
         # PNG: 89 50 4E 47
@@ -457,7 +537,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_12_create_render_option(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_12_create_render_option(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test creating a render option for a collection.
         """
@@ -472,11 +554,15 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         # Check if render option already exists and delete it
         try:
             client.stac.get_render_option(
-                collection_id=planetarycomputer_collection_id, render_option_id="test-natural-color"
+                collection_id=planetarycomputer_collection_id,
+                render_option_id="test-natural-color",
             )
-            test_logger.info("Render option 'test-natural-color' already exists, deleting it first")
+            test_logger.info(
+                "Render option 'test-natural-color' already exists, deleting it first"
+            )
             client.stac.delete_render_option(
-                collection_id=planetarycomputer_collection_id, render_option_id="test-natural-color"
+                collection_id=planetarycomputer_collection_id,
+                render_option_id="test-natural-color",
             )
             test_logger.info("Existing render option deleted")
         except Exception as e:
@@ -493,7 +579,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: create_render_option(collection_id='{planetarycomputer_collection_id}', body={render_option})"
         )
-        response = client.stac.create_render_option(collection_id=planetarycomputer_collection_id, body=render_option)
+        response = client.stac.create_render_option(
+            collection_id=planetarycomputer_collection_id, body=render_option
+        )
 
         test_logger.info(f"Response: {response}")
         assert response is not None
@@ -504,7 +592,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_13_get_render_option(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_13_get_render_option(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting a specific render option.
         """
@@ -518,7 +608,8 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             f"Calling: get_render_option(collection_id='{planetarycomputer_collection_id}', render_option_id='test-natural-color')"
         )
         response = client.stac.get_render_option(
-            collection_id=planetarycomputer_collection_id, render_option_id="test-natural-color"
+            collection_id=planetarycomputer_collection_id,
+            render_option_id="test-natural-color",
         )
 
         test_logger.info(f"Response: {response}")
@@ -530,7 +621,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_14_replace_render_option(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_14_replace_render_option(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test creating or replacing a render option.
         """
@@ -555,7 +648,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             f"Calling: create_or_replace_render_option(collection_id='{planetarycomputer_collection_id}', render_option_id='test-natural-color', body={render_option})"
         )
         response = client.stac.replace_render_option(
-            collection_id=planetarycomputer_collection_id, render_option_id="test-natural-color", body=render_option
+            collection_id=planetarycomputer_collection_id,
+            render_option_id="test-natural-color",
+            body=render_option,
         )
 
         test_logger.info(f"Response: {response}")
@@ -567,7 +662,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_14a_delete_render_option(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_14a_delete_render_option(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test deleting a render option.
         First creates a render option specifically for deletion.
@@ -590,11 +687,14 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         )
 
         test_logger.info(f"Creating render option for deletion: {render_option.id}")
-        client.stac.create_render_option(collection_id=planetarycomputer_collection_id, body=render_option)
+        client.stac.create_render_option(
+            collection_id=planetarycomputer_collection_id, body=render_option
+        )
 
         # Verify it exists
         retrieved = client.stac.get_render_option(
-            collection_id=planetarycomputer_collection_id, render_option_id="test-render-opt-delete"
+            collection_id=planetarycomputer_collection_id,
+            render_option_id="test-render-opt-delete",
         )
         assert retrieved is not None
         test_logger.info("Render option created successfully")
@@ -604,7 +704,8 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             f"Calling: delete_render_option(collection_id='{planetarycomputer_collection_id}', render_option_id='test-render-opt-delete')"
         )
         client.stac.delete_render_option(
-            collection_id=planetarycomputer_collection_id, render_option_id="test-render-opt-delete"
+            collection_id=planetarycomputer_collection_id,
+            render_option_id="test-render-opt-delete",
         )
 
         test_logger.info("Render option deleted successfully")
@@ -612,18 +713,25 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         # Verify deletion
         try:
             client.stac.get_render_option(
-                collection_id=planetarycomputer_collection_id, render_option_id="test-render-opt-delete"
+                collection_id=planetarycomputer_collection_id,
+                render_option_id="test-render-opt-delete",
             )
             assert False, "Render option should have been deleted"
         except Exception as e:
             test_logger.info(f"Confirmed deletion (404 expected): {e}")
-            assert "404" in str(e) or "Not Found" in str(e) or "not found" in str(e).lower()
+            assert (
+                "404" in str(e)
+                or "Not Found" in str(e)
+                or "not found" in str(e).lower()
+            )
 
         test_logger.info("Test PASSED\n")
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_15_add_mosaic(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_15_add_mosaic(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test adding a mosaic to a collection.
         """
@@ -637,9 +745,13 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Check if mosaic already exists and delete it
         try:
-            client.stac.get_mosaic(collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1")
+            client.stac.get_mosaic(
+                collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1"
+            )
             test_logger.info("Mosaic 'test-mosaic-1' already exists, deleting it first")
-            client.stac.delete_mosaic(collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1")
+            client.stac.delete_mosaic(
+                collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1"
+            )
             test_logger.info("Existing mosaic deleted")
         except Exception as e:
             test_logger.info(f"Mosaic does not exist (expected): {e}")
@@ -650,8 +762,12 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             cql=[],
         )
 
-        test_logger.info(f"Calling: add_mosaic(collection_id='{planetarycomputer_collection_id}', body={mosaic})")
-        response = client.stac.add_mosaic(collection_id=planetarycomputer_collection_id, body=mosaic)
+        test_logger.info(
+            f"Calling: add_mosaic(collection_id='{planetarycomputer_collection_id}', body={mosaic})"
+        )
+        response = client.stac.add_mosaic(
+            collection_id=planetarycomputer_collection_id, body=mosaic
+        )
 
         test_logger.info(f"Response: {response}")
         assert response is not None
@@ -662,7 +778,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_16_get_mosaic(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_16_get_mosaic(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting a specific mosaic.
         """
@@ -675,7 +793,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: get_mosaic(collection_id='{planetarycomputer_collection_id}', mosaic_id='test-mosaic-1')"
         )
-        response = client.stac.get_mosaic(collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1")
+        response = client.stac.get_mosaic(
+            collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1"
+        )
 
         test_logger.info(f"Response: {response}")
         assert response is not None
@@ -686,7 +806,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_17_replace_mosaic(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_17_replace_mosaic(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test creating or replacing a mosaic.
         """
@@ -709,7 +831,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             f"Calling: create_or_replace_mosaic(collection_id='{planetarycomputer_collection_id}', mosaic_id='test-mosaic-1', body={mosaic})"
         )
         response = client.stac.replace_mosaic(
-            collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-1", body=mosaic
+            collection_id=planetarycomputer_collection_id,
+            mosaic_id="test-mosaic-1",
+            body=mosaic,
         )
 
         test_logger.info(f"Response: {response}")
@@ -721,7 +845,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_17a_delete_mosaic(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_17a_delete_mosaic(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test deleting a mosaic.
         First creates a mosaic specifically for deletion.
@@ -742,11 +868,14 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         )
 
         test_logger.info(f"Creating mosaic for deletion: {mosaic.id}")
-        client.stac.add_mosaic(collection_id=planetarycomputer_collection_id, body=mosaic)
+        client.stac.add_mosaic(
+            collection_id=planetarycomputer_collection_id, body=mosaic
+        )
 
         # Verify it exists
         retrieved = client.stac.get_mosaic(
-            collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-to-be-deleted"
+            collection_id=planetarycomputer_collection_id,
+            mosaic_id="test-mosaic-to-be-deleted",
         )
         assert retrieved is not None
         test_logger.info("Mosaic created successfully")
@@ -755,17 +884,27 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: delete_mosaic(collection_id='{planetarycomputer_collection_id}', mosaic_id='test-mosaic-to-be-deleted')"
         )
-        client.stac.delete_mosaic(collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-to-be-deleted")
+        client.stac.delete_mosaic(
+            collection_id=planetarycomputer_collection_id,
+            mosaic_id="test-mosaic-to-be-deleted",
+        )
 
         test_logger.info("Mosaic deleted successfully")
 
         # Verify deletion
         try:
-            client.stac.get_mosaic(collection_id=planetarycomputer_collection_id, mosaic_id="test-mosaic-to-be-deleted")
+            client.stac.get_mosaic(
+                collection_id=planetarycomputer_collection_id,
+                mosaic_id="test-mosaic-to-be-deleted",
+            )
             assert False, "Mosaic should have been deleted"
         except Exception as e:
             test_logger.info(f"Confirmed deletion (404 expected): {e}")
-            assert "404" in str(e) or "Not Found" in str(e) or "not found" in str(e).lower()
+            assert (
+                "404" in str(e)
+                or "Not Found" in str(e)
+                or "not found" in str(e).lower()
+            )
 
         test_logger.info("Test PASSED\n")
 
@@ -795,14 +934,22 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Check if collection exists and delete it first
         try:
-            existing_collection = client.stac.get_collection(collection_id=test_collection_id)
+            existing_collection = client.stac.get_collection(
+                collection_id=test_collection_id
+            )
             if existing_collection:
-                test_logger.info(f"Collection '{test_collection_id}' already exists, deleting first...")
-                delete_poller = client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
+                test_logger.info(
+                    f"Collection '{test_collection_id}' already exists, deleting first..."
+                )
+                delete_poller = client.stac.begin_delete_collection(
+                    collection_id=test_collection_id, polling=True
+                )
                 delete_poller.result()
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
         except Exception:
-            test_logger.info(f"Collection '{test_collection_id}' does not exist, proceeding with creation")
+            test_logger.info(
+                f"Collection '{test_collection_id}' does not exist, proceeding with creation"
+            )
 
         # Define collection extents
         spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-180, -90, 180, 90]])
@@ -831,7 +978,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Create the collection using the correct API
         test_logger.info("Creating collection using begin_create_collection")
-        create_poller = client.stac.begin_create_collection(body=collection_data, polling=True)
+        create_poller = client.stac.begin_create_collection(
+            body=collection_data, polling=True
+        )
         create_poller.result()
         test_logger.info("Temporary collection created")
 
@@ -842,7 +991,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             test_logger.info(
                 f"Calling: replace_partition_type(collection_id='{test_collection_id}', body={partition_type})"
             )
-            client.stac.replace_partition_type(collection_id=test_collection_id, body=partition_type)
+            client.stac.replace_partition_type(
+                collection_id=test_collection_id, body=partition_type
+            )
 
             # Verify the change
             updated_partition = client.stac.get_partition_type(test_collection_id)
@@ -854,7 +1005,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             # Clean up: delete the temporary collection
             test_logger.info(f"Deleting temporary collection: {test_collection_id}")
             try:
-                delete_poller = client.stac.begin_delete_collection(collection_id=test_collection_id, polling=True)
+                delete_poller = client.stac.begin_delete_collection(
+                    collection_id=test_collection_id, polling=True
+                )
                 delete_poller.result()
                 test_logger.info("Temporary collection deleted")
             except Exception as e:
@@ -864,7 +1017,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_19_replace_tile_settings(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_19_replace_tile_settings(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test replacing tile settings for a collection.
         """
@@ -885,7 +1040,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: replace_tile_settings(collection_id='{planetarycomputer_collection_id}', body={tile_settings})"
         )
-        response = client.stac.replace_tile_settings(collection_id=planetarycomputer_collection_id, body=tile_settings)
+        response = client.stac.replace_tile_settings(
+            collection_id=planetarycomputer_collection_id, body=tile_settings
+        )
 
         test_logger.info(f"Response: {response}")
         assert response is not None
@@ -896,7 +1053,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_20_create_queryables(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_20_create_queryables(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test creating queryables for a collection.
         """
@@ -906,15 +1065,23 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        from azure.planetarycomputer.models import StacQueryable, StacQueryableDefinitionDataType
+        from azure.planetarycomputer.models import (
+            StacQueryable,
+            StacQueryableDefinitionDataType,
+        )
 
         # Check if queryable already exists and delete it
         try:
-            queryables = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
+            queryables = client.stac.get_collection_queryables(
+                collection_id=planetarycomputer_collection_id
+            )
             if "test:property" in queryables.get("properties", {}):
-                test_logger.info("Queryable 'test:property' already exists, deleting it first")
+                test_logger.info(
+                    "Queryable 'test:property' already exists, deleting it first"
+                )
                 client.stac.delete_queryable(
-                    collection_id=planetarycomputer_collection_id, queryable_name="test:property"
+                    collection_id=planetarycomputer_collection_id,
+                    queryable_name="test:property",
                 )
                 test_logger.info("Existing queryable deleted")
             else:
@@ -934,24 +1101,34 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: create_queryables(collection_id='{planetarycomputer_collection_id}', body=[queryable])"
         )
-        response = client.stac.create_queryables(collection_id=planetarycomputer_collection_id, body=[queryable])
+        response = client.stac.create_queryables(
+            collection_id=planetarycomputer_collection_id, body=[queryable]
+        )
 
         test_logger.info(f"Response: {response}")
         assert response is not None
 
         # Response is a list of queryables
-        assert isinstance(response, list), f"Response should be a list, got {type(response)}"
+        assert isinstance(
+            response, list
+        ), f"Response should be a list, got {type(response)}"
         assert len(response) > 0, "Response should contain at least one queryable"
 
         # Verify our queryable was created
-        queryable_names = [q.get("name") if isinstance(q, dict) else q.name for q in response]
-        assert "test:property" in queryable_names, "Created queryable 'test:property' should be in response"
+        queryable_names = [
+            q.get("name") if isinstance(q, dict) else q.name for q in response
+        ]
+        assert (
+            "test:property" in queryable_names
+        ), "Created queryable 'test:property' should be in response"
 
         test_logger.info("Test PASSED\n")
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_21_replace_queryable(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_21_replace_queryable(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test creating or replacing a queryable.
         """
@@ -961,7 +1138,10 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        from azure.planetarycomputer.models import StacQueryable, StacQueryableDefinitionDataType
+        from azure.planetarycomputer.models import (
+            StacQueryable,
+            StacQueryableDefinitionDataType,
+        )
 
         queryable = StacQueryable(
             name="test:property",
@@ -976,7 +1156,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             f"Calling: create_or_replace_queryable(collection_id='{planetarycomputer_collection_id}', queryable_name='test:property', body=queryable)"
         )
         response = client.stac.replace_queryable(
-            collection_id=planetarycomputer_collection_id, queryable_name="test:property", body=queryable
+            collection_id=planetarycomputer_collection_id,
+            queryable_name="test:property",
+            body=queryable,
         )
 
         test_logger.info(f"Response: {response}")
@@ -986,7 +1168,9 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_21a_delete_queryable(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_21a_delete_queryable(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test deleting a queryable.
         First creates a queryable specifically for deletion.
@@ -997,7 +1181,10 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        from azure.planetarycomputer.models import StacQueryable, StacQueryableDefinitionDataType
+        from azure.planetarycomputer.models import (
+            StacQueryable,
+            StacQueryableDefinitionDataType,
+        )
 
         # Create a queryable to be deleted
         queryable = StacQueryable(
@@ -1010,10 +1197,14 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         )
 
         test_logger.info(f"Creating queryable for deletion: {queryable.name}")
-        client.stac.create_queryables(collection_id=planetarycomputer_collection_id, body=[queryable])
+        client.stac.create_queryables(
+            collection_id=planetarycomputer_collection_id, body=[queryable]
+        )
 
         # Verify it exists
-        queryables = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
+        queryables = client.stac.get_collection_queryables(
+            collection_id=planetarycomputer_collection_id
+        )
         assert "test:property_to_be_deleted" in queryables["properties"]
         test_logger.info("Queryable created successfully")
 
@@ -1022,13 +1213,18 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
             f"Calling: delete_queryable(collection_id='{planetarycomputer_collection_id}', queryable_name='test:property_to_be_deleted')"
         )
         client.stac.delete_queryable(
-            collection_id=planetarycomputer_collection_id, queryable_name="test:property_to_be_deleted"
+            collection_id=planetarycomputer_collection_id,
+            queryable_name="test:property_to_be_deleted",
         )
 
         test_logger.info("Queryable deleted successfully")
 
         # Verify deletion
-        queryables_after = client.stac.get_collection_queryables(collection_id=planetarycomputer_collection_id)
-        assert "test:property_to_be_deleted" not in queryables_after["properties"], "Queryable should have been deleted"
+        queryables_after = client.stac.get_collection_queryables(
+            collection_id=planetarycomputer_collection_id
+        )
+        assert (
+            "test:property_to_be_deleted" not in queryables_after["properties"]
+        ), "Queryable should have been deleted"
 
         test_logger.info("Test PASSED\n")

@@ -30,13 +30,17 @@ from urllib.request import urlopen
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
+    logging.ERROR
+)
 logging.basicConfig(level=logging.INFO)
 
 
 async def generate_sas_token(client: PlanetaryComputerProClient, collection_id: str):
     """Generate a SAS token for a collection."""
-    get_token_response = await client.shared_access_signature.get_token(collection_id=collection_id, duration_in_minutes=60)
+    get_token_response = await client.shared_access_signature.get_token(
+        collection_id=collection_id, duration_in_minutes=60
+    )
     return get_token_response
 
 
@@ -55,7 +59,9 @@ async def sign_asset_href(client: PlanetaryComputerProClient, collection_id: str
     else:
         raise Exception("No thumbnail found in collection assets.")
 
-    get_sign_response = await client.shared_access_signature.get_sign(href=href, duration_in_minutes=60)
+    get_sign_response = await client.shared_access_signature.get_sign(
+        href=href, duration_in_minutes=60
+    )
     return get_sign_response.href, href  # Return both signed and unsigned hrefs
 
 
@@ -76,13 +82,14 @@ async def download_asset(signed_href: str):
         # Check that it's a PNG by verifying the PNG magic bytes (89 50 4E 47)
         is_png = content[:8] == b"\x89PNG\r\n\x1a\n"
         if not is_png:
-            raise Exception(f"Downloaded content is not a valid PNG file (magic bytes: {content[:8].hex()})")
+            raise Exception(
+                f"Downloaded content is not a valid PNG file (magic bytes: {content[:8].hex()})"
+            )
 
 
 async def revoke_token(client: "PlanetaryComputerProClient") -> None:
     """Revoke the current SAS token."""
     await client.shared_access_signature.revoke_token()
-
 
 
 async def main():
@@ -112,9 +119,9 @@ async def main():
 
     await revoke_token(client)
 
-
-
     await client.close()
     await credential.close()
+
+
 if __name__ == "__main__":
     asyncio.run(main())

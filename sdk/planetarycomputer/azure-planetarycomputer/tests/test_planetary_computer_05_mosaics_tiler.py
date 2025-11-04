@@ -41,7 +41,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_01_register_mosaics_search(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_01_register_mosaics_search(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test registering a mosaics search.
 
@@ -62,13 +64,29 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             filter={
                 "op": "and",
                 "args": [
-                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
-                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+                    {
+                        "op": "=",
+                        "args": [
+                            {"property": "collection"},
+                            planetarycomputer_collection_id,
+                        ],
+                    },
+                    {
+                        "op": ">=",
+                        "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"],
+                    },
+                    {
+                        "op": "<=",
+                        "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"],
+                    },
                 ],
             },
             filter_lang=FilterLanguage.CQL2_JSON,
-            sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
+            sort_by=[
+                StacSortExtension(
+                    direction=StacSearchSortingDirection.DESC, field="datetime"
+                )
+            ],
         )
         test_logger.info(f"Search request: {register_search_request}")
 
@@ -80,10 +98,14 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         # Validate response structure
         assert response is not None, "Response should not be None"
-        assert hasattr(response, "search_id"), "Response should have 'search_id' attribute"
+        assert hasattr(
+            response, "search_id"
+        ), "Response should have 'search_id' attribute"
 
         search_id = response.search_id
-        assert isinstance(search_id, str), f"Search ID should be a string, got {type(search_id)}"
+        assert isinstance(
+            search_id, str
+        ), f"Search ID should be a string, got {type(search_id)}"
         assert len(search_id) > 0, "Search ID should not be empty"
 
         test_logger.info(f"Search ID: {search_id}")
@@ -91,7 +113,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_02_get_mosaics_search_info(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_02_get_mosaics_search_info(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting mosaics search info.
 
@@ -112,13 +136,29 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             filter={
                 "op": "and",
                 "args": [
-                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
-                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+                    {
+                        "op": "=",
+                        "args": [
+                            {"property": "collection"},
+                            planetarycomputer_collection_id,
+                        ],
+                    },
+                    {
+                        "op": ">=",
+                        "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"],
+                    },
+                    {
+                        "op": "<=",
+                        "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"],
+                    },
                 ],
             },
             filter_lang=FilterLanguage.CQL2_JSON,
-            sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
+            sort_by=[
+                StacSortExtension(
+                    direction=StacSearchSortingDirection.DESC, field="datetime"
+                )
+            ],
         )
         register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
@@ -142,7 +182,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         assert hasattr(search, "hash"), "Search should have 'hash' attribute"
 
         search_hash = search.hash
-        assert isinstance(search_hash, str), f"Search hash should be a string, got {type(search_hash)}"
+        assert isinstance(
+            search_hash, str
+        ), f"Search hash should be a string, got {type(search_hash)}"
         assert len(search_hash) > 0, "Search hash should not be empty"
 
         test_logger.info(f"Search hash: {search_hash}")
@@ -150,7 +192,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_03_get_mosaics_tile_json(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_03_get_mosaics_tile_json(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting mosaics tile JSON.
 
@@ -171,13 +215,29 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             filter={
                 "op": "and",
                 "args": [
-                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
-                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+                    {
+                        "op": "=",
+                        "args": [
+                            {"property": "collection"},
+                            planetarycomputer_collection_id,
+                        ],
+                    },
+                    {
+                        "op": ">=",
+                        "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"],
+                    },
+                    {
+                        "op": "<=",
+                        "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"],
+                    },
                 ],
             },
             filter_lang=FilterLanguage.CQL2_JSON,
-            sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
+            sort_by=[
+                StacSortExtension(
+                    direction=StacSearchSortingDirection.DESC, field="datetime"
+                )
+            ],
         )
         register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
@@ -218,7 +278,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_04_get_mosaics_tile(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_04_get_mosaics_tile(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting a specific mosaic tile.
 
@@ -240,13 +302,29 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             filter={
                 "op": "and",
                 "args": [
-                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
-                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+                    {
+                        "op": "=",
+                        "args": [
+                            {"property": "collection"},
+                            planetarycomputer_collection_id,
+                        ],
+                    },
+                    {
+                        "op": ">=",
+                        "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"],
+                    },
+                    {
+                        "op": "<=",
+                        "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"],
+                    },
                 ],
             },
             filter_lang=FilterLanguage.CQL2_JSON,
-            sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
+            sort_by=[
+                StacSortExtension(
+                    direction=StacSearchSortingDirection.DESC, field="datetime"
+                )
+            ],
         )
         register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
@@ -276,8 +354,12 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         # Verify PNG magic bytes
         png_magic = b"\x89PNG\r\n\x1a\n"
         assert len(image_bytes) > 0, "Image bytes should not be empty"
-        assert len(image_bytes) > 100, f"Image should be substantial, got only {len(image_bytes)} bytes"
-        assert image_bytes[:8] == png_magic, "Response should be a valid PNG image (magic bytes mismatch)"
+        assert (
+            len(image_bytes) > 100
+        ), f"Image should be substantial, got only {len(image_bytes)} bytes"
+        assert (
+            image_bytes[:8] == png_magic
+        ), "Response should be a valid PNG image (magic bytes mismatch)"
 
         # Parse and validate the PNG image
         try:
@@ -289,9 +371,13 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             test_logger.info(f"PIL Image mode: {image.mode}")
 
             # Validate image properties
-            assert image.format == "PNG", f"Image format should be PNG, got {image.format}"
+            assert (
+                image.format == "PNG"
+            ), f"Image format should be PNG, got {image.format}"
             width, height = image.size
-            assert width > 0 and height > 0, f"Image should have non-zero dimensions, got {width}x{height}"
+            assert (
+                width > 0 and height > 0
+            ), f"Image should have non-zero dimensions, got {width}x{height}"
 
         except ImportError:
             test_logger.warning("PIL not available, skipping detailed image validation")
@@ -300,7 +386,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_05_get_mosaics_wmts_capabilities(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_05_get_mosaics_wmts_capabilities(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting WMTS capabilities XML for mosaics.
 
@@ -321,13 +409,29 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             filter={
                 "op": "and",
                 "args": [
-                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
-                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+                    {
+                        "op": "=",
+                        "args": [
+                            {"property": "collection"},
+                            planetarycomputer_collection_id,
+                        ],
+                    },
+                    {
+                        "op": ">=",
+                        "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"],
+                    },
+                    {
+                        "op": "<=",
+                        "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"],
+                    },
                 ],
             },
             filter_lang=FilterLanguage.CQL2_JSON,
-            sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
+            sort_by=[
+                StacSortExtension(
+                    direction=StacSearchSortingDirection.DESC, field="datetime"
+                )
+            ],
         )
         register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
@@ -358,15 +462,23 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         # Validate XML structure
         assert len(xml_bytes) > 0, "XML bytes should not be empty"
         # Note: WMTS Capabilities XML may not have <?xml declaration
-        assert "<Capabilities" in xml_string, "Response should contain Capabilities element"
-        assert "WMTS" in xml_string or "wmts" in xml_string.lower(), "Response should reference WMTS"
-        assert "TileMatrix" in xml_string, "Response should contain TileMatrix information"
+        assert (
+            "<Capabilities" in xml_string
+        ), "Response should contain Capabilities element"
+        assert (
+            "WMTS" in xml_string or "wmts" in xml_string.lower()
+        ), "Response should reference WMTS"
+        assert (
+            "TileMatrix" in xml_string
+        ), "Response should contain TileMatrix information"
 
         test_logger.info("Test PASSED\n")
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_06_get_mosaics_assets_for_point(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_06_get_mosaics_assets_for_point(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting mosaic assets for a specific point.
 
@@ -379,7 +491,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
-        test_logger.info("Input - point: longitude=-84.43202751899601, latitude=33.639647639722273")
+        test_logger.info(
+            "Input - point: longitude=-84.43202751899601, latitude=33.639647639722273"
+        )
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
@@ -388,13 +502,29 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             filter={
                 "op": "and",
                 "args": [
-                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
-                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+                    {
+                        "op": "=",
+                        "args": [
+                            {"property": "collection"},
+                            planetarycomputer_collection_id,
+                        ],
+                    },
+                    {
+                        "op": ">=",
+                        "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"],
+                    },
+                    {
+                        "op": "<=",
+                        "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"],
+                    },
                 ],
             },
             filter_lang=FilterLanguage.CQL2_JSON,
-            sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
+            sort_by=[
+                StacSortExtension(
+                    direction=StacSearchSortingDirection.DESC, field="datetime"
+                )
+            ],
         )
         register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
@@ -414,10 +544,14 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         )
 
         test_logger.info(f"Response type: {type(response)}")
-        test_logger.info(f"Number of assets: {len(response) if isinstance(response, list) else 'N/A'}")
+        test_logger.info(
+            f"Number of assets: {len(response) if isinstance(response, list) else 'N/A'}"
+        )
 
         # Validate response structure
-        assert isinstance(response, list), f"Response should be a list, got {type(response)}"
+        assert isinstance(
+            response, list
+        ), f"Response should be a list, got {type(response)}"
 
         # If we have assets, validate structure
         if len(response) > 0:
@@ -428,12 +562,20 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             assert first_asset is not None, "First asset should not be None"
 
             # StacAsset behaves like a dict - access via key
-            asset_dict = first_asset.as_dict() if hasattr(first_asset, "as_dict") else first_asset
-            assert "id" in asset_dict, f"Asset should have 'id' key, got keys: {list(asset_dict.keys())}"
+            asset_dict = (
+                first_asset.as_dict()
+                if hasattr(first_asset, "as_dict")
+                else first_asset
+            )
+            assert (
+                "id" in asset_dict
+            ), f"Asset should have 'id' key, got keys: {list(asset_dict.keys())}"
 
             asset_id = asset_dict["id"]
             test_logger.info(f"First asset ID: {asset_id}")
-            assert isinstance(asset_id, str), f"Asset ID should be a string, got {type(asset_id)}"
+            assert isinstance(
+                asset_id, str
+            ), f"Asset ID should be a string, got {type(asset_id)}"
             assert len(asset_id) > 0, "Asset ID should not be empty"
         else:
             test_logger.info("No assets returned for this point")
@@ -442,7 +584,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_07_get_mosaics_assets_for_tile(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_07_get_mosaics_assets_for_tile(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test getting mosaic assets for a specific tile.
 
@@ -464,13 +608,29 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
             filter={
                 "op": "and",
                 "args": [
-                    {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
-                    {"op": ">=", "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"]},
-                    {"op": "<=", "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"]},
+                    {
+                        "op": "=",
+                        "args": [
+                            {"property": "collection"},
+                            planetarycomputer_collection_id,
+                        ],
+                    },
+                    {
+                        "op": ">=",
+                        "args": [{"property": "datetime"}, "2021-01-01T00:00:00Z"],
+                    },
+                    {
+                        "op": "<=",
+                        "args": [{"property": "datetime"}, "2022-12-31T23:59:59Z"],
+                    },
                 ],
             },
             filter_lang=FilterLanguage.CQL2_JSON,
-            sort_by=[StacSortExtension(direction=StacSearchSortingDirection.DESC, field="datetime")],
+            sort_by=[
+                StacSortExtension(
+                    direction=StacSearchSortingDirection.DESC, field="datetime"
+                )
+            ],
         )
         register_response = client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
@@ -500,7 +660,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_08_create_static_image(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_08_create_static_image(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test creating a static image from a mosaic search.
 
@@ -539,10 +701,19 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         cql_filter = {
             "op": "and",
             "args": [
-                {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                {
+                    "op": "=",
+                    "args": [
+                        {"property": "collection"},
+                        planetarycomputer_collection_id,
+                    ],
+                },
                 {
                     "op": "anyinteracts",
-                    "args": [{"property": "datetime"}, {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]}],
+                    "args": [
+                        {"property": "datetime"},
+                        {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]},
+                    ],
                 },
             ],
         }
@@ -564,7 +735,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         )
 
         test_logger.info("Calling: create_static_image(...)")
-        response = client.data.create_static_image(collection_id=planetarycomputer_collection_id, body=image_request)
+        response = client.data.create_static_image(
+            collection_id=planetarycomputer_collection_id, body=image_request
+        )
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -577,7 +750,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_09_get_static_image(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_09_get_static_image(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """
         Test retrieving a static image by ID.
 
@@ -614,10 +789,19 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         cql_filter = {
             "op": "and",
             "args": [
-                {"op": "=", "args": [{"property": "collection"}, planetarycomputer_collection_id]},
+                {
+                    "op": "=",
+                    "args": [
+                        {"property": "collection"},
+                        planetarycomputer_collection_id,
+                    ],
+                },
                 {
                     "op": "anyinteracts",
-                    "args": [{"property": "datetime"}, {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]}],
+                    "args": [
+                        {"property": "datetime"},
+                        {"interval": ["2023-01-01T00:00:00Z", "2023-12-31T00:00:00Z"]},
+                    ],
                 },
             ],
         }
@@ -653,7 +837,9 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: get_static_image(collection_id='{planetarycomputer_collection_id}', id='{image_id}')"
         )
-        image_data = client.data.get_static_image(collection_id=planetarycomputer_collection_id, id=image_id)
+        image_data = client.data.get_static_image(
+            collection_id=planetarycomputer_collection_id, id=image_id
+        )
 
         test_logger.info(f"Image data type: {type(image_data)}")
 

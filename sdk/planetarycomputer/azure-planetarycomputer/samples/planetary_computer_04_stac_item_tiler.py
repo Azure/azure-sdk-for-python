@@ -21,12 +21,19 @@ USAGE:
 import os
 from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
-from azure.planetarycomputer.models import TilerImageFormat, Polygon, Feature, FeatureType
+from azure.planetarycomputer.models import (
+    TilerImageFormat,
+    Polygon,
+    Feature,
+    FeatureType,
+)
 
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
+    logging.ERROR
+)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -40,7 +47,9 @@ def display_response(response, filename):
 
 def get_tile_matrix_definitions(client: PlanetaryComputerProClient):
     """Get tile matrix definitions for WebMercatorQuad."""
-    result = client.data.get_tile_matrix_definitions(tile_matrix_set_id="WebMercatorQuad")
+    result = client.data.get_tile_matrix_definitions(
+        tile_matrix_set_id="WebMercatorQuad"
+    )
     logging.info(result)
 
 
@@ -52,13 +61,17 @@ def list_tile_matrices(client: PlanetaryComputerProClient):
 
 def get_asset_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get asset statistics for an item."""
-    result = client.data.get_asset_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result = client.data.get_asset_statistics(
+        collection_id=collection_id, item_id=item_id, assets=["image"]
+    )
     logging.info(result)
 
 
 def list_available_assets(client: PlanetaryComputerProClient, collection_id, item_id):
     """List available assets for an item."""
-    result = client.data.list_available_assets(collection_id=collection_id, item_id=item_id)
+    result = client.data.list_available_assets(
+        collection_id=collection_id, item_id=item_id
+    )
     logging.info(result)
 
 
@@ -97,7 +110,9 @@ def crop_geo_json(client: PlanetaryComputerProClient, collection_id, item_id, ge
     display_response(crop_geo_json_response, f"crop_geojson_{item_id}.png")
 
 
-def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
+def crop_geo_json_with_dimensions(
+    client: PlanetaryComputerProClient, collection_id, item_id, geojson
+):
     """Crop an item using GeoJSON geometry with specific dimensions."""
     crop_geo_json_with_dimensions_response = client.data.crop_geo_json_with_dimensions(
         collection_id=collection_id,
@@ -109,10 +124,14 @@ def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, collection
         asset_band_indices="image|1,2,3",
         body=geojson,
     )
-    display_response(crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png")
+    display_response(
+        crop_geo_json_with_dimensions_response, f"crop_geojson_dims_{item_id}.png"
+    )
 
 
-def get_geo_json_statistics(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
+def get_geo_json_statistics(
+    client: PlanetaryComputerProClient, collection_id, item_id, geojson
+):
     """Get statistics for a GeoJSON area."""
     result = client.data.get_geo_json_statistics(
         collection_id=collection_id, item_id=item_id, body=geojson, assets=["image"]
@@ -122,7 +141,9 @@ def get_geo_json_statistics(client: PlanetaryComputerProClient, collection_id, i
 
 def get_info_geo_json(client: PlanetaryComputerProClient, collection_id, item_id):
     """Get info for GeoJSON."""
-    result = client.data.get_info_geo_json(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result = client.data.get_info_geo_json(
+        collection_id=collection_id, item_id=item_id, assets=["image"]
+    )
     logging.info(result)
 
 
@@ -144,7 +165,9 @@ def get_part(client: PlanetaryComputerProClient, collection_id, item_id, bounds)
     display_response(get_part_response, f"part_{item_id}.png")
 
 
-def get_part_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, bounds):
+def get_part_with_dimensions(
+    client: PlanetaryComputerProClient, collection_id, item_id, bounds
+):
     """Get a part of an item with specific bounds and dimensions."""
     get_part_with_dimensions_response = client.data.get_part_with_dimensions(
         collection_id=collection_id,
@@ -205,7 +228,9 @@ def get_preview_with_format(client: PlanetaryComputerProClient, collection_id, i
 
 def list_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
     """List statistics for an item."""
-    result = client.data.list_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result = client.data.list_statistics(
+        collection_id=collection_id, item_id=item_id, assets=["image"]
+    )
     logging.info(result)
 
 
@@ -239,7 +264,9 @@ def get_tile(client: PlanetaryComputerProClient, collection_id, item_id):
         assets=["image"],
         asset_band_indices="image|1,2,3",
     )
-    display_response(get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png")
+    display_response(
+        get_tile_with_matrix_set_response, f"tile_{item_id}_z14_x4349_y6564.png"
+    )
 
 
 def get_wmts_capabilities(client: PlanetaryComputerProClient, collection_id, item_id):
@@ -273,7 +300,9 @@ def main():
     collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID")
     item_id = "ga_m_3308421_se_16_060_20211114"
 
-    client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
+    client = PlanetaryComputerProClient(
+        endpoint=endpoint, credential=DefaultAzureCredential()
+    )
 
     # Define geometry for operations
     geometry = Polygon(

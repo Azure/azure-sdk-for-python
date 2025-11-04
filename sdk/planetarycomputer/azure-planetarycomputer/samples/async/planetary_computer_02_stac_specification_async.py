@@ -39,12 +39,18 @@ from azure.planetarycomputer.models import (
     StacSortExtension,
     StacItem,
 )
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+)
 
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
+    logging.ERROR
+)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -63,7 +69,11 @@ async def search_collections(client: "PlanetaryComputerProClient"):
     # Show first few collections
     for collection in collections.collections[:3]:
         if collection.description:
-            desc = collection.description[:100] + "..." if len(collection.description) > 100 else collection.description
+            desc = (
+                collection.description[:100] + "..."
+                if len(collection.description) > 100
+                else collection.description
+            )
             logging.info(f"  - {collection.id}: {desc}")
 
 
@@ -93,7 +103,11 @@ async def search_items(client: PlanetaryComputerProClient, collection_id):
             ],
         },
         date_time="2021-01-01T00:00:00Z/2022-12-31T00:00:00Z",
-        sort_by=[StacSortExtension(field="datetime", direction=StacSearchSortingDirection.DESC)],
+        sort_by=[
+            StacSortExtension(
+                field="datetime", direction=StacSearchSortingDirection.DESC
+            )
+        ],
         limit=50,
     )
 
@@ -139,7 +153,17 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
                 ],
                 "naip:state": "ga",
                 "proj:shape": [12460, 10620],
-                "proj:transform": [0.6, 0.0, 737334.0, 0.0, -0.6, 3730800.0, 0.0, 0.0, 1.0],
+                "proj:transform": [
+                    0.6,
+                    0.0,
+                    737334.0,
+                    0.0,
+                    -0.6,
+                    3730800.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                ],
             },
             "links": [
                 {
@@ -170,7 +194,11 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
                         {"name": "Red", "common_name": "red"},
                         {"name": "Green", "common_name": "green"},
                         {"name": "Blue", "common_name": "blue"},
-                        {"name": "NIR", "common_name": "nir", "description": "near-infrared"},
+                        {
+                            "name": "NIR",
+                            "common_name": "nir",
+                            "description": "near-infrared",
+                        },
                     ],
                 },
                 "thumbnail": {
@@ -204,13 +232,19 @@ def get_sample_stac_item(collection_id: str, item_id: str) -> StacItem:
 async def create_stac_item(client: PlanetaryComputerProClient, collection_id, item_id):
     """Create a STAC item."""
     stac_item = get_sample_stac_item(collection_id, item_id)
-    stac_item_get_items_response = await client.stac.get_item_collection(collection_id=collection_id)
+    stac_item_get_items_response = await client.stac.get_item_collection(
+        collection_id=collection_id
+    )
     for item in stac_item_get_items_response.features:
         logging.error(item.id)
 
     if any(item.id == stac_item.id for item in stac_item_get_items_response.features):
-        logging.info(f"Item {stac_item.id} already exists. Deleting it before creating a new one.")
-        delete_poller = await client.stac.begin_delete_item(collection_id=collection_id, item_id=stac_item.id, polling=True)
+        logging.info(
+            f"Item {stac_item.id} already exists. Deleting it before creating a new one."
+        )
+        delete_poller = await client.stac.begin_delete_item(
+            collection_id=collection_id, item_id=stac_item.id, polling=True
+        )
         await delete_poller.result()
         logging.info(f"Deleted item {stac_item.id}. Proceeding to create a new one.")
     else:
@@ -239,10 +273,14 @@ async def update_stac_item(client: PlanetaryComputerProClient, collection_id, it
     )
 
     await stac_item_create_or_update_response.result()
-    logging.info(f"Updated item {stac_item.id}, platform: {stac_item.properties['platform']}")
+    logging.info(
+        f"Updated item {stac_item.id}, platform: {stac_item.properties['platform']}"
+    )
 
 
-async def create_or_replace_stac_item(client: PlanetaryComputerProClient, collection_id, item_id):
+async def create_or_replace_stac_item(
+    client: PlanetaryComputerProClient, collection_id, item_id
+):
     """Create or replace a STAC item (idempotent operation).
 
     This demonstrates using begin_create_or_replace_item which is idempotent:
@@ -254,14 +292,18 @@ async def create_or_replace_stac_item(client: PlanetaryComputerProClient, collec
     stac_item = get_sample_stac_item(collection_id, item_id)
 
     try:
-        create_poller = await client.stac.begin_create_item(collection_id=collection_id, body=stac_item, polling=True)
+        create_poller = await client.stac.begin_create_item(
+            collection_id=collection_id, body=stac_item, polling=True
+        )
         await create_poller.result()
         logging.info(f"Created item {item_id}")
     except ResourceExistsError:
         logging.info(f"Item {item_id} already exists, continuing...")
 
     # Verify creation
-    created_item = await client.stac.get_item(collection_id=collection_id, item_id=item_id)
+    created_item = await client.stac.get_item(
+        collection_id=collection_id, item_id=item_id
+    )
     logging.info(f"Verified item {created_item.id}")
 
     # Now demonstrate create_or_replace (replace since item exists)
@@ -275,8 +317,12 @@ async def create_or_replace_stac_item(client: PlanetaryComputerProClient, collec
     logging.info(f"Replaced item {item_id} using create_or_replace")
 
     # Verify replacement
-    replaced_item = await client.stac.get_item(collection_id=collection_id, item_id=item_id)
-    logging.info(f"Verified replaced item, platform: {replaced_item.properties.get('platform', 'N/A')}")
+    replaced_item = await client.stac.get_item(
+        collection_id=collection_id, item_id=item_id
+    )
+    logging.info(
+        f"Verified replaced item, platform: {replaced_item.properties.get('platform', 'N/A')}"
+    )
 
 
 async def delete_stac_item(client: PlanetaryComputerProClient, collection_id, item_id):
@@ -287,18 +333,24 @@ async def delete_stac_item(client: PlanetaryComputerProClient, collection_id, it
     """
     try:
         # Check if item exists before attempting deletion
-        existing_item = await client.stac.get_item(collection_id=collection_id, item_id=item_id)
+        existing_item = await client.stac.get_item(
+            collection_id=collection_id, item_id=item_id
+        )
         logging.info(f"Found item {existing_item.id} to delete")
 
         # Delete the item using begin_delete_item
-        delete_poller = await client.stac.begin_delete_item(collection_id=collection_id, item_id=item_id, polling=True)
+        delete_poller = await client.stac.begin_delete_item(
+            collection_id=collection_id, item_id=item_id, polling=True
+        )
         await delete_poller.result()
         logging.info(f"Successfully deleted item {item_id}")
 
         # Verify deletion by attempting to retrieve the item
         try:
             await client.stac.get_item(collection_id=collection_id, item_id=item_id)
-            logging.warning(f"Item {item_id} still exists after deletion (may take time to propagate)")
+            logging.warning(
+                f"Item {item_id} still exists after deletion (may take time to propagate)"
+            )
         except ResourceNotFoundError:
             logging.info(f"Verified item {item_id} was successfully deleted")
 
@@ -334,7 +386,11 @@ async def query_items(client: PlanetaryComputerProClient, collection_id):
     # Sorted query
     sorted_options = StacSearchParameters(
         collections=[collection_id],
-        sort_by=[StacSortExtension(field="eo:cloud_cover", direction=StacSearchSortingDirection.ASC)],
+        sort_by=[
+            StacSortExtension(
+                field="eo:cloud_cover", direction=StacSearchSortingDirection.ASC
+            )
+        ],
         limit=3,
     )
 
@@ -348,12 +404,16 @@ async def query_items(client: PlanetaryComputerProClient, collection_id):
 
 async def get_queryables(client: PlanetaryComputerProClient, collection_id):
     """Get queryable properties for a collection."""
-    queryables = await client.stac.get_collection_queryables(collection_id=collection_id)
+    queryables = await client.stac.get_collection_queryables(
+        collection_id=collection_id
+    )
     properties = queryables.get("properties")
 
     if properties:
         for prop_name in list(properties.keys())[:10]:  # Show first 10
-            logging.info(f"  - {prop_name}: {properties[prop_name].get('description', '')}")
+            logging.info(
+                f"  - {prop_name}: {properties[prop_name].get('description', '')}"
+            )
 
 
 async def main():
@@ -367,7 +427,9 @@ async def main():
 
     # Create client
     credential = DefaultAzureCredential()
-    client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential, logging_enable=False)
+    client = PlanetaryComputerProClient(
+        endpoint=endpoint, credential=credential, logging_enable=False
+    )
 
     # Execute STAC specification operations
     await get_landing_page(client)
@@ -380,12 +442,14 @@ async def main():
     await create_stac_item(client, collection_id, item_id)
     await update_stac_item(client, collection_id, item_id)
     await create_or_replace_stac_item(client, collection_id, f"{item_id}_replace_demo")
-    await delete_stac_item(client, collection_id, f"{item_id}_replace_demo")  # Clean up the item created above
+    await delete_stac_item(
+        client, collection_id, f"{item_id}_replace_demo"
+    )  # Clean up the item created above
     await get_collection(client, collection_id)
-
-
 
     await client.close()
     await credential.close()
+
+
 if __name__ == "__main__":
     asyncio.run(main())
