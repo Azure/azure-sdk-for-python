@@ -322,7 +322,7 @@
 
 # ServiceLabel: %Planetary Computer
 # PRLabel: %Planetary Computer
-/sdk/planetarycomputer/                                              @mandarinamdar @gmoralessanchez @chahibi
+/sdk/planetarycomputer/                                              @mandarinamdar @chahibi
 
 # AzureSdkOwners: @annatisch
 # ServiceLabel: %Azure Projects
