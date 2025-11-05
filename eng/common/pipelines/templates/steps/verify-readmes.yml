@@ -39,19 +39,28 @@ steps:
   condition: ${{ parameters.Condition }}
 
 - pwsh: |
-    # Install azsdk tool
+    # Install azsdk tool and capture installation path
     $repoRoot = "${{ parameters.RepoRoot }}"
     if ([string]::IsNullOrWhiteSpace($repoRoot)) {
       $repoRoot = "$(Build.SourcesDirectory)"
     }
     $installer = Join-Path $repoRoot "eng/common/mcp/azure-sdk-mcp.ps1"
-    & $installer | Out-Host
+    $installOutput = & $installer 2>&1 | Tee-Object -Variable installLogs
     
-    # Get installed tool path
-    $toolPath = Join-Path $env:USERPROFILE "bin" "azsdk.exe"
-    if (-not (Test-Path $toolPath)) {
-      throw "azsdk tool not found at $toolPath"
+    # Parse installation output to find tool path
+    $toolPath = $null
+    foreach ($line in $installLogs) {
+      if ($line -match "Package .+ is installed at (.+)") {
+        $toolPath = $matches[1]
+        break
+      }
     }
+    
+    if (-not $toolPath -or -not (Test-Path $toolPath)) {
+      throw "azsdk tool installation failed or tool not found"
+    }
+    
+    Write-Host "Using azsdk tool at: $toolPath"
     
     # Run readme validation on discovered paths
     $scanPathsValue = '$(ScanPathArgument)'
