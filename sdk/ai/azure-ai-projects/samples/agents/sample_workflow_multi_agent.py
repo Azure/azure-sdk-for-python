@@ -28,7 +28,12 @@ from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ResponseStreamEventType, WorkflowAgentDefinition
+from azure.ai.projects.models import (
+    AgentReference,
+    PromptAgentDefinition,
+    ResponseStreamEventType,
+    WorkflowAgentDefinition,
+)
 
 load_dotenv()
 
