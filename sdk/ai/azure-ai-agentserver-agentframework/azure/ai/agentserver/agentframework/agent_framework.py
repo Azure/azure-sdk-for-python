@@ -4,12 +4,16 @@
 # pylint: disable=logging-fstring-interpolation
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import os
 from typing import Any, AsyncGenerator, Union
 
 from agent_framework import AgentProtocol
-from agent_framework.azure import AzureAIAgentClient
+from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
+from opentelemetry import trace
+
+from azure.identity import DefaultAzureCredential
+
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
 from azure.ai.agentserver.core.logger import get_logger
@@ -19,8 +23,6 @@ from azure.ai.agentserver.core.models import (
     ResponseStreamEvent,
 )
 from azure.ai.projects import AIProjectClient
-from azure.identity import DefaultAzureCredential
-from opentelemetry import trace
 
 from .models.agent_framework_input_converters import AgentFrameworkInputConverter
 from .models.agent_framework_output_non_streaming_converter import (
@@ -61,6 +63,12 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         1) request_body.stream_timeout_s (if provided)
         2) env var Constants.AGENTS_ADAPTER_STREAM_TIMEOUT_S
         3) Constants.DEFAULT_STREAM_TIMEOUT_S
+
+        :param request_body: The CreateResponse request body.
+        :type request_body: CreateResponse
+
+        :return: The resolved stream timeout in seconds.
+        :rtype: float
         """
         override = request_body.get("stream_timeout_s", None)
         if override is not None:

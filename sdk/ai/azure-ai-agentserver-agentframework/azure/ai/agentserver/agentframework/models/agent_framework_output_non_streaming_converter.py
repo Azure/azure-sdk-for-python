@@ -23,7 +23,7 @@ from .constants import Constants
 logger = get_logger()
 
 
-class AgentFrameworkOutputNonStreamingConverter:
+class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-long
     """Non-streaming converter: AgentRunResponse -> OpenAIResponse."""
 
     def __init__(self, context: AgentRunContext):
@@ -54,6 +54,12 @@ class AgentFrameworkOutputNonStreamingConverter:
           - FunctionResultContent -> function_call_output item
         
         to stay aligned with the streaming converter so no output is lost.
+
+        :param response: The AgentRunResponse from the agent framework.
+        :type response: AgentRunResponse
+
+        :return: The constructed OpenAIResponse.
+        :rtype: OpenAIResponse
         """
         logger.debug("Transforming non-streaming response (messages=%d)", len(response.messages))
         self._ensure_response_started()
@@ -85,6 +91,14 @@ class AgentFrameworkOutputNonStreamingConverter:
 
         Adding this indirection keeps the main transform method compact and makes it
         simpler to extend with new content types later.
+
+        :param content: The content object to append.
+        :type content: Any
+        :param sink: The list to append the converted content dict to.
+        :type sink: List[dict]
+
+        :return: None
+        :rtype: None
         """
         if isinstance(content, TextContent):
             self._append_text_content(content, sink)
@@ -124,7 +138,7 @@ class AgentFrameworkOutputNonStreamingConverter:
         if not isinstance(arguments, str):
             try:
                 arguments = json.dumps(arguments)
-            except Exception:  # pragma: no cover - fallback
+            except Exception:  # pragma: no cover - fallback # pylint: disable=broad-exception-caught
                 arguments = str(arguments)
         call_id = getattr(content, "call_id", None) or self._context.id_generator.generate_function_call_id()
         func_item_id = self._context.id_generator.generate_function_call_id()
@@ -175,7 +189,15 @@ class AgentFrameworkOutputNonStreamingConverter:
 
     # ------------- simple normalization helper -------------------------
     def _coerce_result_text(self, value: Any) -> str | dict:
-        """Return a string if value is already str or a TextContent-like object; else str(value)."""
+        """
+        Return a string if value is already str or a TextContent-like object; else str(value).
+
+        :param value: The value to coerce.
+        :type value: Any
+
+        :return: The coerced string or dict.
+        :rtype: str | dict
+        """
         if value is None:
             return ""
         if isinstance(value, str):

@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init,protected-access
 from __future__ import annotations
 
 import datetime
@@ -47,13 +48,13 @@ logger = get_logger()
 class _BaseStreamingState:
     """Base interface for streaming state handlers."""
 
-    def prework(self, ctx: Any) -> List[ResponseStreamEvent]:
+    def prework(self, ctx: Any) -> List[ResponseStreamEvent]:  # pylint: disable=unused-argument
         return []
 
-    def convert_content(self, ctx: Any, content) -> List[ResponseStreamEvent]:
+    def convert_content(self, ctx: Any, content) -> List[ResponseStreamEvent]:  # pylint: disable=unused-argument
         raise NotImplementedError
 
-    def afterwork(self, ctx: Any) -> List[ResponseStreamEvent]:
+    def afterwork(self, ctx: Any) -> List[ResponseStreamEvent]:  # pylint: disable=unused-argument
         return []
 
 
@@ -74,7 +75,7 @@ class _TextContentStreamingState(_BaseStreamingState):
 
         # Start a new assistant message item (in_progress)
         self.item_id = self.context.id_generator.generate_message_id()
-        self.output_index = ctx._next_output_index
+        self.output_index = ctx._next_output_index  # pylint: disable=protected-access
         ctx._next_output_index += 1
 
         message_item = ResponsesAssistantMessageItemResource(
@@ -165,7 +166,7 @@ class _TextContentStreamingState(_BaseStreamingState):
                 item=completed_item,
             )
         )
-        ctx._last_completed_text = full_text
+        ctx._last_completed_text = full_text  # pylint: disable=protected-access
         # store for final response
         ctx._completed_output_items.append(
             {
@@ -263,7 +264,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
             try:
                 json.loads(self.args_buffer)
                 is_done = True
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
 
         if is_done:
@@ -378,7 +379,15 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         return events
 
     def _coerce_result_text(self, value: Any) -> str | dict:
-        """Return a string if value is already str or a TextContent-like object; else str(value)."""
+        """
+        Return a string if value is already str or a TextContent-like object; else str(value).
+        
+        :param value: The value to coerce.
+        :type value: Any
+        
+        :return: The coerced string or dict.
+        :rtype: str | dict
+        """
         if value is None:
             return ""
         if isinstance(value, str):
@@ -541,7 +550,12 @@ class AgentFrameworkOutputStreamingConverter:
 
     # High-level helpers to emit lifecycle events for streaming
     def initial_events(self) -> List[ResponseStreamEvent]:
-        """Emit ResponseCreatedEvent and an initial ResponseInProgressEvent."""
+        """
+        Emit ResponseCreatedEvent and an initial ResponseInProgressEvent.
+        
+        :return: List of initial response stream events.
+        :rtype: List[ResponseStreamEvent]
+        """
         self._ensure_response_started()
         events: List[ResponseStreamEvent] = []
         created_response = self.build_response(status="in_progress")
@@ -560,7 +574,12 @@ class AgentFrameworkOutputStreamingConverter:
         return events
 
     def completion_events(self) -> List[ResponseStreamEvent]:
-        """Finalize any active content and emit a single ResponseCompletedEvent."""
+        """
+        Finalize any active content and emit a single ResponseCompletedEvent.
+        
+        :return: List of completion response stream events.
+        :rtype: List[ResponseStreamEvent]
+        """
         self._ensure_response_started()
         events: List[ResponseStreamEvent] = []
         events.extend(self.finalize_last_content())
