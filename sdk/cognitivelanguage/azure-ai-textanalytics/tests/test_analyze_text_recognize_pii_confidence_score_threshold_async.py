@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import functools
 import pytest
 
@@ -37,7 +38,9 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_analyze_text_recognize_pii_confidence_score_threshold_async(self, text_analysis_endpoint, text_analysis_key):
+    async def test_analyze_text_recognize_pii_confidence_score_threshold_async(
+        self, text_analysis_endpoint, text_analysis_key
+    ):
         async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
 
             # Input documents
@@ -51,9 +54,13 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
             text_input = MultiLanguageTextInput(multi_language_inputs=docs)
 
             # Confidence score overrides
-            ssn_override_default = ConfidenceScoreThresholdOverride(value=0.8, entity="USSocialSecurityNumber")
-            ssn_override_fr = ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber", language="fr")
-            confidence_threshold = ConfidenceScoreThreshold(default= 0.9, overrides=[ssn_override_default, ssn_override_fr])
+            ssn_override = ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber")
+            email_override = ConfidenceScoreThresholdOverride(
+                value=0.9, entity="Email"
+            )
+            confidence_threshold = ConfidenceScoreThreshold(
+                default=0.3, overrides=[ssn_override, email_override]
+            )
 
             # Parameters
             parameters = PiiActionContent(
@@ -70,28 +77,22 @@ class TestTextAnalysisCase_NewPIIThresholds(TestTextAnalysis):
             assert isinstance(result, AnalyzeTextPiiResult)
             assert result.results is not None
             assert result.results.documents is not None
-            assert len(result.results.documents) == 1
 
             doc = result.results.documents[0]
-            assert isinstance(doc, PiiResultWithDetectedLanguage)
-            assert doc.id == "1"
-            assert doc.entities is not None
-            assert len(doc.entities) > 0
+            redacted = doc.redacted_text
 
-            # Validate entity fields + confidence thresholds apply
-            saw_ssn = False
-            for entity in doc.entities:
-                assert isinstance(entity, PiiEntity)
-                assert entity.text is not None
-                assert entity.category is not None
-                assert entity.offset is not None
-                assert entity.length is not None
-                assert entity.confidence_score is not None
+            # Person should be masked out in text; SSN & Email should remain (filtered out as entities)
+            assert "John Doe" not in redacted
+            assert "222-45-6789" in redacted
+            assert "john@example.com" in redacted
 
-                # For English doc, SSN should meet the 0.8 threshold override
-                if entity.category in ("USSocialSecurityNumber", "SocialSecurityNumber", "ssn", "usssn"):
-                    saw_ssn = True
-                    assert entity.confidence_score >= 0.8
+            # Only Person entities should be returned (SSN & Email removed by 0.9 thresholds)
+            assert len(doc.entities) == 2
+            cats = {e.category for e in doc.entities}
+            assert cats == {"Person"}
 
-            # Ensure we actually recognized an SSN in the sample
-            assert saw_ssn
+            # Quick sanity on masking and confidence (no brittle exact names)
+            for e in doc.entities:
+                assert e.category == "Person"
+                assert e.mask is not None and e.mask != e.text  # masked
+                assert e.confidence_score >= 0.3  # respects default floor

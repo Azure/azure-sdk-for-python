@@ -8,8 +8,6 @@ from azure.ai.textanalytics.models import (
     MultiLanguageInput,
     TextPiiEntitiesRecognitionInput,
     AnalyzeTextPiiResult,
-    PiiResultWithDetectedLanguage,
-    PiiEntity,
     PiiActionContent,
     EntityMaskPolicyType,
     CharacterMaskPolicyType,
@@ -48,7 +46,7 @@ class TestTextAnalysisCase(TestTextAnalysis):
         text_input = MultiLanguageTextInput(multi_language_inputs=documents)
 
         # Redaction Policies
-        default_policy = EntityMaskPolicyType(policy_name="defaultPolicy", is_default_policy=True)
+        default_policy = EntityMaskPolicyType(policy_name="defaultPolicy", is_default=True)
 
         ssn_policy = CharacterMaskPolicyType(
             policy_name="customMaskForSSN",
@@ -78,32 +76,33 @@ class TestTextAnalysisCase(TestTextAnalysis):
         assert len(result.results.documents) == 2
 
         for doc in result.results.documents:
-            assert isinstance(doc, PiiResultWithDetectedLanguage)
             assert doc.id in ("1", "2")
 
-            # Entities exist
-            assert doc.entities is not None and len(doc.entities) > 0
+            # Redacted text must exist and original PII must not appear
+            redacted = doc.redacted_text
+            assert redacted is not None
+            assert "John Doe" not in redacted
+            assert "123-45-6789" not in redacted
+            assert "john@example.com" not in redacted
 
-            # Check redaction
-            assert doc.redacted_text is not None
-            redacted_text = doc.redacted_text
+            # Must detect 3 PII entities
+            assert len(doc.entities) == 3
+            categories = {e.category for e in doc.entities}
+            assert categories == {"Person", "USSocialSecurityNumber", "Email"}
 
-            # Ensure original PII not present
-            assert "123-45-6789" not in redacted_text
-            assert "john@example.com" not in redacted_text
-            assert "John Doe" not in redacted_text
+            # Validate Person entity was replaced (synthetic replacement)
+            person = next(e for e in doc.entities if e.category == "Person")
+            assert person.mask is not None
+            assert person.mask != person.text  # replaced with a different name
 
-            # Check at least one of each category detected
-            categories = {e.category.lower() for e in doc.entities}
-            assert any("ssn" in c or "socialsecurity" in c for c in categories)
-            assert any("email" in c for c in categories)
-            assert any("person" in c for c in categories)
+            # Validate SSN is masked with asterisks
+            ssn = next(e for e in doc.entities if e.category == "USSocialSecurityNumber")
+            assert ssn.mask is not None
+            assert "*" in ssn.mask
+            assert "123-45-6789" not in redacted
 
-            # Check each entity has required fields
-            for entity in doc.entities:
-                assert isinstance(entity, PiiEntity)
-                assert entity.text is not None
-                assert entity.category is not None
-                assert entity.offset is not None
-                assert entity.length is not None
-                assert entity.confidence_score is not None
+            # Validate Email is replaced (synthetic replacement)
+            email = next(e for e in doc.entities if e.category == "Email")
+            assert email.mask is not None
+            assert email.mask != email.text
+            assert "john@example.com" not in redacted

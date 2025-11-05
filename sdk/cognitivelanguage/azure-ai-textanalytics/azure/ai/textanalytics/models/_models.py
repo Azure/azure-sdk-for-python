@@ -1149,10 +1149,10 @@ class BaseRedactionPolicy(_Model):
     :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
     :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
     :vartype policy_name: str
-    :ivar is_default_policy: (Optional) flag to indicate whether this redaction policy is the
-     default policy to be applied when no specific policy is defined for a PII category. Only one
-     policy can be marked as default.
-    :vartype is_default_policy: bool
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -1168,8 +1168,8 @@ class BaseRedactionPolicy(_Model):
         name="policyName", visibility=["read", "create", "update", "delete", "query"]
     )
     """(Optional) name of the redaction policy for identification purposes."""
-    is_default_policy: Optional[bool] = rest_field(
-        name="isDefaultPolicy", visibility=["read", "create", "update", "delete", "query"]
+    is_default: Optional[bool] = rest_field(
+        name="isDefault", visibility=["read", "create", "update", "delete", "query"]
     )
     """(Optional) flag to indicate whether this redaction policy is the default policy to be applied
      when no specific policy is defined for a PII category. Only one policy can be marked as
@@ -1182,7 +1182,7 @@ class BaseRedactionPolicy(_Model):
         policy_kind: str,
         entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
         policy_name: Optional[str] = None,
-        is_default_policy: Optional[bool] = None,
+        is_default: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1204,10 +1204,10 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
     :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
     :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
     :vartype policy_name: str
-    :ivar is_default_policy: (Optional) flag to indicate whether this redaction policy is the
-     default policy to be applied when no specific policy is defined for a PII category. Only one
-     policy can be marked as default.
-    :vartype is_default_policy: bool
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     :ivar policy_kind: The entity RedactionPolicy object kind. Required. React detected entities
      with redaction character.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.CHARACTER_MASK
@@ -1251,7 +1251,7 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         *,
         entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
         policy_name: Optional[str] = None,
-        is_default_policy: Optional[bool] = None,
+        is_default: Optional[bool] = None,
         redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = None,
         unmask_length: Optional[int] = None,
         unmask_from_end: Optional[bool] = None,
@@ -3131,10 +3131,10 @@ class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
     :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
     :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
     :vartype policy_name: str
-    :ivar is_default_policy: (Optional) flag to indicate whether this redaction policy is the
-     default policy to be applied when no specific policy is defined for a PII category. Only one
-     policy can be marked as default.
-    :vartype is_default_policy: bool
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     :ivar policy_kind: The entity OverlapPolicy object kind. Required. Redact detected entities
      with entity type.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.ENTITY_MASK
@@ -3149,7 +3149,7 @@ class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
         *,
         entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
         policy_name: Optional[str] = None,
-        is_default_policy: Optional[bool] = None,
+        is_default: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5135,10 +5135,10 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
     :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
     :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
     :vartype policy_name: str
-    :ivar is_default_policy: (Optional) flag to indicate whether this redaction policy is the
-     default policy to be applied when no specific policy is defined for a PII category. Only one
-     policy can be marked as default.
-    :vartype is_default_policy: bool
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     :ivar policy_kind: The entity RedactionPolicy object kind. Required. Do not redact detected
      entities.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.NO_MASK
@@ -5153,7 +5153,7 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
         *,
         entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
         policy_name: Optional[str] = None,
-        is_default_policy: Optional[bool] = None,
+        is_default: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6351,10 +6351,10 @@ class SyntheticReplacementPolicyType(BaseRedactionPolicy, discriminator="synthet
     :vartype entity_types: list[str or ~azure.ai.textanalytics.models.PiiCategoriesExclude]
     :ivar policy_name: (Optional) name of the redaction policy for identification purposes.
     :vartype policy_name: str
-    :ivar is_default_policy: (Optional) flag to indicate whether this redaction policy is the
-     default policy to be applied when no specific policy is defined for a PII category. Only one
-     policy can be marked as default.
-    :vartype is_default_policy: bool
+    :ivar is_default: (Optional) flag to indicate whether this redaction policy is the default
+     policy to be applied when no specific policy is defined for a PII category. Only one policy can
+     be marked as default.
+    :vartype is_default: bool
     :ivar policy_kind: The entity RedactionPolicy object kind. Required. Replace detected entities
      with synthetic values.
     :vartype policy_kind: str or ~azure.ai.textanalytics.models.SYNTHETIC_REPLACEMENT
@@ -6378,7 +6378,7 @@ class SyntheticReplacementPolicyType(BaseRedactionPolicy, discriminator="synthet
         *,
         entity_types: Optional[list[Union[str, "_models.PiiCategoriesExclude"]]] = None,
         policy_name: Optional[str] = None,
-        is_default_policy: Optional[bool] = None,
+        is_default: Optional[bool] = None,
         preserve_data_format: Optional[bool] = None,
     ) -> None: ...
 
