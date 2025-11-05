@@ -6,17 +6,19 @@
 """
 DESCRIPTION:
     This sample demonstrates how to interact with the Foundry Project MCP tool.
+
 USAGE:
-    python sample_mcp_tool.py
+    python sample_mcp_tool_async.py
 
     Before running the sample:
-        pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1 mcp
 
-        Set these environment variables with your own values:
-        1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-        page of your Azure AI Foundry portal.
-        2) IMAGE_GEN_DEPLOYMENT_NAME - The deployment name of the image generation model, as found under the "Name" column in
-        the "Models + endpoints" tab in your Azure AI Foundry project.
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv mcp
+
+    Set these environment variables with your own values:
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+       page of your Azure AI Foundry portal.
+    2) IMAGE_GEN_DEPLOYMENT_NAME - The deployment name of the image generation model, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import asyncio

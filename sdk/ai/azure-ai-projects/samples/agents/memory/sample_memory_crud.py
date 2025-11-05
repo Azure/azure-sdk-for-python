@@ -1,25 +1,27 @@
-# # ------------------------------------
-# # Copyright (c) Microsoft Corporation.
-# # Licensed under the MIT License.
-# # ------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
-# """
-# DESCRIPTION:
-#     This sample demonstrates how to perform CRUD operations on a memory store using the Azure AI Projects SDK.
-# USAGE:
-#     python sample_memory_crud.py
+"""
+DESCRIPTION:
+    This sample demonstrates how to perform CRUD operations on a memory store using the Azure AI Projects SDK.
 
-#     Before running the sample:
-#         pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1
+USAGE:
+    python sample_memory_crud.py
 
-#         Set these environment variables with your own values:
-#         1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-#         page of your Azure AI Foundry portal.
-#         2) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model, as found under the "Name" column in
-#         the "Models + endpoints" tab in your Azure AI Foundry project.
-#         3) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model, as found under the
-#             "Name" column in the "Models + endpoints" tab in your Azure AI Foundry project.
-# """
+    Before running the sample:
+
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+
+    Set these environment variables with your own values:
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+       page of your Azure AI Foundry portal.
+    2) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model, as found under the
+       "Name" column in the "Models + endpoints" tab in your Azure AI Foundry project.
+"""
 
 # import os
 # from dotenv import load_dotenv

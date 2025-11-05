@@ -1,30 +1,32 @@
-# # ------------------------------------
-# # Copyright (c) Microsoft Corporation.
-# # Licensed under the MIT License.
-# # ------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
-# """
-# DESCRIPTION:
-#     This sample demonstrates how to integrate memory into a prompt agent.
-# USAGE:
-#     python sample_agent_memory.py
+"""
+DESCRIPTION:
+    This sample demonstrates how to integrate memory into a prompt agent.
 
-#     Before running the sample:
-#         pip install python-dotenv azure-identity azure-ai-projects>=2.0.0b1
+USAGE:
+    python sample_agent_memory.py
 
-#         Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
-#         Once you have deployed models, set the deployment name in the variables below.
+    Before running the sample:
 
-#         Set these environment variables with your own values:
-#         1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-#         page of your Azure AI Foundry portal.
-#         2) AZURE_AI_AGENT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for the agent, as found under the "Name" column in
-#         the "Models + endpoints" tab in your Azure AI Foundry project.
-#         3) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory, as found under the "Name" column in
-#         the "Models + endpoints" tab in your Azure AI Foundry project.
-#         4) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory, as found under the
-#             "Name" column in the "Models + endpoints" tab in your Azure AI Foundry project.
-# """
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+
+    Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
+    Once you have deployed models, set the deployment name in the variables below.
+
+    Set these environment variables with your own values:
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+       page of your Azure AI Foundry portal.
+    2) AZURE_AI_AGENT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for the agent, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory, as found under the "Name" column in
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    4) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory, as found under the
+       "Name" column in the "Models + endpoints" tab in your Azure AI Foundry project.
+"""
 
 # import os
 # from dotenv import load_dotenv
