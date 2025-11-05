@@ -3,6 +3,11 @@
 ## 12.23.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2026-02-06.
+- Added support for the keyword `start_from` for `DataLakeServiceClient`'s `get_paths` and
+`DataLakeDirectoryClient`'s `get_paths` APIs, which specifies the full path to start listing paths from.
+- Added support for the keyword `user_delegation_oid` to `generate_file_system_sas`, `generate_directory_sas`, and
+`generate_file_sas`, which specifies the Entra ID of the user that is authorized to use the generated SAS URL.
 
 ## 12.22.0 (2025-10-15)
 

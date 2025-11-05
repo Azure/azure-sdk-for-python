@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import logging
 import os
 from typing import Dict, List, Optional, Union
 
@@ -37,6 +38,7 @@ class GeneratedRAIClient:
     ):
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager
+        self.logger = logging.getLogger(__name__)
 
         user_agent_policy = UserAgentPolicy(base_user_agent=UserAgentSingleton().value)
 
@@ -144,6 +146,8 @@ class GeneratedRAIClient:
                 headers["x-ms-client-request-id"] = scan_session_id
             if client_id:
                 from azure.identity import DefaultAzureCredential
+
+                self.logger.info(f"Using client_id: {client_id} to set token in aml-aca-token header ")
 
                 # Get token using the client_id for managed identity
                 managed_identity_credential = DefaultAzureCredential(

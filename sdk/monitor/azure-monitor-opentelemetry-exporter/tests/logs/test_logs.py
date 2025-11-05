@@ -73,7 +73,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_number=SeverityNumber.WARN,
                 body="Test message",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
-                attributes={"test": "attribute"},
+                attributes={"test": "attribute", "ai.operation.name": "TestOperationName"},
             ),
             InstrumentationScope("test_name"),
         )
@@ -87,7 +87,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_number=SeverityNumber.WARN,
                 body="",
                 resource=Resource.create(attributes={"asd": "test_resource"}),
-                attributes={"test": "attribute"},
+                attributes={"test": "attribute", "ai.operation.name": "TestOperationName"},
             ),
             InstrumentationScope("test_name"),
         )
@@ -115,7 +115,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 severity_number=SeverityNumber.WARN,
                 body={"foo": {"bar": "baz", "qux": 42}},
                 resource=Resource.create(attributes={"asd": "test_resource"}),
-                attributes={"test": "attribute"},
+                attributes={"test": "attribute", "ai.operation.name": "TestOperationName"},
             ),
             InstrumentationScope("test_name"),
         )
@@ -394,6 +394,7 @@ class TestAzureLogExporter(unittest.TestCase):
         span_id = self._log_data.log_record.span_id
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span_id))
         self._log_data.log_record.resource = old_resource
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
 
     def test_log_to_envelope_partA_default(self):
         exporter = self._exporter
@@ -433,6 +434,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, _DEFAULT_LOG_MESSAGE)
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
     
     def test_log_to_envelope_log_empty_with_whitespaces(self):
         exporter = self._exporter
@@ -447,6 +449,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, json.dumps(self._log_data_complex_body.log_record.body))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
 
     def test_log_to_envelope_log_complex_body_not_serializeable(self):
         exporter = self._exporter
