@@ -16,7 +16,7 @@ DESCRIPTION:
     taking screenshots in a controlled environment using asynchronous operations.
 
 USAGE:
-    python sample_responses_computer_use_async.py
+    python sample_agent_computer_use_async.py
 
     Before running the sample:
 

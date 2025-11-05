@@ -17,7 +17,7 @@ DESCRIPTION:
     - Proper cleanup of created resources
 
 USAGE:
-    python sample_responses_image_generation_async.py
+    python sample_agent_image_generation_async.py
 
     Before running the sample:
 

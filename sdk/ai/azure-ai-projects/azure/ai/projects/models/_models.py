@@ -451,7 +451,8 @@ class AgentDefinition(_Model):
     """AgentDefinition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ContainerAppAgentDefinition, HostedAgentDefinition, PromptAgentDefinition, WorkflowDefinition
+    ContainerAppAgentDefinition, HostedAgentDefinition, PromptAgentDefinition,
+    WorkflowAgentDefinition
 
     :ivar kind: Required. Known values are: "prompt", "hosted", "container_app", and "workflow".
     :vartype kind: str or ~azure.ai.projects.models.AgentKind
@@ -5671,7 +5672,9 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A filter to apply. Is either a ComparisonFilter type or a CompoundFilter type."""
 
     @overload
@@ -15048,8 +15051,8 @@ class WeeklyRecurrenceSchedule(RecurrenceSchedule, discriminator="Weekly"):
         self.type = RecurrenceType.WEEKLY  # type: ignore
 
 
-class WorkflowDefinition(AgentDefinition, discriminator="workflow"):
-    """The workflow specification in CSDL format.
+class WorkflowAgentDefinition(AgentDefinition, discriminator="workflow"):
+    """The workflow agent definition.
 
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
     :vartype rai_config: ~azure.ai.projects.models.RaiConfig

@@ -6607,7 +6607,7 @@ class EvaluationTaxonomiesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
