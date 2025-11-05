@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import json
 import logging
-from typing import Optional, Sequence, Any
+from typing import Optional, Sequence, Any, Union
 
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.semconv.attributes.exception_attributes import (
@@ -64,7 +64,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         :return: The result of the export.
         :rtype: ~opentelemetry.sdk._logs.export.LogData
         """
-        envelopes = [self._log_to_envelope(log) for log in batch]
+        envelopes = [envelope for log in batch if (envelope := self._log_to_envelope(log)) is not None]
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
@@ -81,8 +81,10 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         if self.storage:
             self.storage.close()
 
-    def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
+    def _log_to_envelope(self, log_data: LogData) -> Union[TelemetryItem, None]:
         envelope = _convert_log_to_envelope(log_data)
+        if envelope is None:
+            return None
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -117,7 +119,7 @@ def _log_data_is_event(log_data: LogData) -> bool:
 
 # pylint: disable=protected-access
 # pylint: disable=too-many-statements
-def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
+def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
     log_record = log_data.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
@@ -177,6 +179,13 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             exceptions=[exc_details],
         )
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
+
+        if _utils._should_drop_logs_for_unsampled_traces(log_record):
+            return None
+
+        if _utils._is_less_than_minimum_severity_level(log_record):
+            return None
+
     elif _log_data_is_event(log_data):  # Event telemetry
         _set_statsbeat_custom_events_feature()
         envelope.name = "Microsoft.ApplicationInsights.Event"
@@ -203,6 +212,12 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         if len(data.message) == 0:
             data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
+
+        if _utils._should_drop_logs_for_unsampled_traces(log_record):
+            return None
+
+        if _utils._is_less_than_minimum_severity_level(log_record):
+            return None
 
     return envelope
 

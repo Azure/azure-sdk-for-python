@@ -30,6 +30,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _DEFAULT_LOG_MESSAGE,
+    _MINIMUM_SEVERITY_LEVEL,
+    _TRACE_BASED_SAMPLING,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import (
@@ -641,6 +643,201 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
 
+    def test_emit_logrecord_with_min_severity_filtering(self):
+        exporter = self._exporter
+        log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="Test message",
+            ),
+            InstrumentationScope("test_name"),
+        )
+
+        # When the minimum severity is higher than the record's level, the envelope should be dropped
+        # Test 1: SeverityNumber.ERROR format (uppercase)
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "SeverityNumber.ERROR"
+        envelope = exporter._log_to_envelope(log_data)
+        self.assertIsNone(envelope)
+
+        # Reset expectation: setting minimum severity below or equal allows the record through
+        # Test 2: SeverityNumber.INFO format (below WARN)
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "SeverityNumber.INFO"
+        envelope = exporter._log_to_envelope(log_data)
+        self.assertIsNotNone(envelope)
+
+        # Test 3: Empty string defaults to UNSPECIFIED
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = ""
+        envelope = exporter._log_to_envelope(log_data)
+        self.assertIsNotNone(envelope)
+
+        # Test 4: severitynumber.error format (lowercase)
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "severitynumber.error"
+        envelope = exporter._log_to_envelope(log_data)
+        self.assertIsNone(envelope)
+
+        # Test 5: Invalid format with underscore (treated as UNSPECIFIED)
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "severity_number.error"
+        envelope = exporter._log_to_envelope(log_data)
+        self.assertIsNotNone(envelope)
+
+        # Test 6: Invalid prefix (treated as UNSPECIFIED)
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "RANDOM_STRING.error"
+        envelope = exporter._log_to_envelope(log_data)
+        self.assertIsNotNone(envelope)
+
+        os.environ.pop("MINIMUM_SEVERITY_LEVEL", None)
+
+    def test_emit_logrecord_with_trace_based_filtering(self):
+        from opentelemetry.trace import TraceFlags
+
+        exporter = self._exporter
+        mock_context = mock.Mock()
+
+        # Test 1: When trace-based sampling is enabled and trace is unsampled, envelope should be dropped
+        mock_span_context = mock.Mock()
+        mock_span_context.is_valid = True
+        mock_span_context.trace_flags.sampled = False
+
+        mock_span = mock.Mock()
+        mock_span.get_span_context.return_value = mock_span_context
+
+        log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=TraceFlags.DEFAULT,
+                severity_number=SeverityNumber.INFO,
+                body="Trace filtered log",
+                context=mock_context
+            ),
+            InstrumentationScope("test_name"),
+        )
+
+        os.environ["TRACE_BASED_SAMPLING"] = "true"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNone(envelope)
+
+        # Test 3: When trace-based sampling is enabled but is associated with unsampled trace, envelope should be dropped
+        os.environ["TRACE_BASED_SAMPLING"] = "TRUE"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNone(envelope)
+
+        # Test 4: When trace-based sampling is disabled, envelope should not be dropped
+        os.environ["TRACE_BASED_SAMPLING"] = "FALSE"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNotNone(envelope)
+
+        # Test 5: When trace-based sampling is not specified, envelope should not be dropped
+        os.environ["TRACE_BASED_SAMPLING"] = ""
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNotNone(envelope)
+
+        # Test 2: When trace-based sampling is enabled and trace is sampled, envelope should not be dropped
+        mock_span_context_sampled = mock.Mock()
+        mock_span_context_sampled.is_valid = True
+        mock_span_context_sampled.trace_flags.sampled = True
+
+        mock_span_sampled = mock.Mock()
+        mock_span_sampled.get_span_context.return_value = mock_span_context_sampled
+
+        log_data_sampled = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=TraceFlags.SAMPLED,
+                severity_number=SeverityNumber.INFO,
+                body="Trace filtered log",
+                context=mock_context
+            ),
+            InstrumentationScope("test_name"),
+        )
+        
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
+            envelope = exporter._log_to_envelope(log_data_sampled)
+            self.assertIsNotNone(envelope)
+
+        # Test 3: When trace-based sampling is disabled, envelope should not be dropped
+        os.environ["TRACE_BASED_SAMPLING"] = "TRUE"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNotNone(envelope)
+
+        # Test 4: When trace-based sampling is disabled, envelope should not be dropped
+        os.environ["TRACE_BASED_SAMPLING"] = "FALSE"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNotNone(envelope)
+
+        # Test 5: When trace-based sampling is disabled, envelope should not be dropped
+        os.environ["TRACE_BASED_SAMPLING"] = ""
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNotNone(envelope)
+        
+
+        os.environ.pop("TRACE_BASED_SAMPLING", None)
+
+    def test_emit_log_record_with_both_trace_based_and_min_severity_filters(self):
+        from opentelemetry.trace import TraceFlags
+
+        exporter = self._exporter
+        mock_context = mock.Mock()
+
+        # Test 1: When trace-based sampling is enabled and trace is unsampled, envelope should be dropped
+        mock_span_context = mock.Mock()
+        mock_span_context.is_valid = True
+        mock_span_context.trace_flags.sampled = False
+
+        mock_span = mock.Mock()
+        mock_span.get_span_context.return_value = mock_span_context
+
+        log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=TraceFlags.DEFAULT,
+                severity_number=SeverityNumber.WARN,
+                body="Trace filtered log",
+                context=mock_context
+            ),
+            InstrumentationScope("test_name"),
+        )
+
+        os.environ["TRACE_BASED_SAMPLING"] = "true"
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "SeverityNumber.ERROR"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNone(envelope)
+
+        os.environ["TRACE_BASED_SAMPLING"] = "fALSE"
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "SeverityNumber.INFO"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNotNone(envelope)
+
+        os.environ["TRACE_BASED_SAMPLING"] = "TRUE"
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "SeverityNumber.INFO"
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
+            envelope = exporter._log_to_envelope(log_data)
+            self.assertIsNone(envelope)
+        
+        os.environ.pop("TRACE_BASED_SAMPLING", None)
+        os.environ.pop("MINIMUM_SEVERITY_LEVEL", None)
 
 class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
     _exporter_class = partial(AzureMonitorLogExporter, disable_offline_storage=True)

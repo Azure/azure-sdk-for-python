@@ -16,6 +16,11 @@ from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
+from opentelemetry._logs.severity import SeverityNumber
+
+from opentelemetry.sdk._logs import LogRecord
+
+from opentelemetry.trace import get_current_span
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
@@ -28,6 +33,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _KUBERNETES_SERVICE_HOST,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
+    _MINIMUM_SEVERITY_LEVEL,
+    _TRACE_BASED_SAMPLING,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
@@ -426,3 +433,51 @@ def get_compute_type():
 
 def _get_sha256_hash(input_str: str) -> str:
     return hashlib.sha256(input_str.encode("utf-8")).hexdigest()
+
+def _is_less_than_minimum_severity_level(record: LogRecord) -> bool:
+    """Checks if the log record's severity number is less than the minimum severity level.
+
+    :param record: The log record to be processed.
+    :type record: LogRecord
+    :return: True if the log record's severity number is less than the minimum
+            severity level, False otherwise. Log records with an unspecified severity (i.e. `0`)
+            are not affected by this parameter and therefore bypass minimum severity filtering.
+    :rtype: bool
+    """
+    if record.severity_number is not None and record.severity_number.value != SeverityNumber.UNSPECIFIED:
+        min_severity_level_env = environ.get(_MINIMUM_SEVERITY_LEVEL)
+        if min_severity_level_env is not None and '.' in min_severity_level_env:
+            label, severity_name = min_severity_level_env.split('.')
+            if label.lower() == "severitynumber":
+                min_severity_level = SeverityNumber[severity_name.upper()]
+            else:
+                min_severity_level = SeverityNumber.UNSPECIFIED
+        else:
+            min_severity_level = SeverityNumber.UNSPECIFIED
+
+        if min_severity_level.value is not None and min_severity_level.value != SeverityNumber.UNSPECIFIED:
+            if record.severity_number.value < min_severity_level.value:
+                return True
+    return False
+
+def _should_drop_logs_for_unsampled_traces(record: LogRecord) -> bool:
+    """Determines whether the logger should drop log records associated with unsampled traces.
+    If `trace_based` is `true`, log records associated with unsampled traces are dropped by the `Logger`.
+    A log record is considered associated with an unsampled trace if it has a valid `SpanId` and its
+    `TraceFlags` indicate that the trace is unsampled. A log record that isn't associated with a trace
+    context is not affected by this parameter and therefore bypasses trace-based filtering.
+
+    :param record: The log record to be processed.
+    :type record: LogRecord
+    :return: True if the log record should be dropped due to being associated with an unsampled trace.
+    :rtype: bool
+    """
+    trace_based_sampling = environ.get(_TRACE_BASED_SAMPLING, "False")
+    if trace_based_sampling.lower() == "true":
+        if record.context is not None:
+            span = get_current_span(record.context)
+            span_context = span.get_span_context()
+            if span_context.is_valid and not span_context.trace_flags.sampled:
+                return True
+    return False
+
