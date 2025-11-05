@@ -1,4 +1,4 @@
-# pylint: disable=broad-exception-caught
+# pylint: disable=broad-exception-caught,dangerous-default-value
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -52,9 +52,8 @@ def get_project_endpoint():
         account = parts[0]
         project = parts[1]
         return f"https://{account}.services.ai.azure.com/api/projects/{project}"
-    else:
-        print("environment variable AGENT_PROJECT_RESOURCE_ID not set.")
-        return None
+    print("environment variable AGENT_PROJECT_RESOURCE_ID not set.")
+    return None
 
 
 def get_application_insights_connstr():
@@ -97,6 +96,9 @@ def configure(log_config: dict = default_log_config):
     """
     Configure logging based on the provided configuration dictionary.
     The dictionary should contain the logging configuration in a format compatible with `logging.config.dictConfig`.
+
+    :param log_config: A dictionary containing logging configuration.
+    :type log_config: dict
     """
     try:
         config.dictConfig(log_config)
@@ -135,7 +137,6 @@ def configure(log_config: dict = default_log_config):
 
     except Exception as e:
         print(f"Failed to configure logging: {e}")
-        pass
 
 
 def get_log_level():
@@ -147,8 +148,11 @@ def get_log_level():
     return log_level
 
 
-def get_logger():
+def get_logger() -> logging.Logger:
     """
     If the logger is not already configured, it will be initialized with default settings.
+
+    :return: Configured logger instance.
+    :rtype: logging.Logger
     """
     return logging.getLogger("azure.ai.agentshosting")
