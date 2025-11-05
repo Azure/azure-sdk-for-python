@@ -232,7 +232,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         Validate if the provided context is non-empty and meaningful.
         Treats None, empty strings, empty lists, and lists of empty strings as no context.
-        
+
         :param context: The context to validate
         :type context: Union[str, List, None]
         :return: True if context is valid and non-empty, False otherwise
