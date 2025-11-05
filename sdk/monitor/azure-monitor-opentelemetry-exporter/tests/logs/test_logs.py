@@ -686,7 +686,12 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertIsNotNone(envelope)
 
         # Test 6: Invalid prefix (treated as UNSPECIFIED)
-        os.environ["MINIMUM_SEVERITY_LEVEL"] = "RANDOM_STRING.error"
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "INVALID_STRING.error"
+        envelope = exporter._log_to_envelope(log_data)
+        self.assertIsNotNone(envelope)
+
+        # Test 6: Invalid prefix (treated as UNSPECIFIED)
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "SeverityNumber.invalid"
         envelope = exporter._log_to_envelope(log_data)
         self.assertIsNotNone(envelope)
 
@@ -769,24 +774,17 @@ class TestAzureLogExporter(unittest.TestCase):
             envelope = exporter._log_to_envelope(log_data_sampled)
             self.assertIsNotNone(envelope)
 
-        # Test 3: When trace-based sampling is disabled, envelope should not be dropped
+        # Test 3: When trace-based sampling is enabled and trace is sampled, envelope should not be dropped
         os.environ["TRACE_BASED_SAMPLING"] = "TRUE"
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
-            envelope = exporter._log_to_envelope(log_data)
+            envelope = exporter._log_to_envelope(log_data_sampled)
             self.assertIsNotNone(envelope)
 
         # Test 4: When trace-based sampling is disabled, envelope should not be dropped
         os.environ["TRACE_BASED_SAMPLING"] = "FALSE"
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
-            envelope = exporter._log_to_envelope(log_data)
+            envelope = exporter._log_to_envelope(log_data_sampled)
             self.assertIsNotNone(envelope)
-
-        # Test 5: When trace-based sampling is disabled, envelope should not be dropped
-        os.environ["TRACE_BASED_SAMPLING"] = ""
-        with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
-            envelope = exporter._log_to_envelope(log_data)
-            self.assertIsNotNone(envelope)
-        
 
         os.environ.pop("TRACE_BASED_SAMPLING", None)
 

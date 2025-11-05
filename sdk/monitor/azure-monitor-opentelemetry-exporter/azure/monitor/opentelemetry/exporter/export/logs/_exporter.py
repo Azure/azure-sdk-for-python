@@ -180,12 +180,6 @@ def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
         )
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
 
-        if _utils._should_drop_logs_for_unsampled_traces(log_record):
-            return None
-
-        if _utils._is_less_than_minimum_severity_level(log_record):
-            return None
-
     elif _log_data_is_event(log_data):  # Event telemetry
         _set_statsbeat_custom_events_feature()
         envelope.name = "Microsoft.ApplicationInsights.Event"
@@ -213,11 +207,11 @@ def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
             data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
-        if _utils._should_drop_logs_for_unsampled_traces(log_record):
-            return None
+    if _utils._should_drop_logs_for_unsampled_traces(log_record):
+        return None
 
-        if _utils._is_less_than_minimum_severity_level(log_record):
-            return None
+    if _utils._is_less_than_minimum_severity_level(log_record):
+        return None
 
     return envelope
 
