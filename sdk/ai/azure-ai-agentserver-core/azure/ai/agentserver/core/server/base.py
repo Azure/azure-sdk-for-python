@@ -1,7 +1,7 @@
-# pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
 import inspect
 import json
 import os
@@ -223,6 +223,9 @@ class FoundryCBAgent:
     ) -> None:
         """
         Awaitable server starter for use **inside** an existing event loop.
+
+        :param port: Port to listen on.
+        :type port: int
         """
         self.init_tracing()
         config = uvicorn.Config(self.app, host="0.0.0.0", port=port, loop="asyncio")
@@ -237,6 +240,9 @@ class FoundryCBAgent:
           POST  /responses
           GET   /liveness
           GET   /readiness
+
+        :param port: Port to listen on.
+        :type port: int
         """
         self.init_tracing()
         logger.info(f"Starting FoundryCBAgent server on port {port}")
@@ -268,8 +274,9 @@ class FoundryCBAgent:
         pass
 
     def setup_application_insights_exporter(self, connection_string, provider):
-        from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+        from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
         exporter_instance = AzureMonitorTraceExporter.from_connection_string(connection_string)
         processor = BatchSpanProcessor(exporter_instance)

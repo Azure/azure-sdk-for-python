@@ -109,6 +109,7 @@ steps:
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - script: |
+      sudo dpkg --configure -a
       sudo apt-get update
       sudo apt-get install -y qemu-user-static binfmt-support
       sudo update-binfmts --enable qemu-aarch64

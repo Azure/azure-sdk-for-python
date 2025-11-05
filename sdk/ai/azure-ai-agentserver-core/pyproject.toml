@@ -8,25 +8,30 @@ authors = [{ name = "Microsoft Corporation" }]
 classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10"]
 
 dependencies = [
-    "azure-monitor-opentelemetry",
+    "azure-monitor-opentelemetry>=1.5.0",
     "azure-ai-projects",
     "azure-ai-agents>=1.2.0b5",
     "azure-core>=1.35.0",
     "azure-identity",
     "openai>=1.80.0",
-    "opentelemetry-api",
+    "opentelemetry-api>=1.35",
     "opentelemetry-exporter-otlp-proto-http",
-    "starlette",
-    "uvicorn",
+    "starlette>=0.45.0",
+    "uvicorn>=0.31.0",
 ]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-# Auto-discover packages under the code root, including namespace packages (PEP 420)
-packages = { find = { include = ["azure*"] } }
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
 
 [tool.setuptools.dynamic]
 # read version from your module (see Step 2 file layout)
