@@ -36,12 +36,11 @@ def run_evaluator(
 
     with DefaultAzureCredential() as credential:
         with AIProjectClient(
-            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+            endpoint=endpoint, credential=credential
         ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
 
             client = project_client.get_openai_client()
-            client._custom_query = {"api-version": "2025-11-15-preview"}
 
             testing_criteria = [
                 {

@@ -49,18 +49,20 @@ def main() -> None:
 
     with DefaultAzureCredential() as credential:
         with AIProjectClient(
-            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+            endpoint=endpoint, credential=credential
         ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
 
             client = project_client.get_openai_client()
-            client._custom_query = {"api-version": "2025-11-15-preview"}
 
             data_source_config = {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
-                    "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
+                    "properties": {
+                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                    },
                     "required": ["query", "response"],
                 },
                 "include_sample_schema": True,
@@ -97,6 +99,30 @@ def main() -> None:
             failure_query = "What is the capital of Japan?"
             failure_response = "Japan is known for its beautiful cherry blossoms and advanced technology. The country has a rich cultural heritage and is famous for sushi and anime."
 
+            # Conversation example
+            query_conversation_query = [
+                {
+                    "createdAt": "2025-03-26T17:30:00Z",
+                    "run_id": "run_SimpleTask789",
+                    "role": "user",
+                    "content": [{"type": "text", "text": "Please calculate 15% tip on a $80 dinner bill"}],
+                }
+            ]
+            query_conversation_response = [
+                {
+                    "createdAt": "2025-03-26T17:30:05Z",
+                    "run_id": "run_SimpleTask789",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The 15% tip on an $80 dinner bill is $12.00. Your total bill including tip would be $92.00.",
+                        }
+                    ],
+                }
+            ]
+
+
             print("Creating Eval Run with Inline Data")
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
@@ -111,6 +137,8 @@ def main() -> None:
                             SourceFileContentContent(item={"query": success_query, "response": success_response}),
                             # Failure example - irrelevant response
                             SourceFileContentContent(item={"query": failure_query, "response": failure_response}),
+                            # Conversation example
+                            SourceFileContentContent(item={"query": query_conversation_query,"response": query_conversation_response}),
                         ],
                     ),
                 ),
