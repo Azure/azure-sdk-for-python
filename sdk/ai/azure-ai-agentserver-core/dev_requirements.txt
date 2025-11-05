@@ -1,3 +1,2 @@
 -e ../../../eng/tools/azure-sdk-tools
-../../identity/azure-identity
 python-dotenv
