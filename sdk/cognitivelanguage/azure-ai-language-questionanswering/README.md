@@ -233,17 +233,57 @@ asyncio.run(main())
 
 ```python
 import os
+import asyncio
 from azure.identity import DefaultAzureCredential
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
 
-endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
-client = QuestionAnsweringClient(endpoint, DefaultAzureCredential())
+async def main():
+    endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+    client = QuestionAnsweringClient(endpoint, DefaultAzureCredential())
+    output = await client.get_answers(
+        question="How long should my Surface battery last?",
+        project_name="FAQ",
+        deployment_name="production"
+    )
+    for candidate in output.answers:
+        print(f"({candidate.confidence:.2f}) {candidate.answer}")
 
-output = await client.get_answers(
-    question="How long should my Surface battery last?",
-    project_name="FAQ",
-    deployment_name="production"
+asyncio.run(main())
+```
+
+#### Filtering with metadata (QueryFilters)
+
+You can narrow answers using metadata stored in your knowledge base:
+
+```python
+from azure.ai.language.questionanswering.models import (
+    AnswersOptions,
+    QueryFilters,
+    MetadataFilter,
+    MetadataRecord
 )
+
+# Tuple form (supported)
+metadata_filter_tuple = MetadataFilter(metadata=[("product", "surface"), ("locale", "en-US")])
+
+# MetadataRecord form (recommended for static typing)
+metadata_filter_records = MetadataFilter(metadata=[
+    MetadataRecord(key="product", value="surface"),
+    MetadataRecord(key="locale", value="en-US")
+])
+
+options = AnswersOptions(
+    question="How long should my Surface battery last?",
+    filters=QueryFilters(metadata_filter=metadata_filter_tuple),
+    confidence_threshold=0.2,
+    top=3
+)
+
+resp = client.get_answers(options, project_name="FAQ", deployment_name="production")
+for ans in resp.answers:
+    print(f"{ans.answer} ({ans.confidence:.2f})")
+
+# Note: Passing metadata as a dict (e.g. {'product': 'surface'}) is no longer supported.
 ```
 
 ## Optional Configuration
