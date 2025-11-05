@@ -1,4 +1,3 @@
 -e ../../../eng/tools/azure-sdk-tools
-../../identity/azure-identity
 ../azure-ai-agentserver-core
 python-dotenv
