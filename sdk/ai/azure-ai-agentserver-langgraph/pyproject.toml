@@ -8,19 +8,25 @@ classifiers = ["Programming Language :: Python :: 3", "Programming Language :: P
 
 dependencies = [
     "azure-ai-agentserver-core",
-    "langchain",
-    "langchain-openai",
+    "langchain>0.4.0",
+    "langchain-openai>0.4.0",
     "langchain-azure-ai[opentelemetry]",
-    "langgraph",
+    "langgraph>0.4.0",
     "opentelemetry-exporter-otlp-proto-http",
 ]
 
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = { find = { include = ["azure*"] } }
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
 
 [tool.setuptools.dynamic]
 version = { attr = "azure.ai.agentserver.langgraph._version.VERSION" }
