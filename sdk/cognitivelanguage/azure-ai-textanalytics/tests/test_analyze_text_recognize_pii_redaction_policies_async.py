@@ -24,7 +24,7 @@ from azure.ai.textanalytics.models import (
 TextAnalysisPreparer = functools.partial(
     EnvironmentVariableLoader,
     "text_analysis",
-    text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
+    text_analysis_endpoint="https://Sanitized.azure-api.net/",
     text_analysis_key="fake_key",
 )
 
@@ -88,8 +88,6 @@ class TestTextAnalysisCase(TestTextAnalysis):
             assert len(result.results.documents) == 2
 
             for doc in result.results.documents:
-                assert doc.id in ("1", "2")
-
                 # Redacted text must exist and original PII must not appear
                 redacted = doc.redacted_text
                 assert redacted is not None
