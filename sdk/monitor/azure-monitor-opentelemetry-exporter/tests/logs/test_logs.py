@@ -702,13 +702,13 @@ class TestAzureLogExporter(unittest.TestCase):
 
         os.environ.pop("MINIMUM_SEVERITY_LEVEL", None)
 
-    def test_emit_logrecord_with_trace_based_filtering(self):
+    def test_emit_logrecord_with_trace_based_sampling_filtering(self):
         from opentelemetry.trace import TraceFlags
 
         exporter = self._exporter
         mock_context = mock.Mock()
 
-        # Test 1: When trace-based sampling is enabled and trace is not sampled, envelope should be dropped
+        # Test 1: When trace based sampling is enabled and trace is not sampled, envelope should be dropped
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = True
         mock_span_context.trace_flags.sampled = False
@@ -735,25 +735,25 @@ class TestAzureLogExporter(unittest.TestCase):
             envelope = exporter._log_to_envelope(log_data)
             self.assertIsNone(envelope)
 
-        # Test 3: When trace-based sampling is enabled but is associated with unsampled trace, envelope should be dropped # cspell:disable-line
+        # Test 3: When trace based sampling is enabled but is associated with unsampled trace, envelope should be dropped # cspell:disable-line
         os.environ["TRACE_BASED_SAMPLING"] = "TRUE"
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
             envelope = exporter._log_to_envelope(log_data)
             self.assertIsNone(envelope)
 
-        # Test 4: When trace-based sampling is disabled, envelope should not be dropped
+        # Test 4: When trace based sampling is disabled, envelope should not be dropped
         os.environ["TRACE_BASED_SAMPLING"] = "FALSE"
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
             envelope = exporter._log_to_envelope(log_data)
             self.assertIsNotNone(envelope)
 
-        # Test 5: When trace-based sampling is not specified, envelope should not be dropped
+        # Test 5: When trace based sampling is not specified, envelope should not be dropped
         os.environ["TRACE_BASED_SAMPLING"] = ""
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
             envelope = exporter._log_to_envelope(log_data)
             self.assertIsNotNone(envelope)
 
-        # Test 2: When trace-based sampling is enabled and trace is sampled, envelope should not be dropped
+        # Test 2: When trace based sampling is enabled and trace is sampled, envelope should not be dropped
         mock_span_context_sampled = mock.Mock()
         mock_span_context_sampled.is_valid = True
         mock_span_context_sampled.trace_flags.sampled = True
@@ -779,13 +779,13 @@ class TestAzureLogExporter(unittest.TestCase):
             envelope = exporter._log_to_envelope(log_data_sampled)
             self.assertIsNotNone(envelope)
 
-        # Test 3: When trace-based sampling is enabled and trace is sampled, envelope should not be dropped
+        # Test 3: When trace based sampling is enabled and trace is sampled, envelope should not be dropped
         os.environ["TRACE_BASED_SAMPLING"] = "TRUE"
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
             envelope = exporter._log_to_envelope(log_data_sampled)
             self.assertIsNotNone(envelope)
 
-        # Test 4: When trace-based sampling is disabled, envelope should not be dropped
+        # Test 4: When trace based sampling is disabled, envelope should not be dropped
         os.environ["TRACE_BASED_SAMPLING"] = "FALSE"
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span_sampled):
             envelope = exporter._log_to_envelope(log_data_sampled)
@@ -793,13 +793,13 @@ class TestAzureLogExporter(unittest.TestCase):
 
         os.environ.pop("TRACE_BASED_SAMPLING", None)
 
-    def test_emit_log_record_with_both_trace_based_and_min_severity_filters(self):
+    def test_emit_log_record_with_both_trace_based_sampling_and_min_severity_level_filters(self):
         from opentelemetry.trace import TraceFlags
 
         exporter = self._exporter
         mock_context = mock.Mock()
 
-        # Test 1: When trace-based sampling is enabled and trace is unsampled, envelope should be dropped # cspell:disable-line
+        # Test 1: When trace based sampling is enabled and trace is unsampled, envelope should be dropped # cspell:disable-line
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = True
         mock_span_context.trace_flags.sampled = False

@@ -466,10 +466,10 @@ def _is_less_than_minimum_severity_level(record: LogRecord) -> bool:
 # cspell:disable
 def _should_drop_logs_for_unsampled_traces(record: LogRecord) -> bool:
     """Determines whether the logger should drop log records associated with unsampled traces.
-    If `trace_based` is `true`, log records associated with unsampled traces are dropped by the `Logger`.
+    If `trace_based_sampling` is `true`, log records associated with unsampled traces are dropped by the `Logger`.
     A log record is considered associated with an unsampled trace if it has a valid `SpanId` and its
     `TraceFlags` indicate that the trace is unsampled. A log record that isn't associated with a trace
-    context is not affected by this parameter and therefore bypasses trace-based filtering.
+    context is not affected by this parameter and therefore bypasses trace based sampling filtering.
 
     :param record: The log record to be processed.
     :type record: LogRecord
