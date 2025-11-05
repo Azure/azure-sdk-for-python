@@ -39,7 +39,7 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.ai.projects import AIProjectClient
 
-from utils import pprint
+from pprint import pprint
 
 load_dotenv()
 

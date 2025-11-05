@@ -38,7 +38,7 @@ from azure.ai.projects.models import (
 )
 
 from azure.core.paging import ItemPaged
-from utils import pprint
+from pprint import pprint
 import time
 
 from dotenv import load_dotenv

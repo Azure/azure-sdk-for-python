@@ -8,10 +8,10 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `openai.evals.*` methods to create, get and list eval group and and eval runs
-    for Task Completion evaluator using inline dataset content.
+    for Task Adherence evaluator using inline dataset content.
 
 USAGE:
-    python sample_task_completion.py
+    python sample_task_adherence.py
 
     Before running the sample:
 
@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 import os
 import json
 import time
-from utils import pprint
+from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -75,8 +75,8 @@ def main() -> None:
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "task_completion",
-                    "evaluator_name": "builtin.task_completion",
+                    "name": "task_adherence",
+                    "evaluator_name": "builtin.task_adherence",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
@@ -88,7 +88,7 @@ def main() -> None:
 
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Task Completion Evaluator with inline data",
+                name="Test Task Adherence Evaluator with inline data",
                 data_source_config=data_source_config,
                 testing_criteria=testing_criteria,
             )
@@ -99,67 +99,65 @@ def main() -> None:
             print("Eval Run Response:")
             pprint(eval_object_response)
 
-            # Success example - task completed successfully
-            success_query = "Book a flight from New York to Los Angeles for next Friday"
-            success_response = "I've successfully booked your flight from New York (JFK) to Los Angeles (LAX) for Friday, March 29th. Your confirmation number is ABC123. The flight departs at 2:30 PM EST and arrives at 5:45 PM PST."
+            # Failure example - vague adherence to the task
+            failure_query = "What are the best practices for maintaining a healthy rose garden during the summer?"
+            failure_response = "Make sure to water your roses regularly and trim them occasionally."
 
-            # Failure example - task not completed
-            failure_query = "Cancel my subscription and refund my payment"
-            failure_response = "I understand you want to cancel your subscription. Here are some helpful articles about our cancellation policy and refund terms that you might find useful."
+            # Success example - full adherence to the task
+            success_query = "What are the best practices for maintaining a healthy rose garden during the summer?"
+            success_response = "For optimal summer care of your rose garden, start by watering deeply early in the morning to ensure the roots are well-hydrated without encouraging fungal growth. Apply a 2-3 inch layer of organic mulch around the base of the plants to conserve moisture and regulate soil temperature. Fertilize with a balanced rose fertilizer every 4–6 weeks to support healthy growth. Prune away any dead or diseased wood to promote good air circulation, and inspect regularly for pests such as aphids or spider mites, treating them promptly with an appropriate organic insecticidal soap. Finally, ensure that your roses receive at least 6 hours of direct sunlight daily for robust flowering."
 
-            # Complex example - conversation format with task completion
+            # Complex conversation example with tool calls
             complex_query = [
+                {"role": "system", "content": "You are an expert in literature and can provide book recommendations."},
                 {
-                    "createdAt": "2025-03-26T17:27:35Z",
-                    "run_id": "run_TaskCompletion123",
+                    "createdAt": "2025-03-14T08:00:00Z",
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": "I need to transfer $500 from my checking account to my savings account",
+                            "text": "I love historical fiction. Can you recommend a good book from that genre?",
                         }
                     ],
-                }
+                },
             ]
+
             complex_response = [
                 {
-                    "createdAt": "2025-03-26T17:27:40Z",
-                    "run_id": "run_TaskCompletion123",
+                    "createdAt": "2025-03-14T08:00:05Z",
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": "Let me fetch a recommendation for historical fiction."}],
+                },
+                {
+                    "createdAt": "2025-03-14T08:00:10Z",
                     "role": "assistant",
                     "content": [
                         {
                             "type": "tool_call",
-                            "tool_call_id": "call_TransferMoney456",
-                            "name": "transfer_money",
-                            "arguments": {"from_account": "checking", "to_account": "savings", "amount": 500},
+                            "tool_call_id": "tool_call_20250314_001",
+                            "name": "get_book",
+                            "arguments": {"genre": "historical fiction"},
                         }
                     ],
                 },
                 {
-                    "createdAt": "2025-03-26T17:27:42Z",
-                    "run_id": "run_TaskCompletion123",
-                    "tool_call_id": "call_TransferMoney456",
+                    "createdAt": "2025-03-14T08:00:15Z",
                     "role": "tool",
+                    "tool_call_id": "tool_call_20250314_001",
                     "content": [
                         {
                             "type": "tool_result",
-                            "tool_result": {
-                                "status": "success",
-                                "transaction_id": "TXN789",
-                                "new_checking_balance": 2500.00,
-                                "new_savings_balance": 8500.00,
-                            },
+                            "tool_result": '{ "book": { "title": "The Pillars of the Earth", "author": "Ken Follett", "summary": "A captivating tale set in medieval England that weaves historical events with personal drama." } }',
                         }
                     ],
                 },
                 {
-                    "createdAt": "2025-03-26T17:27:45Z",
-                    "run_id": "run_TaskCompletion123",
+                    "createdAt": "2025-03-14T08:00:20Z",
                     "role": "assistant",
                     "content": [
                         {
                             "type": "text",
-                            "text": "I've successfully transferred $500 from your checking account to your savings account. Transaction ID: TXN789. Your new checking balance is $2,500.00 and your savings balance is $8,500.00.",
+                            "text": "Based on our records, I recommend 'The Pillars of the Earth' by Ken Follett. This novel is an excellent example of historical fiction with a rich narrative and well-developed characters. Would you like more details or another suggestion?",
                         }
                     ],
                 },
@@ -167,45 +165,17 @@ def main() -> None:
 
             complex_tool_definitions = [
                 {
-                    "name": "transfer_money",
-                    "description": "Transfers money between user accounts.",
+                    "name": "get_book",
+                    "description": "Retrieve a book recommendation for a specified genre.",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "from_account": {
+                            "genre": {
                                 "type": "string",
-                                "description": "The source account type (checking, savings, etc.)",
-                            },
-                            "to_account": {
-                                "type": "string",
-                                "description": "The destination account type (checking, savings, etc.)",
-                            },
-                            "amount": {"type": "number", "description": "The amount to transfer"},
+                                "description": "The genre for which a book recommendation is requested.",
+                            }
                         },
                     },
-                }
-            ]
-
-            # Another complex example - conversation format with query but no tool calls
-            query_conversation_query = [
-                {
-                    "createdAt": "2025-03-26T17:30:00Z",
-                    "run_id": "run_SimpleTask789",
-                    "role": "user",
-                    "content": [{"type": "text", "text": "Please calculate 15% tip on a $80 dinner bill"}],
-                }
-            ]
-            query_conversation_response = [
-                {
-                    "createdAt": "2025-03-26T17:30:05Z",
-                    "run_id": "run_SimpleTask789",
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "The 15% tip on an $80 dinner bill is $12.00. Your total bill including tip would be $92.00.",
-                        }
-                    ],
                 }
             ]
 
@@ -219,28 +189,20 @@ def main() -> None:
                     source=SourceFileContent(
                         type="file_content",
                         content=[
-                            # Success example - task completed
-                            SourceFileContentContent(
-                                item={"query": success_query, "response": success_response, "tool_definitions": None}
-                            ),
-                            # Failure example - task not completed
+                            # Failure example - vague adherence
                             SourceFileContentContent(
                                 item={"query": failure_query, "response": failure_response, "tool_definitions": None}
                             ),
-                            # Complex example - conversation format with tool usage
+                            # Success example - full adherence
+                            SourceFileContentContent(
+                                item={"query": success_query, "response": success_response, "tool_definitions": None}
+                            ),
+                            # Complex conversation example with tool calls
                             SourceFileContentContent(
                                 item={
                                     "query": complex_query,
                                     "response": complex_response,
                                     "tool_definitions": complex_tool_definitions,
-                                }
-                            ),
-                            # Another complex example - conversation format without tool calls
-                            SourceFileContentContent(
-                                item={
-                                    "query": query_conversation_query,
-                                    "response": query_conversation_response,
-                                    "tool_definitions": None,
                                 }
                             ),
                         ],

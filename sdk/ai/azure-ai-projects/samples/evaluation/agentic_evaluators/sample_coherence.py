@@ -8,10 +8,10 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `openai.evals.*` methods to create, get and list eval group and and eval runs
-    for Relevance evaluator using inline dataset content.
+    using inline dataset content.
 
 USAGE:
-    python sample_relevance.py
+    python sample_coherence.py
 
     Before running the sample:
 
@@ -24,10 +24,10 @@ USAGE:
 """
 
 from dotenv import load_dotenv
-import os
 import json
+import os
 import time
-from utils import pprint
+from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -61,7 +61,7 @@ def main() -> None:
                 "item_schema": {
                     "type": "object",
                     "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-                    "required": ["query", "response"],
+                    "required": [],
                 },
                 "include_sample_schema": True,
             }
@@ -69,8 +69,8 @@ def main() -> None:
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "relevance",
-                    "evaluator_name": "builtin.relevance",
+                    "name": "coherence",
+                    "evaluator_name": "builtin.coherence",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
                 }
@@ -78,7 +78,7 @@ def main() -> None:
 
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Relevance Evaluator with inline data",
+                name="Test Coherence Evaluator with inline data",
                 data_source_config=data_source_config,
                 testing_criteria=testing_criteria,
             )
@@ -89,13 +89,13 @@ def main() -> None:
             print("Eval Run Response:")
             pprint(eval_object_response)
 
-            # Success example - relevant response
-            success_query = "What is the capital of Japan?"
-            success_response = "The capital of Japan is Tokyo."
+            # Sample inline data
+            success_query = "What is the capital of France?"
+            success_response = "The capital of France is Paris."
 
-            # Failure example - irrelevant response
-            failure_query = "What is the capital of Japan?"
-            failure_response = "Japan is known for its beautiful cherry blossoms and advanced technology. The country has a rich cultural heritage and is famous for sushi and anime."
+            # Failure example - incoherent response
+            failure_query = "What is the capital of France?"
+            failure_response = "France capital is... well, the city where government sits is Paris but no wait, Lyon is bigger actually maybe Rome? The French people live in many cities but the main one, I think it's definitely Paris or maybe not, depends on what you mean by capital."
 
             print("Creating Eval Run with Inline Data")
             eval_run_object = client.evals.runs.create(
@@ -107,9 +107,9 @@ def main() -> None:
                     source=SourceFileContent(
                         type="file_content",
                         content=[
-                            # Success example - relevant response
+                            # Success example - coherent response
                             SourceFileContentContent(item={"query": success_query, "response": success_response}),
-                            # Failure example - irrelevant response
+                            # Failure example - incoherent response
                             SourceFileContentContent(item={"query": failure_query, "response": failure_response}),
                         ],
                     ),

@@ -8,10 +8,10 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `openai.evals.*` methods to create, get and list eval group and and eval runs
-    for Task Adherence evaluator using inline dataset content.
+    for Tool Output Utilization evaluator using inline dataset content.
 
 USAGE:
-    python sample_task_adherence.py
+    python sample_tool_output_utilization.py
 
     Before running the sample:
 
@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 import os
 import json
 import time
-from utils import pprint
+from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -75,8 +75,8 @@ def main() -> None:
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "task_adherence",
-                    "evaluator_name": "builtin.task_adherence",
+                    "name": "tool_output_utilization",
+                    "evaluator_name": "builtin.tool_output_utilization",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
@@ -88,7 +88,7 @@ def main() -> None:
 
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Task Adherence Evaluator with inline data",
+                name="Test Tool Output Utilization Evaluator with inline data",
                 data_source_config=data_source_config,
                 testing_criteria=testing_criteria,
             )
@@ -99,82 +99,129 @@ def main() -> None:
             print("Eval Run Response:")
             pprint(eval_object_response)
 
-            # Failure example - vague adherence to the task
-            failure_query = "What are the best practices for maintaining a healthy rose garden during the summer?"
-            failure_response = "Make sure to water your roses regularly and trim them occasionally."
-
-            # Success example - full adherence to the task
-            success_query = "What are the best practices for maintaining a healthy rose garden during the summer?"
-            success_response = "For optimal summer care of your rose garden, start by watering deeply early in the morning to ensure the roots are well-hydrated without encouraging fungal growth. Apply a 2-3 inch layer of organic mulch around the base of the plants to conserve moisture and regulate soil temperature. Fertilize with a balanced rose fertilizer every 4–6 weeks to support healthy growth. Prune away any dead or diseased wood to promote good air circulation, and inspect regularly for pests such as aphids or spider mites, treating them promptly with an appropriate organic insecticidal soap. Finally, ensure that your roses receive at least 6 hours of direct sunlight daily for robust flowering."
-
-            # Complex conversation example with tool calls
-            complex_query = [
-                {"role": "system", "content": "You are an expert in literature and can provide book recommendations."},
+            # Example 1: Good utilization - uses tool output effectively
+            query1 = [
                 {
-                    "createdAt": "2025-03-14T08:00:00Z",
+                    "createdAt": "2025-03-26T17:27:30Z",
+                    "run_id": "run_ToolOutput123",
                     "role": "user",
                     "content": [
-                        {
-                            "type": "text",
-                            "text": "I love historical fiction. Can you recommend a good book from that genre?",
-                        }
+                        {"type": "text", "text": "What's the weather like in Paris and should I bring an umbrella?"}
                     ],
-                },
+                }
             ]
-
-            complex_response = [
+            response1 = [
                 {
-                    "createdAt": "2025-03-14T08:00:05Z",
-                    "role": "assistant",
-                    "content": [{"type": "text", "text": "Let me fetch a recommendation for historical fiction."}],
-                },
-                {
-                    "createdAt": "2025-03-14T08:00:10Z",
+                    "createdAt": "2025-03-26T17:27:35Z",
+                    "run_id": "run_ToolOutput123",
                     "role": "assistant",
                     "content": [
                         {
                             "type": "tool_call",
-                            "tool_call_id": "tool_call_20250314_001",
-                            "name": "get_book",
-                            "arguments": {"genre": "historical fiction"},
+                            "tool_call_id": "call_WeatherParis456",
+                            "name": "get_weather",
+                            "arguments": {"location": "Paris"},
                         }
                     ],
                 },
                 {
-                    "createdAt": "2025-03-14T08:00:15Z",
+                    "createdAt": "2025-03-26T17:27:37Z",
+                    "run_id": "run_ToolOutput123",
+                    "tool_call_id": "call_WeatherParis456",
                     "role": "tool",
-                    "tool_call_id": "tool_call_20250314_001",
                     "content": [
                         {
                             "type": "tool_result",
-                            "tool_result": '{ "book": { "title": "The Pillars of the Earth", "author": "Ken Follett", "summary": "A captivating tale set in medieval England that weaves historical events with personal drama." } }',
+                            "tool_result": {
+                                "weather": "Rainy, 16°C",
+                                "humidity": "85%",
+                                "precipitation": "Heavy rain expected",
+                            },
                         }
                     ],
                 },
                 {
-                    "createdAt": "2025-03-14T08:00:20Z",
+                    "createdAt": "2025-03-26T17:27:39Z",
+                    "run_id": "run_ToolOutput123",
                     "role": "assistant",
                     "content": [
                         {
                             "type": "text",
-                            "text": "Based on our records, I recommend 'The Pillars of the Earth' by Ken Follett. This novel is an excellent example of historical fiction with a rich narrative and well-developed characters. Would you like more details or another suggestion?",
+                            "text": "The weather in Paris is currently rainy with a temperature of 16°C and high humidity at 85%. Heavy rain is expected, so yes, you should definitely bring an umbrella!",
                         }
                     ],
                 },
             ]
-
-            complex_tool_definitions = [
+            tool_definitions1 = [
                 {
-                    "name": "get_book",
-                    "description": "Retrieve a book recommendation for a specified genre.",
+                    "name": "get_weather",
+                    "description": "Get detailed weather information for a location",
                     "parameters": {
                         "type": "object",
-                        "properties": {
-                            "genre": {
-                                "type": "string",
-                                "description": "The genre for which a book recommendation is requested.",
-                            }
-                        },
+                        "properties": {"location": {"type": "string", "description": "The city name"}},
+                    },
+                }
+            ]
+
+            # Example 2: Poor utilization - ignores tool output
+            query2 = [
+                {
+                    "createdAt": "2025-03-26T17:28:00Z",
+                    "run_id": "run_ToolOutputPoor789",
+                    "role": "user",
+                    "content": [{"type": "text", "text": "What's the current stock price of AAPL and should I buy?"}],
+                }
+            ]
+            response2 = [
+                {
+                    "createdAt": "2025-03-26T17:28:05Z",
+                    "run_id": "run_ToolOutputPoor789",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "tool_call",
+                            "tool_call_id": "call_StockPrice101",
+                            "name": "get_stock_price",
+                            "arguments": {"symbol": "AAPL"},
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-03-26T17:28:07Z",
+                    "run_id": "run_ToolOutputPoor789",
+                    "tool_call_id": "call_StockPrice101",
+                    "role": "tool",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_result": {
+                                "price": "$190.50",
+                                "change": "+2.5%",
+                                "volume": "50M",
+                                "market_cap": "$2.9T",
+                            },
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-03-26T17:28:09Z",
+                    "run_id": "run_ToolOutputPoor789",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "I can't provide investment advice. Please consult with a financial advisor for investment decisions.",
+                        }
+                    ],
+                },
+            ]
+            tool_definitions2 = [
+                {
+                    "name": "get_stock_price",
+                    "description": "Get current stock price and market data",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {"symbol": {"type": "string", "description": "Stock symbol (e.g., AAPL)"}},
                     },
                 }
             ]
@@ -189,21 +236,13 @@ def main() -> None:
                     source=SourceFileContent(
                         type="file_content",
                         content=[
-                            # Failure example - vague adherence
+                            # Example 1: Good tool output utilization
                             SourceFileContentContent(
-                                item={"query": failure_query, "response": failure_response, "tool_definitions": None}
+                                item={"query": query1, "response": response1, "tool_definitions": tool_definitions1}
                             ),
-                            # Success example - full adherence
+                            # Example 2: Poor tool output utilization
                             SourceFileContentContent(
-                                item={"query": success_query, "response": success_response, "tool_definitions": None}
-                            ),
-                            # Complex conversation example with tool calls
-                            SourceFileContentContent(
-                                item={
-                                    "query": complex_query,
-                                    "response": complex_response,
-                                    "tool_definitions": complex_tool_definitions,
-                                }
+                                item={"query": query2, "response": response2, "tool_definitions": tool_definitions2}
                             ),
                         ],
                     ),

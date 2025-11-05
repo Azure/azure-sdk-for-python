@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 import os
 import json
 import time
-from utils import pprint
+from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient

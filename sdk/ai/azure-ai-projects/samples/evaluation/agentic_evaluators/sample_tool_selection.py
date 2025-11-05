@@ -8,10 +8,10 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `openai.evals.*` methods to create, get and list eval group and and eval runs
-    for Tool Output Utilization evaluator using inline dataset content.
+    for Tool Selection evaluator using inline dataset content.
 
 USAGE:
-    python sample_tool_output_utilization.py
+    python sample_tool_selection.py
 
     Before running the sample:
 
@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 import os
 import json
 import time
-from utils import pprint
+from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -63,11 +63,12 @@ def main() -> None:
                     "properties": {
                         "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
                         "tool_definitions": {
                             "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
                         },
                     },
-                    "required": ["query", "response"],
+                    "required": ["query", "response", "tool_definitions"],
                 },
                 "include_sample_schema": True,
             }
@@ -75,12 +76,13 @@ def main() -> None:
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "tool_output_utilization",
-                    "evaluator_name": "builtin.tool_output_utilization",
+                    "name": "tool_selection",
+                    "evaluator_name": "builtin.tool_selection",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
                         "response": "{{item.response}}",
+                        "tool_calls": "{{item.tool_calls}}",
                         "tool_definitions": "{{item.tool_definitions}}",
                     },
                 }
@@ -88,7 +90,7 @@ def main() -> None:
 
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Tool Output Utilization Evaluator with inline data",
+                name="Test Tool Selection Evaluator with inline data",
                 data_source_config=data_source_config,
                 testing_criteria=testing_criteria,
             )
@@ -99,131 +101,94 @@ def main() -> None:
             print("Eval Run Response:")
             pprint(eval_object_response)
 
-            # Example 1: Good utilization - uses tool output effectively
-            query1 = [
-                {
-                    "createdAt": "2025-03-26T17:27:30Z",
-                    "run_id": "run_ToolOutput123",
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": "What's the weather like in Paris and should I bring an umbrella?"}
-                    ],
-                }
-            ]
-            response1 = [
+            # Example: Conversation format
+            query = "Can you send me an email with weather information for Seattle?"
+            response = [
                 {
                     "createdAt": "2025-03-26T17:27:35Z",
-                    "run_id": "run_ToolOutput123",
+                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
                     "role": "assistant",
                     "content": [
                         {
                             "type": "tool_call",
-                            "tool_call_id": "call_WeatherParis456",
-                            "name": "get_weather",
-                            "arguments": {"location": "Paris"},
+                            "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
+                            "name": "fetch_weather",
+                            "arguments": {"location": "Seattle"},
                         }
                     ],
                 },
                 {
                     "createdAt": "2025-03-26T17:27:37Z",
-                    "run_id": "run_ToolOutput123",
-                    "tool_call_id": "call_WeatherParis456",
+                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
+                    "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
                     "role": "tool",
-                    "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_result": {
-                                "weather": "Rainy, 16°C",
-                                "humidity": "85%",
-                                "precipitation": "Heavy rain expected",
-                            },
-                        }
-                    ],
+                    "content": [{"type": "tool_result", "tool_result": {"weather": "Rainy, 14\u00b0C"}}],
                 },
                 {
-                    "createdAt": "2025-03-26T17:27:39Z",
-                    "run_id": "run_ToolOutput123",
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "The weather in Paris is currently rainy with a temperature of 16°C and high humidity at 85%. Heavy rain is expected, so yes, you should definitely bring an umbrella!",
-                        }
-                    ],
-                },
-            ]
-            tool_definitions1 = [
-                {
-                    "name": "get_weather",
-                    "description": "Get detailed weather information for a location",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"location": {"type": "string", "description": "The city name"}},
-                    },
-                }
-            ]
-
-            # Example 2: Poor utilization - ignores tool output
-            query2 = [
-                {
-                    "createdAt": "2025-03-26T17:28:00Z",
-                    "run_id": "run_ToolOutputPoor789",
-                    "role": "user",
-                    "content": [{"type": "text", "text": "What's the current stock price of AAPL and should I buy?"}],
-                }
-            ]
-            response2 = [
-                {
-                    "createdAt": "2025-03-26T17:28:05Z",
-                    "run_id": "run_ToolOutputPoor789",
+                    "createdAt": "2025-03-26T17:27:38Z",
+                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
                     "role": "assistant",
                     "content": [
                         {
                             "type": "tool_call",
-                            "tool_call_id": "call_StockPrice101",
-                            "name": "get_stock_price",
-                            "arguments": {"symbol": "AAPL"},
-                        }
-                    ],
-                },
-                {
-                    "createdAt": "2025-03-26T17:28:07Z",
-                    "run_id": "run_ToolOutputPoor789",
-                    "tool_call_id": "call_StockPrice101",
-                    "role": "tool",
-                    "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_result": {
-                                "price": "$190.50",
-                                "change": "+2.5%",
-                                "volume": "50M",
-                                "market_cap": "$2.9T",
+                            "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
+                            "name": "send_email",
+                            "arguments": {
+                                "recipient": "your_email@example.com",
+                                "subject": "Weather Information for Seattle",
+                                "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
                             },
                         }
                     ],
                 },
                 {
-                    "createdAt": "2025-03-26T17:28:09Z",
-                    "run_id": "run_ToolOutputPoor789",
+                    "createdAt": "2025-03-26T17:27:41Z",
+                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
+                    "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
+                    "role": "tool",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_result": {"message": "Email successfully sent to your_email@example.com."},
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-03-26T17:27:42Z",
+                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
                     "role": "assistant",
                     "content": [
                         {
                             "type": "text",
-                            "text": "I can't provide investment advice. Please consult with a financial advisor for investment decisions.",
+                            "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
                         }
                     ],
                 },
             ]
-            tool_definitions2 = [
+
+            tool_definitions = [
                 {
-                    "name": "get_stock_price",
-                    "description": "Get current stock price and market data",
+                    "name": "fetch_weather",
+                    "description": "Fetches the weather information for the specified location.",
                     "parameters": {
                         "type": "object",
-                        "properties": {"symbol": {"type": "string", "description": "Stock symbol (e.g., AAPL)"}},
+                        "properties": {
+                            "location": {"type": "string", "description": "The location to fetch weather for."}
+                        },
                     },
-                }
+                },
+                {
+                    "name": "send_email",
+                    "description": "Sends an email with the specified subject and body to the recipient.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "recipient": {"type": "string", "description": "Email address of the recipient."},
+                            "subject": {"type": "string", "description": "Subject of the email."},
+                            "body": {"type": "string", "description": "Body content of the email."},
+                        },
+                    },
+                },
             ]
 
             print("Creating Eval Run with Inline Data")
@@ -236,14 +201,14 @@ def main() -> None:
                     source=SourceFileContent(
                         type="file_content",
                         content=[
-                            # Example 1: Good tool output utilization
                             SourceFileContentContent(
-                                item={"query": query1, "response": response1, "tool_definitions": tool_definitions1}
-                            ),
-                            # Example 2: Poor tool output utilization
-                            SourceFileContentContent(
-                                item={"query": query2, "response": response2, "tool_definitions": tool_definitions2}
-                            ),
+                                item={
+                                    "query": query,
+                                    "response": response,
+                                    "tool_calls": None,
+                                    "tool_definitions": tool_definitions,
+                                }
+                            )
                         ],
                     ),
                 ),

@@ -8,10 +8,10 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `openai.evals.*` methods to create, get and list eval group and and eval runs
-    for Tool Selection evaluator using inline dataset content.
+    for Intent Resolution evaluator using inline dataset content.
 
 USAGE:
-    python sample_tool_selection.py
+    python sample_intent_resolution.py
 
     Before running the sample:
 
@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 import os
 import json
 import time
-from utils import pprint
+from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -63,12 +63,11 @@ def main() -> None:
                     "properties": {
                         "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
                         "tool_definitions": {
                             "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
                         },
                     },
-                    "required": ["query", "response", "tool_definitions"],
+                    "required": ["query", "response"],
                 },
                 "include_sample_schema": True,
             }
@@ -76,13 +75,12 @@ def main() -> None:
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "tool_selection",
-                    "evaluator_name": "builtin.tool_selection",
+                    "name": "intent_resolution",
+                    "evaluator_name": "builtin.intent_resolution",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {
                         "query": "{{item.query}}",
                         "response": "{{item.response}}",
-                        "tool_calls": "{{item.tool_calls}}",
                         "tool_definitions": "{{item.tool_definitions}}",
                     },
                 }
@@ -90,7 +88,7 @@ def main() -> None:
 
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Tool Selection Evaluator with inline data",
+                name="Test Intent Resolution Evaluator with inline data",
                 data_source_config=data_source_config,
                 testing_criteria=testing_criteria,
             )
@@ -101,95 +99,129 @@ def main() -> None:
             print("Eval Run Response:")
             pprint(eval_object_response)
 
-            # Example: Conversation format
-            query = "Can you send me an email with weather information for Seattle?"
-            response = [
+            # Success example - Intent is identified and understood and the response correctly resolves user intent
+            success_query = "What are the opening hours of the Eiffel Tower?"
+            success_response = "Opening hours of the Eiffel Tower are 9:00 AM to 11:00 PM."
+
+            # Failure example - Even though intent is correctly identified, the response does not resolve the user intent
+            failure_query = "What is the opening hours of the Eiffel Tower?"
+            failure_response = (
+                "Please check the official website for the up-to-date information on Eiffel Tower opening hours."
+            )
+
+            # Complex conversation example with tool calls
+            complex_query = [
+                {"role": "system", "content": "You are a friendly and helpful customer service agent."},
                 {
-                    "createdAt": "2025-03-26T17:27:35Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "tool_call",
-                            "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
-                            "name": "fetch_weather",
-                            "arguments": {"location": "Seattle"},
-                        }
-                    ],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:37Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "tool_call_id": "call_CUdbkBfvVBla2YP3p24uhElJ",
-                    "role": "tool",
-                    "content": [{"type": "tool_result", "tool_result": {"weather": "Rainy, 14\u00b0C"}}],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:38Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "role": "assistant",
-                    "content": [
-                        {
-                            "type": "tool_call",
-                            "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
-                            "name": "send_email",
-                            "arguments": {
-                                "recipient": "your_email@example.com",
-                                "subject": "Weather Information for Seattle",
-                                "body": "The current weather in Seattle is rainy with a temperature of 14\u00b0C.",
-                            },
-                        }
-                    ],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:41Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "tool_call_id": "call_iq9RuPxqzykebvACgX8pqRW2",
-                    "role": "tool",
-                    "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_result": {"message": "Email successfully sent to your_email@example.com."},
-                        }
-                    ],
-                },
-                {
-                    "createdAt": "2025-03-26T17:27:42Z",
-                    "run_id": "run_zblZyGCNyx6aOYTadmaqM4QN",
-                    "role": "assistant",
+                    "createdAt": "2025-03-14T06:14:20Z",
+                    "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": "I have successfully sent you an email with the weather information for Seattle. The current weather is rainy with a temperature of 14\u00b0C.",
+                            "text": "Hi, I need help with my order #123 status?",
                         }
                     ],
                 },
             ]
 
+            complex_response = [
+                {
+                    "createdAt": "2025-03-14T06:14:30Z",
+                    "run_id": "0",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "tool_call",
+                            "tool_call_id": "tool_call_001",
+                            "name": "get_order",
+                            "arguments": {"order_id": "123"},
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-03-14T06:14:35Z",
+                    "run_id": "0",
+                    "tool_call_id": "tool_call_001",
+                    "role": "tool",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_result": '{ "order": { "id": "123", "status": "shipped", "delivery_date": "2025-03-15" } }',
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-03-14T06:14:40Z",
+                    "run_id": "0",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "tool_call",
+                            "tool_call_id": "tool_call_002",
+                            "name": "get_tracking",
+                            "arguments": {"order_id": "123"},
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-03-14T06:14:45Z",
+                    "run_id": "0",
+                    "tool_call_id": "tool_call_002",
+                    "role": "tool",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_result": '{ "tracking_number": "ABC123", "carrier": "UPS" }',
+                        }
+                    ],
+                },
+                {
+                    "createdAt": "2025-03-14T06:14:50Z",
+                    "run_id": "0",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Your order #123 has been shipped and is expected to be delivered on March 15, 2025. The tracking number is ABC123 with UPS.",
+                        }
+                    ],
+                },
+            ]
+
+            # Tool definitions for the complex example
             tool_definitions = [
                 {
-                    "name": "fetch_weather",
-                    "description": "Fetches the weather information for the specified location.",
+                    "name": "get_order",
+                    "description": "Get the details of a specific order.",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "location": {"type": "string", "description": "The location to fetch weather for."}
+                            "order_id": {"type": "string", "description": "The order ID to get the details for."}
                         },
                     },
                 },
                 {
-                    "name": "send_email",
-                    "description": "Sends an email with the specified subject and body to the recipient.",
+                    "name": "get_tracking",
+                    "description": "Get tracking information for an order.",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "recipient": {"type": "string", "description": "Email address of the recipient."},
-                            "subject": {"type": "string", "description": "Subject of the email."},
-                            "body": {"type": "string", "description": "Body content of the email."},
+                            "order_id": {"type": "string", "description": "The order ID to get tracking for."}
                         },
                     },
                 },
             ]
+
+            tool_definition = {
+                "name": "get_order",
+                "description": "Get the details of a specific order.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "order_id": {"type": "string", "description": "The order ID to get the details for."}
+                    },
+                },
+            }
 
             print("Creating Eval Run with Inline Data")
             eval_run_object = client.evals.runs.create(
@@ -201,14 +233,28 @@ def main() -> None:
                     source=SourceFileContent(
                         type="file_content",
                         content=[
+                            # Example 1: Success case - simple string query and response
+                            SourceFileContentContent(item={"query": success_query, "response": success_response}),
+                            # Example 2: Failure case - simple string query and response
+                            SourceFileContentContent(item={"query": failure_query, "response": failure_response}),
+                            # Example 3: Complex conversation with tool calls and tool definitions
                             SourceFileContentContent(
                                 item={
-                                    "query": query,
-                                    "response": response,
-                                    "tool_calls": None,
+                                    "query": complex_query,
+                                    "response": complex_response,
                                     "tool_definitions": tool_definitions,
                                 }
-                            )
+                            ),
+                            # Example 4: Complex conversation without tool definitions
+                            SourceFileContentContent(item={"query": complex_query, "response": complex_response}),
+                            # Example 5: Complex conversation with single tool definition
+                            SourceFileContentContent(
+                                item={
+                                    "query": complex_query,
+                                    "response": complex_response,
+                                    "tool_definitions": tool_definition,
+                                }
+                            ),
                         ],
                     ),
                 ),
