@@ -135,7 +135,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 internal_message="response is a required input to the Tool Call Success evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.TOOL_SUCCESS_EVALUATOR,
+                target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
         if eval_input["response"] is None or eval_input["response"] == []:
             raise EvaluationException(
@@ -143,7 +143,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 internal_message="response cannot be None or empty for the Tool Call Success evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.TOOL_SUCCESS_EVALUATOR,
+                target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
         eval_input["tool_calls"] = _reformat_tool_calls_results(

@@ -704,7 +704,7 @@ class EvaluationEvaluateSamples(object):
         # [START tool_success_evaluator]
         import os
         import json
-        from azure.ai.evaluation._evaluators._tool_success import (
+        from azure.ai.evaluation._evaluators._tool_call_success import (
             _ToolCallSuccessEvaluator,
         )
 
