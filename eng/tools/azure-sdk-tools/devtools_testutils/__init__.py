@@ -15,12 +15,19 @@ from .storage_testcase import (
     CachedStorageAccountPreparer,
 )
 
-# cSpell:disable
 from .envvariable_loader import EnvironmentVariableLoader
 from .exceptions import AzureTestError, ReservedResourceNameError
 from .proxy_fixtures import environment_variables, recorded_test, variable_recorder
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
+
+# Import httpx decorators if httpx is available
+try:
+    from .proxy_testcase_httpx import recorded_by_proxy_httpx
+    _httpx_available = True
+except ImportError:
+    _httpx_available = False
+
 from .sanitizers import (
     add_api_version_transform,
     add_batch_sanitizers,
@@ -118,3 +125,7 @@ __all__ = [
     "create_combined_bundle",
     "is_live_and_not_recording",
 ]
+
+# Add httpx decorator if available
+if _httpx_available:
+    __all__.append("recorded_by_proxy_httpx")
