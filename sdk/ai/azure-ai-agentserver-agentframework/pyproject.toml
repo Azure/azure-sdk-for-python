@@ -10,7 +10,7 @@ classifiers = ["Programming Language :: Python :: 3", "Programming Language :: P
 dependencies = [
     "azure-ai-agentserver-core",
     "agent_framework_azure_ai==1.0.0b251007",
-    "opentelemetry-exporter-otlp-proto-grpc"
+    "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
 ]
 
 [build-system]
