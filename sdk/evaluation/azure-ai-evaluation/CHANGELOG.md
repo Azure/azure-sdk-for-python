@@ -3,6 +3,7 @@
 ## 1.13.1 (Unreleased)
 
 ### Features Added
+
 - Improved RedTeam coverage across risk sub-categories to ensure comprehensive security testing
 - Made RedTeam's `AttackStrategy.Tense` seed prompts dynamic to allow use of this strategy with additional risk categories
 - Refactors error handling and result semantics in the RedTeam evaluation system to improve clarity and align with Attack Success Rate (ASR) conventions (passed=False means attack success)
