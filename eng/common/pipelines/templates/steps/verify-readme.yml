@@ -20,11 +20,50 @@ parameters:
   default: succeeded()
 
 steps:
-- task: PowerShell@2
+- pwsh: |
+    # Install azsdk tool
+    $repoRoot = "${{ parameters.RepoRoot }}"
+    if ([string]::IsNullOrWhiteSpace($repoRoot)) {
+      $repoRoot = "$(Build.SourcesDirectory)"
+    }
+    $installer = Join-Path $repoRoot "eng/common/mcp/azure-sdk-mcp.ps1"
+    & $installer | Out-Host
+    
+    # Get installed tool path
+    $toolPath = Join-Path $env:USERPROFILE "bin" "azsdk.exe"
+    if (-not (Test-Path $toolPath)) {
+      throw "azsdk tool not found at $toolPath"
+    }
+    
+    # Run readme validation
+    $scanPathsValue = '${{ coalesce(parameters.ScanPath, parameters.ScanPaths) }}'
+    if ([string]::IsNullOrWhiteSpace($scanPathsValue)) {
+      throw "ScanPaths cannot be empty."
+    }
+
+    $paths = $scanPathsValue.Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+    if (-not $paths) {
+      throw "No valid scan paths provided."
+    }
+
+    $exitCode = 0
+    foreach ($path in $paths) {
+      $fullPath = Join-Path $repoRoot $path
+      if (-not (Test-Path -Path $fullPath -PathType Container)) {
+        Write-Error "path '$fullPath' does not exist or is not a directory"
+        $exitCode = 1
+        continue
+      }
+
+      Write-Host "Validating README content in '$path'"
+      & $toolPath package run-checks readme --package-path $fullPath
+      if ($LASTEXITCODE -ne 0) {
+        $exitCode = $LASTEXITCODE
+      }
+    }
+
+    if ($exitCode -ne 0) {
+      exit $exitCode
+    }
   displayName: "Verify Readmes"
   condition: ${{ parameters.Condition }}
-  inputs:
-    filePath: "eng/common/common/mcp/azure-sdk-mcp.ps1"
-    arguments: >
-      -PackagePath ${{ coalesce(parameters.ScanPath, parameters.ScanPaths) }}'
-    pwsh: true
