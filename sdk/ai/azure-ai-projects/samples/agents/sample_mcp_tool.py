@@ -84,7 +84,7 @@ async def main():
                     vector_store_file = await openai_client.vector_stores.files.upload_and_poll(
                         vector_store_id=vector_store.id,
                         file=open(
-                            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../assets/product_info_1.md")),
+                            os.path.abspath(os.path.join(os.path.dirname(__file__), "./assets/product_info_1.md")),
                             "rb",
                         ),
                     )
