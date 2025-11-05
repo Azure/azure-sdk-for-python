@@ -226,6 +226,18 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         Treats None, empty strings, empty lists, and lists of empty strings as no context.
         """
         context = eval_input.get("context", None)
+        return self._validate_context(context)
+
+    def _validate_context(self, context) -> bool:
+        """
+        Validate if the provided context is non-empty and meaningful.
+        Treats None, empty strings, empty lists, and lists of empty strings as no context.
+        
+        :param context: The context to validate
+        :type context: Union[str, List, None]
+        :return: True if context is valid and non-empty, False otherwise
+        :rtype: bool
+        """
         if not context:
             return False
         if context == "<>":  # Special marker for no context
@@ -298,7 +310,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
         context = self._get_context_from_agent_response(response, tool_definitions)
 
-        filtered_response = self._filter_file_search_results(response)
+        filtered_response = self._filter_file_search_results(response) if self._validate_context(context) else response
         return super()._convert_kwargs_to_eval_input(response=filtered_response, context=context, query=query)
 
     def _filter_file_search_results(self, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
