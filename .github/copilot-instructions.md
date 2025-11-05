@@ -21,9 +21,9 @@
 - All Python operations (pip, tox, pytest, etc.) must be executed within an activated virtual environment
 - Create a virtual environment using: `python -m venv env`
 - Activate before running commands:
-  - Windows (PowerShell): `env\scripts\activate`
+  - Windows (PowerShell): `env\Scripts\Activate.ps1`
   - Linux/Mac: `source env/bin/activate`
-  - Windows (CMD): `env\scripts\activate.bat`
+  - Windows (CMD): `env\Scripts\activate.bat`
 - Reference: [Python virtual environment documentation](https://docs.python.org/3/tutorial/venv.html)
 - Reference: [Azure SDK dev setup guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md)
 
