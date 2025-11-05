@@ -9,6 +9,7 @@ from typing import Any, List
 
 from agent_framework import AgentRunResponse, FunctionResultContent
 from agent_framework._types import FunctionCallContent, TextContent
+
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
@@ -52,7 +53,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         Previously this method only emitted text message items. We now also capture:
           - FunctionCallContent  -> function_call output item
           - FunctionResultContent -> function_call_output item
-        
+
         to stay aligned with the streaming converter so no output is lost.
 
         :param response: The AgentRunResponse from the agent framework.

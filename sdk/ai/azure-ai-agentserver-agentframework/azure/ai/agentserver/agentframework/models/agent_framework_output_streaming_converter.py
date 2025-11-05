@@ -15,6 +15,7 @@ from agent_framework._types import (
     FunctionCallContent,
     TextContent,
 )
+
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
@@ -381,10 +382,10 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
     def _coerce_result_text(self, value: Any) -> str | dict:
         """
         Return a string if value is already str or a TextContent-like object; else str(value).
-        
+
         :param value: The value to coerce.
         :type value: Any
-        
+
         :return: The coerced string or dict.
         :rtype: str | dict
         """
@@ -552,7 +553,7 @@ class AgentFrameworkOutputStreamingConverter:
     def initial_events(self) -> List[ResponseStreamEvent]:
         """
         Emit ResponseCreatedEvent and an initial ResponseInProgressEvent.
-        
+
         :return: List of initial response stream events.
         :rtype: List[ResponseStreamEvent]
         """
@@ -576,7 +577,7 @@ class AgentFrameworkOutputStreamingConverter:
     def completion_events(self) -> List[ResponseStreamEvent]:
         """
         Finalize any active content and emit a single ResponseCompletedEvent.
-        
+
         :return: List of completion response stream events.
         :rtype: List[ResponseStreamEvent]
         """

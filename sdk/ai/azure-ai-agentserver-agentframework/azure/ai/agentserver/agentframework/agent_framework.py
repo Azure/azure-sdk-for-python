@@ -12,8 +12,6 @@ from agent_framework import AgentProtocol
 from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
-from azure.identity import DefaultAzureCredential
-
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
 from azure.ai.agentserver.core.logger import get_logger
@@ -23,6 +21,7 @@ from azure.ai.agentserver.core.models import (
     ResponseStreamEvent,
 )
 from azure.ai.projects import AIProjectClient
+from azure.identity import DefaultAzureCredential
 
 from .models.agent_framework_input_converters import AgentFrameworkInputConverter
 from .models.agent_framework_output_non_streaming_converter import (
