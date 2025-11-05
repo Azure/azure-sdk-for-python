@@ -360,6 +360,10 @@ def _get_flattened_attribute(obj: Any) -> Optional[str]:
     return None
 
 
+SPECIAL_KEY_MAP = {
+    "keys_property": "keys"
+}
+
 def attribute_list(obj: Any) -> List[str]:
     """Get a list of attribute names for a generated SDK model.
 
@@ -379,7 +383,7 @@ def attribute_list(obj: Any) -> List[str]:
         if flattened_attribute == attr_name:
             retval.extend(attribute_list(rest_field._class_type))  # pylint: disable=protected-access
         else:
-            retval.append(attr_name)
+            retval.append(SPECIAL_KEY_MAP.get(attr_name, attr_name))
     return retval
 
 
