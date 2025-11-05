@@ -24,10 +24,7 @@ steps:
   displayName: "Verify Readmes"
   condition: ${{ parameters.Condition }}
   inputs:
-    filePath: "eng/common/scripts/Verify-Readme.ps1"
+    filePath: "eng/common/common/mcp/azure-sdk-mcp.ps1"
     arguments: >
-      -DocWardenVersion '${{ parameters.DocWardenVersion }}'
-      -ScanPaths '${{ coalesce(parameters.ScanPath, parameters.ScanPaths) }}'
-      -RepoRoot ${{ parameters.RepoRoot }}
-      -SettingsPath ${{ parameters.SettingsPath }}
+      -PackagePath ${{ coalesce(parameters.ScanPath, parameters.ScanPaths) }}'
     pwsh: true
