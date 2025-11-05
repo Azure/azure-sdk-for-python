@@ -97,20 +97,15 @@ class apistub(Check):
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
 
-            # debug a pip freeze result
-            cmd = get_pip_command(executable) + ["freeze"]
-            freeze_result = subprocess.run(
-                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
-            logger.debug(f"Running pip freeze with {cmd}")
-            logger.debug(freeze_result.stdout)
+            self.pip_freeze(executable)
 
             # Check if a wheel is already built for current package and install from wheel when available
             # If wheel is not available then install package from source
             pkg_path, out_token_path = get_package_wheel_path(package_dir, staging_directory)
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
-            cmds = [executable, "-m", "apistub", "--pkg-path", pkg_path]
+            # cmds = [executable, "-m", "apistub", "--pkg-path", pkg_path]
+            cmds = ["apistubgen", "--pkg-path", pkg_path]
 
             if out_token_path:
                 cmds.extend(["--out-path", out_token_path])
