@@ -675,14 +675,10 @@ def sample_detect_language():
     client = TextAnalysisClient(endpoint, credential=credential)
 
     # Build input
-    text_a = (
-        "Sentences in different languages."
-    )
+    text_a = "Sentences in different languages."
 
     body = TextLanguageDetectionInput(
-        text_input=LanguageDetectionTextInput(
-            language_inputs=[LanguageInput(id="A", text=text_a)]
-        )
+        text_input=LanguageDetectionTextInput(language_inputs=[LanguageInput(id="A", text=text_a)])
     )
 
     # Sync (non-LRO) call
@@ -796,12 +792,12 @@ def sample_analyze_healthcare_entities():
                 print(f"Kind: {op_result.kind}")
 
                 hc_result = op_result.results
-                for doc in (hc_result.documents or []):
+                for doc in hc_result.documents or []:
                     print(f"\nDocument ID: {doc.id}")
 
                     # Entities
                     print("Entities:")
-                    for entity in (doc.entities or []):
+                    for entity in doc.entities or []:
                         print(f"  Text: {entity.text}")
                         print(f"  Category: {entity.category}")
                         print(f"  Offset: {entity.offset}")
@@ -815,9 +811,9 @@ def sample_analyze_healthcare_entities():
 
                     # Relations
                     print("Relations:")
-                    for relation in (doc.relations or []):
+                    for relation in doc.relations or []:
                         print(f"  Relation type: {relation.relation_type}")
-                        for rel_entity in (relation.entities or []):
+                        for rel_entity in relation.entities or []:
                             print(f"    Role: {rel_entity.role}")
                             print(f"    Ref: {rel_entity.ref}")
                         print()
@@ -886,9 +882,7 @@ def sample_analyze():
         " offers services for childcare in case you want that."
     )
 
-    text_b = (
-        "Sentences in different languages."
-    )
+    text_b = "Sentences in different languages."
 
     text_c = (
         "That was the best day of my life! We went on a 4 day trip where we stayed at Hotel Foo. They had"
@@ -946,7 +940,7 @@ def sample_analyze():
                     print(f"    Confidence score: {entity.confidence_score}")
                     print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
 
         # --- Key Phrases ---
@@ -958,7 +952,7 @@ def sample_analyze():
                     print(f"    {kp}")
                 print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
 ```
 
