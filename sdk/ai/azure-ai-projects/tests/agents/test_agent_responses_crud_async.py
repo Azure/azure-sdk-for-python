@@ -7,17 +7,14 @@
 
 import pytest
 from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from devtools_testutils.aio import recorded_by_proxy_async_httpx
 from azure.ai.projects.models import PromptAgentDefinition
 
 
 class TestAgentResponsesCrudAsync(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy_async_httpx
     async def test_agent_responses_crud_async(self, **kwargs):
 
         model = self.test_agents_params["model_deployment_name"]
