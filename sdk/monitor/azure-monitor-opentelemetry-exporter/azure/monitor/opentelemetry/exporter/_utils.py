@@ -477,7 +477,7 @@ def _should_drop_logs_for_unsampled_traces(record: LogRecord) -> bool:
     """
     trace_based_sampling = environ.get(_TRACE_BASED_SAMPLING, "False")
     if trace_based_sampling.lower() == "true":
-        if record.context is not None:
+        if hasattr(record, "context") and record.context is not None:
             span = get_current_span(record.context)
             span_context = span.get_span_context()
             if span_context.is_valid and not span_context.trace_flags.sampled:
