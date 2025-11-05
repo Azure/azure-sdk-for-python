@@ -328,10 +328,16 @@ class EvaluationProcessor:
                         )
                         return row
             except Exception as e:
+                error_msg = str(e)
                 self.logger.error(
-                    f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {str(e)}"
+                    f"Error evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}: {error_msg}"
                 )
-                return {}
+                # Return a row with error information AND conversation data so it can be matched
+                # The error field will be picked up by result processing to populate sample.error
+                return {
+                    "inputs.conversation": {"messages": messages},
+                    "error": error_msg,
+                }
 
         return {}
 

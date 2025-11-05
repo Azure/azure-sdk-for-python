@@ -20,6 +20,7 @@ from azure.ai.evaluation import (
     ProtectedMaterialEvaluator,
     evaluate,
     ViolenceEvaluator,
+    FluencyEvaluator,
     SexualEvaluator,
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
@@ -1093,6 +1094,7 @@ class TestEvaluate:
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
         test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_util_convert_eval_meta_data.json")
         test_input_eval_error_summary_path = os.path.join(parent, "data", "evaluation_util_convert_error_summary.json")
+        test_expected_output_path = os.path.join(parent, "data", "evaluation_util_convert_expected_output.json")
 
         mock_model_config = AzureOpenAIModelConfiguration(
             azure_deployment="test-deployment",
@@ -1101,6 +1103,7 @@ class TestEvaluate:
             api_version="2024-12-01-preview",
         )
         fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
+
         evaluators = {
             "labelgrader": AzureOpenAILabelGrader(
                 model_config=mock_model_config,
@@ -1112,6 +1115,8 @@ class TestEvaluate:
             ),
             "violence": ViolenceEvaluator(None, fake_project),
             "self_harm": SelfHarmEvaluator(None, fake_project),
+            "Fluency": FluencyEvaluator(model_config=mock_model_config),
+            "ViolenceContentCustomEvaluator": callable(fake_project),
         }
 
         # Create logger
@@ -1158,6 +1163,18 @@ class TestEvaluate:
         assert "studio_url" in converted_results
         assert "_evaluation_results_list" in converted_results
         assert "_evaluation_summary" in converted_results
+
+        # Normalize timestamp for comparison
+        result_list = []
+        for item in converted_results["_evaluation_results_list"]:
+            item["created_at"] = 1762319309  # Fixed timestamp for testing
+            result_list.append(item)
+        converted_results["_evaluation_results_list"] = result_list
+        converted_results_json = json.loads(f"{json.dumps(converted_results)}")
+        expected_results_json = None
+        with open(test_expected_output_path, "r") as f:
+            expected_results_json = json.load(f)
+        assert converted_results_json == expected_results_json
 
         # Verify metrics preserved
         assert converted_results["metrics"]["overall_score"] == 0.75
