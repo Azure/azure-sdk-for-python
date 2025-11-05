@@ -25,10 +25,10 @@ package_folder_path = PACKAGE_NAME.replace("-", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
-
-if not version:
-    raise RuntimeError("Cannot find version information")
+    version_match = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE)
+    if not version_match:
+        raise RuntimeError("Cannot find version information")
+    version = version_match.group(1)
 
 setup(
     name=PACKAGE_NAME,
