@@ -26,6 +26,7 @@ USAGE:
 """
 
 import os
+from typing import Any
 from dotenv import load_dotenv
 
 # [START imports_for_console_tracing]
@@ -41,9 +42,34 @@ from azure.ai.projects.telemetry import AIProjectInstrumentor
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition
+from azure.ai.projects.models import PromptAgentDefinition, AgentReference
+from openai.types.responses.response_input_text import ResponseInputText
+from openai.types.responses.response_output_text import ResponseOutputText
+
 
 load_dotenv()
+
+
+def display_conversation_item(item: Any) -> None:
+    """Safely display conversation item information"""
+    print(f"Item ID: {getattr(item, 'id', 'N/A')}")
+    print(f"Type: {getattr(item, 'type', 'N/A')}")
+
+    if hasattr(item, "content") and item.content and len(item.content) > 0:
+        try:
+            content_item = item.content[0]
+            if isinstance(content_item, ResponseInputText):
+                print(f"Content: {content_item.text}")
+            elif isinstance(content_item, ResponseOutputText):
+                print(f"Content: {content_item.text}")
+            else:
+                print(f"Content: [Unsupported content type: {type(content_item)}]")
+        except (IndexError, AttributeError) as e:
+            print(f"Content: [Error accessing content: {e}]")
+    else:
+        print("Content: [No content available]")
+    print("---")
+
 
 # [START setup_console_tracing]
 # Setup tracing to console
@@ -62,19 +88,45 @@ AIProjectInstrumentor().instrument()
 scenario = os.path.basename(__file__)
 with tracer.start_as_current_span(scenario):
     # [END create_span_for_scenario]
-    client = AIProjectClient(
+    project_client = AIProjectClient(
         endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
         credential=DefaultAzureCredential(),
     )
 
-    with client:
+    with project_client:
         agent_definition = PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that answers general questions",
         )
 
-        agent = client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
+        agent = project_client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
         print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-        client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        openai_client = project_client.get_openai_client()
+
+        conversation = openai_client.conversations.create()
+
+        request = "Hello, tell me a joke."
+        response = openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+            input=request,
+        )
+        print(f"Answer: {response.output}")
+
+        response = openai_client.responses.create(
+            conversation=conversation.id,
+            input="Tell another one about computers.",
+            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+        )
+        print(f"Answer: {response.output}")
+
+        print(f"\n📋 Listing conversation items...")
+        items = openai_client.conversations.items.list(conversation_id=conversation.id)
+
+        # Print all the items
+        for item in items:
+            display_conversation_item(item)
+
+        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")

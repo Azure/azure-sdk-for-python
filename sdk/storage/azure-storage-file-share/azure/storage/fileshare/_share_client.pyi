@@ -115,6 +115,7 @@ class ShareClient(StorageAccountHostsMixin):
         paid_bursting_iops: Optional[int] = None,
         provisioned_iops: Optional[int] = None,
         provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -157,6 +158,7 @@ class ShareClient(StorageAccountHostsMixin):
         paid_bursting_iops: Optional[int] = None,
         provisioned_iops: Optional[int] = None,
         provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -225,6 +227,7 @@ class ShareClient(StorageAccountHostsMixin):
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Literal["New", "Restore"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ShareDirectoryClient: ...

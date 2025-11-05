@@ -49,7 +49,7 @@ def build_list_by_managed_cluster_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -89,7 +89,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -137,7 +137,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -188,7 +188,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +236,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -287,7 +287,7 @@ def build_list_credential_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -582,9 +582,13 @@ class ManagedNamespacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ManagedNamespace]:
-        """Creates or updates a managed namespace in the specified managed cluster.
+        """Creates or updates a namespace managed by ARM for the specified managed cluster. Users can
+        configure aspects like resource quotas, network ingress/egress policies, and more. See
+        aka.ms/aks/managed-namespaces for more details.
 
-        Creates or updates a managed namespace in the specified managed cluster.
+        Creates or updates a namespace managed by ARM for the specified managed cluster. Users can
+        configure aspects like resource quotas, network ingress/egress policies, and more. See
+        aka.ms/aks/managed-namespaces for more details.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -615,9 +619,13 @@ class ManagedNamespacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ManagedNamespace]:
-        """Creates or updates a managed namespace in the specified managed cluster.
+        """Creates or updates a namespace managed by ARM for the specified managed cluster. Users can
+        configure aspects like resource quotas, network ingress/egress policies, and more. See
+        aka.ms/aks/managed-namespaces for more details.
 
-        Creates or updates a managed namespace in the specified managed cluster.
+        Creates or updates a namespace managed by ARM for the specified managed cluster. Users can
+        configure aspects like resource quotas, network ingress/egress policies, and more. See
+        aka.ms/aks/managed-namespaces for more details.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -646,9 +654,13 @@ class ManagedNamespacesOperations:
         parameters: Union[_models.ManagedNamespace, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedNamespace]:
-        """Creates or updates a managed namespace in the specified managed cluster.
+        """Creates or updates a namespace managed by ARM for the specified managed cluster. Users can
+        configure aspects like resource quotas, network ingress/egress policies, and more. See
+        aka.ms/aks/managed-namespaces for more details.
 
-        Creates or updates a managed namespace in the specified managed cluster.
+        Creates or updates a namespace managed by ARM for the specified managed cluster. Users can
+        configure aspects like resource quotas, network ingress/egress policies, and more. See
+        aka.ms/aks/managed-namespaces for more details.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

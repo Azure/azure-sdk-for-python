@@ -122,7 +122,7 @@ def build_agents_update_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_agent_from_manifest_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_agents_create_from_manifest_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -144,7 +144,7 @@ def build_agents_create_agent_from_manifest_request(**kwargs: Any) -> HttpReques
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_agent_from_manifest_request(  # pylint: disable=name-too-long
+def build_agents_update_from_manifest_request(  # pylint: disable=name-too-long
     agent_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -261,7 +261,7 @@ def build_agents_create_version_request(agent_name: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_agent_version_from_manifest_request(  # pylint: disable=name-too-long
+def build_agents_create_version_from_manifest_request(  # pylint: disable=name-too-long
     agent_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -620,7 +620,7 @@ def build_agents_list_version_container_operations_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_memory_stores_create_memory_store_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_memory_stores_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -642,9 +642,7 @@ def build_memory_stores_create_memory_store_request(**kwargs: Any) -> HttpReques
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_memory_stores_update_memory_store_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_memory_stores_update_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -671,9 +669,7 @@ def build_memory_stores_update_memory_store_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_memory_stores_get_memory_store_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_memory_stores_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -697,7 +693,7 @@ def build_memory_stores_get_memory_store_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_memory_stores_list_memory_stores_request(  # pylint: disable=name-too-long
+def build_memory_stores_list_request(
     *,
     limit: Optional[int] = None,
     order: Optional[Literal["asc", "desc"]] = None,
@@ -731,9 +727,7 @@ def build_memory_stores_list_memory_stores_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_memory_stores_delete_memory_store_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
+def build_memory_stores_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1463,7 +1457,7 @@ def build_evaluation_taxonomies_get_request(name: str, **kwargs: Any) -> HttpReq
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1489,7 +1483,7 @@ def build_evaluation_taxonomies_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies"
+    _url = "/evaluationtaxonomies"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1512,7 +1506,7 @@ def build_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1538,7 +1532,7 @@ def build_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1567,7 +1561,7 @@ def build_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluation_taxonomies/{name}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1695,6 +1689,7 @@ def build_evaluators_create_version_request(name: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1710,6 +1705,8 @@ def build_evaluators_create_version_request(name: str, **kwargs: Any) -> HttpReq
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1719,6 +1716,7 @@ def build_evaluators_update_version_request(name: str, version: str, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1735,6 +1733,8 @@ def build_evaluators_update_version_request(name: str, version: str, **kwargs: A
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2421,7 +2421,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create_agent_from_manifest(
+    def create_from_manifest(
         self,
         *,
         name: str,
@@ -2464,7 +2464,7 @@ class AgentsOperations:
         """
 
     @overload
-    def create_agent_from_manifest(
+    def create_from_manifest(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Creates an agent from a manifest.
@@ -2480,7 +2480,7 @@ class AgentsOperations:
         """
 
     @overload
-    def create_agent_from_manifest(
+    def create_from_manifest(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Creates an agent from a manifest.
@@ -2501,7 +2501,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def create_agent_from_manifest(
+    def create_from_manifest(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -2577,7 +2577,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_agent_from_manifest_request(
+        _request = build_agents_create_from_manifest_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2620,7 +2620,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update_agent_from_manifest(
+    def update_from_manifest(
         self,
         agent_name: str,
         *,
@@ -2660,7 +2660,7 @@ class AgentsOperations:
         """
 
     @overload
-    def update_agent_from_manifest(
+    def update_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
@@ -2680,7 +2680,7 @@ class AgentsOperations:
         """
 
     @overload
-    def update_agent_from_manifest(
+    def update_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentObject:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
@@ -2705,7 +2705,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def update_agent_from_manifest(
+    def update_from_manifest(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -2775,7 +2775,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_agent_from_manifest_request(
+        _request = build_agents_update_from_manifest_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3184,7 +3184,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create_agent_version_from_manifest(
+    def create_version_from_manifest(
         self,
         agent_name: str,
         *,
@@ -3227,7 +3227,7 @@ class AgentsOperations:
         """
 
     @overload
-    def create_agent_version_from_manifest(
+    def create_version_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionObject:
         """Create a new agent version from a manifest.
@@ -3250,7 +3250,7 @@ class AgentsOperations:
         """
 
     @overload
-    def create_agent_version_from_manifest(
+    def create_version_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionObject:
         """Create a new agent version from a manifest.
@@ -3278,7 +3278,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def create_agent_version_from_manifest(
+    def create_version_from_manifest(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3351,7 +3351,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_agent_version_from_manifest_request(
+        _request = build_agents_create_version_from_manifest_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4589,7 +4589,7 @@ class MemoryStoresOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def create_memory_store(
+    def create(
         self,
         *,
         name: str,
@@ -4619,9 +4619,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    def create_memory_store(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.MemoryStoreObject:
         """Create a memory store.
 
         :param body: Required.
@@ -4635,7 +4633,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    def create_memory_store(
+    def create(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Create a memory store.
@@ -4656,7 +4654,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def create_memory_store(
+    def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -4711,7 +4709,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_create_memory_store_request(
+        _request = build_memory_stores_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4754,7 +4752,7 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update_memory_store(
+    def update(
         self,
         name: str,
         *,
@@ -4781,7 +4779,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    def update_memory_store(
+    def update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Update a memory store.
@@ -4799,7 +4797,7 @@ class MemoryStoresOperations:
         """
 
     @overload
-    def update_memory_store(
+    def update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreObject:
         """Update a memory store.
@@ -4822,7 +4820,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def update_memory_store(
+    def update(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -4870,7 +4868,7 @@ class MemoryStoresOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_memory_stores_update_memory_store_request(
+        _request = build_memory_stores_update_request(
             name=name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4919,7 +4917,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def get_memory_store(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
+    def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
@@ -4941,7 +4939,7 @@ class MemoryStoresOperations:
 
         cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
 
-        _request = build_memory_stores_get_memory_store_request(
+        _request = build_memory_stores_get_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4988,7 +4986,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "limit", "order", "after", "before", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def list_memory_stores(
+    def list(
         self,
         *,
         limit: Optional[int] = None,
@@ -5032,7 +5030,7 @@ class MemoryStoresOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_memory_stores_list_memory_stores_request(
+            _request = build_memory_stores_list_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -5081,7 +5079,7 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def delete_memory_store(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResponse:
+    def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResponse:
         """Delete a memory store.
 
         :param name: The name of the memory store to delete. Required.
@@ -5104,7 +5102,7 @@ class MemoryStoresOperations:
 
         cls: ClsType[_models.DeleteMemoryStoreResponse] = kwargs.pop("cls", None)
 
-        _request = build_memory_stores_delete_memory_store_request(
+        _request = build_memory_stores_delete_request(
             name=name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8447,7 +8445,7 @@ class EvaluationTaxonomiesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -8954,17 +8952,81 @@ class EvaluatorsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    def create_version(self, name: str, **kwargs: Any) -> _models.EvaluatorVersion:
+    @overload
+    def create_version(
+        self,
+        name: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
 
         :param name: The name of the resource. Required.
         :type name: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_version(
+        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create a new EvaluatorVersion with auto incremented version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_version(
+        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create a new EvaluatorVersion with auto incremented version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def create_version(
+        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create a new EvaluatorVersion with auto incremented version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
+         JSON, IO[bytes] Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8977,14 +9039,24 @@ class EvaluatorsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluator_version, (IOBase, bytes)):
+            _content = evaluator_version
+        else:
+            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_evaluators_create_version_request(
             name=name,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -9019,19 +9091,100 @@ class EvaluatorsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    def update_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
+    @overload
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
         """Update an existing EvaluatorVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The version of the EvaluatorVersion to update. Required.
         :type version: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_version(
+        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Update an existing EvaluatorVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Update an existing EvaluatorVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Required.
+        :type evaluator_version: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Update an existing EvaluatorVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
+         JSON, IO[bytes] Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9044,15 +9197,25 @@ class EvaluatorsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluator_version, (IOBase, bytes)):
+            _content = evaluator_version
+        else:
+            _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_evaluators_update_version_request(
             name=name,
             version=version,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
