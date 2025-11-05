@@ -4,6 +4,8 @@
 
 ### Features Added
 - Added support for service version 2026-04-06.
+- Added support for error code `INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED`. 
+This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which has been deprecated.
 
 ## 12.28.0b1 (Unreleased)
 
