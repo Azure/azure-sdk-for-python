@@ -179,7 +179,6 @@ def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
             exceptions=[exc_details],
         )
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
-
     elif _log_data_is_event(log_data):  # Event telemetry
         _set_statsbeat_custom_events_feature()
         envelope.name = "Microsoft.ApplicationInsights.Event"
