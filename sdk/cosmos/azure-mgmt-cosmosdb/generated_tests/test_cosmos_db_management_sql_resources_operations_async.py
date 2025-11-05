@@ -25,7 +25,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.sql_resources.list_sql_databases(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +84,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -98,7 +98,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -131,7 +131,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -146,7 +146,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -161,7 +161,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -175,7 +175,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -189,7 +189,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -235,12 +235,21 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                             "automatic": bool,
                             "compositeIndexes": [[{"order": "str", "path": "str"}]],
                             "excludedPaths": [{"path": "str"}],
+                            "fullTextIndexes": [{"path": "str"}],
                             "includedPaths": [
                                 {"indexes": [{"dataType": "String", "kind": "Hash", "precision": 0}], "path": "str"}
                             ],
                             "indexingMode": "consistent",
                             "spatialIndexes": [{"path": "str", "types": ["str"]}],
-                            "vectorIndexes": [{"path": "str", "type": "str"}],
+                            "vectorIndexes": [
+                                {
+                                    "path": "str",
+                                    "type": "str",
+                                    "indexingSearchListSize": 100,
+                                    "quantizationByteSize": 0,
+                                    "vectorIndexShardKey": ["str"],
+                                }
+                            ],
                         },
                         "partitionKey": {"kind": "Hash", "paths": ["str"], "systemKey": bool, "version": 0},
                         "restoreParameters": {
@@ -262,7 +271,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -278,7 +287,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 account_name="str",
                 database_name="str",
                 container_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -293,7 +302,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -327,7 +336,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -343,7 +352,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 account_name="str",
                 database_name="str",
                 container_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -359,7 +368,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 account_name="str",
                 database_name="str",
                 container_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -373,7 +382,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -387,7 +396,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             client_encryption_key_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -410,7 +419,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                         "wrappedDataEncryptionKey": bytes("bytes", encoding="utf-8"),
                     }
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -425,7 +434,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -440,7 +449,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             database_name="str",
             container_name="str",
             stored_procedure_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -465,7 +474,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -482,7 +491,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 stored_procedure_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -497,7 +506,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -512,7 +521,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             database_name="str",
             container_name="str",
             user_defined_function_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -537,7 +546,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -554,7 +563,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 user_defined_function_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -569,7 +578,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -584,7 +593,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             database_name="str",
             container_name="str",
             trigger_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -609,7 +618,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -626,7 +635,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 trigger_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -640,7 +649,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -660,7 +669,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "roleName": "str",
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -675,7 +684,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 role_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -688,7 +697,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.sql_resources.list_sql_role_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -701,7 +710,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             role_assignment_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -720,7 +729,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "roleDefinitionId": "str",
                     "scope": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -735,7 +744,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 role_assignment_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -748,7 +757,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.sql_resources.list_sql_role_assignments(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -764,7 +773,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 location={"location": "str"},
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

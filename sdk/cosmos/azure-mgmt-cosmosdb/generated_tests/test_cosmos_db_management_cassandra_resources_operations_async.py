@@ -25,7 +25,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
         response = self.client.cassandra_resources.list_cassandra_keyspaces(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             keyspace_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -76,7 +76,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 keyspace_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +90,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             keyspace_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -138,7 +138,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 keyspace_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -153,7 +153,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 keyspace_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -167,7 +167,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             keyspace_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -181,7 +181,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             account_name="str",
             keyspace_name="str",
             table_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -214,7 +214,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -230,7 +230,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 account_name="str",
                 keyspace_name="str",
                 table_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -245,7 +245,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             account_name="str",
             keyspace_name="str",
             table_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -279,7 +279,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -295,7 +295,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 account_name="str",
                 keyspace_name="str",
                 table_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -311,7 +311,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 account_name="str",
                 keyspace_name="str",
                 table_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

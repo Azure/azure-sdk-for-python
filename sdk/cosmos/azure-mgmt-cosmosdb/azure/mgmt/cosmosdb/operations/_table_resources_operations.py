@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,7 +36,8 @@ from .._configuration import CosmosDBManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +49,7 @@ def build_list_tables_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,7 +84,7 @@ def build_get_table_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -119,7 +120,7 @@ def build_create_update_table_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -157,7 +158,7 @@ def build_delete_table_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -188,7 +189,7 @@ def build_get_table_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +225,7 @@ def build_update_table_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -263,7 +264,7 @@ def build_migrate_table_to_autoscale_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -299,7 +300,7 @@ def build_migrate_table_to_manual_throughput_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +336,7 @@ def build_retrieve_continuous_backup_information_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -380,7 +381,7 @@ class TableResourcesOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -390,7 +391,7 @@ class TableResourcesOperations:
     @distributed_trace
     def list_tables(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> Iterable["_models.TableGetResults"]:
+    ) -> ItemPaged["_models.TableGetResults"]:
         """Lists the Tables under an existing Azure Cosmos DB database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

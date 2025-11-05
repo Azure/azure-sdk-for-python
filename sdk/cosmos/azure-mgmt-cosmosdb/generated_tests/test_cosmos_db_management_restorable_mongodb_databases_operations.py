@@ -24,7 +24,7 @@ class TestCosmosDBManagementRestorableMongodbDatabasesOperations(AzureMgmtRecord
         response = self.client.restorable_mongodb_databases.list(
             location="str",
             instance_id="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

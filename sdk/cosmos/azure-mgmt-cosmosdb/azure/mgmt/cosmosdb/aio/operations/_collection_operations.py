@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -35,7 +35,8 @@ from ...operations._collection_operations import (
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class CollectionOperations:
@@ -66,7 +67,7 @@ class CollectionOperations:
         collection_rid: str,
         filter: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Metric"]:
+    ) -> AsyncItemPaged["_models.Metric"]:
         """Retrieves the metrics determined by the given filter for the given database account and
         collection.
 
@@ -167,7 +168,7 @@ class CollectionOperations:
         collection_rid: str,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Usage"]:
+    ) -> AsyncItemPaged["_models.Usage"]:
         """Retrieves the usages (most recent storage data) for the given collection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -261,7 +262,7 @@ class CollectionOperations:
     @distributed_trace
     def list_metric_definitions(
         self, resource_group_name: str, account_name: str, database_rid: str, collection_rid: str, **kwargs: Any
-    ) -> AsyncIterable["_models.MetricDefinition"]:
+    ) -> AsyncItemPaged["_models.MetricDefinition"]:
         """Retrieves metric definitions for the given collection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
