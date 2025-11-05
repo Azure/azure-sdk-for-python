@@ -28,7 +28,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
         with client:
-            output = client.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="test")
+            output = client.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="production")
         assert output.answers
         for answer in output.answers:
             assert answer.answer

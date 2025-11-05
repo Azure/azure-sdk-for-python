@@ -29,7 +29,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
         async with client:
-            output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="test")
+            output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="production")
         assert output.answers
         for answer in output.answers:
             assert answer.answer
@@ -50,7 +50,10 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
         async with client:
             output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="test")
         assert output.answers
-        assert any(a.short_answer for a in output.answers if a.short_answer and a.short_answer.text)
+        for answer in output.answers:
+            if answer.short_answer:
+                assert answer.short_answer.text
+                assert answer.short_answer.confidence is not None
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase_filter(self, recorded_test, qna_creds):
@@ -74,7 +77,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             response = await client.get_answers(
                 params,
                 project_name=qna_creds["qna_project"],
-                deployment_name="test",
+                deployment_name="production",
             )
             assert response.answers
             assert any(
