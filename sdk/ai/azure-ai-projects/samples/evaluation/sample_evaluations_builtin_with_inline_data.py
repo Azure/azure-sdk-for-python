@@ -55,7 +55,7 @@ endpoint = os.environ[
 connection_name = os.environ.get("CONNECTION_NAME", "")
 model_endpoint = os.environ.get("MODEL_ENDPOINT", "")  # Sample: https://<account_name>.openai.azure.com.
 model_api_key = os.environ.get("MODEL_API_KEY", "")
-model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
 dataset_name = os.environ.get("DATASET_NAME", "eval-data-2025-10-28_060550_UTC")
 dataset_version = os.environ.get("DATASET_VERSION", "1")
 
@@ -93,14 +93,14 @@ with DefaultAzureCredential() as credential:
                 "name": "violence",
                 "evaluator_name": "builtin.violence",
                 "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-                "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
+                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
             },
             {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
             {
                 "type": "azure_ai_evaluator",
                 "name": "coherence",
                 "evaluator_name": "builtin.coherence",
-                "initialization_parameters": {"deployment_name": "{{aoai_deployment_and_model}}"},
+                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
             },
         ]
 
