@@ -237,7 +237,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 "name": "gen_ai.system.instruction",
                 "attributes": {
                     "gen_ai.system": "az.ai.agents",
-                    "gen_ai.event.content": '{"content": "You are a helpful AI assistant. Be polite and provide accurate information."}',
+                    "gen_ai.event.content": '{"text": "You are a helpful AI assistant. Be polite and provide accurate information."}',
                 },
             }
         ]
