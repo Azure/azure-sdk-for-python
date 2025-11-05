@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 """Helper utilities for constructing AgentId model instances.
 
 Centralizes logic for safely building a `models.AgentId` from a request agent
@@ -17,7 +20,15 @@ from azure.ai.agentserver.core.models import projects
 class AgentIdGenerator:
     @staticmethod
     def generate(context: AgentRunContext) -> Optional[projects.AgentId]:
-        """Builds an AgentId model from the request agent object in the provided context."""
+        """
+        Builds an AgentId model from the request agent object in the provided context.
+
+        :param context: The AgentRunContext containing the request.
+        :type context: AgentRunContext
+
+        :return: The constructed AgentId model, or None if the request lacks an agent name.
+        :rtype: Optional[projects.AgentId]
+        """
         agent = context.request.get("agent")
         if not agent:
             return None

@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 class Constants:
     # streaming configuration
     # Environment variable name to control idle timeout for streaming updates (seconds)

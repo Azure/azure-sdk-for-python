@@ -1,3 +1,6 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 from __future__ import annotations
 
 import datetime
@@ -49,6 +52,7 @@ class AgentFrameworkOutputNonStreamingConverter:
         Previously this method only emitted text message items. We now also capture:
           - FunctionCallContent  -> function_call output item
           - FunctionResultContent -> function_call_output item
+        
         to stay aligned with the streaming converter so no output is lost.
         """
         logger.debug("Transforming non-streaming response (messages=%d)", len(response.messages))

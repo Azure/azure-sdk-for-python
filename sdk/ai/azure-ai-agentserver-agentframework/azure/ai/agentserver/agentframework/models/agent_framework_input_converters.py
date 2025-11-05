@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+# pylint: disable=too-many-nested-blocks,too-many-return-statements,too-many-branches
 from __future__ import annotations
 
 from typing import Dict, List
@@ -101,7 +105,7 @@ class AgentFrameworkInputConverter:
             raise TypeError(f"Unsupported input type: {type(input)}")
         except Exception as e:
             logger.error("Error processing messages: %s", e, exc_info=True)
-            raise Exception(f"Error processing messages: {e}") from e
+            raise Exception(f"Error processing messages: {e}") from e   # pylint: disable=broad-exception-raised
 
     def _is_implicit_user_message(self, item: Dict) -> bool:
         return "content" in item and "role" not in item and "type" not in item
@@ -111,4 +115,4 @@ class AgentFrameworkInputConverter:
             text_content = content_item.get("text")
             if isinstance(text_content, str):
                 return text_content
-        return None
+        return None # type: ignore
