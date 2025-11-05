@@ -15,6 +15,7 @@ class StreamEventState:
     :meta private:
     State information for the stream event processing.
     """
+
     sequence_number: int = 0
 
 
@@ -23,6 +24,7 @@ class ResponseEventGenerator:
     :meta private:
     Abstract base class for response event generators.
     """
+
     started: bool = False
 
     def __init__(self, logger, parent):
@@ -48,7 +50,7 @@ class ResponseEventGenerator:
     def on_start(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         """
         Generate the starting events for this layer.
-        
+
         :return: tuple of (started, events)
         :rtype: tuple[bool, List[ResponseStreamEvent]]
         """

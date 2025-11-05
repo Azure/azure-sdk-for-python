@@ -111,7 +111,7 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         # aggregate content from child processor
         self.item_resource_helper.add_aggregate_content(content)
 
-    def try_create_item_resource_helper(self, event: AnyMessage, id_generator: IdGenerator): # pylint: disable=too-many-return-statements
+    def try_create_item_resource_helper(self, event: AnyMessage, id_generator: IdGenerator):  # pylint: disable=too-many-return-statements
         if isinstance(event, langgraph_messages.AIMessageChunk) and event.tool_call_chunks:
             self.item_resource_helper = item_resource_helpers.FunctionCallItemResourceHelper(
                 item_id=id_generator.generate_function_call_id(), tool_call=event.tool_call_chunks[0]

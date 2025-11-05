@@ -113,7 +113,7 @@ class LangGraphRequestConverter:
 
     def convert_function_call_output(self, item: dict) -> ToolMessage:
         try:
-            item = openai_models.response_input_item_param.FunctionCallOutput(**item) # pylint: disable=no-member
+            item = openai_models.response_input_item_param.FunctionCallOutput(**item)  # pylint: disable=no-member
         except Exception as e:
             raise ValueError(f"Invalid function call output item: {item}") from e
 

@@ -5,7 +5,7 @@ import json
 from typing import get_type_hints
 
 
-def extract_function_call(tool_call : dict):
+def extract_function_call(tool_call: dict):
     """
     Extract function call details from tool_call dict.
 
