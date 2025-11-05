@@ -49,12 +49,11 @@ def main() -> None:
 
     with DefaultAzureCredential() as credential:
         with AIProjectClient(
-            endpoint=endpoint, credential=credential, api_version="2025-11-15-preview"
+            endpoint=endpoint, credential=credential
         ) as project_client:
             print("Creating an OpenAI client from the AI Project client")
 
             client = project_client.get_openai_client()
-            client._custom_query = {"api-version": "2025-11-15-preview"}
 
             data_source_config = {
                 "type": "custom",
@@ -69,8 +68,8 @@ def main() -> None:
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "coherence",
-                    "evaluator_name": "builtin.coherence",
+                    "name": "fluency",
+                    "evaluator_name": "builtin.fluency",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
                 }
