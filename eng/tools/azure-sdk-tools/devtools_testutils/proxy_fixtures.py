@@ -6,7 +6,7 @@
 from inspect import iscoroutinefunction
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple, Optional
 import urllib.parse as url_parse
 
 import pytest
@@ -21,7 +21,7 @@ except:
     pass
 
 from .helpers import get_test_id, is_live, is_live_and_not_recording
-from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request
+from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request, get_proxy_netloc
 from .proxy_startup import test_proxy
 from .sanitizers import add_batch_sanitizers, add_general_string_sanitizer, Sanitizer
 
@@ -158,7 +158,7 @@ async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[st
 
         # True if the function requesting the fixture is an async test
         if iscoroutinefunction(request._pyfuncitem.function):
-            original_transport_func = await redirect_async_traffic(recording_id)
+            original_transport_func, original_httpx_async_func = await redirect_async_traffic(recording_id)
             yield {"variables": variables}  # yield relevant test info and allow tests to run
             restore_async_traffic(original_transport_func, request)
         else:
@@ -201,7 +201,7 @@ def start_proxy_session() -> "Tuple[str, str, Dict[str, str]]":
     return (test_id, recording_id, variables)
 
 
-async def redirect_async_traffic(recording_id: str) -> "Callable":
+async def redirect_async_traffic(recording_id: str) -> Tuple["Callable", Optional["Callable"]]:
     """Redirects asynchronous network requests to target the test proxy.
 
     :param str recording_id: Recording ID of the currently executing test.
@@ -210,7 +210,7 @@ async def redirect_async_traffic(recording_id: str) -> "Callable":
     """
     from azure.core.pipeline.transport import AioHttpTransport
 
-    original_transport_func = AioHttpTransport.send
+    original_async_transport_func = AioHttpTransport.send
 
     def transform_args(*args, **kwargs):
         copied_positional_args = list(args)
@@ -222,7 +222,7 @@ async def redirect_async_traffic(recording_id: str) -> "Callable":
 
     async def combined_call(*args, **kwargs):
         adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-        result = await original_transport_func(*adjusted_args, **adjusted_kwargs)
+        result = await original_async_transport_func(*adjusted_args, **adjusted_kwargs)
 
         # make the x-recording-upstream-base-uri the URL of the request
         # this makes the request look like it was made to the original endpoint instead of to the proxy
@@ -236,7 +236,52 @@ async def redirect_async_traffic(recording_id: str) -> "Callable":
         return result
 
     AioHttpTransport.send = combined_call
-    return original_transport_func
+
+    try:
+        import httpx
+
+        original_httpx_async_send = httpx.AsyncClient.send
+
+        if original_httpx_async_send is None:
+            raise ImportError("httpx.AsyncClient.send not found while able to import httpx")
+
+        def _transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+
+            parsed = url_parse.urlparse(str(request.url))
+            if "x-recording-upstream-base-uri" not in request.headers:
+                request.headers["x-recording-upstream-base-uri"] = f"{parsed.scheme}://{parsed.netloc}"
+            request.headers["x-recording-id"] = recording_id
+            request.headers["x-recording-mode"] = "record" if is_live() else "playback"
+
+            proxied = parsed._replace(**get_proxy_netloc()).geturl()
+            request.url = httpx.URL(proxied)
+
+            return tuple(copied_positional_args), kwargs
+
+        async def combined_async_send(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = _transform_args(*args, **kwargs)
+            result = await original_httpx_async_send(*adjusted_args, **adjusted_kwargs)
+
+            try:
+                parsed_result = url_parse.urlparse(result.request.url)
+                upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+                upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+                original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+                result.request.url = original_target
+            except Exception:
+                pass
+
+            return result
+
+        if original_httpx_async_send is not None:
+            httpx.AsyncClient.send = combined_async_send
+            return (original_async_transport_func, original_httpx_async_send)
+    except ImportError:
+        pass # there is no httpx to patch the return at the end is good enough.
+
+    return (original_async_transport_func, None)
 
 
 def redirect_traffic(recording_id: str) -> "Callable":
@@ -272,10 +317,53 @@ def redirect_traffic(recording_id: str) -> "Callable":
         return result
 
     RequestsTransport.send = combined_call
-    return original_transport_func
+
+    # attempt to monkeypatch httpx.Client.send as well (if httpx is installed)
+    original_httpx_send = None
+    try:
+        import httpx
+
+        original_httpx_send = getattr(httpx.Client, "send", None)
+
+        def _transform_args(*args, **kwargs):
+            copied_positional_args = list(args)
+            request = copied_positional_args[1]
+
+            parsed = url_parse.urlparse(str(request.url))
+            if "x-recording-upstream-base-uri" not in request.headers:
+                request.headers["x-recording-upstream-base-uri"] = f"{parsed.scheme}://{parsed.netloc}"
+            request.headers["x-recording-id"] = recording_id
+            request.headers["x-recording-mode"] = "record" if is_live() else "playback"
+
+            proxied = parsed._replace(**get_proxy_netloc()).geturl()
+            request.url = httpx.URL(proxied)
+
+            return tuple(copied_positional_args), kwargs
+
+        def combined_httpx_send(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = _transform_args(*args, **kwargs)
+            result = original_httpx_send(*adjusted_args, **adjusted_kwargs)
+
+            try:
+                parsed_result = url_parse.urlparse(result.request.url)
+                upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+                upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+                original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+                result.request.url = httpx.URL(original_target)
+            except Exception:
+                pass
+
+            return result
+
+        if original_httpx_send is not None:
+            httpx.Client.send = combined_httpx_send
+    except Exception:
+        original_httpx_send = None
+
+    return (original_transport_func, original_httpx_send)
 
 
-def restore_async_traffic(original_transport_func: "Callable", request: "FixtureRequest") -> None:
+def restore_async_traffic(original_transport_func: "Callable", original_httpx_transport_func: Optional["Callable"], request: "FixtureRequest") -> None:
     """Resets asynchronous network traffic to no longer target the test proxy.
 
     :param original_transport_func: The original transport function used by the currently executing test.
@@ -285,7 +373,20 @@ def restore_async_traffic(original_transport_func: "Callable", request: "Fixture
     """
     from azure.core.pipeline.transport import AioHttpTransport
 
-    AioHttpTransport.send = original_transport_func  # test finished running -- tear down
+    # original_transport_func may be a tuple (original_aio_send, original_httpx_async_send)
+    orig_aio_send = original_transport_func[0] if isinstance(original_transport_func, tuple) else original_transport_func
+    orig_httpx_async_send = original_transport_func[1] if isinstance(original_transport_func, tuple) else None
+
+    AioHttpTransport.send = orig_aio_send  # test finished running -- tear down
+
+    # restore httpx.AsyncClient.send if we patched it
+    if orig_httpx_async_send is not None:
+        try:
+            import httpx
+
+            httpx.AsyncClient.send = orig_httpx_async_send
+        except Exception:
+            pass
 
     if hasattr(request.node, "test_error"):
         # Exceptions are logged here instead of being raised because of how pytest handles error raising from inside
@@ -308,7 +409,20 @@ def restore_traffic(original_transport_func: "Callable", request: "FixtureReques
     :param request: The built-in `request` pytest fixture.
     :type request: ~pytest.FixtureRequest
     """
-    RequestsTransport.send = original_transport_func  # test finished running -- tear down
+    # original_transport_func may be a tuple (original_requests_send, original_httpx_send)
+    orig_requests_send = original_transport_func[0] if isinstance(original_transport_func, tuple) else original_transport_func
+    orig_httpx_send = original_transport_func[1] if isinstance(original_transport_func, tuple) else None
+
+    RequestsTransport.send = orig_requests_send  # test finished running -- tear down
+
+    # restore httpx.Client.send if we patched it
+    if orig_httpx_send is not None:
+        try:
+            import httpx
+
+            httpx.Client.send = orig_httpx_send
+        except Exception:
+            pass
 
     if hasattr(request.node, "test_error"):
         # Exceptions are logged here instead of being raised because of how pytest handles error raising from inside
