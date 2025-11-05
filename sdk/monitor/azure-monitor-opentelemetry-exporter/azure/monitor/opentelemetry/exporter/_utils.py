@@ -463,6 +463,7 @@ def _is_less_than_minimum_severity_level(record: LogRecord) -> bool:
                 return True
     return False
 
+# cspell:disable
 def _should_drop_logs_for_unsampled_traces(record: LogRecord) -> bool:
     """Determines whether the logger should drop log records associated with unsampled traces.
     If `trace_based` is `true`, log records associated with unsampled traces are dropped by the `Logger`.
@@ -475,6 +476,7 @@ def _should_drop_logs_for_unsampled_traces(record: LogRecord) -> bool:
     :return: True if the log record should be dropped due to being associated with an unsampled trace.
     :rtype: bool
     """
+# cspell:enable
     trace_based_sampling = environ.get(_TRACE_BASED_SAMPLING, "False")
     if trace_based_sampling.lower() == "true":
         if hasattr(record, "context") and record.context is not None:

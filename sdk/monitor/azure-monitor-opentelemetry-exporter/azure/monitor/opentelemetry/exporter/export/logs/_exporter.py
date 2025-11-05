@@ -207,7 +207,7 @@ def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
             data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
-    if _utils._should_drop_logs_for_unsampled_traces(log_record):
+    if _utils._should_drop_logs_for_unsampled_traces(log_record): # cspell:disable-line
         return None
 
     if _utils._is_less_than_minimum_severity_level(log_record):

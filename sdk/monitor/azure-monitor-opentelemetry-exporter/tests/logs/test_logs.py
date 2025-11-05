@@ -675,22 +675,27 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(log_data)
         self.assertIsNotNone(envelope)
 
-        # Test 4: severitynumber.error format (lowercase)
+        # Test 4: severitynumber.error format (lowercase) and checking for event telemetry log
         os.environ["MINIMUM_SEVERITY_LEVEL"] = "severitynumber.error"
-        envelope = exporter._log_to_envelope(log_data)
+        envelope = exporter._log_to_envelope(self._log_data_event)
         self.assertIsNone(envelope)
 
         # Test 5: Invalid format with underscore (treated as UNSPECIFIED)
         os.environ["MINIMUM_SEVERITY_LEVEL"] = "severity_number.error"
-        envelope = exporter._log_to_envelope(log_data)
+        envelope = exporter._log_to_envelope(self._exc_data_with_exc_body)
         self.assertIsNotNone(envelope)
 
-        # Test 6: Invalid prefix (treated as UNSPECIFIED)
+        ## Test 6: Camelcase format, should be converted to lowercase and dropped, exception telemetry log
+        os.environ["MINIMUM_SEVERITY_LEVEL"] = "severityNumber.fatal4"
+        envelope = exporter._log_to_envelope(self._exc_data_with_exc_body)
+        self.assertIsNone(envelope)
+
+        # Test 7: Invalid prefix (treated as UNSPECIFIED)
         os.environ["MINIMUM_SEVERITY_LEVEL"] = "INVALID_STRING.error"
         envelope = exporter._log_to_envelope(log_data)
         self.assertIsNotNone(envelope)
 
-        # Test 6: Invalid prefix (treated as UNSPECIFIED)
+        # Test 8: Invalid prefix (treated as UNSPECIFIED)
         os.environ["MINIMUM_SEVERITY_LEVEL"] = "SeverityNumber.invalid"
         envelope = exporter._log_to_envelope(log_data)
         self.assertIsNotNone(envelope)
@@ -703,7 +708,7 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         mock_context = mock.Mock()
 
-        # Test 1: When trace-based sampling is enabled and trace is unsampled, envelope should be dropped
+        # Test 1: When trace-based sampling is enabled and trace is not sampled, envelope should be dropped
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = True
         mock_span_context.trace_flags.sampled = False
@@ -730,7 +735,7 @@ class TestAzureLogExporter(unittest.TestCase):
             envelope = exporter._log_to_envelope(log_data)
             self.assertIsNone(envelope)
 
-        # Test 3: When trace-based sampling is enabled but is associated with unsampled trace, envelope should be dropped
+        # Test 3: When trace-based sampling is enabled but is associated with unsampled trace, envelope should be dropped # cspell:disable-line
         os.environ["TRACE_BASED_SAMPLING"] = "TRUE"
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.get_current_span", return_value=mock_span):
             envelope = exporter._log_to_envelope(log_data)
@@ -794,7 +799,7 @@ class TestAzureLogExporter(unittest.TestCase):
         exporter = self._exporter
         mock_context = mock.Mock()
 
-        # Test 1: When trace-based sampling is enabled and trace is unsampled, envelope should be dropped
+        # Test 1: When trace-based sampling is enabled and trace is unsampled, envelope should be dropped # cspell:disable-line
         mock_span_context = mock.Mock()
         mock_span_context.is_valid = True
         mock_span_context.trace_flags.sampled = False
