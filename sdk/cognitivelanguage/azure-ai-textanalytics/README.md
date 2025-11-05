@@ -81,7 +81,8 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 6.0.0b1 - Latest preview release | 3.0, 3.1, 2022-05-01, 2023-04-01, 2024-11-01, 2024-11-15-preview, 2025-05-15-preview (default) |
+| 6.0.0b2 - Latest preview release | 3.0, 3.1, 2022-05-01, 2023-04-01, 2024-11-01, 2025-11-15-preview (default) |
+| 6.0.0b1  | 3.0, 3.1, 2022-05-01, 2023-04-01, 2024-11-01, 2025-05-15-preview (default) |
 | 5.3.X - Latest stable release | 3.0, 3.1, 2022-05-01, 2023-04-01 (default) |
 | 5.2.X  | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
@@ -253,14 +254,14 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 The following section provides several code snippets covering some of the most common Language service tasks, including:
 
-- [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
-- [Recognize Entities](#recognize-entities "Recognize entities")
-- [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
-- [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
-- [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
-- [Detect Language](#detect-language "Detect language")
-- [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
-- [Multiple Analysis](#multiple-analysis "Multiple analysis")
+- [Analyze Sentiment][analyze_sentiment_sample]
+- [Recognize Entities][recognize_entities_sample]
+- [Recognize Linked Entities][recognize_linked_entities_sample]
+- [Recognize PII Entities][recognize_pii_entities_sample]
+- [Extract Key Phrases][extract_key_phrases_sample]
+- [Detect Language][detect_language_sample]
+- [Healthcare Entities Analysis][analyze_healthcare_entities_sample]
+- [Multiple Analysis][analyze_sample]
 - [Custom Entity Recognition][recognize_custom_entities_sample]
 - [Custom Single Label Classification][single_label_classify_sample]
 - [Custom Multi Label Classification][multi_label_classify_sample]
