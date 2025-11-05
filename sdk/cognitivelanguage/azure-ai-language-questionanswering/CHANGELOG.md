@@ -10,9 +10,9 @@
 * Removed client constructor keyword argument `default_language`. Per-call language control is now done explicitly via the `language` property on `AnswersFromTextOptions` (and related options models). The service default remains `"en"` if a language is not supplied. To change the effective language:
   * Pass `language="<bcp-47-code>"` when constructing `AnswersFromTextOptions` (e.g. `"es"`, `"zh-Hans"`).
   * Or create / select a project in the desired language in [Language Studio](https://language.azure.com) when authoring knowledge bases.
-  * For resource/project level language behavior and multi-language strategies see: [Language support for custom question answering and projects](https://learn.microsoft.com/azure/ai-services/language-service/question-answering/language-support).
 
   The previous implicit fallback (client-level `default_language`) has been removed to avoid hidden state and to encourage explicit specification or project-level configuration.
+* Removed support for passing metadata as `Dict[str,str]` to `MetadataFilter`. Tuple form `[("key","value"), ...]` and `List[MetadataRecord]` remain supported.
 
 ### Features Added
 
@@ -22,7 +22,6 @@
 
 * Internal refactoring and dependency grooming in preparation for the authoring/runtime split.
 * Changed samples and README examples to use explicit `AnswersOptions` / `AnswersFromTextOptions` objects as the first argument when calling `get_answers` and `get_answers_from_text`.
-* Restored backwards compatibility for `MetadataFilter.metadata` inputs so legacy dict or `(key, value)` tuple collections continue to work alongside the new `MetadataRecord` model type.
 
 ## 1.1.0 (2022-10-13)
 
