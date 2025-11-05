@@ -54,6 +54,14 @@ def main():
                     },
                     "computedProperties": [{"name": "cp_lowerName", "query": "SELECT VALUE LOWER(c.name) FROM c"}],
                     "conflictResolutionPolicy": {"conflictResolutionPath": "/path", "mode": "LastWriterWins"},
+                    "dataMaskingPolicy": {
+                        "excludedPaths": [{"path": "/id"}],
+                        "includedPaths": [
+                            {"path": "/"},
+                            {"length": 10, "path": "/contact/phones", "startPosition": 3, "strategy": "MaskSubstring"},
+                        ],
+                        "isPolicyEnabled": True,
+                    },
                     "defaultTtl": 100,
                     "fullTextPolicy": {
                         "defaultLanguage": "1033",
@@ -67,6 +75,7 @@ def main():
                     "indexingPolicy": {
                         "automatic": True,
                         "excludedPaths": [],
+                        "fullTextIndexes": [{"path": "/ftPath1"}, {"path": "/ftPath2"}, {"path": "/ftPath3"}],
                         "includedPaths": [
                             {
                                 "indexes": [
@@ -115,6 +124,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2025-04-15/examples/CosmosDBSqlContainerCreateUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/DocumentDB/preview/2025-11-01-preview/examples/CosmosDBSqlContainerCreateUpdate.json
 if __name__ == "__main__":
     main()
