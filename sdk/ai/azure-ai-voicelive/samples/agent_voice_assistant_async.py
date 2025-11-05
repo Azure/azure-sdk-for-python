@@ -407,23 +407,30 @@ class BasicVoiceAssistant:
             await write_conversation_log(f"")
             self.session_ready = True
 
+            # Invoke Proactive greeting
+            if not self.conversation_started:
+                self.conversation_started = True
+                logger.info("Sending proactive greeting request")
+                try:
+                    await conn.response.create()
+
+                except Exception:
+                    logger.exception("Failed to send proactive greeting request")
+
             # Start audio capture once session is ready
             ap.start_capture()
 
         elif event.type == ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED:
-            user_transcript = f'User Input:\t{event.get("transcript", "")}'
-            print("👤 You said: ", user_transcript)
-            await write_conversation_log(user_transcript)
+            print(f'👤 You said:\t{event.get("transcript", "")}')
+            await write_conversation_log(f'User Input:\t{event.get("transcript", "")}')
 
         elif event.type == ServerEventType.RESPONSE_TEXT_DONE:
-            agent_text = f'Agent Text Response:\t{event.get("text", "")}'
-            print("🤖 Agent responded with text: ", agent_text)
-            await write_conversation_log(agent_text)
+            print(f'🤖 Agent responded with text:\t{event.get("text", "")}')
+            await write_conversation_log(f'Agent Text Response:\t{event.get("text", "")}')
 
         elif event.type == ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE:
-            agent_audio = f'Agent Audio Response:\t{event.get("transcript", "")}'
-            print("🤖 Agent responded with audio transcript: ", agent_audio)
-            await write_conversation_log(agent_audio)
+            print(f'🤖 Agent responded with audio transcript:\t{event.get("transcript", "")}')
+            await write_conversation_log(f'Agent Audio Response:\t{event.get("transcript", "")}')
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
             logger.info("User started speaking - stopping playback")
