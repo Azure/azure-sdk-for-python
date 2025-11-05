@@ -6,6 +6,26 @@
 
 These instructions help LLMs automatically upgrade Azure SDK Python management libraries from AutoRest-generated versions to TypeSpec-generated versions with minimal user intervention.
 
+## Summary of Breaking Changes
+
+The TypeSpec migration introduces three major categories of breaking changes:
+
+### 1. Operation Design Changes
+- **Query/Header Parameters**: Now require keyword-only arguments (never positional)
+- **Conditional Operations**: `if_match`/`if_none_match` replaced with `etag` + `match_condition` enum
+- **Parameter Ordering**: Only path and body parameters remain positional
+
+### 2. Hybrid Model Changes
+- **Dictionary Access**: Direct dict operations, camelCase keys, renamed `as_dict()` parameters
+- **Property Flattening**: Multi-level flattened properties removed, use nested access
+- **Additional Properties**: No more `additional_properties` parameter, use dict syntax
+- **Serialization**: `.serialize()` and `.deserialize()` methods removed
+- **String Representation**: Output now in camelCase to match REST API
+
+### 3. Authentication Changes
+- **Credential Libraries**: Migration from `azure.common.credentials` to `azure.identity`
+- **Credential Parameter**: Now keyword-only in client constructors
+
 ## Trigger
 
 When a user says: **"azsdk upgrade \<package-name\> \<version\>"**
@@ -138,9 +158,12 @@ Apply fixes based on TypeSpec migration patterns for Python:
 **Pattern Detection:** Look for TypeErrors about positional arguments:
 - `TypeError: xxx() takes n positional arguments but m were given`
 - `TypeError: xxx() got multiple values for argument`
+- `TypeError: xxx() got an unexpected keyword argument 'if_match'`
 - Methods with many positional arguments (>3)
 
 **Fixes to Apply:**
+
+##### 3.1.1 Basic Parameter Migration
 
 ```python
 # OLD: AutoRest-generated (all parameters could be positional)
@@ -162,49 +185,113 @@ client.resource_groups.create_or_update(
         "properties": properties
     }
 )
+```
 
-# Alternative with separate body construction
-body = {
-    "location": location,
-    "tags": tags
-}
-client.resource_groups.create_or_update(
-    resource_group_name,
-    body
+##### 3.1.2 Query and Header Parameters
+
+**Query/header parameters MUST be keyword-only:**
+
+```python
+# OLD: Query parameters as positional
+environments = client.organization_operations.list_environments(
+    "resource_group",
+    "org_name", 
+    10,        # page_size as positional
+    "token"    # page_token as positional
+)
+
+# NEW: Query parameters as keyword-only
+environments = client.organization_operations.list_environments(
+    "resource_group",     # Path param - positional
+    "org_name",          # Path param - positional
+    page_size=10,        # Query param - keyword-only
+    page_token="token"   # Query param - keyword-only
 )
 ```
+
+##### 3.1.3 Conditional Operation Parameters
+
+**Conditional headers have been redesigned:**
+
+```python
+# OLD: Using if_match/if_none_match
+from azure.mgmt.containerservicefleet import ContainerServiceFleetManagementClient
+
+fleet = client.fleets.begin_create_or_update(
+    resource_group_name="rg",
+    fleet_name="fleet1",
+    resource=fleet_data,
+    if_match="W/\"etag-value\""  # Old conditional header
+)
+
+# NEW: Using etag + match_condition enum
+from azure.mgmt.containerservicefleet import ContainerServiceFleetManagementClient
+from azure.core import MatchConditions
+
+fleet = client.fleets.begin_create_or_update(
+    resource_group_name="rg",     # Path param
+    fleet_name="fleet1",          # Path param
+    resource=fleet_data,          # Body param
+    etag="W/\"etag-value\"",     # Keyword-only
+    match_condition=MatchConditions.IfNotModified  # Keyword-only
+)
+```
+
+**Conditional Parameter Migration Map:**
+
+| Old Pattern | New Pattern |
+|------------|-------------|
+| `if_match="<etag>"` | `etag="<etag>", match_condition=MatchConditions.IfNotModified` |
+| `if_none_match="<etag>"` | `etag="<etag>", match_condition=MatchConditions.IfModified` |
+| `if_match="*"` | `match_condition=MatchConditions.IfPresent` |
+| `if_none_match="*"` | `match_condition=MatchConditions.IfMissing` |
 
 **Rules for Parameter Migration:**
 - **Path parameters** (in URL path): Remain positional
 - **Body parameters** (request body): Remain positional (usually as dict)
-- **Query parameters** (in URL query string): Become keyword-only
-- **Header parameters** (HTTP headers): Become keyword-only
+- **Query parameters** (in URL query string): **ALWAYS** keyword-only
+- **Header parameters** (HTTP headers): **ALWAYS** keyword-only
+- **Conditional parameters** (if_match/if_none_match): Replace with etag + match_condition
 - **Optional parameters**: Become keyword-only
 
 **Common Parameter Patterns:**
 
 ```python
-# List operations - all params become keyword-only
+# List operations - query params become keyword-only
 # OLD
-resources = client.resources.list(filter_expr, expand, top, skip)
+resources = client.resources.list(
+    filter_expr,  # Positional query param
+    expand,       # Positional query param
+    top,          # Positional query param
+    skip          # Positional query param
+)
 
 # NEW
 resources = client.resources.list(
-    filter=filter_expr,
-    expand=expand,
-    top=top,
-    skip=skip
+    filter=filter_expr,  # Keyword-only
+    expand=expand,       # Keyword-only
+    top=top,            # Keyword-only
+    skip=skip           # Keyword-only
 )
 
-# Get operations - path params stay positional
+# Operations with mixed parameters
 # OLD
-resource = client.resources.get(resource_group, name, api_version)
+result = client.resources.create_or_update(
+    resource_group,      # Path
+    name,               # Path
+    api_version,        # Query
+    if_match,           # Header
+    resource_data       # Body
+)
 
-# NEW  
-resource = client.resources.get(
-    resource_group,  # Path param
-    name,           # Path param
-    api_version=api_version  # Query param becomes keyword-only
+# NEW
+result = client.resources.create_or_update(
+    resource_group,                    # Path - positional
+    name,                             # Path - positional
+    resource_data,                    # Body - positional
+    api_version=api_version,          # Query - keyword-only
+    etag=if_match,                    # Header - keyword-only
+    match_condition=MatchConditions.IfNotModified  # Header - keyword-only
 )
 ```
 
@@ -674,6 +761,12 @@ for resource in client.resources.list():
 **`TypeError: xxx() got multiple values for argument 'yyy'`**
 → Parameter is now keyword-only, remove positional usage
 
+**`TypeError: xxx() got an unexpected keyword argument 'if_match'`**
+→ Replace with `etag` and `match_condition` parameters (see conditional operations section)
+
+**`TypeError: xxx() got an unexpected keyword argument 'if_none_match'`**
+→ Replace with `etag` and `match_condition` parameters
+
 **`TypeError: __init__() got an unexpected keyword argument 'additional_properties'`**
 → Remove `additional_properties` parameter, use direct dict syntax instead
 
@@ -700,6 +793,9 @@ for resource in client.resources.list():
 
 **`ImportError: cannot import name 'ServicePrincipalCredentials'`**
 → Replace with azure-identity credential classes
+
+**`NameError: name 'MatchConditions' is not defined`**
+→ Import from azure.core: `from azure.core import MatchConditions`
 
 ### Type Checking Errors (mypy)
 
@@ -739,6 +835,20 @@ model.as_dict(exclude_readonly=False)
 ```python
 # OLD: Model(name="test", additional_properties={"custom": "value"})
 # NEW: Model(name="test", custom="value") or Model({"name": "test", "custom": "value"})
+```
+
+**Error with conditional operations**
+```python
+# OLD: client.update(name, data, if_match="etag-123")
+# NEW: 
+from azure.core import MatchConditions
+client.update(name, data, etag="etag-123", match_condition=MatchConditions.IfNotModified)
+```
+
+**Error with query parameters as positional**
+```python
+# OLD: client.list("rg", "name", 10, "token")  # TypeError
+# NEW: client.list("rg", "name", page_size=10, page_token="token")
 ```
 
 ## Python Environment Commands Reference
@@ -797,7 +907,10 @@ uv run black . --check
 ## Notes for LLMs
 
 - **Use TODO tracking:** Always use the `manage_todo_list` tool to track migration phases
-- **Parameter rules are critical:** Remember only path and body params are positional
+- **Parameter rules are critical:** 
+  - Path and body params: positional
+  - Query and header params: ALWAYS keyword-only
+  - Conditional params: Replace with etag + match_condition
 - **Hybrid model patterns:** Apply all 6 model migration patterns systematically:
   1. Dictionary access changes (`.as_dict()` parameters, camelCase keys)
   2. Property flattening fixes (nested dot notation for multi-level)
@@ -805,6 +918,10 @@ uv run black . --check
   4. Serialization updates (no `.serialize()/.deserialize()` methods)
   5. String representation (expect camelCase in output)
   6. Model instantiation (prefer dicts for nested structures)
+- **Operation patterns:** Fix conditional operations systematically:
+  - Import `MatchConditions` from `azure.core`
+  - Replace `if_match` → `etag` + `MatchConditions.IfNotModified`
+  - Replace `if_none_match` → `etag` + `MatchConditions.IfModified`
 - **Use uv for speed:** Always prefer uv over pip/poetry for 10-100x faster operations
 - **Prefer dictionaries:** TypeSpec SDKs work well with dict representations
 - **Check imports carefully:** Many imports change between versions
@@ -827,9 +944,21 @@ To determine if a parameter should be positional or keyword-only:
 
 1. **Path parameters** (part of the URL path like `/resource-groups/{resourceGroupName}`): **POSITIONAL**
 2. **Body parameters** (request payload): **POSITIONAL** (as single dict/object)
-3. **Query parameters** (URL query string like `?api-version=2024-01-01`): **KEYWORD-ONLY**
-4. **Header parameters** (HTTP headers like `If-Match`): **KEYWORD-ONLY**
-5. **Optional parameters**: **KEYWORD-ONLY**
+3. **Query parameters** (URL query string like `?api-version=2024-01-01`): **ALWAYS KEYWORD-ONLY**
+4. **Header parameters** (HTTP headers like `If-Match`): **ALWAYS KEYWORD-ONLY**
+5. **Conditional parameters** (`if_match`/`if_none_match`): **REPLACED** (see below)
+6. **Optional parameters**: **KEYWORD-ONLY**
+
+### Quick Reference: Conditional Operations
+
+| Old Pattern | New Pattern |
+|------------|-------------|
+| `if_match="<etag>"` | `etag="<etag>", match_condition=MatchConditions.IfNotModified` |
+| `if_none_match="<etag>"` | `etag="<etag>", match_condition=MatchConditions.IfModified` |
+| `if_match="*"` | `match_condition=MatchConditions.IfPresent` |
+| `if_none_match="*"` | `match_condition=MatchConditions.IfMissing` |
+
+Always import: `from azure.core import MatchConditions`
 
 ### Quick Reference: Hybrid Model Migration
 
@@ -848,19 +977,26 @@ To determine if a parameter should be positional or keyword-only:
 ```python
 # If you see: client.method(a, b, c, d, e)
 # And get: TypeError about too many positional arguments
-# Check if a, b are path params and combine rest into body:
-client.method(a, b, {"c": c, "d": d, "e": e})
+# Check parameter types and fix:
+# - If a, b are path params and c is body: client.method(a, b, c, d=d, e=e)
+# - If a, b are path params and rest are query: client.method(a, b, c=c, d=d, e=e)
+# - If a, b are path and c,d,e should be in body: client.method(a, b, {"c": c, "d": d, "e": e})
 
 # If you see: resource.some_nested_property
 # And get: AttributeError
 # Try: resource.some.nested.property
+
+# If you see: if_match="etag-value"
+# Replace with: etag="etag-value", match_condition=MatchConditions.IfNotModified
+
+# If you see: if_none_match="*"
+# Replace with: match_condition=MatchConditions.IfMissing
 
 # If you see: model.as_dict(keep_readonly=True)
 # Replace with: model.as_dict(exclude_readonly=False)
 
 # If you see: from azure.common.credentials import X
 # Replace with: from azure.identity import Y
-# Use the credential migration map above
 
 # If you see: Model.deserialize(json_data)
 # Replace with: Model(json_data)
@@ -868,6 +1004,10 @@ client.method(a, b, {"c": c, "d": d, "e": e})
 # If you need snake_case for compatibility:
 from azure.core.serialization import as_attribute_dict
 snake_case_dict = as_attribute_dict(model)
+
+# If you need conditional operations:
+from azure.core import MatchConditions
+result = client.update(name, data, etag=etag, match_condition=MatchConditions.IfNotModified)
 ```
 
 This migration should be **fully automated** with minimal user intervention beyond the initial command.
