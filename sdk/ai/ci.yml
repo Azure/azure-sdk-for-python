@@ -65,6 +65,8 @@ extends:
       safeName: azureaivoicelive
     - name: azure-ai-agentserver-core
       safeName: azureaiagentservercore
+    - name: azure-ai-agentserver-langgraph
+      safeName: azureaiagentserverlanggraph
     # These packages are deprecated:
     # - name: azure-ai-generative
     #   safeName: azureaigenerative
