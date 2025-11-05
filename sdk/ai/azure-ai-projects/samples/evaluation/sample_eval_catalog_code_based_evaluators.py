@@ -117,7 +117,7 @@ with DefaultAzureCredential() as credential:
         testing_criteria = [
             {
                 "type": "azure_ai_evaluator",
-                "name": "my custom evaluators for code eval",
+                "name": "my_custom_evaluator_code",
                 "evaluator_name": "my_custom_evaluator_code",
                 "data_mapping": {
                     "query": "{{item.query}}",
@@ -127,7 +127,6 @@ with DefaultAzureCredential() as credential:
                 "initialization_parameters": {
                     "deployment_name": f"{model_deployment_name}",
                     "pass_threshold": 0.5,
-                    "image_tag": "2025-05-08",
                 },
             }
         ]

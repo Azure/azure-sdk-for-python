@@ -140,7 +140,7 @@ with DefaultAzureCredential() as credential:
         testing_criteria = [
             {
                 "type": "azure_ai_evaluator",
-                "name": "my groundedness prompt eval",
+                "name": "my_custom_evaluator_prompt",
                 "evaluator_name": "my_custom_evaluator_prompt",
                 "data_mapping": {
                     "query": "{{item.query}}",
