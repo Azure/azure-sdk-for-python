@@ -18,6 +18,11 @@ from .response_output_item_event_generator import ResponseOutputItemEventGenerat
 
 
 class ResponseStreamEventGenerator(ResponseEventGenerator):
+    """
+    :meta private:
+    Response stream event generator.
+    """
+
     def __init__(self, logger, parent):
         super().__init__(logger, parent)
         self.aggregated_contents: List[project_models.ItemResource] = []

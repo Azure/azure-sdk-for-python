@@ -11,10 +11,18 @@ from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunCo
 
 
 class StreamEventState:
+    """
+    :meta private:
+    State information for the stream event processing.
+    """
     sequence_number: int = 0
 
 
 class ResponseEventGenerator:
+    """
+    :meta private:
+    Abstract base class for response event generators.
+    """
     started: bool = False
 
     def __init__(self, logger, parent):

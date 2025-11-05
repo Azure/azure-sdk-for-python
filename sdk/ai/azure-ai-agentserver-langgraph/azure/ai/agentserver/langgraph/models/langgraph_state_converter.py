@@ -34,7 +34,11 @@ from .langgraph_stream_response_converter import LangGraphStreamResponseConverte
 
 
 class LanggraphStateConverter(ABC):
-    """Abstract base class for LangGraph state <-> response conversion."""
+    """
+    Abstract base class for LangGraph state <-> response conversion.
+
+    :meta private:
+    """
 
     @abstractmethod
     def get_stream_mode(self, context: AgentRunContext) -> str:

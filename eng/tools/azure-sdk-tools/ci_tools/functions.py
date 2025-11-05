@@ -58,6 +58,7 @@ PATHS_EXCLUDED_FROM_DISCOVERY = [
 TEST_COMPATIBILITY_MAP = {
     "azure-ai-ml": ">=3.7",
     "azure-ai-agentserver-core": ">=3.9",  # override to allow build with python 3.9
+    "azure-ai-agentserver-langgraph": ">=3.9",  # override to allow build with python 3.9
 }
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
