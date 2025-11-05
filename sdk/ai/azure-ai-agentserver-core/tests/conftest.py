@@ -8,6 +8,7 @@ and provides shared test fixtures.
 import json
 import logging
 import os
+import socket
 import subprocess
 import sys
 import time
@@ -50,20 +51,31 @@ class AgentTestClient:
         sample_name: str,
         script_name: str,
         endpoint: str = "/responses",  # Default endpoint
-        base_url: str = "http://localhost:8088",
+        base_url: Optional[str] = None,
         env_vars: Optional[Dict[str, str]] = None,
         timeout: int = 120,
+        port: Optional[int] = None,
     ):
         self.sample_name = sample_name
         self.script_name = script_name
-        self.base_url = base_url
         self.endpoint = endpoint
         self.timeout = timeout
 
         # Setup paths
         self.project_root = project_root  # Use already defined project_root
-        self.sample_dir = self.project_root / "samples" / "python" / sample_name
+        self.sample_dir = self.project_root / "samples" / sample_name
         self.original_dir = os.getcwd()
+
+        # Determine port assignment priority: explicit param > env override > random
+        if env_vars and env_vars.get("DEFAULT_AD_PORT"):
+            self.port = int(env_vars["DEFAULT_AD_PORT"])
+        elif port is not None:
+            self.port = port
+        else:
+            self.port = self._find_free_port()
+
+        # Configure base URL for client requests
+        self.base_url = (base_url or f"http://127.0.0.1:{self.port}").rstrip("/")
 
         # Setup environment
         # Get Agent Framework configuration (new format)
@@ -118,12 +130,28 @@ class AgentTestClient:
         if env_vars:
             self.env_vars.update(env_vars)
 
+        # Ensure server picks the dynamically assigned port and clients know how to reach it
+        self.env_vars.setdefault("DEFAULT_AD_PORT", str(self.port))
+        self.env_vars.setdefault("AGENT_BASE_URL", self.base_url)
+
         self.process = None
         self.session = requests.Session()
+
+    @staticmethod
+    def _find_free_port() -> int:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.bind(("127.0.0.1", 0))
+            return sock.getsockname()[1]
 
     def setup(self):
         """Setup test environment."""
         os.chdir(self.sample_dir)
+
+        logger.info(
+            "Configured %s to listen on %s",
+            self.sample_name,
+            f"{self.base_url}{self.endpoint}",
+        )
 
         # Validate critical environment variables
         # For Agent Framework samples, check new env vars first
@@ -175,10 +203,17 @@ class AgentTestClient:
 
     def start_server(self):
         """Start the agent server."""
-        logger.info(f"Starting {self.sample_name} server in {self.sample_dir}")
+        logger.info(
+            "Starting %s server in %s on port %s",
+            self.sample_name,
+            self.sample_dir,
+            self.port,
+        )
 
         env = os.environ.copy()
         env.update(self.env_vars)
+        env["DEFAULT_AD_PORT"] = str(self.port)
+        env.setdefault("AGENT_BASE_URL", self.base_url)
 
         # Use unbuffered output to capture logs in real-time
         self.process = subprocess.Popen(
@@ -195,7 +230,11 @@ class AgentTestClient:
 
     def wait_for_ready(self, max_attempts: int = 30, delay: float = 1.0) -> bool:
         """Wait for server to be ready."""
-        logger.info(f"Waiting for server to be ready (max {max_attempts} attempts)")
+        logger.info(
+            "Waiting for server to be ready at %s (max %s attempts)",
+            f"{self.base_url}{self.endpoint}",
+            max_attempts,
+        )
 
         for i in range(max_attempts):
             # Check process status first

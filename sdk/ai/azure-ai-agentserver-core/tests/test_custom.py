@@ -7,6 +7,7 @@ Each sample gets its own test class with multiple test scenarios.
 """
 
 import os
+import socket
 import subprocess
 import sys
 import time
@@ -35,7 +36,8 @@ class BaseCustomAgentTest:
         self.sample_name = sample_name
         self.script_name = script_name
         self.sample_dir = project_root / "samples" / sample_name
-        self.base_url = "http://localhost:8088"
+        self.port = self._find_free_port()
+        self.base_url = f"http://127.0.0.1:{self.port}"
         self.responses_endpoint = f"{self.base_url}/responses"
         self.process = None
         self.original_dir = os.getcwd()
@@ -49,6 +51,8 @@ class BaseCustomAgentTest:
         # Prepare environment with UTF-8 encoding to handle emoji in agent output
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
+        env["DEFAULT_AD_PORT"] = str(self.port)
+        env.setdefault("AGENT_BASE_URL", self.base_url)
 
         # Use subprocess.DEVNULL to avoid buffering issues
         self.process = subprocess.Popen(
@@ -126,6 +130,12 @@ class BaseCustomAgentTest:
                 self.process.kill()
 
         os.chdir(self.original_dir)
+
+    @staticmethod
+    def _find_free_port() -> int:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.bind(("127.0.0.1", 0))
+            return sock.getsockname()[1]
 
 
 class TestSimpleMockAgent:
