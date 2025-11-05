@@ -485,4 +485,3 @@ def _should_drop_logs_for_unsampled_traces(record: LogRecord) -> bool:
             if span_context.is_valid and not span_context.trace_flags.sampled:
                 return True
     return False
-
