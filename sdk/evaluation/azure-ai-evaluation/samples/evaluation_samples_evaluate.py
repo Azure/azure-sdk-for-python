@@ -29,7 +29,12 @@ class EvaluationEvaluateSamples(object):
     def evaluation_evaluate_classes_methods(self):
         # [START evaluate_method]
         import os
-        from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator, IntentResolutionEvaluator
+        from azure.ai.evaluation import (
+            evaluate,
+            RelevanceEvaluator,
+            CoherenceEvaluator,
+            IntentResolutionEvaluator,
+        )
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
@@ -38,14 +43,18 @@ class EvaluationEvaluateSamples(object):
         }
 
         print(os.getcwd())
-        path = "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
+        path = (
+            "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
+        )
 
         evaluate(
             data=path,
             evaluators={
                 "coherence": CoherenceEvaluator(model_config=model_config),
                 "relevance": RelevanceEvaluator(model_config=model_config),
-                "intent_resolution": IntentResolutionEvaluator(model_config=model_config),
+                "intent_resolution": IntentResolutionEvaluator(
+                    model_config=model_config
+                ),
             },
             evaluator_config={
                 "coherence": {
@@ -77,7 +86,10 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import BleuScoreEvaluator
 
         bleu_evaluator = BleuScoreEvaluator()
-        bleu_evaluator(response="Lyon is the capital of France.", ground_truth="Paris is the capital of France.")
+        bleu_evaluator(
+            response="Lyon is the capital of France.",
+            ground_truth="Paris is the capital of France.",
+        )
         # [END bleu_score_evaluator]
 
         # [START coherence_evaluator]
@@ -90,7 +102,10 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
         coherence_evaluator = CoherenceEvaluator(model_config=model_config)
-        coherence_evaluator(query="What is the capital of France?", response="Paris is the capital of France.")
+        coherence_evaluator(
+            query="What is the capital of France?",
+            response="Paris is the capital of France.",
+        )
         # [END coherence_evaluator]
 
         # [START intent_resolution_evaluator]
@@ -102,7 +117,9 @@ class EvaluationEvaluateSamples(object):
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
-        intent_resolution_evaluator = IntentResolutionEvaluator(model_config=model_config)
+        intent_resolution_evaluator = IntentResolutionEvaluator(
+            model_config=model_config
+        )
         intent_resolution_evaluator(
             query="What is the opening hours of the Eiffel Tower?",
             response="Opening hours of the Eiffel Tower are 9:00 AM to 11:00 PM.",
@@ -121,7 +138,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        chat_eval = ContentSafetyEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        chat_eval = ContentSafetyEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
 
         chat_eval(
             query="What is the capital of France?",
@@ -141,7 +160,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        hate_unfairness_eval = HateUnfairnessEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        hate_unfairness_eval = HateUnfairnessEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         hate_unfairness_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -160,7 +181,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        self_harm_eval = SelfHarmEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        self_harm_eval = SelfHarmEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         self_harm_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -179,7 +202,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        sexual_eval = SexualEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        sexual_eval = SexualEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         sexual_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -198,7 +223,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        violence_eval = ViolenceEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        violence_eval = ViolenceEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         violence_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -209,7 +236,10 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import F1ScoreEvaluator
 
         f1_evaluator = F1ScoreEvaluator()
-        f1_evaluator(response="Lyon is the capital of France.", ground_truth="Paris is the capital of France.")
+        f1_evaluator(
+            response="Lyon is the capital of France.",
+            ground_truth="Paris is the capital of France.",
+        )
         # [END f1_score_evaluator]
 
         # [START fluency_evaluator]
@@ -230,7 +260,10 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import GleuScoreEvaluator
 
         gleu_evaluator = GleuScoreEvaluator()
-        gleu_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
+        gleu_evaluator(
+            response="Paris is the capital of France.",
+            ground_truth="France's capital is Paris.",
+        )
         # [END gleu_score_evaluator]
 
         # [START groundedness_evaluator]
@@ -258,7 +291,10 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import MeteorScoreEvaluator
 
         meteor_evaluator = MeteorScoreEvaluator(alpha=0.8)
-        meteor_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
+        meteor_evaluator(
+            response="Paris is the capital of France.",
+            ground_truth="France's capital is Paris.",
+        )
         # [END meteor_score_evaluator]
 
         # [START protected_material_evaluator]
@@ -273,7 +309,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        protected_material_eval = ProtectedMaterialEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        protected_material_eval = ProtectedMaterialEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         protected_material_eval(
             query="Write me a catchy song",
             response=(
@@ -294,7 +332,12 @@ class EvaluationEvaluateSamples(object):
         }
 
         qa_eval = QAEvaluator(model_config=model_config)
-        qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
+        qa_eval(
+            query="This's the color?",
+            response="Black",
+            ground_truth="gray",
+            context="gray",
+        )
         # [END qa_evaluator]
 
         # [START relevance_evaluator]
@@ -332,13 +375,21 @@ class EvaluationEvaluateSamples(object):
                     "role": "user",
                     "context": "Customer wants to know the capital of France",
                 },
-                {"content": "Paris", "role": "assistant", "context": "Paris is the capital of France"},
+                {
+                    "content": "Paris",
+                    "role": "assistant",
+                    "context": "Paris is the capital of France",
+                },
                 {
                     "content": "What is the capital of Hawaii?",
                     "role": "user",
                     "context": "Customer wants to know the capital of Hawaii",
                 },
-                {"content": "Honolulu", "role": "assistant", "context": "Honolulu is the capital of Hawaii"},
+                {
+                    "content": "Honolulu",
+                    "role": "assistant",
+                    "context": "Honolulu is the capital of Hawaii",
+                },
             ],
             "context": "Global context",
         }
@@ -349,7 +400,10 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import RougeScoreEvaluator, RougeType
 
         rouge_evaluator = RougeScoreEvaluator(rouge_type=RougeType.ROUGE_4)
-        rouge_evaluator(response="Paris is the capital of France.", ground_truth="France's capital is Paris.")
+        rouge_evaluator(
+            response="Paris is the capital of France.",
+            ground_truth="France's capital is Paris.",
+        )
         # [END rouge_score_evaluator]
 
         # [START similarity_evaluator]
@@ -384,7 +438,12 @@ class EvaluationEvaluateSamples(object):
 
         query = [
             {"role": "system", "content": "You are a helpful customer service agent."},
-            {"role": "user", "content": [{"type": "text", "text": "What is the status of my order #123?"}]},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "What is the status of my order #123?"}
+                ],
+            },
         ]
 
         response = [
@@ -396,7 +455,10 @@ class EvaluationEvaluateSamples(object):
                         "tool_call": {
                             "id": "tool_001",
                             "type": "function",
-                            "function": {"name": "get_order", "arguments": {"order_id": "123"}},
+                            "function": {
+                                "name": "get_order",
+                                "arguments": {"order_id": "123"},
+                            },
                         },
                     }
                 ],
@@ -405,26 +467,41 @@ class EvaluationEvaluateSamples(object):
                 "role": "tool",
                 "tool_call_id": "tool_001",
                 "content": [
-                    {"type": "tool_result", "tool_result": '{ "order": { "id": "123", "status": "shipped" } }'}
+                    {
+                        "type": "tool_result",
+                        "tool_result": '{ "order": { "id": "123", "status": "shipped" } }',
+                    }
                 ],
             },
-            {"role": "assistant", "content": [{"type": "text", "text": "Your order #123 has been shipped."}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "Your order #123 has been shipped."}
+                ],
+            },
         ]
 
         tool_definitions = [
             {
                 "name": "get_order",
                 "description": "Get order details.",
-                "parameters": {"type": "object", "properties": {"order_id": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"order_id": {"type": "string"}},
+                },
             }
         ]
 
-        task_adherence_evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        task_adherence_evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
         # [END task_adherence_evaluator]
 
         # [START task_completion_evaluator]
         import os
-        from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
+        from azure.ai.evaluation._evaluators._task_completion import (
+            _TaskCompletionEvaluator,
+        )
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
@@ -435,10 +512,18 @@ class EvaluationEvaluateSamples(object):
         task_completion_evaluator = _TaskCompletionEvaluator(model_config=model_config)
 
         query = [
-            {"role": "system", "content": "You are a travel booking assistant. Help users find and book flights."},
+            {
+                "role": "system",
+                "content": "You are a travel booking assistant. Help users find and book flights.",
+            },
             {
                 "role": "user",
-                "content": [{"type": "text", "text": "I need to book a flight from London to Paris for tomorrow"}],
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "I need to book a flight from London to Paris for tomorrow",
+                    }
+                ],
             },
         ]
 
@@ -492,14 +577,22 @@ class EvaluationEvaluateSamples(object):
                     "type": "object",
                     "properties": {
                         "origin": {"type": "string", "description": "Departure city"},
-                        "destination": {"type": "string", "description": "Arrival city"},
-                        "departure_date": {"type": "string", "description": "Departure date in YYYY-MM-DD format"},
+                        "destination": {
+                            "type": "string",
+                            "description": "Arrival city",
+                        },
+                        "departure_date": {
+                            "type": "string",
+                            "description": "Departure date in YYYY-MM-DD format",
+                        },
                     },
                 },
             }
         ]
 
-        task_completion_evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        task_completion_evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
         # [END task_completion_evaluator]
 
         # [START indirect_attack_evaluator]
@@ -514,7 +607,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        indirect_attack_eval = IndirectAttackEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        indirect_attack_eval = IndirectAttackEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         indirect_attack_eval(
             query="What is the capital of France?",
             response="Paris",
@@ -533,7 +628,9 @@ class EvaluationEvaluateSamples(object):
         }
         credential = DefaultAzureCredential()
 
-        groundedness_pro_eval = GroundednessProEvaluator(azure_ai_project=azure_ai_project, credential=credential)
+        groundedness_pro_eval = GroundednessProEvaluator(
+            azure_ai_project=azure_ai_project, credential=credential
+        )
         groundedness_pro_eval(
             query="What shape has 4 equilateral sides?",
             response="Rhombus",
@@ -551,7 +648,9 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        tool_call_accuracy_evaluator = ToolCallAccuracyEvaluator(model_config=model_config)
+        tool_call_accuracy_evaluator = ToolCallAccuracyEvaluator(
+            model_config=model_config
+        )
         tool_call_accuracy_evaluator(
             query="How is the weather in New York?",
             response="The weather in New York is sunny.",
@@ -560,7 +659,10 @@ class EvaluationEvaluateSamples(object):
                 "tool_call": {
                     "id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
                     "type": "function",
-                    "function": {"name": "fetch_weather", "arguments": {"location": "New York"}},
+                    "function": {
+                        "name": "fetch_weather",
+                        "arguments": {"location": "New York"},
+                    },
                 },
             },
             tool_definitions={
@@ -569,7 +671,12 @@ class EvaluationEvaluateSamples(object):
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
                 },
             },
         )
@@ -578,7 +685,9 @@ class EvaluationEvaluateSamples(object):
         # [START tool_success_evaluator]
         import os
         import json
-        from azure.ai.evaluation._evaluators._tool_success import _ToolSuccessEvaluator
+        from azure.ai.evaluation._evaluators._tool_success import (
+            _ToolCallSuccessEvaluator,
+        )
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
@@ -586,7 +695,7 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        tool_success_evaluator = _ToolSuccessEvaluator(model_config=model_config)
+        tool_success_evaluator = _ToolCallSuccessEvaluator(model_config=model_config)
         tool_success_evaluator(
             response=json.loads(
                 """[{"createdAt": "2025-08-16T08:39:47Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_id557", "name": "get_date", "arguments": {}}]}, {"createdAt": "2025-08-16T08:39:49Z", "run_id": "run_id22", "tool_call_id": "call_id557", "role": "tool", "content": [{"type": "tool_result", "tool_result": {"date_and_time": "2019-09-07 23:59:59"}}]}, {"createdAt": "2025-08-16T08:39:51Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_Run1", "name": "get_spending_by_day", "arguments": {"start_date": "2019-10-01", "end_date": "2019-10-31"}}]}, {"createdAt": "2025-08-16T08:39:53Z", "run_id": "run_id22", "tool_call_id": "call_Run1", "role": "tool", "content": [{"type": "tool_result", "tool_result": {"spending": {}}}]}, {"createdAt": "2025-08-16T08:39:54Z", "run_id": "run_id22", "role": "assistant", "content": [{"type": "text", "text": "There are no spending records for October."}]}]"""
@@ -612,10 +721,20 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        tool_output_utilization_evaluator = _ToolOutputUtilizationEvaluator(model_config=model_config)
+        tool_output_utilization_evaluator = _ToolOutputUtilizationEvaluator(
+            model_config=model_config
+        )
         query = [
-            {"role": "system", "content": "You are a customer service assistant helping with order inquiries."},
-            {"role": "user", "content": [{"type": "text", "text": "What's the status of order #12345?"}]},
+            {
+                "role": "system",
+                "content": "You are a customer service assistant helping with order inquiries.",
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "What's the status of order #12345?"}
+                ],
+            },
         ]
 
         response = [
@@ -661,11 +780,16 @@ class EvaluationEvaluateSamples(object):
                 "name": "get_order_status",
                 "type": "function",
                 "description": "Retrieves current status and details for an order",
-                "parameters": {"type": "object", "properties": {"order_id": {"type": "string"}}},
+                "parameters": {
+                    "type": "object",
+                    "properties": {"order_id": {"type": "string"}},
+                },
             }
         ]
 
-        tool_output_utilization_evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        tool_output_utilization_evaluator(
+            query=query, response=response, tool_definitions=tool_definitions
+        )
         # [END tool_output_utilization]
 
         # [START task_navigation_efficiency_evaluator]
@@ -681,33 +805,63 @@ class EvaluationEvaluateSamples(object):
         response = [
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "analyze",
+                        "arguments": {},
+                    }
+                ],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "report", "arguments": {}}],
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_3",
+                        "name": "report",
+                        "arguments": {},
+                    }
+                ],
             },
         ]
         ground_truth = ["search", "analyze", "report"]
 
-        task_navigation_efficiency_evaluator(response=response, ground_truth=ground_truth)
+        task_navigation_efficiency_evaluator(
+            response=response, ground_truth=ground_truth
+        )
 
         # Also supports tuple format with parameters for exact parameter matching
         response_with_params = [
             {
                 "role": "assistant",
                 "content": [
-                    {"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {"query": "test"}}
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {"query": "test"},
+                    }
                 ],
             },
         ]
         ground_truth_with_params = (["search"], {"search": {"query": "test"}})
 
-        task_navigation_efficiency_evaluator(response=response_with_params, ground_truth=ground_truth_with_params)
+        task_navigation_efficiency_evaluator(
+            response=response_with_params, ground_truth=ground_truth_with_params
+        )
         # [END task_navigation_efficiency_evaluator]
 
         # [START document_retrieval_evaluator]
@@ -731,7 +885,8 @@ class EvaluationEvaluateSamples(object):
 
         document_retrieval_evaluator = DocumentRetrievalEvaluator()
         document_retrieval_evaluator(
-            retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents
+            retrieval_ground_truth=retrieval_ground_truth,
+            retrieved_documents=retrieved_documents,
         )
         # [END document_retrieval_evaluator]
 

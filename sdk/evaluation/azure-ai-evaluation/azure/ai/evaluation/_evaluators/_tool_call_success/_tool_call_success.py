@@ -6,7 +6,12 @@ import os
 import logging
 from typing import Dict, Union, List, Optional
 from typing_extensions import overload, override
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -15,8 +20,8 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """The Tool Success evaluator determines whether tool calls done by an AI agent includes failures or not.
+class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+    """The Tool Call Success evaluator determines whether tool calls done by an AI agent includes failures or not.
 
     This evaluator focuses solely on tool call results and tool definitions, disregarding user's query to
     the agent, conversation history and agent's final response. Although tool definitions is optional,
@@ -40,7 +45,7 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END tool_success_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a _ToolSuccessEvaluator with a tool definitions and response.
+            :caption: Initialize and call a _ToolCallSuccessEvaluator with a tool definitions and response.
 
     .. admonition:: Example using Azure AI Project URL:
 
@@ -49,7 +54,7 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :end-before: [END tool_success_evaluator]
         :language: python
         :dedent: 8
-        :caption: Initialize and call a _ToolSuccessEvaluator using Azure AI Project URL in the following
+        :caption: Initialize and call a _ToolCallSuccessEvaluator using Azure AI Project URL in the following
             format https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
@@ -63,7 +68,7 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     def __init__(self, model_config, *, credential=None, **kwargs):
-        """Initialize the Tool Success evaluator."""
+        """Initialize the Tool Call Success evaluator."""
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(
@@ -86,7 +91,7 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """Evaluate tool call success for a given response, and optionally tool definitions.
 
         Example with list of messages:
-            evaluator = _ToolSuccessEvaluator(model_config)
+            evaluator = _ToolCallSuccessEvaluator(model_config)
             response = [{'createdAt': 1700000070, 'run_id': '0', 'role': 'assistant',
             'content': [{'type': 'text', 'text': '**Day 1:** Morning: Visit Louvre Museum (9 AM - 12 PM)...'}]}]
 
@@ -97,7 +102,7 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype response: Union[str, List[dict]]
         :keyword tool_definitions: Optional tool definitions to use for evaluation.
         :paramtype tool_definitions: Union[dict, List[dict]]
-        :return: A dictionary with the tool success evaluation results.
+        :return: A dictionary with the Tool Call Success evaluation results.
         :rtype: Dict[str, Union[str, float]]
         """
 
@@ -116,7 +121,7 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:  # type: ignore[override]
-        """Do Tool Success evaluation.
+        """Do Tool Call Success evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain whatever inputs are
         needed for the _flow method
@@ -126,22 +131,24 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         if "response" not in eval_input:
             raise EvaluationException(
-                message="response is a required input to the Tool Success evaluator.",
-                internal_message="response is a required input to the Tool Success evaluator.",
+                message="response is a required input to the Tool Call Success evaluator.",
+                internal_message="response is a required input to the Tool Call Success evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_SUCCESS_EVALUATOR,
             )
         if eval_input["response"] is None or eval_input["response"] == []:
             raise EvaluationException(
-                message="response cannot be None or empty for the Tool Success evaluator.",
-                internal_message="response cannot be None or empty for the Tool Success evaluator.",
+                message="response cannot be None or empty for the Tool Call Success evaluator.",
+                internal_message="response cannot be None or empty for the Tool Call Success evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.TOOL_SUCCESS_EVALUATOR,
             )
 
-        eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
+        eval_input["tool_calls"] = _reformat_tool_calls_results(
+            eval_input["response"], logger
+        )
 
         if "tool_definitions" in eval_input:
             tool_definitions = eval_input["tool_definitions"]
@@ -150,9 +157,13 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 msgs_list=eval_input["response"],
                 logger=logger,
             )
-            eval_input["tool_definitions"] = _reformat_tool_definitions(filtered_tool_definitions, logger)
+            eval_input["tool_definitions"] = _reformat_tool_definitions(
+                filtered_tool_definitions, logger
+            )
 
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await self._flow(
+            timeout=self._LLM_CALL_TIMEOUT, **eval_input
+        )
         llm_output = prompty_output_dict.get("llm_output", "")
 
         if isinstance(llm_output, dict):
@@ -167,16 +178,30 @@ class _ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_result": success_result,
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": f"{reason} {llm_output.get('details', '')}",
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
+                f"{self._result_key}_prompt_tokens": prompty_output_dict.get(
+                    "input_token_count", 0
+                ),
+                f"{self._result_key}_completion_tokens": prompty_output_dict.get(
+                    "output_token_count", 0
+                ),
+                f"{self._result_key}_total_tokens": prompty_output_dict.get(
+                    "total_token_count", 0
+                ),
+                f"{self._result_key}_finish_reason": prompty_output_dict.get(
+                    "finish_reason", ""
+                ),
                 f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_sample_input": prompty_output_dict.get(
+                    "sample_input", ""
+                ),
+                f"{self._result_key}_sample_output": prompty_output_dict.get(
+                    "sample_output", ""
+                ),
             }
         if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
+            logger.warning(
+                "LLM output is not a dictionary, returning NaN for the score."
+            )
 
         score = math.nan
         binary_result = self._get_binary_result(score)
@@ -198,21 +223,30 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
                 for content in msg.get("content", []):
                     if content.get("type") == "tool_call":
                         any_tools_used = True
-                        if "tool_call" in content and "function" in content["tool_call"]:
+                        if (
+                            "tool_call" in content
+                            and "function" in content["tool_call"]
+                        ):
                             used_tool_names.add(content["tool_call"]["function"])
                         elif "name" in content:
                             used_tool_names.add(content["name"])
 
-        filtered_tools = [tool for tool in tool_definitions if tool.get("name") in used_tool_names]
+        filtered_tools = [
+            tool for tool in tool_definitions if tool.get("name") in used_tool_names
+        ]
         if any_tools_used and not filtered_tools:
             if logger:
-                logger.warning("No tool definitions matched the tools used in the messages. Returning original list.")
+                logger.warning(
+                    "No tool definitions matched the tools used in the messages. Returning original list."
+                )
             filtered_tools = tool_definitions
 
         return filtered_tools
     except Exception as e:
         if logger:
-            logger.warning(f"Failed to filter tool definitions, returning original list. Error: {e}")
+            logger.warning(
+                f"Failed to filter tool definitions, returning original list. Error: {e}"
+            )
         return tool_definitions
 
 
@@ -237,7 +271,9 @@ def _get_tool_calls_results(agent_response_msgs):
             for content in msg.get("content", []):
 
                 if content.get("type") == "tool_call":
-                    if "tool_call" in content and "function" in content.get("tool_call", {}):
+                    if "tool_call" in content and "function" in content.get(
+                        "tool_call", {}
+                    ):
                         tc = content.get("tool_call", {})
                         func_name = tc.get("function", {}).get("name", "")
                         args = tc.get("function", {}).get("arguments", {})
@@ -276,7 +312,9 @@ def _reformat_tool_calls_results(response, logger=None):
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.warning(
+                f"Agent response could not be parsed, falling back to original response: {response}"
+            )
         return response
 
 

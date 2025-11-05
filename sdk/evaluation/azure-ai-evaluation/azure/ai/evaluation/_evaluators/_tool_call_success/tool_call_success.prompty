@@ -1,5 +1,5 @@
 ---
-name: Tool Success
+name: Tool Call Success
 description: Evaluates whether a Tool call was successful or resulted in a technical error
 model:
   api: chat
