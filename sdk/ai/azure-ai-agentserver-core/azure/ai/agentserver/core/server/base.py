@@ -240,7 +240,7 @@ class FoundryCBAgent:
           POST  /responses
           GET   /liveness
           GET   /readiness
-        
+
         :param port: Port to listen on.
         :type port: int
         """
@@ -274,8 +274,9 @@ class FoundryCBAgent:
         pass
 
     def setup_application_insights_exporter(self, connection_string, provider):
-        from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+        from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
         exporter_instance = AzureMonitorTraceExporter.from_connection_string(connection_string)
         processor = BatchSpanProcessor(exporter_instance)

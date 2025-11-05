@@ -108,7 +108,6 @@ def configure(log_config: dict = default_log_config):
             os.environ.get(Constants.ENABLE_APPLICATION_INSIGHTS_LOGGER, "true").lower() == "true"
         )
         if application_insights_connection_string and enable_application_insights_logger:
-            from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
             from opentelemetry._logs import set_logger_provider
             from opentelemetry.sdk._logs import (
                 LoggerProvider,
@@ -116,6 +115,8 @@ def configure(log_config: dict = default_log_config):
             )
             from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
             from opentelemetry.sdk.resources import Resource
+
+            from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
             logger_provider = LoggerProvider(resource=Resource.create({"service.name": "azure.ai.agentshosting"}))
             set_logger_provider(logger_provider)
