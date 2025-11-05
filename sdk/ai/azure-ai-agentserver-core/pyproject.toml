@@ -24,9 +24,14 @@ dependencies = [
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-# Auto-discover packages under the code root, including namespace packages (PEP 420)
-packages = { find = { include = ["azure*"] } }
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
 
 [tool.setuptools.dynamic]
 # read version from your module (see Step 2 file layout)
