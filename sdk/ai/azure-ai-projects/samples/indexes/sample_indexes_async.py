@@ -15,10 +15,10 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity aiohttp
+    pip install azure-ai-projects azure-identity aiohttp python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
     2) INDEX_NAME - Optional. The name of the Index to create and use in this sample.
     3) INDEX_VERSION - Optional. The version of the Index to create and use in this sample.
@@ -27,14 +27,17 @@ USAGE:
 """
 import asyncio
 import os
+from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import AzureAISearchIndex
 
+load_dotenv()
+
 
 async def main() -> None:
 
-    endpoint = os.environ["PROJECT_ENDPOINT"]
+    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
     index_name = os.environ.get("INDEX_NAME", "index-test")
     index_version = os.environ.get("INDEX_VERSION", "1.0")
     ai_search_connection_name = os.environ.get("AI_SEARCH_CONNECTION_NAME", "my-ai-search-connection-name")

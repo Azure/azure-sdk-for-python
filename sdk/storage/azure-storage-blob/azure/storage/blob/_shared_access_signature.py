@@ -67,6 +67,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
+        user_delegation_oid: Optional[str] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
@@ -136,6 +137,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param str user_delegation_oid:
+            Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+            The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+            issued to the user specified in this value.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -148,6 +153,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
+        sas.add_user_delegation_oid(user_delegation_oid)
 
         resource = 'bs' if snapshot else 'b'
         resource = 'bv' if version_id else resource
@@ -181,6 +187,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
+        user_delegation_oid: Optional[str] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
         **kwargs: Any
     ) -> str:
@@ -240,6 +247,10 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param str user_delegation_oid:
+            Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+            The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+            issued to the user specified in this value.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -250,6 +261,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
+        sas.add_user_delegation_oid(user_delegation_oid)
         sas.add_resource('c')
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
@@ -439,6 +451,7 @@ def generate_container_sas(
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -513,6 +526,10 @@ def generate_container_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -549,6 +566,7 @@ def generate_container_sas(
         start=start,
         policy_id=policy_id,
         ip=ip,
+        user_delegation_oid=user_delegation_oid,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -567,6 +585,7 @@ def generate_blob_sas(
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -653,6 +672,10 @@ def generate_blob_sas(
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
         generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -687,6 +710,7 @@ def generate_blob_sas(
         policy_id=policy_id,
         ip=ip,
         sts_hook=sts_hook,
+        user_delegation_oid=user_delegation_oid,
         **kwargs
     )
 

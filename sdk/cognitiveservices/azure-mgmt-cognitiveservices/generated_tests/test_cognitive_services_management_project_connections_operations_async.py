@@ -27,7 +27,7 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
             account_name="str",
             project_name="str",
             connection_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
             account_name="str",
             project_name="str",
             connection_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
             account_name="str",
             project_name="str",
             connection_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
             account_name="str",
             project_name="str",
             connection_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestCognitiveServicesManagementProjectConnectionsOperationsAsync(AzureMgmt
             resource_group_name=resource_group.name,
             account_name="str",
             project_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

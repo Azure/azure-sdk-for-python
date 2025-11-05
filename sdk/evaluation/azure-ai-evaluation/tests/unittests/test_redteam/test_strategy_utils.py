@@ -6,16 +6,19 @@ import pytest
 from unittest.mock import MagicMock, patch
 from typing import Dict, List, Callable
 
+from pyrit.common import initialize_pyrit, IN_MEMORY
+
 from azure.ai.evaluation.red_team._utils.strategy_utils import (
     strategy_converter_map,
     get_converter_for_strategy,
     get_chat_target,
-    get_orchestrators_for_attack_strategies,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
 from pyrit.prompt_converter import PromptConverter, Base64Converter, FlipConverter, MorseConverter
 from pyrit.prompt_target import PromptChatTarget, OpenAIChatTarget
+
+initialize_pyrit(memory_db_type=IN_MEMORY)
 
 
 @pytest.mark.unittest
@@ -49,17 +52,25 @@ class TestConverterForStrategy:
 
     def test_get_converter_for_strategy_single(self):
         """Test getting converter for a single strategy."""
-        converter = get_converter_for_strategy(AttackStrategy.Base64)
+        # Create mock dependencies
+        mock_rai_client = MagicMock()
+        mock_logger = MagicMock()
+
+        converter = get_converter_for_strategy(AttackStrategy.Base64, mock_rai_client, False, mock_logger)
         assert isinstance(converter, Base64Converter)
 
         # Test strategy with no converter
-        converter = get_converter_for_strategy(AttackStrategy.Baseline)
+        converter = get_converter_for_strategy(AttackStrategy.Baseline, mock_rai_client, False, mock_logger)
         assert converter is None
 
     def test_get_converter_for_strategy_list(self):
         """Test getting converters for a list of strategies."""
+        # Create mock dependencies
+        mock_rai_client = MagicMock()
+        mock_logger = MagicMock()
+
         strategies = [AttackStrategy.Base64, AttackStrategy.Flip]
-        converters = get_converter_for_strategy(strategies)
+        converters = get_converter_for_strategy(strategies, mock_rai_client, False, mock_logger)
 
         assert isinstance(converters, list)
         assert len(converters) == 2
@@ -155,22 +166,21 @@ class TestChatTargetFunctions:
 
         result = get_chat_target(callback_fn)
 
-        mock_callback_chat_target.assert_called_once_with(callback=callback_fn, prompt_to_context=None)
+        mock_callback_chat_target.assert_called_once_with(callback=callback_fn)
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
     def test_get_chat_target_callback_function_with_context(self, mock_callback_chat_target):
-        """Test getting chat target from a callback function with context mapping."""
+        """Test getting chat target from a callback function. Context is now handled via request labels."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance
 
         def callback_fn(messages, stream, session_state, context):
             return {"role": "assistant", "content": "test"}
 
-        prompt_to_context = {"test prompt": "test context"}
-        result = get_chat_target(callback_fn, prompt_to_context=prompt_to_context)
+        result = get_chat_target(callback_fn)
 
-        mock_callback_chat_target.assert_called_once_with(callback=callback_fn, prompt_to_context=prompt_to_context)
+        mock_callback_chat_target.assert_called_once_with(callback=callback_fn)
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
@@ -190,24 +200,21 @@ class TestChatTargetFunctions:
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
     def test_get_chat_target_simple_function_with_context(self, mock_callback_chat_target):
-        """Test getting chat target from a simple function with context mapping."""
+        """Test getting chat target from a simple function. Context is now handled via request labels."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance
 
         def simple_fn(query):
             return "test response"
 
-        prompt_to_context = {"test prompt": "test context"}
-        result = get_chat_target(simple_fn, prompt_to_context=prompt_to_context)
+        result = get_chat_target(simple_fn)
 
-        # Verify that _CallbackChatTarget was called with context
+        # Verify that _CallbackChatTarget was called
         mock_callback_chat_target.assert_called_once()
-        call_args = mock_callback_chat_target.call_args
-        assert call_args[1]["prompt_to_context"] == prompt_to_context
         assert result == mock_instance
 
     def test_get_chat_target_simple_function_context_support(self):
-        """Test that simple function with context parameter receives context."""
+        """Test that simple function with context parameter works. Context is now handled via request labels."""
 
         def simple_fn_with_context(query, context=None):
             # Function that accepts context parameter
@@ -215,8 +222,7 @@ class TestChatTargetFunctions:
                 return f"Response with context: {context}"
             return "Response without context"
 
-        prompt_to_context = {"test prompt": "test context"}
-        result = get_chat_target(simple_fn_with_context, prompt_to_context=prompt_to_context)
+        result = get_chat_target(simple_fn_with_context)
 
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
@@ -227,30 +233,7 @@ class TestChatTargetFunctions:
         def simple_fn(query):
             return "test response"
 
-        prompt_to_context = {"test prompt": "test context"}
-        result = get_chat_target(simple_fn, prompt_to_context=prompt_to_context)
+        result = get_chat_target(simple_fn)
 
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
-
-
-@pytest.mark.unittest
-class TestOrchestratorFunctions:
-    """Test orchestrator related functions."""
-
-    def test_get_orchestrators_for_attack_strategies(self):
-        """Test getting orchestrators for attack strategies."""
-        strategies = [AttackStrategy.Base64, AttackStrategy.Flip]
-        orchestrators = get_orchestrators_for_attack_strategies(strategies)
-
-        assert isinstance(orchestrators, list)
-        assert len(orchestrators) == 1
-        assert callable(orchestrators[0])
-
-        # Test the orchestrator function returns None (since it's a placeholder)
-        mock_chat_target = MagicMock()
-        mock_prompts = ["test prompt"]
-        mock_converter = MagicMock()
-
-        result = orchestrators[0](mock_chat_target, mock_prompts, mock_converter, "test-strategy", "test-risk")
-        assert result is None
