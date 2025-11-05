@@ -327,10 +327,10 @@ _DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
 # Default message for messages(MessageData) with empty body
 _DEFAULT_LOG_MESSAGE = "n/a"
 
-# Minimum severity Level for logs
+# Minimum Severity Level for logs
 _MINIMUM_SEVERITY_LEVEL = "MINIMUM_SEVERITY_LEVEL"
 
-# Trace Based Sampling for logs
+# Trace Based Sampling flag for logs
 _TRACE_BASED_SAMPLING = "TRACE_BASED_SAMPLING"
 
 # cSpell:disable
