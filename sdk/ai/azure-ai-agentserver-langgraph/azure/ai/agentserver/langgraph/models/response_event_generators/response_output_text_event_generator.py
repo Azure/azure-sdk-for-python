@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=unused-argument
 from typing import List
 
 from azure.ai.agentserver.core.models import projects as project_models
@@ -29,7 +30,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         self.aggregated_content = ""
 
     def try_process_message(
-        self, message, run_details, stream_state: StreamEventState
+        self, message, context, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         events = []
@@ -38,13 +39,13 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
             self.started = True
 
         if message:
-            is_processed, next_processor, processed_events = self.process(message, run_details, stream_state)
+            is_processed, next_processor, processed_events = self.process(message, context, stream_state)
             if not is_processed:
                 self.logger.warning(f"OutputTextEventGenerator did not process message: {message}")
             events.extend(processed_events)
 
         if self.should_end(message):
-            is_processed, complete_events = self.on_end(message, run_details, stream_state)
+            is_processed, complete_events = self.on_end(message, context, stream_state)
             events.extend(complete_events)
             next_processor = self.parent
 

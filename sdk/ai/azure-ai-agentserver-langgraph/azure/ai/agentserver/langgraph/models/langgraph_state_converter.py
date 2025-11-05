@@ -36,9 +36,6 @@ from .langgraph_stream_response_converter import LangGraphStreamResponseConverte
 class LanggraphStateConverter(ABC):
     """Abstract base class for LangGraph state <-> response conversion."""
 
-    def __init__(self):
-        super().__init__()
-
     @abstractmethod
     def get_stream_mode(self, context: AgentRunContext) -> str:
         """Return a string indicating streaming mode for this run.
@@ -46,6 +43,12 @@ class LanggraphStateConverter(ABC):
         Examples: "values", "updates", "messages", "custom", "debug".
         Implementations may inspect context.request.stream or other flags.
         Must be fast and side-effect free.
+
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+
+        :return: The streaming mode as a string.
+        :rtype: str
         """
 
     @abstractmethod
@@ -54,6 +57,12 @@ class LanggraphStateConverter(ABC):
 
         Return a serializable dict that downstream graph execution expects.
         Should not mutate the context. Raise ValueError on invalid input.
+
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+
+        :return: The initial LangGraph state as a dictionary.
+        :rtype: Dict[str, Any]
         """
 
     @abstractmethod
@@ -63,6 +72,14 @@ class LanggraphStateConverter(ABC):
         Implementations must construct and return an models.Response.
         The returned object should include output items, usage (if available),
         and reference the agent / conversation from context.
+
+        :param state: The completed LangGraph state.
+        :type state: Any
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+
+        :return: The final non-streaming Response object.
+        :rtype: Response
         """
 
     @abstractmethod
@@ -74,6 +91,14 @@ class LanggraphStateConverter(ABC):
         Yield ResponseStreamEvent objects in the correct order. Implementations
         are responsible for emitting lifecycle events (created, in_progress, deltas,
         completed, errors) consistent with the OpenAI Responses streaming contract.
+
+        :param stream_state: An async iterator of partial LangGraph state updates.
+        :type stream_state: AsyncIterator[Dict[str, Any] | Any]
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+
+        :return: An async generator yielding ResponseStreamEvent objects.
+        :rtype: AsyncGenerator[ResponseStreamEvent, None]
         """
 
 
@@ -83,8 +108,7 @@ class LanggraphMessageStateConverter(LanggraphStateConverter):
     def get_stream_mode(self, context: AgentRunContext) -> str:
         if context.request.get("stream"):
             return "messages"
-        else:
-            return "updates"
+        return "updates"
 
     def request_to_state(self, context: AgentRunContext) -> Dict[str, Any]:
         converter = LangGraphRequestConverter(context.request)

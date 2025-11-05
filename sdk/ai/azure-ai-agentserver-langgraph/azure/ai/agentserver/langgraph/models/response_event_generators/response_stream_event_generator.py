@@ -1,12 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=unused-argument
 import time
 from typing import List
 
+from langchain_core import messages as langgraph_messages
+
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-from langchain_core import messages as langgraph_messages
 
 from .response_event_generator import (
     ResponseEventGenerator,

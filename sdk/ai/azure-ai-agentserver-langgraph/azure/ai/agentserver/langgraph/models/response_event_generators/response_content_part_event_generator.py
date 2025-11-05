@@ -1,10 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=unused-argument,consider-using-in,consider-merging-isinstance
 from typing import List
 
-from azure.ai.agentserver.core.models import projects as project_models
 from langchain_core import messages as langgraph_messages
+
+from azure.ai.agentserver.core.models import projects as project_models
 
 from . import item_content_helpers
 from .response_event_generator import ResponseEventGenerator, StreamEventState
@@ -30,7 +32,7 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
         self.item_content_helper = None
 
     def try_process_message(
-        self, message, run_details, stream_state: StreamEventState
+        self, message, context, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
         is_processed = False
         events = []
@@ -41,14 +43,14 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
                 self.logger.warning(f"Cannot create item content helper for message: {message}")
                 return True, self, []
         if self.item_content_helper and not self.started:
-            self.started, start_events = self.on_start(message, run_details, stream_state)
+            self.started, start_events = self.on_start(message, context, stream_state)
             if not self.started:
                 # could not start processing, skip this message
                 return True, self, []
             events.extend(start_events)
 
         if self.should_end(message):
-            complete_events = self.on_end(message, run_details, stream_state)
+            complete_events = self.on_end(message, context, stream_state)
             events.extend(complete_events)
             next_processor = self.parent
             is_processed = self.has_finish_reason(message) if message else False

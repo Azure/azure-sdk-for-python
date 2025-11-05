@@ -1,17 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=logging-fstring-interpolation,broad-exception-caught
 import os
 import re
 from typing import Optional
+
+from langchain_core.runnables import RunnableConfig
+from langgraph.graph.state import CompiledStateGraph
 
 from azure.ai.agentserver.core.constants import Constants
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.server.base import FoundryCBAgent
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-from langchain_core.runnables import RunnableConfig
-
-from langgraph.graph.state import CompiledStateGraph
 
 from .models import (
     LanggraphMessageStateConverter,
@@ -31,9 +32,10 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         Initialize the LangGraphAdapter with a CompiledStateGraph.
 
-        Args:
-            graph (StateGraph): The LangGraph StateGraph to adapt.
-            state_converter: custom state converter. Required if graph state is not MessagesState.
+        :param graph: The LangGraph StateGraph to adapt.
+        :type graph: CompiledStateGraph
+        :param state_converter: custom state converter. Required if graph state is not MessagesState.
+        :type state_converter: Optional[LanggraphStateConverter]
         """
         super().__init__()
         self.graph = graph
@@ -52,8 +54,7 @@ class LangGraphAdapter(FoundryCBAgent):
         if not context.stream:
             response = await self.agent_run_non_stream(input_data, context)
             return response
-        else:
-            return self.agent_run_astream(input_data, context)
+        return self.agent_run_astream(input_data, context)
 
     def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
         # set env vars for langsmith
@@ -87,11 +88,13 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         Run the agent with non-streaming response.
 
-        Args:
-            context (AgentRunContext): The context for the agent run.
+        :param input_data: The input data to run the agent with.
+        :type input_data: dict
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
 
-        Returns:
-            RunObject: The result of the agent run.
+        :return: The response of the agent run.
+        :rtype: dict
         """
 
         try:
@@ -108,11 +111,13 @@ class LangGraphAdapter(FoundryCBAgent):
         """
         Run the agent with streaming response.
 
-        Args:
-            request_body (CreateResponse): The request body to run the agent with.
+        :param input_data: The input data to run the agent with.
+        :type input_data: dict
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
 
-        Returns:
-            StreamingResponse: The streaming response of the agent run.
+        :return: An async generator yielding the response stream events.
+        :rtype: AsyncGenerator[dict]
         """
         try:
             logger.info(f"Starting streaming agent run {context.response_id}")
@@ -128,6 +133,12 @@ class LangGraphAdapter(FoundryCBAgent):
     def create_runnable_config(self, context: AgentRunContext) -> RunnableConfig:
         """
         Create a RunnableConfig from the converted request data.
+
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+
+        :return: The RunnableConfig for the agent run.
+        :rtype: RunnableConfig
         """
         config = RunnableConfig(
             configurable={

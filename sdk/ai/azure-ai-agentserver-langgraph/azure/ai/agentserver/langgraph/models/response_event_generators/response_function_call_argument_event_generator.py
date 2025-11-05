@@ -1,12 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=unused-argument,name-too-long
 from typing import List
+
+from langchain_core import messages as langgraph_messages
+from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-from langchain_core import messages as langgraph_messages
-from langchain_core.messages import AnyMessage
 
 from ..utils import extract_function_call
 from . import ResponseEventGenerator, StreamEventState
@@ -23,7 +25,6 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
     def try_process_message(
         self, message, context: AgentRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
-        
         is_processed = False
         events = []
         next_processor = self

@@ -5,10 +5,15 @@ import json
 from typing import get_type_hints
 
 
-def extract_function_call(tool_call):
+def extract_function_call(tool_call : dict):
     """
     Extract function call details from tool_call dict.
-    Returns a tuple of (name, call_id, argument).
+
+    :param tool_call: The tool call dictionary containing function call details.
+    :type tool_call: dict
+
+    :return: A tuple of (name, call_id, argument).
+    :rtype: tuple[str | None, str | None, str | None]
     """
     name = tool_call.get("name")
     call_id = tool_call.get("id")
@@ -24,6 +29,12 @@ def extract_function_call(tool_call):
 def is_state_schema_valid(state_schema) -> bool:
     """
     Validate whether the state schema of a graph contains a field named messages
+
+    :param state_schema: The state schema class from LangGraph
+    :type state_schema: TypedDict
+
+    :return: True if the state schema contains a field named messages, False otherwise.
+    :rtype: bool
     """
     fields = get_typeddict_fields(state_schema)
     return "messages" in fields
@@ -33,11 +44,11 @@ def get_typeddict_fields(schema_class) -> dict:
     """
     Get all fields/attributes from a TypedDict class.
 
-    Args:
-        schema_class: The TypedDict class to inspect
+    :param schema_class: The TypedDict class to extract fields from
+    :type schema_class: TypedDict
 
-    Returns:
-        dict: Dictionary of field names and their types
+    :return: Dictionary of field names and their types
+    :rtype: dict
 
     Example:
         >>> from typing_extensions import TypedDict

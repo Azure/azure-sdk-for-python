@@ -1,14 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=logging-fstring-interpolation,broad-exception-caught,logging-not-lazy
 import copy
 from typing import List
+
+from langchain_core import messages
+from langchain_core.messages import AnyMessage
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import projects as project_models
 from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-from langchain_core import messages
-from langchain_core.messages import AnyMessage
 
 from .utils import extract_function_call
 
@@ -24,11 +26,11 @@ class LangGraphResponseConverter:
         res = []
         for step in self.output:
             for node_name, node_output in step.items():
-                messages = node_output.get("messages")
-                if not messages:
+                message_arr = node_output.get("messages")
+                if not message_arr:
                     logger.warning(f"No messages found in node {node_name} output: {node_output}")
                     continue
-                for message in messages:
+                for message in message_arr:
                     try:
                         converted = self.convert_output_message(message)
                         res.append(converted)
@@ -36,7 +38,7 @@ class LangGraphResponseConverter:
                         logger.error(f"Error converting message {message}: {e}")
         return res
 
-    def convert_output_message(self, output_message: AnyMessage) -> project_models.ItemResource:
+    def convert_output_message(self, output_message: AnyMessage):  # pylint: disable=inconsistent-return-statements
         # Implement the conversion logic for inner inputs
         if isinstance(output_message, messages.HumanMessage):
             return project_models.ResponsesUserMessageItemResource(
@@ -86,14 +88,14 @@ class LangGraphResponseConverter:
             )
 
     def convert_MessageContent(
-        self, content: str | list[str | dict], role: project_models.ResponsesMessageRole
+        self, content, role: project_models.ResponsesMessageRole
     ) -> List[project_models.ItemContent]:
         if isinstance(content, str):
             return [self.convert_MessageContentItem(content, role)]
         return [self.convert_MessageContentItem(item, role) for item in content]
 
     def convert_MessageContentItem(
-        self, content: str | dict, role: project_models.ResponsesMessageRole
+        self, content, role: project_models.ResponsesMessageRole
     ) -> project_models.ItemContent:
         content_dict = copy.deepcopy(content) if isinstance(content, dict) else {"text": content}
 
