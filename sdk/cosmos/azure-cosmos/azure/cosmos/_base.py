@@ -948,7 +948,6 @@ def _build_properties_cache(properties: dict[str, Any], container_link: str) -> 
 
 def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
     """Formats the partition key range options to be used internally from the query ones.
-
     :param dict query_options: The query options being used.
     :return: The relevant partition key range options.
     :rtype: dict
