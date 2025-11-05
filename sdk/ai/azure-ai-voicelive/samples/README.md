@@ -91,14 +91,13 @@ python basic_voice_assistant_async.py --help
 - **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
 - **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
 - **voice_assistant_w_proactive_greeting_async.py**: Shows two proactive greeting strategies:
-  1. invokong a server-generated greeting by sending a `response.create` event;
+  1. invoking a server-generated greeting by sending a `response.create` event;
   1. sending a pre-generated assistant greeting using a raw `response.create` event with `pre_generated_assistant_message`.
 
   **Tips**
   
   - Send the proactive event(s) immediately after `SESSION_UPDATED` and before starting microphone capture to avoid overlap if the user speaks early.
   - If you might repeat the greeting (e.g. reconnect), guard with a flag like `self.conversation_started`.
-  - For one-off greeting instructions that should not persist as a conversation item, you can also use `await conn.response.create(additional_instructions="Greet the user...")`.
 
 ## Troubleshooting
 
