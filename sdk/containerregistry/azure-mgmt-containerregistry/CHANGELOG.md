@@ -1,6 +1,6 @@
 # Release History
 
-## 14.1.0b3 (2025-11-05)
+## 14.1.0b3 (2025-11-04)
 
 ### Features Added
 
