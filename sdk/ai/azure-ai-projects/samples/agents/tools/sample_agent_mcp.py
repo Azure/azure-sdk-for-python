@@ -10,7 +10,7 @@ DESCRIPTION:
     using MCP (Model Context Protocol) tools and a synchronous client.
 
 USAGE:
-    python sample_responses_mcp.py
+    python sample_agent_mcp.py
 
     Before running the sample:
 
@@ -41,8 +41,6 @@ project_client = AIProjectClient(
 # Get the OpenAI client for responses and conversations
 openai_client = project_client.get_openai_client()
 
-# Define MCP tool that connects to Azure REST API specifications GitHub repository
-# The tool requires approval for each operation to ensure user control over external requests
 mcp_tool = MCPTool(
     server_label="api-specs",
     server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
@@ -53,8 +51,6 @@ mcp_tool = MCPTool(
 tools: list[Tool] = [mcp_tool]
 
 with project_client:
-    # Create a prompt agent with MCP tool capabilities
-    # The agent will be able to access external GitHub repositories through the MCP protocol
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
@@ -69,8 +65,7 @@ with project_client:
     conversation = openai_client.conversations.create()
     print(f"Created conversation (id: {conversation.id})")
 
-    # Send initial request that will trigger the MCP tool to access Azure REST API specs
-    # This will generate an approval request since require_approval="always"
+    # Send initial request that will trigger the MCP tool
     response = openai_client.responses.create(
         conversation=conversation.id,
         input="Please summarize the Azure REST API specifications Readme",
@@ -78,7 +73,6 @@ with project_client:
     )
 
     # Process any MCP approval requests that were generated
-    # When require_approval="always", the agent will request permission before accessing external resources
     input_list: ResponseInputParam = []
     for item in response.output:
         if item.type == "mcp_approval_request":

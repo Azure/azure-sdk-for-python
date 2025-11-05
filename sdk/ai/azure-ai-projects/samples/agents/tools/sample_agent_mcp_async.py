@@ -10,7 +10,7 @@ DESCRIPTION:
     using MCP (Model Context Protocol) tools and an asynchronous client.
 
 USAGE:
-    python sample_responses_mcp_async.py
+    python sample_agent_mcp_async.py
 
     Before running the sample:
 
@@ -45,8 +45,6 @@ async def main():
         )
 
         async with project_client:
-            # Define MCP tool that connects to Azure REST API specifications GitHub repository
-            # The tool requires approval for each operation to ensure user control over external requests
             mcp_tool = MCPTool(
                 server_label="api-specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
@@ -57,7 +55,6 @@ async def main():
             tools: list[Tool] = [mcp_tool]
 
             # Create a prompt agent with MCP tool capabilities
-            # The agent will be able to access external GitHub repositories through the MCP protocol
             agent = await project_client.agents.create_version(
                 agent_name="MyAgent",
                 definition=PromptAgentDefinition(
@@ -76,8 +73,7 @@ async def main():
                 conversation = await openai_client.conversations.create()
                 print(f"Created conversation (id: {conversation.id})")
 
-                # Send initial request that will trigger the MCP tool to access Azure REST API specs
-                # This will generate an approval request since require_approval="always"
+                # Send initial request that will trigger the MCP tool
                 response = await openai_client.responses.create(
                     conversation=conversation.id,
                     input="Please summarize the Azure REST API specifications Readme",
@@ -85,7 +81,6 @@ async def main():
                 )
 
                 # Process any MCP approval requests that were generated
-                # When require_approval="always", the agent will request permission before accessing external resources
                 input_list: ResponseInputParam = []
                 for item in response.output:
                     if item.type == "mcp_approval_request":
