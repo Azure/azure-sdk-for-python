@@ -176,6 +176,44 @@ def query_items_cross_partition_with_pagination(container):
     print(f'  - Pages: {page_count}')
     print(f'  - Total items: {total_item_count}')
 
+def query_items_with_feed_ranges_and_pagination(container):
+    print('\n1.5c Querying with Feed Range and Pagination\n')
+    # We again use max_item_count to control page size
+    max_items_per_page = 3
+
+    # First we fetch the relevant feed ranges for the container - feed ranges represent logical partitions
+    # or ranges of partition key values, and can be used to query as well
+    feed_ranges = container.read_feed_ranges()
+
+    # For this example, we will just use the first feed range
+    feed_ranges_list = list(feed_ranges)
+    query_iterable = container.query_items(
+        query="SELECT * FROM c",
+        feed_range=feed_ranges_list[0],  # Query specific feed range
+        max_item_count=max_items_per_page
+    )
+
+    # Iterate through pages and count both pages and total items
+    total_item_count = 0
+    page_count = 0
+
+    item_pages = query_iterable.by_page()
+    for page in item_pages:
+        page_count += 1
+        items_in_page = list(page)
+        items_in_current_page = len(items_in_page)
+        total_item_count += items_in_current_page
+
+        print(f'Page {page_count}: Retrieved {items_in_current_page} items (max per page: {max_items_per_page})')
+
+        # Process items in this page
+        for item in items_in_page:
+            # Do something with each item
+            pass
+
+    print(f'\nTotal pages processed: {page_count}')
+    print(f'Total items retrieved: {total_item_count}')
+    print(f'Note: max_item_count limits items PER PAGE, not total results\n')
 
 def replace_item(container, doc_id):
     print('\n1.6 Replace an Item\n')
@@ -593,6 +631,7 @@ def run_sample():
         read_items(container)
         query_items(container, 'SalesOrder1')
         query_items_with_continuation_token(container)
+        query_items_with_feed_ranges_and_pagination(container)
         query_items_single_partition_with_pagination(container)
         query_items_cross_partition_with_pagination(container)
         replace_item(container, 'SalesOrder1')
