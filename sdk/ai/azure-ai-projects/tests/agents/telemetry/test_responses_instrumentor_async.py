@@ -350,16 +350,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             first_response_id = None
             async for chunk in stream:
                 # Capture the response ID from ResponseCreatedEvent or ResponseCompletedEvent
-                if chunk.type == "response.created" and hasattr(chunk, 'response'):
+                if chunk.type == "response.created" and hasattr(chunk, "response"):
                     first_response_id = chunk.response.id
-                elif chunk.type == "response.completed" and hasattr(chunk, 'response'):
+                elif chunk.type == "response.completed" and hasattr(chunk, "response"):
                     if first_response_id is None:
                         first_response_id = chunk.response.id
-                
+
                 # Collect complete function calls from ResponseOutputItemDoneEvent
-                if chunk.type == "response.output_item.done" and hasattr(chunk, 'item'):
+                if chunk.type == "response.output_item.done" and hasattr(chunk, "item"):
                     item = chunk.item
-                    if hasattr(item, 'type') and item.type == "function_call":
+                    if hasattr(item, "type") and item.type == "function_call":
                         call_id = item.call_id
                         function_calls_dict[call_id] = item
 
@@ -546,16 +546,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             first_response_id = None
             async for chunk in stream:
                 # Capture the response ID from ResponseCreatedEvent or ResponseCompletedEvent
-                if chunk.type == "response.created" and hasattr(chunk, 'response'):
+                if chunk.type == "response.created" and hasattr(chunk, "response"):
                     first_response_id = chunk.response.id
-                elif chunk.type == "response.completed" and hasattr(chunk, 'response'):
+                elif chunk.type == "response.completed" and hasattr(chunk, "response"):
                     if first_response_id is None:
                         first_response_id = chunk.response.id
-                
+
                 # Collect complete function calls from ResponseOutputItemDoneEvent
-                if chunk.type == "response.output_item.done" and hasattr(chunk, 'item'):
+                if chunk.type == "response.output_item.done" and hasattr(chunk, "item"):
                     item = chunk.item
-                    if hasattr(item, 'type') and item.type == "function_call":
+                    if hasattr(item, "type") and item.type == "function_call":
                         call_id = item.call_id
                         function_calls_dict[call_id] = item
 
@@ -616,7 +616,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
             {
@@ -656,7 +656,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
             {
@@ -664,7 +664,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
         ]

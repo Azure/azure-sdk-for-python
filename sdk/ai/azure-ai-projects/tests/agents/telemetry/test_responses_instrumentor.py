@@ -297,7 +297,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
             {
@@ -305,7 +305,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
         ]
@@ -872,16 +872,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             first_response_id = None
             for chunk in stream:
                 # Capture the response ID from ResponseCreatedEvent or ResponseCompletedEvent
-                if chunk.type == "response.created" and hasattr(chunk, 'response'):
+                if chunk.type == "response.created" and hasattr(chunk, "response"):
                     first_response_id = chunk.response.id
-                elif chunk.type == "response.completed" and hasattr(chunk, 'response'):
+                elif chunk.type == "response.completed" and hasattr(chunk, "response"):
                     if first_response_id is None:
                         first_response_id = chunk.response.id
-                
+
                 # Collect complete function calls from ResponseOutputItemDoneEvent
-                if chunk.type == "response.output_item.done" and hasattr(chunk, 'item'):
+                if chunk.type == "response.output_item.done" and hasattr(chunk, "item"):
                     item = chunk.item
-                    if hasattr(item, 'type') and item.type == "function_call":
+                    if hasattr(item, "type") and item.type == "function_call":
                         call_id = item.call_id
                         function_calls_dict[call_id] = item
 
@@ -1118,7 +1118,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
             {
@@ -1158,7 +1158,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
             {
@@ -1166,7 +1166,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
         ]
@@ -1236,16 +1236,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             first_response_id = None
             for chunk in stream:
                 # Capture the response ID from ResponseCreatedEvent or ResponseCompletedEvent
-                if chunk.type == "response.created" and hasattr(chunk, 'response'):
+                if chunk.type == "response.created" and hasattr(chunk, "response"):
                     first_response_id = chunk.response.id
-                elif chunk.type == "response.completed" and hasattr(chunk, 'response'):
+                elif chunk.type == "response.completed" and hasattr(chunk, "response"):
                     if first_response_id is None:
                         first_response_id = chunk.response.id
-                
+
                 # Collect complete function calls from ResponseOutputItemDoneEvent
-                if chunk.type == "response.output_item.done" and hasattr(chunk, 'item'):
+                if chunk.type == "response.output_item.done" and hasattr(chunk, "item"):
                     item = chunk.item
-                    if hasattr(item, 'type') and item.type == "function_call":
+                    if hasattr(item, "type") and item.type == "function_call":
                         call_id = item.call_id
                         function_calls_dict[call_id] = item
 
@@ -1306,7 +1306,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
             {
@@ -1346,7 +1346,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
             {
@@ -1354,7 +1354,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{}',
+                    "gen_ai.event.content": "{}",
                 },
             },
         ]
@@ -1450,7 +1450,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        
+
         # Check list_conversation_items span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) == 1
@@ -1471,22 +1471,22 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # The order might vary, so we check that all expected event types are present
         events = list_span.events
         event_names = [event.name for event in events]
-        
+
         # Should have: user message, assistant message (with tool call), tool message (output), assistant message (final)
         assert "gen_ai.user.message" in event_names
         assert "gen_ai.assistant.message" in event_names
         assert "gen_ai.tool.message" in event_names
-        
+
         # Find and validate the tool message event
         tool_events = [e for e in events if e.name == "gen_ai.tool.message"]
         assert len(tool_events) >= 1
         tool_event = tool_events[0]
-        
+
         # Check that tool event has correct role attribute
         tool_event_attrs = dict(tool_event.attributes)
         assert "gen_ai.conversation.item.role" in tool_event_attrs
         assert tool_event_attrs["gen_ai.conversation.item.role"] == "tool"
-        
+
         # Check that content contains tool_call_outputs
         assert "gen_ai.event.content" in tool_event_attrs
         content = tool_event_attrs["gen_ai.event.content"]
@@ -1583,7 +1583,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        
+
         # Check list_conversation_items span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) == 1
@@ -1603,22 +1603,22 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         # Check events - should have event names but empty content
         events = list_span.events
         event_names = [event.name for event in events]
-        
+
         # Should have the event types present
         assert "gen_ai.user.message" in event_names
         assert "gen_ai.assistant.message" in event_names
         assert "gen_ai.tool.message" in event_names
-        
+
         # Find and validate the tool message event has correct role but no content details
         tool_events = [e for e in events if e.name == "gen_ai.tool.message"]
         assert len(tool_events) >= 1
         tool_event = tool_events[0]
-        
+
         # Check that tool event has correct role attribute
         tool_event_attrs = dict(tool_event.attributes)
         assert "gen_ai.conversation.item.role" in tool_event_attrs
         assert tool_event_attrs["gen_ai.conversation.item.role"] == "tool"
-        
+
         # Check that content is empty when content recording is disabled
         assert "gen_ai.event.content" in tool_event_attrs
         content = tool_event_attrs["gen_ai.event.content"]

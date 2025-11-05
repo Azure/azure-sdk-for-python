@@ -494,43 +494,43 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
     ) -> None:
         """Add tool message events (tool call outputs) to the span."""
         event_body: Dict[str, Any] = {}
-        
+
         if _trace_responses_content and tool_outputs:
             tool_call_outputs = []
             for output_item in tool_outputs:
                 try:
                     tool_output: Dict[str, Any] = {}
-                    
+
                     # Get the item type - handle both dict and object attributes
                     if isinstance(output_item, dict):
                         item_type = output_item.get("type")
                     else:
                         item_type = getattr(output_item, "type", None)
-                    
+
                     if not item_type:
                         continue  # Skip if no type
-                    
+
                     # Convert function_call_output to "function"
                     if item_type == "function_call_output":
                         tool_output["type"] = "function"
                     else:
                         tool_output["type"] = item_type
-                    
+
                     # Add call_id as "id" - handle both dict and object
                     if isinstance(output_item, dict):
                         call_id = output_item.get("call_id") or output_item.get("id")
                     else:
                         call_id = getattr(output_item, "call_id", None) or getattr(output_item, "id", None)
-                    
+
                     if call_id:
                         tool_output["id"] = call_id
-                    
+
                     # Add output field - parse JSON string if needed
                     if isinstance(output_item, dict):
                         output_value = output_item.get("output")
                     else:
                         output_value = getattr(output_item, "output", None)
-                    
+
                     if output_value is not None:
                         # Try to parse JSON string into object
                         if isinstance(output_value, str):
@@ -541,26 +541,41 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 tool_output["output"] = output_value
                         else:
                             tool_output["output"] = output_value
-                    
+
                     tool_call_outputs.append(tool_output)
                 except Exception:  # pylint: disable=broad-exception-caught
                     # Skip items that can't be processed
                     logger.debug("Failed to process tool output item: %s", output_item, exc_info=True)
                     continue
-            
+
             if tool_call_outputs:
                 event_body["tool_call_outputs"] = tool_call_outputs
-        
+
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
             message_role="tool",
         )
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-        
+
         # Use "tool" for the event name: gen_ai.tool.message
         span.span_instance.add_event(name="gen_ai.tool.message", attributes=attributes)
 
-    def _add_tool_call_events(
+    def _emit_tool_call_event(
+        self,
+        span: "AbstractSpan",
+        tool_call: Dict[str, Any],
+        conversation_id: Optional[str] = None,
+    ) -> None:
+        """Helper to emit a single tool call event."""
+        event_body: Dict[str, Any] = {"tool_calls": [tool_call]}
+        attributes = self._create_event_attributes(
+            conversation_id=conversation_id,
+            message_role="assistant",
+        )
+        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+
+    def _add_tool_call_events(  # pylint: disable=too-many-branches
         self,
         span: "AbstractSpan",
         response: Any,
@@ -581,9 +596,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if not item_type:
                     continue
 
+                tool_call: Dict[str, Any]  # Declare once for all branches
+
                 # Handle function_call type
                 if item_type == "function_call":
-                    tool_call: Dict[str, Any] = {
+                    tool_call = {
                         "type": "function",
                     }
 
@@ -601,55 +618,37 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if function_details:
                             tool_call["function"] = function_details
 
-                    event_body: Dict[str, Any] = {
-                        "tool_calls": [tool_call]
-                    }
-
-                    attributes = self._create_event_attributes(
-                        conversation_id=conversation_id,
-                        message_role="assistant",
-                    )
-                    attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                    span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle file_search_call type
                 elif item_type == "file_search_call":
-                        tool_call: Dict[str, Any] = {
-                            "type": "file_search",
-                        }
+                    tool_call = {
+                        "type": "file_search",
+                    }
 
-                        if hasattr(output_item, "id"):
-                            tool_call["id"] = output_item.id
+                    if hasattr(output_item, "id"):
+                        tool_call["id"] = output_item.id
 
-                        # Only include search details if content recording is enabled
-                        if _trace_responses_content:
-                            # queries and results are directly on the item
-                            if hasattr(output_item, "queries") and output_item.queries:
-                                tool_call["queries"] = output_item.queries
-                            if hasattr(output_item, "results") and output_item.results:
-                                tool_call["results"] = []
-                                for result in output_item.results:
-                                    result_data = {
-                                        "file_id": getattr(result, "file_id", None),
-                                        "filename": getattr(result, "filename", None),
-                                        "score": getattr(result, "score", None),
-                                    }
-                                    tool_call["results"].append(result_data)
+                    # Only include search details if content recording is enabled
+                    if _trace_responses_content:
+                        # queries and results are directly on the item
+                        if hasattr(output_item, "queries") and output_item.queries:
+                            tool_call["queries"] = output_item.queries
+                        if hasattr(output_item, "results") and output_item.results:
+                            tool_call["results"] = []
+                            for result in output_item.results:
+                                result_data = {
+                                    "file_id": getattr(result, "file_id", None),
+                                    "filename": getattr(result, "filename", None),
+                                    "score": getattr(result, "score", None),
+                                }
+                                tool_call["results"].append(result_data)
 
-                        event_body: Dict[str, Any] = {
-                            "tool_calls": [tool_call]
-                        }
-
-                        attributes = self._create_event_attributes(
-                            conversation_id=conversation_id,
-                            message_role="assistant",
-                        )
-                        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle code_interpreter_call type
                 elif item_type == "code_interpreter_call":
-                    tool_call: Dict[str, Any] = {
+                    tool_call = {
                         "type": "code_interpreter",
                     }
 
@@ -674,20 +673,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                     output_data["image"] = {"file_id": getattr(output.image, "file_id", None)}
                                 tool_call["outputs"].append(output_data)
 
-                    event_body: Dict[str, Any] = {
-                        "tool_calls": [tool_call]
-                    }
-
-                    attributes = self._create_event_attributes(
-                        conversation_id=conversation_id,
-                        message_role="assistant",
-                    )
-                    attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                    span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle web_search_call type
                 elif item_type == "web_search_call":
-                    tool_call: Dict[str, Any] = {
+                    tool_call = {
                         "type": "web_search",
                     }
 
@@ -714,20 +704,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                     }
                                     tool_call["action"]["results"].append(result_data)
 
-                    event_body: Dict[str, Any] = {
-                        "tool_calls": [tool_call]
-                    }
-
-                    attributes = self._create_event_attributes(
-                        conversation_id=conversation_id,
-                        message_role="assistant",
-                    )
-                    attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                    span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle mcp_call type (Model Context Protocol)
                 elif item_type == "mcp_call":
-                    tool_call: Dict[str, Any] = {
+                    tool_call = {
                         "type": "mcp",
                     }
 
@@ -743,20 +724,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if hasattr(output_item, "server_label"):
                             tool_call["server_label"] = output_item.server_label
 
-                    event_body: Dict[str, Any] = {
-                        "tool_calls": [tool_call]
-                    }
-
-                    attributes = self._create_event_attributes(
-                        conversation_id=conversation_id,
-                        message_role="assistant",
-                    )
-                    attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                    span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle computer_call type (for computer use)
                 elif item_type == "computer_call":
-                    tool_call: Dict[str, Any] = {
+                    tool_call = {
                         "type": "computer",
                     }
 
@@ -776,21 +748,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 if hasattr(output_item.action, attr):
                                     tool_call["action"][attr] = getattr(output_item.action, attr)
 
-                    event_body: Dict[str, Any] = {
-                        "tool_calls": [tool_call]
-                    }
-
-                    attributes = self._create_event_attributes(
-                        conversation_id=conversation_id,
-                        message_role="assistant",
-                    )
-                    attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                    span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
 
                 # Handle unknown/future tool call types with best effort
                 elif item_type and "_call" in item_type:
                     try:
-                        tool_call: Dict[str, Any] = {
+                        tool_call = {
                             "type": item_type,
                         }
 
@@ -817,16 +780,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                         if value is not None:
                                             tool_call[field] = value
 
-                        event_body: Dict[str, Any] = {
-                            "tool_calls": [tool_call]
-                        }
-
-                        attributes = self._create_event_attributes(
-                            conversation_id=conversation_id,
-                            message_role="assistant",
-                        )
-                        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                        span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
+                        self._emit_tool_call_event(span, tool_call, conversation_id)
 
                     except Exception as e:
                         # Log but don't crash if we can't handle an unknown tool type
@@ -880,10 +834,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Process input - check if it contains tool outputs
             tool_outputs = []
             has_tool_outputs = False
-            
+
             # Use input_raw (or input_text if it's a list) to check for tool outputs
             input_to_check = input_raw if input_raw is not None else input_text
-            
+
             # Check if input is a list (structured input with potential tool outputs)
             if isinstance(input_to_check, list):
                 for item in input_to_check:
@@ -893,11 +847,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         item_type = getattr(item, "type", None)
                     elif isinstance(item, dict):
                         item_type = item.get("type")
-                    
+
                     if item_type and ("output" in item_type or item_type == "function_call_output"):
                         has_tool_outputs = True
                         tool_outputs.append(item)
-            
+
             # Add appropriate message events based on input type
             if has_tool_outputs:
                 # Add tool message event for tool outputs
@@ -1464,28 +1418,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.service_tier = None
                 self.input_tokens = 0
                 self.output_tokens = 0
-                
+
                 # Track all output items from streaming events (tool calls, text, etc.)
                 self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id or id
                 self.has_output_items = False
-
-            def __iter__(self):
-                return self
-
-            def __next__(self):
-                if not self.span_ended:
-                    try:
-                        chunk = next(self.stream_iter)
-                        self.process_chunk(chunk)
-                        return chunk
-                    except StopIteration:
-                        self.cleanup()
-                        raise
-                    except Exception:
-                        self.cleanup()
-                        raise
-                else:
-                    raise StopIteration
 
             def append_output_content(self, content):
                 """Append content to accumulated output list."""
@@ -1505,33 +1441,33 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 """Process chunk to accumulate data and update metadata."""
                 # Check for output item events in streaming
                 chunk_type = getattr(chunk, "type", None)
-                
+
                 # Collect all complete output items from ResponseOutputItemDoneEvent
                 # This includes function_call, file_search_tool_call, code_interpreter_tool_call,
                 # web_search, mcp_call, computer_tool_call, custom_tool_call, and any future types
-                if chunk_type == "response.output_item.done" and hasattr(chunk, 'item'):
+                if chunk_type == "response.output_item.done" and hasattr(chunk, "item"):
                     item = chunk.item
-                    item_type = getattr(item, 'type', None)
-                    
+                    item_type = getattr(item, "type", None)
+
                     # Collect any output item (not just function_call)
                     if item_type:
                         # Use call_id or id as the key
-                        item_id = getattr(item, 'call_id', None) or getattr(item, 'id', None)
+                        item_id = getattr(item, "call_id", None) or getattr(item, "id", None)
                         if item_id:
                             self.output_items[item_id] = item
                             self.has_output_items = True
-                
+
                 # Capture response ID from ResponseCreatedEvent or ResponseCompletedEvent
-                if chunk_type == "response.created" and hasattr(chunk, 'response'):
+                if chunk_type == "response.created" and hasattr(chunk, "response"):
                     if not self.response_id:
                         self.response_id = chunk.response.id
-                        self.response_model = getattr(chunk.response, 'model', None)
-                elif chunk_type == "response.completed" and hasattr(chunk, 'response'):
+                        self.response_model = getattr(chunk.response, "model", None)
+                elif chunk_type == "response.completed" and hasattr(chunk, "response"):
                     if not self.response_id:
                         self.response_id = chunk.response.id
                     if not self.response_model:
-                        self.response_model = getattr(chunk.response, 'model', None)
-                
+                        self.response_model = getattr(chunk.response, "model", None)
+
                 # Only append TEXT content from delta events (not function call arguments or other deltas)
                 # Text deltas can come as:
                 # 1. response.text.delta - has delta as string
@@ -1576,13 +1512,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if self.has_output_items:
                             # Create mock response with output items for event generation
                             # The existing _add_tool_call_events method handles all tool types
-                            mock_response = type('Response', (), {'output': list(self.output_items.values())})()
+                            mock_response = type("Response", (), {"output": list(self.output_items.values())})()
                             self.instrumentor._add_tool_call_events(
                                 self.span,
                                 mock_response,
                                 self.conversation_id,
                             )
-                        
+
                         # Only add assistant message event if there's actual text content (not empty/whitespace)
                         if complete_content and complete_content.strip():
                             self.instrumentor._add_message_event(
@@ -1801,28 +1737,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 self.service_tier = None
                 self.input_tokens = 0
                 self.output_tokens = 0
-                
+
                 # Track all output items from streaming events (tool calls, text, etc.)
                 self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id or id
                 self.has_output_items = False
-
-            def __aiter__(self):
-                return self
-
-            async def __anext__(self):
-                if not self.span_ended:
-                    try:
-                        chunk = await self.stream_async_iter.__anext__()
-                        self.process_chunk(chunk)
-                        return chunk
-                    except StopAsyncIteration:
-                        self.cleanup()
-                        raise
-                    except Exception:
-                        self.cleanup()
-                        raise
-                else:
-                    raise StopAsyncIteration
 
             def append_output_content(self, content):
                 """Append content to accumulated output list."""
@@ -1842,33 +1760,33 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 """Process chunk to accumulate data and update metadata."""
                 # Check for output item events in streaming
                 chunk_type = getattr(chunk, "type", None)
-                
+
                 # Collect all complete output items from ResponseOutputItemDoneEvent
                 # This includes function_call, file_search_tool_call, code_interpreter_tool_call,
                 # web_search, mcp_call, computer_tool_call, custom_tool_call, and any future types
-                if chunk_type == "response.output_item.done" and hasattr(chunk, 'item'):
+                if chunk_type == "response.output_item.done" and hasattr(chunk, "item"):
                     item = chunk.item
-                    item_type = getattr(item, 'type', None)
-                    
+                    item_type = getattr(item, "type", None)
+
                     # Collect any output item (not just function_call)
                     if item_type:
                         # Use call_id or id as the key
-                        item_id = getattr(item, 'call_id', None) or getattr(item, 'id', None)
+                        item_id = getattr(item, "call_id", None) or getattr(item, "id", None)
                         if item_id:
                             self.output_items[item_id] = item
                             self.has_output_items = True
-                
+
                 # Capture response ID from ResponseCreatedEvent or ResponseCompletedEvent
-                if chunk_type == "response.created" and hasattr(chunk, 'response'):
+                if chunk_type == "response.created" and hasattr(chunk, "response"):
                     if not self.response_id:
                         self.response_id = chunk.response.id
-                        self.response_model = getattr(chunk.response, 'model', None)
-                elif chunk_type == "response.completed" and hasattr(chunk, 'response'):
+                        self.response_model = getattr(chunk.response, "model", None)
+                elif chunk_type == "response.completed" and hasattr(chunk, "response"):
                     if not self.response_id:
                         self.response_id = chunk.response.id
                     if not self.response_model:
-                        self.response_model = getattr(chunk.response, 'model', None)
-                
+                        self.response_model = getattr(chunk.response, "model", None)
+
                 # Only append TEXT content from delta events (not function call arguments or other deltas)
                 # Text deltas can come as:
                 # 1. response.text.delta - has delta as string
@@ -1913,13 +1831,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         if self.has_output_items:
                             # Create mock response with output items for event generation
                             # The existing _add_tool_call_events method handles all tool types
-                            mock_response = type('Response', (), {'output': list(self.output_items.values())})()
+                            mock_response = type("Response", (), {"output": list(self.output_items.values())})()
                             self.instrumentor._add_tool_call_events(
                                 self.span,
                                 mock_response,
                                 self.conversation_id,
                             )
-                        
+
                         # Only add assistant message event if there's actual text content (not empty/whitespace)
                         if complete_content and complete_content.strip():
                             self.instrumentor._add_message_event(
@@ -2317,7 +2235,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         return span
 
-    def _add_conversation_item_event(
+    def _add_conversation_item_event(  # pylint: disable=too-many-branches
         self,
         span: "AbstractSpan",
         item: Any,
@@ -2342,13 +2260,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 tool_output: Dict[str, Any] = {
                     "type": "function",
                 }
-                
+
                 # Add call_id as "id"
                 if hasattr(item, "call_id"):
                     tool_output["id"] = item.call_id
                 elif hasattr(item, "id"):
                     tool_output["id"] = item.id
-                
+
                 # Add output field - parse JSON string if needed
                 if hasattr(item, "output"):
                     output_value = item.output
@@ -2359,11 +2277,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             tool_output["output"] = output_value
                     else:
                         tool_output["output"] = output_value
-                
+
                 event_body["tool_call_outputs"] = [tool_output]
-            
+
             event_name = "gen_ai.tool.message"
-            
+
         elif item_type == "function_call":
             # Tool call - use tool_calls format
             role = "assistant"  # Override role for function calls
@@ -2371,13 +2289,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 tool_call: Dict[str, Any] = {
                     "type": "function",
                 }
-                
+
                 # Add call_id as "id"
                 if hasattr(item, "call_id"):
                     tool_call["id"] = item.call_id
                 elif hasattr(item, "id"):
                     tool_call["id"] = item.id
-                
+
                 # Add function details
                 if hasattr(item, "name"):
                     function_details: Dict[str, Any] = {
@@ -2393,13 +2311,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                 function_details["arguments"] = args_value
                         else:
                             function_details["arguments"] = args_value
-                    
+
                     tool_call["function"] = function_details
-                
+
                 event_body["tool_calls"] = [tool_call]
-            
+
             event_name = "gen_ai.assistant.message"
-            
+
         elif item_type == "message":
             # Regular message - use text format
             if _trace_responses_content and hasattr(item, "content") and item.content:
@@ -2417,7 +2335,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 if content_list:
                     event_body["text"] = " ".join(content_list)
-            
+
             # Determine event name based on role
             if role == "assistant":
                 event_name = "gen_ai.assistant.message"
