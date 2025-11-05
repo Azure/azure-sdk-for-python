@@ -50,14 +50,22 @@ steps:
     # Parse installation output to find tool path
     $toolPath = $null
     foreach ($line in $installLogs) {
-      if ($line -match "Package .+ is installed at (.+)") {
-        $toolPath = $matches[1]
+      Write-Host "Debug: $line"
+      if ($line -match "Package \w+ is installed at (.+)") {
+        $toolPath = $matches[1].Trim()
+        Write-Host "Found tool path: $toolPath"
         break
       }
     }
     
-    if (-not $toolPath -or -not (Test-Path $toolPath)) {
-      throw "azsdk tool installation failed or tool not found"
+    if (-not $toolPath) {
+      Write-Host "Installation logs:"
+      $installLogs | ForEach-Object { Write-Host "  $_" }
+      throw "Could not parse tool installation path from output"
+    }
+    
+    if (-not (Test-Path $toolPath)) {
+      throw "azsdk tool not found at parsed path: $toolPath"
     }
     
     Write-Host "Using azsdk tool at: $toolPath"
