@@ -2,4 +2,4 @@
 ../../identity/azure-identity
 ../azure-ai-agentserver-core
 python-dotenv
-pywin32
+pywin32; sys_platform == 'win32'
