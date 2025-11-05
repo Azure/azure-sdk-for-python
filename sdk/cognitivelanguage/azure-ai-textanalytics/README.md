@@ -258,6 +258,8 @@ The following section provides several code snippets covering some of the most c
 - [Recognize Entities][recognize_entities_sample]
 - [Recognize Linked Entities][recognize_linked_entities_sample]
 - [Recognize PII Entities][recognize_pii_entities_sample]
+- [Recognize PII Entities with multiple redaction policies][recognize_pii_entities_with_redaction_policies_sample]
+- [Recognize PII Entities with confidence score][recognize_pii_entities_with_confidence_score_sample]
 - [Extract Key Phrases][extract_key_phrases_sample]
 - [Detect Language][detect_language_sample]
 - [Healthcare Entities Analysis][analyze_healthcare_entities_sample]
@@ -1032,6 +1034,8 @@ Common scenarios
 - Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 - Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
 - Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample] ([async version][recognize_pii_entities_sample_async])
+- Recognize personally identifiable information(Multiple redaction policies): [sample_recognize_pii_entities_with_redaction_policies.py][recognize_pii_entities_with_redaction_policies_sample] ([async version][recognize_pii_entities_with_redaction_policies_sample_async])
+- Recognize personally identifiable information(Confidence score): [sample_recognize_pii_entities_with_confidence_score.py][recognize_pii_entities_with_confidence_score_sample] ([async version][recognize_pii_entities_with_confidence_score_sample_async])
 - Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 - Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 - Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
@@ -1128,6 +1132,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
 [recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
 [recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
+[recognize_pii_entities_with_redaction_policies_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_redaction_policies.py
+[recognize_pii_entities_with_redaction_policies_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_redaction_policies_async.py
+[recognize_pii_entities_with_confidence_score_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_confidence_score.py
+[recognize_pii_entities_with_confidence_score_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_confidence_score_async.py
 [analyze_healthcare_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities.py
 [analyze_healthcare_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_async.py
 [analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_actions.py
