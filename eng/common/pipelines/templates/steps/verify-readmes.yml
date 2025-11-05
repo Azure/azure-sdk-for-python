@@ -45,30 +45,44 @@ steps:
       $repoRoot = "$(Build.SourcesDirectory)"
     }
     $installer = Join-Path $repoRoot "eng/common/mcp/azure-sdk-mcp.ps1"
-    $installOutput = & $installer 2>&1 | Tee-Object -Variable installLogs
     
-    # Parse installation output to find tool path
-    $toolPath = $null
-    foreach ($line in $installLogs) {
-      Write-Host "Debug: $line"
-      if ($line -match "Package \w+ is installed at (.+)") {
-        $toolPath = $matches[1].Trim()
-        Write-Host "Found tool path: $toolPath"
-        break
+    # Capture output to temp file to ensure we get all output
+    $tempFile = [System.IO.Path]::GetTempFileName()
+    try {
+      & $installer *>&1 | Tee-Object -FilePath $tempFile | Write-Host
+      $installOutput = Get-Content $tempFile
+      
+      # Parse installation output to find tool path
+      $toolPath = $null
+      foreach ($line in $installOutput) {
+        Write-Host "Testing line: '$line'"
+        # Try multiple regex patterns to be more flexible
+        if ($line -match "Package .+ is installed at (.+)$" -or 
+            $line -match "is installed at (.+)$" -or
+            $line -match "installed at (.+)$") {
+          $toolPath = $matches[1].Trim()
+          Write-Host "Found tool path: $toolPath"
+          break
+        }
+      }
+      
+      if (-not $toolPath) {
+        Write-Host "Could not parse tool path from installation output:"
+        $installOutput | ForEach-Object { Write-Host "  $_" }
+        throw "Could not parse tool installation path from output"
+      }
+      
+      if (-not (Test-Path $toolPath)) {
+        throw "azsdk tool not found at parsed path: $toolPath"
+      }
+      
+      Write-Host "Using azsdk tool at: $toolPath"
+    }
+    finally {
+      if (Test-Path $tempFile) {
+        Remove-Item $tempFile
       }
     }
-    
-    if (-not $toolPath) {
-      Write-Host "Installation logs:"
-      $installLogs | ForEach-Object { Write-Host "  $_" }
-      throw "Could not parse tool installation path from output"
-    }
-    
-    if (-not (Test-Path $toolPath)) {
-      throw "azsdk tool not found at parsed path: $toolPath"
-    }
-    
-    Write-Host "Using azsdk tool at: $toolPath"
     
     # Run readme validation on discovered paths
     $scanPathsValue = '$(ScanPathArgument)'
