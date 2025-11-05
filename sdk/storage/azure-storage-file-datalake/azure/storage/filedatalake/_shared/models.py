@@ -89,6 +89,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY_ID_MISMATCH = "CopyIdMismatch"
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
+    INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierSnapshotNotAllowed"
+    #: Deprecated: Please use INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED instead.
     INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
     #: Deprecated: Please use INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED instead.
     INCREMENTAL_COPY_OF_ERALIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
