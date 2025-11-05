@@ -80,13 +80,11 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger.setLevel(logging.DEBUG)
             azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
             # Exclude detailed logs for network calls associated with getting Entra ID token.
-            identity_logger = logging.getLogger("azure.identity")
-            identity_logger.setLevel(logging.ERROR)
+            logging.getLogger("azure.identity").setLevel(logging.ERROR)
             # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
             # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
             # (which are implemented as a separate logging policy)
-            logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-            logger.setLevel(logging.ERROR)
+            logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 
             kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
