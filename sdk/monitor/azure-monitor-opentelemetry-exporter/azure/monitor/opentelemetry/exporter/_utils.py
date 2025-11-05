@@ -447,9 +447,12 @@ def _is_less_than_minimum_severity_level(record: LogRecord) -> bool:
     if record.severity_number is not None and record.severity_number.value != SeverityNumber.UNSPECIFIED:
         min_severity_level_env = environ.get(_MINIMUM_SEVERITY_LEVEL)
         if min_severity_level_env is not None and '.' in min_severity_level_env:
-            label, severity_name = min_severity_level_env.split('.')
-            if label.lower() == "severitynumber":
-                min_severity_level = SeverityNumber[severity_name.upper()]
+            parts = min_severity_level_env.split('.', 1)
+            if len(parts) == 2 and parts[0].lower() == "severitynumber":
+                try:
+                    min_severity_level = SeverityNumber[parts[1].upper()]
+                except (KeyError, ValueError):
+                    min_severity_level = SeverityNumber.UNSPECIFIED
             else:
                 min_severity_level = SeverityNumber.UNSPECIFIED
         else:
