@@ -5,7 +5,6 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import time_str
 from typing import List, Union, Optional, Any
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential, TokenCredential
 
@@ -62,7 +61,6 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
         api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        self.newparameterthatshouldbewaytoolongandpylintwillhoepfullygetmasdatusforthisbutwewillsee = endpoint
         self._namespace = namespace_topic
         self._credential = credential
 
