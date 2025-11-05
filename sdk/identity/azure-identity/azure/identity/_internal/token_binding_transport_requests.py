@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-Transport class for WorkloadIdentityCredential with token proxy support.
+Requests transport class for WorkloadIdentityCredential with token proxy support.
 """
 import ssl
 from typing import Any, Optional
@@ -39,14 +39,13 @@ class CustomRequestsTransport(TokenBindingTransportMixin, RequestsTransport):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.session: Optional[Session] = None
         super().__init__(*args, **kwargs)
-        self._create_session()
+        self._update_adaptor()
 
-    def _create_session(self) -> None:
-        """Create a new requests session with custom SSL configuration."""
-        if self.session:
-            self.session.close()
+    def _update_adaptor(self) -> None:
+        """Update the session's adapter with the current SNI and CA data."""
+        if not self.session:
+            self.session = Session()
 
-        self.session = Session()
         adapter = SNIAdapter(self._sni, self._ca_data)
         self.session.mount("https://", adapter)
 
@@ -58,5 +57,5 @@ class CustomRequestsTransport(TokenBindingTransportMixin, RequestsTransport):
             self._load_ca_file_to_data()
             # If ca_data was updated, recreate SSL context with the new data
             if self._ca_data:
-                self._create_session()
+                self._update_adaptor()
         return super().send(request, **kwargs)

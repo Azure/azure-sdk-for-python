@@ -207,6 +207,58 @@ class TestWorkloadIdentityCredentialTokenProxy:
                     use_token_proxy=True,
                 )
 
+    def test_use_token_proxy_missing_endpoint_with_custom_env_vars_raises_error(self):
+        """Test that use_token_proxy=True without proxy endpoint but with other custom env vars raises ValueError."""
+        tenant_id = "tenant-id"
+        client_id = "client-id"
+        token_file_path = "foo-path"
+        sni_hostname = "sni.example.com"
+        ca_file_path = "/path/to/ca.pem"
+        ca_data = "-----BEGIN CERTIFICATE-----\nTest CA data\n-----END CERTIFICATE-----"
+
+        # Ensure proxy endpoint is not set
+        if "AZURE_KUBERNETES_TOKEN_PROXY" in os.environ:
+            del os.environ["AZURE_KUBERNETES_TOKEN_PROXY"]
+
+        # Test with SNI set but no proxy endpoint
+        env_vars_sni = {
+            "AZURE_KUBERNETES_SNI_NAME": sni_hostname,
+        }
+        with patch.dict(os.environ, env_vars_sni, clear=False):
+            with pytest.raises(ValueError):
+                WorkloadIdentityCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    token_file_path=token_file_path,
+                    use_token_proxy=True,
+                )
+
+        # Test with CA file set but no proxy endpoint
+        env_vars_ca_file = {
+            "AZURE_KUBERNETES_CA_FILE": ca_file_path,
+        }
+        with patch.dict(os.environ, env_vars_ca_file, clear=False):
+            with pytest.raises(ValueError):
+                WorkloadIdentityCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    token_file_path=token_file_path,
+                    use_token_proxy=True,
+                )
+
+        # Test with CA data set but no proxy endpoint
+        env_vars_ca_data = {
+            "AZURE_KUBERNETES_CA_DATA": ca_data,
+        }
+        with patch.dict(os.environ, env_vars_ca_data, clear=False):
+            with pytest.raises(ValueError):
+                WorkloadIdentityCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    token_file_path=token_file_path,
+                    use_token_proxy=True,
+                )
+
     @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
     def test_use_token_proxy_get_token_success(self, get_token_method):
         """Test successful token acquisition when using token proxy."""
@@ -413,12 +465,11 @@ class TestCustomRequestsTransport:
                 # Mock the CA file change detection
                 with patch.object(transport, "_has_ca_file_changed", return_value=True):
                     with patch.object(transport, "_load_ca_file_to_data") as mock_load_ca:
-                        with patch.object(transport, "_create_session") as mock_create_session:
+                        with patch.object(transport, "_update_adaptor") as mock_update_adaptor:
                             transport.send(mock_request)
 
                             mock_load_ca.assert_called_once()
-                            # _create_session should be called if _ca_data is truthy after loading
-                            # This depends on the implementation details
+                            mock_update_adaptor.assert_called_once()
 
                 assert mock_parent_send.call_count == 2
 
@@ -607,12 +658,20 @@ class TestCustomRequestsTransportWithLocalServer:
             assert transport is not None
 
             request = HttpRequest("GET", f"{server.base_url}/health")
-
             response = transport.send(request)
 
             assert response.status_code == 200
             data = response.json()
             assert data["status"] == "healthy"
+
+            # Check an invalid SNI hostname
+            transport = _get_transport(
+                sni="unmatched.sni.hostname", token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None
+            )
+            assert transport is not None
+            request = HttpRequest("GET", f"{server.base_url}/health")
+            with pytest.raises(ServiceRequestError):
+                transport.send(request)
 
     def test_ca_file_change_detection(self):
         """Test CA file change detection with real certificates."""

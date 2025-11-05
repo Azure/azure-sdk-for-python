@@ -15,6 +15,8 @@ from azure.core.rest import HttpRequest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.identity.aio import WorkloadIdentityCredential
 from azure.identity.aio._credentials.workload_identity import _get_transport
+from azure.identity.aio._internal.token_binding_transport_aiohttp import CustomAioHttpTransport
+from azure.identity.aio._internal.token_binding_transport_asyncio import CustomAsyncioRequestsTransport
 
 from helpers import mock_response, build_aad_response, GET_TOKEN_METHODS
 from proxy_server import TokenProxyTestServer
@@ -209,6 +211,58 @@ class TestWorkloadIdentityCredentialTokenProxyAsync:
                     use_token_proxy=True,
                 )
 
+    def test_use_token_proxy_missing_endpoint_with_custom_env_vars_raises_error(self):
+        """Test that use_token_proxy=True without proxy endpoint but with other custom env vars raises ValueError."""
+        tenant_id = "tenant-id"
+        client_id = "client-id"
+        token_file_path = "foo-path"
+        sni_hostname = "sni.example.com"
+        ca_file_path = "/path/to/ca.pem"
+        ca_data = "-----BEGIN CERTIFICATE-----\nTest CA data\n-----END CERTIFICATE-----"
+
+        # Ensure proxy endpoint is not set
+        if "AZURE_KUBERNETES_TOKEN_PROXY" in os.environ:
+            del os.environ["AZURE_KUBERNETES_TOKEN_PROXY"]
+
+        # Test with SNI set but no proxy endpoint
+        env_vars_sni = {
+            "AZURE_KUBERNETES_SNI_NAME": sni_hostname,
+        }
+        with patch.dict(os.environ, env_vars_sni, clear=False):
+            with pytest.raises(ValueError):
+                WorkloadIdentityCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    token_file_path=token_file_path,
+                    use_token_proxy=True,
+                )
+
+        # Test with CA file set but no proxy endpoint
+        env_vars_ca_file = {
+            "AZURE_KUBERNETES_CA_FILE": ca_file_path,
+        }
+        with patch.dict(os.environ, env_vars_ca_file, clear=False):
+            with pytest.raises(ValueError):
+                WorkloadIdentityCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    token_file_path=token_file_path,
+                    use_token_proxy=True,
+                )
+
+        # Test with CA data set but no proxy endpoint
+        env_vars_ca_data = {
+            "AZURE_KUBERNETES_CA_DATA": ca_data,
+        }
+        with patch.dict(os.environ, env_vars_ca_data, clear=False):
+            with pytest.raises(ValueError):
+                WorkloadIdentityCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    token_file_path=token_file_path,
+                    use_token_proxy=True,
+                )
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
     async def test_use_token_proxy_get_token_success(self, get_token_method):
@@ -282,7 +336,7 @@ class TestCustomAioHttpTransport:
             ca_data=None,
         )
 
-        assert transport is not None
+        assert type(transport) is CustomAioHttpTransport
         assert hasattr(transport, "_sni")
         assert hasattr(transport, "_proxy_endpoint")
         assert hasattr(transport, "_ca_file")
@@ -681,6 +735,14 @@ class TestCustomAioHttpTransportWithLocalServer:
             data = response.json()
             assert data["status"] == "healthy"
 
+            transport = _get_transport(
+                sni="unmatched.sni.hostname", token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None
+            )
+            assert transport is not None
+            request = HttpRequest("GET", f"{server.base_url}/health")
+            with pytest.raises(ServiceRequestError):
+                await transport.send(request)
+
     @pytest.mark.asyncio
     async def test_ca_file_change_detection(self):
         """Test CA file change detection with real certificates."""
@@ -835,3 +897,196 @@ class TestCustomAioHttpTransportWithLocalServer:
             for request_id, status_code, data in results:
                 assert status_code == 200
                 assert data["status"] == "healthy"
+
+
+class TestCustomAsyncioRequestsTransportFallback:
+    """Test cases for the custom AsyncioRequestsTransport used by WorkloadIdentityCredential."""
+
+    def test_get_transport_creates_workload_identity_asyncio_requests_transport(self, ca_data):
+        """Test that _get_transport creates WorkloadIdentityAsyncioRequestsTransport with correct parameters."""
+        sni = "test.sni.com"
+        proxy_endpoint = "https://proxy.example.com:8080"
+        ca_file = PEM_CERT_PATH
+
+        with patch.dict("sys.modules", {"azure.identity.aio._internal.token_binding_transport_aiohttp": None}):
+            transport = _get_transport(
+                sni=sni,
+                token_proxy_endpoint=proxy_endpoint,
+                ca_file=ca_file,
+                ca_data=None,
+            )
+
+            assert type(transport) is CustomAsyncioRequestsTransport
+            assert hasattr(transport, "_sni")
+            assert hasattr(transport, "_proxy_endpoint")
+            assert hasattr(transport, "_ca_file")
+            assert hasattr(transport, "_ca_data")
+            assert transport._sni == sni
+            assert transport._proxy_endpoint == proxy_endpoint
+            assert transport._ca_file == ca_file
+            assert transport._ca_data == ca_data
+
+    @pytest.mark.asyncio
+    async def test_basic_https_request(self):
+        """Test basic HTTPS request to test server."""
+        with TokenProxyTestServer(use_ssl=True) as server:
+            # Create transport with server's CA certificate
+            with patch.dict("sys.modules", {"azure.identity.aio._internal.token_binding_transport_aiohttp": None}):
+                transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None)
+                assert type(transport) is CustomAsyncioRequestsTransport
+                request = HttpRequest("GET", f"{server.base_url}/health")
+
+                response = await transport.send(request)
+
+                assert response.status_code == 200
+                data = response.json()
+                assert data["status"] == "healthy"
+                assert "timestamp" in data
+
+    @pytest.mark.asyncio
+    async def test_proxy_endpoint_comprehensive(self):
+        """Test comprehensive proxy endpoint functionality with various HTTP methods and scenarios."""
+        with TokenProxyTestServer(use_ssl=True) as server:
+            with patch.dict("sys.modules", {"azure.identity.aio._internal.token_binding_transport_aiohttp": None}):
+                transport = _get_transport(
+                    sni=None, token_proxy_endpoint=server.base_url, ca_file=server.ca_file, ca_data=None
+                )
+                assert type(transport) is CustomAsyncioRequestsTransport
+
+                # Test 1: POST request with JSON body through proxy
+                post_data = {"grant_type": "client_credentials", "scope": "https://graph.microsoft.com/.default"}
+                post_request = HttpRequest(
+                    "POST",
+                    "https://login.microsoftonline.com/tenant/oauth2/v2.0/token2",
+                    headers={"Content-Type": "application/json"},
+                    json=post_data,
+                )
+
+                post_response = await transport.send(post_request)
+                assert post_response.status_code == 200
+                post_data_response = post_response.json()
+                assert post_data_response["method"] == "POST"
+                assert post_data_response["proxied_path"] == "/tenant/oauth2/v2.0/token2"
+
+                # Test 2: PUT request through proxy
+                put_request = HttpRequest(
+                    "PUT",
+                    "https://graph.microsoft.com/v1.0/me/profile",
+                    headers={"Content-Type": "application/json"},
+                    json={"displayName": "Test User"},
+                )
+
+                put_response = await transport.send(put_request)
+                assert put_response.status_code == 200
+                put_data_response = put_response.json()
+                assert put_data_response["method"] == "PUT"
+                assert put_data_response["proxied_path"] == "/v1.0/me/profile"
+
+                # Test 3: DELETE request through proxy
+                delete_request = HttpRequest("DELETE", "https://graph.microsoft.com/v1.0/applications/app-id")
+
+                delete_response = await transport.send(delete_request)
+                assert delete_response.status_code == 200
+                delete_data_response = delete_response.json()
+                assert delete_data_response["method"] == "DELETE"
+                assert delete_data_response["proxied_path"] == "/v1.0/applications/app-id"
+
+                # Test 4: Complex URL with multiple path segments and query parameters
+                complex_url = "https://management.azure.com/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/account?api-version=2021-04-01&expand=properties"
+                complex_request = HttpRequest("GET", complex_url)
+
+                complex_response = await transport.send(complex_request)
+                assert complex_response.status_code == 200
+                complex_data_response = complex_response.json()
+                assert complex_data_response["method"] == "GET"
+                expected_path = "/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/account?api-version=2021-04-01&expand=properties"
+                assert complex_data_response["proxied_path"] == expected_path
+
+                # Test 5: Request with custom headers through proxy
+                headers_request = HttpRequest(
+                    "GET",
+                    "https://vault.azure.net/secrets/test-secret?api-version=7.3",
+                    headers={
+                        "Authorization": "Bearer test-token",
+                        "X-Custom-Header": "proxy-test-value",
+                        "User-Agent": "Azure-SDK-For-Python",
+                    },
+                )
+
+                headers_response = await transport.send(headers_request)
+                assert headers_response.status_code == 200
+                headers_data_response = headers_response.json()
+                assert headers_data_response["method"] == "GET"
+                assert headers_data_response["proxied_path"] == "/secrets/test-secret?api-version=7.3"
+
+                # Verify headers were forwarded through proxy
+                received_headers = headers_data_response["headers_received"]
+                assert "Authorization" in received_headers
+                assert "X-Custom-Header" in received_headers
+                assert received_headers["Authorization"] == "Bearer test-token"
+                assert received_headers["X-Custom-Header"] == "proxy-test-value"
+
+    @pytest.mark.asyncio
+    async def test_sni_with_custom_hostname(self):
+        """Test SNI (Server Name Indication) with custom hostname."""
+        with TokenProxyTestServer(use_ssl=True) as server:
+            with patch.dict("sys.modules", {"azure.identity.aio._internal.token_binding_transport_aiohttp": None}):
+                # Use SNI with a different hostname than the server
+                transport = _get_transport(
+                    sni="1234.ests.aks", token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None
+                )
+                assert type(transport) is CustomAsyncioRequestsTransport
+
+                request = HttpRequest("GET", f"{server.base_url}/health")
+                response = await transport.send(request)
+
+                assert response.status_code == 200
+                data = response.json()
+                assert data["status"] == "healthy"
+
+                # Check an invalid SNI hostname
+                transport = _get_transport(
+                    sni="unmatched.sni.hostname", token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None
+                )
+                assert transport is not None
+                request = HttpRequest("GET", f"{server.base_url}/health")
+                with pytest.raises(ServiceRequestError):
+                    await transport.send(request)
+
+    @pytest.mark.asyncio
+    async def test_ca_file_change_detection(self):
+        """Test CA file change detection with real certificates."""
+        with TokenProxyTestServer(use_ssl=True) as server:
+            with patch.dict("sys.modules", {"azure.identity.aio._internal.token_binding_transport_aiohttp": None}):
+                # Create a copy of the CA file that we can modify
+                ca_file = server.ca_file
+                if ca_file is None:
+                    pytest.skip("CA file not available")
+
+                assert ca_file is not None  # Type hint for mypy
+                with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".pem") as temp_ca:
+                    with open(ca_file, "r") as original:
+                        original_content = original.read()
+                        temp_ca.write(original_content)
+                    temp_ca_path = temp_ca.name
+
+                try:
+                    transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=temp_ca_path, ca_data=None)
+                    assert type(transport) is CustomAsyncioRequestsTransport
+
+                    # First request should work
+                    request = HttpRequest("GET", f"{server.base_url}/health")
+                    response1 = await transport.send(request)
+                    assert response1.status_code == 200
+
+                    # Modify the CA file (add some content)
+                    real_sleep(0.1)
+                    with open(temp_ca_path, "a") as f:
+                        f.write("\n# Modified for testing\n")
+
+                    # Second request should still work (using the same cert content)
+                    response2 = await transport.send(request)
+                    assert response2.status_code == 200
+
+                finally:
+                    os.unlink(temp_ca_path)
