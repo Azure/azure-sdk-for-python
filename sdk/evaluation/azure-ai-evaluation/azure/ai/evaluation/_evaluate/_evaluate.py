@@ -2459,7 +2459,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 cur_failed_count = 0
             result_counts_stats_val.append(
                 {
-                    "testing_criteria": criteria_name if _is_none_or_nan(criteria_name) == False else "unknown",
+                    "testing_criteria": criteria_name if not _is_none_or_nan(criteria_name) else "unknown",
                     "passed": cur_passed,
                     "failed": cur_failed_count,
                 }
