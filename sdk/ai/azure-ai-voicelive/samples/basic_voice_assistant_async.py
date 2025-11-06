@@ -286,7 +286,9 @@ class BasicVoiceAssistant:
         self.connection: Optional["VoiceLiveConnection"] = None
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready = False
-        self.conversation_started = False
+        # Track response lifecycle to avoid cancelling already-completed responses
+        self._active_response = False
+        self._response_api_done = False
 
     async def start(self):
         """Start the voice assistant session."""
@@ -395,11 +397,16 @@ class BasicVoiceAssistant:
             # skip queued audio
             ap.skip_pending_audio()
 
-            # Cancel any ongoing response
-            try:
-                await conn.response.cancel()
-            except Exception:
-                logger.exception("No response to cancel")
+            # Only cancel if response is active and not already done
+            if self._active_response and not self._response_api_done:
+                try:
+                    await conn.response.cancel()
+                    logger.debug("Cancelled in-progress response due to barge-in")
+                except Exception as e:
+                    if "no active response" in str(e).lower():
+                        logger.debug("Cancel ignored - response already completed")
+                    else:
+                        logger.warning("Cancel failed: %s", e)
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")
@@ -407,6 +414,8 @@ class BasicVoiceAssistant:
 
         elif event.type == ServerEventType.RESPONSE_CREATED:
             logger.info("🤖 Assistant response created")
+            self._active_response = True
+            self._response_api_done = False
 
         elif event.type == ServerEventType.RESPONSE_AUDIO_DELTA:
             # Stream audio response to speakers
@@ -419,10 +428,17 @@ class BasicVoiceAssistant:
 
         elif event.type == ServerEventType.RESPONSE_DONE:
             logger.info("✅ Response complete")
+            self._active_response = False
+            self._response_api_done = True
 
         elif event.type == ServerEventType.ERROR:
-            logger.error("❌ VoiceLive error: %s", event.error.message)
-            print(f"Error: {event.error.message}")
+            msg = event.error.message
+            if "Cancellation failed: no active response" in msg:
+                # Benign - barge-in occurred after response completed
+                logger.debug("Benign cancellation error: %s", msg)
+            else:
+                logger.error("❌ VoiceLive error: %s", msg)
+                print(f"Error: {msg}")
 
         elif event.type == ServerEventType.CONVERSATION_ITEM_CREATED:
             logger.debug("Conversation item created: %s", event.item.id)
