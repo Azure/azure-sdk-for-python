@@ -299,6 +299,7 @@ ENGLISH_WEEKEND_PLANNER = Agent(
     model=_chat_model(),
 )
 
+# cSpell:disable
 SPANISH_WEEKEND_PLANNER = Agent(
     name="Planificador de fin de semana (Español)",
     instructions=(
@@ -320,6 +321,7 @@ TRIAGE_AGENT = Agent(
     handoffs=[SPANISH_WEEKEND_PLANNER, ENGLISH_WEEKEND_PLANNER],
     model=_chat_model(),
 )
+# cSpell:enable
 
 
 def _root_span_name(provider: str) -> str:
