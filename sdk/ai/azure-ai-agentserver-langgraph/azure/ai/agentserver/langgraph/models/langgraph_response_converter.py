@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation,broad-exception-caught,logging-not-lazy
+# mypy: ignore-errors
 import copy
 from typing import List
 

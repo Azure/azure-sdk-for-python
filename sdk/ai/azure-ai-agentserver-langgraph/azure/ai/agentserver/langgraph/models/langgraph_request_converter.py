@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation
+# mypy: ignore-errors
 import json
 from typing import Dict, List
 

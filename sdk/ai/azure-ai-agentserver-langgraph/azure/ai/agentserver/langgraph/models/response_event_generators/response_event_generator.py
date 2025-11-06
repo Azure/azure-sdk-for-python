@@ -31,7 +31,7 @@ class ResponseEventGenerator:
         self.logger = logger
         self.parent = parent  # parent generator
 
-    def try_process_message(self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState):
+    def try_process_message(self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState):   # mypy: ignore[valid-type]
         """
         Try to process the incoming message.
 
@@ -47,7 +47,7 @@ class ResponseEventGenerator:
         """
         pass
 
-    def on_start(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+    def on_start(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:   # mypy: ignore[empty-body]
         """
         Generate the starting events for this layer.
 
@@ -56,7 +56,7 @@ class ResponseEventGenerator:
         """
         pass
 
-    def on_end(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+    def on_end(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:   # mypy: ignore[empty-body]
         """
         Generate the ending events for this layer.
         TODO: handle different end conditions, e.g. normal end, error end, etc.

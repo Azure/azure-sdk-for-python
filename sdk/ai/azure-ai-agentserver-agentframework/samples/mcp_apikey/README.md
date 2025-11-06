@@ -11,15 +11,6 @@ This sample mirrors the simpler `mcp_simple` Agent Framework sample but adds an 
 
 > **Azure sign-in:** Run `az login` before starting the sample so `DefaultAzureCredential` can acquire a CLI token.
 
-### Install Dependencies
-
-Initialize a virtual environment and then install dependencies:
-
-```bash
-pip install ../../wheels/azure_ai_agentshosting-0.0.1+g407f536.d251024-py3-none-any.whl
-pip install -r ./requirements.txt --pre
-```
-
 ### Environment Variables
 
 Copy `.envtemplate` to `.env` and supply:

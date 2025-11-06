@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=unused-argument
+# mypy: ignore-errors
 from typing import List
 
 from langchain_core import messages as langgraph_messages

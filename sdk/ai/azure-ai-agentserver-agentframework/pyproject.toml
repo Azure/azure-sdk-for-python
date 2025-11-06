@@ -4,12 +4,24 @@ name = "azure-ai-agentserver-agentframework"
 dynamic = ["version", "readme"]
 description = "Agents server adapter for Azure AI"
 requires-python = ">=3.10"
-authors = [{ name = "Microsoft Corporation" }]
-classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10"]
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-ai-agentserver-core",
-    "agent_framework_azure_ai==1.0.0b251007",
+    "agent_framework_azure_ai>=1.0.0b251007",
     "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
 ]
 
@@ -30,6 +42,9 @@ exclude = [
 version = { attr = "azure.ai.agentserver.agentframework._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.ruff]
 line-length = 120
 target-version = "py311"
@@ -38,5 +53,9 @@ lint.ignore = []
 fix = false
 
 [tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.agentframework"]  # Your package/module name
+known-first-party = ["azure.ai.agentserver.agentframework"]
 combine-as-imports = true
+
+[tool.azure-sdk-build]
+verifytypes = false  # has unknown dependencies
+pyright = false

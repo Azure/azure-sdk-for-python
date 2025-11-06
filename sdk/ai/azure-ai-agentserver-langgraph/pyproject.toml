@@ -3,8 +3,20 @@ name = "azure-ai-agentserver-langgraph"
 dynamic = ["version", "readme"]
 description = "LangGraph adapter for Azure AI Agent Server"
 requires-python = ">=3.10"
-authors = [{ name = "Microsoft Corporation" }]
-classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10"]
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-ai-agentserver-core",
@@ -32,6 +44,9 @@ exclude = [
 version = { attr = "azure.ai.agentserver.langgraph._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.ruff]
 line-length = 120
 target-version = "py311"
@@ -42,3 +57,7 @@ fix = false
 [tool.ruff.lint.isort]
 known-first-party = ["azure.ai.agentserver.langgraph"]
 combine-as-imports = true
+
+[tool.azure-sdk-build]
+verifytypes = false  # has unknown dependencies
+pyright = false

@@ -16,7 +16,7 @@ Create an Azure Managed Redis instance
     ```
 
 3) Create a Redis Enterprise instance with RedisJSON and RediSearch modules enabled
-   Create an [Azure Managed Redis instance](https://learn.microsoft.com/en-us/azure/redis/quickstart-create-managed-redis). For LangGraph checkpointer, the instance must have RedisJSON and RediSearch enabled. Clustering-policy should be EnterpriseCluster. Those configurations have to be set when creating. Redis sku and capacities can be configured with your needs.
+   Create an [Azure Managed Redis instance](https://learn.microsoft.com/azure/redis/quickstart-create-managed-redis). For LangGraph checkpointer, the instance must have RedisJSON and RediSearch enabled. Clustering-policy should be EnterpriseCluster. Those configurations have to be set when creating. Redis sku and capacities can be configured with your needs.
 
    When your redis instance is ready, add the redis information to environment variables.
 

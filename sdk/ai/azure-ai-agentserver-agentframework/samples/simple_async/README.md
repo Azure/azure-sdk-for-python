@@ -6,15 +6,6 @@ This sample demonstrates how to use the agents hosting adapter in an async imple
 
 > **Azure sign-in:** Run `az login` before starting the sample so `DefaultAzureCredential` can acquire a CLI token.
 
-### Install Dependencies
-
-Initialize a virtual environment and then install dependencies:
-
-```bash
-pip install ../../wheels/azure_ai_agentshosting-0.0.1+g407f536.d251024-py3-none-any.whl
-pip install -r ./requirements.txt --pre
-```
-
 ### Environment Variables
 
 Copy `.envtemplate` to `.env` and supply:
@@ -32,7 +23,7 @@ Follow these steps from this folder:
 1) Start the agent server (defaults to 0.0.0.0:8088):
 
 ```bash
-python minimal_example.py
+python minimal_async_example.py
 ```
 
 2) Send a non-streaming request (returns a single JSON response):
