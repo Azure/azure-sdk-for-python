@@ -2252,6 +2252,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Create event body - format depends on item type
         event_body: Dict[str, Any] = {}
 
+        # Declare tool_call variable with type for use across branches
+        tool_call: Dict[str, Any]
+
         # Handle different item types
         if item_type == "function_call_output":
             # Function tool output - use tool_call_outputs format
@@ -2286,7 +2289,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Function tool call - use tool_calls format
             role = "assistant"  # Override role for function calls
             if _trace_responses_content:
-                tool_call: Dict[str, Any] = {
+                tool_call = {
                     "type": "function",
                 }
 
@@ -2322,7 +2325,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # File search tool call
             role = "assistant"  # Override role for file search calls
             if _trace_responses_content:
-                tool_call: Dict[str, Any] = {
+                tool_call = {
                     "type": "file_search",
                 }
 
@@ -2362,7 +2365,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Code interpreter tool call
             role = "assistant"  # Override role for code interpreter calls
             if _trace_responses_content:
-                tool_call: Dict[str, Any] = {
+                tool_call = {
                     "type": "code_interpreter",
                 }
 
@@ -2408,7 +2411,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Web search tool call
             role = "assistant"  # Override role for web search calls
             if _trace_responses_content:
-                tool_call: Dict[str, Any] = {
+                tool_call = {
                     "type": "web_search",
                 }
 
