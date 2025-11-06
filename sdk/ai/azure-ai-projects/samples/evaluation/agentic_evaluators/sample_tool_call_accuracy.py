@@ -102,26 +102,32 @@ def main() -> None:
 
             # Example 1: Simple tool call evaluation
             query1 = "What's the weather like in New York?"
-            tool_definitions1 = {
-                "name": "get_weather",
-                "description": "Get weather information for a location",
-                "parameters": {
-                    "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The city name"}},
-                },
-            }
+            tool_definitions1 = [
+                {
+                    "type": "function",
+                    "name": "get_weather",
+                    "description": "Get weather information for a location",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {"location": {"type": "string", "description": "The city name"}},
+                    },
+                }
+            ]
 
-            tool_calls1 = {
-                "type": "tool_call",
-                "tool_call_id": "call_1",
-                "name": "get_weather",
-                "arguments": {"location": "New York"},
-            }
+            tool_calls1 = [
+                {
+                    "type": "tool_call",
+                    "tool_call_id": "call_1",
+                    "name": "get_weather",
+                    "arguments": {"location": "New York"},
+                }
+            ]
 
             # Example 2: Multiple tool calls
             query2 = "Search for customer orders and send an email update"
             tool_definitions2 = [
                 {
+                    "type": "function",
                     "id": "search_database_tool",
                     "name": "search_database",
                     "description": "Search database for information",
@@ -131,6 +137,7 @@ def main() -> None:
                     },
                 },
                 {
+                    "type": "function",
                     "id": "send_email_tool",
                     "name": "send_email",
                     "description": "Send an email",
