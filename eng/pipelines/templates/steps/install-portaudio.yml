@@ -1,7 +1,6 @@
 steps:
   - script: |
       if [[ "$AGENT_OS" == "Linux" ]]; then
-        sudo dpkg --configure -a
         sudo apt-get update
         sudo apt-get install -y portaudio19-dev libasound2-dev
       elif [[ "$AGENT_OS" == "Darwin" ]]; then
