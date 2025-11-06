@@ -4023,7 +4023,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key,
-            max_range_size=4 * 1024
+            max_chunk_get_size=4,
+            max_single_get_size=4,
         )
         compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
         content_settings = ContentSettings(content_encoding='gzip')
@@ -4031,13 +4032,7 @@ class TestStorageFile(StorageRecordedTestCase):
         # Act / Assert
         file_client.upload_file(data=compressed_data, content_settings=content_settings)
 
-        chunk_size=4
-        data = bytearray()
-        for offset in range(0, len(compressed_data), chunk_size):
-            stream = file_client.download_file(offset=offset, length=chunk_size, decompress=False)
-            chunk = stream.readall()
-            assert chunk == compressed_data[offset:offset+chunk_size]
-            data.extend(chunk)
-        assert data == compressed_data
+        result = file_client.download_file(decompress=False).readall()
+        assert result == compressed_data
 
 # ------------------------------------------------------------------------------
