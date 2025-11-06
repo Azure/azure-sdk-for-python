@@ -34,9 +34,9 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
 
     def _ensure_response_started(self) -> None:
         if not self._response_id:
-            self._response_id = self._context.response_id
+            self._response_id = self._context.response_id  # type: ignore
         if not self._response_created_at:
-            self._response_created_at = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+            self._response_created_at = int(datetime.datetime.now(datetime.timezone.utc).timestamp())  # type: ignore
 
     def _build_item_content_output_text(self, text: str) -> ItemContentOutputText:
         return ItemContentOutputText(text=text, annotations=[])
@@ -169,7 +169,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             result = [raw]
         elif isinstance(raw, list):
             for item in raw:
-                result.append(self._coerce_result_text(item))
+                result.append(self._coerce_result_text(item))   # type: ignore
         call_id = getattr(content, "call_id", None) or ""
         func_out_id = self._context.id_generator.generate_function_output_id()
         sink.append(

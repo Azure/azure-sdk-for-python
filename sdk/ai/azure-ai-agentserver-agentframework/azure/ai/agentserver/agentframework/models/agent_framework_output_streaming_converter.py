@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init,protected-access
+# mypy: disable-error-code="call-overload,assignment"
 from __future__ import annotations
 
 import datetime
