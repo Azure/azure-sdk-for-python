@@ -363,13 +363,9 @@ fine_tuning_job = openai_client.fine_tuning.jobs.create(
     method={
         "type": "supervised",
         "supervised": {
-            "hyperparameters": {
-                "n_epochs": 3,
-                "batch_size": 1,
-                "learning_rate_multiplier": 1.0
-            }
-        }
-    }
+            "hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}
+        },
+    },
 )
 print(fine_tuning_job)
 
@@ -401,6 +397,37 @@ for checkpoint in openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_jo
 print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
 cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
 print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
+
+# Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
+print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
+model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
+deployment_name = "gpt-4-1-fine-tuned"
+
+with CognitiveServicesManagementClient(
+    credential=credential, subscription_id=subscription_id
+) as cogsvc_client:
+
+    deployment = cogsvc_client.deployments.begin_create_or_update(
+        resource_group_name=resource_group,
+        account_name=account_name,
+        deployment_name=deployment_name,
+        deployment={
+            "properties": {
+                "model": {"format": "OpenAI", "name": model_name, "version": "1"},
+            },
+            "sku": {"capacity": 250, "name": "standard"},
+        },
+    )
+
+    while deployment.status() not in ["succeeded", "failed"]:
+        time.sleep(30)
+        print(f"Status: {deployment.status()}")
+
+print(f"Testing fine-tuned model via deployment: {deployment_name}")
+response = openai_client.chat.completions.create(
+    model=deployment_name, messages=[{"role": "user", "content": "Who invented the telephone?"}]
+)
+print(f"Model response: {response.choices[0].message.content}")
 ```
 
 <!-- END SNIPPET -->

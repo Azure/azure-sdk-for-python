@@ -8,6 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
     .fine_tuning.jobs methods to create, get, list, cancel, pause, resume, list events and list checkpoints supervised fine-tuning jobs.
+    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management Client and perform inference on the deployed model.
     Supported OAI Models: GPT 4o, 4o-mini, 4.1, 4.1-mini
 
 USAGE:
@@ -15,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity openai python-dotenv aiohttp
+    pip install azure-ai-projects azure-identity openai python-dotenv aiohttp azure-mgmt-cognitiveservices
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -23,17 +24,23 @@ USAGE:
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `gpt-4.1` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
     4) VALIDATION_FILE_PATH - Optional. Path to the validation data file. Default to the `data` folder.
+    5) AZURE_SUBSCRIPTION_ID - Required. Your Azure subscription ID for fine-tuned model deployment and inferencing.
+    6) AZURE_RESOURCE_GROUP - Required. The resource group name containing your Azure OpenAI resource.
+    7) AZURE_AOAI_ACCOUNT - Required. The name of your Azure OpenAI account for fine-tuned model deployment and inferencing.
 """
 
 import asyncio
 import os
+import time
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
+from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from pathlib import Path
 
 load_dotenv()
 
+# For fine-tuning
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "gpt-4.1")
 script_dir = Path(__file__).parent
@@ -41,6 +48,11 @@ training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_di
 validation_file_path = os.environ.get(
     "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl")
 )
+
+# For Deployment and inferencing on model
+subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
+resource_group = os.environ.get("AZURE_RESOURCE_GROUP")
+account_name = os.environ.get("AZURE_AOAI_ACCOUNT")
 
 
 async def main():
@@ -104,6 +116,39 @@ async def main():
                 print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
                 cancelled_job = await openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
                 print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
+
+                # Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
+                print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
+                fine_tuned_model_name = (
+                    await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+                ).fine_tuned_model
+                deployment_name = "gpt-4-1-fine-tuned"
+
+                with CognitiveServicesManagementClient(
+                    credential=credential, subscription_id=subscription_id
+                ) as cogsvc_client:
+
+                    deployment = cogsvc_client.deployments.begin_create_or_update(
+                        resource_group_name=resource_group,
+                        account_name=account_name,
+                        deployment_name=deployment_name,
+                        deployment={
+                            "properties": {
+                                "model": {"format": "OpenAI", "name": fine_tuned_model_name, "version": "1"},
+                            },
+                            "sku": {"capacity": 250, "name": "standard"},
+                        },
+                    )
+
+                    while deployment.status() not in ["succeeded", "failed"]:
+                        time.sleep(30)
+                        print(f"Status: {deployment.status()}")
+
+                print(f"Testing fine-tuned model via deployment: {deployment_name}")
+                response = await openai_client.chat.completions.create(
+                    model=deployment_name, messages=[{"role": "user", "content": "Who invented the telephone?"}]
+                )
+                print(f"Model response: {response.choices[0].message.content}")
 
 
 if __name__ == "__main__":

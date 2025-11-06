@@ -42,6 +42,7 @@ validation_file_path = os.environ.get(
     "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "dpo_validation_set.jsonl")
 )
 
+
 async def main():
     async with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
