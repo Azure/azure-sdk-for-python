@@ -1,5 +1,30 @@
 # Release History
 
+## 1.13.2 (Unreleased)
+
+### Features Added
+
+- Added App Insights redaction for agent safety result queries to prevent adversarial prompts from being stored in telemetry
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.13.1 (2025-11-05)
+
+### Features Added
+
+- Improved RedTeam coverage across risk sub-categories to ensure comprehensive security testing
+- Made RedTeam's `AttackStrategy.Tense` seed prompts dynamic to allow use of this strategy with additional risk categories
+- Refactors error handling and result semantics in the RedTeam evaluation system to improve clarity and align with Attack Success Rate (ASR) conventions (passed=False means attack success)
+
+### Bugs Fixed
+
+- Fixed RedTeam evaluation error related to context handling for context-dependent risk categories
+- Fixed RedTeam prompt application for model targets during Indirect Jailbreak XPIA (Cross-Platform Indirect Attack)
+
 ## 1.13.0 (2025-10-30)
 
 ### Features Added
@@ -20,6 +45,12 @@
 
 - `image_tag` parameter in `AzureOpenAIPythonGrader` is now optional.
 
+## 1.11.2 (2025-10-09)
+
+### Bugs Fixed
+
+- **kwargs in an evaluator signature receives input columns that are not otherwise named in the evaluator's signature
+
 ## 1.12.0 (2025-10-02)
 
 ### Features Added
@@ -28,12 +59,6 @@
 
 ### Bugs Fixed
 - Support for multi-level nesting in OpenAI grader (experimental)
-
-## 1.11.2 (2025-10-09)
-
-### Bugs Fixed
-
-- **kwargs in an evaluator signature receives input columns that are not otherwise named in the evaluator's signature
 
 ## 1.11.1 (2025-09-19)
 

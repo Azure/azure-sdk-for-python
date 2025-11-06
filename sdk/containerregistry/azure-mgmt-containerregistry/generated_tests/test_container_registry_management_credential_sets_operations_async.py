@@ -25,7 +25,7 @@ class TestContainerRegistryManagementCredentialSetsOperationsAsync(AzureMgmtReco
         response = self.client.credential_sets.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerRegistryManagementCredentialSetsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             registry_name="str",
             credential_set_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -82,22 +82,7 @@ class TestContainerRegistryManagementCredentialSetsOperationsAsync(AzureMgmtReco
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_credential_sets_begin_delete(self, resource_group):
-        response = await (
-            await self.client.credential_sets.begin_delete(
-                resource_group_name=resource_group.name,
-                registry_name="str",
-                credential_set_name="str",
-                api_version="2025-05-01-preview",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -128,7 +113,22 @@ class TestContainerRegistryManagementCredentialSetsOperationsAsync(AzureMgmtReco
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                 },
-                api_version="2025-05-01-preview",
+                api_version="2025-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_credential_sets_begin_delete(self, resource_group):
+        response = await (
+            await self.client.credential_sets.begin_delete(
+                resource_group_name=resource_group.name,
+                registry_name="str",
+                credential_set_name="str",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

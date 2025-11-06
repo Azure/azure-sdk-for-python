@@ -17,6 +17,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="bandit"
+        --disable-compatibility-filter
         --disablecov
         ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
