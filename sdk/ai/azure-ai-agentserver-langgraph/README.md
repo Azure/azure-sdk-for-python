@@ -1,4 +1,4 @@
-# Azure AI Agent Server adapter for LangGraph
+# Azure AI LangGraph Agent Server Adapter for Python
 
 
 ## Getting started

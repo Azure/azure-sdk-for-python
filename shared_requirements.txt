@@ -88,3 +88,4 @@ azure-ai-projects
 starlette
 uvicorn
 opentelemetry-exporter-otlp-proto-http
+opentelemetry-exporter-otlp-proto-grpc
