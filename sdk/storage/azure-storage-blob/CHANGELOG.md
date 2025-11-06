@@ -4,6 +4,8 @@
 
 ### Features Added
 - Added support for service version 2026-04-06.
+- Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
+conditionally perform `BlobClient.delete_blob` operation.
 
 ## 12.28.0b1 (Unreleased)
 
