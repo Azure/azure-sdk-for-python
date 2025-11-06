@@ -3,3 +3,4 @@
 ../../core/azure-core-tracing-opentelemetry
 -e ../../identity/azure-identity
 aiohttp>=3.0; python_version >= '3.7'
+fixedint<1.0.0,>=0.1.6

@@ -21,15 +21,12 @@ from opentelemetry.sdk.trace.sampling import (
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
 
-# pylint:disable=no-name-in-module
-from fixedint import Int32
-
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _SAMPLING_HASH,
-    _INTEGER_MAX,
-    _INTEGER_MIN,
+    _INT32_MAX,
+    _INT32_MIN,
 )
 
 
@@ -342,27 +339,29 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
 
 def _get_DJB2_sample_score(trace_id_hex: str) -> float:
     # This algorithm uses 32bit integers
-    hash_value = Int32(_SAMPLING_HASH)
+    hash_value = _SAMPLING_HASH
     for char in trace_id_hex:
         hash_value = ((hash_value << 5) + hash_value) + ord(char)
+        # Correctly emulate signed 32-bit integer overflow using two's complement
+        hash_value = ((hash_value + 2**31) % 2**32) - 2**31
 
-    if hash_value == _INTEGER_MIN:
-        hash_value = int(_INTEGER_MAX)
+    if hash_value == _INT32_MIN:
+        hash_value = int(_INT32_MAX)
     else:
         hash_value = abs(hash_value)
 
-    # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
-    return float(hash_value) / _INTEGER_MAX
+    # divide by _INT32_MAX for value between 0 and 1 for sampling score
+    return float(hash_value) / _INT32_MAX
 
 def _round_down_to_nearest(sampling_percentage: float) -> float:
     if sampling_percentage == 0:
         return 0
     # Handle extremely small percentages that would cause overflow
-    if sampling_percentage <= _INTEGER_MIN:  # Extremely small threshold
+    if sampling_percentage <= _INT32_MIN:  # Extremely small threshold
         return 0.0
     item_count = 100.0 / sampling_percentage
     # Handle case where item_count is infinity or too large for math.ceil
-    if not math.isfinite(item_count) or item_count >= _INTEGER_MAX:
+    if not math.isfinite(item_count) or item_count >= _INT32_MAX:
         return 0.0
     return 100.0 / math.ceil(item_count)
 
