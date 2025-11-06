@@ -136,6 +136,8 @@ def sample_conversation_pii_with_character_mask_policy():
 
                             if "*" in redacted_text:
                                 redacted_verified.append(redacted_text)
+
+
 # [END conversation_pii_with_character_mask_policy]
 
 
