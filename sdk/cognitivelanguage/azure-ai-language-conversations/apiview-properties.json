@@ -65,6 +65,10 @@
         "azure.ai.language.conversations.models.KnowledgeBaseAnswerPrompt": "Language.Conversations.KnowledgeBaseAnswerPrompt",
         "azure.ai.language.conversations.models.LengthResolution": "Language.Conversations.LengthResolution",
         "azure.ai.language.conversations.models.ListKey": "Language.Conversations.ListKey",
+        "azure.ai.language.conversations.models.LuisCallingConfig": "Language.Conversations.LuisCallingOptions",
+        "azure.ai.language.conversations.models.LuisConfig": "Language.Conversations.LuisParameters",
+        "azure.ai.language.conversations.models.LuisResult": "Language.Conversations.LuisResult",
+        "azure.ai.language.conversations.models.LuisTargetIntentResult": "Language.Conversations.LuisTargetIntentResult",
         "azure.ai.language.conversations.models.MetadataFilter": "Language.Conversations.MetadataFilter",
         "azure.ai.language.conversations.models.MetadataRecord": "Language.Conversations.MetadataRecord",
         "azure.ai.language.conversations.models.NamedEntity": "Language.Conversations.Entity",
@@ -122,9 +126,9 @@
         "azure.ai.language.conversations.models.AnalyzeConversationOperationResultsKind": "Language.Conversations.AnalyzeConversationResultsKind",
         "azure.ai.language.conversations.models.SummaryLengthBucket": "Language.Conversations.SummaryLengthBucket",
         "azure.ai.language.conversations.models.SummaryAspect": "Language.Conversations.SummaryAspect",
-        "azure.ai.language.conversations.ConversationAnalysisClient.analyze_conversation": "Language.Conversations.analyzeConversations",
-        "azure.ai.language.conversations.aio.ConversationAnalysisClient.analyze_conversation": "Language.Conversations.analyzeConversations",
-        "azure.ai.language.conversations.ConversationAnalysisClient.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob",
-        "azure.ai.language.conversations.aio.ConversationAnalysisClient.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob"
+        "azure.ai.language.conversations.ConversationAnalysis.analyze_conversation": "Language.Conversations.analyzeConversations",
+        "azure.ai.language.conversations.aio.ConversationAnalysis.analyze_conversation": "Language.Conversations.analyzeConversations",
+        "azure.ai.language.conversations.ConversationAnalysis.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob",
+        "azure.ai.language.conversations.aio.ConversationAnalysis.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob"
     }
 }

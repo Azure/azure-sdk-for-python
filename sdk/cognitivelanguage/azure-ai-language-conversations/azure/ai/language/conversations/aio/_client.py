@@ -16,14 +16,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ConversationAnalysisClientConfiguration
-from ._operations import _ConversationAnalysisClientOperationsMixin
+from ._configuration import ConversationAnalysisConfiguration
+from ._operations import _ConversationAnalysisOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ConversationAnalysisClient(_ConversationAnalysisClientOperationsMixin):
+class ConversationAnalysis(_ConversationAnalysisOperationsMixin):
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). The synchronous API
     in this suite accepts a request and mediates among multiple language projects, such as LUIS
@@ -41,7 +41,7 @@ class ConversationAnalysisClient(_ConversationAnalysisClientOperationsMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     "2025-11-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -52,7 +52,7 @@ class ConversationAnalysisClient(_ConversationAnalysisClientOperationsMixin):
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = ConversationAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = ConversationAnalysisConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

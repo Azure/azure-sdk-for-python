@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -136,7 +137,10 @@ async def sample_conversation_pii_with_character_mask_policy_async():
 
                                 if "*" in redacted_text:
                                     redacted_verified.append(redacted_text)
+
+
 # [END conversation_pii_with_character_mask_policy_async]
+
 
 async def main():
     await sample_conversation_pii_with_character_mask_policy_async()

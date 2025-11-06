@@ -107,38 +107,38 @@ async def sample_conversation_multi_turn_prediction_async():
                 # Intents
                 print("Intents:")
                 for intent in conversation.intents or []:
-                        print(f"  Name: {intent.name}")
-                        print(f"  Type: {intent.type}")
+                    print(f"  Name: {intent.name}")
+                    print(f"  Type: {intent.type}")
 
-                        print("  Conversation Item Ranges:")
-                        for rng in intent.conversation_item_ranges or []:
-                            print(f"    - Offset: {rng.offset}, Count: {rng.count}")
+                    print("  Conversation Item Ranges:")
+                    for rng in intent.conversation_item_ranges or []:
+                        print(f"    - Offset: {rng.offset}, Count: {rng.count}")
 
-                        print("\n  Entities (Scoped to Intent):")
-                        for ent in intent.entities or []:
-                            print(f"    Name: {ent.name}")
-                            print(f"    Text: {ent.text}")
-                            print(f"    Confidence: {ent.confidence_score}")
-                            print(f"    Offset: {ent.offset}, Length: {ent.length}")
-                            print(
-                                f"    Conversation Item ID: {ent.conversation_item_id}, "
-                                f"Index: {ent.conversation_item_index}"
-                            )
+                    print("\n  Entities (Scoped to Intent):")
+                    for ent in intent.entities or []:
+                        print(f"    Name: {ent.name}")
+                        print(f"    Text: {ent.text}")
+                        print(f"    Confidence: {ent.confidence_score}")
+                        print(f"    Offset: {ent.offset}, Length: {ent.length}")
+                        print(
+                            f"    Conversation Item ID: {ent.conversation_item_id}, "
+                            f"Index: {ent.conversation_item_index}"
+                        )
 
-                                # Date/time resolutions
-                            for res in ent.resolutions or []:
-                                if isinstance(res, DateTimeResolution):
-                                    print(
-                                        f"    - [DateTimeResolution] SubKind: {res.date_time_sub_kind}, "
-                                        f"Timex: {res.timex}, Value: {res.value}"
-                                    )
+                        # Date/time resolutions
+                        for res in ent.resolutions or []:
+                            if isinstance(res, DateTimeResolution):
+                                print(
+                                    f"    - [DateTimeResolution] SubKind: {res.date_time_sub_kind}, "
+                                    f"Timex: {res.timex}, Value: {res.value}"
+                                )
 
-                            # Extra information (entity subtype + tags)
-                            for extra in ent.extra_information or []:
-                                if isinstance(extra, EntitySubtype):
-                                    print(f"    - [EntitySubtype] Value: {extra.value}")
-                                    for tag in extra.tags or []:
-                                        print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
+                        # Extra information (entity subtype + tags)
+                        for extra in ent.extra_information or []:
+                            if isinstance(extra, EntitySubtype):
+                                print(f"    - [EntitySubtype] Value: {extra.value}")
+                                for tag in extra.tags or []:
+                                    print(f"      • Tag: {tag.name}, Confidence: {tag.confidence_score}")
                 print()
 
                 # Global entities
@@ -149,8 +149,7 @@ async def sample_conversation_multi_turn_prediction_async():
                     print(f"  Confidence: {ent.confidence_score}")
                     print(f"  Offset: {ent.offset}, Length: {ent.length}")
                     print(
-                        f"  Conversation Item ID: {ent.conversation_item_id}, "
-                        f"Index: {ent.conversation_item_index}"
+                        f"  Conversation Item ID: {ent.conversation_item_id}, " f"Index: {ent.conversation_item_index}"
                     )
 
                     for extra in ent.extra_information or []:
@@ -161,10 +160,14 @@ async def sample_conversation_multi_turn_prediction_async():
                 print("-" * 40)
         else:
             print("No Conversational AI result returned.")
+
+
 # [END conversation_multi_turn_prediction_async]
+
 
 async def main():
     await sample_conversation_multi_turn_prediction_async()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
