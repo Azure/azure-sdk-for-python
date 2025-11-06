@@ -11,7 +11,7 @@ pip install azure-ai-agentserver-core
 
 This is the core package for Azure AI Agent server. It hosts your agent as a container on the cloud.
 
-You can talk to your agent using azure-ai-project sdk
+You can talk to your agent using azure-ai-project sdk.
 
 
 ## Examples

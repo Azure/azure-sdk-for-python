@@ -45,7 +45,6 @@ exclude = [
 ]
 
 [tool.setuptools.dynamic]
-# read version from your module (see Step 2 file layout)
 version = { attr = "azure.ai.agentserver.core._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
