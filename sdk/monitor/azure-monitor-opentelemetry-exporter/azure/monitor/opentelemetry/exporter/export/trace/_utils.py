@@ -342,11 +342,8 @@ def _get_DJB2_sample_score(trace_id_hex: str) -> float:
     hash_value = _SAMPLING_HASH
     for char in trace_id_hex:
         hash_value = ((hash_value << 5) + hash_value) + ord(char)
-        # Manually handle 32-bit integer overflow
-        if hash_value > _INT32_MAX:
-            hash_value = ((hash_value - _INT32_MIN) % (_INT32_MAX - _INT32_MIN + 1)) + _INT32_MIN
-        elif hash_value < _INT32_MIN:
-            hash_value = _INT32_MAX - ((_INT32_MIN - hash_value - 1) % (_INT32_MAX - _INT32_MIN + 1))
+        # Correctly emulate signed 32-bit integer overflow using two's complement
+        hash_value = ((hash_value + 2**31) % 2**32) - 2**31
 
     if hash_value == _INT32_MIN:
         hash_value = int(_INT32_MAX)
