@@ -59,8 +59,8 @@ class TestContainerRegistryManagementRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runs_get_log_sas_url(self, resource_group):
-        response = self.client.runs.get_log_sas_url(
+    def test_runs_cancel(self, resource_group):
+        response = self.client.runs.cancel(
             resource_group_name=resource_group.name,
             registry_name="str",
             run_id="str",
@@ -72,8 +72,8 @@ class TestContainerRegistryManagementRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_runs_cancel(self, resource_group):
-        response = self.client.runs.cancel(
+    def test_runs_get_log_sas_url(self, resource_group):
+        response = self.client.runs.get_log_sas_url(
             resource_group_name=resource_group.name,
             registry_name="str",
             run_id="str",

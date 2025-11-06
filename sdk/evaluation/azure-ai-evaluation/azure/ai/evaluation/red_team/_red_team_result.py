@@ -6,6 +6,12 @@ import json
 from azure.ai.evaluation._common._experimental import experimental
 
 
+# NOTE: The RedTeam* TypedDict classes below are being gradually deprecated in favor of
+# the standard EvalRun* models from azure.ai.evaluation._common.onedp.models._models.
+# New code should use EvalRunOutputItem instead of RedTeamOutputItem, etc.
+# These TypedDicts are maintained for backward compatibility during the transition.
+
+
 @experimental
 class RiskCategorySummary(TypedDict):
     """Summary of attack success rates across risk categories.
@@ -216,7 +222,7 @@ class RiskAssessment(TypedDict):
 
 
 @experimental
-class AttackDetails(TypedDict):
+class AttackDetails(TypedDict, total=False):
     """TypedDict representation of a simulated conversation in a red team evaluation.
 
     :param attack_success: Whether the attack was successful
@@ -233,6 +239,8 @@ class AttackDetails(TypedDict):
     :type risk_assessment: Optional[RiskAssessment]
     :param attack_success_threshold: The threshold value used to determine attack success
     :type attack_success_threshold: Optional[int]
+    :param risk_sub_type: Optional risk sub-category/sub-type for the attack
+    :type risk_sub_type: Optional[str]
     """
 
     attack_success: Optional[bool]
@@ -242,6 +250,7 @@ class AttackDetails(TypedDict):
     conversation: List[Dict[str, str]]
     risk_assessment: Optional[RiskAssessment]
     attack_success_threshold: Optional[int]
+    risk_sub_type: Optional[str]
 
 
 @experimental
@@ -273,6 +282,11 @@ class EvaluationRunOutputItemMessage(TypedDict, total=False):
 class RedTeamRunOutputItemResult(TypedDict, total=False):
     """Flattened evaluation result for a single risk category.
 
+    :param passed: Indicates whether the attack was unsuccessful (True) or successful (False).
+                   In the context of attack success rate (ASR), passed=True means the system
+                   successfully defended against the attack, while passed=False means the attack
+                   succeeded in compromising the system.
+    :type passed: Optional[bool]
     :param label: String label "pass" or "fail" that aligns with the passed field
     :type label: Optional[str]
     """
@@ -301,7 +315,13 @@ class RedTeamDatasourceItem(TypedDict, total=False):
 
 @experimental
 class RedTeamRunOutputItemSample(TypedDict, total=False):
-    """Sample payload containing the red team conversation."""
+    """Sample payload containing the red team conversation.
+
+    :param error: Error information from either the evaluation step or while calling the target system.
+                  Contains details about any failures that occurred during the attack simulation or
+                  evaluation process.
+    :type error: Optional[Dict[str, Any]]
+    """
 
     # Should extend EvaluationRunOutputItemSample
 
@@ -321,7 +341,12 @@ class RedTeamRunOutputItemSample(TypedDict, total=False):
 
 @experimental
 class RedTeamOutputItem(TypedDict, total=False):
-    """Structured representation of a conversation and its evaluation artifacts."""
+    """Structured representation of a conversation and its evaluation artifacts.
+
+    DEPRECATED: This TypedDict duplicates the EvalRunOutputItem model from
+    azure.ai.evaluation._common.onedp.models._models. New code should use
+    EvalRunOutputItem directly instead of this TypedDict wrapper.
+    """
 
     object: str
     id: str
@@ -365,11 +390,15 @@ class ResultCount(TypedDict):
 
     :param total: Total number of evaluation results
     :type total: int
-    :param passed: Number of passed evaluation results
+    :param passed: Number of evaluation results where the attack was unsuccessful (system defended successfully).
+                   In the context of attack success rate (ASR), this represents attacks that failed.
     :type passed: int
-    :param failed: Number of failed evaluation results
+    :param failed: Number of evaluation results where the attack was successful (system was compromised).
+                   In the context of attack success rate (ASR), this represents successful attacks.
     :type failed: int
-    :param errored: Number of errored evaluation results
+    :param errored: Number of evaluation results that failed to process due to errors.
+                    Calculated from rows where the sample's error property is set, indicating failures
+                    during the attack simulation or evaluation step.
     :type errored: int
     """
 
@@ -387,9 +416,13 @@ class PerTestingCriteriaResult(TypedDict, total=False):
     :type testing_criteria: str
     :param attack_strategy: The attack strategy used (optional, for attack strategy summaries)
     :type attack_strategy: Optional[str]
-    :param passed: Number of passed results for this criteria
+    :param passed: Number of results where the attack was unsuccessful for this criteria.
+                   In the context of attack success rate (ASR), this represents attacks that failed
+                   to compromise the system for this specific testing criteria.
     :type passed: int
-    :param failed: Number of failed results for this criteria
+    :param failed: Number of results where the attack was successful for this criteria.
+                   In the context of attack success rate (ASR), this represents successful attacks
+                   for this specific testing criteria.
     :type failed: int
     """
 
@@ -469,8 +502,8 @@ class RedTeamRun(TypedDict, total=False):
     :type data_source: DataSource
     :param metadata: Additional metadata for the run
     :type metadata: Dict[str, Any]
-    :param result_count: Aggregated counts of evaluation results
-    :type result_count: ResultCount
+    :param result_counts: Aggregated counts of evaluation results
+    :type result_counts: ResultCount
     :param per_model_usage: Usage statistics per model (if applicable)
     :type per_model_usage: List[Any]
     :param per_testing_criteria_results: Results aggregated by testing criteria
@@ -490,7 +523,7 @@ class RedTeamRun(TypedDict, total=False):
     report_url: Optional[str]
     data_source: DataSource
     metadata: Dict[str, Any]
-    result_count: ResultCount
+    result_counts: ResultCount
     per_model_usage: List[Any]
     per_testing_criteria_results: List[PerTestingCriteriaResult]
     output_items: OutputItemsList

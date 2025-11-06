@@ -50,9 +50,6 @@ class import_all(Check):
 
         targeted = self.get_targeted_directories(args)
 
-        # {[tox]pip_command} freeze
-        # python {repository_root}/eng/tox/import_all.py -t {tox_root}
-
         outcomes: List[int] = []
 
         for parsed in targeted:

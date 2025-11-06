@@ -54,15 +54,16 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
     """
 
     id = "azureai://built-in/evaluators/azure-openai/python_grader"
+    _type = "python"
 
     def __init__(
         self,
         *,
         model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         name: str,
-        image_tag: str,
         pass_threshold: float,
         source: str,
+        image_tag: Optional[str] = None,
         credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
@@ -79,7 +80,7 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
             image_tag=image_tag,
             pass_threshold=pass_threshold,
             source=source,
-            type="python",
+            type=AzureOpenAIPythonGrader._type,
         )
 
         super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)
