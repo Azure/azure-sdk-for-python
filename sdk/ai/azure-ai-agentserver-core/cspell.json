@@ -1,0 +1,26 @@
+{
+    "ignoreWords": [
+      "Agentic",
+      "UPIA",
+      "ANSII",
+      "inpainting",
+      "CSDL",
+      "azureai",
+      "GLEU",
+      "fstring",
+      "alnum",
+      "GENAI",
+      "Prereqs",
+      "mslearn",
+      "PYTHONIOENCODING",
+      "GETFL",
+      "DETFL",
+      "Planifica"
+    ],
+    "ignorePaths": [
+      "*.csv",
+      "*.json",
+      "*.rst",
+      "./samples/**"
+    ]
+  }

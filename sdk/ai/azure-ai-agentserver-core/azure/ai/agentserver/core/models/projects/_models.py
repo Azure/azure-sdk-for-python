@@ -47,7 +47,7 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import _types, models as _models   # type: ignore
 
 
 class Tool(_Model):
