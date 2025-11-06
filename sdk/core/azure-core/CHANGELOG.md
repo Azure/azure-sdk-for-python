@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix `attribute_list` to make sure the attribute list of hybrid model same as msrest model
+
 ### Other Changes
 
 - Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
