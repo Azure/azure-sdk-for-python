@@ -103,14 +103,16 @@ with project_client:
             openai_client.evals.runs.output_items.list(run_id=response_eval_run.id, eval_id=eval_object.id)
         )
         print(f"\nOUTPUT ITEMS (Total: {len(output_items)})")
+        print(f"Eval Run Report URL: {response_eval_run.report_url}")
+
         print(f"{'-'*60}")
         pprint(output_items)
         print(f"{'-'*60}")
     else:
         print("\n✗ Evaluation run failed.")
 
-    openai_client.evals.delete(eval_id=eval_object.id)
-    print("Evaluation deleted")
+    # openai_client.evals.delete(eval_id=eval_object.id)
+    # print("Evaluation deleted")
 
     project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")
