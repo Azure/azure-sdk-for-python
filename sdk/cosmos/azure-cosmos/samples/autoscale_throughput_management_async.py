@@ -225,68 +225,6 @@ async def update_autoscale_max_throughput(container, new_max_throughput):
     except exceptions.CosmosHttpResponseError as e:
         print(f"Error updating autoscale throughput: {e.message}")
 
-async def demonstrate_concurrent_throughput_operations(database):
-    """
-    Demonstrate concurrent throughput operations on multiple containers.
-    
-    Shows how async operations can efficiently manage throughput settings
-    for multiple containers simultaneously.
-    
-    Args:
-        database: DatabaseProxy instance
-    """
-    print("\nDemonstrate Concurrent Throughput Operations (Async)")
-    print("=" * 70)
-    
-    try:
-        # Create multiple containers with different autoscale settings concurrently
-        container_configs = [
-            ('container_async_1', 4000),
-            ('container_async_2', 5000),
-            ('container_async_3', 6000)
-        ]
-        
-        # Create containers concurrently
-        create_tasks = [
-            database.create_container(
-                id=container_id,
-                partition_key=PartitionKey(path='/id'),
-                offer_throughput=ThroughputProperties(
-                    auto_scale_max_throughput=max_throughput,
-                    auto_scale_increment_percent=0
-                )
-            )
-            for container_id, max_throughput in container_configs
-        ]
-        
-        containers = await asyncio.gather(*create_tasks, return_exceptions=True)
-        
-        print(f"Created {len([c for c in containers if not isinstance(c, Exception)])} containers concurrently")
-        
-        # Read throughput settings concurrently
-        valid_containers = [c for c in containers if not isinstance(c, Exception)]
-        read_tasks = [container.get_throughput() for container in valid_containers]
-        
-        offers = await asyncio.gather(*read_tasks, return_exceptions=True)
-        
-        print("\nThroughput settings for all containers:")
-        for container, offer in zip(valid_containers, offers):
-            if not isinstance(offer, Exception):
-                autopilot_settings = offer.properties.get('content', {}).get('offerAutopilotSettings')
-                if autopilot_settings:
-                    max_throughput = autopilot_settings.get('maxThroughput')
-                    print(f"  - {container.id}: {max_throughput} RU/s (autoscale)")
-        
-        # Cleanup containers concurrently
-        delete_tasks = [database.delete_container(container.id) for container in valid_containers]
-        await asyncio.gather(*delete_tasks, return_exceptions=True)
-        
-        print(f"\nCleaned up {len(valid_containers)} containers concurrently")
-        
-    except Exception as e:
-        print(f"Error in concurrent operations: {str(e)}")
-
-
 async def run_sample():
     """
     Run the async autoscale throughput management sample.
@@ -312,10 +250,7 @@ async def run_sample():
             
             # 5. Read updated settings
             await read_autoscale_throughput(database, container)
-            
-            # 6. Demonstrate concurrent operations
-            await demonstrate_concurrent_throughput_operations(database)
-            
+
             # Cleanup
             print("\n" + "=" * 70)
             print("Cleaning up resources...")
