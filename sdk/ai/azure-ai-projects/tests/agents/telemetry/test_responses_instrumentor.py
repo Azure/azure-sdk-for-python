@@ -1396,6 +1396,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_function_tool_list_conversation_items_with_content_recording(self, **kwargs):
         """Test listing conversation items after function tool usage with content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
@@ -1530,6 +1531,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_function_tool_list_conversation_items_without_content_recording(self, **kwargs):
         """Test listing conversation items after function tool usage without content recording."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
@@ -1683,10 +1685,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ]
 
             result = client.responses.create(
-                model=deployment_name,
-                conversation=conversation.id,
-                input=input_list,
-                stream=False
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=False
             )
 
             # Verify the response exists
@@ -1774,10 +1773,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ]
 
             stream = client.responses.create(
-                model=deployment_name,
-                conversation=conversation.id,
-                input=input_list,
-                stream=True
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=True
             )
 
             # Consume the stream
@@ -1873,10 +1869,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ]
 
             result = client.responses.create(
-                model=deployment_name,
-                conversation=conversation.id,
-                input=input_list,
-                stream=False
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=False
             )
 
             # Verify the response exists
@@ -1962,10 +1955,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ]
 
             stream = client.responses.create(
-                model=deployment_name,
-                conversation=conversation.id,
-                input=input_list,
-                stream=True
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=True
             )
 
             # Consume the stream
@@ -2039,10 +2029,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_off_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2060,12 +2047,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2105,10 +2090,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_off_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2125,12 +2107,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2170,10 +2150,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_on_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2190,12 +2167,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2235,10 +2210,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_on_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2255,12 +2227,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2304,10 +2274,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_off_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2315,7 +2282,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
-            print("Deployment Name ------------------------------------------------------------------ :", deployment_name)
+            print(
+                "Deployment Name ------------------------------------------------------------------ :", deployment_name
+            )
 
             conversation = client.conversations.create()
 
@@ -2328,11 +2297,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2372,10 +2341,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_off_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2394,11 +2360,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2438,10 +2404,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_on_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2460,11 +2423,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2504,10 +2467,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_on_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2526,11 +2486,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=False
+                stream=False,
             )
 
             assert hasattr(result, "output")
@@ -2574,10 +2534,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_off_binary_off_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2594,12 +2551,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             # Consume the stream
@@ -2648,10 +2603,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_off_binary_on_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2668,12 +2620,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             accumulated_content = []
@@ -2721,10 +2671,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_on_binary_off_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2741,12 +2688,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             accumulated_content = []
@@ -2794,10 +2739,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_image_only_content_on_binary_on_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2814,12 +2756,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 input=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             accumulated_content = []
@@ -2871,10 +2811,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_off_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2893,11 +2830,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             accumulated_content = []
@@ -2945,10 +2882,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_off_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "False",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -2967,11 +2901,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             accumulated_content = []
@@ -3019,10 +2953,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_on_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "False"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -3041,11 +2972,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             accumulated_content = []
@@ -3093,10 +3024,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_text_and_image_content_on_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (streaming)."""
         self.cleanup()
-        os.environ.update({
-            CONTENT_TRACING_ENV_VARIABLE: "True",
-            BINARY_DATA_TRACING_ENV_VARIABLE: "True"
-        })
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
         self.setup_telemetry()
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
@@ -3115,11 +3043,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                         "role": "user",
                         "content": [
                             {"type": "input_text", "text": "What is shown in this image?"},
-                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}
-                        ]
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
                     }
                 ],
-                stream=True
+                stream=True,
             )
 
             accumulated_content = []

@@ -399,9 +399,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             )
 
         # Check if binary data tracing is enabled
-        enable_binary_data = self._str_to_bool(
-            os.environ.get("AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA", "false")
-        )
+        enable_binary_data = self._str_to_bool(os.environ.get("AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA", "false"))
 
         if not self.is_instrumented():
             self._instrument_responses(enable_content_recording, enable_binary_data)
@@ -618,17 +616,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 # Build structured event content with content parts
                 event_body: Dict[str, Any] = {}
-                
+
                 # Only process content if content recording is enabled
                 if _trace_responses_content:
                     content_parts = []
                     has_non_text_content = False
-                    
+
                     # Content can be a list of content items
                     if isinstance(content, list):
                         for content_item in content:
                             content_type = None
-                            
+
                             # Handle dict format
                             if isinstance(content_item, dict):
                                 content_type = content_item.get("type")
@@ -665,7 +663,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                     # Other content types (audio, video, etc.)
                                     has_non_text_content = True
                                     content_parts.append({"type": content_type})
-                                    
+
                             # Handle object format
                             elif hasattr(content_item, "type"):
                                 content_type = getattr(content_item, "type", None)
@@ -702,23 +700,23 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                     # Other content types
                                     has_non_text_content = True
                                     content_parts.append({"type": content_type})
-                    
+
                     # Only add content if we have content parts
                     if content_parts:
                         # Always use consistent structured format
                         event_body["content"] = content_parts
-                
+
                 # Create event attributes
                 attributes = self._create_event_attributes(
                     conversation_id=conversation_id,
                     message_role=role,
                 )
                 attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
-                
+
                 # Add the event
                 event_name = f"gen_ai.{role}.message"
                 span.span_instance.add_event(name=event_name, attributes=attributes)
-                    
+
             except Exception:  # pylint: disable=broad-exception-caught
                 # Skip items that can't be processed
                 logger.debug("Failed to process structured input item: %s", input_item, exc_info=True)
