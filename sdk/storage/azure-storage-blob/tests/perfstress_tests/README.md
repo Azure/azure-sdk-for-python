@@ -61,9 +61,10 @@ These options are available for all perf tests:
 The options are available for all Blob perf tests:
 - `--size=10240` Size in bytes of data to be transferred in upload or download tests. Default is 10240.
 - `--max-concurrency=1` Number of threads to concurrently upload/download a single operation using the SDK API parameter. Default is 1.
-- `--max-put-size` Maximum size of data uploading in single HTTP PUT. Default is 64\*1024\*1024.
-- `--max-block-size` Maximum size of data in a block within a blob. Defaults to 4\*1024\*1024.
-- `--buffer-threshold` Minimum block size to prevent full block buffering. Defaults to 4\*1024\*1024+1.
+- `--max-put-size` Maximum size of data uploading in single HTTP PUT.
+- `--max-block-size` Maximum size of data in a block within a blob.
+- `--max-get-size` Initial chunk size of a Blob download.
+- `--buffer-threshold` Minimum block size to prevent full block buffering.
 - `--client-encryption` The version of client-side encryption to use. Leave out for no encryption.
 
 #### List Blobs command line options

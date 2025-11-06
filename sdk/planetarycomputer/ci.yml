@@ -29,6 +29,19 @@ extends:
   parameters:
     ServiceDirectory: planetarycomputer
     TestProxy: true
+    # The job "Test ubuntu2404_pypy39" fails due to nh3 (required by readme_renderer==43.0) 
+    # not being compatible with PyPy 3.9. nh3 requires PyPy 3.11+.
+    # Using custom matrix to filter out PyPy tests until PyPy is upgraded to 3.11+.
+    # Tracking issue: #43708
+    MatrixConfigs:
+      - Name: planetarycomputer_ci_matrix
+        Path: sdk/planetarycomputer/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
+    MatrixFilters:
+      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-mgmt-planetarycomputer
       safeName: azuremgmtplanetarycomputer
+    - name: azure-planetarycomputer
+      safeName: azureplanetarycomputer

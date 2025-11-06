@@ -11,7 +11,7 @@ from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
 )
 from azure.confidentialledger.certificate.aio import (
-    ConfidentialLedgerCertificateClient as ConfidentialLedgerCertificateClientAsync
+    ConfidentialLedgerCertificateClient as ConfidentialLedgerCertificateClientAsync,
 )
 
 from .constants import USER_CERTIFICATE
@@ -33,14 +33,10 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
         usually contains tests).
         """
 
-        with tempfile.NamedTemporaryFile(
-            "w", suffix=".pem", delete=False
-        ) as tls_cert_file:
+        with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as tls_cert_file:
             cls.network_certificate_path = tls_cert_file.name
 
-        with tempfile.NamedTemporaryFile(
-            "w", suffix=".pem", delete=False
-        ) as user_cert_file:
+        with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as user_cert_file:
             user_cert_file.write(USER_CERTIFICATE)
             cls.user_certificate_path = user_cert_file.name
 
@@ -74,11 +70,7 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
             credential=None,
         )
 
-        network_identity = (
-            client.get_ledger_identity(
-                ledger_id=confidentialledger_id
-            )
-        )
+        network_identity = client.get_ledger_identity(ledger_id=confidentialledger_id)
 
         with open(self.network_certificate_path, "w", encoding="utf-8") as outfile:
             outfile.write(network_identity["ledgerTlsCertificate"])
@@ -102,11 +94,7 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
         )
 
         try:
-            network_identity = (
-                await client.get_ledger_identity(
-                    ledger_id=confidentialledger_id
-                )
-            )
+            network_identity = await client.get_ledger_identity(ledger_id=confidentialledger_id)
 
             with open(self.network_certificate_path, "w", encoding="utf-8") as outfile:
                 outfile.write(network_identity["ledgerTlsCertificate"])
