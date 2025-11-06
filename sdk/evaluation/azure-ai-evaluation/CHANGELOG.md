@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added App Insights redaction for agent safety result queries to prevent adversarial prompts from being stored in telemetry
+
 ### Breaking Changes
 
 ### Bugs Fixed
