@@ -823,7 +823,7 @@ class ContainerProxy:
         # Set query with 'query' and 'parameters' from kwargs
         query_str = kwargs.pop("query", None)
         parameters = kwargs.pop("parameters", None)
-        if "parameters" in kwargs or parameters is not None:
+        if parameters is not None:
             query = {"query": query_str, "parameters": parameters}
         else:
             query = query_str

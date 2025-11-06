@@ -934,9 +934,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Set query with 'query' and 'parameters' from kwargs
         query_str = kwargs.pop("query", None)
-        _sentinel = object()
-        parameters = kwargs.pop("parameters", _sentinel)
-        if parameters is not _sentinel:
+        parameters = kwargs.pop("parameters", None)
+        if parameters is not None:
             query = {"query": query_str, "parameters": parameters}
         else:
             query = query_str
