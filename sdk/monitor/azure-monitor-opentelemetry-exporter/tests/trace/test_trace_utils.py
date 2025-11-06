@@ -7,7 +7,7 @@ from unittest import mock
 from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     _get_DJB2_sample_score,
 )
-# Fixed was removed as a source dependency. It is used as a dev requirement to test sample score
+# fixedint was removed as a source dependency. It is used as a dev requirement to test sample score
 from fixedint import Int32
 from azure.monitor.opentelemetry.exporter._constants import (
     _SAMPLING_HASH,
@@ -87,7 +87,7 @@ class TestGetDJB2SampleScore(unittest.TestCase):
         # that results in exactly _INT32_MIN. Instead, let's test the logic.
         
         # We'll use a mock to simulate this condition
-        original_func = _get_DJB2_sample_score
+
         
         def mock_djb2_with_min_value(trace_id_hex):
             # Call original to get the structure, then simulate _INT32_MIN case
