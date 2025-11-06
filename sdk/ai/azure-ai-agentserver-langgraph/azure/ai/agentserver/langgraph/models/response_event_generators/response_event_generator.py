@@ -31,7 +31,12 @@ class ResponseEventGenerator:
         self.logger = logger
         self.parent = parent  # parent generator
 
-    def try_process_message(self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState):   # mypy: ignore[valid-type]
+    def try_process_message(
+            self,
+            message: AnyMessage,   # mypy: ignore[valid-type]
+            context: AgentRunContext,
+            stream_state: StreamEventState
+        ):    # mypy: ignore[empty-body]
         """
         Try to process the incoming message.
 

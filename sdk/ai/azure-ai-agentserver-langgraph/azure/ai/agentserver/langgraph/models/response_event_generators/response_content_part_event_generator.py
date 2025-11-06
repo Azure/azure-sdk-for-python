@@ -81,7 +81,8 @@ class ResponseContentPartEventGenerator(ResponseEventGenerator):
 
         return True, [start_event]
 
-    def on_end(self, event, run_details, stream_state: StreamEventState) -> List[project_models.ResponseStreamEvent]:   # mypy: ignore[override]
+    def on_end(self, event, run_details, stream_state: StreamEventState
+            ) -> List[project_models.ResponseStreamEvent]:   # mypy: ignore[override]
         aggregated_content = self.item_content_helper.create_item_content()
         done_event = project_models.ResponseContentPartDoneEvent(
             item_id=self.item_id,

@@ -1,0 +1,13 @@
+{
+    "reportAttributeAccessIssue": "none",
+    "reportIncompatibleMethodOverride": "none",
+    "reportReturnType": "none",
+    "reportArgumentType": "none",
+
+    "exclude": [
+        "**/tests/**",
+        "**/samples/**",
+        "**/setup.py",
+        "**/conftest.py"
+    ]
+}
