@@ -36,7 +36,7 @@ class TestStorageManagementStorageTaskAssignmentsOperationsAsync(AzureMgmtRecord
                                 "parameters": {
                                     "endBy": "2020-02-20 00:00:00",
                                     "interval": 0,
-                                    "intervalUnit": "Days",
+                                    "intervalUnit": "str",
                                     "startFrom": "2020-02-20 00:00:00",
                                     "startOn": "2020-02-20 00:00:00",
                                 },
@@ -68,7 +68,7 @@ class TestStorageManagementStorageTaskAssignmentsOperationsAsync(AzureMgmtRecord
                     "name": "str",
                     "type": "str",
                 },
-                api_version="2024-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -93,7 +93,7 @@ class TestStorageManagementStorageTaskAssignmentsOperationsAsync(AzureMgmtRecord
                                 "parameters": {
                                     "endBy": "2020-02-20 00:00:00",
                                     "interval": 0,
-                                    "intervalUnit": "Days",
+                                    "intervalUnit": "str",
                                     "startFrom": "2020-02-20 00:00:00",
                                     "startOn": "2020-02-20 00:00:00",
                                 },
@@ -121,7 +121,7 @@ class TestStorageManagementStorageTaskAssignmentsOperationsAsync(AzureMgmtRecord
                         "taskId": "str",
                     }
                 },
-                api_version="2024-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -135,7 +135,7 @@ class TestStorageManagementStorageTaskAssignmentsOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             account_name="str",
             storage_task_assignment_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestStorageManagementStorageTaskAssignmentsOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 account_name="str",
                 storage_task_assignment_name="str",
-                api_version="2024-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -162,7 +162,7 @@ class TestStorageManagementStorageTaskAssignmentsOperationsAsync(AzureMgmtRecord
         response = self.client.storage_task_assignments.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

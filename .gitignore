@@ -60,6 +60,7 @@ conda/assembled/
 conda/downloaded/
 conda/conda-env/
 scenario_*.txt
+.wheels
 
 # tox environment folders
 .tox/
@@ -175,3 +176,6 @@ component-detection-pip-report.json
 
 # No uv lock for now
 uv.lock
+
+# Sphinx generated documentation
+website/

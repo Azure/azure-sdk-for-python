@@ -1,5 +1,82 @@
 # Release History
 
+## 15.1.0b1 (2025-10-01)
+
+### Features Added
+
+- Added Long Running Operation (LRO) support for the following operation methods:
+  - `delete_job` -> `begin_delete_job`
+  - `disable_job` -> `begin_disable_job`
+  - `enable_job` -> `begin_enable_job`
+  - `delete_job_schedule` -> `begin_delete_job_schedule`
+  - `delete_pool` -> `begin_delete_pool`
+  - `delete_certificate` -> `begin_delete_certificate`
+  - `deallocate_node` -> `begin_deallocate_node`
+  - `reboot_node` -> `begin_reboot_node`
+  - `reimage_node` -> `begin_reimage_node`
+  - `remove_nodes` -> `begin_remove_nodes`
+  - `resize_pool` -> `begin_resize_pool`
+  - `start_node` -> `begin_start_node`
+  - `stop_pool_resize` -> `begin_stop_pool_resize`
+  - `terminate_job` -> `begin_terminate_job`
+  - `terminate_job_schedule` -> `begin_terminate_job_schedule`
+
+### Breaking Changes
+
+- Renamed the following models. These name changes include several models with the suffix `Content` being renamed to have the suffix `Options`.
+  - `AccessScope` -> `BatchAccessScope`
+  - `AffinityInfo` -> `BatchAffinityInfo`
+  - `BatchJobAction` -> `BatchJobActionKind`
+  - `BatchJobCreateContent` -> `BatchJobCreateOptions`
+  - `BatchJobDisableContent` -> `BatchJobDisableOptions`
+  - `BatchJobScheduleCreateContent` -> `BatchJobScheduleCreateOptions`
+  - `BatchJobScheduleUpdateContent` -> `BatchJobScheduleUpdateOptions`
+  - `BatchJobTerminateContent` -> `BatchJobTerminateOptions`
+  - `BatchJobUpdateContent` -> `BatchJobUpdateOptions`
+  - `BatchNodeDeallocateContent` -> `BatchNodeDeallocateOptions`
+  - `BatchNodeDisableSchedulingContent` -> `BatchNodeDisableSchedulingOptions`
+  - `BatchNodeRebootContent` -> `BatchNodeRebootOptions`
+  - `BatchNodeRebootOption` -> `BatchNodeRebootKind`
+  - `BatchNodeReimageContent` -> `BatchNodeReimageOptions`
+  - `BatchNodeRemoveContent` -> `BatchNodeRemoveOptions`
+  - `BatchNodeUserCreateContent` -> `BatchNodeUserCreateOptions`
+  - `BatchNodeUserUpdateContent` -> `BatchNodeUserUpdateOptions`
+  - `BatchPoolCreateContent` -> `BatchPoolCreateOptions`
+  - `BatchPoolEnableAutoScaleContent` -> `BatchPoolEnableAutoScaleOptions`
+  - `BatchPoolEvaluateAutoScaleContent` -> `BatchPoolEvaluateAutoScaleOptions`
+  - `BatchPoolReplaceContent` -> `BatchPoolReplaceOptions`
+  - `BatchPoolResizeContent` -> `BatchPoolResizeOptions`
+  - `BatchPoolUpdateContent` -> `BatchPoolUpdateOptions`
+  - `BatchTaskCreateContent` -> `BatchTaskCreateOptions`
+  - `ContainerConfiguration` -> `BatchContainerConfiguration`
+  - `ContainerConfigurationUpdate` -> `BatchContainerConfigurationUpdate`
+  - `DeleteBatchCertificateError` -> `BatchCertificateDeleteError`
+  - `DiffDiskSettings` -> `BatchDiffDiskSettings`
+  - `ErrorCategory` -> `BatchErrorSourceCategory`
+  - `HttpHeader` -> `OutputFileUploadHeader`
+  - `ImageReference` -> `BatchVmImageReference`
+  - `OSDisk` -> `BatchOsDisk`
+  - `OnAllBatchTasksComplete` -> `BatchAllTasksCompleteMode`
+  - `OnBatchTaskFailure` -> `BatchAllTasksCompleteMode`
+  - `PublicIpAddressConfiguration` -> `BatchPublicIpAddressConfiguration`
+  - `UefiSettings` -> `BatchUefiSettings`
+  - `UploadBatchServiceLogsContent` -> `UploadBatchServiceLogsOptions`
+  - `VMDiskSecurityProfile` -> `BatchVMDiskSecurityProfile`
+
+- Renamed parameters in the following operation methods:
+  - `begin_disable_job` changed `content` parameter to `disable_options`
+  - `begin_deallocate_node` changed `parameters` parameter to `options`
+  - `begin_remove_nodes` changed `content` parameter to `remove_options`.
+  - `begin_resize_pool` changed `content` parameter to `resize_options`.
+  - `begin_terminate_job` changed `parameters` parameter to `options`.
+  - `begin_reboot_node` changed `parameters` parameter to `options`.
+  - `begin_reimage_node` changed `parameters` parameter to `options`.
+  - `disable_node_scheduling` changed `parameters` parameter to `options`.
+  - `enable_pool_auto_scale` changed `content` parameter to `enable_auto_scale_options`.
+  - `evaluate_pool_auto_scale` changed `content` parameter to `evaluate_auto_scale_options`.
+  - `upload_node_logs` changed `content` parameter to `upload_options`.
+  - `replace_node_user` changed `content` parameter to `update_options`.
+
 ## 15.0.0b2 (2025-03-01)
 
 ### Features Added

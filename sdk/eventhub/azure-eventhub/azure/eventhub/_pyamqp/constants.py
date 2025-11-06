@@ -59,6 +59,7 @@ EMPTY_FRAME = b"\x00\x00\x00\x08\x02\x00\x00\x00"
 #: size until they have agreed a definitive maximum frame size for that Connection.
 MIN_MAX_FRAME_SIZE = 512
 MAX_FRAME_SIZE_BYTES = 1024 * 1024
+LINK_MAX_MESSAGE_SIZE = 0
 MAX_CHANNELS = 65535
 INCOMING_WINDOW = 64 * 1024
 OUTGOING_WINDOW = 64 * 1024

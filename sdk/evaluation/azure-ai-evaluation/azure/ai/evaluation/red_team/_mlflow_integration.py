@@ -12,7 +12,7 @@ import os
 import tempfile
 import uuid
 from datetime import datetime
-from typing import Dict, Optional, cast
+from typing import Any, Dict, List, Optional, Set, cast
 from pathlib import Path
 
 # Azure AI Evaluation imports
@@ -27,7 +27,14 @@ from azure.ai.evaluation._common import RedTeamUpload, ResultType
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
 # Local imports
-from ._red_team_result import RedTeamResult
+from ._red_team_result import (
+    RedTeamResult,
+    RedTeamRun,
+    ResultCount,
+    PerTestingCriteriaResult,
+    DataSource,
+    OutputItemsList,
+)
 from ._utils.logging_utils import log_error
 
 
@@ -50,6 +57,32 @@ class MLflowIntegration:
         self.scan_output_dir = scan_output_dir
         self.ai_studio_url = None
         self.trace_destination = None
+        self._run_id_override: Optional[str] = None
+        self._eval_id_override: Optional[str] = None
+        self._created_at_override: Optional[int] = None
+
+    def set_run_identity_overrides(
+        self,
+        *,
+        run_id: Optional[str] = None,
+        eval_id: Optional[str] = None,
+        created_at: Optional[Any] = None,
+    ) -> None:
+        """Allow callers to supply pre-existing identifiers for the run payload."""
+
+        self._run_id_override = str(run_id).strip() if run_id else None
+        self._eval_id_override = str(eval_id).strip() if eval_id else None
+
+        if created_at is None or created_at == "":
+            self._created_at_override = None
+        else:
+            if isinstance(created_at, datetime):
+                self._created_at_override = int(created_at.timestamp())
+            else:
+                try:
+                    self._created_at_override = int(created_at)
+                except (TypeError, ValueError):
+                    self._created_at_override = None
 
     def start_redteam_mlflow_run(
         self,
@@ -136,6 +169,7 @@ class MLflowIntegration:
         eval_run: EvalRun,
         red_team_info: Dict,
         _skip_evals: bool = False,
+        aoai_summary: Optional["RedTeamRun"] = None,
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
 
@@ -147,43 +181,42 @@ class MLflowIntegration:
         :type red_team_info: Dict
         :param _skip_evals: Whether to log only data without evaluation results
         :type _skip_evals: bool
+        :param aoai_summary: Pre-built AOAI-compatible summary (optional, will be built if not provided)
+        :type aoai_summary: Optional[RedTeamRun]
         :return: The URL to the run in Azure AI Studio, if available
         :rtype: Optional[str]
         """
         self.logger.debug(f"Logging results to MLFlow, _skip_evals={_skip_evals}")
         artifact_name = "instance_results.json"
+        results_name = "results.json"
         eval_info_name = "redteam_info.json"
         properties = {}
 
         with tempfile.TemporaryDirectory() as tmpdir:
             if self.scan_output_dir:
+                # Save new format as results.json
+                results_path = os.path.join(self.scan_output_dir, results_name)
+                self.logger.debug(f"Saving results to scan output directory: {results_path}")
+                with open(results_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    # Use provided aoai_summary
+                    if aoai_summary is None:
+                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
+                        raise ValueError("aoai_summary parameter is required but was not provided")
+
+                    payload = dict(aoai_summary)  # Make a copy
+                    json.dump(payload, f)
+
+                # Save legacy format as instance_results.json
                 artifact_path = os.path.join(self.scan_output_dir, artifact_name)
                 self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
                 with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if _skip_evals:
-                        # In _skip_evals mode, we write the conversations in conversation/messages format
-                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                    elif redteam_result.scan_result:
-                        # Create a copy to avoid modifying the original scan result
-                        result_with_conversations = (
-                            redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
-                        )
-
-                        # Preserve all original fields needed for scorecard generation
-                        result_with_conversations["scorecard"] = result_with_conversations.get("scorecard", {})
-                        result_with_conversations["parameters"] = result_with_conversations.get("parameters", {})
-
-                        # Add conversations field with all conversation data including user messages
-                        result_with_conversations["conversations"] = redteam_result.attack_details or []
-
-                        # Keep original attack_details field to preserve compatibility with existing code
-                        if (
-                            "attack_details" not in result_with_conversations
-                            and redteam_result.attack_details is not None
-                        ):
-                            result_with_conversations["attack_details"] = redteam_result.attack_details
-
-                        json.dump(result_with_conversations, f)
+                    legacy_payload = self._build_instance_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        scan_name=getattr(eval_run, "display_name", None),
+                    )
+                    json.dump(legacy_payload, f)
 
                 eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
                 self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
@@ -210,16 +243,35 @@ class MLflowIntegration:
                     self.logger.debug(f"Saved scorecard to: {scorecard_path}")
 
                 # Create a dedicated artifacts directory with proper structure for MLFlow
-                # First, create the main artifact file that MLFlow expects
+                # First, create the main artifact file that MLFlow expects (new format)
+                with open(
+                    os.path.join(tmpdir, results_name),
+                    "w",
+                    encoding=DefaultOpenEncoding.WRITE,
+                ) as f:
+                    # Use provided aoai_summary (required)
+                    if aoai_summary is None:
+                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
+                        raise ValueError("aoai_summary parameter is required but was not provided")
+
+                    payload = dict(aoai_summary)  # Make a copy
+                    # Remove conversations for MLFlow artifact
+                    payload.pop("conversations", None)
+                    json.dump(payload, f)
+
+                # Also create legacy instance_results.json for compatibility
                 with open(
                     os.path.join(tmpdir, artifact_name),
                     "w",
                     encoding=DefaultOpenEncoding.WRITE,
                 ) as f:
-                    if _skip_evals:
-                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                    elif redteam_result.scan_result:
-                        json.dump(redteam_result.scan_result, f)
+                    legacy_payload = self._build_instance_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        scan_name=getattr(eval_run, "display_name", None),
+                    )
+                    json.dump(legacy_payload, f)
 
                 # Copy all relevant files to the temp directory
                 import shutil
@@ -246,12 +298,34 @@ class MLflowIntegration:
                 properties.update({"scan_output_dir": str(self.scan_output_dir)})
             else:
                 # Use temporary directory as before if no scan output directory exists
+                results_file = Path(tmpdir) / results_name
+                with open(results_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    # Use provided aoai_summary (required)
+                    if aoai_summary is None:
+                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
+                        raise ValueError("aoai_summary parameter is required but was not provided")
+
+                    payload = dict(aoai_summary)  # Make a copy
+                    # Include conversations only if _skip_evals is True
+                    if _skip_evals and "conversations" not in payload:
+                        payload["conversations"] = (
+                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                        )
+                    elif not _skip_evals:
+                        payload.pop("conversations", None)
+                    json.dump(payload, f)
+                self.logger.debug(f"Logged artifact: {results_name}")
+
+                # Also create legacy instance_results.json
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if _skip_evals:
-                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                    elif redteam_result.scan_result:
-                        json.dump(redteam_result.scan_result, f)
+                    legacy_payload = self._build_instance_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        scan_name=getattr(eval_run, "display_name", None),
+                    )
+                    json.dump(legacy_payload, f)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
             properties.update(
@@ -278,7 +352,7 @@ class MLflowIntegration:
                 try:
                     create_evaluation_result_response = (
                         self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                            name=uuid.uuid4(),
+                            name=str(uuid.uuid4()),
                             path=tmpdir,
                             metrics=metrics,
                             result_type=ResultType.REDTEAM,
@@ -320,3 +394,37 @@ class MLflowIntegration:
 
         self.logger.info("Successfully logged results to AI Foundry")
         return None
+
+    def _build_instance_results_payload(
+        self,
+        redteam_result: RedTeamResult,
+        eval_run: Optional[Any] = None,
+        red_team_info: Optional[Dict] = None,
+        scan_name: Optional[str] = None,
+    ) -> Dict:
+        """Assemble the legacy structure for instance_results.json (scan_result format)."""
+
+        scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
+
+        # Return the scan_result directly for legacy compatibility
+        # This maintains the old format that was expected previously
+        # Filter out AOAI_Compatible properties - those belong in results.json only
+        legacy_payload = (
+            {
+                k: v
+                for k, v in scan_result.items()
+                if k not in ["AOAI_Compatible_Summary", "AOAI_Compatible_Row_Results"]
+            }
+            if scan_result
+            else {}
+        )
+
+        # Ensure we have the basic required fields
+        if "scorecard" not in legacy_payload:
+            legacy_payload["scorecard"] = {}
+        if "parameters" not in legacy_payload:
+            legacy_payload["parameters"] = {}
+        if "attack_details" not in legacy_payload:
+            legacy_payload["attack_details"] = redteam_result.attack_details or []
+
+        return legacy_payload

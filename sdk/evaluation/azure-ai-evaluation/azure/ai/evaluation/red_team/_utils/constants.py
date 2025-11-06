@@ -39,12 +39,27 @@ ATTACK_STRATEGY_COMPLEXITY_MAP = {
     str(AttackStrategy.MODERATE.value): "moderate",
     str(AttackStrategy.DIFFICULT.value): "difficult",
     str(AttackStrategy.Jailbreak.value): "easy",
+    str(AttackStrategy.IndirectJailbreak.value): "easy",
     str(AttackStrategy.MultiTurn.value): "difficult",
     str(AttackStrategy.Crescendo.value): "difficult",
 }
 
 # Task timeouts and status codes
 INTERNAL_TASK_TIMEOUT = 120
+
+# Sampling constants
+# Multiplier for the maximum number of sampling iterations when round-robin sampling from risk subtypes.
+# This prevents infinite loops while allowing sufficient attempts to find unique objectives.
+# With N subtypes, this allows up to N * MAX_SAMPLING_ITERATIONS_MULTIPLIER total iterations.
+MAX_SAMPLING_ITERATIONS_MULTIPLIER = 100
+
+# Map of risk categories to their maximum number of subtypes
+# Used to calculate num_objectives_with_subtypes for adequate subtype coverage
+RISK_TO_NUM_SUBTYPE_MAP = {
+    RiskCategory.ProhibitedActions: 32,
+    RiskCategory.TaskAdherence: 9,
+    RiskCategory.SensitiveDataLeakage: 19,
+}
 
 # Task status definitions
 TASK_STATUS = {

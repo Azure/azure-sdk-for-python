@@ -23,7 +23,7 @@ class TestStorageManagementUsagesOperations(AzureMgmtRecordedTestCase):
     def test_usages_list_by_location(self, resource_group):
         response = self.client.usages.list_by_location(
             location="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

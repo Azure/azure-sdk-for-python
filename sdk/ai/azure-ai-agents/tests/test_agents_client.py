@@ -16,6 +16,8 @@ import pytest
 import io
 import user_functions
 
+from typing import List
+
 from azure.ai.agents import AgentsClient
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import (
@@ -35,6 +37,7 @@ from azure.ai.agents.models import (
     CodeInterpreterToolResource,
     ConnectedAgentTool,
     DeepResearchTool,
+    ComputerUseTool,
     FabricTool,
     FilePurpose,
     FileSearchTool,
@@ -42,8 +45,14 @@ from azure.ai.agents.models import (
     FileSearchToolResource,
     FunctionTool,
     McpTool,
+    ComputerToolOutput,
+    ComputerScreenshot,
     MessageAttachment,
     MessageDeltaChunk,
+    MessageInputContentBlock,
+    MessageImageUrlParam,
+    MessageInputTextBlock,
+    MessageInputImageUrlBlock,
     MessageTextContent,
     MessageTextFileCitationDetails,
     MessageTextFileCitationAnnotation,
@@ -53,6 +62,7 @@ from azure.ai.agents.models import (
     OpenApiTool,
     OpenApiAnonymousAuthDetails,
     RequiredMcpToolCall,
+    RequiredComputerUseToolCall,
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunStepActivityDetails,
@@ -63,6 +73,7 @@ from azure.ai.agents.models import (
     RunStepBingGroundingToolCall,
     RunStepBrowserAutomationToolCall,
     RunStepCodeInterpreterToolCall,
+    RunStepComputerUseToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     RunStepDeltaAzureFunctionToolCall,
@@ -89,6 +100,7 @@ from azure.ai.agents.models import (
     RunStep,
     SharepointTool,
     SubmitToolApprovalAction,
+    SubmitToolOutputsAction,
     ThreadMessage,
     ThreadMessageOptions,
     ThreadRun,
@@ -107,6 +119,7 @@ from test_agents_client_base import (
     agentClientPreparer,
     fetch_current_datetime_recordings,
     fetch_current_datetime_live,
+    image_to_base64,
 )
 
 # Statically defined user functions for fast reference
@@ -136,6 +149,14 @@ class TestAgentClient(TestAgentClientBase):
     def _get_data_file(self) -> str:
         """Return the test file name."""
         return os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_data", "product_info_1.md")
+
+    def _get_screenshot_file(self) -> str:
+        """Return the test file name."""
+        return os.path.join(os.path.dirname(__file__), "test_data", "cua_screenshot.jpg")
+
+    def _get_screenshot_next_file(self) -> str:
+        """Return the test file name."""
+        return os.path.join(os.path.dirname(__file__), "test_data", "cua_screenshot_next.jpg")
 
     # **********************************************************************************
     #
@@ -3908,6 +3929,10 @@ class TestAgentClient(TestAgentClientBase):
             allowed_tools=[],  # Optional: specify allowed tools
         )
 
+    def _get_computer_use_tool(self):
+        """Helper method to get a Computer Use tool (preview)."""
+        return ComputerUseTool(display_width=1024, display_height=768, environment="browser")
+
     @agentClientPreparer()
     @recorded_by_proxy
     def test_mcp_tool(self, **kwargs):
@@ -3973,6 +3998,86 @@ class TestAgentClient(TestAgentClientBase):
                                 break
                 assert is_activity_step_found, "RunStepMcpToolCall was not found."
                 assert is_tool_call_step_found, "No RunStepMcpToolCall"
+                messages = list(agents_client.messages.list(thread_id=thread.id))
+                assert len(messages) > 1
+            finally:
+                agents_client.threads.delete(thread.id)
+                agents_client.delete_agent(agent.id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_computer_use_tool(self, **kwargs):
+        """Test Computer Use tool call.
+
+        Model name is fixed to the preview model as required: 'computer-use-preview'.
+        """
+        cu_tool = self._get_computer_use_tool()
+        with self.create_client(**kwargs, by_endpoint=True) as agents_client:
+            agent = agents_client.create_agent(
+                model="computer-use-preview",  # NOTE: spelling per requirement
+                name="my-cu-agent",
+                instructions=(
+                    "You are a computer automation assistant. Use the computer_use_preview tool to interact with the screen when needed."
+                ),
+                tools=cu_tool.definitions,
+            )
+            thread = agents_client.threads.create()
+            try:
+                input_message = (
+                    "I can see a web browser with bing.com open and the cursor in the search box."
+                    "Type 'movies near me' without pressing Enter or any other key. Only type 'movies near me'."
+                )
+                image_base64 = image_to_base64(self._get_screenshot_file())
+                img_url = f"data:image/jpeg;base64,{image_base64}"
+                url_param = MessageImageUrlParam(url=img_url, detail="high")
+                content_blocks: List[MessageInputContentBlock] = [
+                    MessageInputTextBlock(text=input_message),
+                    MessageInputImageUrlBlock(image_url=url_param),
+                ]
+                # Create message to thread
+                message = agents_client.messages.create(
+                    thread_id=thread.id, role=MessageRole.USER, content=content_blocks
+                )
+                run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+                submitted_tool_outputs = False
+                result_image_base64 = image_to_base64(self._get_screenshot_next_file())
+                result_img_url = f"data:image/jpeg;base64,{result_image_base64}"
+                computer_screenshot = ComputerScreenshot(image_url=result_img_url)
+                while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS, RunStatus.REQUIRES_ACTION]:
+                    time.sleep(self._sleep_time())
+                    run = agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+
+                    if run.status == RunStatus.REQUIRES_ACTION and isinstance(
+                        run.required_action, SubmitToolOutputsAction
+                    ):
+                        tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                        assert tool_calls, "No tool calls to fulfill."
+                        tool_outputs = []
+                        for tool_call in tool_calls:
+                            if isinstance(tool_call, RequiredComputerUseToolCall):
+                                # Provide a fake screenshot response
+                                tool_outputs.append(
+                                    ComputerToolOutput(tool_call_id=tool_call.id, output=computer_screenshot)
+                                )
+                        if tool_outputs:
+                            submitted_tool_outputs = True
+                            agents_client.runs.submit_tool_outputs(
+                                thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+                            )
+                assert submitted_tool_outputs, "Tool outputs were never submitted."
+                assert run.status != RunStatus.FAILED, run.last_error
+
+                # Validate run steps contain a Computer Use tool call
+                found_cu_tool_call = False
+                for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id):
+                    if isinstance(run_step.step_details, RunStepToolCallDetails):
+                        for tc in run_step.step_details.tool_calls:
+                            if isinstance(tc, RunStepComputerUseToolCall):
+                                found_cu_tool_call = True
+                                break
+                    if found_cu_tool_call:
+                        break
+                assert found_cu_tool_call, "No RunStepComputerUseToolCall was found."
                 messages = list(agents_client.messages.list(thread_id=thread.id))
                 assert len(messages) > 1
             finally:

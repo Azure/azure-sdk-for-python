@@ -1,9 +1,15 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict
 import json
 from azure.ai.evaluation._common._experimental import experimental
+
+
+# NOTE: The RedTeam* TypedDict classes below are being gradually deprecated in favor of
+# the standard EvalRun* models from azure.ai.evaluation._common.onedp.models._models.
+# New code should use EvalRunOutputItem instead of RedTeamOutputItem, etc.
+# These TypedDicts are maintained for backward compatibility during the transition.
 
 
 @experimental
@@ -216,7 +222,7 @@ class RiskAssessment(TypedDict):
 
 
 @experimental
-class AttackDetails(TypedDict):
+class AttackDetails(TypedDict, total=False):
     """TypedDict representation of a simulated conversation in a red team evaluation.
 
     :param attack_success: Whether the attack was successful
@@ -233,6 +239,8 @@ class AttackDetails(TypedDict):
     :type risk_assessment: Optional[RiskAssessment]
     :param attack_success_threshold: The threshold value used to determine attack success
     :type attack_success_threshold: Optional[int]
+    :param risk_sub_type: Optional risk sub-category/sub-type for the attack
+    :type risk_sub_type: Optional[str]
     """
 
     attack_success: Optional[bool]
@@ -242,6 +250,112 @@ class AttackDetails(TypedDict):
     conversation: List[Dict[str, str]]
     risk_assessment: Optional[RiskAssessment]
     attack_success_threshold: Optional[int]
+    risk_sub_type: Optional[str]
+
+
+@experimental
+class RedTeamOutputResultProperties(TypedDict, total=False):
+    """Additional metadata captured for each evaluation result."""
+
+    attack_success: Optional[bool]
+    attack_success_threshold: Optional[int]
+    attack_technique: str
+    attack_complexity: str
+    risk_category: str
+    risk_assessment: Optional[Dict[str, Any]]
+    reason: Optional[str]
+    severity_label: Optional[str]
+    metadata: Optional[Dict[str, Any]]
+
+
+@experimental
+class EvaluationRunOutputItemMessage(TypedDict, total=False):
+    """Representation of a single message within an evaluation sample."""
+
+    role: str
+    content: Any
+    name: Optional[str]
+    tool_calls: Optional[List[Dict[str, Any]]]
+
+
+@experimental
+class RedTeamRunOutputItemResult(TypedDict, total=False):
+    """Flattened evaluation result for a single risk category.
+
+    :param passed: Indicates whether the attack was unsuccessful (True) or successful (False).
+                   In the context of attack success rate (ASR), passed=True means the system
+                   successfully defended against the attack, while passed=False means the attack
+                   succeeded in compromising the system.
+    :type passed: Optional[bool]
+    :param label: String label "pass" or "fail" that aligns with the passed field
+    :type label: Optional[str]
+    """
+
+    # Should extend EvaluationRunOutputItemResult
+
+    object: str
+    type: str
+    name: str
+    passed: Optional[bool]
+    label: Optional[str]
+    score: Optional[float]
+    metric: Optional[str]
+    threshold: Optional[float]
+    reason: Optional[str]
+    properties: RedTeamOutputResultProperties
+
+
+@experimental
+class RedTeamDatasourceItem(TypedDict, total=False):
+    """Metadata about the datasource item that produced this conversation."""
+
+    id: Optional[str]
+    input_data: Dict[str, Any]
+
+
+@experimental
+class RedTeamRunOutputItemSample(TypedDict, total=False):
+    """Sample payload containing the red team conversation.
+
+    :param error: Error information from either the evaluation step or while calling the target system.
+                  Contains details about any failures that occurred during the attack simulation or
+                  evaluation process.
+    :type error: Optional[Dict[str, Any]]
+    """
+
+    # Should extend EvaluationRunOutputItemSample
+
+    object: str
+    input: List[EvaluationRunOutputItemMessage]
+    output: List[EvaluationRunOutputItemMessage]
+    finish_reason: Optional[str]
+    model: Optional[str]
+    error: Optional[Dict[str, Any]]
+    usage: Optional[Dict[str, Any]]
+    seed: Optional[int]
+    temperature: Optional[float]
+    top_p: Optional[float]
+    max_completion_tokens: Optional[float]
+    metadata: Optional[Dict[str, Any]]
+
+
+@experimental
+class RedTeamOutputItem(TypedDict, total=False):
+    """Structured representation of a conversation and its evaluation artifacts.
+
+    DEPRECATED: This TypedDict duplicates the EvalRunOutputItem model from
+    azure.ai.evaluation._common.onedp.models._models. New code should use
+    EvalRunOutputItem directly instead of this TypedDict wrapper.
+    """
+
+    object: str
+    id: str
+    created_time: int
+    status: str
+    datasource_item_id: Optional[str]
+    datasource_item: Optional[RedTeamDatasourceItem]
+    sample: RedTeamRunOutputItemSample
+    results: List[RedTeamRunOutputItemResult]
 
 
 @experimental
@@ -254,6 +368,10 @@ class ScanResult(TypedDict):
     :type parameters: RedTeamingParameters
     :param attack_details: List of AttackDetails objects representing the conversations in the evaluation
     :type attack_details: List[AttackDetails]
+    :param AOAI_Compatible_Row_Results: List of evaluation results for each risk category
+    :type AOAI_Compatible_Row_Results: Optional[List[RedTeamRunOutputItemResult]]
+    :param AOAI_Compatible_Summary: The evaluation run metadata in eval.run format
+    :type AOAI_Compatible_Summary: Optional[RedTeamRun]
     :param studio_url: Optional URL for the studio
     :type studio_url: Optional[str]
     """
@@ -261,7 +379,155 @@ class ScanResult(TypedDict):
     scorecard: RedTeamingScorecard
     parameters: RedTeamingParameters
     attack_details: List[AttackDetails]
+    AOAI_Compatible_Row_Results: Optional[List[RedTeamRunOutputItemResult]]
+    AOAI_Compatible_Summary: Optional["RedTeamRun"]
     studio_url: Optional[str]
+
+
+@experimental
+class ResultCount(TypedDict):
+    """Count of evaluation results by status.
+
+    :param total: Total number of evaluation results
+    :type total: int
+    :param passed: Number of evaluation results where the attack was unsuccessful (system defended successfully).
+                   In the context of attack success rate (ASR), this represents attacks that failed.
+    :type passed: int
+    :param failed: Number of evaluation results where the attack was successful (system was compromised).
+                   In the context of attack success rate (ASR), this represents successful attacks.
+    :type failed: int
+    :param errored: Number of evaluation results that failed to process due to errors.
+                    Calculated from rows where the sample's error property is set, indicating failures
+                    during the attack simulation or evaluation step.
+    :type errored: int
+    """
+
+    total: int
+    passed: int
+    failed: int
+    errored: int
+
+
+@experimental
+class PerTestingCriteriaResult(TypedDict, total=False):
+    """Result count for a specific testing criteria.
+
+    :param testing_criteria: The name of the testing criteria (e.g., risk category)
+    :type testing_criteria: str
+    :param attack_strategy: The attack strategy used (optional, for attack strategy summaries)
+    :type attack_strategy: Optional[str]
+    :param passed: Number of results where the attack was unsuccessful for this criteria.
+                   In the context of attack success rate (ASR), this represents attacks that failed
+                   to compromise the system for this specific testing criteria.
+    :type passed: int
+    :param failed: Number of results where the attack was successful for this criteria.
+                   In the context of attack success rate (ASR), this represents successful attacks
+                   for this specific testing criteria.
+    :type failed: int
+    """
+
+    testing_criteria: str
+    attack_strategy: Optional[str]
+    passed: int
+    failed: int
+
+
+@experimental
+class DataSourceItemGenerationParams(TypedDict, total=False):
+    """Parameters for data source item generation.
+
+    :param type: Type of data source generation (e.g., "red_team")
+    :type type: str
+    :param attack_strategies: List of attack strategies used
+    :type attack_strategies: List[str]
+    :param num_turns: Number of turns in the conversation
+    :type num_turns: int
+    """
+
+    type: str
+    attack_strategies: List[str]
+    num_turns: int
+
+
+@experimental
+class DataSource(TypedDict, total=False):
+    """Data source information for the red team evaluation.
+
+    :param type: Type of data source (e.g., "azure_ai_red_team")
+    :type type: str
+    :param target: Target configuration for the data source
+    :type target: Dict[str, Any]
+    :param item_generation_params: Parameters used for generating data items
+    :type item_generation_params: DataSourceItemGenerationParams
+    """
+
+    type: str
+    target: Dict[str, Any]
+    item_generation_params: DataSourceItemGenerationParams
+
+
+@experimental
+class OutputItemsList(TypedDict):
+    """Wrapper for list of output items.
+
+    :param object: Object type identifier (always "list")
+    :type object: str
+    :param data: List of red team output items
+    :type data: List[RedTeamOutputItem]
+    """
+
+    object: str
+    data: List[RedTeamOutputItem]
+
+
+@experimental
+class RedTeamRun(TypedDict, total=False):
+    """TypedDict representation of a Red Team evaluation run in eval.run format.
+
+    :param object: Object type identifier (always "eval.run")
+    :type object: str
+    :param id: Unique identifier for the run
+    :type id: str
+    :param eval_id: Identifier for the evaluation experiment
+    :type eval_id: str
+    :param created_at: Timestamp when the run was created (Unix epoch seconds)
+    :type created_at: int
+    :param status: Status of the run (e.g., "completed", "failed", "in_progress")
+    :type status: str
+    :param name: Display name for the run
+    :type name: str
+    :param report_url: URL to view the run report in Azure AI Studio
+    :type report_url: Optional[str]
+    :param data_source: Information about the data source used for the evaluation
+    :type data_source: DataSource
+    :param metadata: Additional metadata for the run
+    :type metadata: Dict[str, Any]
+    :param result_counts: Aggregated counts of evaluation results
+    :type result_counts: ResultCount
+    :param per_model_usage: Usage statistics per model (if applicable)
+    :type per_model_usage: List[Any]
+    :param per_testing_criteria_results: Results aggregated by testing criteria
+    :type per_testing_criteria_results: List[PerTestingCriteriaResult]
+    :param output_items: Wrapped list of output items from the evaluation
+    :type output_items: OutputItemsList
+    :param conversations: Optional list of attack details/conversations
+    :type conversations: List[AttackDetails]
+    """
+
+    object: str
+    id: str
+    eval_id: str
+    created_at: int
+    status: str
+    name: str
+    report_url: Optional[str]
+    data_source: DataSource
+    metadata: Dict[str, Any]
+    result_counts: ResultCount
+    per_model_usage: List[Any]
+    per_testing_criteria_results: List[PerTestingCriteriaResult]
+    output_items: OutputItemsList
+    conversations: List[AttackDetails]
 
 
 @experimental
@@ -284,21 +550,23 @@ class RedTeamResult:
         return self.scan_result.get("scorecard", None) if self.scan_result else None
 
     def to_eval_qr_json_lines(self) -> str:
-        """
-        Converts conversations in messages format to query-response format suitable for evaluation.
+        """Converts conversations in messages format to query-response format suitable for evaluation.
 
         The output format follows the JSONL pattern with each line containing:
-        {
-            "query": "user message content",
-            "response": "assistant message content",
-            "risk_category": "risk category",
-            "attack_strategy": "strategy name",
-            "attack_complexity": "complexity level",
-            "attack_success": "true|false", (if available from evaluation)
-            "category": "risk category", (if available from evaluation)
-            "severity_level": "low|medium|high", (if available from evaluation)
-            "threshold": "threshold value" (if available from evaluation)
-        }
+
+        .. code-block:: javascript
+
+            {
+                "query": "user message content",
+                "response": "assistant message content",
+                "risk_category": "risk category",
+                "attack_strategy": "strategy name",
+                "attack_complexity": "complexity level",
+                "attack_success": "true|false", // (if available from evaluation)
+                "category": "risk category", // (if available from evaluation)
+                "severity_level": "low|medium|high", // (if available from evaluation)
+                "threshold": "threshold value" // (if available from evaluation)
+            }
 
         :returns: A list of strings containing query-response pairs in JSONL format.
         :rtype: List[str]

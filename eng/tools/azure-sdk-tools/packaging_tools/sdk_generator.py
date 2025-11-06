@@ -1,11 +1,11 @@
 import sys
 import time
-from typing import List, Dict, Any
+from typing import List, Any
 import argparse
 import json
 import logging
 from pathlib import Path
-from subprocess import check_call, getoutput
+from subprocess import check_call
 import shutil
 import re
 import os
@@ -33,8 +33,6 @@ from .generate_utils import (
     gen_dpg,
     dpg_relative_folder,
     gen_typespec,
-    return_origin_path,
-    call_build_config,
     del_outdated_generated_files,
 )
 from .conf import CONF_NAME
@@ -42,8 +40,7 @@ from .package_utils import create_package, change_log_generate, extract_breaking
 
 logging.basicConfig(
     stream=sys.stdout,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%Y-%m-%d %X",
+    format="[%(levelname)s] %(message)s",
 )
 _LOGGER = logging.getLogger(__name__)
 
@@ -126,63 +123,6 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
     return result
 
 
-def get_last_commit_info(files: List[str]) -> str:
-    result = [getoutput(f'git log -1 --pretty="format:%ai %H" {f}').strip("\n ") + " " + f for f in files]
-    result.sort()
-    return result[-1]
-
-
-# input_readme: "specification/paloaltonetworks/resource-manager/readme.md"
-# source: content of readme.python.md
-# work directory is in root folder of azure-rest-api-specs
-@return_origin_path
-def choose_tag_and_update_meta(
-    idx: int, source: List[str], target: List[str], input_readme: str, meta: Dict[str, Any], need_regenerate: bool
-) -> int:
-    os.chdir(str(Path(input_readme).parent))
-    with open("readme.md", "r") as file_in:
-        readme_content = file_in.readlines()
-
-    while idx < len(source):
-        if "```" in source[idx]:
-            break
-        if "tag:" in source[idx]:
-            tag = source[idx].split("tag:")[-1].strip("\n ")
-            related_files = get_related_swagger(readme_content, tag)
-            if related_files:
-                commit_info = get_last_commit_info(related_files)
-                recorded_info = meta.get(tag, "")
-                # there may be new commit after last release
-                if need_regenerate or commit_info > recorded_info:
-                    _LOGGER.info(f"update tag: {tag} with commit info {commit_info}")
-                    meta[tag] = commit_info
-                    target.append(source[idx])
-                else:
-                    _LOGGER.info(f"skip tag: {tag} since commit info doesn't change")
-            else:
-                _LOGGER.warning(f"do not find related swagger for tag: {tag}")
-        else:
-            target.append(source[idx])
-        idx += 1
-    return idx
-
-
-def extract_version_info(config: Dict[str, Any]) -> str:
-    autorest_version = config.get("autorest", "")
-    autorest_modelerfour_version = config.get("use", [])
-    return autorest_version + "".join(autorest_modelerfour_version)
-
-
-def if_need_regenerate(meta: Dict[str, Any]) -> bool:
-    with open(str(Path("../azure-sdk-for-python", CONFIG_FILE)), "r") as file_in:
-        config = json.load(file_in)
-    current_info = config["meta"]["autorest_options"]["version"] + "".join(
-        sorted(config["meta"]["autorest_options"]["use"])
-    )
-    recorded_info = meta["autorest"] + "".join(sorted(meta["use"]))
-    return recorded_info != current_info
-
-
 
 
 
@@ -201,6 +141,7 @@ def main(generate_input, generate_output):
     run_in_pipeline = data.get("runMode") is not None
     for input_type, readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
+        config = None
         try:
             code_generation_start_time = time.time()
             if input_type == "relatedTypeSpecProjectFolder":
@@ -217,8 +158,7 @@ def main(generate_input, generate_output):
             elif "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
-                generate_mgmt = partial(
-                    generate,
+                config = generate(
                     CONFIG_FILE,
                     sdk_folder,
                     [],
@@ -227,7 +167,6 @@ def main(generate_input, generate_output):
                     force_generation=True,
                     python_tag=python_tag,
                 )
-                config = generate_mgmt()
             else:
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
@@ -263,8 +202,6 @@ def main(generate_input, generate_output):
                     package_entry["path"] = [folder_name]
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
-                    readme_python_content = get_readme_python_content(str(Path(spec_folder) / readme_or_tsp))
-                    package_entry["isMultiapi"] = False
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     package_entry["allowInvalidNextVersion"] = data.get("allowInvalidNextVersion", False)
                     result[package_name] = package_entry
@@ -289,15 +226,18 @@ def main(generate_input, generate_output):
 
             # Update metadata
             try:
-                update_servicemetadata(
-                    sdk_folder,
-                    data,
-                    config,
-                    folder_name,
-                    package_name,
-                    spec_folder,
-                    readme_or_tsp,
-                )
+                if config is not None:
+                    update_servicemetadata(
+                        sdk_folder,
+                        data,
+                        config,
+                        folder_name,
+                        package_name,
+                        spec_folder,
+                        readme_or_tsp,
+                    )
+                else:
+                    _LOGGER.warning(f"Skip metadata update for {package_name} as config is not available")
             except Exception as e:
                 _LOGGER.warning(f"Fail to update meta: {str(e)}")
 
@@ -309,8 +249,6 @@ def main(generate_input, generate_output):
                 )
             except Exception as e:
                 _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
-
-
 
             # Changelog generation
             try:
