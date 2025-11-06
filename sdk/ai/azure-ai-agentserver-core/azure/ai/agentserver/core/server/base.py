@@ -60,10 +60,20 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
             request_context.set(ctx)
 
     def set_run_context_to_context_var(self, run_context):
+        agent_id = ""
+        agent_obj = run_context.get_agent_id_object()
+        if agent_obj:
+            agent_name = getattr(agent_obj, "name", "")
+            agent_version = getattr(agent_obj, "version", "")
+            agent_id = f"{agent_name}:{agent_version}"
+
         res = {
             "azure.ai.agentshosting.response_id": run_context.response_id or "",
             "azure.ai.agentshosting.conversation_id": run_context.conversation_id or "",
             "azure.ai.agentshosting.streaming": str(run_context.stream or False),
+            "gen_ai.agent.id": agent_id,
+            "gen_ai.provider.name": "AzureAI Hosted Agents",
+            "gen_ai.response.id": run_context.response_id or "",
         }
         ctx = request_context.get() or {}
         ctx.update(res)
