@@ -2334,13 +2334,13 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 # Add file search details
                 file_search_details: Dict[str, Any] = {}
-                
+
                 if hasattr(item, "queries") and item.queries:
                     file_search_details["queries"] = item.queries
-                
+
                 if hasattr(item, "status"):
                     file_search_details["status"] = item.status
-                
+
                 if hasattr(item, "results") and item.results:
                     file_search_details["results"] = [
                         {
@@ -2374,29 +2374,26 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 # Add code interpreter details
                 code_interpreter_details: Dict[str, Any] = {}
-                
+
                 if hasattr(item, "code") and item.code:
                     code_interpreter_details["code"] = item.code
-                
+
                 if hasattr(item, "status"):
                     code_interpreter_details["status"] = item.status
-                
+
                 if hasattr(item, "outputs") and item.outputs:
                     outputs_list = []
                     for output in item.outputs:
                         output_type = getattr(output, "type", None)
                         if output_type == "logs":
-                            outputs_list.append({
-                                "type": "logs",
-                                "logs": getattr(output, "logs", None)
-                            })
+                            outputs_list.append({"type": "logs", "logs": getattr(output, "logs", None)})
                         elif output_type == "image":
-                            outputs_list.append({
-                                "type": "image",
-                                "image": {
-                                    "file_id": getattr(getattr(output, "image", None), "file_id", None)
+                            outputs_list.append(
+                                {
+                                    "type": "image",
+                                    "image": {"file_id": getattr(getattr(output, "image", None), "file_id", None)},
                                 }
-                            })
+                            )
                     if outputs_list:
                         code_interpreter_details["outputs"] = outputs_list
 
@@ -2423,14 +2420,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 # Add web search details
                 web_search_details: Dict[str, Any] = {}
-                
+
                 if hasattr(item, "status"):
                     web_search_details["status"] = item.status
-                
+
                 if hasattr(item, "action") and item.action:
                     action_type = getattr(item.action, "type", None)
                     web_search_details["action_type"] = action_type
-                    
+
                     if action_type == "search" and hasattr(item.action, "query"):
                         web_search_details["query"] = item.action.query
                     elif action_type == "open_page" and hasattr(item.action, "url"):
