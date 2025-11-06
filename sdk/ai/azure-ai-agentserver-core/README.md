@@ -1,4 +1,4 @@
-# Azure AI Agent Server Adapter 
+# Azure AI Agent Server Adapter for Python
 
 
 ## Getting started

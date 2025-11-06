@@ -84,3 +84,7 @@ Jinja2
 azure-ai-language-conversations
 azure-ai-textanalytics
 azure-confidentialledger-certificate
+azure-ai-projects
+starlette
+uvicorn
+opentelemetry-exporter-otlp-proto-http
