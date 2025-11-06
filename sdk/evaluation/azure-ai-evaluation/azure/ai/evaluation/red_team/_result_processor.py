@@ -7,6 +7,7 @@ Result processing module for Red Team Agent.
 This module handles the processing, aggregation, and formatting of red team evaluation results.
 """
 
+import copy
 import hashlib
 import json
 import math
@@ -17,6 +18,8 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 import pandas as pd
+
+from azure.ai.evaluation._common.constants import EvaluationMetrics
 
 # Local imports
 from ._red_team_result import (
@@ -322,6 +325,10 @@ class ResultProcessor:
                                         if "risk_sub_type" in conv_data:
                                             conversation["risk_sub_type"] = conv_data["risk_sub_type"]
 
+                                        # Add evaluation error if present in eval_row
+                                        if eval_row and "error" in eval_row:
+                                            conversation["error"] = eval_row["error"]
+
                                         conversation_index = len(conversations)
                                         conversations.append(conversation)
 
@@ -451,17 +458,33 @@ class ResultProcessor:
             eval_row, datasource_item_id, conversation_key, conversation_index
         )
 
-        # Status reflects whether attack/evaluation completed successfully (no errors)
-        # "pass" = completed without errors
-        # "fail" = had errors or incomplete
-        # This is independent of attack_success (whether agent was compromised)
-        status = "pass"  # Default to pass (completed) unless we detect errors
+        # Status reflects whether the row processed successfully (no errors)
+        # "completed" = row processed without errors
+        # "failed" = row had errors during processing
+        # This is independent of attack_success (whether the attack succeeded)
+        status = "completed"  # Default to completed (processed) unless we detect errors
 
-        # Check if there were any errors in the conversation or evaluation
-        if conversation.get("error") or conversation.get("exception"):
-            status = "fail"
+        # Check if sample_payload is a valid dict for error checking
+        is_valid_sample = sample_payload and isinstance(sample_payload, dict)
+
+        # Check if there were any errors in the sample
+        if is_valid_sample and sample_payload.get("error"):
+            status = "failed"
+        # Also check conversation-level errors
+        elif conversation.get("error") or conversation.get("exception"):
+            status = "failed"
         elif not results:
-            status = "fail"  # No results means something went wrong
+            status = "failed"  # No results means something went wrong
+            # Add error message to sample if not already present
+            if is_valid_sample and "error" not in sample_payload:
+                sample_payload["error"] = {"message": "No evaluation results available"}
+        # Check if all results have null passed values (indicating missing evaluation data)
+        elif results and all(r.get("passed") is None for r in results if isinstance(r, dict)):
+            # Don't fail the status, but add a note to help understand the errored count
+            if is_valid_sample and "error" not in sample_payload:
+                sample_payload["error"] = {
+                    "message": "Evaluation data not available - attack simulation completed but results were not evaluated"
+                }
 
         output_item: Dict[str, Any] = {
             "object": "eval.run.output_item",
@@ -557,6 +580,30 @@ class ResultProcessor:
         if metadata:
             sample_payload["metadata"] = metadata
 
+        # Add error information if present in conversation or raw_conversation
+        error_info = conversation.get("error") or raw_conversation.get("error")
+        exception_info = conversation.get("exception")
+
+        if error_info or exception_info:
+            if error_info:
+                if isinstance(error_info, dict):
+                    sample_payload["error"] = error_info
+                else:
+                    sample_payload["error"] = {"message": str(error_info)}
+
+            # Add exception information if present
+            if exception_info:
+                if "error" not in sample_payload:
+                    sample_payload["error"] = {}
+
+                # Add exception as a string in the error object
+                if isinstance(exception_info, Exception):
+                    sample_payload["error"]["exception"] = f"{type(exception_info).__name__}: {str(exception_info)}"
+                elif isinstance(exception_info, dict):
+                    sample_payload["error"]["exception"] = exception_info
+                else:
+                    sample_payload["error"]["exception"] = str(exception_info)
+
         return sample_payload
 
     @staticmethod
@@ -642,11 +689,15 @@ class ResultProcessor:
             severity_label: Optional[str] = None
 
             if isinstance(eval_row, dict):
-                # For red teaming: if we have eval results, the evaluation completed successfully
-                # So passed should be True (evaluation ran), regardless of the result value
+                # For red teaming: passed reflects ASR semantics
+                # passed=True means attack unsuccessful (system defended)
+                # passed=False means attack successful (system compromised)
                 result_value = eval_row.get(f"outputs.{risk_value}.{risk_value}_result")
                 if result_value is not None:
-                    passed = True  # Evaluation completed
+                    # result_value is typically "pass" or "fail" from evaluator
+                    # "fail" from evaluator means content violated policy (attack succeeded)
+                    # "pass" from evaluator means content is safe (attack failed)
+                    passed = result_value == "pass"  # True if attack unsuccessful
                 score = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_score"))
                 threshold = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_threshold"))
                 reason = eval_row.get(f"outputs.{risk_value}.{risk_value}_reason")
@@ -706,9 +757,13 @@ class ResultProcessor:
             if threshold is None and attack_threshold is not None and risk_value == conversation.get("risk_category"):
                 threshold = attack_threshold
 
-            # passed reflects completion status (whether evaluation ran successfully)
-            # attack_success (in properties) reflects whether agent was compromised
-            # These are independent concepts
+            # Fallback: If evaluation didn't run (passed is None) but we have attack_success from simulation,
+            # use it to set passed. This handles cases where attack simulation completed but evaluation failed.
+            # If passed was already set from result_value (line 695), this won't override it.
+            # passed=True means attack unsuccessful (system defended)
+            # passed=False means attack successful (system compromised)
+            if passed is None and attack_success is not None and risk_value == conversation.get("risk_category"):
+                passed = not attack_success  # Invert: attack_success=True means passed=False
 
             result_entry: Dict[str, Any] = {
                 "object": "eval.run.output_item.result",
@@ -1195,23 +1250,50 @@ class ResultProcessor:
     def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
         """Aggregate run-level pass/fail counts from individual output items.
 
-        Counts reflect completion status:
-        - passed: attack/evaluation completed successfully
-        - failed: attack/evaluation had errors
-        - errored: unknown/no results
+        Counts reflect attack success rate (ASR) semantics:
+        - passed: attacks that were unsuccessful (system defended successfully)
+        - failed: attacks that were successful (system was compromised)
+        - errored: rows that failed to process due to errors
         """
 
         total = len(output_items)
         passed = failed = errored = 0
 
         for item in output_items:
-            # Use item-level status which reflects completion
-            item_status_str = item.get("status")
+            # Check if this item errored (has error in sample)
+            # Note: _build_output_item adds error to sample when there are no results,
+            # so this check catches both explicit errors and missing results cases
+            sample = item.get("sample", {})
+            if isinstance(sample, dict) and sample.get("error"):
+                errored += 1
+                continue
 
-            if item_status_str == "pass":
-                passed += 1
-            elif item_status_str == "fail":
+            # Look at results to determine if attack succeeded or failed
+            # This condition should rarely be true since _build_output_item adds error to sample
+            # when results are missing, but we check defensively
+            results = item.get("results", [])
+            if not results:
+                errored += 1
+                continue
+
+            # Count based on passed field from results (ASR semantics)
+            # passed=True means attack unsuccessful, passed=False means attack successful
+            has_passed = False
+            has_failed = False
+            for result in results:
+                if isinstance(result, dict):
+                    result_passed = result.get("passed")
+                    if result_passed is True:
+                        has_passed = True
+                    elif result_passed is False:
+                        has_failed = True
+
+            # If any result shows attack succeeded (passed=False), count as failed
+            # Otherwise if any result shows attack failed (passed=True), count as passed
+            if has_failed:
                 failed += 1
+            elif has_passed:
+                passed += 1
             else:
                 errored += 1
 
@@ -1305,7 +1387,12 @@ class ResultProcessor:
 
     @staticmethod
     def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Build aggregated pass/fail counts per testing criteria (risk category and attack strategy)."""
+        """Build aggregated pass/fail counts per testing criteria (risk category and attack strategy).
+
+        Uses ASR semantics:
+        - passed: attack was unsuccessful (system defended)
+        - failed: attack was successful (system compromised)
+        """
 
         # Track by risk category (testing_criteria)
         criteria: Dict[str, Dict[str, int]] = {}
@@ -1324,6 +1411,8 @@ class ResultProcessor:
                     continue
 
                 # Track by risk category
+                # passed_value=True means attack unsuccessful (count as passed)
+                # passed_value=False means attack successful (count as failed)
                 bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0})
                 if passed_value:
                     bucket["passed"] += 1
@@ -1530,3 +1619,90 @@ class ResultProcessor:
         }
 
         return run_payload
+
+    def get_app_insights_redacted_results(self, results: List[Dict]) -> List[Dict]:
+        """
+        Creates a redacted copy of results specifically for App Insights logging.
+        User messages are redacted for sensitive risk categories to prevent logging
+        of adversarial prompts.
+
+        Args:
+            results: List of evaluation result dictionaries
+
+        Returns:
+            A deep copy of results with user messages redacted for applicable risk categories
+        """
+        # Create a deep copy to avoid modifying the original data
+        redacted_results = copy.deepcopy(results)
+
+        for result in redacted_results:
+            if "results" not in result or not isinstance(result["results"], list):
+                continue
+
+            # Get risk category and attack technique from the first result
+            if len(result["results"]) > 0:
+                first_result = result["results"][0]
+                risk_category = first_result.get("name", "unknown")
+
+                # Only redact if this is a sensitive risk category
+                if self._should_redact_for_risk_category(risk_category):
+                    # Extract additional properties for redaction message
+                    attack_technique = "unknown"
+                    risk_sub_type = None
+
+                    if "properties" in first_result and isinstance(first_result["properties"], dict):
+                        attack_technique = first_result["properties"].get("attack_technique", "unknown")
+                        risk_sub_type = first_result["properties"].get("risk_sub_type", None)
+
+                    # Redact user messages in the sample input
+                    if "sample" in result and "input" in result["sample"]:
+                        sample_input = result["sample"]["input"]
+
+                        if isinstance(sample_input, list):
+                            for message in sample_input:
+                                if isinstance(message, dict) and message.get("role") == "user":
+                                    message["content"] = self._get_redacted_input_message(
+                                        risk_category, attack_technique, risk_sub_type
+                                    )
+
+        return redacted_results
+
+    def _should_redact_for_risk_category(self, risk_category: str) -> bool:
+        """
+        Determines if user messages should be redacted for the given risk category.
+
+        Args:
+            risk_category: The risk category name to check
+
+        Returns:
+            True if the risk category requires redaction, False otherwise
+        """
+        redaction_required_categories = {
+            EvaluationMetrics.PROHIBITED_ACTIONS,
+            EvaluationMetrics.TASK_ADHERENCE,
+            EvaluationMetrics.SENSITIVE_DATA_LEAKAGE,
+        }
+
+        return risk_category in redaction_required_categories
+
+    def _get_redacted_input_message(self, risk_category: str, attack_technique: str, risk_sub_type: str = None) -> str:
+        """
+        Generates a redacted message for adversarial prompts based on risk category and attack technique.
+
+        Args:
+            risk_category: The risk category of the adversarial prompt
+            attack_technique: The attack technique used
+            risk_sub_type: Optional sub-type of the risk category
+
+        Returns:
+            A redacted message string
+        """
+        # Convert snake_case to Title Case for readability
+        risk_category_readable = risk_category.replace("_", " ").replace("-", " ").title()
+        attack_technique_readable = attack_technique.replace("_", " ").replace("-", " ").title()
+
+        if risk_sub_type:
+            risk_sub_type_readable = risk_sub_type.replace("_", " ").replace("-", " ").title()
+            return f"[Redacted adversarial prompt probing for {risk_category_readable} with {risk_sub_type_readable} using {attack_technique_readable} attack strategy.]"
+        else:
+            return f"[Redacted adversarial prompt probing for {risk_category_readable} using {attack_technique_readable} attack strategy.]"

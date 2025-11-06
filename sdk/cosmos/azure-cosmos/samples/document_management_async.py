@@ -645,6 +645,7 @@ async def run_sample():
             await read_items(container)
             await query_items(container, 'SalesOrder1')
             await query_items_with_continuation_token(container)
+            await query_items_with_feed_ranges_and_pagination(container)
             await query_items_single_partition_with_pagination(container)
             await query_items_cross_partition_with_pagination(container)
             await replace_item(container, 'SalesOrder1')

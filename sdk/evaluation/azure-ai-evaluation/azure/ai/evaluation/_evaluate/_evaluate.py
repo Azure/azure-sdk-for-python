@@ -963,7 +963,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name)
+            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name, **kwargs)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -1823,6 +1823,8 @@ def _convert_results_to_aoai_evaluation_results(
                 metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
                 if metrics_mapped and len(metrics_mapped) > 0:
                     metrics.extend(metrics_mapped)
+                else:
+                    metrics.append(criteria_name)
             else:
                 metrics.append(criteria_name)
         elif isinstance(evaluator, AzureOpenAIGrader):
