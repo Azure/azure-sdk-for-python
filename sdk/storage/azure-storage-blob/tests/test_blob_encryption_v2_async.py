@@ -211,10 +211,11 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
         # Cannot directly set content settings on encrypted blobs
-        await blob.upload_blob(data=compressed_data, overwrite=True)
+        await blob.upload_blob(data=compressed_data, overwrite=True, content_setting=content_settings)
 
         result = await (await blob.download_blob(decompress=False)).readall()
         assert result == compressed_data
