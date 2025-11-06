@@ -2252,9 +2252,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Create event body - format depends on item type
         event_body: Dict[str, Any] = {}
 
+        # Declare tool_call variable with type for use across branches
+        tool_call: Dict[str, Any]
+
         # Handle different item types
         if item_type == "function_call_output":
-            # Tool output - use tool_call_outputs format
+            # Function tool output - use tool_call_outputs format
             role = "tool"  # Override role for tool outputs
             if _trace_responses_content:
                 tool_output: Dict[str, Any] = {
@@ -2283,10 +2286,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             event_name = "gen_ai.tool.message"
 
         elif item_type == "function_call":
-            # Tool call - use tool_calls format
+            # Function tool call - use tool_calls format
             role = "assistant"  # Override role for function calls
             if _trace_responses_content:
-                tool_call: Dict[str, Any] = {
+                tool_call = {
                     "type": "function",
                 }
 
@@ -2313,6 +2316,130 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             function_details["arguments"] = args_value
 
                     tool_call["function"] = function_details
+
+                event_body["tool_calls"] = [tool_call]
+
+            event_name = "gen_ai.assistant.message"
+
+        elif item_type == "file_search_call":
+            # File search tool call
+            role = "assistant"  # Override role for file search calls
+            if _trace_responses_content:
+                tool_call = {
+                    "type": "file_search",
+                }
+
+                # Add call_id as "id"
+                if hasattr(item, "call_id"):
+                    tool_call["id"] = item.call_id
+                elif hasattr(item, "id"):
+                    tool_call["id"] = item.id
+
+                # Add file search details
+                file_search_details: Dict[str, Any] = {}
+
+                if hasattr(item, "queries") and item.queries:
+                    file_search_details["queries"] = item.queries
+
+                if hasattr(item, "status"):
+                    file_search_details["status"] = item.status
+
+                if hasattr(item, "results") and item.results:
+                    file_search_details["results"] = [
+                        {
+                            "file_id": getattr(result, "file_id", None),
+                            "file_name": getattr(result, "file_name", None),
+                            "score": getattr(result, "score", None),
+                        }
+                        for result in item.results
+                    ]
+
+                if file_search_details:
+                    tool_call["file_search"] = file_search_details
+
+                event_body["tool_calls"] = [tool_call]
+
+            event_name = "gen_ai.assistant.message"
+
+        elif item_type == "code_interpreter_call":
+            # Code interpreter tool call
+            role = "assistant"  # Override role for code interpreter calls
+            if _trace_responses_content:
+                tool_call = {
+                    "type": "code_interpreter",
+                }
+
+                # Add call_id as "id"
+                if hasattr(item, "call_id"):
+                    tool_call["id"] = item.call_id
+                elif hasattr(item, "id"):
+                    tool_call["id"] = item.id
+
+                # Add code interpreter details
+                code_interpreter_details: Dict[str, Any] = {}
+
+                if hasattr(item, "code") and item.code:
+                    code_interpreter_details["code"] = item.code
+
+                if hasattr(item, "status"):
+                    code_interpreter_details["status"] = item.status
+
+                if hasattr(item, "outputs") and item.outputs:
+                    outputs_list = []
+                    for output in item.outputs:
+                        output_type = getattr(output, "type", None)
+                        if output_type == "logs":
+                            outputs_list.append({"type": "logs", "logs": getattr(output, "logs", None)})
+                        elif output_type == "image":
+                            outputs_list.append(
+                                {
+                                    "type": "image",
+                                    "image": {"file_id": getattr(getattr(output, "image", None), "file_id", None)},
+                                }
+                            )
+                    if outputs_list:
+                        code_interpreter_details["outputs"] = outputs_list
+
+                if code_interpreter_details:
+                    tool_call["code_interpreter"] = code_interpreter_details
+
+                event_body["tool_calls"] = [tool_call]
+
+            event_name = "gen_ai.assistant.message"
+
+        elif item_type == "web_search_call":
+            # Web search tool call
+            role = "assistant"  # Override role for web search calls
+            if _trace_responses_content:
+                tool_call = {
+                    "type": "web_search",
+                }
+
+                # Add call_id as "id"
+                if hasattr(item, "call_id"):
+                    tool_call["id"] = item.call_id
+                elif hasattr(item, "id"):
+                    tool_call["id"] = item.id
+
+                # Add web search details
+                web_search_details: Dict[str, Any] = {}
+
+                if hasattr(item, "status"):
+                    web_search_details["status"] = item.status
+
+                if hasattr(item, "action") and item.action:
+                    action_type = getattr(item.action, "type", None)
+                    web_search_details["action_type"] = action_type
+
+                    if action_type == "search" and hasattr(item.action, "query"):
+                        web_search_details["query"] = item.action.query
+                    elif action_type == "open_page" and hasattr(item.action, "url"):
+                        web_search_details["url"] = item.action.url
+                    elif action_type == "find" and hasattr(item.action, "query"):
+                        web_search_details["find_query"] = item.action.query
+
+                if web_search_details:
+                    tool_call["web_search"] = web_search_details
 
                 event_body["tool_calls"] = [tool_call]
 
