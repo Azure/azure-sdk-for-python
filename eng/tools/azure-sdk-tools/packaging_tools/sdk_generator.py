@@ -50,9 +50,6 @@ def execute_func_with_timeout(func, timeout: int = 900) -> Any:
     return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
-
-
-
 # return relative path like: network/azure-mgmt-network
 def extract_sdk_folder(python_md: List[str]) -> str:
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
@@ -121,9 +118,6 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
                 idx += 1
             break
     return result
-
-
-
 
 
 def main(generate_input, generate_output):
