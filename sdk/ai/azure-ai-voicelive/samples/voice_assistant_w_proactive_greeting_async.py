@@ -527,7 +527,7 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--use-token-credential", help="Use Azure token credential instead of API key", action="store_true", default=True
+        "--use-token-credential", help="Use Azure token credential instead of API key", action="store_true", default=False
     )
 
     parser.add_argument("--verbose", help="Enable verbose logging", action="store_true")
