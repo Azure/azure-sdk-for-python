@@ -1,6 +1,6 @@
 # Release History
 
-## 1.13.1 (Unreleased)
+## 1.13.1 (2025-11-05)
 
 ### Features Added
 
