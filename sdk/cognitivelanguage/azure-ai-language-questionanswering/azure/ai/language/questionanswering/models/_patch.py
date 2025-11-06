@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-__all__ = []
+__all__: list[str] = [] 
 
 def patch_sdk():
     """Do not remove from this file.
