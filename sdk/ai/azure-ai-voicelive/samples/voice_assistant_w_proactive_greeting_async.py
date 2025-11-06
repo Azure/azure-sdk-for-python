@@ -291,7 +291,6 @@ class BasicVoiceAssistant:
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready = False
         self.conversation_started = False
-        # Track response lifecycle to avoid cancelling already-completed responses
         self._active_response = False
         self._response_api_done = False
 
@@ -345,13 +344,13 @@ class BasicVoiceAssistant:
             # OpenAI voice (alloy, echo, fable, onyx, nova, shimmer)
             voice_config = self.voice
 
-        # Create strongly typed turn detection configuration
+        # Create turn detection configuration
         turn_detection_config = ServerVad(
             threshold=0.5,
             prefix_padding_ms=300,
             silence_duration_ms=500)
 
-        # Create strongly typed session configuration
+        # Create session configuration
         session_config = RequestSession(
             modalities=[Modality.TEXT, Modality.AUDIO],
             instructions=self.instructions,
@@ -431,7 +430,6 @@ class BasicVoiceAssistant:
             logger.info("User started speaking - stopping playback")
             print("🎤 Listening...")
 
-            # skip queued audio
             ap.skip_pending_audio()
 
             # Only cancel if response is active and not already done
@@ -455,7 +453,6 @@ class BasicVoiceAssistant:
             self._response_api_done = False
 
         elif event.type == ServerEventType.RESPONSE_AUDIO_DELTA:
-            # Stream audio response to speakers
             logger.debug("Received audio delta")
             ap.queue_audio(event.delta)
 
@@ -471,7 +468,6 @@ class BasicVoiceAssistant:
         elif event.type == ServerEventType.ERROR:
             msg = event.error.message
             if "Cancellation failed: no active response" in msg:
-                # Benign - barge-in occurred after response completed
                 logger.debug("Benign cancellation error: %s", msg)
             else:
                 logger.error("❌ VoiceLive error: %s", msg)
