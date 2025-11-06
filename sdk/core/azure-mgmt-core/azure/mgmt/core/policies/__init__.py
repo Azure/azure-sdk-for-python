@@ -29,12 +29,14 @@ from ._authentication import (
     ARMChallengeAuthenticationPolicy,
     AuxiliaryAuthenticationPolicy,
 )
+from ._policy_token_header import PolicyEvaluationTokenPolicy
 from ._base import ARMAutoResourceProviderRegistrationPolicy
 from ._authentication_async import (
     AsyncARMChallengeAuthenticationPolicy,
     AsyncAuxiliaryAuthenticationPolicy,
 )
 from ._base_async import AsyncARMAutoResourceProviderRegistrationPolicy
+from ._policy_token_header_async import AsyncPolicyEvaluationTokenPolicy
 
 
 class ARMHttpLoggingPolicy(HttpLoggingPolicy):
@@ -62,8 +64,10 @@ __all__ = [
     "ARMAutoResourceProviderRegistrationPolicy",
     "ARMChallengeAuthenticationPolicy",
     "ARMHttpLoggingPolicy",
+    "PolicyEvaluationTokenPolicy",
     "AsyncARMAutoResourceProviderRegistrationPolicy",
     "AsyncARMChallengeAuthenticationPolicy",
     "AuxiliaryAuthenticationPolicy",
     "AsyncAuxiliaryAuthenticationPolicy",
+    "AsyncPolicyEvaluationTokenPolicy",
 ]
