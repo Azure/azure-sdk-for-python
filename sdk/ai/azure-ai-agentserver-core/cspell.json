@@ -21,6 +21,6 @@
       "*.csv",
       "*.json",
       "*.rst",
-      "./samples/**"
+      "samples/**"
     ]
   }
