@@ -1663,7 +1663,9 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(datalake_storage_account_name, 'dfs'),
             self.file_system_name,
             file_name,
-            credential=datalake_storage_account_key
+            credential=datalake_storage_account_key,
+            max_chunk_get_size=4,
+            max_single_get_size=4,
         )
         await file_client.create_file()
 
@@ -1678,17 +1680,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             content_settings=content_settings
         )
 
-        stream = await file_client.download_file(decompress=False)
-        result = bytearray()
-        read_size = 4
-        num_chunks = int(ceil(len(compressed_data) / read_size))
-        for i in range(num_chunks):
-            content = await stream.read(read_size)
-            start = i * read_size
-            end = start + read_size
-            assert compressed_data[start:end] == content
-            result.extend(content)
-
+        result = await (await file_client.download_file(decompress=False)).readall()
         assert result == compressed_data
 
 # ------------------------------------------------------------------------------
