@@ -2402,6 +2402,8 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
                 usage_data = sample_data["usage"]
                 model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
+                if _is_none_or_nan(model_name):
+                    continue
                 if model_name not in model_usage_stats:
                     model_usage_stats[model_name] = {
                         "invocation_count": 0,
@@ -2414,18 +2416,22 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 model_stats = model_usage_stats[model_name]
                 model_stats["invocation_count"] += 1
                 if isinstance(usage_data, dict):
-                    model_stats["total_tokens"] += (
-                        usage_data.get("total_tokens", 0) if usage_data.get("total_tokens", 0) else 0
-                    )
-                    model_stats["prompt_tokens"] += (
-                        usage_data.get("prompt_tokens", 0) if usage_data.get("prompt_tokens", 0) else 0
-                    )
-                    model_stats["completion_tokens"] += (
-                        usage_data.get("completion_tokens", 0) if usage_data.get("completion_tokens", 0) else 0
-                    )
-                    model_stats["cached_tokens"] += (
-                        usage_data.get("cached_tokens", 0) if usage_data.get("cached_tokens", 0) else 0
-                    )
+                    cur_total_tokens = usage_data.get("total_tokens", 0)
+                    if _is_none_or_nan(cur_total_tokens):
+                        cur_total_tokens = 0
+                    cur_prompt_tokens = usage_data.get("prompt_tokens", 0)
+                    if _is_none_or_nan(cur_prompt_tokens):
+                        cur_prompt_tokens = 0
+                    cur_completion_tokens = usage_data.get("completion_tokens", 0)
+                    if _is_none_or_nan(cur_completion_tokens):
+                        cur_completion_tokens = 0
+                    cur_cached_tokens = usage_data.get("cached_tokens", 0)
+                    if _is_none_or_nan(cur_cached_tokens):
+                        cur_cached_tokens = 0
+                    model_stats["total_tokens"] += cur_total_tokens
+                    model_stats["prompt_tokens"] += cur_prompt_tokens
+                    model_stats["completion_tokens"] += cur_completion_tokens
+                    model_stats["cached_tokens"] += cur_cached_tokens
 
     # Convert model usage stats to list format matching EvaluationRunPerModelUsage
     per_model_usage = []
@@ -2445,11 +2451,17 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
     for criteria_name, stats_val in result_counts_stats.items():
         if isinstance(stats_val, dict):
             logger.info(f"\r\n  Criteria: {criteria_name}, stats: {stats_val}")
+            cur_passed = stats_val.get("passed", 0)
+            if _is_none_or_nan(cur_passed):
+                cur_passed = 0
+            cur_failed_count = stats_val.get("failed", 0)
+            if _is_none_or_nan(cur_failed_count):
+                cur_failed_count = 0
             result_counts_stats_val.append(
                 {
-                    "testing_criteria": criteria_name,
-                    "passed": stats_val.get("passed", 0),
-                    "failed": stats_val.get("failed", 0),
+                    "testing_criteria": criteria_name if not _is_none_or_nan(criteria_name) else "unknown",
+                    "passed": cur_passed,
+                    "failed": cur_failed_count,
                 }
             )
     return {

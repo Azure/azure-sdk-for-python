@@ -20,10 +20,10 @@
     "ViolenceContentCustomEvaluator": {
         "status": "Failed",
         "duration": "0:00:01.002324",
-        "completed_lines": 0,
+        "completed_lines": 1,
         "failed_lines": 1,
         "log_path": null,
-        "error_message": "(SystemError) 100% of the batch run failed. Prompt template is not initialized.",
+        "error_message": "(SystemError) 50% of the batch run failed. Prompt template is not initialized.",
         "error_code": "FAILED_EXECUTION"
     }
 }
