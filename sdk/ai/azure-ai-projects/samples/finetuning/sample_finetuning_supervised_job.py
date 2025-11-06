@@ -114,6 +114,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
 
             # Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
+            # Note: Deployment can only be started after the fine-tuning job completes successfully.
             print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
             model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
             deployment_name = "gpt-4-1-fine-tuned"

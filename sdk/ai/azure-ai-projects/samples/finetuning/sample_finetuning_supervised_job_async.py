@@ -118,6 +118,7 @@ async def main():
                 print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
 
                 # Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
+                # Note: Deployment can only be started after the fine-tuning job completes successfully.
                 print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
                 fine_tuned_model_name = (
                     await openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
