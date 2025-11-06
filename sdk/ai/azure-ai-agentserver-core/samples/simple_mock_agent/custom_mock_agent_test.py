@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import datetime
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent

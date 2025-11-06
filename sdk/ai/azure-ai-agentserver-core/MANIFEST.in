@@ -6,3 +6,4 @@ recursive-include doc *.rst *.md
 include azure/__init__.py
 include azure/ai/__init__.py
 include azure/ai/agentserver/__init__.py
+include azure/ai/agentserver/core/py.typed

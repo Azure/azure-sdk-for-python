@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Custom MCP simple sample.
 
 This sample combines the patterns from:

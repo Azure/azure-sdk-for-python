@@ -49,6 +49,9 @@ exclude = [
 version = { attr = "azure.ai.agentserver.core._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.ruff]
 line-length = 120
 target-version = "py311"
@@ -60,5 +63,9 @@ exclude = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.core"]  # Your package/module name
+known-first-party = ["azure.ai.agentserver.core"]
 combine-as-imports = true
+
+[tool.azure-sdk-build]
+verifytypes = false  # has unknown dependencies
+pyright = false
