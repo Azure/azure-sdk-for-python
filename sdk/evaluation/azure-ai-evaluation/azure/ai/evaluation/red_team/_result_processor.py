@@ -7,6 +7,7 @@ Result processing module for Red Team Agent.
 This module handles the processing, aggregation, and formatting of red team evaluation results.
 """
 
+import copy
 import hashlib
 import json
 import math
@@ -17,6 +18,8 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 import pandas as pd
+
+from azure.ai.evaluation._common.constants import EvaluationMetrics
 
 # Local imports
 from ._red_team_result import (
@@ -1629,8 +1632,6 @@ class ResultProcessor:
         Returns:
             A deep copy of results with user messages redacted for applicable risk categories
         """
-        import copy
-
         # Create a deep copy to avoid modifying the original data
         redacted_results = copy.deepcopy(results)
 
@@ -1676,8 +1677,6 @@ class ResultProcessor:
         Returns:
             True if the risk category requires redaction, False otherwise
         """
-        from azure.ai.evaluation._common.constants import EvaluationMetrics
-
         redaction_required_categories = {
             EvaluationMetrics.PROHIBITED_ACTIONS,
             EvaluationMetrics.TASK_ADHERENCE,
