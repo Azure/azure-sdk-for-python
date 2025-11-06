@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -117,7 +117,7 @@ class ArrowConfiguration(_serialization.Model):
     }
     _xml_map = {"name": "ArrowConfiguration"}
 
-    def __init__(self, *, schema: List["_models.ArrowField"], **kwargs: Any) -> None:
+    def __init__(self, *, schema: list["_models.ArrowField"], **kwargs: Any) -> None:
         """
         :keyword schema: Required.
         :paramtype schema: list[~azure.storage.blob.models.ArrowField]
@@ -197,7 +197,7 @@ class BlobFlatListSegment(_serialization.Model):
     }
     _xml_map = {"name": "Blobs"}
 
-    def __init__(self, *, blob_items: List["_models.BlobItemInternal"], **kwargs: Any) -> None:
+    def __init__(self, *, blob_items: list["_models.BlobItemInternal"], **kwargs: Any) -> None:
         """
         :keyword blob_items: Required.
         :paramtype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
@@ -230,8 +230,8 @@ class BlobHierarchyListSegment(_serialization.Model):
     def __init__(
         self,
         *,
-        blob_items: List["_models.BlobItemInternal"],
-        blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
+        blob_items: list["_models.BlobItemInternal"],
+        blob_prefixes: Optional[list["_models.BlobPrefix"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -375,7 +375,7 @@ class BlobItemInternal(_serialization.Model):
         metadata: Optional["_models.BlobMetadata"] = None,
         blob_tags: Optional["_models.BlobTags"] = None,
         has_versions_only: Optional[bool] = None,
-        object_replication_metadata: Optional[Dict[str, str]] = None,
+        object_replication_metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -430,7 +430,7 @@ class BlobMetadata(_serialization.Model):
     _xml_map = {"name": "Metadata"}
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, str]] = None, encrypted: Optional[str] = None, **kwargs: Any
+        self, *, additional_properties: Optional[dict[str, str]] = None, encrypted: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
@@ -920,7 +920,7 @@ class BlobTags(_serialization.Model):
     }
     _xml_map = {"name": "Tags"}
 
-    def __init__(self, *, blob_tag_set: List["_models.BlobTag"], **kwargs: Any) -> None:
+    def __init__(self, *, blob_tag_set: list["_models.BlobTag"], **kwargs: Any) -> None:
         """
         :keyword blob_tag_set: Required.
         :paramtype blob_tag_set: list[~azure.storage.blob.models.BlobTag]
@@ -979,8 +979,8 @@ class BlockList(_serialization.Model):
     def __init__(
         self,
         *,
-        committed_blocks: Optional[List["_models.Block"]] = None,
-        uncommitted_blocks: Optional[List["_models.Block"]] = None,
+        committed_blocks: Optional[list["_models.Block"]] = None,
+        uncommitted_blocks: Optional[list["_models.Block"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1015,9 +1015,9 @@ class BlockLookupList(_serialization.Model):
     def __init__(
         self,
         *,
-        committed: Optional[List[str]] = None,
-        uncommitted: Optional[List[str]] = None,
-        latest: Optional[List[str]] = None,
+        committed: Optional[list[str]] = None,
+        uncommitted: Optional[list[str]] = None,
+        latest: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1144,7 +1144,7 @@ class ContainerItem(_serialization.Model):
         properties: "_models.ContainerProperties",
         deleted: Optional[bool] = None,
         version: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1601,7 +1601,7 @@ class FilterBlobSegment(_serialization.Model):
         *,
         service_endpoint: str,
         where: str,
-        blobs: List["_models.FilterBlobItem"],
+        blobs: list["_models.FilterBlobItem"],
         next_marker: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1944,7 +1944,7 @@ class ListContainersSegmentResponse(_serialization.Model):
         self,
         *,
         service_endpoint: str,
-        container_items: List["_models.ContainerItem"],
+        container_items: list["_models.ContainerItem"],
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -2175,8 +2175,8 @@ class PageList(_serialization.Model):
     def __init__(
         self,
         *,
-        page_range: Optional[List["_models.PageRange"]] = None,
-        clear_range: Optional[List["_models.ClearRange"]] = None,
+        page_range: Optional[list["_models.PageRange"]] = None,
+        clear_range: Optional[list["_models.ClearRange"]] = None,
         next_marker: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2706,7 +2706,7 @@ class StorageServiceProperties(_serialization.Model):
         logging: Optional["_models.Logging"] = None,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
         default_service_version: Optional[str] = None,
         delete_retention_policy: Optional["_models.RetentionPolicy"] = None,
         static_website: Optional["_models.StaticWebsite"] = None,

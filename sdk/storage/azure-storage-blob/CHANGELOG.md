@@ -5,6 +5,10 @@
 ### Features Added
 - Added support for service version 2026-04-06.
 
+### Bugs Fixed
+- Fixed an issue where `BlobServiceClient.get_account_information` returned missing 
+SKU names `STANDARD_GZRS`, `STANDARD_RAGZRS` and `PREMIUM_ZRS`.
+
 ## 12.28.0b1 (Unreleased)
 
 ### Features Added
