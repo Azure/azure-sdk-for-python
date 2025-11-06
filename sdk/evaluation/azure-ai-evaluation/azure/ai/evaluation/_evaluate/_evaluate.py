@@ -1823,6 +1823,8 @@ def _convert_results_to_aoai_evaluation_results(
                 metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
                 if metrics_mapped and len(metrics_mapped) > 0:
                     metrics.extend(metrics_mapped)
+                else:
+                    metrics.append(criteria_name)
             else:
                 metrics.append(criteria_name)
         elif isinstance(evaluator, AzureOpenAIGrader):

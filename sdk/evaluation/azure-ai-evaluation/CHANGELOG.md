@@ -1,5 +1,18 @@
 # Release History
 
+## 1.13.1 (Unreleased)
+
+### Features Added
+
+- Improved RedTeam coverage across risk sub-categories to ensure comprehensive security testing
+- Made RedTeam's `AttackStrategy.Tense` seed prompts dynamic to allow use of this strategy with additional risk categories
+- Refactors error handling and result semantics in the RedTeam evaluation system to improve clarity and align with Attack Success Rate (ASR) conventions (passed=False means attack success)
+
+### Bugs Fixed
+
+- Fixed RedTeam evaluation error related to context handling for context-dependent risk categories
+- Fixed RedTeam prompt application for model targets during Indirect Jailbreak XPIA (Cross-Platform Indirect Attack)
+
 ## 1.13.0 (2025-10-30)
 
 ### Features Added

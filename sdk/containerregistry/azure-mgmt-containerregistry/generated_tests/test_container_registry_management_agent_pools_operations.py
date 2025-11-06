@@ -20,6 +20,18 @@ class TestContainerRegistryManagementAgentPoolsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_agent_pools_list(self, resource_group):
+        response = self.client.agent_pools.list(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            api_version="2025-03-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_agent_pools_get(self, resource_group):
         response = self.client.agent_pools.get(
             resource_group_name=resource_group.name,
@@ -66,19 +78,6 @@ class TestContainerRegistryManagementAgentPoolsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_agent_pools_begin_delete(self, resource_group):
-        response = self.client.agent_pools.begin_delete(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            agent_pool_name="str",
-            api_version="2025-03-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_agent_pools_begin_update(self, resource_group):
         response = self.client.agent_pools.begin_update(
             resource_group_name=resource_group.name,
@@ -93,13 +92,14 @@ class TestContainerRegistryManagementAgentPoolsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_agent_pools_list(self, resource_group):
-        response = self.client.agent_pools.list(
+    def test_agent_pools_begin_delete(self, resource_group):
+        response = self.client.agent_pools.begin_delete(
             resource_group_name=resource_group.name,
             registry_name="str",
+            agent_pool_name="str",
             api_version="2025-03-01-preview",
-        )
-        result = [r for r in response]
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
 
