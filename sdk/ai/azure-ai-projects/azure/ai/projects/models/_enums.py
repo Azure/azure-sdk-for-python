@@ -761,7 +761,7 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OPENAPI = "openapi"
     BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
     CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
-    A2_A_PREVIEW = "a2a_preview"
+    A2A_PREVIEW = "a2a_preview"
     AZURE_FUNCTION = "azure_function"
     MEMORY_SEARCH = "memory_search"
 

@@ -99,7 +99,7 @@ class A2ATool(Tool, discriminator="a2a_preview"):
     """An agent implementing the A2A protocol.
 
     :ivar type: The type of the tool. Always ``a2a``. Required.
-    :vartype type: str or ~azure.ai.projects.models.A2_A_PREVIEW
+    :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``.
@@ -111,7 +111,7 @@ class A2ATool(Tool, discriminator="a2a_preview"):
     :vartype project_connection_id: str
     """
 
-    type: Literal[ToolType.A2_A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``a2a``. Required."""
     base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base URL of the agent."""
@@ -141,7 +141,7 @@ class A2ATool(Tool, discriminator="a2a_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.A2_A_PREVIEW  # type: ignore
+        self.type = ToolType.A2A_PREVIEW  # type: ignore
 
 
 class InsightResult(_Model):
