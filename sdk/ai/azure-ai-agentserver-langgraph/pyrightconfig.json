@@ -1,8 +1,12 @@
 {
-    "reportAttributeAccessIssue": "none",
-    "reportIncompatibleMethodOverride": "none",
-    "reportReturnType": "none",
-    "reportArgumentType": "none",
+    "reportAttributeAccessIssue": "warning",
+    "reportIncompatibleMethodOverride": "warning",
+    "reportReturnType": "warning",
+    "reportArgumentType": "warning",
+    "reportMissingImports": "warning",
+    "reportOptionalMemberAccess": "warning",
+    "reportGeneralTypeIssues": "warning",
+    "reportCallIssue": "warning",
 
     "exclude": [
         "**/tests/**",

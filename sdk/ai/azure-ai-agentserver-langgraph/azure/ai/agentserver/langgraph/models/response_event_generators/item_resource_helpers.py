@@ -51,7 +51,8 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
         if item.get("type") != project_models.ItemType.FUNCTION_CALL:
             return
         _, _, argument = extract_function_call(item)
-        self.arguments += argument
+        if argument:
+            self.arguments += argument
 
     def get_aggregated_content(self):
         return self.create_item_resource(is_done=True)

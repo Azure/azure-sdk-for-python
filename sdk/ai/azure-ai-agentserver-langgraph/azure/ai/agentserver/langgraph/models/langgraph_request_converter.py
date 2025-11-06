@@ -107,7 +107,7 @@ class LangGraphRequestConverter:
             argument = item.get("arguments", None)
             args = json.loads(argument) if argument else {}
         except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in function call arguments: {argument}") from e
+            raise ValueError(f"Invalid JSON in function call arguments: {item}") from e
         except Exception as e:
             raise ValueError(f"Invalid function call item: {item}") from e
         return AIMessage(tool_calls=[ToolCall(id=item.get("call_id"), name=item.get("name"), args=args)], content="")
