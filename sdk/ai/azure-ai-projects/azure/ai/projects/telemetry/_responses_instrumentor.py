@@ -591,6 +591,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         # Use "tool" for the event name: gen_ai.tool.message
         span.span_instance.add_event(name="gen_ai.tool.message", attributes=attributes)
 
+    # pylint: disable=too-many-branches
     def _add_structured_input_events(
         self,
         span: "AbstractSpan",
