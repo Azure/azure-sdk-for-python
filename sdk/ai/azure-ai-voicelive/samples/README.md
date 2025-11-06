@@ -80,6 +80,12 @@ Most samples support additional command-line arguments. For example:
 python basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy
 ```
 
+For Azure authentication instead of API key:
+
+```bash
+python basic_voice_assistant_async.py --use-token-credential
+```
+
 Use the `--help` flag to see all available options:
 
 ```bash
@@ -89,15 +95,19 @@ python basic_voice_assistant_async.py --help
 ## Sample descriptions
 
 - **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
-- **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
+
+- **function_calling_sample_async.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to define functions (`get_current_time`, `get_current_weather`), handle function calls from the AI model, and process results with audio playback.
+
 - **voice_assistant_w_proactive_greeting_async.py**: Shows two proactive greeting strategies:
   1. invoking a server-generated greeting by sending a `response.create` event;
-  1. sending a pre-generated assistant greeting using a raw `response.create` event with `pre_generated_assistant_message`.
+  2. sending a pre-generated assistant greeting using a raw `response.create` event with `pre_generated_assistant_message`.
 
   **Tips**
   
   - Send the proactive event(s) immediately after `SESSION_UPDATED` and before starting microphone capture to avoid overlap if the user speaks early.
   - If you might repeat the greeting (e.g. reconnect), guard with a flag like `self.conversation_started`.
+
+- **agent_voice_assistant_async.py**: Demonstrates integration with Azure AI Foundry agents, showing how to connect a voice assistant to an agent backend. This sample also demonstrates conversation logging to track user and agent interactions.
 
 ## Troubleshooting
 
