@@ -26,17 +26,6 @@
       }
     },
     {
-      "PyPyConfig": {
-        "ubuntu2404_pypy39": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.9",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false"
-        }
-      }
-    },
-    {
       "CoverageConfig": {
         "ubuntu2404_39_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",

@@ -11,10 +11,9 @@ pkginfo==1.12.1.2
 pip==24.0
 typing-extensions==4.12.2
 pyproject-api==1.8.0
-cibuildwheel==2.16.5
+cibuildwheel==2.23.3
 importlib-metadata==8.5.0
 build==1.2.2.post1
-nh3<0.3; platform_python_implementation == "PyPy" and python_version == "3.9"
 
 # requirements leveraged for testing
 pytest==8.3.5
