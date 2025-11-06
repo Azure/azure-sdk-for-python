@@ -3658,4 +3658,23 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_access_tier_unmodified_since(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._create_block_blob()
+        container = self.bsc.get_container_client(self.container_name)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        blob.set_standard_blob_tier('Cool')
+
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow() - timedelta(hours=1))
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+
+        return variables
+
     # ------------------------------------------------------------------------------
