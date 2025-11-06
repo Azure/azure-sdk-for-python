@@ -26,21 +26,6 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
-from openai.types.responses import (
-    ResponseTextDeltaEvent,
-    ResponseOutputMessage,
-    ResponseOutputText,
-)
-
-from azure.ai.projects.models import (
-    ResponseCompletedEvent,
-    ResponseTextDoneEvent,
-    ResponseCreatedEvent,
-    ResponseOutputItemDoneEvent,
-    AnnotationFileCitation,
-)
-
-
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
@@ -97,8 +82,8 @@ with project_client:
     print("=" * 60)
 
     # Create a streaming response with file search capabilities
-    with openai_client.responses.stream(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+    stream_response = openai_client.responses.create(
+        stream=True,
         conversation=conversation.id,
         input=[
             {
@@ -106,61 +91,58 @@ with project_client:
                 "content": "Tell me about Contoso products and their features in detail. Please search through the available documentation.",
             },
         ],
-        tools=[{"type": "file_search", "vector_store_ids": [vector_store.id]}],
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    ) as responses_stream_manager:
+    )
 
-        print("Processing streaming file search results...\n")
+    print("Processing streaming file search results...\n")
 
-        # Process streaming events as they arrive
-        for event in responses_stream_manager:
-            if isinstance(event, ResponseCreatedEvent):
-                print(f"Stream response created with ID: {event.response.id}")
-            elif isinstance(event, ResponseTextDeltaEvent):
-                print(f"Delta: {event.delta}")
-            elif isinstance(event, ResponseTextDoneEvent):
-                print(f"\nResponse done with full message: {event.text}")
-            elif isinstance(event, ResponseCompletedEvent):
-                print(f"\nResponse completed!")
-                print(f"Full response: {event.response.output_text}")
+    # Process streaming events as they arrive
+    for event in stream_response:
+        if event.type == "response.created":
+            print(f"Stream response created with ID: {event.response.id}")
+        elif event.type == "response.output_text.delta":
+            print(f"Delta: {event.delta}")
+        elif event.type == "response.text.done":
+            print(f"\nResponse done with full message: {event.text}")
+        elif event.type == "response.completed":
+            print(f"\nResponse completed!")
+            print(f"Full response: {event.response.output_text}")
 
     print("\n" + "=" * 60)
     print("Demonstrating follow-up query with streaming...")
     print("=" * 60)
 
     # Demonstrate a follow-up query in the same conversation
-    with openai_client.responses.stream(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+    stream_response = openai_client.responses.create(
+        stream=True,
         conversation=conversation.id,
         input=[
-            {"role": "user", "content": "Can you provide more specific details about pricing and availability?"},
+            {"role": "user", "content": "Tell me about Smart Eyewear and its features."},
         ],
-        tools=[{"type": "file_search", "vector_store_ids": [vector_store.id]}],
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    ) as responses_stream_manager:
+    )
 
-        print("Processing follow-up streaming response...\n")
+    print("Processing follow-up streaming response...\n")
 
-        # Process streaming events for the follow-up
-        for event in responses_stream_manager:
-            if isinstance(event, ResponseCreatedEvent):
-                print(f"Follow-up response created with ID: {event.response.id}")
-            elif isinstance(event, ResponseTextDeltaEvent):
-                print(f"Delta: {event.delta}")
-            elif isinstance(event, ResponseTextDoneEvent):
-                print(f"\nFollow-up response done!")
-            elif isinstance(event, ResponseOutputItemDoneEvent):
-                if isinstance(event.item, ResponseOutputMessage):
-                    item = event.item
-                    if isinstance(item.content[-1], ResponseOutputText):
-                        text_content = item.content[-1]
-                        for annotation in text_content.annotations:
-                            if isinstance(annotation, AnnotationFileCitation):
-                                print(f"File Citation - Filename: {annotation.filename}, File ID: {annotation.file_id}")
-            elif isinstance(event, ResponseCompletedEvent):
-                print(f"\nFollow-up completed!")
-                print(f"Full response: {event.response.output_text}")
-            print(event)
+    # Process streaming events for the follow-up
+    for event in stream_response:
+        if event.type == "response.created":
+            print(f"Follow-up response created with ID: {event.response.id}")
+        elif event.type == "response.output_text.delta":
+            print(f"Delta: {event.delta}")
+        elif event.type == "response.text.done":
+            print(f"\nFollow-up response done!")
+        elif event.type == "response.output_item.done":
+            if event.item.type == "message":
+                item = event.item
+                if item.content[-1].type == "output_text":
+                    text_content = item.content[-1]
+                    for annotation in text_content.annotations:
+                        if annotation.type == "file_citation":
+                            print(f"File Citation - Filename: {annotation.filename}, File ID: {annotation.file_id}")
+        elif event.type == "response.completed":
+            print(f"\nFollow-up completed!")
+            print(f"Full response: {event.response.output_text}")
 
     # Clean up resources
     print("\n" + "=" * 60)

@@ -29,8 +29,6 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto
-from openai.types.responses import ResponseOutputMessage, ResponseOutputText
-from openai.types.responses.response_output_text import AnnotationContainerFileCitation
 
 load_dotenv()
 
@@ -82,14 +80,14 @@ with project_client:
 
     # Get the last message which should contain file citations
     last_message = response.output[-1]  # ResponseOutputMessage
-    if isinstance(last_message, ResponseOutputMessage):
+    if last_message.type == "message":
         # Get the last content item (contains the file annotations)
         text_content = last_message.content[-1]  # ResponseOutputText
-        if isinstance(text_content, ResponseOutputText):
+        if text_content.type == "output_text":
             # Get the last annotation (most recent file)
             if text_content.annotations:
                 file_citation = text_content.annotations[-1]  # AnnotationContainerFileCitation
-                if isinstance(file_citation, AnnotationContainerFileCitation):
+                if file_citation.type == "container_file_citation":
                     file_id = file_citation.file_id
                     filename = file_citation.filename
                     container_id = file_citation.container_id
