@@ -69,6 +69,13 @@ class ResponseEventGenerator:
         Generate the ending events for this layer.
         TODO: handle different end conditions, e.g. normal end, error end, etc.
 
+        :param message: The incoming message to process.
+        :type message: AnyMessage
+        :param context: The agent run context.
+        :type context: AgentRunContext
+        :param stream_state: The current stream event state.
+        :type stream_state: StreamEventState
+
         :return: tuple of (started, events)
         :rtype: tuple[bool, List[ResponseStreamEvent]]
         """
