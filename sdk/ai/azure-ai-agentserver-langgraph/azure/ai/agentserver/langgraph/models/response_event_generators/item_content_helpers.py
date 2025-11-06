@@ -10,8 +10,8 @@ class ItemContentHelper:
         self.has_aggregated_content = False
 
     def create_item_content(self) -> project_models.ItemContent:
-        return project_models.ItemContent(   # mypy: ignore[call-overload]
-            content_type=self.content_type,
+        return project_models.ItemContent(
+            type=self.content_type,
         )
 
 

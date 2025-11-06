@@ -93,7 +93,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
 
         if self.should_end(message):
             # received a None message, indicating end of the stream
-            done_events = self.on_end(context, stream_state)
+            done_events = self.on_end(message, context, stream_state)
             events.extend(done_events)
             is_processed = True
             next_processor = None
@@ -106,7 +106,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def on_end(self, context: AgentRunContext, stream_state: StreamEventState):
+    def on_end(self, message: langgraph_messages.AnyMessage, context: AgentRunContext, stream_state: StreamEventState):
         agent_id = context.get_agent_id_object()
         conversation = context.get_conversation_object()
         response_dict = {

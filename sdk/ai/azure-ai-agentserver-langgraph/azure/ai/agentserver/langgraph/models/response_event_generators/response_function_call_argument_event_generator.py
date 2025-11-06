@@ -39,7 +39,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
 
         if self.should_end(message):
             has_finish_reason = self.has_finish_reason(message)
-            complete_events = self.on_end(message, stream_state)
+            complete_events = self.on_end(message, context, stream_state)
             events.extend(complete_events)
             next_processor = self.parent
             is_processed = has_finish_reason  # if has finish reason, mark as processed and stop further processing
@@ -94,7 +94,7 @@ class ResponseFunctionCallArgumentEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(
-        self, message: AnyMessage, stream_state: StreamEventState
+        self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         done_event = project_models.ResponseFunctionCallArgumentsDoneEvent(
             item_id=self.item_id,

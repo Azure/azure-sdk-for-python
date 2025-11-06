@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# mypy: disable-error-code="call-overload,override"
 """Base interface for converting between LangGraph internal state and OpenAI-style responses.
 
 A LanggraphStateConverter implementation bridges:

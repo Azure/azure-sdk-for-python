@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=logging-fstring-interpolation,broad-exception-caught,logging-not-lazy
-# mypy: ignore-errors
+# mypy: disable-error-code="valid-type,call-overload,attr-defined"
 import copy
 from typing import List
 
@@ -23,7 +23,7 @@ class LangGraphResponseConverter:
         self.context = context
         self.output = output
 
-    def convert(self) -> project_models.ItemResource:
+    def convert(self) -> list[project_models.ItemResource]:
         res = []
         for step in self.output:
             for node_name, node_output in step.items():

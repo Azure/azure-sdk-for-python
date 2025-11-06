@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=unused-argument,unnecessary-pass
+# mypy: disable-error-code="valid-type"
 from typing import List
 
 from langchain_core.messages import AnyMessage
@@ -52,16 +53,18 @@ class ResponseEventGenerator:
         """
         pass
 
-    def on_start(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:   # mypy: ignore[empty-body]
+    def on_start(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         """
         Generate the starting events for this layer.
 
         :return: tuple of (started, events)
         :rtype: tuple[bool, List[ResponseStreamEvent]]
         """
-        pass
+        return False, []
 
-    def on_end(self) -> tuple[bool, List[project_models.ResponseStreamEvent]]:   # mypy: ignore[empty-body]
+    def on_end(
+            self, message: AnyMessage, context: AgentRunContext, stream_state: StreamEventState
+        ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         """
         Generate the ending events for this layer.
         TODO: handle different end conditions, e.g. normal end, error end, etc.
@@ -69,7 +72,7 @@ class ResponseEventGenerator:
         :return: tuple of (started, events)
         :rtype: tuple[bool, List[ResponseStreamEvent]]
         """
-        pass
+        return False, []
 
     def aggregate_content(self):
         """

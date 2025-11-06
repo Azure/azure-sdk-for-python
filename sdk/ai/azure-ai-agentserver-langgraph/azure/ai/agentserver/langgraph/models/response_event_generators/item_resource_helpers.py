@@ -92,7 +92,7 @@ class MessageItemResourceHelper(ItemResourceHelper):
     def __init__(self, item_id: str, role: project_models.ResponsesMessageRole):
         super().__init__(project_models.ItemType.MESSAGE, item_id)
         self.role = role
-        self.content = []   # mypy: ignore[var-annotated]
+        self.content: list[project_models.ItemContent] = []
 
     def create_item_resource(self, is_done: bool):
         content = {

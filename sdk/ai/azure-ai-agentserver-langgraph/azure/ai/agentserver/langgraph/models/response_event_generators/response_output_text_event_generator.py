@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=unused-argument
+# mypy: disable-error-code="return-value,assignment"
 from typing import List
 
 from azure.ai.agentserver.core.models import projects as project_models
+from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
 
 from .response_event_generator import (
     ResponseEventGenerator,
@@ -91,7 +93,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
         return False
 
     def on_end(   # mypy: ignore[override]
-        self, message, run_details, stream_state: StreamEventState
+        self, message, context: AgentRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if not self.started:
             return False, []
