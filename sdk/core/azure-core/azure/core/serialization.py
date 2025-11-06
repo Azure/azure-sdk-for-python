@@ -36,6 +36,19 @@ A falsy sentinel object which is supposed to be used to specify attributes
 with no data. This gets serialized to `null` on the wire.
 """
 
+_HYBRID_MODEL_COMPATIBLE_KEY_MAP: dict[str, str] = {
+    "keys_property": "keys",
+    "values_property": "values",
+    "items_property": "items",
+    "get_property": "get",
+    "pop_property": "pop",
+    "update_property": "update",
+    "clear_property": "clear",
+    "popitem_property": "popitem",
+    "copy_property": "copy",
+    "setdefault_property": "setdefault",
+}
+
 
 class TypeHandlerRegistry:
     """A registry for custom serializers and deserializers for specific types or conditions."""
@@ -379,7 +392,7 @@ def attribute_list(obj: Any) -> List[str]:
         if flattened_attribute == attr_name:
             retval.extend(attribute_list(rest_field._class_type))  # pylint: disable=protected-access
         else:
-            retval.append(attr_name)
+            retval.append(_HYBRID_MODEL_COMPATIBLE_KEY_MAP.get(attr_name) or attr_name)
     return retval
 
 
