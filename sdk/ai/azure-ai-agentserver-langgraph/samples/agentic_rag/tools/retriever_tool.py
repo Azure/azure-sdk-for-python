@@ -38,5 +38,5 @@ retriever = vectorstore.as_retriever()
 retriever_tool = create_retriever_tool(
     retriever,
     "retrieve_blog_posts",
-    "Search and return information about Lilian Weng blog posts.",
+    "Search and return information about Lilian Weng blog posts.",  # cspell:disable-line
 )

@@ -238,6 +238,8 @@ if __name__ == "__main__":
     
     print("Operation complete.")
 
+[comment]: # ( cspell:ignore pysort )
+
 ### Key Points:
 1. **Parallel Read**: The reading of files is handled using `concurrent.futures.ThreadPoolExecutor`, allowing multiple files to be processed simultaneously.
 

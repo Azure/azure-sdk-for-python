@@ -10,7 +10,7 @@ pip install azure-ai-agentserver-agentframework
 
 ## Key concepts
 
-Azure AI Agent Server wraps your Agent-frameworl agent, and host it on the cloud.
+Azure AI Agent Server wraps your Agent-framework agent, and host it on the cloud.
 
 
 ## Examples

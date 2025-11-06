@@ -93,6 +93,8 @@ curl -sS \
     -d "{\"input\":\"What is Microsoft Semantic Kernel in brief?\",\"stream\":true}"
 ```
 
+[comment]: # ( cspell:ignore mult ained )
+
 event: response.output_text.delta
 data: {"type": "response.output_text.delta", "sequence_number": 51, "item_id": "7c7115b0-b1b2-4682-9acd-5cb05a3c8123", "output_index": 0, "content_index": 0, "delta": " traditional"}
 
