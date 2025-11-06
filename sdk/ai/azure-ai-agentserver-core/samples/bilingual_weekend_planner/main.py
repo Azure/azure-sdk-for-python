@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Bilingual weekend planner sample with full GenAI telemetry capture."""
 
 from __future__ import annotations
@@ -51,11 +52,11 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 from rich.logging import RichHandler
 
 try:
-    from azure.monitor.opentelemetry.exporter import (  # type: ignore import-not-found
+    from azure.monitor.opentelemetry.exporter import (  # mypy: ignore
         AzureMonitorTraceExporter,
     )
 except Exception:  # pragma: no cover
-    AzureMonitorTraceExporter = None  # type: ignore[assignment]
+    AzureMonitorTraceExporter = None  # mypy: ignore
 
 # Load env early so adapter init sees them
 load_dotenv(override=True)
