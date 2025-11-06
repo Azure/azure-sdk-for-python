@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_web_test_metric_alert.py
+    python delete_metric_alert.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,15 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="12345678-1234-1234-1234-123456789101",
+        subscription_id="14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7",
     )
 
-    response = client.metric_alerts.get(
-        resource_group_name="rg-example",
-        rule_name="webtest-name-example",
+    client.metric_alerts.delete(
+        resource_group_name="gigtest",
+        rule_name="chiricutin",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2018-03-01/examples/getWebTestMetricAlert.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-03-01-preview/examples/deleteMetricAlert.json
 if __name__ == "__main__":
     main()
