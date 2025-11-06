@@ -15,6 +15,7 @@
       "PYTHONIOENCODING",
       "GETFL",
       "DETFL",
+      "SETFL",
       "Planifica"
     ],
     "ignorePaths": [
