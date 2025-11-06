@@ -500,7 +500,7 @@ def gen_typespec(
     api_version: Optional[str] = None,
 ) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
-    # call scirpt to generate sdk
+    # call script to generate sdk
     try:
         tsp_client = "npx --no --prefix eng/common/tsp-client tsp-client"
         if spec_folder:

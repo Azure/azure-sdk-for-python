@@ -46,7 +46,7 @@ def move_wrapper_files_or_dirs(src_root, dst_root, global_conf, local_conf):
             if file_path.is_file():
                 file_path_dest.parent.mkdir(parents=True, exist_ok=True)
             _LOGGER.info("Moving %s to %s", str(file_path), str(file_path_dest))
-            # This does not work in Windows if generatd and dest are not in the same drive
+            # This does not work in Windows if generated and dest are not in the same drive
             # file_path.replace(file_path_dest)
             shutil.move(file_path, file_path_dest)
 
@@ -103,7 +103,7 @@ def move_autorest_files(client_generated_path, sdk_root, global_conf, local_conf
             raise ValueError(err_msg)
 
     shutil.rmtree(str(destination_folder))
-    # This does not work in Windows if generatd and dest are not in the same drive
+    # This does not work in Windows if generated and dest are not in the same drive
     # client_generated_path.replace(destination_folder)
     shutil.move(client_generated_path, destination_folder)
 
@@ -285,7 +285,7 @@ def generate_sdk_from_git_object(
         ) as restapi_git_folder, manage_git_folder(gh_token, clone_dir, branched_sdk_git_id) as sdk_folder:
 
             readme_files_infered = get_readme_files_from_git_object(git_object, restapi_git_folder)
-            _LOGGER.info("Readmes files infered from PR: %s ", readme_files_infered)
+            _LOGGER.info("Readmes files inferred from PR: %s ", readme_files_infered)
             if not readme_files_infered:
                 _LOGGER.info("No Readme in PR, quit")
                 return

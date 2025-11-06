@@ -39,7 +39,7 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
         _LOGGER.info(f"Run breaking change detector with command: {cmd}")
         output = getoutput(cmd)
     except CalledProcessError as e:
-        _LOGGER.warning(f"Error ocurred when call breaking change detector: {e.output.decode('utf-8')}")
+        _LOGGER.warning(f"Error occurred when call breaking change detector: {e.output.decode('utf-8')}")
         raise e
     _LOGGER.info(f"Breaking change detector output: {output}")
     result = [l for l in output.split("\n")]

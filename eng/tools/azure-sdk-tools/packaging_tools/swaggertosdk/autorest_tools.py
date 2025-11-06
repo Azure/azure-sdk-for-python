@@ -48,7 +48,7 @@ def autorest_bootstrap_version_finder():
 
 
 def merge_options(global_conf, local_conf, key, *, keep_list_order=False):
-    """Merge the conf using override: local conf is prioritary over global.
+    """Merge the conf using override: local conf is priority over global.
 
     If keep_list_order is True, list are merged global+local. Might have duplicate.
     If false, duplication are removed.
@@ -125,7 +125,7 @@ def generate_code(input_file, global_conf, local_conf, output_dir=None, autorest
 
     execute_simple_command(cmd_line, cwd=str(input_path))
     # Checks that Autorest did something if output_dir is under control
-    # Note that this can fail if "--output-folder" was overidden by the Readme.
+    # Note that this can fail if "--output-folder" was overridden by the Readme.
     if output_dir and (not output_dir.is_dir() or next(output_dir.iterdir(), None) is None):
         raise ValueError("Autorest call ended with 0, but no files were generated")
 

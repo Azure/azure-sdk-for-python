@@ -96,7 +96,7 @@ def create_package_and_install(
                     built_pkg_path = package_path
 
                     logger.info("Installing {w} from directory".format(w=built_package))
-                # it does't exist, so we need to error out
+                # it doesn't exist, so we need to error out
                 else:
                     logger.error("{w} not present in the prebuilt package directory. Exiting.".format(w=built_package))
                     exit(1)

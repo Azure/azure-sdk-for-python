@@ -52,7 +52,7 @@ def get_repo_tag_meta(meta_conf):
         return "azure-sdk-for-node"
     if "typescript" in meta_conf["autorest_options"]:
         return "azure-sdk-for-js"
-    raise ValueError("No repotag found or infered")
+    raise ValueError("No repotag found or inferred")
 
 
 @unique

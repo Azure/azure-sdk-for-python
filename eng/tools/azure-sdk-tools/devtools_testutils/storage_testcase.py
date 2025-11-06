@@ -117,7 +117,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                     group = self._get_resource_group(**kwargs)
                     self.client.storage_accounts.delete(group.name, name)
                 except ResourceExistsError as e:
-                    # Occassionally a storage test will try to delete the
+                    # Occasionally a storage test will try to delete the
                     # resource before the previous operation has been completed
                     logger = logging.getLogger()
                     logger.warning(

@@ -39,7 +39,7 @@ def get_requirements_from_file(requirements_file: str) -> List[str]:
 
 def test_replace_dev_reqs_specifiers(tmp_directory_create):
     """
-    Specifiers should always be pointed at an external source, nothing to build locally. Nontheless we need to confirm
+    Specifiers should always be pointed at an external source, nothing to build locally. Nonetheless we need to confirm
     that we don't accidentally trip the replacement logic.
     """
     target_file = os.path.join(sample_dev_reqs_folder, "specifiers_requirements.txt")

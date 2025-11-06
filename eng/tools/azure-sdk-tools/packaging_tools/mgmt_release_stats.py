@@ -258,7 +258,7 @@ class ReleaseStats:
         return col
 
     def sum_matrix_sheets(self):
-        logging.info("Adding Sum and Total to Matix")
+        logging.info("Adding Sum and Total to Matrix")
         for sheet_name in [SHEET_PACKAGE_MATRIX, SHEET_BREAKING_MATRIX]:
             ws = self.wb[sheet_name]
             last_row, last_date = ReleaseStats._get_last_cell(ws)

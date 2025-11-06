@@ -104,7 +104,7 @@ def build_packaging_by_package_name(
         # Might decide to make it more generic one day
         if template_name == "CHANGELOG.md" and future_filepath.exists():
             _LOGGER.info("Skipping CHANGELOG.md template, since a previous one was found")
-            # Never overwirte the ChangeLog
+            # Never overwrite the ChangeLog
             continue
 
         template = env.get_template(template_name)
