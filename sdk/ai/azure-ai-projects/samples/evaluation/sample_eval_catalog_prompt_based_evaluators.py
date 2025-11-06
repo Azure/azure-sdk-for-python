@@ -57,27 +57,27 @@ with DefaultAzureCredential() as credential:
                 "name": "my_custom_evaluator_prompt",
                 "categories": [EvaluatorCategory.QUALITY],
                 "display_name": "my_custom_evaluator_prompt",
-                "description": "Custom evaluator to for groundedness",
+                "description": "Custom evaluator for groundedness",
                 "definition": {
                     "type": EvaluatorDefinitionType.PROMPT,
                     "prompt_text": """
                             You are a Groundedness Evaluator.
 
-                            Your task is to evaluate how well the given response is grounded in the provided ground truth.
-                            Groundedness means the response’s statements are factually supported by the ground truth.
+                            Your task is to evaluate how well the given response is grounded in the provided ground truth.  
+                            Groundedness means the response’s statements are factually supported by the ground truth.  
                             Evaluate factual alignment only — ignore grammar, fluency, or completeness.
 
                             ---
 
                             ### Input:
                             Query:
-                            {query}
+                            {{query}}
 
                             Response:
-                            {response}
+                            {{response}}
 
                             Ground Truth:
-                            {ground_truth}
+                            {{ground_truth}}
 
                             ---
 
@@ -90,13 +90,16 @@ with DefaultAzureCredential() as credential:
 
                             ---
 
-                            ### Output should be Integer:
-                            <integer from 1 to 5>
+                            ### Output Format (JSON):
+                            {
+                            "result": <integer from 1 to 5>,
+                            "reason": "<brief explanation for the score>"
+                            }
                     """,
                     "init_parameters": {
                         "type": "object",
                         "properties": {"deployment_name": {"type": "string"}, "threshold": {"type": "number"}},
-                        "required": ["deployment_name"],
+                        "required": ["deployment_name", "threshold"],
                     },
                     "data_schema": {
                         "type": "object",
@@ -108,7 +111,7 @@ with DefaultAzureCredential() as credential:
                         "required": ["query", "response", "ground_truth"],
                     },
                     "metrics": {
-                        "tool_selection": {
+                        "custom_prompt": {
                             "type": "ordinal",
                             "desirable_direction": "increase",
                             "min_value": 1,
@@ -147,7 +150,7 @@ with DefaultAzureCredential() as credential:
                     "response": "{{item.response}}",
                     "ground_truth": "{{item.ground_truth}}",
                 },
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}", "threshold": 3.5},
+                "initialization_parameters": {"deployment_name": f"{model_deployment_name}", "threshold": 3},
             }
         ]
 
