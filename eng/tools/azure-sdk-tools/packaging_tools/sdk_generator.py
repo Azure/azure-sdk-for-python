@@ -88,36 +88,11 @@ def del_outdated_files(readme: str):
                 shutil.rmtree(sample_folder)
                 _LOGGER.info(f"remove sample folder: {sample_folder}")
             else:
-                _LOGGER.info(f"we don't remove sample folder for rdbms package")
+                _LOGGER.info(f"we don't remove sample folder for rdbms")
         else:
             _LOGGER.info(f"sample folder does not exist: {sample_folder}")
     else:
-        python_readme = Path(readme).parent / "readme.python.md"
-        _LOGGER.info(f"do not find valid sdk_folder from readme.python.md: {python_readme}")
-
-
-# look for fines in tag like:
-# ``` yaml $(tag) == 'package-2023-05-01-preview-only'
-# input-file:
-# - Microsoft.Insights/preview/2023-05-01-preview/tenantActionGroups_API.json
-# ```
-def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
-    result = []
-    for idx in range(len(readme_content)):
-        line = readme_content[idx]
-        if tag in line and "```" in line and "tag" in line and "==" in line and "yaml" in line:
-            idx += 1
-            while idx < len(readme_content):
-                if "```" in readme_content[idx]:
-                    break
-                if ".json" in readme_content[idx] and (
-                    re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(readme_content[idx])
-                    or "Microsoft." in readme_content[idx]
-                ):
-                    result.append(readme_content[idx].strip("\n -"))
-                idx += 1
-            break
-    return result
+        _LOGGER.info(f"do not find valid sdk_folder in readme.python.md")
 
 
 def main(generate_input, generate_output):
