@@ -30,7 +30,10 @@ Azure AI Project Configuration Options:
 
 import json
 import os
+import base64
+
 from dotenv import load_dotenv
+
 import pandas as pd
 from azure.ai.evaluation import evaluate, AzureOpenAIScoreModelGrader
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, AzureAIProject
@@ -41,102 +44,17 @@ load_dotenv()
 
 def create_sample_data() -> str:
     """Create sample conversation data for testing."""
+    IMAGE_FILE_PATH = os.getcwd() + "/samples/score_model_multimodal/image.jpg"
+    with open(IMAGE_FILE_PATH, "rb") as f:
+        encoded_image = base64.b64encode(f.read()).decode("utf-8")
     sample_conversations = [
         {
-            "conversation": {
-                "messages": [
-                    {"content": "How can I improve my Python coding skills?", "role": "user"},
-                    {
-                        "content": (
-                            "Here are some effective ways to improve your "
-                            "Python skills: 1) Practice coding daily with "
-                            "platforms like LeetCode or HackerRank, 2) Work "
-                            "on real projects that interest you, 3) Read "
-                            "other people's code on GitHub, 4) Join Python "
-                            "communities and forums, 5) Take online courses "
-                            "or tutorials. The key is consistent practice and "
-                            "building projects that challenge you."
-                        ),
-                        "role": "assistant",
-                    },
-                ]
-            },
-            "expected_quality": "high",
-            "context": "Programming advice request",
+            "image_url": "https://en.wikipedia.org/wiki/Eiffel_Tower#/media/File:Tour_Eiffel_Wikimedia_Commons_(cropped).jpg",
+            "caption": "This is a photo of Eiffel Tower in Paris.",
         },
         {
-            "conversation": {
-                "messages": [
-                    {"content": "What is Python?", "role": "user"},
-                    {"content": "Python is a programming language.", "role": "assistant"},
-                ]
-            },
-            "expected_quality": "low",
-            "context": "Basic definition request",
-        },
-        {
-            "conversation": {
-                "messages": [
-                    {"content": ("Can you explain machine learning concepts " "for a beginner?"), "role": "user"},
-                    {
-                        "content": (
-                            "Machine learning is a subset of artificial "
-                            "intelligence where computers learn patterns from "
-                            "data without being explicitly programmed. Think "
-                            "of it like teaching a child to recognize animals "
-                            "- you show them many pictures of cats and dogs, "
-                            "and eventually they learn to distinguish between "
-                            "them. In ML, we feed algorithms lots of data so "
-                            "they can make predictions or decisions on new, "
-                            "unseen data. Common types include supervised "
-                            "learning (learning from labeled examples), "
-                            "unsupervised learning (finding hidden patterns), "
-                            "and reinforcement learning (learning through "
-                            "trial and error)."
-                        ),
-                        "role": "assistant",
-                    },
-                ]
-            },
-            "expected_quality": "high",
-            "context": "Educational explanation request",
-        },
-        {
-            "conversation": {
-                "messages": [
-                    {"content": "Help me debug this code", "role": "user"},
-                    {"content": "Sure, please share your code.", "role": "assistant"},
-                ]
-            },
-            "expected_quality": "medium",
-            "context": "Debug assistance request",
-        },
-        {
-            "conversation": {
-                "messages": [
-                    {"content": ("What are the best practices for writing " "clean Python code?"), "role": "user"},
-                    {
-                        "content": (
-                            "Here are key best practices for writing clean "
-                            "Python code: 1) Follow PEP 8 style guidelines "
-                            "for consistent formatting, 2) Use descriptive "
-                            "variable and function names that explain their "
-                            "purpose, 3) Write docstrings for functions and "
-                            "classes, 4) Keep functions small and focused on "
-                            "a single task, 5) Use type hints to improve code "
-                            "clarity, 6) Handle exceptions appropriately, "
-                            "7) Write unit tests for your code, 8) Use "
-                            "virtual environments for dependency management, "
-                            "9) Comment complex logic but avoid obvious "
-                            "comments, 10) Refactor code regularly to improve "
-                            "readability and maintainability."
-                        ),
-                        "role": "assistant",
-                    },
-                ]
-            },
-            "expected_quality": "high",
-            "context": "Best practices inquiry",
+            "image_url": f"data:image/jpg;base64,{encoded_image}",
+            "caption": "This is a photo of Eiffel Tower in Paris.",
         },
     ]
 
@@ -189,13 +107,21 @@ def demonstrate_score_model_grader():
 
     print("=== Azure OpenAI Score Model Grader Demo ===\n")
 
+    endpoint = os.getenv("endpoint", "")
+    deployment = os.getenv("deployment", "gpt-4o-mini")
+    api_key = os.getenv("api_key", "")
+
+    print(f"Endpoint: {endpoint}")
+    print(f"Deployment: {deployment}")
+    print(f"API Key: {api_key}")
+
     try:
         # 1. Configure Azure OpenAI model using environment variables
         model_config = AzureOpenAIModelConfiguration(
-            azure_endpoint=os.environ.get("endpoint"),
-            api_key=os.environ.get("api_key"),
-            azure_deployment=os.environ.get("deployment_name"),
-            api_version="2024-12-01-preview",
+            azure_endpoint=endpoint,
+            api_key=api_key,
+            azure_deployment=deployment,
+            api_version="2025-01-01-preview",
         )
 
         print("✅ Model configuration loaded successfully")
@@ -209,33 +135,25 @@ def demonstrate_score_model_grader():
             return
 
         # 3. Create conversation quality grader
-        conversation_quality_grader = AzureOpenAIScoreModelGrader(
+        score_model = AzureOpenAIScoreModelGrader(
             model_config=model_config,
-            name="Conversation Quality Assessment",
+            name="Image to Text Grader",
             model="gpt-4o-mini",
             input=[
                 {
                     "role": "system",
-                    "content": (
-                        "You are an expert conversation quality evaluator. "
-                        "Assess the quality of AI assistant responses based on "
-                        "helpfulness, completeness, accuracy, and "
-                        "appropriateness. Return a score between 0.0 (very "
-                        "poor) and 1.0 (excellent)."
-                    ),
+                    "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if it's an excellent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0.",
                 },
                 {
                     "role": "user",
-                    "content": (
-                        "Evaluate this conversation:\n"
-                        "Context: {{ item.context }}\n"
-                        "Messages: {{ item.conversation }}\n\n"
-                        "Provide a quality score from 0.0 to 1.0."
-                    ),
+                    "content": [
+                        {"type": "input_text", "text": "Caption: {{ item.caption }}"},
+                        {"type": "input_image", "image_url": "{{ item.image_url }}"},
+                    ],
                 },
             ],
             range=[0.0, 1.0],
-            sampling_params={"temperature": 0.0},
+            pass_threshold=0.5,
         )
 
         print("✅ Conversation quality grader created successfully")
@@ -244,14 +162,45 @@ def demonstrate_score_model_grader():
         print("\n🚀 Running evaluation with score model grader...")
         result = evaluate(
             data=data_file,
-            evaluators={"conversation_quality": conversation_quality_grader},
+            evaluators={"score_model": score_model},
             azure_ai_project=azure_ai_project,
             tags={
                 "grader_type": "score_model",
                 "model": "gpt-4o-mini",
-                "evaluation_focus": "conversation_quality",
+                "evaluation_focus": "score_model",
                 "sample_size": "demo",
                 "automation_level": "full",
+            },
+            data_source_config={
+                "type": "custom",
+                "item_schema": {
+                    "type": "object",
+                    "properties": {
+                        "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
+                        "caption": {"type": "string", "description": "The caption describing the image."},
+                    },
+                    "required": ["image_url", "caption"],
+                },
+                "include_sample_schema": True,
+            },
+            data_source={
+                "type": "completions",
+                "model": "gpt-4o-mini",
+                "input_messages": {
+                    "type": "template",
+                    "template": [
+                        {
+                            "role": "system",
+                            "content": "You are an assistant that analyzes images and provides captions that accurately describe the content of the image.",
+                        },
+                        {
+                            "role": "user",
+                            "type": "message",
+                            "content": {"type": "input_image", "image_url": "{{ item.image_url }}", "detail": "auto"},
+                        },
+                    ],
+                },
+                "sampling_params": {"temperature": 0.8},
             },
         )
 
@@ -276,10 +225,7 @@ def demonstrate_score_model_grader():
             for col in df.columns:
                 if col.startswith("outputs."):
                     grader_name = col.split(".")[1]
-                    if "score" in col:
-                        print(f"  {grader_name} Score: {row[col]:.3f}")
-                    elif "passed" in col:
-                        print(f"  {grader_name} Passed: {row[col]}")
+                    print(f"  {grader_name} - {col} : {row[col]}")
 
         print("\n✅ Evaluation completed successfully!")
 
@@ -296,7 +242,7 @@ if __name__ == "__main__":
     print("🚀 Starting Azure OpenAI Score Model Grader Demo\n")
 
     # Check if environment variables are set
-    required_vars = ["endpoint", "key", "deployment_name"]
+    required_vars = ["endpoint", "api_key", "deployment_name"]
 
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
 
