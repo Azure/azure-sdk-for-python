@@ -22,19 +22,10 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import (
     NULL_CHAR,
-    CUSTOM_FILTER_KEY,
-    PERCENTAGE_FILTER_KEY,
-    TIME_WINDOW_FILTER_KEY,
-    TARGETING_FILTER_KEY,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
     TELEMETRY_KEY,
     METADATA_KEY,
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
-    APP_CONFIG_AI_MIME_PROFILE,
-    APP_CONFIG_AICC_MIME_PROFILE,
 )
 from azure.appconfiguration.provider._refresh_timer import _RefreshTimer
 

@@ -13,16 +13,26 @@ from ._constants import (
     AzureWebAppEnvironmentVariable,
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
-    CUSTOM_FILTER_KEY,
-    PERCENTAGE_FILTER_KEY,
-    TIME_WINDOW_FILTER_KEY,
-    TARGETING_FILTER_KEY,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
-    FEATURE_FLAG_USES_SEED_TAG,
-    FEATURE_FLAG_USES_TELEMETRY_TAG,
+    APP_CONFIG_AI_MIME_PROFILE,
 )
+
+# Feature flag filter names
+PERCENTAGE_FILTER_NAMES = ["Percentage", "PercentageFilter", "Microsoft.Percentage", "Microsoft.PercentageFilter"]
+TIME_WINDOW_FILTER_NAMES = ["TimeWindow", "TimeWindowFilter", "Microsoft.TimeWindow", "Microsoft.TimeWindowFilter"]
+TARGETING_FILTER_NAMES = ["Targeting", "TargetingFilter", "Microsoft.Targeting", "Microsoft.TargetingFilter"]
+
+CUSTOM_FILTER_KEY = "CSTM"  # cspell:disable-line
+PERCENTAGE_FILTER_KEY = "PRCNT"  # cspell:disable-line
+TIME_WINDOW_FILTER_KEY = "TIME"
+TARGETING_FILTER_KEY = "TRGT"  # cspell:disable-line
+
+FEATURE_FLAG_USES_TELEMETRY_TAG = "Telemetry"
+FEATURE_FLAG_USES_SEED_TAG = "Seed"
+FEATURE_FLAG_MAX_VARIANTS_KEY = "MaxVariants"
+FEATURE_FLAG_FEATURES_KEY = "FFFeatures"
+
+CHAT_COMPLETION_PROFILE = "chat-completion"
+
 
 # Feature flag constants for telemetry
 LOAD_BALANCING_FEATURE = "LB"
@@ -32,10 +42,6 @@ AI_FOUNDRY_SDK_FEATURE = "USE_AI_FOUNDRY_SDK"
 
 # Package name constants
 AZURE_AI_PROJECTS_PACKAGE = "azure-ai-projects"
-
-# MIME profile constants
-AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai"
-CHAT_COMPLETION_PROFILE = "chat-completion"
 
 # Correlation context constants
 FEATUREMANAGEMENT_PACKAGE = "featuremanagement"
@@ -199,7 +205,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             return
 
         # Check for AI mime profiles in content type
-        if AI_MIME_PROFILE in content_type:
+        if APP_CONFIG_AI_MIME_PROFILE in content_type:
             self.uses_ai_configuration = True
             if CHAT_COMPLETION_PROFILE in content_type:
                 self.uses_aicc_configuration = True
@@ -269,20 +275,18 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             key_values.append((MAX_VARIANTS_KEY, str(self.max_variants)))
 
         # Add feature flag features if present
-        if self.uses_seed or self.uses_telemetry:
-            ff_features_string = self._create_features_string()
-            if ff_features_string:
-                key_values.append((FF_FEATURES_KEY, ff_features_string))
+        ff_features_string = self._create_features_string()
+        if ff_features_string:
+            key_values.append((FF_FEATURES_KEY, ff_features_string))
+
+        # Add general features if present
+        features_string = self._get_features_string()
+        if features_string:
+            key_values.append((FEATURES_KEY, features_string))
 
         # Add version information
         if self.feature_management_version:
             key_values.append((FM_PY_VER_KEY, self.feature_management_version))
-
-        # Add general features if present
-        if self.uses_load_balancing or self.uses_ai_configuration or self.uses_aicc_configuration:
-            features_string = self._get_features_string()
-            if features_string:
-                key_values.append((FEATURES_KEY, features_string))
 
         # Add tags
         if self.is_key_vault_configured:

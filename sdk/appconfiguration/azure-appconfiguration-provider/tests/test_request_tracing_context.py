@@ -11,14 +11,6 @@ from azure.appconfiguration.provider._request_tracing_context import (
     _RequestTracingContext,
     HostType,
     RequestType,
-)
-from azure.appconfiguration.provider._constants import (
-    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
-    ServiceFabricEnvironmentVariable,
-    AzureFunctionEnvironmentVariable,
-    AzureWebAppEnvironmentVariable,
-    ContainerAppEnvironmentVariable,
-    KubernetesEnvironmentVariable,
     CUSTOM_FILTER_KEY,
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
@@ -28,6 +20,16 @@ from azure.appconfiguration.provider._constants import (
     TARGETING_FILTER_NAMES,
     FEATURE_FLAG_USES_SEED_TAG,
     FEATURE_FLAG_USES_TELEMETRY_TAG,
+)
+from azure.appconfiguration.provider._constants import (
+    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
+    ServiceFabricEnvironmentVariable,
+    AzureFunctionEnvironmentVariable,
+    AzureWebAppEnvironmentVariable,
+    ContainerAppEnvironmentVariable,
+    KubernetesEnvironmentVariable,
+    APP_CONFIG_AI_MIME_PROFILE,
+    APP_CONFIG_AICC_MIME_PROFILE,
 )
 
 
@@ -168,7 +170,7 @@ class TestRequestTracingContext(unittest.TestCase):
 
     def test_update_ai_configuration_tracing_ai_profile(self):
         """Test update_ai_configuration_tracing with AI profile."""
-        content_type = "application/json; https://azconfig.io/mime-profiles/ai"
+        content_type = "application/json; " + APP_CONFIG_AI_MIME_PROFILE
         self.context.update_ai_configuration_tracing(content_type)
 
         self.assertTrue(self.context.uses_ai_configuration)
@@ -176,7 +178,7 @@ class TestRequestTracingContext(unittest.TestCase):
 
     def test_update_ai_configuration_tracing_aicc_profile(self):
         """Test update_ai_configuration_tracing with AI Chat Completion profile."""
-        content_type = "application/json; https://azconfig.io/mime-profiles/ai+chat-completion"
+        content_type = "application/json; " + APP_CONFIG_AICC_MIME_PROFILE
         self.context.update_ai_configuration_tracing(content_type)
 
         self.assertTrue(self.context.uses_ai_configuration)
