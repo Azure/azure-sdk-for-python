@@ -8,6 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
    `.fine_tuning_jobs` methods to create DPO (Direct Preference Optimization) fine-tuning jobs.
+   Supported OAI Models: GPT 4o, 4.1, 4.1-mini, 4.1-nano, gpt-4o-mini
 
 USAGE:
     python sample_finetuning_dpo_job_async.py
@@ -34,14 +35,12 @@ from pathlib import Path
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-# Supported Models: GPT 4o, 4.1, 4.1-mini, 4.1-nano, gpt-4o-mini
 model_name = os.environ.get("MODEL_NAME", "gpt-4o-mini")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "dpo_training_set.jsonl"))
 validation_file_path = os.environ.get(
     "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "dpo_validation_set.jsonl")
 )
-
 
 async def main():
     async with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:

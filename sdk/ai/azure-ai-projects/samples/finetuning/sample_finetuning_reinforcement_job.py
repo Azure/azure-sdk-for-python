@@ -8,6 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `.fine_tuning.jobs` methods to create reinforcement fine-tuning jobs.
+    Supported OAI Models: o4-mini
 
 USAGE:
     python sample_finetuning_reinforcement_job.py
@@ -33,7 +34,6 @@ from pathlib import Path
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-# Supported Models: o4-mini
 model_name = os.environ.get("MODEL_NAME", "o4-mini")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "rft_training_set.jsonl"))

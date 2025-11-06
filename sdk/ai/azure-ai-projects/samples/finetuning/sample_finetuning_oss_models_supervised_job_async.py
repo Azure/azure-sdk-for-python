@@ -8,6 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
     `.fine_tuning.jobs` methods to create supervised fine-tuning jobs using OSS model.
+    Supported OSS models with SFT technique: Ministral-3b , Llama-3.3-70b , Qwen3-32b , Gpt-oss-20b 
 
 USAGE:
     python sample_finetuning_oss_models_supervised_job_async.py

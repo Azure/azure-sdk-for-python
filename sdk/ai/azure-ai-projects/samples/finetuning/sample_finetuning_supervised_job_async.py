@@ -8,6 +8,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
     .fine_tuning.jobs methods to create, get, list, cancel, pause, resume, list events and list checkpoints supervised fine-tuning jobs.
+    Supported OAI Models: GPT 4o, 4o-mini, 4.1, 4.1-mini
 
 USAGE:
     python sample_finetuning_supervised_job_async.py
@@ -34,8 +35,6 @@ from pathlib import Path
 load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
-# Supported Models: GPT 4o, 4o-mini, 4.1, 4.1-mini, 4.1-nano;
-# Llama 2 and Llama 3.1; Phi 4, Phi-4-mini-instruct; Mistral Nemo, Ministral-3B, Mistral Large (2411); NTT Tsuzumi-7b
 model_name = os.environ.get("MODEL_NAME", "gpt-4.1")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "sft_training_set.jsonl"))
