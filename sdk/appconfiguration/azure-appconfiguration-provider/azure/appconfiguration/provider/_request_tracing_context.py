@@ -14,6 +14,7 @@ from ._constants import (
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
     APP_CONFIG_AI_MIME_PROFILE,
+    APP_CONFIG_AICC_MIME_PROFILE,
 )
 
 # Feature flag filter names
@@ -207,7 +208,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         # Check for AI mime profiles in content type
         if APP_CONFIG_AI_MIME_PROFILE in content_type:
             self.uses_ai_configuration = True
-            if CHAT_COMPLETION_PROFILE in content_type:
+            if APP_CONFIG_AICC_MIME_PROFILE in content_type:
                 self.uses_aicc_configuration = True
 
     def update_correlation_context_header(
