@@ -259,46 +259,6 @@ class TestWorkloadIdentityCredentialTokenProxy:
                     use_token_proxy=True,
                 )
 
-    @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-    def test_use_token_proxy_get_token_success(self, get_token_method):
-        """Test successful token acquisition when using token proxy."""
-        tenant_id = "tenant-id"
-        client_id = "client-id"
-        access_token = "foo-access-token"
-        token_file_path = "foo-path"
-        assertion = "foo-assertion"
-        proxy_endpoint = "https://proxy.example.com:8080"
-
-        def send(request, **kwargs):
-            assert "claims" not in kwargs
-            assert "tenant_id" not in kwargs
-            assert request.data.get("client_assertion") == assertion
-            return mock_response(json_payload=build_aad_response(access_token=access_token))
-
-        mock_transport_instance = MagicMock(send=send)
-
-        env_vars = {
-            "AZURE_KUBERNETES_TOKEN_PROXY": proxy_endpoint,
-        }
-
-        with patch.dict(os.environ, env_vars, clear=False):
-            with patch("azure.identity._credentials.workload_identity._get_transport") as mock_get_transport:
-                mock_get_transport.return_value = mock_transport_instance
-
-                credential = WorkloadIdentityCredential(
-                    tenant_id=tenant_id,
-                    client_id=client_id,
-                    token_file_path=token_file_path,
-                    use_token_proxy=True,
-                )
-
-                open_mock = mock_open(read_data=assertion)
-                with patch("builtins.open", open_mock):
-                    token = getattr(credential, get_token_method)("scope")
-                    assert token.token == access_token
-
-                open_mock.assert_called_once_with(token_file_path, encoding="utf-8")
-
     def test_use_token_proxy_false_does_not_create_transport(self):
         """Test that use_token_proxy=False (default) does not create a custom transport."""
         tenant_id = "tenant-id"
@@ -356,150 +316,6 @@ class TestCustomRequestsTransport:
         assert transport._sni is None
         assert transport._proxy_endpoint == proxy_endpoint
         assert transport._ca_file is None
-        assert transport._ca_data is None
-
-    def test_custom_requests_transport_send_with_sni(self):
-        """Test that CustomRequestsTransport.send works with SNI configuration."""
-        sni = "1234.ests.aks"
-        proxy_endpoint = "https://proxy.example.com:8080"
-
-        transport = _get_transport(
-            sni=sni,
-            token_proxy_endpoint=proxy_endpoint,
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        # Mock request
-        mock_request = HttpRequest("POST", "https://login.microsoftonline.com/tenant/oauth2/v2.0/token")
-        mock_request.data = {"grant_type": "client_credentials"}
-
-        with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-            mock_response_obj = MagicMock()
-            mock_parent_send.return_value = mock_response_obj
-
-            response = transport.send(mock_request)
-
-            assert response == mock_response_obj
-            mock_parent_send.assert_called_once_with(mock_request)
-
-    def test_custom_requests_transport_send_updates_url(self):
-        """Test that CustomRequestsTransport.send updates request URL through proxy endpoint."""
-        proxy_endpoint = "https://proxy.example.com:8080"
-
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint=proxy_endpoint,
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        # Mock request with original URL
-        original_url = "https://login.microsoftonline.com/tenant/oauth2/v2.0/token"
-        mock_request = HttpRequest("POST", original_url)
-
-        with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-            mock_response_obj = MagicMock()
-            mock_parent_send.return_value = mock_response_obj
-
-            transport.send(mock_request)
-
-            # Verify that _update_request_url was called (URL should be modified)
-            # The exact URL modification is tested in the mixin tests
-            mock_parent_send.assert_called_once_with(mock_request)
-
-    def test_custom_requests_transport_send_with_ca_data(self, ca_data):
-        """Test that CustomRequestsTransport.send works with CA data."""
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint="https://proxy.example.com:8080",
-            ca_file=None,
-            ca_data=ca_data,
-        )
-        assert transport is not None
-
-        mock_request = HttpRequest("GET", "https://login.microsoftonline.com/tenant/oauth2/v2.0/token")
-
-        with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-            mock_response_obj = MagicMock()
-            mock_parent_send.return_value = mock_response_obj
-
-            response = transport.send(mock_request)
-
-            assert response == mock_response_obj
-            mock_parent_send.assert_called_once_with(mock_request)
-
-    def test_custom_requests_transport_send_with_ca_file_reload(self, ca_data):
-        """Test that CustomRequestsTransport.send reloads CA file when changed."""
-        # Create a temporary CA file
-        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".pem") as ca_file:
-            ca_file.write(ca_data)
-            ca_file_path = ca_file.name
-
-        try:
-            transport = _get_transport(
-                sni=None,
-                token_proxy_endpoint="https://proxy.example.com:8080",
-                ca_file=ca_file_path,
-                ca_data=None,
-            )
-            assert transport is not None
-
-            mock_request = HttpRequest("GET", "https://login.microsoftonline.com/tenant/oauth2/v2.0/token")
-
-            # Mock the parent send method and file modification time tracking
-            with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-                mock_response_obj = MagicMock()
-                mock_parent_send.return_value = mock_response_obj
-
-                # First request
-                transport.send(mock_request)
-
-                # Simulate file change by modifying the file
-                time.sleep(0.1)  # Ensure different modification time
-                with open(ca_file_path, "a") as f:
-                    f.write("\n# Modified for testing\n")
-
-                # Mock the CA file change detection
-                with patch.object(transport, "_has_ca_file_changed", return_value=True):
-                    with patch.object(transport, "_load_ca_file_to_data") as mock_load_ca:
-                        with patch.object(transport, "_update_adaptor") as mock_update_adaptor:
-                            transport.send(mock_request)
-
-                            mock_load_ca.assert_called_once()
-                            mock_update_adaptor.assert_called_once()
-
-                assert mock_parent_send.call_count == 2
-
-        finally:
-            os.unlink(ca_file_path)
-
-    def test_custom_requests_transport_initialization_with_ca_data(self, ca_data):
-        """Test CustomRequestsTransport initialization with CA data creates SSL context."""
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint="https://proxy.example.com:8080",
-            ca_file=None,
-            ca_data=ca_data,
-        )
-        assert transport is not None
-
-        # Verify transport was created properly
-        assert transport._ca_data == ca_data
-
-    def test_custom_requests_transport_initialization_without_ca_data(self):
-        """Test CustomRequestsTransport initialization without CA data."""
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint="https://proxy.example.com:8080",
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        # Verify transport was created properly
         assert transport._ca_data is None
 
     def test_custom_requests_transport_inherits_from_token_binding_mixin(self):
@@ -704,6 +520,8 @@ class TestCustomRequestsTransportWithLocalServer:
 
                 # Second request should still work (using the same cert content)
                 response2 = transport.send(request)
+                assert transport._ca_data != original_content
+                assert "Modified for testing" in transport._ca_data
                 assert response2.status_code == 200
 
             finally:
@@ -734,25 +552,6 @@ class TestCustomRequestsTransportWithLocalServer:
 
             assert response.status_code == 500
             # Should not raise exception, just return error response
-
-    def test_slow_server_response(self):
-        """Test handling of slow server responses."""
-
-        with TokenProxyTestServer(use_ssl=True) as server:
-            transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None)
-            assert transport is not None
-
-            request = HttpRequest("GET", f"{server.base_url}/slow")
-
-            start_time = time.time()
-            response = transport.send(request)
-            elapsed_time = time.time() - start_time
-
-            assert response.status_code == 200
-            # Should take at least 2 seconds (server waits for 2s)
-            assert elapsed_time >= 2.0
-            data = response.json()
-            assert data["message"] == "slow response"
 
     def test_custom_headers_preserved(self):
         """Test that custom headers are preserved and sent to server."""

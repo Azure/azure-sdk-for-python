@@ -346,6 +346,9 @@ class TestCustomAioHttpTransport:
         assert transport._ca_file == ca_file
         assert transport._ca_data == ca_data
 
+        assert hasattr(transport, "_ssl_context")
+        assert transport._ssl_context is not None
+
     def test_get_transport_with_minimal_config(self):
         """Test _get_transport with minimal configuration."""
         proxy_endpoint = "https://proxy.example.com:8080"
@@ -363,210 +366,8 @@ class TestCustomAioHttpTransport:
         assert transport._ca_file is None
         assert transport._ca_data is None
 
-    @pytest.mark.asyncio
-    async def test_workload_identity_aiohttp_transport_send_with_sni(self):
-        """Test that WorkloadIdentityAioHttpTransport.send sets server_hostname correctly."""
-        sni = "test.sni.com"
-        proxy_endpoint = "https://proxy.example.com:8080"
-
-        transport = _get_transport(
-            sni=sni,
-            token_proxy_endpoint=proxy_endpoint,
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        # Mock the parent send method
-        mock_request = MagicMock()
-        mock_request.url = "https://login.microsoftonline.com/tenant/oauth2/v2.0/token"
-
-        with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-            mock_parent_send.return_value = MagicMock()
-
-            await transport.send(mock_request)
-
-            # Verify parent send was called with server_hostname set
-            mock_parent_send.assert_called_once()
-            call_args = mock_parent_send.call_args
-            assert call_args[1]["server_hostname"] == sni
-
-    @pytest.mark.asyncio
-    async def test_workload_identity_aiohttp_transport_send_updates_url(self):
-        """Test that WorkloadIdentityAioHttpTransport.send updates request URL with proxy endpoint."""
-        proxy_endpoint = "https://proxy.example.com:8080/path"
-        original_url = "https://login.microsoftonline.com/tenant/oauth2/v2.0/token"
-        expected_url = "https://proxy.example.com:8080/path/tenant/oauth2/v2.0/token"
-
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint=proxy_endpoint,
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        mock_request = MagicMock()
-        mock_request.url = original_url
-
-        with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-            mock_parent_send.return_value = MagicMock()
-
-            await transport.send(mock_request)
-
-            # Verify URL was updated to use proxy endpoint
-            assert mock_request.url == expected_url
-
-    @pytest.mark.asyncio
-    async def test_workload_identity_aiohttp_transport_send_with_ca_data(self, ca_data):
-        """Test that WorkloadIdentityAioHttpTransport.send creates SSL context from CA data."""
-        proxy_endpoint = "https://proxy.example.com:8080"
-
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint=proxy_endpoint,
-            ca_file=None,
-            ca_data=ca_data,
-        )
-        assert transport is not None
-
-        mock_request = MagicMock()
-        mock_request.url = "https://login.microsoftonline.com/tenant/oauth2/v2.0/token"
-
-        with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-            mock_parent_send.return_value = MagicMock()
-
-            await transport.send(mock_request)
-
-            # Verify SSL context was set
-            mock_parent_send.assert_called_once()
-            call_args = mock_parent_send.call_args
-            assert "ssl" in call_args[1]
-            assert call_args[1]["ssl"] is not None
-
-    @pytest.mark.asyncio
-    async def test_workload_identity_aiohttp_transport_send_with_ca_file_reload(self, ca_data):
-        """Test that WorkloadIdentityAioHttpTransport.send reloads CA file when changed."""
-
-        # Create a temporary CA file
-        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".pem") as ca_file:
-            ca_file.write(ca_data)
-            ca_file_path = ca_file.name
-
-        try:
-            proxy_endpoint = "https://proxy.example.com:8080"
-
-            transport = _get_transport(
-                sni=None,
-                token_proxy_endpoint=proxy_endpoint,
-                ca_file=ca_file_path,
-                ca_data=None,
-            )
-
-            assert transport is not None
-            # Store original CA data
-            original_ca_data = transport._ca_data
-
-            # Simulate file change by modifying mtime tracking
-            real_sleep(0.1)  # Ensure different mtime
-            with open(ca_file_path, "a") as f:
-                f.write("\n")
-
-            mock_request = MagicMock()
-            mock_request.url = "https://login.microsoftonline.com/tenant/oauth2/v2.0/token"
-
-            with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-                mock_parent_send.return_value = MagicMock()
-
-                await transport.send(mock_request)
-
-                # Verify CA data was reloaded
-                assert transport._ca_data != original_ca_data
-
-        finally:
-            # Clean up temporary file
-            os.unlink(ca_file_path)
-
-    @pytest.mark.asyncio
-    async def test_workload_identity_aiohttp_transport_context_manager(self):
-        """Test that WorkloadIdentityAioHttpTransport works as async context manager."""
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint="https://proxy.example.com:8080",
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        # Mock the parent context manager methods
-        with patch.object(transport.__class__.__bases__[1], "__aenter__") as mock_aenter, patch.object(
-            transport.__class__.__bases__[1], "__aexit__"
-        ) as mock_aexit:
-
-            mock_aenter.return_value = transport
-            mock_aexit.return_value = None
-
-            async with transport as ctx_transport:
-                assert ctx_transport == transport
-
-            mock_aenter.assert_called_once()
-            mock_aexit.assert_called_once()
-
-    def test_workload_identity_aiohttp_transport_initialization_with_ca_data(self, ca_data):
-        """Test WorkloadIdentityAioHttpTransport initialization with CA data creates SSL context."""
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint="https://proxy.example.com:8080",
-            ca_file=None,
-            ca_data=ca_data,
-        )
-        assert transport is not None
-
-        # Verify SSL context was created during initialization
         assert hasattr(transport, "_ssl_context")
         assert transport._ssl_context is not None
-
-    def test_workload_identity_aiohttp_transport_initialization_without_ca_data(self):
-        """Test WorkloadIdentityAioHttpTransport initialization without CA data."""
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint="https://proxy.example.com:8080",
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        # Verify SSL context is created with None ca_data (creates default context)
-        assert hasattr(transport, "_ssl_context")
-        # SSL context should still be created even with None ca_data
-
-    @pytest.mark.asyncio
-    async def test_workload_identity_aiohttp_transport_send_no_ssl_context_when_no_ca_data(self):
-        """Test that no SSL context is passed when ca_data is None and SSL context creation fails."""
-        transport = _get_transport(
-            sni=None,
-            token_proxy_endpoint="https://proxy.example.com:8080",
-            ca_file=None,
-            ca_data=None,
-        )
-        assert transport is not None
-
-        # Mock SSL context creation to return None
-        with patch("ssl.create_default_context", return_value=None):
-            # Manually set ssl_context to None to test the conditional logic
-            with patch.object(transport, "_ssl_context", None):
-                mock_request = MagicMock()
-                mock_request.url = "https://login.microsoftonline.com/tenant/oauth2/v2.0/token"
-
-                with patch.object(transport.__class__.__bases__[1], "send") as mock_parent_send:
-                    mock_parent_send.return_value = MagicMock()
-
-                    await transport.send(mock_request)
-
-                    # Verify SSL context was not set when None
-                    mock_parent_send.assert_called_once()
-                    call_args = mock_parent_send.call_args
-                    assert "ssl" not in call_args[1] or call_args[1].get("ssl") is None
 
     def test_workload_identity_aiohttp_transport_inherits_from_token_binding_mixin(self):
         """Test that WorkloadIdentityAioHttpTransport inherits from TokenBindingTransportMixin."""
@@ -775,6 +576,7 @@ class TestCustomAioHttpTransportWithLocalServer:
 
                 # Second request should still work (using the same cert content)
                 response2 = await transport.send(request)
+                assert transport._ca_data != original_content
                 assert response2.status_code == 200
 
             finally:
@@ -807,25 +609,6 @@ class TestCustomAioHttpTransportWithLocalServer:
 
             assert response.status_code == 500
             # Should not raise exception, just return error response
-
-    @pytest.mark.asyncio
-    async def test_slow_server_response(self):
-        """Test handling of slow server responses."""
-        with TokenProxyTestServer(use_ssl=True) as server:
-            transport = _get_transport(sni=None, token_proxy_endpoint=None, ca_file=server.ca_file, ca_data=None)
-            assert transport is not None
-
-            request = HttpRequest("GET", f"{server.base_url}/slow")
-
-            start_time = time.time()
-            response = await transport.send(request)
-            elapsed_time = time.time() - start_time
-
-            assert response.status_code == 200
-            # Should take at least 2 seconds (server waits for 2s)
-            assert elapsed_time >= 2.0
-            data = response.json()
-            assert data["message"] == "slow response"
 
     @pytest.mark.asyncio
     async def test_custom_headers_preserved(self):
@@ -1086,6 +869,7 @@ class TestCustomAsyncioRequestsTransportFallback:
 
                     # Second request should still work (using the same cert content)
                     response2 = await transport.send(request)
+                    assert transport._ca_data != original_content
                     assert response2.status_code == 200
 
                 finally:

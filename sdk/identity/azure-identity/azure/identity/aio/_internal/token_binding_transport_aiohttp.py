@@ -33,6 +33,5 @@ class CustomAioHttpTransport(TokenBindingTransportMixin, AioHttpTransport):
             if self._ca_data:
                 self._ssl_context = ssl.create_default_context(cadata=self._ca_data)
 
-        if self._ssl_context:
-            kwargs.setdefault("ssl", self._ssl_context)
+        kwargs.setdefault("ssl", self._ssl_context)
         return await super().send(request, **kwargs)

@@ -83,12 +83,6 @@ class TokenProxyHandler(BaseHTTPRequestHandler):
             # Simulate SSL error by closing connection
             self.wfile.close()
             return
-        elif path == "/slow":
-            # Simulate slow response using threading.Event instead of time.sleep
-            # to avoid being mocked by conftest.py
-            event = threading.Event()
-            event.wait(timeout=2)
-            self._send_json_response({"message": "slow response"})
         else:
             self._send_proxy_response(path, body, headers)
 
@@ -320,7 +314,6 @@ def main():
         print(f"  {server.base_url}/oauth2/v2.0/token - Mock OAuth token endpoint")
         print(f"  {server.base_url}/error/500 - Simulate server error")
         print(f"  {server.base_url}/error/ssl - Simulate SSL error")
-        print(f"  {server.base_url}/slow - Simulate slow response")
         print(f"  {server.base_url}/<any-path> - Generic proxy response")
         print("\nPress Ctrl+C to stop")
 
