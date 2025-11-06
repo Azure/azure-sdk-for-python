@@ -39,15 +39,15 @@ from ..._operations._operations import (
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
 from ..._validation import api_version_validation
-from .._configuration import ConversationAnalysisConfiguration
+from .._configuration import ConversationAnalysisClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class _ConversationAnalysisOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ConversationAnalysisConfiguration]
+class _ConversationAnalysisClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ConversationAnalysisClientConfiguration]
 ):
 
     @overload

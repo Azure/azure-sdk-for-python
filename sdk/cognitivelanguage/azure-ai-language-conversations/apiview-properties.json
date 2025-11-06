@@ -126,9 +126,9 @@
         "azure.ai.language.conversations.models.AnalyzeConversationOperationResultsKind": "Language.Conversations.AnalyzeConversationResultsKind",
         "azure.ai.language.conversations.models.SummaryLengthBucket": "Language.Conversations.SummaryLengthBucket",
         "azure.ai.language.conversations.models.SummaryAspect": "Language.Conversations.SummaryAspect",
-        "azure.ai.language.conversations.ConversationAnalysis.analyze_conversation": "Language.Conversations.analyzeConversations",
-        "azure.ai.language.conversations.aio.ConversationAnalysis.analyze_conversation": "Language.Conversations.analyzeConversations",
-        "azure.ai.language.conversations.ConversationAnalysis.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob",
-        "azure.ai.language.conversations.aio.ConversationAnalysis.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob"
+        "azure.ai.language.conversations.ConversationAnalysisClient.analyze_conversation": "Language.Conversations.analyzeConversations",
+        "azure.ai.language.conversations.aio.ConversationAnalysisClient.analyze_conversation": "Language.Conversations.analyzeConversations",
+        "azure.ai.language.conversations.ConversationAnalysisClient.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob",
+        "azure.ai.language.conversations.aio.ConversationAnalysisClient.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob"
     }
 }
