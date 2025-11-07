@@ -14,7 +14,7 @@ default_log_config = {
     "version": 1,
     "disable_existing_loggers": False,
     "loggers": {
-        "azure.ai.agentshosting": {
+        "azure.ai.agentserver": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
@@ -31,12 +31,12 @@ request_context = contextvars.ContextVar("request_context", default=None)
 
 def get_dimensions():
     env_values = {name: value for name, value in vars(Constants).items() if not name.startswith("_")}
-    res = {"azure.ai.agentshosting.version": VERSION}
+    res = {"azure.ai.agentserver.version": VERSION}
     for name, env_name in env_values.items():
         if isinstance(env_name, str) and not env_name.startswith("_"):
             runtime_value = os.environ.get(env_name)
             if runtime_value:
-                res[f"azure.ai.agentshosting.{name.lower()}"] = runtime_value
+                res[f"azure.ai.agentserver.{name.lower()}"] = runtime_value
     return res
 
 
@@ -118,7 +118,7 @@ def configure(log_config: dict = default_log_config):
 
             from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
-            logger_provider = LoggerProvider(resource=Resource.create({"service.name": "azure.ai.agentshosting"}))
+            logger_provider = LoggerProvider(resource=Resource.create({"service.name": "azure.ai.agentserver"}))
             set_logger_provider(logger_provider)
 
             exporter = AzureMonitorLogExporter(connection_string=application_insights_connection_string)
@@ -131,8 +131,8 @@ def configure(log_config: dict = default_log_config):
             custom_filter = CustomDimensionsFilter()
             handler.addFilter(custom_filter)
 
-            # Only add to azure.ai.agentshosting namespace to avoid infrastructure logs
-            app_logger = logging.getLogger("azure.ai.agentshosting")
+            # Only add to azure.ai.agentserver namespace to avoid infrastructure logs
+            app_logger = logging.getLogger("azure.ai.agentserver")
             app_logger.setLevel(get_log_level())
             app_logger.addHandler(handler)
 
@@ -156,4 +156,4 @@ def get_logger() -> logging.Logger:
     :return: Configured logger instance.
     :rtype: logging.Logger
     """
-    return logging.getLogger("azure.ai.agentshosting")
+    return logging.getLogger("azure.ai.agentserver")
