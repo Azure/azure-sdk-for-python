@@ -28,7 +28,6 @@ USAGE:
 import os
 import base64
 from dotenv import load_dotenv
-from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 
