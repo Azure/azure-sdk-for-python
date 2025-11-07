@@ -1,4 +1,5 @@
 import pytest
+import copy
 from azure.ai.evaluation._evaluate._evaluate_aoai import _combine_item_schemas
 
 
@@ -21,7 +22,7 @@ class TestCombineItemSchemas:
     """Unit tests for _combine_item_schemas"""
 
     def test_combine_item_schemas_success(self, default_data_source_config):
-        data_source_config = default_data_source_config.copy()
+        data_source_config = copy.deepcopy(default_data_source_config)
         kwargs = {
             "item_schema": {
                 "properties": {
@@ -44,7 +45,7 @@ class TestCombineItemSchemas:
         assert data_source_config["item_schema"]["required"] == expected_required
 
     def test_combine_item_schemas_without_item_schema(self, default_data_source_config):
-        data_source_config = default_data_source_config.copy()
+        data_source_config = copy.deepcopy(default_data_source_config)
 
         expected_properties = {
             "id": {"type": "string"},
@@ -65,7 +66,7 @@ class TestCombineItemSchemas:
         assert data_source_config["item_schema"]["required"] == expected_required
 
     def test_combine_item_schemas_with_empty_external_properties(self, default_data_source_config):
-        data_source_config = default_data_source_config.copy()
+        data_source_config = copy.deepcopy(default_data_source_config)
         kwargs = {
             "item_schema": {
                 "properties": {},
@@ -84,7 +85,7 @@ class TestCombineItemSchemas:
         assert data_source_config["item_schema"]["required"] == expected_required
 
     def test_combine_item_schemas_with_external_properties_without_required(self, default_data_source_config):
-        data_source_config = default_data_source_config.copy()
+        data_source_config = copy.deepcopy(default_data_source_config)
         kwargs = {
             "item_schema": {
                 "properties": {
