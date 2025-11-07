@@ -22,6 +22,7 @@ keywords = ["azure", "azure sdk"]
 dependencies = [
     "azure-ai-agentserver-core",
     "agent_framework_azure_ai==1.0.0b251007",
+    "agent_framework_core==1.0.0b251007",
     "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
 ]
 
