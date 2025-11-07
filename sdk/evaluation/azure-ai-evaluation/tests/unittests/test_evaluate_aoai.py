@@ -18,6 +18,7 @@ def default_data_source_config():
         "include_sample_schema": False,
     }
 
+
 class TestCombineItemSchemas:
     """Unit tests for _combine_item_schemas"""
 

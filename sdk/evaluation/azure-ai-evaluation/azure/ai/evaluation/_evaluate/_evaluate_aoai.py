@@ -217,17 +217,17 @@ def _begin_single_aoai_evaluation(
 
 
 def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, Any]) -> None:
-    if 'item_schema' not in kwargs or 'properties' not in kwargs['item_schema']:
+    if "item_schema" not in kwargs or "properties" not in kwargs["item_schema"]:
         return
 
-    if 'item_schema' in data_source_config:
-        item_schema = kwargs['item_schema']['required'] if 'required' in kwargs['item_schema'] else []
-        for key in kwargs['item_schema']['properties']:
-            if key not in data_source_config['item_schema']['properties']:
-                data_source_config['item_schema']['properties'][key] = kwargs['item_schema']['properties'][key]
+    if "item_schema" in data_source_config:
+        item_schema = kwargs["item_schema"]["required"] if "required" in kwargs["item_schema"] else []
+        for key in kwargs["item_schema"]["properties"]:
+            if key not in data_source_config["item_schema"]["properties"]:
+                data_source_config["item_schema"]["properties"][key] = kwargs["item_schema"]["properties"][key]
 
                 if key in item_schema:
-                    data_source_config['item_schema']['required'].append(key)
+                    data_source_config["item_schema"]["required"].append(key)
 
 
 def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
