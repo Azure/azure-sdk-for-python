@@ -399,24 +399,28 @@ cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
 print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
 
 # Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
+# Note: Deployment can only be started after the fine-tuning job completes successfully.
 print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
-model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
+fine_tuned_model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
 deployment_name = "gpt-4-1-fine-tuned"
 
 with CognitiveServicesManagementClient(
     credential=credential, subscription_id=subscription_id
 ) as cogsvc_client:
 
+    deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
+
+    deployment_properties = DeploymentProperties(model=deployment_model)
+
+    deployment_sku = Sku(name="Standard", capacity=250)
+
+    deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
+
     deployment = cogsvc_client.deployments.begin_create_or_update(
         resource_group_name=resource_group,
         account_name=account_name,
         deployment_name=deployment_name,
-        deployment={
-            "properties": {
-                "model": {"format": "OpenAI", "name": model_name, "version": "1"},
-            },
-            "sku": {"capacity": 250, "name": "standard"},
-        },
+        deployment=deployment_config,
     )
 
     while deployment.status() not in ["succeeded", "failed"]:

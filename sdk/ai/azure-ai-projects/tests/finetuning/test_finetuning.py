@@ -10,6 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
+
 @pytest.mark.skipif(
     condition=(not is_live_and_not_recording()),
     reason="Skipped because we cannot record network calls with AOAI client",
@@ -400,84 +401,82 @@ class TestFineTuning(TestBase):
     def test_sft_pre_finetuning_job_deploy_infer(self, **kwargs):
 
         with self.create_client(**kwargs) as project_client:
-            
+
             with project_client.get_openai_client() as openai_client:
-                
+
                 pre_finetuned_model = self.test_finetuning_params["sft"]["openai"]["deployment"]["pre_finetuned_model"]
                 deployment_name = f"{self.test_finetuning_params['sft']['openai']['deployment']['deployment_name']}-{int(time.time())}"
-                
+
                 resource_group = kwargs.get("azure_ai_projects_azure_resource_group", "")
                 account_name = kwargs.get("azure_ai_projects_azure_aoai_account", "")
-                
+
                 assert resource_group, "Azure resource group is required for deployment test"
                 assert account_name, "Azure OpenAI account name is required for deployment test"
-                
-                print(f"[test_sft_pre_finetuning_job_deploy_infer] Deploying model: {pre_finetuned_model}, Deployment name: {deployment_name}")
-                
+
+                print(
+                    f"[test_sft_pre_finetuning_job_deploy_infer] Deploying model: {pre_finetuned_model}, Deployment name: {deployment_name}"
+                )
+
                 with self.create_cognitive_services_management_client(**kwargs) as cogsvc_client:
-                    
-                    deployment_model = DeploymentModel(
-                        format="OpenAI",
-                        name=pre_finetuned_model,
-                        version="1"
-                    )
-                    
-                    deployment_properties = DeploymentProperties(
-                        model=deployment_model
-                    )
-                    
-                    deployment_sku = Sku(
-                        name="Standard",
-                        capacity=1
-                    )
-                    
-                    deployment_config = Deployment(
-                        properties=deployment_properties,
-                        sku=deployment_sku
-                    )
-                    
+
+                    deployment_model = DeploymentModel(format="OpenAI", name=pre_finetuned_model, version="1")
+
+                    deployment_properties = DeploymentProperties(model=deployment_model)
+
+                    deployment_sku = Sku(name="Standard", capacity=1)
+
+                    deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
+
                     deployment_operation = cogsvc_client.deployments.begin_create_or_update(
                         resource_group_name=resource_group,
                         account_name=account_name,
                         deployment_name=deployment_name,
-                        deployment=deployment_config
+                        deployment=deployment_config,
                     )
-                    
+
                     # Wait for deployment to complete
                     max_wait_time = 300
                     start_time = time.time()
-                    
-                    while (deployment_operation.status() not in ["succeeded", "failed"] and 
-                           time.time() - start_time < max_wait_time):
+
+                    while (
+                        deployment_operation.status() not in ["succeeded", "failed"]
+                        and time.time() - start_time < max_wait_time
+                    ):
                         time.sleep(30)
-                        print(f"[test_sft_pre_finetuning_job_deploy_infer] Deployment status: {deployment_operation.status()}")
-                    
+                        print(
+                            f"[test_sft_pre_finetuning_job_deploy_infer] Deployment status: {deployment_operation.status()}"
+                        )
+
                     final_status = deployment_operation.status()
                     print(f"[test_sft_pre_finetuning_job_deploy_infer] Final deployment status: {final_status}")
-                    
+
                     if final_status == "succeeded":
                         print(f"[test_sft_pre_finetuning_job_deploy_infer] Testing inference on deployed model")
-                        
+
                         response = openai_client.chat.completions.create(
                             model=deployment_name,
                             messages=[{"role": "user", "content": "Hello, how are you?"}],
-                            max_tokens=50
+                            max_tokens=50,
                         )
-                        
+
                         assert response.choices is not None, "Response choices should not be None"
                         assert len(response.choices) > 0, "Response should have at least one choice"
                         assert response.choices[0].message is not None, "Message should not be None"
                         assert response.choices[0].message.content is not None, "Message content should not be None"
-                        
-                        print(f"[test_sft_pre_finetuning_job_deploy_infer] Inference successful: {response.choices[0].message.content[:100]}")
-                        
+
+                        print(
+                            f"[test_sft_pre_finetuning_job_deploy_infer] Inference successful: {response.choices[0].message.content[:100]}"
+                        )
+
                         # Clean up deployment
                         cogsvc_client.deployments.begin_delete(
                             resource_group_name=resource_group,
                             account_name=account_name,
-                            deployment_name=deployment_name
+                            deployment_name=deployment_name,
                         )
                         print(f"[test_sft_pre_finetuning_job_deploy_infer] Started deployment cleanup")
-                    
+
                     else:
-                        print(f"[test_sft_pre_finetuning_job_deploy_infer] Deployment failed or timed out: {final_status}")
+                        print(
+                            f"[test_sft_pre_finetuning_job_deploy_infer] Deployment failed or timed out: {final_status}"
+                        )

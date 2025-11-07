@@ -132,31 +132,19 @@ async def main():
                     credential=credential, subscription_id=subscription_id
                 ) as cogsvc_client:
 
-                    deployment_model = DeploymentModel(
-                        format="OpenAI",
-                        name=fine_tuned_model_name,
-                        version="1"
-                    )
-                    
-                    deployment_properties = DeploymentProperties(
-                        model=deployment_model
-                    )
-                    
-                    deployment_sku = Sku(
-                        name="Standard",
-                        capacity=250
-                    )
-                    
-                    deployment_config = Deployment(
-                        properties=deployment_properties,
-                        sku=deployment_sku
-                    )
+                    deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
+
+                    deployment_properties = DeploymentProperties(model=deployment_model)
+
+                    deployment_sku = Sku(name="Standard", capacity=250)
+
+                    deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
 
                     deployment = await cogsvc_client.deployments.begin_create_or_update(
                         resource_group_name=resource_group,
                         account_name=account_name,
                         deployment_name=deployment_name,
-                        deployment=deployment_config
+                        deployment=deployment_config,
                     )
 
                     while deployment.status() not in ["succeeded", "failed"]:

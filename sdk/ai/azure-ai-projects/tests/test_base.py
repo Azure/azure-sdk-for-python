@@ -107,7 +107,7 @@ class TestBase(AzureRecordedTestCase):
                 "deployment": {
                     "deployment_name": "gpt-4-1-fine-tuned-test",
                     "pre_finetuned_model": "ft:gpt-4.1:azure-ai-test::ABCD1234",
-                }
+                },
             },
             "oss": {"model_name": "Ministral-3B"},
             "training_file_name": "sft_training_set.jsonl",
@@ -178,10 +178,7 @@ class TestBase(AzureRecordedTestCase):
         credential = self.get_credential(CognitiveServicesManagementClient, is_async=False)
 
         # create and return client
-        client = CognitiveServicesManagementClient(
-            credential=credential,
-            subscription_id=subscription_id
-        )
+        client = CognitiveServicesManagementClient(credential=credential, subscription_id=subscription_id)
 
         return client
 
@@ -190,10 +187,7 @@ class TestBase(AzureRecordedTestCase):
         subscription_id = kwargs.pop("azure_ai_projects_azure_subscription_id")
         credential = self.get_credential(CognitiveServicesManagementClientAsync, is_async=True)
 
-        client = CognitiveServicesManagementClientAsync(
-            credential=credential,
-            subscription_id=subscription_id
-        )
+        client = CognitiveServicesManagementClientAsync(credential=credential, subscription_id=subscription_id)
 
         return client
 
