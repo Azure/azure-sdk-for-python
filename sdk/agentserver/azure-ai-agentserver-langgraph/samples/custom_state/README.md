@@ -1,6 +1,6 @@
 # Custom LangGraph State Converter (Mini RAG) Sample
 
-This sample demonstrates how to host a LangGraph agent **with a custom internal state** using the `azure.ai.agentshosting` SDK by supplying a custom `LanggraphStateConverter` (`RAGStateConverter`). It shows the minimal pattern required to adapt OpenAI Responses-style requests to a LangGraph state and back to an OpenAI-compatible response.
+This sample demonstrates how to host a LangGraph agent **with a custom internal state** using the `azure.ai.agentserver` SDK by supplying a custom `LanggraphStateConverter` (`RAGStateConverter`). It shows the minimal pattern required to adapt OpenAI Responses-style requests to a LangGraph state and back to an OpenAI-compatible response.
 
 ## What It Shows
 - Defining a custom state (`RAGState`) separate from the wire contract.

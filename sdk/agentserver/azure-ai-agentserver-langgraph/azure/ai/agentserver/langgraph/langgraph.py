@@ -82,7 +82,7 @@ class LangGraphAdapter(FoundryCBAgent):
 
     def get_trace_attributes(self):
         attrs = super().get_trace_attributes()
-        attrs["service.namespace"] = "azure.ai.agentshosting.langgraph"
+        attrs["service.namespace"] = "azure.ai.agentserver.langgraph"
         return attrs
 
     async def agent_run_non_stream(self, input_data: dict, context: AgentRunContext):
@@ -162,4 +162,4 @@ class LangGraphAdapter(FoundryCBAgent):
         agent_id = os.getenv(Constants.AGENT_ID)
         if agent_id:
             return agent_id
-        return "AgentsHosting-LangGraph"
+        return "HostedAgent-LangGraph"

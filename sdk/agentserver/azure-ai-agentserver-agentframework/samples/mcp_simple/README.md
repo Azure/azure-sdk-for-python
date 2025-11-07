@@ -51,7 +51,6 @@ This sample demonstrates how to run a Microsoft Agent Framework `ChatAgent` that
 Initialize a virtual environment and then install dependencies:
 
 ```bash
-pip install ../../wheels/azure_ai_agentshosting-0.0.1+g407f536.d251024-py3-none-any.whl
 pip install -r ./requirements.txt --pre
 ```
 
