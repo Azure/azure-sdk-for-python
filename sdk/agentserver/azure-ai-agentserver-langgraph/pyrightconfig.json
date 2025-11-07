@@ -1,0 +1,17 @@
+{
+    "reportAttributeAccessIssue": "warning",
+    "reportIncompatibleMethodOverride": "warning",
+    "reportReturnType": "warning",
+    "reportArgumentType": "warning",
+    "reportMissingImports": "warning",
+    "reportOptionalMemberAccess": "warning",
+    "reportGeneralTypeIssues": "warning",
+    "reportCallIssue": "warning",
+
+    "exclude": [
+        "**/tests/**",
+        "**/samples/**",
+        "**/setup.py",
+        "**/conftest.py"
+    ]
+}
