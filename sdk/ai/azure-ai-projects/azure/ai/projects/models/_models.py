@@ -5512,7 +5512,9 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A filter to apply. Is either a ComparisonFilter type or a CompoundFilter type."""
 
     @overload
@@ -11390,13 +11392,6 @@ class ResponseFileSearchCallSearchingEvent(ResponseStreamEvent, discriminator="r
         self.type = ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_SEARCHING  # type: ignore
 
 
-class ResponseFormatJsonSchemaSchema(_Model):
-    """The schema for the response format, described as a JSON Schema object.
-    Learn how to build JSON schemas `here <https://json-schema.org/>`_.
-
-    """
-
-
 class ResponseFunctionCallArgumentsDeltaEvent(
     ResponseStreamEvent, discriminator="response.function_call_arguments.delta"
 ):
@@ -13379,7 +13374,7 @@ class ResponseTextFormatConfigurationJsonSchema(
      underscores and dashes, with a maximum length of 64. Required.
     :vartype name: str
     :ivar schema: Required.
-    :vartype schema: ~azure.ai.projects.models.ResponseFormatJsonSchemaSchema
+    :vartype schema: dict[str, any]
     :ivar strict: Whether to enable strict schema adherence when generating the output.
      If set to true, the model will always follow the exact schema defined
      in the ``schema`` field. Only a subset of JSON Schema is supported when
@@ -13396,9 +13391,7 @@ class ResponseTextFormatConfigurationJsonSchema(
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the response format. Must be a-z, A-Z, 0-9, or contain
      underscores and dashes, with a maximum length of 64. Required."""
-    schema: "_models.ResponseFormatJsonSchemaSchema" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    schema: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable strict schema adherence when generating the output.
@@ -13412,7 +13405,7 @@ class ResponseTextFormatConfigurationJsonSchema(
         self,
         *,
         name: str,
-        schema: "_models.ResponseFormatJsonSchemaSchema",
+        schema: dict[str, Any],
         description: Optional[str] = None,
         strict: Optional[bool] = None,
     ) -> None: ...
