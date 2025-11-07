@@ -39,11 +39,6 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
-    MatrixConfigs:
-      - Name: storage_ci_matrix
-        Path: sdk/storage/platform-matrix.json
-        Selection: sparse
-        GenerateVMJobs: true
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     Artifacts:
