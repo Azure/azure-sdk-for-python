@@ -17,6 +17,11 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from test_base import servicePreparer
 from test_ai_instrumentor_base import TestAiAgentsInstrumentorBase, CONTENT_TRACING_ENV_VARIABLE
 
+BINARY_DATA_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA"
+
+# Base64 encoded small test image (1x1 PNG)
+TEST_IMAGE_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
@@ -86,7 +91,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{"text": "Write a short poem about AI"}',
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "Write a short poem about AI"}]}',
                 },
             },
             {
@@ -94,7 +99,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"text": "*"}',
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "*"}]}',
                 },
             },
         ]
@@ -171,7 +176,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{"text": "Write a short poem about AI"}',
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "Write a short poem about AI"}]}',
                 },
             },
             {
@@ -179,7 +184,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"text": "*"}',
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "*"}]}',
                 },
             },
         ]
@@ -427,7 +432,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{"text": "What\'s the weather in Seattle?"}',
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "What\'s the weather in Seattle?"}]}',
                 },
             },
             {
@@ -475,7 +480,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"text": "*"}',
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "*"}]}',
                 },
             },
         ]
@@ -672,4 +677,1455 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             },
         ]
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
+        """Test asynchronous non-streaming responses with multiple text inputs and content recording enabled."""
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
+            # Get the OpenAI client from the project client
+            client = await project_client.get_openai_client()
+            deployment_name = self.test_agents_params["model_deployment_name"]
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create responses with multiple text inputs as a list
+            input_list = [
+                {"role": "user", "content": [{"type": "input_text", "text": "Hello"}]},
+                {"role": "user", "content": [{"type": "input_text", "text": "Write a haiku about Python"}]},
+            ]
+
+            result = await client.responses.create(
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=False
+            )
+
+            # Verify the response exists
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Check span attributes
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Check span events - should have 2 user messages and 1 assistant message
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "Hello"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "Write a haiku about Python"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "*"}]}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
+        """Test asynchronous streaming responses with multiple text inputs and content recording enabled."""
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
+            # Get the OpenAI client from the project client
+            client = await project_client.get_openai_client()
+            deployment_name = self.test_agents_params["model_deployment_name"]
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create responses with multiple text inputs as a list
+            input_list = [
+                {"role": "user", "content": [{"type": "input_text", "text": "Hello"}]},
+                {"role": "user", "content": [{"type": "input_text", "text": "Write a haiku about Python"}]},
+            ]
+
+            stream = await client.responses.create(
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=True
+            )
+
+            # Consume the stream
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Check span attributes
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Check span events - should have 2 user messages and 1 assistant message
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "Hello"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "Write a haiku about Python"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": '{"content": [{"type": "text", "text": "*"}]}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
+        """Test asynchronous non-streaming responses with multiple text inputs and content recording disabled."""
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
+            # Get the OpenAI client from the project client
+            client = await project_client.get_openai_client()
+            deployment_name = self.test_agents_params["model_deployment_name"]
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create responses with multiple text inputs as a list
+            input_list = [
+                {"role": "user", "content": [{"type": "input_text", "text": "Hello"}]},
+                {"role": "user", "content": [{"type": "input_text", "text": "Write a haiku about Python"}]},
+            ]
+
+            result = await client.responses.create(
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=False
+            )
+
+            # Verify the response exists
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Check span attributes
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Check span events - should have 2 user messages and 1 assistant message, all with empty content
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    # ========================================
+    # Binary Data Tracing Tests (Image Only)
+    # ========================================
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_off_binary_off_non_streaming(self, **kwargs):
+        """Test image only with content recording OFF and binary data OFF (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            # Send only an image (no text)
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_off_binary_on_non_streaming(self, **kwargs):
+        """Test image only with content recording OFF and binary data ON (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty (binary flag doesn't matter)
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_on_binary_off_non_streaming(self, **kwargs):
+        """Test image only with content recording ON and binary data OFF (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary OFF: should have image type but no image_url
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content":[{"type":"image"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_on_binary_on_non_streaming(self, **kwargs):
+        """Test image only with content recording ON and binary data ON (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary ON: should have image type AND image_url with base64 data
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": f'{{"content":[{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    # ========================================
+    # Binary Data Tracing Tests (Text + Image)
+    # ========================================
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_off_binary_off_non_streaming(self, **kwargs):
+        """Test text + image with content recording OFF and binary data OFF (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            # Send text + image
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_off_binary_on_non_streaming(self, **kwargs):
+        """Test text + image with content recording OFF and binary data ON (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty (binary flag doesn't matter)
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_on_binary_off_non_streaming(self, **kwargs):
+        """Test text + image with content recording ON and binary data OFF (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary OFF: should have text and image type but no image_url
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content":[{"type":"text","text":"What is shown in this image?"},{"type":"image"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_on_binary_on_non_streaming(self, **kwargs):
+        """Test text + image with content recording ON and binary data ON (non-streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            result = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=False,
+            )
+
+            assert hasattr(result, "output")
+            assert result.output is not None
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary ON: should have text and image with full base64 data
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": f'{{"content":[{{"type":"text","text":"What is shown in this image?"}},{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    # ========================================
+    # Binary Data Tracing Tests - Streaming (Image Only)
+    # ========================================
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_off_binary_off_streaming(self, **kwargs):
+        """Test image only with content recording OFF and binary data OFF (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=True,
+            )
+
+            # Consume the stream
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_off_binary_on_streaming(self, **kwargs):
+        """Test image only with content recording OFF and binary data ON (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=True,
+            )
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_on_binary_off_streaming(self, **kwargs):
+        """Test image only with content recording ON and binary data OFF (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=True,
+            )
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary OFF: should have image type but no image_url
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content":[{"type":"image"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_image_only_content_on_binary_on_streaming(self, **kwargs):
+        """Test image only with content recording ON and binary data ON (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"}],
+                    }
+                ],
+                stream=True,
+            )
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary ON: should have image type AND image_url with base64 data
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": f'{{"content":[{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    # ========================================
+    # Binary Data Tracing Tests - Streaming (Text + Image)
+    # ========================================
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_off_binary_off_streaming(self, **kwargs):
+        """Test text + image with content recording OFF and binary data OFF (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=True,
+            )
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_off_binary_on_streaming(self, **kwargs):
+        """Test text + image with content recording OFF and binary data ON (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=True,
+            )
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording OFF: event content should be empty
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_on_binary_off_streaming(self, **kwargs):
+        """Test text + image with content recording ON and binary data OFF (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "False"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=True,
+            )
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary OFF: should have text and image type but no image_url
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"content":[{"type":"text","text":"What is shown in this image?"},{"type":"image"}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_text_and_image_content_on_binary_on_streaming(self, **kwargs):
+        """Test text + image with content recording ON and binary data ON (streaming)."""
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True", BINARY_DATA_TRACING_ENV_VARIABLE: "True"})
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            client = await project_client.get_openai_client()
+            conversation = await client.conversations.create()
+
+            stream = await client.responses.create(
+                model=deployment_name,
+                conversation=conversation.id,
+                input=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "input_text", "text": "What is shown in this image?"},
+                            {"type": "input_image", "image_url": f"data:image/png;base64,{TEST_IMAGE_BASE64}"},
+                        ],
+                    }
+                ],
+                stream=True,
+            )
+
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Content recording ON, binary ON: should have text and image with full base64 data
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": f'{{"content":[{{"type":"text","text":"What is shown in this image?"}},{{"type":"image","image_url":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "*",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_multiple_text_inputs_without_content_recording_streaming(self, **kwargs):
+        """Test asynchronous streaming responses with multiple text inputs and content recording disabled."""
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
+            # Get the OpenAI client from the project client
+            client = await project_client.get_openai_client()
+            deployment_name = self.test_agents_params["model_deployment_name"]
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create responses with multiple text inputs as a list
+            input_list = [
+                {"role": "user", "content": [{"type": "input_text", "text": "Hello"}]},
+                {"role": "user", "content": [{"type": "input_text", "text": "Write a haiku about Python"}]},
+            ]
+
+            stream = await client.responses.create(
+                model=deployment_name, conversation=conversation.id, input=input_list, stream=True
+            )
+
+            # Consume the stream
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(chunk.output)
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+        # Check spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        assert len(spans) == 1
+        span = spans[0]
+
+        # Check span attributes
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # Check span events - should have 2 user messages and 1 assistant message, all with empty content
+        expected_events = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
