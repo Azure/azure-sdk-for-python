@@ -1,6 +1,25 @@
 # Release History
 
-## 1.29.0 (unreleased)
+## 1.31.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+
+## 1.30.0 (2025-10-29)
+
+### Features Added
+
+- Removed the dependencies - msrest and six
+- Added support for `Deployment Templates` along with the following operations:
+  - `ml_client.deployment_templates.create_or_update()`
+  - `ml_client.deployment_templates.list()`
+  - `ml_client.deployment_templates.get()`
+  - `ml_client.deployment_templates.archive()`
+  - `ml_client.deployment_templates.restore()`
+
+## 1.29.0 (2025-09-01)
 
 ### Features Added
 

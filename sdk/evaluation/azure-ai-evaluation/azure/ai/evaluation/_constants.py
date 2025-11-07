@@ -140,6 +140,18 @@ class _EvaluatorMetricMapping:
         "self_harm": ["self_harm"],
         "violence": ["violence"],
         "hate_unfairness": ["hate_unfairness"],
+        "tool_input_accuracy": ["tool_input_accuracy"],
+        "task_completion": ["task_completion"],
+        "tool_success": ["tool_success"],
+        "tool_selection": ["tool_selection"],
+        "tool_output_utilization": ["tool_output_utilization"],
+        "task_navigation_efficiency": ["task_navigation_efficiency"],
+        "text_similarity": ["similarity"],
+        "string_check": ["string_check"],
+        "sensitive_data_leakage": ["prohibited_actions"],
+        "score_model": ["score_model"],
+        "label_model": ["label_model"],
+        "prohibited_actions": ["prohibited_actions"],
     }
 
     EVAL_CLASS_NAME_MAP = {

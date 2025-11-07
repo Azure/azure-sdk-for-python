@@ -1,7 +1,7 @@
 import pytest
 from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
-    TaskNavigationEfficiencyEvaluator,
-    TaskNavigationEfficiencyMatchingMode,
+    _TaskNavigationEfficiencyEvaluator,
+    _TaskNavigationEfficiencyMatchingMode,
 )
 
 
@@ -9,7 +9,7 @@ from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
 class TestTaskNavigationEfficiencyEvaluator:
     def test_exact_match_scenario(self):
         """Test when agent steps exactly match ground truth."""
-        evaluator = TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
 
         response = [
             {
@@ -29,14 +29,16 @@ class TestTaskNavigationEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
         assert result["task_navigation_efficiency_result"] == "pass"
-        assert "properties" in result
-        assert result["properties"]["precision_score"] == 1.0
-        assert result["properties"]["recall_score"] == 1.0
-        assert result["properties"]["f1_score"] == 1.0
+        assert "task_navigation_efficiency_details" in result
+        assert result["task_navigation_efficiency_details"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["f1_score"] == 1.0
 
     def test_in_order_match_with_extra_steps(self):
         """Test when agent has extra steps but maintains order."""
-        evaluator = TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
+        )
 
         response = [
             {
@@ -60,14 +62,14 @@ class TestTaskNavigationEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
         assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["properties"]["precision_score"] == 0.75  # 3/4
-        assert result["properties"]["recall_score"] == 1.0  # 3/3
-        assert result["properties"]["f1_score"] == pytest.approx(0.857, rel=1e-2)
+        assert result["task_navigation_efficiency_details"]["precision_score"] == 0.75  # 3/4
+        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0  # 3/3
+        assert result["task_navigation_efficiency_details"]["f1_score"] == pytest.approx(0.857, rel=1e-2)
 
     def test_any_order_match(self):
         """Test when agent has all steps but in wrong order."""
-        evaluator = TaskNavigationEfficiencyEvaluator(
-            matching_mode=TaskNavigationEfficiencyMatchingMode.ANY_ORDER_MATCH
+        evaluator = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.ANY_ORDER_MATCH
         )
 
         response = [
@@ -88,17 +90,17 @@ class TestTaskNavigationEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
         assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["properties"]["precision_score"] == 1.0
-        assert result["properties"]["recall_score"] == 1.0
-        assert result["properties"]["f1_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["f1_score"] == 1.0
 
     def test_exact_match_failure(self):
         """Test when exact match fails but other matches succeed."""
-        exact_evaluator = TaskNavigationEfficiencyEvaluator(
-            matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+        exact_evaluator = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
         )
-        in_order_evaluator = TaskNavigationEfficiencyEvaluator(
-            matching_mode=TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
+        in_order_evaluator = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
         )
 
         response = [
@@ -125,7 +127,7 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_invalid_ground_truth(self):
         """Test with invalid ground truth steps."""
-        evaluator = TaskNavigationEfficiencyEvaluator()
+        evaluator = _TaskNavigationEfficiencyEvaluator()
 
         with pytest.raises(TypeError):
             evaluator(response=[], ground_truth="not_a_list")  # type: ignore
@@ -135,7 +137,7 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_tuple_format_with_parameters(self):
         """Test tuple format with exact parameter matching."""
-        evaluator = TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
 
         response = [
             {
@@ -159,26 +161,26 @@ class TestTaskNavigationEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
         assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["properties"]["precision_score"] == 1.0
-        assert result["properties"]["recall_score"] == 1.0
-        assert result["properties"]["f1_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_details"]["f1_score"] == 1.0
 
     def test_matching_mode_validation(self):
         """Test validation of matching_mode parameter."""
         # Test valid string mode
-        evaluator1 = TaskNavigationEfficiencyEvaluator(matching_mode="exact_match")
-        assert evaluator1.matching_mode == TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+        evaluator1 = _TaskNavigationEfficiencyEvaluator(matching_mode="exact_match")
+        assert evaluator1.matching_mode == _TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
 
         # Test valid enum mode
-        evaluator2 = TaskNavigationEfficiencyEvaluator(
-            matching_mode=TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
+        evaluator2 = _TaskNavigationEfficiencyEvaluator(
+            matching_mode=_TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
         )
-        assert evaluator2.matching_mode == TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
+        assert evaluator2.matching_mode == _TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
 
         # Test invalid string mode
         with pytest.raises(ValueError):
-            TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
+            _TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
 
         # Test invalid type for mode
         with pytest.raises(Exception):  # EvaluationException
-            TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore
+            _TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore

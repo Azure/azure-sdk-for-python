@@ -37,6 +37,12 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 
 class ShareDirectoryClient(StorageAccountHostsMixin):
+    share_name: str
+    directory_path: str
+    snapshot: Optional[str]
+    allow_trailing_dot: Optional[bool]
+    allow_source_trailing_dot: Optional[bool]
+    file_request_intent: Optional[Literal["backup"]]
     def __init__(
         self,
         account_url: str,
@@ -115,6 +121,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Literal["New", "Restore"]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...

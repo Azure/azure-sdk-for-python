@@ -79,14 +79,14 @@ class TestDeploymentTemplate:
         assert template.liveness_probe is not None
         assert template.readiness_probe is not None
 
-        # Test convenience properties
-        assert template.liveness_probe_initial_delay_seconds == 10
-        assert template.liveness_probe_period_seconds == 30
-        assert template.liveness_probe_timeout_seconds == 5
+        # Test convenience properties (without _seconds suffix)
+        assert template.liveness_probe_initial_delay == 10
+        assert template.liveness_probe_period == 30
+        assert template.liveness_probe_timeout == 5
 
-        assert template.readiness_probe_initial_delay_seconds == 5
-        assert template.readiness_probe_period_seconds == 15
-        assert template.readiness_probe_timeout_seconds == 3
+        assert template.readiness_probe_initial_delay == 5
+        assert template.readiness_probe_period == 15
+        assert template.readiness_probe_timeout == 3
 
     def test_deployment_template_request_settings(self):
         """Test request settings functionality."""
@@ -96,41 +96,41 @@ class TestDeploymentTemplate:
         template = DeploymentTemplate(name="test-template", version="1.0", request_settings=request_settings)
 
         assert template.request_settings is not None
-        assert template.request_timeout_seconds == 30
+        assert template.request_timeout == 30
 
     def test_deployment_template_probe_property_setters(self):
         """Test probe property setters."""
         template = DeploymentTemplate(name="test-template", version="1.0")
 
         # Test liveness probe setters
-        template.liveness_probe_initial_delay_seconds = 15
-        template.liveness_probe_period_seconds = 45
-        template.liveness_probe_timeout_seconds = 10
+        template.liveness_probe_initial_delay = 15
+        template.liveness_probe_period = 45
+        template.liveness_probe_timeout = 10
 
         assert template.liveness_probe is not None
-        assert template.liveness_probe_initial_delay_seconds == 15
-        assert template.liveness_probe_period_seconds == 45
-        assert template.liveness_probe_timeout_seconds == 10
+        assert template.liveness_probe_initial_delay == 15
+        assert template.liveness_probe_period == 45
+        assert template.liveness_probe_timeout == 10
 
         # Test readiness probe setters
-        template.readiness_probe_initial_delay_seconds = 8
-        template.readiness_probe_period_seconds = 20
-        template.readiness_probe_timeout_seconds = 6
+        template.readiness_probe_initial_delay = 8
+        template.readiness_probe_period = 20
+        template.readiness_probe_timeout = 6
 
         assert template.readiness_probe is not None
-        assert template.readiness_probe_initial_delay_seconds == 8
-        assert template.readiness_probe_period_seconds == 20
-        assert template.readiness_probe_timeout_seconds == 6
+        assert template.readiness_probe_initial_delay == 8
+        assert template.readiness_probe_period == 20
+        assert template.readiness_probe_timeout == 6
 
     def test_deployment_template_request_timeout_setter(self):
         """Test request timeout setter."""
         template = DeploymentTemplate(name="test-template", version="1.0")
 
         # Test request timeout setter
-        template.request_timeout_seconds = 60
+        template.request_timeout = 60
 
         assert template.request_settings is not None
-        assert template.request_timeout_seconds == 60
+        assert template.request_timeout == 60
 
     def test_deployment_template_environment_handling(self):
         """Test environment field handling."""

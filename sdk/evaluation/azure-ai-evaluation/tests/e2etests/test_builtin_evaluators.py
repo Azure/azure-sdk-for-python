@@ -1232,7 +1232,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_cls",
         [
-            RelevanceEvaluator,
             FluencyEvaluator,
             SimilarityEvaluator,
             CoherenceEvaluator,

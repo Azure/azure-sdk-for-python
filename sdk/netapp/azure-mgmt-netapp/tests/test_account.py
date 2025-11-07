@@ -2,12 +2,13 @@ import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 import azure.mgmt.netapp.models
-from azure.mgmt.netapp.models import NetAppAccount, NetAppAccountPatch
+from azure.mgmt.netapp.models import NetAppAccount, AccountProperties, NetAppAccountPatch
 import setup
 
 
 def create_account(client, rg, acc_name, location=setup.LOCATION, tags=None, active_directories=None):
-    account_body = NetAppAccount(location=location, tags=tags, active_directories=active_directories)
+    account_body_properties = AccountProperties(active_directories=active_directories)
+    account_body = NetAppAccount(location=location, tags=tags, properties=account_body_properties)
 
     print("Creating NetApp Account {0}".format(acc_name))
     account = client.accounts.begin_create_or_update(rg, acc_name, account_body).result()

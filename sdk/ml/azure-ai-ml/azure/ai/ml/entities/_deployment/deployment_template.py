@@ -9,7 +9,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, IO, AnyStr
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -70,7 +70,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         environment_variables: Optional[Dict[str, str]] = None,
         app_insights_enabled: Optional[bool] = None,
         allowed_instance_type: Optional[str] = None,
-        allowed_instance_types: Optional[str] = None,  # Handle plural form
         default_instance_type: Optional[str] = None,  # Handle default instance type
         scoring_port: Optional[int] = None,
         scoring_path: Optional[str] = None,
@@ -100,13 +99,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         self.code_configuration = code_configuration
         self.environment_variables = environment_variables
         self.app_insights_enabled = app_insights_enabled
-
-        # Handle both singular and plural forms of allowed_instance_type
-        if allowed_instance_types and not allowed_instance_type:
-            self.allowed_instance_type = allowed_instance_types  # type: ignore[assignment]
-        else:
-            self.allowed_instance_type = allowed_instance_type  # type: ignore[assignment]
-
+        self.allowed_instance_type = allowed_instance_type
         self.default_instance_type = default_instance_type
         self.scoring_port = scoring_port
         self.scoring_path = scoring_path
@@ -123,8 +116,8 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         self._original_immutable_fields = {}  # type: ignore[var-annotated]
 
     @property
-    def request_timeout_seconds(self) -> Optional[int]:  # pylint: disable=docstring-missing-rtype
-        """Get request timeout in seconds (user-friendly format)."""
+    def request_timeout(self) -> Optional[int]:  # pylint: disable=docstring-missing-rtype
+        """Get request timeout in seconds."""
         if self.request_settings and hasattr(self.request_settings, "request_timeout_ms"):
             if isinstance(self.request_settings.request_timeout_ms, str):
                 # This shouldn't happen with proper OnlineRequestSettings, return a default
@@ -138,54 +131,54 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 )
         return None
 
-    @request_timeout_seconds.setter
-    def request_timeout_seconds(self, value: int):  # pylint: disable=docstring-missing-param
-        """Set request timeout in seconds (user-friendly format)."""
+    @request_timeout.setter
+    def request_timeout(self, value: int):  # pylint: disable=docstring-missing-param
+        """Set request timeout in seconds."""
         if not self.request_settings:
             self.request_settings = OnlineRequestSettings(request_timeout_ms=value * 1000)
         else:
             self.request_settings.request_timeout_ms = value * 1000
 
     @property
-    def liveness_probe_initial_delay_seconds(self) -> Optional[int]:  # pylint: disable=docstring-missing-rtype
-        """Get liveness probe initial delay in seconds (user-friendly format)."""
+    def liveness_probe_initial_delay(self) -> Optional[int]:  # pylint: disable=docstring-missing-rtype
+        """Get liveness probe initial delay in seconds."""
         if self.liveness_probe and hasattr(self.liveness_probe, "initial_delay"):
             return self.liveness_probe.initial_delay
         return None
 
-    @liveness_probe_initial_delay_seconds.setter
-    def liveness_probe_initial_delay_seconds(self, value: int):  # pylint: disable=docstring-missing-param
-        """Set liveness probe initial delay in seconds (user-friendly format)."""
+    @liveness_probe_initial_delay.setter
+    def liveness_probe_initial_delay(self, value: int):  # pylint: disable=docstring-missing-param
+        """Set liveness probe initial delay in seconds."""
         if not self.liveness_probe:
             self.liveness_probe = ProbeSettings(initial_delay=value)
         else:
             self.liveness_probe.initial_delay = value
 
     @property
-    def liveness_probe_period_seconds(self) -> Optional[int]:
-        """Get liveness probe period in seconds (user-friendly format)."""
+    def liveness_probe_period(self) -> Optional[int]:
+        """Get liveness probe period in seconds."""
         if self.liveness_probe and hasattr(self.liveness_probe, "period"):
             return self.liveness_probe.period
         return None
 
-    @liveness_probe_period_seconds.setter
-    def liveness_probe_period_seconds(self, value: int):
-        """Set liveness probe period in seconds (user-friendly format)."""
+    @liveness_probe_period.setter
+    def liveness_probe_period(self, value: int):
+        """Set liveness probe period in seconds."""
         if not self.liveness_probe:
             self.liveness_probe = ProbeSettings(period=value)
         else:
             self.liveness_probe.period = value
 
     @property
-    def liveness_probe_timeout_seconds(self) -> Optional[int]:
-        """Get liveness probe timeout in seconds (user-friendly format)."""
+    def liveness_probe_timeout(self) -> Optional[int]:
+        """Get liveness probe timeout in seconds."""
         if self.liveness_probe and hasattr(self.liveness_probe, "timeout"):
             return self.liveness_probe.timeout
         return None
 
-    @liveness_probe_timeout_seconds.setter
-    def liveness_probe_timeout_seconds(self, value: int):
-        """Set liveness probe timeout in seconds (user-friendly format)."""
+    @liveness_probe_timeout.setter
+    def liveness_probe_timeout(self, value: int):
+        """Set liveness probe timeout in seconds."""
         if not self.liveness_probe:
             self.liveness_probe = ProbeSettings(timeout=value)
         else:
@@ -193,45 +186,45 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
 
     # Readiness probe convenience properties
     @property
-    def readiness_probe_initial_delay_seconds(self) -> Optional[int]:
-        """Get readiness probe initial delay in seconds (user-friendly format)."""
+    def readiness_probe_initial_delay(self) -> Optional[int]:
+        """Get readiness probe initial delay in seconds."""
         if self.readiness_probe and hasattr(self.readiness_probe, "initial_delay"):
             return self.readiness_probe.initial_delay
         return None
 
-    @readiness_probe_initial_delay_seconds.setter
-    def readiness_probe_initial_delay_seconds(self, value: int):
-        """Set readiness probe initial delay in seconds (user-friendly format)."""
+    @readiness_probe_initial_delay.setter
+    def readiness_probe_initial_delay(self, value: int):
+        """Set readiness probe initial delay in seconds."""
         if not self.readiness_probe:
             self.readiness_probe = ProbeSettings(initial_delay=value)
         else:
             self.readiness_probe.initial_delay = value
 
     @property
-    def readiness_probe_period_seconds(self) -> Optional[int]:
-        """Get readiness probe period in seconds (user-friendly format)."""
+    def readiness_probe_period(self) -> Optional[int]:
+        """Get readiness probe period in seconds."""
         if self.readiness_probe and hasattr(self.readiness_probe, "period"):
             return self.readiness_probe.period
         return None
 
-    @readiness_probe_period_seconds.setter
-    def readiness_probe_period_seconds(self, value: int):
-        """Set readiness probe period in seconds (user-friendly format)."""
+    @readiness_probe_period.setter
+    def readiness_probe_period(self, value: int):
+        """Set readiness probe period in seconds."""
         if not self.readiness_probe:
             self.readiness_probe = ProbeSettings(period=value)
         else:
             self.readiness_probe.period = value
 
     @property
-    def readiness_probe_timeout_seconds(self) -> Optional[int]:
-        """Get readiness probe timeout in seconds (user-friendly format)."""
+    def readiness_probe_timeout(self) -> Optional[int]:
+        """Get readiness probe timeout in seconds."""
         if self.readiness_probe and hasattr(self.readiness_probe, "timeout"):
             return self.readiness_probe.timeout
         return None
 
-    @readiness_probe_timeout_seconds.setter
-    def readiness_probe_timeout_seconds(self, value: int):
-        """Set readiness probe timeout in seconds (user-friendly format)."""
+    @readiness_probe_timeout.setter
+    def readiness_probe_timeout(self, value: int):
+        """Set readiness probe timeout in seconds."""
         if not self.readiness_probe:
             self.readiness_probe = ProbeSettings(timeout=value)
         else:
@@ -271,12 +264,13 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         res: DeploymentTemplate = load_from_dict(DeploymentTemplateSchema, data, context, **kwargs)
         return res
 
-    def dump(self, dest=None, **kwargs) -> Dict[str, Any]:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]] = None, **kwargs: Any) -> Dict[str, Any]:  # type: ignore
         """Dump the deployment template to a dictionary.
 
         :param dest: Destination path to write the deployment template to.
+        :type dest: Optional[Union[str, PathLike]]
         :return: Dictionary representation of the deployment template.
-        :rtype: dict
+        :rtype: Dict[str, Any]
         """
         result = {
             "name": self.name,
@@ -434,7 +428,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             liveness_probe=liveness_probe_obj,  # Use proper ProbeSettings object or None
             readiness_probe=readiness_probe_obj,  # Use proper ProbeSettings object or None
             instance_count=instance_count,
-            instance_type=default_instance_type,  # Use default instance type
+            default_instance_type=default_instance_type,  # Use default instance type
             model=get_value(obj, "model"),  # May not be present in this API format
             code_configuration=get_value(obj, "code_configuration"),  # May not be present in this API format
             environment_variables=environment_variables,
@@ -544,7 +538,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 result["readinessProbe"] = readiness_dict  # type: ignore[assignment]
 
         # Add instance configuration
-        if hasattr(self, "instance_type") and self.instance_type:
+        if hasattr(self, "default_instance_type") and self.default_instance_type:
+            result["defaultInstanceType"] = self.default_instance_type
+        elif hasattr(self, "instance_type") and self.instance_type:
             result["defaultInstanceType"] = self.instance_type
 
         if hasattr(self, "instance_count") and self.instance_count is not None:
@@ -577,9 +573,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             else:
                 instance_types_array = [str(self.allowed_instance_type)]
             result["allowedInstanceType"] = instance_types_array  # type: ignore[assignment]
-        elif hasattr(self, "instance_type") and self.instance_type:
-            # Fallback to default instance type if no allowed types specified
-            result["allowedInstanceType"] = [self.instance_type]  # type: ignore[assignment]
 
         return result
 
@@ -646,7 +639,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         # Add instance configuration
         if hasattr(self, "allowed_instance_type") and self.allowed_instance_type:
             result["allowedInstanceType"] = self.allowed_instance_type  # type: ignore[assignment]
-        if self.instance_type:
+        if self.default_instance_type:
+            result["defaultInstanceType"] = self.default_instance_type
+        elif self.instance_type:
             result["defaultInstanceType"] = self.instance_type
         if self.instance_count is not None:
             result["instanceCount"] = self.instance_count  # type: ignore[assignment]

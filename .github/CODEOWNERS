@@ -150,12 +150,12 @@
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft @koen-mertens
 
-# AzureSdkOwners: @mccoyp @Azure/azure-sdk-write-keyvault
+# AzureSdkOwners: @Azure/azure-sdk-write-keyvault
 # ServiceLabel: %KeyVault
 # ServiceOwners:                                                     @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @mccoyp @Azure/azure-sdk-write-keyvault
+/sdk/keyvault/                                                       @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @prativen @mitsha-microsoft @ninallam
@@ -319,6 +319,10 @@
 # ServiceLabel: %Operator Nexus - Network Cloud
 # PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
+
+# ServiceLabel: %Planetary Computer
+# PRLabel: %Planetary Computer
+/sdk/planetarycomputer/                                              @mandarinamdar @chahibi
 
 # AzureSdkOwners: @annatisch
 # ServiceLabel: %Azure Projects
@@ -836,6 +840,7 @@
 /eng/common/                                                         @Azure/azure-sdk-eng
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
+/.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
@@ -859,4 +864,4 @@
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @iscai-msft
 
 /pylintrc                                                            @l0lawrence @scbedd @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @lmazuel
+/sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd

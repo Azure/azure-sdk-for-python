@@ -474,6 +474,45 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_create_file_semantics(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+
+        file1 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file1",
+            credential=storage_account_key
+        )
+        file1.create_file(1024, file_property_semantics=None)
+        props = file1.get_file_properties()
+        assert props is not None
+
+        file2 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file2",
+            credential=storage_account_key
+        )
+        file2.create_file(1024, file_property_semantics="New")
+        props = file2.get_file_properties()
+        assert props is not None
+
+        file3 = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file2",
+            credential=storage_account_key
+        )
+        file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
+        props = file3.get_file_properties()
+        assert props is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_file_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -642,7 +681,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._get_file_client()
 
         file_attributes = NTFSAttributes(read_only=True, archive=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         file_client.create_file(
@@ -3598,9 +3637,9 @@ class TestStorageFile(StorageRecordedTestCase):
         source_file = self._create_file('file1')
 
         file_attributes = NTFSAttributes(read_only=True, archive=True)
-        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
-        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
-        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000, tzinfo=timezone.utc)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000, tzinfo=timezone.utc)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         new_file = source_file.rename_file(
@@ -3926,5 +3965,25 @@ class TestStorageFile(StorageRecordedTestCase):
             assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
         finally:
             self.fsc.delete_share(self.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_file_with_data(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + "file",
+            credential=storage_account_key
+        )
+        size = 1024
+        data = b"abc" * size
+        file_client.create_file(len(data), data=data)
+        downloaded_data = file_client.download_file().readall()
+        assert downloaded_data == data
 
 # ------------------------------------------------------------------------------

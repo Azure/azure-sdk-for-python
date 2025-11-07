@@ -37,6 +37,6 @@ environment_variables:
  MODEL_BASE_PATH: /var/azureml-app/azureml-models/tfs-model1/1 
  MODEL_NAME: half_plus_two 
  ENABLE_INFERENCESERVER_DIAGNOSTICSLOG_AML_VISIBILITY: True 
-allowed_instance_types: Standard_DS3_v2 Standard_DS4_v2 
+allowed_instance_type: Standard_DS3_v2 Standard_DS4_v2 
 default_instance_type: Standard_DS3_v2 
 instance_count: 3 

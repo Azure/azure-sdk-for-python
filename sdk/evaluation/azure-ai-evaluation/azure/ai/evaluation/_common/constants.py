@@ -16,6 +16,12 @@ PROMPT_BASED_REASON_EVALUATORS = [
     "tool_call_accurate",
     "response_completeness",
     "task_adherence",
+    "tool_selection",
+    "tool_output_utilization",
+    "task_completion",
+    "tool_input_accuracy",
+    "tool_success",
+    "tool_call_accuracy",
 ]
 
 
@@ -118,8 +124,7 @@ EVALUATOR_SCORING_PATTERNS: Dict[str, EvaluatorScoringPattern] = {
     # Binary evaluators (true/false)
     "sensitive_data_leakage": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     "protected_material": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
-    # 1-3 scale evaluators
-    "task_adherence": EvaluatorScoringPattern.SCALE_1_3,
+    "task_adherence": EvaluatorScoringPattern.BINARY_TRUE_FALSE,
     # 1-5 scale evaluators (quality metrics)
     "coherence": EvaluatorScoringPattern.SCALE_1_5,
     "relevance": EvaluatorScoringPattern.SCALE_1_5,
