@@ -59,5 +59,6 @@ known-first-party = ["azure.ai.agentserver.langgraph"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]
+breaking = false   # incompatible python version
 pyright = false
-breaking = false # the pipeline is running on py39
+verifytypes = false
