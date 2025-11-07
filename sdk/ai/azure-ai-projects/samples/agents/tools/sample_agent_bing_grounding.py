@@ -5,33 +5,30 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an AI agent with image generation capabilities
-    using the ImageGenTool and synchronous Azure AI Projects client. The agent can generate
-    images based on text prompts and save them to files.
+    This sample demonstrates how to create an AI agent with Bing grounding capabilities
+    using the BingGroundingAgentTool and synchronous Azure AI Projects client. The agent can search
+    the web for current information and provide grounded responses with URL citations.
 
     The sample shows:
-    - Creating an agent with ImageGenTool configured for image generation
-    - Making requests to generate images from text prompts
-    - Extracting base64-encoded image data from the response
-    - Decoding and saving the generated image to a local file
+    - Creating an agent with BingGroundingAgentTool configured for web search
+    - Making requests that require current information from the web
+    - Extracting URL citations from the response annotations
+    - Processing grounded responses with source citations
     - Proper cleanup of created resources
 
 USAGE:
-    python sample_agent_image_generation.py
+    python sample_agent_bing_grounding.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity load_dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Azure AI Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) BING_PROJECT_CONNECTION_ID - The Bing project connection id, as found in the "Connections" tab in your Azure AI Foundry project.
-    NOTE:
-    - Image generation must have "gpt-image-1" deployment specified in the header when creating response at this moment
-    - The generated image will be saved as "microsoft.png" in the current directory
+    3) BING_PROJECT_CONNECTION_ID - The Bing project connection ID, as found in the "Connections" tab in your Azure AI Foundry project.
 """
 
 from asyncio import events
