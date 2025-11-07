@@ -37,6 +37,7 @@ from .generate_utils import (
 )
 from .conf import CONF_NAME
 from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info, check_file
+from .sdk_changelog import main as changelog_generate
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -230,47 +231,7 @@ def main(generate_input, generate_output):
                 _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Changelog generation
-            try:
-                last_version, last_stable_release = get_version_info(package_name, result[package_name]["tagIsStable"])
-                change_log_func = partial(
-                    change_log_generate,
-                    package_name,
-                    last_version,
-                    result[package_name]["tagIsStable"],
-                    last_stable_release=last_stable_release,
-                    prefolder=folder_name,
-                )
-
-                changelog_generation_start_time = time.time()
-                try:
-                    if data.get("enableChangelog", True):
-                        md_output = execute_func_with_timeout(change_log_func)
-                    else:
-                        md_output = "skip changelog generation"
-                except multiprocessing.TimeoutError:
-                    md_output = "change log generation was timeout!!! You need to write it manually!!!"
-                except:
-                    md_output = "change log generation failed!!! You need to write it manually!!!"
-                finally:
-                    for file in ["stable.json", "current.json"]:
-                        file_path = Path(sdk_folder, folder_name, package_name, file)
-                        if file_path.exists():
-                            os.remove(file_path)
-                            _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
-
-                _LOGGER.info(
-                    f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds"
-                )
-                result[package_name]["changelog"] = {
-                    "content": md_output,
-                    "hasBreakingChange": "Breaking Changes" in md_output,
-                    "breakingChangeItems": extract_breaking_change(md_output),
-                }
-                result[package_name]["version"] = last_version
-
-                _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
-            except Exception as e:
-                _LOGGER.warning(f"Fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
+            changelog_generate(Path(sdk_code_path).absolute(), enable_changelog=data.get("enableChangelog", True), package_result=result[package_name])
 
             # Generate ApiView
             if data.get("runMode") in ["spec-pull-request"]:
