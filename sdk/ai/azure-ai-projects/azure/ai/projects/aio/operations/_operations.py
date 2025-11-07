@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,20 +41,12 @@ from ...operations._operations import (
     build_agents_create_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
-    build_agents_delete_container_request,
     build_agents_delete_request,
     build_agents_delete_version_request,
-    build_agents_list_container_operations_request,
+    build_agents_get_request,
+    build_agents_get_version_request,
     build_agents_list_request,
-    build_agents_list_version_container_operations_request,
     build_agents_list_versions_request,
-    build_agents_retrieve_container_operation_request,
-    build_agents_retrieve_container_request,
-    build_agents_retrieve_request,
-    build_agents_retrieve_version_request,
-    build_agents_start_container_request,
-    build_agents_stop_container_request,
-    build_agents_update_container_request,
     build_agents_update_from_manifest_request,
     build_agents_update_request,
     build_connections_get_request,
@@ -143,7 +135,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def retrieve(self, agent_name: str, **kwargs: Any) -> _models.AgentObject:
+    async def get(self, agent_name: str, **kwargs: Any) -> _models.AgentObject:
         """Retrieves the agent.
 
         :param agent_name: The name of the agent to retrieve. Required.
@@ -165,7 +157,7 @@ class AgentsOperations:
 
         cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
 
-        _request = build_agents_retrieve_request(
+        _request = build_agents_get_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1551,7 +1543,7 @@ class AgentsOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def retrieve_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionObject:
+    async def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionObject:
         """Retrieves a specific version of an agent.
 
         :param agent_name: The name of the agent to retrieve. Required.
@@ -1575,7 +1567,7 @@ class AgentsOperations:
 
         cls: ClsType[_models.AgentVersionObject] = kwargs.pop("cls", None)
 
-        _request = build_agents_retrieve_version_request(
+        _request = build_agents_get_version_request(
             agent_name=agent_name,
             agent_version=agent_version,
             api_version=self._config.api_version,
@@ -1766,942 +1758,6 @@ class AgentsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.AgentVersionObject], deserialized.get("data", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @overload
-    async def start_container(
-        self,
-        agent_name: str,
-        agent_version: str,
-        *,
-        content_type: str = "application/json",
-        min_replicas: Optional[int] = None,
-        max_replicas: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Start a container for a specific version of an agent. If the container is already running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword min_replicas: The minimum number of replicas. Defaults to 1. Default value is None.
-        :paramtype min_replicas: int
-        :keyword max_replicas: The maximum number of replicas. Defaults to 1. Default value is None.
-        :paramtype max_replicas: int
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_container(
-        self, agent_name: str, agent_version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Start a container for a specific version of an agent. If the container is already running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_container(
-        self,
-        agent_name: str,
-        agent_version: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Start a container for a specific version of an agent. If the container is already running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "agent_name", "agent_version", "content_type", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def start_container(
-        self,
-        agent_name: str,
-        agent_version: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        min_replicas: Optional[int] = None,
-        max_replicas: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Start a container for a specific version of an agent. If the container is already running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword min_replicas: The minimum number of replicas. Defaults to 1. Default value is None.
-        :paramtype min_replicas: int
-        :keyword max_replicas: The maximum number of replicas. Defaults to 1. Default value is None.
-        :paramtype max_replicas: int
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentContainerOperationObject] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"max_replicas": max_replicas, "min_replicas": min_replicas}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_start_container_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentContainerOperationObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update_container(
-        self,
-        agent_name: str,
-        agent_version: str,
-        *,
-        content_type: str = "application/json",
-        min_replicas: Optional[int] = None,
-        max_replicas: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Update a container for a specific version of an agent. If the container is not running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword min_replicas: The minimum number of replicas. Default value is None.
-        :paramtype min_replicas: int
-        :keyword max_replicas: The maximum number of replicas. Default value is None.
-        :paramtype max_replicas: int
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_container(
-        self, agent_name: str, agent_version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Update a container for a specific version of an agent. If the container is not running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_container(
-        self,
-        agent_name: str,
-        agent_version: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Update a container for a specific version of an agent. If the container is not running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "agent_name", "agent_version", "content_type", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def update_container(
-        self,
-        agent_name: str,
-        agent_version: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        min_replicas: Optional[int] = None,
-        max_replicas: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Update a container for a specific version of an agent. If the container is not running, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword min_replicas: The minimum number of replicas. Default value is None.
-        :paramtype min_replicas: int
-        :keyword max_replicas: The maximum number of replicas. Default value is None.
-        :paramtype max_replicas: int
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentContainerOperationObject] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"max_replicas": max_replicas, "min_replicas": min_replicas}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_update_container_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentContainerOperationObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def stop_container(
-        self, agent_name: str, agent_version: str, **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Stop a container for a specific version of an agent. If the container is not running, or
-        already stopped, the operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentContainerOperationObject] = kwargs.pop("cls", None)
-
-        _request = build_agents_stop_container_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentContainerOperationObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def delete_container(
-        self, agent_name: str, agent_version: str, **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Delete a container for a specific version of an agent. If the container doesn't exist, the
-        operation will be no-op.
-        The operation is a long-running operation. Following the design guidelines for long-running
-        operations in Azure REST APIs.
-        `https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations
-        <https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#action-operations>`_.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentContainerOperationObject] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_container_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentContainerOperationObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def retrieve_container(
-        self, agent_name: str, agent_version: str, **kwargs: Any
-    ) -> _models.AgentContainerObject:
-        """Get a container for a specific version of an agent.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :return: AgentContainerObject. The AgentContainerObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentContainerObject] = kwargs.pop("cls", None)
-
-        _request = build_agents_retrieve_container_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentContainerObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "operation_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def retrieve_container_operation(
-        self, agent_name: str, operation_id: str, **kwargs: Any
-    ) -> _models.AgentContainerOperationObject:
-        """Get the status of a container operation for an agent.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param operation_id: The operation ID. Required.
-        :type operation_id: str
-        :return: AgentContainerOperationObject. The AgentContainerOperationObject is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentContainerOperationObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentContainerOperationObject] = kwargs.pop("cls", None)
-
-        _request = build_agents_retrieve_container_operation_request(
-            agent_name=agent_name,
-            operation_id=operation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentContainerOperationObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "agent_name", "limit", "order", "after", "before", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
-    def list_container_operations(
-        self,
-        agent_name: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentContainerOperationObject"]:
-        """List container operations for an agent.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of AgentContainerOperationObject
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentContainerOperationObject]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentContainerOperationObject]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_agents_list_container_operations_request(
-                agent_name=agent_name,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentContainerOperationObject], deserialized.get("data", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": [
-                "api_version",
-                "agent_name",
-                "agent_version",
-                "limit",
-                "order",
-                "after",
-                "before",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
-    def list_version_container_operations(
-        self,
-        agent_name: str,
-        agent_version: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentContainerOperationObject"]:
-        """List container operations for a specific version of an agent.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of AgentContainerOperationObject
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentContainerOperationObject]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentContainerOperationObject]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_agents_list_version_container_operations_request(
-                agent_name=agent_name,
-                agent_version=agent_version,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentContainerOperationObject], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, AsyncList(list_of_elem)
@@ -3238,14 +2294,13 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResponse:
+    async def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
         """Delete a memory store.
 
         :param name: The name of the memory store to delete. Required.
         :type name: str
-        :return: DeleteMemoryStoreResponse. The DeleteMemoryStoreResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResponse
+        :return: DeleteMemoryStoreResult. The DeleteMemoryStoreResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3259,7 +2314,7 @@ class MemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteMemoryStoreResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeleteMemoryStoreResult] = kwargs.pop("cls", None)
 
         _request = build_memory_stores_delete_request(
             name=name,
@@ -3295,7 +2350,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.DeleteMemoryStoreResponse, response.json())
+            deserialized = _deserialize(_models.DeleteMemoryStoreResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3314,7 +2369,7 @@ class MemoryStoresOperations:
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreSearchResponse:
+    ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
         :param name: The name of the memory store to search. Required.
@@ -3337,16 +2392,15 @@ class MemoryStoresOperations:
         :paramtype previous_search_id: str
         :keyword options: Memory search options. Default value is None.
         :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
-        :return: MemoryStoreSearchResponse. The MemoryStoreSearchResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResponse
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def search_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResponse:
+    ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
         :param name: The name of the memory store to search. Required.
@@ -3356,16 +2410,15 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreSearchResponse. The MemoryStoreSearchResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResponse
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def search_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResponse:
+    ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
         :param name: The name of the memory store to search. Required.
@@ -3375,9 +2428,8 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreSearchResponse. The MemoryStoreSearchResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResponse
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3398,7 +2450,7 @@ class MemoryStoresOperations:
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreSearchResponse:
+    ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
         :param name: The name of the memory store to search. Required.
@@ -3420,9 +2472,8 @@ class MemoryStoresOperations:
         :paramtype previous_search_id: str
         :keyword options: Memory search options. Default value is None.
         :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
-        :return: MemoryStoreSearchResponse. The MemoryStoreSearchResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResponse
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3437,7 +2488,7 @@ class MemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreSearchResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreSearchResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if scope is _Unset:
@@ -3493,7 +2544,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreSearchResponse, response.json())
+            deserialized = _deserialize(_models.MemoryStoreSearchResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3603,7 +2654,7 @@ class MemoryStoresOperations:
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
         """Update memory store with conversation memories.
 
         :param name: The name of the memory store to update. Required.
@@ -3630,16 +2681,17 @@ class MemoryStoresOperations:
          Set to 0 to immediately trigger the update without delay.
          Defaults to 300 (5 minutes). Default value is None.
         :paramtype update_delay: int
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateResult. The
-         MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateResult]
+        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
+         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_update_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
         """Update memory store with conversation memories.
 
         :param name: The name of the memory store to update. Required.
@@ -3649,16 +2701,17 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateResult. The
-         MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateResult]
+        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
+         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_update_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
         """Update memory store with conversation memories.
 
         :param name: The name of the memory store to update. Required.
@@ -3668,9 +2721,10 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateResult. The
-         MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateResult]
+        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
+         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3691,7 +2745,7 @@ class MemoryStoresOperations:
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateResult]:
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
         """Update memory store with conversation memories.
 
         :param name: The name of the memory store to update. Required.
@@ -3717,16 +2771,17 @@ class MemoryStoresOperations:
          Set to 0 to immediately trigger the update without delay.
          Defaults to 300 (5 minutes). Default value is None.
         :paramtype update_delay: int
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateResult. The
-         MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateResult]
+        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
+         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreUpdateResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -3755,7 +2810,7 @@ class MemoryStoresOperations:
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(_models.MemoryStoreUpdateResult, response.json().get("result", {}))
+            deserialized = _deserialize(_models.MemoryStoreUpdateCompletedResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -3774,13 +2829,13 @@ class MemoryStoresOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.MemoryStoreUpdateResult].from_continuation_token(
+            return AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.MemoryStoreUpdateResult](
+        return AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -3790,16 +2845,15 @@ class MemoryStoresOperations:
         params_added_on={"2025-11-15-preview": ["api_version", "name", "update_id", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def get_update_result(self, name: str, update_id: str, **kwargs: Any) -> _models.MemoryStoreUpdateResponse:
+    async def get_update_result(self, name: str, update_id: str, **kwargs: Any) -> _models.MemoryStoreUpdateResult:
         """Get memory store update result.
 
         :param name: The name of the memory store. Required.
         :type name: str
         :param update_id: The ID of the memory update operation. Required.
         :type update_id: str
-        :return: MemoryStoreUpdateResponse. The MemoryStoreUpdateResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreUpdateResponse
+        :return: MemoryStoreUpdateResult. The MemoryStoreUpdateResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreUpdateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3813,7 +2867,7 @@ class MemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MemoryStoreUpdateResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreUpdateResult] = kwargs.pop("cls", None)
 
         _request = build_memory_stores_get_update_result_request(
             name=name,
@@ -3850,7 +2904,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreUpdateResponse, response.json())
+            deserialized = _deserialize(_models.MemoryStoreUpdateResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3860,7 +2914,7 @@ class MemoryStoresOperations:
     @overload
     async def delete_scope(
         self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResponse:
+    ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
         :param name: The name of the memory store. Required.
@@ -3871,16 +2925,16 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResponse. The MemoryStoreDeleteScopeResponse is compatible with
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResponse
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def delete_scope(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResponse:
+    ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
         :param name: The name of the memory store. Required.
@@ -3890,16 +2944,16 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResponse. The MemoryStoreDeleteScopeResponse is compatible with
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResponse
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def delete_scope(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResponse:
+    ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
         :param name: The name of the memory store. Required.
@@ -3909,9 +2963,9 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResponse. The MemoryStoreDeleteScopeResponse is compatible with
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResponse
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3923,7 +2977,7 @@ class MemoryStoresOperations:
     )
     async def delete_scope(
         self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResponse:
+    ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
         :param name: The name of the memory store. Required.
@@ -3933,9 +2987,9 @@ class MemoryStoresOperations:
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
-        :return: MemoryStoreDeleteScopeResponse. The MemoryStoreDeleteScopeResponse is compatible with
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResponse
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3950,7 +3004,7 @@ class MemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreDeleteScopeResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreDeleteScopeResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if scope is _Unset:
@@ -4000,7 +3054,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreDeleteScopeResponse, response.json())
+            deserialized = _deserialize(_models.MemoryStoreDeleteScopeResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

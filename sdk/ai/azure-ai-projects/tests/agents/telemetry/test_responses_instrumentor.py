@@ -318,6 +318,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_streaming_with_content_recording(self, **kwargs):
         """Test synchronous streaming responses with content recording enabled."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
@@ -645,6 +646,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_function_tool_with_content_recording_non_streaming(self, **kwargs):
         """Test synchronous function tool usage with content recording enabled (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
@@ -817,6 +819,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_function_tool_with_content_recording_streaming(self, **kwargs):
         """Test synchronous function tool usage with content recording enabled (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
@@ -1012,6 +1015,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_function_tool_without_content_recording_non_streaming(self, **kwargs):
         """Test synchronous function tool usage without content recording (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
@@ -1183,6 +1187,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_function_tool_without_content_recording_streaming(self, **kwargs):
         """Test synchronous function tool usage without content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
