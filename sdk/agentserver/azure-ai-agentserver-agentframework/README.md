@@ -1,4 +1,4 @@
-# Azure AI Agent-framework Agent Server Adapter for Python
+# Azure AI Agent Server Adapter for Agent-framework Python
 
 
 
