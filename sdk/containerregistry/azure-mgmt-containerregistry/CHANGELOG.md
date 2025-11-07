@@ -1,5 +1,59 @@
 # Release History
 
+## 14.1.0b3 (2025-11-05)
+
+### Features Added
+
+  - Model `ContainerRegistryManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.archives`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.archive_versions`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.export_pipelines`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.import_pipelines`
+  - Deleted or renamed client operation group `ContainerRegistryManagementClient.pipeline_runs`
+  - Model `Policies` deleted or renamed its instance variable `soft_delete_policy`
+  - Model `Registry` deleted or renamed its instance variable `metadata_search`
+  - Model `RegistryUpdateParameters` deleted or renamed its instance variable `metadata_search`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `ActiveDirectoryObject`
+  - Deleted or renamed model `Archive`
+  - Deleted or renamed model `ArchivePackageSourceProperties`
+  - Deleted or renamed model `ArchiveProperties`
+  - Deleted or renamed model `ArchiveUpdateParameters`
+  - Deleted or renamed model `ArchiveVersion`
+  - Deleted or renamed model `DebianArchivePackageSourceProperties`
+  - Deleted or renamed model `DebianArchiveProperties`
+  - Deleted or renamed model `ExportPipeline`
+  - Deleted or renamed model `ExportPipelineTargetProperties`
+  - Deleted or renamed model `ImportPipeline`
+  - Deleted or renamed model `ImportPipelineSourceProperties`
+  - Deleted or renamed model `LastModifiedByType`
+  - Deleted or renamed model `MetadataSearch`
+  - Deleted or renamed model `PackageSourceType`
+  - Deleted or renamed model `PackageType`
+  - Deleted or renamed model `PipelineOptions`
+  - Deleted or renamed model `PipelineRun`
+  - Deleted or renamed model `PipelineRunRequest`
+  - Deleted or renamed model `PipelineRunResponse`
+  - Deleted or renamed model `PipelineRunSourceProperties`
+  - Deleted or renamed model `PipelineRunSourceType`
+  - Deleted or renamed model `PipelineRunTargetProperties`
+  - Deleted or renamed model `PipelineRunTargetType`
+  - Deleted or renamed model `PipelineSourceTriggerDescriptor`
+  - Deleted or renamed model `PipelineSourceTriggerProperties`
+  - Deleted or renamed model `PipelineSourceType`
+  - Deleted or renamed model `PipelineTriggerDescriptor`
+  - Deleted or renamed model `PipelineTriggerProperties`
+  - Deleted or renamed model `ProgressProperties`
+  - Deleted or renamed model `RunFilter`
+  - Deleted or renamed model `SoftDeletePolicy`
+  - Deleted or renamed model `StorageAccountProperties`
+
 ## 14.1.0b2 (2025-08-15)
 
 ### Features Added
