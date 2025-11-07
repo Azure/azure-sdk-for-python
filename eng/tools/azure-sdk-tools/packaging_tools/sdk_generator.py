@@ -9,7 +9,6 @@ from subprocess import check_call
 import shutil
 import re
 import os
-from functools import partial
 import multiprocessing
 
 try:
@@ -35,8 +34,7 @@ from .generate_utils import (
     gen_typespec,
     del_outdated_generated_files,
 )
-from .conf import CONF_NAME
-from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info, check_file
+from .package_utils import create_package, check_file
 from .sdk_changelog import main as changelog_generate
 
 logging.basicConfig(
