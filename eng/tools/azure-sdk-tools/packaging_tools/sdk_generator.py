@@ -229,7 +229,11 @@ def main(generate_input, generate_output):
                 _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Changelog generation
-            changelog_generate(Path(sdk_code_path).absolute(), enable_changelog=data.get("enableChangelog", True), package_result=result[package_name])
+            changelog_generate(
+                Path(sdk_code_path).absolute(),
+                enable_changelog=data.get("enableChangelog", True),
+                package_result=result[package_name],
+            )
 
             # Generate ApiView
             if data.get("runMode") in ["spec-pull-request"]:
