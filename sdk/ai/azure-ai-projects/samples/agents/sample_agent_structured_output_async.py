@@ -41,7 +41,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinitionText,
     ResponseTextFormatConfigurationJsonSchema,
 )
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -49,7 +49,7 @@ load_dotenv()
 class CalendarEvent(BaseModel):
     model_config = {"extra": "forbid"}
     name: str
-    date: str
+    date: str = Field(description="Date in YYYY-MM-DD format")
     participants: list[str]
 
 
@@ -90,7 +90,7 @@ async def main() -> None:
                     {
                         "type": "message",
                         "role": "user",
-                        "content": "Alice and Bob are going to a science fair on Friday.",
+                        "content": "Alice and Bob are going to a science fair this Friday, November 7, 2025.",
                     }
                 ],
             )

@@ -10,7 +10,7 @@ DESCRIPTION:
     using the synchronous AIProjectClient, while defining a desired
     JSON schema for the response ("structured output").
 
-    The OpenAI compatible Responses and Conversation calls in this sample are made using
+    The Responses and Conversations calls in this sample are made using
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
     for more information.
 
@@ -40,7 +40,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinitionText,
     ResponseTextFormatConfigurationJsonSchema,
 )
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
@@ -48,7 +48,7 @@ load_dotenv()
 class CalendarEvent(BaseModel):
     model_config = {"extra": "forbid"}
     name: str
-    date: str
+    date: str = Field(description="Date in YYYY-MM-DD format")
     participants: list[str]
 
 
@@ -79,7 +79,13 @@ with project_client:
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     conversation = openai_client.conversations.create(
-        items=[{"type": "message", "role": "user", "content": "Alice and Bob are going to a science fair on Friday."}],
+        items=[
+            {
+                "type": "message",
+                "role": "user",
+                "content": "Alice and Bob are going to a science fair this Friday, November 7, 2025.",
+            }
+        ],
     )
     print(f"Created conversation with initial user message (id: {conversation.id})")
 
