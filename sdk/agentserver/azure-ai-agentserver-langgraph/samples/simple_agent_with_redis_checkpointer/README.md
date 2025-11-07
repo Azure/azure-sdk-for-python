@@ -63,6 +63,6 @@ Create an Azure Managed Redis instance
          "type": "agent_reference"
        },
        "stream": false,
-       "input": "What is 15 divided by 3?"
+       "input": "What is 15 divided by 3?",
        "conversation": {"id": "test-conversation-id"}
      }'
