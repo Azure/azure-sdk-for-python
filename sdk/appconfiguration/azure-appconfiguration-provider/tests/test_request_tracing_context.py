@@ -73,31 +73,31 @@ class TestRequestTracingContext(unittest.TestCase):
         self.context.update_max_variants(3)
         self.assertEqual(self.context.max_variants, 10)
 
-    def test__get_features_string_empty(self):
-        """Test _get_features_string with no features enabled."""
-        result = self.context._get_features_string()
-        self.assertEqual(result, "")
-
-    def test__get_features_string_with_features(self):
-        """Test _get_features_string with features enabled."""
-        self.context.uses_load_balancing = True
-        self.context.uses_ai_configuration = True
-        self.context.uses_aicc_configuration = True
-
-        result = self.context._get_features_string()
-        self.assertEqual(result, "LB+AI+AICC")
-
     def test__create_features_string_empty(self):
-        """Test _create_features_string with no FF features enabled."""
+        """Test _create_features_string with no features enabled."""
         result = self.context._create_features_string()
         self.assertEqual(result, "")
 
     def test__create_features_string_with_features(self):
-        """Test _create_features_string with FF features enabled."""
+        """Test _create_features_string with features enabled."""
+        self.context.uses_load_balancing = True
+        self.context.uses_ai_configuration = True
+        self.context.uses_aicc_configuration = True
+
+        result = self.context._create_features_string()
+        self.assertEqual(result, "LB+AI+AICC")
+
+    def test__create_ff_features_string_empty(self):
+        """Test _create_feature_string with no FF features enabled."""
+        result = self.context._create_ff_feature_string()
+        self.assertEqual(result, "")
+
+    def test__create_ff_features_string_with_features(self):
+        """Test _create_ff_feature_string with FF features enabled."""
         self.context.uses_seed = True
         self.context.uses_telemetry = True
 
-        result = self.context._create_features_string()
+        result = self.context._create_ff_feature_string()
         expected = f"{FEATURE_FLAG_USES_SEED_TAG}+{FEATURE_FLAG_USES_TELEMETRY_TAG}"
         self.assertEqual(result, expected)
 

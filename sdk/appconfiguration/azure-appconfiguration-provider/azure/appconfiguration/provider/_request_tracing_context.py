@@ -110,84 +110,6 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         if self.max_variants is None or size > self.max_variants:
             self.max_variants = size
 
-    def _get_features_string(self) -> str:
-        """
-        Generate the features string for correlation context.
-
-        :return: A string containing features used separated by delimiters.
-        :rtype: str
-        """
-        features_list = []
-
-        if self.uses_load_balancing:
-            features_list.append(LOAD_BALANCING_FEATURE)
-        if self.uses_ai_configuration:
-            features_list.append(AI_CONFIGURATION_FEATURE)
-        if self.uses_aicc_configuration:
-            features_list.append(AI_CHAT_COMPLETION_FEATURE)
-        if self.get_assembly_version(AZURE_AI_PROJECTS_PACKAGE):
-            features_list.append(AI_FOUNDRY_SDK_FEATURE)
-
-        return Delimiter.join(features_list)
-
-    def _create_features_string(self) -> str:
-        """
-        Generate the features string for feature flag usage tracking.
-
-        :return: A string containing feature flag usage tags separated by delimiters.
-        :rtype: str
-        """
-        features_list = []
-
-        if self.uses_seed:
-            features_list.append(FEATURE_FLAG_USES_SEED_TAG)
-
-        if self.uses_telemetry:
-            features_list.append(FEATURE_FLAG_USES_TELEMETRY_TAG)
-
-        return Delimiter.join(features_list)
-
-    @staticmethod
-    def get_host_type() -> str:
-        """
-        Detect the host environment type based on environment variables.
-
-        :return: The detected host type.
-        :rtype: str
-        """
-        if os.environ.get(AzureFunctionEnvironmentVariable):
-            return HostType.AZURE_FUNCTION
-        if os.environ.get(AzureWebAppEnvironmentVariable):
-            return HostType.AZURE_WEB_APP
-        if os.environ.get(ContainerAppEnvironmentVariable):
-            return HostType.CONTAINER_APP
-        if os.environ.get(KubernetesEnvironmentVariable):
-            return HostType.KUBERNETES
-        if os.environ.get(ServiceFabricEnvironmentVariable):
-            return HostType.SERVICE_FABRIC
-
-        return HostType.UNIDENTIFIED
-
-    @staticmethod
-    def get_assembly_version(package_name: str) -> Optional[str]:
-        """
-        Get the version of a Python package.
-
-        :param package_name: The name of the package to get version for.
-        :type package_name: str
-        :return: Package version string or None if not found.
-        :rtype: Optional[str]
-        """
-        if not package_name:
-            return None
-
-        try:
-            return version(package_name)
-        except PackageNotFoundError:
-            pass
-
-        return None
-
     def reset_ai_configuration_tracing(self) -> None:
         """
         Reset AI configuration tracing flags.
@@ -276,12 +198,12 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             key_values.append((MAX_VARIANTS_KEY, str(self.max_variants)))
 
         # Add feature flag features if present
-        ff_features_string = self._create_features_string()
+        ff_features_string = self._create_ff_feature_string()
         if ff_features_string:
             key_values.append((FF_FEATURES_KEY, ff_features_string))
 
         # Add general features if present
-        features_string = self._get_features_string()
+        features_string = self._create_features_string()
         if features_string:
             key_values.append((FEATURES_KEY, features_string))
 
@@ -313,26 +235,6 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
 
         return headers
 
-    def _create_filters_string(self) -> str:
-        """
-        Create a string representing the feature filters in use.
-
-        :return: String of filter names separated by delimiters.
-        :rtype: str
-        """
-        filters: List[str] = []
-
-        if CUSTOM_FILTER_KEY in self.feature_filter_usage:
-            filters.append(CUSTOM_FILTER_KEY)
-        if PERCENTAGE_FILTER_KEY in self.feature_filter_usage:
-            filters.append(PERCENTAGE_FILTER_KEY)
-        if TIME_WINDOW_FILTER_KEY in self.feature_filter_usage:
-            filters.append(TIME_WINDOW_FILTER_KEY)
-        if TARGETING_FILTER_KEY in self.feature_filter_usage:
-            filters.append(TARGETING_FILTER_KEY)
-
-        return Delimiter.join(filters)
-
     def update_feature_filter_telemetry(self, feature_flag) -> None:
         """
         Track feature filter usage for App Configuration telemetry.
@@ -356,3 +258,101 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
     def reset_feature_filter_usage(self) -> None:
         """Reset the feature filter usage tracking."""
         self.feature_filter_usage = {}
+
+    def _create_features_string(self) -> str:
+        """
+        Generate the features string for correlation context.
+
+        :return: A string containing features used separated by delimiters.
+        :rtype: str
+        """
+        features_list = []
+
+        if self.uses_load_balancing:
+            features_list.append(LOAD_BALANCING_FEATURE)
+        if self.uses_ai_configuration:
+            features_list.append(AI_CONFIGURATION_FEATURE)
+        if self.uses_aicc_configuration:
+            features_list.append(AI_CHAT_COMPLETION_FEATURE)
+        if self.get_assembly_version(AZURE_AI_PROJECTS_PACKAGE):
+            features_list.append(AI_FOUNDRY_SDK_FEATURE)
+
+        return Delimiter.join(features_list)
+
+    def _create_ff_feature_string(self) -> str:
+        """
+        Generate the features string for feature flag usage tracking.
+
+        :return: A string containing feature flag usage tags separated by delimiters.
+        :rtype: str
+        """
+        features_list = []
+
+        if self.uses_seed:
+            features_list.append(FEATURE_FLAG_USES_SEED_TAG)
+
+        if self.uses_telemetry:
+            features_list.append(FEATURE_FLAG_USES_TELEMETRY_TAG)
+
+        return Delimiter.join(features_list)
+
+    def _create_filters_string(self) -> str:
+        """
+        Create a string representing the feature filters in use.
+
+        :return: String of filter names separated by delimiters.
+        :rtype: str
+        """
+        filters: List[str] = []
+
+        if CUSTOM_FILTER_KEY in self.feature_filter_usage:
+            filters.append(CUSTOM_FILTER_KEY)
+        if PERCENTAGE_FILTER_KEY in self.feature_filter_usage:
+            filters.append(PERCENTAGE_FILTER_KEY)
+        if TIME_WINDOW_FILTER_KEY in self.feature_filter_usage:
+            filters.append(TIME_WINDOW_FILTER_KEY)
+        if TARGETING_FILTER_KEY in self.feature_filter_usage:
+            filters.append(TARGETING_FILTER_KEY)
+
+        return Delimiter.join(filters)
+
+    @staticmethod
+    def get_host_type() -> str:
+        """
+        Detect the host environment type based on environment variables.
+
+        :return: The detected host type.
+        :rtype: str
+        """
+        if os.environ.get(AzureFunctionEnvironmentVariable):
+            return HostType.AZURE_FUNCTION
+        if os.environ.get(AzureWebAppEnvironmentVariable):
+            return HostType.AZURE_WEB_APP
+        if os.environ.get(ContainerAppEnvironmentVariable):
+            return HostType.CONTAINER_APP
+        if os.environ.get(KubernetesEnvironmentVariable):
+            return HostType.KUBERNETES
+        if os.environ.get(ServiceFabricEnvironmentVariable):
+            return HostType.SERVICE_FABRIC
+
+        return HostType.UNIDENTIFIED
+
+    @staticmethod
+    def get_assembly_version(package_name: str) -> Optional[str]:
+        """
+        Get the version of a Python package.
+
+        :param package_name: The name of the package to get version for.
+        :type package_name: str
+        :return: Package version string or None if not found.
+        :rtype: Optional[str]
+        """
+        if not package_name:
+            return None
+
+        try:
+            return version(package_name)
+        except PackageNotFoundError:
+            pass
+
+        return None
