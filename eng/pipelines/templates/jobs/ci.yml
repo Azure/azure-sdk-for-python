@@ -220,13 +220,10 @@ jobs:
 
     steps:
     - task: UsePythonVersion@0
-      displayName: 'Use Python $(PythonVersion)'
+      displayName: "Use Python ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}"
       condition: succeededOrFailed()
       inputs:
-        ${{ if ne(parameters.PythonVersionForAnalyze, '') }}:
-          versionSpec: ${{ parameters.PythonVersionForAnalyze }}
-        ${{ else }}:
-          versionSpec: $(PythonVersion)
+        versionSpec: ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
