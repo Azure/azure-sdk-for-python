@@ -98,7 +98,7 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Please visit [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agentserver-core/samples) folder. There are several cases for you to build your agent with azure-ai-agentserver
+Please visit [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-core/samples) folder. There are several cases for you to build your agent with azure-ai-agentserver
 
 
 ## Contributing
