@@ -21,20 +21,20 @@ class TestAgentCrud(TestBase):
         Test CRUD operations for Agents.
 
         This test creates two agents, the first one with two versions, the second one with one version.
-        It then retrieves, lists, and deletes them, validating at each step.
+        It then gets, lists, and deletes them, validating at each step.
         It uses different ways of creating agents: strongly typed, dictionary, and IO[bytes].
 
         Routes used in this test:
 
         Action REST API Route                                Client Method
         ------+---------------------------------------------+-----------------------------------
-        GET    /agents/{agent_name}                          project_client.agents.retrieve()
+        GET    /agents/{agent_name}                          project_client.agents.get()
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
         GET    /agents/{agent_name}/versions                 project_client.agents.list_versions()
         GET    /agents                                       project_client.agents.list()
         DELETE /agents/{agent_name}                          project_client.agents.delete()
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
-        GET    /agents/{agent_name}/versions/{agent_version} project_client.agents.retrieve_version()
+        GET    /agents/{agent_name}/versions/{agent_version} project_client.agents.get_version()
         """
         model = self.test_agents_params["model_deployment_name"]
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -76,20 +76,20 @@ class TestAgentCrud(TestBase):
         # )
         # self._validate_agent_version(agent2_version2)
 
-        # Retrieve the first Agent
-        retrieved_agent: AgentObject = project_client.agents.retrieve(agent_name=first_agent_name)
+        # Get the first Agent
+        retrieved_agent: AgentObject = project_client.agents.get(agent_name=first_agent_name)
         self._validate_agent(
             retrieved_agent, expected_name=first_agent_name, expected_latest_version=agent1_version2.version
         )
 
         # Retrieve specific versions of the first Agent
-        retrieved_agent: AgentVersionObject = project_client.agents.retrieve_version(
+        retrieved_agent: AgentVersionObject = project_client.agents.get_version(
             agent_name=first_agent_name, agent_version=agent1_version1.version
         )
         self._validate_agent_version(
             retrieved_agent, expected_name=first_agent_name, expected_version=agent1_version1.version
         )
-        retrieved_agent: AgentVersionObject = project_client.agents.retrieve_version(
+        retrieved_agent: AgentVersionObject = project_client.agents.get_version(
             agent_name=first_agent_name, agent_version=agent1_version2.version
         )
         self._validate_agent_version(
