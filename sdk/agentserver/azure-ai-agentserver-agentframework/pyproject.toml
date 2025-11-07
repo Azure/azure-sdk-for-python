@@ -59,4 +59,5 @@ combine-as-imports = true
 [tool.azure-sdk-build]
 breaking = false   # incompatible python version
 pyright = false
-verifytypes = false
+verifytypes = false   # incompatible python version for -core
+bandit = false
