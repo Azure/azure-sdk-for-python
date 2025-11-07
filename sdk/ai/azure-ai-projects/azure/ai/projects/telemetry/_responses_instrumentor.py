@@ -869,6 +869,35 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                     self._emit_tool_call_event(span, tool_call, conversation_id)
 
+                # Handle image_generation_call type
+                elif item_type == "image_generation_call":
+                    tool_call = {
+                        "type": "image_generation",
+                    }
+
+                    if hasattr(output_item, "id"):
+                        tool_call["id"] = output_item.id
+                    elif hasattr(output_item, "call_id"):
+                        tool_call["id"] = output_item.call_id
+
+                    # Only include image generation details if content recording is enabled
+                    if _trace_responses_content:
+                        # Include metadata fields
+                        if hasattr(output_item, "prompt"):
+                            tool_call["prompt"] = output_item.prompt
+                        if hasattr(output_item, "quality"):
+                            tool_call["quality"] = output_item.quality
+                        if hasattr(output_item, "size"):
+                            tool_call["size"] = output_item.size
+                        if hasattr(output_item, "style"):
+                            tool_call["style"] = output_item.style
+
+                        # Include the result (image data) only if binary data tracing is enabled
+                        if _trace_binary_data and hasattr(output_item, "result") and output_item.result:
+                            tool_call["result"] = output_item.result
+
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
+
                 # Handle mcp_call type (Model Context Protocol)
                 elif item_type == "mcp_call":
                     tool_call = {
@@ -2611,6 +2640,46 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 if web_search_details:
                     tool_call["web_search"] = web_search_details
+
+                event_body["tool_calls"] = [tool_call]
+
+            event_name = "gen_ai.assistant.message"
+
+        elif item_type == "image_generation_call":
+            # Image generation tool call
+            role = "assistant"  # Override role for image generation calls
+            if _trace_responses_content:
+                tool_call = {
+                    "type": "image_generation",
+                }
+
+                # Add call_id as "id"
+                if hasattr(item, "call_id"):
+                    tool_call["id"] = item.call_id
+                elif hasattr(item, "id"):
+                    tool_call["id"] = item.id
+
+                # Add image generation details
+                image_gen_details: Dict[str, Any] = {}
+
+                if hasattr(item, "prompt"):
+                    image_gen_details["prompt"] = item.prompt
+
+                if hasattr(item, "quality"):
+                    image_gen_details["quality"] = item.quality
+
+                if hasattr(item, "size"):
+                    image_gen_details["size"] = item.size
+
+                if hasattr(item, "style"):
+                    image_gen_details["style"] = item.style
+
+                # Include the result (image data) only if binary data tracing is enabled
+                if _trace_binary_data and hasattr(item, "result") and item.result:
+                    image_gen_details["result"] = item.result
+
+                if image_gen_details:
+                    tool_call["image_generation"] = image_gen_details
 
                 event_body["tool_calls"] = [tool_call]
 
