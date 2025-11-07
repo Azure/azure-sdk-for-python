@@ -198,7 +198,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             key_values.append((MAX_VARIANTS_KEY, str(self.max_variants)))
 
         # Add feature flag features if present
-        ff_features_string = self._create_ff_feature_string()
+        ff_features_string = self._create_ff_features_string()
         if ff_features_string:
             key_values.append((FF_FEATURES_KEY, ff_features_string))
 
@@ -279,7 +279,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
 
         return Delimiter.join(features_list)
 
-    def _create_ff_feature_string(self) -> str:
+    def _create_ff_features_string(self) -> str:
         """
         Generate the features string for feature flag usage tracking.
 

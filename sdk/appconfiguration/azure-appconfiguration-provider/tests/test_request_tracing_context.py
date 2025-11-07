@@ -89,15 +89,15 @@ class TestRequestTracingContext(unittest.TestCase):
 
     def test__create_ff_features_string_empty(self):
         """Test _create_feature_string with no FF features enabled."""
-        result = self.context._create_ff_feature_string()
+        result = self.context._create_ff_features_string()
         self.assertEqual(result, "")
 
     def test__create_ff_features_string_with_features(self):
-        """Test _create_ff_feature_string with FF features enabled."""
+        """Test _create_ff_features_string with FF features enabled."""
         self.context.uses_seed = True
         self.context.uses_telemetry = True
 
-        result = self.context._create_ff_feature_string()
+        result = self.context._create_ff_features_string()
         expected = f"{FEATURE_FLAG_USES_SEED_TAG}+{FEATURE_FLAG_USES_TELEMETRY_TAG}"
         self.assertEqual(result, expected)
 
