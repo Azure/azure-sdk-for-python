@@ -420,15 +420,10 @@ The AI Projects client library automatically instruments OpenAI responses and co
 
 ### Tracing Binary Data
 
-By default, binary data such as images and files included with input is not captured in traces. To include binary data in traces, set the environment variable `AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA` to `true`. If the environment variable is not set, binary data defaults to not being included. 
+Binary data are images and files sent to the service as input messages. When you enable content recording (`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` set to `true`), by default you only trace file IDs and filenames. To enable full binary data tracing, set `AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA` to `true`. In this case:
 
-Binary data tracing works in combination with content recording:
-- **When content recording is enabled**: File IDs and filenames are included in traces
-- **When both content recording and binary data tracing are enabled**: 
-  - **Images**: Image URLs (including data URIs with base64-encoded content) are included
-  - **Files**: File data is included if sent via the API
-
-**Note:** Binary data tracing requires content recording to be enabled (see [Enabling content recording](#enabling-content-recording)). If content recording is disabled, binary data will not be included regardless of the `AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA` setting.
+- **Images**: Image URLs (including data URIs with base64-encoded content) are included
+- **Files**: File data is included if sent via the API
 
 **Important:** Binary data can contain sensitive information and may significantly increase trace size. Some trace backends and tracing implementations may have limitations on the maximum size of trace data that can be sent to and/or supported by the backend. Ensure your observability backend and tracing implementation support the expected trace payload sizes when enabling binary data tracing.
 
