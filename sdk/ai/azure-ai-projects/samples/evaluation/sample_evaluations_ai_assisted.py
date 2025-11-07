@@ -7,11 +7,10 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list eval group and and eval runs
-    using a dataset by ID.
+    `openai.evals.*` methods to create, get and list eval group and and eval runs.
 
 USAGE:
-    python sample_evaluations_builtin_with_dataset_id.py
+    python sample_evaluations_ai_assisted.py
 
     Before running the sample:
 
@@ -35,22 +34,23 @@ import os
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import (
+    DatasetVersion,
+)
 import json
 import time
 from pprint import pprint
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
-from azure.ai.projects.models import (
-    DatasetVersion,
-)
 from dotenv import load_dotenv
 from datetime import datetime
 
-load_dotenv()
 
+load_dotenv()
 
 endpoint = os.environ[
     "AZURE_AI_PROJECT_ENDPOINT"
 ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+
 connection_name = os.environ.get("CONNECTION_NAME", "")
 model_endpoint = os.environ.get("MODEL_ENDPOINT", "")  # Sample: https://<account_name>.openai.azure.com.
 model_api_key = os.environ.get("MODEL_API_KEY", "")
@@ -84,36 +84,96 @@ with DefaultAzureCredential() as credential:
             "item_schema": {
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string"},
                     "response": {"type": "string"},
-                    "context": {"type": "string"},
                     "ground_truth": {"type": "string"},
                 },
                 "required": [],
             },
-            "include_sample_schema": True,
+            "include_sample_schema": False,
         }
 
         testing_criteria = [
             {
                 "type": "azure_ai_evaluator",
-                "name": "violence",
-                "evaluator_name": "builtin.violence",
-                "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "name": "Similarity",
+                "evaluator_name": "builtin.similarity",
+                "data_mapping": {
+                    "response": "{{item.answer}}",
+                    "ground_truth": "{{item.ground_truth}}"
+                },
+                "initialization_parameters": {
+                    "deployment_name": f"{model_deployment_name}",
+                    "threshold": 3
+                }
             },
-            {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
             {
                 "type": "azure_ai_evaluator",
-                "name": "coherence",
-                "evaluator_name": "builtin.coherence",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "name": "ROUGEScore",
+                "evaluator_name": "builtin.rouge_score",
+                "data_mapping": {
+                    "response": "{{item.answer}}",
+                    "ground_truth": "{{item.ground_truth}}"
+                },
+                "initialization_parameters": {
+                    "rouge_type": "rouge1",
+                    "f1_score_threshold": 0.5,
+                    "precision_threshold": 0.5,
+                    "recall_threshold": 0.5
+                }
             },
+            {
+                "type": "azure_ai_evaluator",
+                "name": "METEORScore",
+                "evaluator_name": "builtin.meteor_score",
+                "data_mapping": {
+                    "response": "{{item.answer}}",
+                    "ground_truth": "{{item.ground_truth}}"
+                },
+                "initialization_parameters": {
+                    "threshold": 0.5
+                }
+            },
+            {
+                "type": "azure_ai_evaluator",
+                "name": "GLEUScore",
+                "evaluator_name": "builtin.gleu_score",
+                "data_mapping": {
+                    "response": "{{item.answer}}",
+                    "ground_truth": "{{item.ground_truth}}"
+                },
+                "initialization_parameters": {
+                    "threshold": 0.5
+                }
+            },
+            {
+                "type": "azure_ai_evaluator",
+                "name": "F1Score",
+                "evaluator_name": "builtin.f1_score",
+                "data_mapping": {
+                    "response": "{{item.answer}}",
+                    "ground_truth": "{{item.ground_truth}}"
+                },
+                "initialization_parameters": {
+                    "threshold": 0.5
+                }
+            },
+            {
+                "type": "azure_ai_evaluator",
+                "name": "BLEUScore",
+                "evaluator_name": "builtin.bleu_score",
+                "data_mapping": {
+                    "response": "{{item.answer}}",
+                    "ground_truth": "{{item.ground_truth}}"
+                },
+                "initialization_parameters": {
+                    "threshold": 0.5
+                }
+            }
         ]
 
         print("Creating Eval Group")
         eval_object = client.evals.create(
-            name="label model test with dataset ID",
+            name="ai assisted evaluators test",
             data_source_config=data_source_config,
             testing_criteria=testing_criteria,
         )
@@ -124,16 +184,15 @@ with DefaultAzureCredential() as credential:
         print("Eval Run Response:")
         pprint(eval_object_response)
 
-        print("Creating Eval Run with Dataset ID")
+        print("Creating Eval Run")
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
-            name="dataset_id_run",
-            metadata={"team": "eval-exp", "scenario": "dataset-id-v1"},
+            name="dataset",
+            metadata={"team": "eval-exp", "scenario": "notifications-v1"},
             data_source=CreateEvalJSONLRunDataSourceParam(
-                type="jsonl", source=SourceFileID(type="file_id", id=dataset.id if dataset.id else "")
+                source=SourceFileID(id=dataset.id or "", type="file_id"), type="jsonl"
             ),
         )
-
         print(f"Eval Run created")
         pprint(eval_run_object)
 

@@ -25,7 +25,7 @@ USAGE:
        It can be found in the Foundry overview page. It has the form https://<account_name>.openai.azure.com.
     4) MODEL_API_KEY - Required. The API key for the model endpoint. Can be found under "key" in the model details page
        (click "Models + endpoints" and select your model to get to the model details page).
-    5) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    5) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
     6) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     7) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     8) DATA_FOLDER - Optional. The folder path where the data files for upload are located.

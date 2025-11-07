@@ -24,7 +24,7 @@ USAGE:
     2) APPINSIGHTS_RESOURCE_ID - Required. The Azure Application Insights resource ID that stores agent traces.
        It has the form: /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>.
     3) AGENT_ID - Required. The agent identifier emitted by the Azure tracing integration, used to filter traces.
-    4) MODEL_DEPLOYMENT_NAME - Required. The Azure OpenAI deployment name to use with the built-in evaluators.
+    4) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The Azure OpenAI deployment name to use with the built-in evaluators.
     5) TRACE_LOOKBACK_HOURS - Optional. Number of hours to look back when querying traces and in the evaluation run.
        Defaults to 1.
 """
@@ -51,7 +51,7 @@ appinsights_resource_id = os.environ[
     "APPINSIGHTS_RESOURCE_ID"
 ]  # Sample : /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>
 agent_id = os.environ["AGENT_ID"]  # Sample : gcp-cloud-run-agent
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
 trace_query_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
 
 
