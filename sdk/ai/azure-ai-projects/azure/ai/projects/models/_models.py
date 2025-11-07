@@ -99,7 +99,7 @@ class A2ATool(Tool, discriminator="a2a_preview"):
     """An agent implementing the A2A protocol.
 
     :ivar type: The type of the tool. Always ``a2a``. Required.
-    :vartype type: str or ~azure.ai.projects.models.A2_A_PREVIEW
+    :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``.
@@ -111,7 +111,7 @@ class A2ATool(Tool, discriminator="a2a_preview"):
     :vartype project_connection_id: str
     """
 
-    type: Literal[ToolType.A2_A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``a2a``. Required."""
     base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base URL of the agent."""
@@ -141,7 +141,7 @@ class A2ATool(Tool, discriminator="a2a_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.A2_A_PREVIEW  # type: ignore
+        self.type = ToolType.A2A_PREVIEW  # type: ignore
 
 
 class InsightResult(_Model):
@@ -285,166 +285,6 @@ class AgentClusterInsightsRequest(InsightRequest, discriminator="AgentClusterIns
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = InsightType.AGENT_CLUSTER_INSIGHT  # type: ignore
-
-
-class AgentContainerObject(_Model):
-    """The details of the container of a specific version of an agent.
-
-    :ivar object: The object type, which is always 'agent.container'. Required. Default value is
-     "agent.container".
-    :vartype object: str
-    :ivar status: The status of the container of a specific version of an agent. Required. Known
-     values are: "Starting", "Running", "Stopping", "Stopped", "Failed", "Deleting", "Deleted", and
-     "Updating".
-    :vartype status: str or ~azure.ai.projects.models.AgentContainerStatus
-    :ivar max_replicas: The maximum number of replicas for the container. Default is 1.
-    :vartype max_replicas: int
-    :ivar min_replicas: The minimum number of replicas for the container. Default is 1.
-    :vartype min_replicas: int
-    :ivar error_message: The error message if the container failed to operate, if any.
-    :vartype error_message: str
-    :ivar created_at: The creation time of the container. Required.
-    :vartype created_at: ~datetime.datetime
-    :ivar updated_at: The last update time of the container. Required.
-    :vartype updated_at: ~datetime.datetime
-    """
-
-    object: Literal["agent.container"] = rest_field(visibility=["read"])
-    """The object type, which is always 'agent.container'. Required. Default value is
-     \"agent.container\"."""
-    status: Union[str, "_models.AgentContainerStatus"] = rest_field(visibility=["read"])
-    """The status of the container of a specific version of an agent. Required. Known values are:
-     \"Starting\", \"Running\", \"Stopping\", \"Stopped\", \"Failed\", \"Deleting\", \"Deleted\",
-     and \"Updating\"."""
-    max_replicas: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum number of replicas for the container. Default is 1."""
-    min_replicas: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The minimum number of replicas for the container. Default is 1."""
-    error_message: Optional[str] = rest_field(visibility=["read"])
-    """The error message if the container failed to operate, if any."""
-    created_at: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
-    """The creation time of the container. Required."""
-    updated_at: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
-    """The last update time of the container. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_replicas: Optional[int] = None,
-        min_replicas: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.object: Literal["agent.container"] = "agent.container"
-
-
-class AgentContainerOperationError(_Model):
-    """The error details of the container operation, if any.
-
-    :ivar code: The error code of the container operation, if any. Required.
-    :vartype code: str
-    :ivar type: The error type of the container operation, if any. Required.
-    :vartype type: str
-    :ivar message: The error message of the container operation, if any. Required.
-    :vartype message: str
-    """
-
-    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error code of the container operation, if any. Required."""
-    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error type of the container operation, if any. Required."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error message of the container operation, if any. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        type: str,
-        message: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AgentContainerOperationObject(_Model):
-    """The container operation for a specific version of an agent.
-
-    :ivar id: The ID of the container operation. This id is unique identifier across the system.
-     Required.
-    :vartype id: str
-    :ivar agent_id: The ID of the agent. Required.
-    :vartype agent_id: str
-    :ivar agent_version_id: The ID of the agent version. Required.
-    :vartype agent_version_id: str
-    :ivar status: The status of the container operation. Required. Known values are: "NotStarted",
-     "InProgress", "Succeeded", and "Failed".
-    :vartype status: str or ~azure.ai.projects.models.AgentContainerOperationStatus
-    :ivar error: The error of the container operation, if any.
-    :vartype error: ~azure.ai.projects.models.AgentContainerOperationError
-    :ivar container: The container of the specific version of an agent.
-    :vartype container: ~azure.ai.projects.models.AgentContainerObject
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the container operation. This id is unique identifier across the system. Required."""
-    agent_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the agent. Required."""
-    agent_version_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the agent version. Required."""
-    status: Union[str, "_models.AgentContainerOperationStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The status of the container operation. Required. Known values are: \"NotStarted\",
-     \"InProgress\", \"Succeeded\", and \"Failed\"."""
-    error: Optional["_models.AgentContainerOperationError"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The error of the container operation, if any."""
-    container: Optional["_models.AgentContainerObject"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The container of the specific version of an agent."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        agent_id: str,
-        agent_version_id: str,
-        status: Union[str, "_models.AgentContainerOperationStatus"],
-        error: Optional["_models.AgentContainerOperationError"] = None,
-        container: Optional["_models.AgentContainerObject"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class AgentDefinition(_Model):
@@ -4532,8 +4372,8 @@ class DeleteAgentVersionResponse(_Model):
         self.object: Literal["agent.version.deleted"] = "agent.version.deleted"
 
 
-class DeleteMemoryStoreResponse(_Model):
-    """DeleteMemoryStoreResponse.
+class DeleteMemoryStoreResult(_Model):
+    """DeleteMemoryStoreResult.
 
     :ivar object: The object type. Always 'memory_store.deleted'. Required. Default value is
      "memory_store.deleted".
@@ -5672,9 +5512,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A filter to apply. Is either a ComparisonFilter type or a CompoundFilter type."""
 
     @overload
@@ -8647,7 +8485,7 @@ class MemoryStoreDefaultOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreDeleteScopeResponse(_Model):
+class MemoryStoreDeleteScopeResult(_Model):
     """Response for deleting memories from a scope.
 
     :ivar object: The object type. Always 'memory_store.scope.deleted'. Required. Default value is
@@ -8880,7 +8718,7 @@ class MemoryStoreOperationUsageOutputTokensDetails(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreSearchResponse(_Model):
+class MemoryStoreSearchResult(_Model):
     """Memory search response.
 
     :ivar search_id: The unique ID of this search request. Use this value as previous_search_id in
@@ -8920,65 +8758,7 @@ class MemoryStoreSearchResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemoryStoreUpdateResponse(_Model):
-    """Provides the status of a memory store update operation.
-
-    :ivar update_id: The unique ID of this update request. Use this value as previous_update_id in
-     subsequent requests to perform incremental updates. Required.
-    :vartype update_id: str
-    :ivar status: The status of the memory update operation. One of "queued", "in_progress",
-     "completed", "failed", or "superseded". Required. Known values are: "queued", "in_progress",
-     "completed", "failed", and "superseded".
-    :vartype status: str or ~azure.ai.projects.models.MemoryStoreUpdateStatus
-    :ivar superseded_by: The update_id the operation was superseded by when status is "superseded".
-    :vartype superseded_by: str
-    :ivar result: The result of memory store update operation when status is "completed".
-    :vartype result: ~azure.ai.projects.models.MemoryStoreUpdateResult
-    :ivar error: Error object that describes the error when status is "failed".
-    :vartype error: ~azure.ai.projects.models.ApiError
-    """
-
-    update_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique ID of this update request. Use this value as previous_update_id in subsequent
-     requests to perform incremental updates. Required."""
-    status: Union[str, "_models.MemoryStoreUpdateStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The status of the memory update operation. One of \"queued\", \"in_progress\", \"completed\",
-     \"failed\", or \"superseded\". Required. Known values are: \"queued\", \"in_progress\",
-     \"completed\", \"failed\", and \"superseded\"."""
-    superseded_by: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The update_id the operation was superseded by when status is \"superseded\"."""
-    result: Optional["_models.MemoryStoreUpdateResult"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The result of memory store update operation when status is \"completed\"."""
-    error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Error object that describes the error when status is \"failed\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        update_id: str,
-        status: Union[str, "_models.MemoryStoreUpdateStatus"],
-        superseded_by: Optional[str] = None,
-        result: Optional["_models.MemoryStoreUpdateResult"] = None,
-        error: Optional["_models.ApiError"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MemoryStoreUpdateResult(_Model):
+class MemoryStoreUpdateCompletedResult(_Model):
     """Memory update result.
 
     :ivar memory_operations: A list of individual memory operations that were performed during the
@@ -9001,6 +8781,64 @@ class MemoryStoreUpdateResult(_Model):
         *,
         memory_operations: list["_models.MemoryOperation"],
         usage: "_models.MemoryStoreOperationUsage",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MemoryStoreUpdateResult(_Model):
+    """Provides the status of a memory store update operation.
+
+    :ivar update_id: The unique ID of this update request. Use this value as previous_update_id in
+     subsequent requests to perform incremental updates. Required.
+    :vartype update_id: str
+    :ivar status: The status of the memory update operation. One of "queued", "in_progress",
+     "completed", "failed", or "superseded". Required. Known values are: "queued", "in_progress",
+     "completed", "failed", and "superseded".
+    :vartype status: str or ~azure.ai.projects.models.MemoryStoreUpdateStatus
+    :ivar superseded_by: The update_id the operation was superseded by when status is "superseded".
+    :vartype superseded_by: str
+    :ivar result: The result of memory store update operation when status is "completed".
+    :vartype result: ~azure.ai.projects.models.MemoryStoreUpdateCompletedResult
+    :ivar error: Error object that describes the error when status is "failed".
+    :vartype error: ~azure.ai.projects.models.ApiError
+    """
+
+    update_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of this update request. Use this value as previous_update_id in subsequent
+     requests to perform incremental updates. Required."""
+    status: Union[str, "_models.MemoryStoreUpdateStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the memory update operation. One of \"queued\", \"in_progress\", \"completed\",
+     \"failed\", or \"superseded\". Required. Known values are: \"queued\", \"in_progress\",
+     \"completed\", \"failed\", and \"superseded\"."""
+    superseded_by: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The update_id the operation was superseded by when status is \"superseded\"."""
+    result: Optional["_models.MemoryStoreUpdateCompletedResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The result of memory store update operation when status is \"completed\"."""
+    error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error object that describes the error when status is \"failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        update_id: str,
+        status: Union[str, "_models.MemoryStoreUpdateStatus"],
+        superseded_by: Optional[str] = None,
+        result: Optional["_models.MemoryStoreUpdateCompletedResult"] = None,
+        error: Optional["_models.ApiError"] = None,
     ) -> None: ...
 
     @overload

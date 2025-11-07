@@ -437,9 +437,9 @@ class _AIAgentsInstrumentorPreview:
         event_body: Dict[str, Any] = {}
         if _trace_agents_content and (instructions or additional_instructions):
             if instructions and additional_instructions:
-                event_body["content"] = f"{instructions} {additional_instructions}"
+                event_body["text"] = f"{instructions} {additional_instructions}"
             else:
-                event_body["content"] = instructions or additional_instructions
+                event_body["text"] = instructions or additional_instructions
 
         attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)

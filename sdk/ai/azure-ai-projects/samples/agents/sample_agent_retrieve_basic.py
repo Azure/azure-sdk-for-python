@@ -47,7 +47,7 @@ with project_client:
     openai_client = project_client.get_openai_client()
 
     # Retrieves latest version of an existing Agent
-    agent = project_client.agents.retrieve(agent_name=agent_name)
+    agent = project_client.agents.get(agent_name=agent_name)
     print(f"Agent retrieved (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
     # Retrieved a stored conversation

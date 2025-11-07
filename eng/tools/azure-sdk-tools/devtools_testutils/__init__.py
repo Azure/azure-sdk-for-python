@@ -52,7 +52,7 @@ from .sanitizers import (
     set_session_recording_options,
 )
 from .cert import create_combined_bundle
-from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording, trim_kwargs_from_test_function
+from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording, is_live as is_live_internal, trim_kwargs_from_test_function
 from .fake_credentials import FakeTokenCredential
 
 PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
@@ -117,4 +117,5 @@ __all__ = [
     "FakeTokenCredential",
     "create_combined_bundle",
     "is_live_and_not_recording",
+    "is_live_internal"
 ]

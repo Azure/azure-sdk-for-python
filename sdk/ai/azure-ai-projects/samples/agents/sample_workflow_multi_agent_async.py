@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -29,7 +30,12 @@ from dotenv import load_dotenv
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ResponseStreamEventType, WorkflowAgentDefinition
+from azure.ai.projects.models import (
+    AgentReference,
+    PromptAgentDefinition,
+    ResponseStreamEventType,
+    WorkflowAgentDefinition,
+)
 
 load_dotenv()
 

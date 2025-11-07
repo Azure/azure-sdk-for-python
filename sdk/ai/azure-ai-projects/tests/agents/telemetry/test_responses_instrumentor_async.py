@@ -5,8 +5,10 @@
 # ------------------------------------
 
 import os
+import json
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 
@@ -84,7 +86,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{"role": "user", "content": "Write a short poem about AI"}',
+                    "gen_ai.event.content": '{"text": "Write a short poem about AI"}',
                 },
             },
             {
@@ -92,7 +94,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"role": "assistant", "content": "*"}',
+                    "gen_ai.event.content": '{"text": "*"}',
                 },
             },
         ]
@@ -169,7 +171,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "user",
-                    "gen_ai.event.content": '{"role": "user", "content": "Write a short poem about AI"}',
+                    "gen_ai.event.content": '{"text": "Write a short poem about AI"}',
                 },
             },
             {
@@ -177,7 +179,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"role": "assistant", "content": "*"}',
+                    "gen_ai.event.content": '{"text": "*"}',
                 },
             },
         ]
@@ -281,3 +283,393 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_function_tool_with_content_recording_streaming(self, **kwargs):
+        """Test asynchronous function tool usage with content recording enabled (streaming)."""
+        from openai.types.responses.response_input_param import FunctionCallOutput
+
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+
+        async with project_client:
+            # Get the OpenAI client from the project client
+            client = await project_client.get_openai_client()
+            deployment_name = self.test_agents_params["model_deployment_name"]
+
+            # Define a function tool
+            func_tool = FunctionTool(
+                name="get_weather",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city name, e.g. San Francisco",
+                        },
+                    },
+                    "required": ["location"],
+                    "additionalProperties": False,
+                },
+                description="Get the current weather for a location.",
+                strict=True,
+            )
+
+            # Create agent with function tool
+            agent = await project_client.agents.create_version(
+                agent_name="WeatherAgent",
+                definition=PromptAgentDefinition(
+                    model=deployment_name,
+                    instructions="You are a helpful assistant that can use function tools.",
+                    tools=[func_tool],
+                ),
+            )
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # First request - should trigger function call
+            stream = await client.responses.create(
+                conversation=conversation.id,
+                input="What's the weather in Seattle?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                stream=True,
+            )
+            # Consume the stream and collect function calls
+            # In streaming, we get events, not direct output items
+            function_calls_dict = {}
+            first_response_id = None
+            async for chunk in stream:
+                # Capture the response ID from ResponseCreatedEvent or ResponseCompletedEvent
+                if chunk.type == "response.created" and hasattr(chunk, "response"):
+                    first_response_id = chunk.response.id
+                elif chunk.type == "response.completed" and hasattr(chunk, "response"):
+                    if first_response_id is None:
+                        first_response_id = chunk.response.id
+
+                # Collect complete function calls from ResponseOutputItemDoneEvent
+                if chunk.type == "response.output_item.done" and hasattr(chunk, "item"):
+                    item = chunk.item
+                    if hasattr(item, "type") and item.type == "function_call":
+                        call_id = item.call_id
+                        function_calls_dict[call_id] = item
+
+            # Process function calls and prepare input for second request
+            input_list = []
+            for item in function_calls_dict.values():
+                # Mock function result
+                weather_result = {"temperature": "72°F", "condition": "sunny"}
+                output = FunctionCallOutput(
+                    type="function_call_output",
+                    call_id=item.call_id,
+                    output=json.dumps(weather_result),
+                )
+                input_list.append(output)
+
+            # Second request - provide function results (using conversation, not previous_response_id)
+            stream2 = await client.responses.create(
+                conversation=conversation.id,
+                input=input_list,
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                stream=True,
+            )
+            # Consume the second stream
+            accumulated_content = []
+            async for chunk in stream2:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(str(chunk.output))
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+            # Cleanup
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+
+        # Check spans - should have 2 responses spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        assert len(spans) == 2
+
+        # Validate first span (user message + tool call)
+        span1 = spans[0]
+        expected_attributes_1 = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.request.assistant_name", agent.name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
+        assert attributes_match == True
+
+        # Check events for first span - user message and assistant tool call
+        expected_events_1 = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": '{"text": "What\'s the weather in Seattle?"}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}]}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+        assert events_match == True
+
+        # Validate second span (tool output + final response)
+        span2 = spans[1]
+        expected_attributes_2 = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.request.assistant_name", agent.name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
+        assert attributes_match == True
+
+        # Check events for second span - tool output and assistant response
+        expected_events_2 = [
+            {
+                "name": "gen_ai.tool.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "tool",
+                    "gen_ai.event.content": '{"tool_call_outputs": [{"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}]}',
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": '{"text": "*"}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+        assert events_match == True
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_function_tool_without_content_recording_streaming(self, **kwargs):
+        """Test asynchronous function tool usage without content recording (streaming)."""
+        from openai.types.responses.response_input_param import FunctionCallOutput
+
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+
+        async with project_client:
+            # Get the OpenAI client from the project client
+            client = await project_client.get_openai_client()
+            deployment_name = self.test_agents_params["model_deployment_name"]
+
+            # Define a function tool
+            func_tool = FunctionTool(
+                name="get_weather",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city name, e.g. San Francisco",
+                        },
+                    },
+                    "required": ["location"],
+                    "additionalProperties": False,
+                },
+                description="Get the current weather for a location.",
+                strict=True,
+            )
+
+            # Create agent with function tool
+            agent = await project_client.agents.create_version(
+                agent_name="WeatherAgent",
+                definition=PromptAgentDefinition(
+                    model=deployment_name,
+                    instructions="You are a helpful assistant that can use function tools.",
+                    tools=[func_tool],
+                ),
+            )
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # First request - should trigger function call
+            stream = await client.responses.create(
+                conversation=conversation.id,
+                input="What's the weather in Seattle?",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                stream=True,
+            )
+            # Consume the stream and collect function calls
+            # In streaming, we get events, not direct output items
+            function_calls_dict = {}
+            first_response_id = None
+            async for chunk in stream:
+                # Capture the response ID from ResponseCreatedEvent or ResponseCompletedEvent
+                if chunk.type == "response.created" and hasattr(chunk, "response"):
+                    first_response_id = chunk.response.id
+                elif chunk.type == "response.completed" and hasattr(chunk, "response"):
+                    if first_response_id is None:
+                        first_response_id = chunk.response.id
+
+                # Collect complete function calls from ResponseOutputItemDoneEvent
+                if chunk.type == "response.output_item.done" and hasattr(chunk, "item"):
+                    item = chunk.item
+                    if hasattr(item, "type") and item.type == "function_call":
+                        call_id = item.call_id
+                        function_calls_dict[call_id] = item
+
+            # Process function calls and prepare input for second request
+            # Respond to ALL function calls (streaming may not populate name attribute reliably)
+            input_list = []
+            for item in function_calls_dict.values():
+                # Mock function result
+                weather_result = {"temperature": "72°F", "condition": "sunny"}
+                output = FunctionCallOutput(
+                    type="function_call_output",
+                    call_id=item.call_id,
+                    output=json.dumps(weather_result),
+                )
+                input_list.append(output)
+
+            # Second request - provide function results (using conversation, not previous_response_id)
+            stream2 = await client.responses.create(
+                conversation=conversation.id,
+                input=input_list,
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                stream=True,
+            )
+            # Consume the second stream
+            async for chunk in stream2:
+                pass  # Just consume the stream
+
+            # Cleanup
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+
+        # Check spans - should have 2 responses spans
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        assert len(spans) == 2
+
+        # Validate first span (user message + tool call) - no content
+        span1 = spans[0]
+        expected_attributes_1 = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.request.assistant_name", agent.name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
+        assert attributes_match == True
+
+        # Check events for first span - tool call ID included but no function details
+        expected_events_1 = [
+            {
+                "name": "gen_ai.user.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "user",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*"}]}',
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+        assert events_match == True
+
+        # Validate second span (tool output + final response) - no content
+        span2 = spans[1]
+        expected_attributes_2 = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.request.assistant_name", agent.name),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
+        assert attributes_match == True
+
+        # Check events for second span - empty content bodies
+        expected_events_2 = [
+            {
+                "name": "gen_ai.tool.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "tool",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+            {
+                "name": "gen_ai.assistant.message",
+                "attributes": {
+                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.message.role": "assistant",
+                    "gen_ai.event.content": "{}",
+                },
+            },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+        assert events_match == True

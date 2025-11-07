@@ -17,6 +17,7 @@
         "inpainting",
         "CSDL",
         "fstring",
+        "aiprojectclient",
         "Ministral",
         "Qwen",
         "cogsvc"
