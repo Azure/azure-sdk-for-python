@@ -404,7 +404,53 @@ pip install opentelemetry-exporter-otlp
 
 ### How to enable tracing
 
-TBD
+Here is a code sample that shows how to enable Azure Monitor tracing:
+
+<!-- SNIPPET:sample_agent_basic_with_azure_monitor_tracing.setup_azure_monitor_tracing -->
+
+```python
+# Enable Azure Monitor tracing
+application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
+configure_azure_monitor(connection_string=application_insights_connection_string)
+```
+
+<!-- END SNIPPET -->
+
+You may also want to create a span for your scenario:
+
+<!-- SNIPPET:sample_agent_basic_with_azure_monitor_tracing.create_span_for_scenario -->
+
+```python
+tracer = trace.get_tracer(__name__)
+scenario = os.path.basename(__file__)
+
+with tracer.start_as_current_span(scenario):
+```
+
+<!-- END SNIPPET -->
+
+See the full sample code in [sample_agent_basic_with_azure_monitor_tracing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/telemetry/sample_agent_basic_with_azure_monitor_tracing.py).
+
+In addition, you might find it helpful to see the tracing logs in the console. You can achieve this with the following code:
+
+<!-- SNIPPET:sample_agent_basic_with_console_tracing.setup_console_tracing -->
+
+```python
+# Setup tracing to console
+# Requires opentelemetry-sdk
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+
+# Enable instrumentation with content tracing
+AIProjectInstrumentor().instrument()
+```
+
+<!-- END SNIPPET -->
+
+See the full sample code in [sample_agent_basic_with_console_tracing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/telemetry/sample_agent_basic_with_console_tracing.py).
 
 ### Enabling content recording
 
@@ -427,13 +473,67 @@ Binary data are images and files sent to the service as input messages. When you
 
 **Important:** Binary data can contain sensitive information and may significantly increase trace size. Some trace backends and tracing implementations may have limitations on the maximum size of trace data that can be sent to and/or supported by the backend. Ensure your observability backend and tracing implementation support the expected trace payload sizes when enabling binary data tracing.
 
+### How to trace your own functions
+
+The decorator `trace_function` is provided for tracing your own function calls using OpenTelemetry. By default the function name is used as the name for the span. Alternatively you can provide the name for the span as a parameter to the decorator.
+
+**Note:** The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable does not affect custom function tracing. When you use the `trace_function` decorator, all parameters and return values are always traced by default.
+
+This decorator handles various data types for function parameters and return values, and records them as attributes in the trace span. The supported data types include:
+* Basic data types: str, int, float, bool
+* Collections: list, dict, tuple, set
+    * Special handling for collections:
+      - If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
+      - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
+
+Object types are omitted, and the corresponding parameter is not traced.
+
+The parameters are recorded in attributes `code.function.parameter.<parameter_name>` and the return value is recorder in attribute `code.function.return.value`
+
+#### Adding custom attributes to spans
+
+You can add custom attributes to spans by creating a custom span processor. Here's how to define one:
+
+<!-- SNIPPET:sample_agent_basic_with_console_tracing_custom_attributes.custom_attribute_span_processor -->
+
+```python
+class CustomAttributeSpanProcessor(SpanProcessor):
+    def __init__(self):
+        pass
+
+    def on_start(self, span: Span, parent_context=None):
+        # Add this attribute to all spans
+        span.set_attribute("trace_sample.sessionid", "123")
+
+        # Add another attribute only to create_thread spans
+        if span.name == "create_thread":
+            span.set_attribute("trace_sample.create_thread.context", "abc")
+
+    def on_end(self, span: ReadableSpan):
+        # Clean-up logic can be added here if necessary
+        pass
+```
+
+<!-- END SNIPPET -->
+
+Then add the custom span processor to the global tracer provider:
+
+<!-- SNIPPET:sample_agent_basic_with_console_tracing_custom_attributes.add_custom_span_processor_to_tracer_provider -->
+
+```python
+provider = cast(TracerProvider, trace.get_tracer_provider())
+provider.add_span_processor(CustomAttributeSpanProcessor())
+```
+
+<!-- END SNIPPET -->
+
+See the full sample code in [sample_agent_basic_with_console_tracing_custom_attributes.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/telemetry/sample_agent_basic_with_console_tracing_custom_attributes.py).
+
 ### Additional resources
 
 For more information see:
 
 * [Trace AI applications using OpenAI SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application)
-* Chat-completion samples with console or Azure Monitor tracing enabled. See `samples\inference\azure-openai` folder.
-* The Tracing section in the [README.md file of the azure-ai-agents package](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/README.md#tracing).
 
 ## Troubleshooting
 
