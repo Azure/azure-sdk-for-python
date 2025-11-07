@@ -24,7 +24,6 @@ role_mapping = {
     project_models.ResponsesMessageRole.USER: HumanMessage,
     project_models.ResponsesMessageRole.SYSTEM: SystemMessage,
     project_models.ResponsesMessageRole.ASSISTANT: AIMessage,
-    # project_models.ResponsesMessageRole.DEVELOPER: ToolMessage,
 }
 
 item_content_type_mapping = {
