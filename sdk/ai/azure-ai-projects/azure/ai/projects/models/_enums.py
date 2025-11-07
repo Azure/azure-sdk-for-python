@@ -10,40 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentContainerOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the container operation for a specific version of an agent."""
-
-    NOT_STARTED = "NotStarted"
-    """The container operation is not started."""
-    IN_PROGRESS = "InProgress"
-    """The container operation is in progress."""
-    SUCCEEDED = "Succeeded"
-    """The container operation has succeeded."""
-    FAILED = "Failed"
-    """The container operation has failed."""
-
-
-class AgentContainerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the container of a specific version of an agent."""
-
-    STARTING = "Starting"
-    """The container is starting."""
-    RUNNING = "Running"
-    """The container is running."""
-    STOPPING = "Stopping"
-    """The container is stopping."""
-    STOPPED = "Stopped"
-    """The container is stopped."""
-    FAILED = "Failed"
-    """The container has failed."""
-    DELETING = "Deleting"
-    """The container is deleting."""
-    DELETED = "Deleted"
-    """The container is deleted."""
-    UPDATING = "Updating"
-    """The container is updating."""
-
-
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 

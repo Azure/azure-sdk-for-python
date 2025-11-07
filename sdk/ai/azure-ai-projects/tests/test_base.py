@@ -441,6 +441,7 @@ class TestBase(AzureRecordedTestCase):
             print(f"Invalid JSON: {e}")
             return False
 
+
 # The following two decorators recorded_by_proxy_httpx and recorded_by_proxy_async_httpx will be supplanted as part of #43794.
 # These are provided here temporarily to support existing tests that use httpx-based clients until they can be migrated.
 def recorded_by_proxy_httpx(test_func):
@@ -480,8 +481,7 @@ def recorded_by_proxy_httpx(test_func):
                 if upstream_uri_str:
                     upstream_uri = url_parse.urlparse(upstream_uri_str)
                     original_target = parsed_resp._replace(
-                        scheme=upstream_uri.scheme or parsed_resp.scheme,
-                        netloc=upstream_uri.netloc
+                        scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
                     ).geturl()
                     response.request.url = httpx.URL(original_target)
             except Exception:
@@ -579,8 +579,7 @@ def recorded_by_proxy_async_httpx(test_func):
                 if upstream_uri_str:
                     upstream_uri = url_parse.urlparse(upstream_uri_str)
                     original_target = parsed_resp._replace(
-                        scheme=upstream_uri.scheme or parsed_resp.scheme,
-                        netloc=upstream_uri.netloc
+                        scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
                     ).geturl()
                     response.request.url = httpx.URL(original_target)
             except Exception:

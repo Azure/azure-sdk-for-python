@@ -10,6 +10,7 @@ import pytest
 from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
 from devtools_testutils import is_live_and_not_recording
 
+
 class TestResponses(TestBase):
     @servicePreparer()
     @pytest.mark.skipif(

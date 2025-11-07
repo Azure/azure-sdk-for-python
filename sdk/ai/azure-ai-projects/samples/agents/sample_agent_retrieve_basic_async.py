@@ -50,7 +50,7 @@ async def main():
             openai_client = await project_client.get_openai_client()
 
             # Retrieves latest version of an existing Agent
-            agent = await project_client.agents.retrieve(agent_name=agent_name)
+            agent = await project_client.agents.get(agent_name=agent_name)
             print(f"Agent retrieved (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
             # Retrieved a stored conversation

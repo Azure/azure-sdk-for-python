@@ -291,6 +291,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_function_tool_with_content_recording_streaming(self, **kwargs):
         """Test asynchronous function tool usage with content recording enabled (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
@@ -488,6 +489,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_function_tool_without_content_recording_streaming(self, **kwargs):
         """Test asynchronous function tool usage without content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
+
         self.cleanup()
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
