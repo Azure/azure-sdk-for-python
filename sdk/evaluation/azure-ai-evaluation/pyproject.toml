@@ -5,7 +5,6 @@ pylint = false
 black = true
 verifytypes = false
 whl_no_aio = false
-depends = false
 
 [tool.isort]
 profile = "black"

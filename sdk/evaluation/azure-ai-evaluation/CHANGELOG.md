@@ -1,5 +1,11 @@
 # Release History
 
+## 1.13.2 (2025-11-07)
+
+### Bugs Fixed
+
+- Added App Insights redaction for agent safety run telemetry so adversarial prompts are not stored in collected logs.
+
 ## 1.13.1 (2025-11-05)
 
 ### Features Added
