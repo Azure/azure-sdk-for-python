@@ -1,5 +1,4 @@
-// Eval Response
-
+// Eval Create - Response
 {
     "object": "eval",
     "created_at": 1762479886,
@@ -282,9 +281,7 @@
     ]
 }
 
-
 // Evaluation Results (Used for Mainline UI)
-
 {
     "type": "evaluationresults",
     "name": "eval-result-evalrun_4130272e0793469faa407eee7a8c2a28-CAKR",
@@ -358,11 +355,7 @@
     }
 }
 
-
-// Eval Run
-
-// End of eval results
-
+// Eval Run - Response
 {
     "first_id": "evalrun_4130272e0793469faa407eee7a8c2a28",
     "last_id": "evalrun_4130272e0793469faa407eee7a8c2a28",
@@ -477,124 +470,8 @@
     "has_more": false
 }
 
-// eval results
-
-{
-    "first_id": "evalrun_4130272e0793469faa407eee7a8c2a28",
-    "last_id": "evalrun_4130272e0793469faa407eee7a8c2a28",
-    "object": "list",
-    "data": [
-        {
-            "object": "eval.run",
-            "created_at": 1762479888,
-            "modified_at": 1762479904,
-            "created_by": "Waqas Javed",
-            "id": "evalrun_4130272e0793469faa407eee7a8c2a28",
-            "eval_id": "eval_c536320b386d46e1a8858936c1173390",
-            "status": "completed",
-            "data_source": {
-                "type": "jsonl",
-                "source": {
-                    "type": "file_id",
-                    "id": "azureai://accounts/aprilk-westus2/projects/aprilk-westus2-proj/data/q_res_gt_context/versions/1"
-                }
-            },
-            "metadata": {},
-            "properties": {
-                "eval_id": "eval_c536320b386d46e1a8858936c1173390",
-                "runType": "eval_run",
-                "_azureml.evaluation_run": "evaluation.service",
-                "_azureml.evaluate_artifacts": "[{\"path\": \"instance_results.jsonl\", \"type\": \"table\"}]",
-                "job_logs": "azureai://accounts/aprilk-westus2/projects/aprilk-westus2-proj/evaluationresults/eval-result-evalrun_4130272e0793469faa407eee7a8c2a28-CAKR/versions/1"
-            },
-            "name": "eval-5aaqoeyv-all-quality",
-            "report_url": "https://ai.azure.com/nextgen/r/sWFUWMHqSbyFJsr8lI08JQ,rg-nextgen,,aprilk-westus2,aprilk-westus2-proj/build/evaluations/eval_c536320b386d46e1a8858936c1173390/run/evalrun_4130272e0793469faa407eee7a8c2a28",
-            "result_counts": {
-                "total": 1,
-                "passed": 0,
-                "failed": 0,
-                "errored": 1
-            },
-            "per_model_usage": [
-                {
-                    "model_name": "gpt-4o-mini-2024-07-18",
-                    "invocation_count": 7,
-                    "total_tokens": 11768,
-                    "prompt_tokens": 10840,
-                    "completion_tokens": 928,
-                    "cached_tokens": 0
-                }
-            ],
-            "per_testing_criteria_results": [
-                {
-                    "testing_criteria": "Retrieval",
-                    "passed": 0,
-                    "failed": 1
-                },
-                {
-                    "testing_criteria": "ResponseCompleteness",
-                    "passed": 0,
-                    "failed": 1
-                },
-                {
-                    "testing_criteria": "Relevance",
-                    "passed": 1,
-                    "failed": 0
-                },
-                {
-                    "testing_criteria": "Groundedness",
-                    "passed": 1,
-                    "failed": 0
-                },
-                {
-                    "testing_criteria": "Fluency",
-                    "passed": 0,
-                    "failed": 1
-                },
-                {
-                    "testing_criteria": "Similarity",
-                    "passed": 1,
-                    "failed": 0
-                },
-                {
-                    "testing_criteria": "ROUGEScore",
-                    "passed": 3,
-                    "failed": 0
-                },
-                {
-                    "testing_criteria": "METEORScore",
-                    "passed": 0,
-                    "failed": 1
-                },
-                {
-                    "testing_criteria": "GLEUScore",
-                    "passed": 0,
-                    "failed": 1
-                },
-                {
-                    "testing_criteria": "F1Score",
-                    "passed": 1,
-                    "failed": 0
-                },
-                {
-                    "testing_criteria": "Coherence",
-                    "passed": 1,
-                    "failed": 0
-                },
-                {
-                    "testing_criteria": "BLEUScore",
-                    "passed": 0,
-                    "failed": 1
-                }
-            ],
-            "error": null
-        }
-    ],
-    "has_more": false
-}
 
 // Eval Run Output Items
-
 {
     "data": [
         {
