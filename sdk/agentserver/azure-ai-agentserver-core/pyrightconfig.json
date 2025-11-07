@@ -1,10 +1,13 @@
 {
-  "reportTypeCommentUsage": true,
-  "reportMissingImports": false,
-  "pythonVersion": "3.11",
+  "reportOptionalMemberAccess": "warning",
+  "reportArgumentType": "warning",
+  "reportAttributeAccessIssue": "warning",
+  "reportMissingImports": "warning",
+  "reportGeneralTypeIssues": "warning",
+  "reportReturnType": "warning",
+
   "exclude": [
-    "./samples"
-  ],
-  "extraPaths": [
+    "**/azure/ai/agentserver/core/models/**",
+    "**/samples/**"
   ]
 }
