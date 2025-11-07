@@ -115,9 +115,9 @@ class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
         :paramtype language: str
         """
         super().__init__(
-            question=question, 
-            text_documents=cast(List[TextDocument], text_documents), 
-            language=language, 
+            question=question,
+            text_documents=cast(List[TextDocument], text_documents),
+            language=language,
             string_index_type="UnicodeCodePoint",
             **kwargs
         )
