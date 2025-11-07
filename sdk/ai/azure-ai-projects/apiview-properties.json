@@ -254,7 +254,6 @@
         "azure.ai.projects.models.ResponseFileSearchCallCompletedEvent": "OpenAI.ResponseFileSearchCallCompletedEvent",
         "azure.ai.projects.models.ResponseFileSearchCallInProgressEvent": "OpenAI.ResponseFileSearchCallInProgressEvent",
         "azure.ai.projects.models.ResponseFileSearchCallSearchingEvent": "OpenAI.ResponseFileSearchCallSearchingEvent",
-        "azure.ai.projects.models.ResponseFormatJsonSchemaSchema": "OpenAI.ResponseFormatJsonSchemaSchema",
         "azure.ai.projects.models.ResponseFunctionCallArgumentsDeltaEvent": "OpenAI.ResponseFunctionCallArgumentsDeltaEvent",
         "azure.ai.projects.models.ResponseFunctionCallArgumentsDoneEvent": "OpenAI.ResponseFunctionCallArgumentsDoneEvent",
         "azure.ai.projects.models.ResponseImageGenCallCompletedEvent": "OpenAI.ResponseImageGenCallCompletedEvent",
