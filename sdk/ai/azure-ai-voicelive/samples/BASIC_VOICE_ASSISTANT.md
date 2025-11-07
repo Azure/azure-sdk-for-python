@@ -30,8 +30,8 @@ Create a `.env` file with your credentials:
 ```bash
 AZURE_VOICELIVE_API_KEY=your-api-key
 AZURE_VOICELIVE_ENDPOINT=your-endpoint
-AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
-AZURE_VOICELIVE_VOICE=en-US-AvaNeural
+AZURE_VOICELIVE_MODEL=gpt-realtime
+AZURE_VOICELIVE_VOICE=en-US-Ava:DragonHDLatestNeural
 AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally and conversationally.
 ```
 
@@ -45,10 +45,13 @@ Optional command-line arguments:
 
 ```bash
 python basic_voice_assistant_async.py \
-    --model gpt-4o-realtime-preview \
-    --voice en-US-AvaNeural \
+    --model gpt-realtime \
+    --voice en-US-Ava:DragonHDLatestNeural \
     --instructions "You are a helpful assistant" \
     --verbose
+
+# Or use Azure token authentication instead of API key:
+python basic_voice_assistant_async.py --use-token-credential
 ```
 
 ## How It Works
@@ -194,7 +197,8 @@ basic_voice_assistant_async.py
 
 ## Next Steps
 
-- Explore `async_function_calling_sample.py` for function calling capabilities
+- Explore `agent_voice_assistant_async.py` for Foundry agent integration and conversation logging capabilities
+- Explore `function_calling_sample_async.py` for function calling capabilities with get_current_time and get_current_weather examples
+- Explore `voice_assistant_w_proactive_greeting_async.py` for proactive greeting strategies
 - Check out other samples in the `samples/` directory
 - Read the main SDK documentation in `README.md`
-- Review the API reference for advanced usage patterns

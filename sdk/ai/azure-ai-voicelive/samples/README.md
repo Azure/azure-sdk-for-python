@@ -15,7 +15,7 @@ This directory contains sample applications demonstrating various capabilities o
 1. **Install dependencies**:
 
    ```bash
-   pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
+   pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv azure-identity
    ```
 
 2. **Configure environment variables**:
@@ -25,15 +25,18 @@ This directory contains sample applications demonstrating various capabilities o
    ```ini
    AZURE_VOICELIVE_API_KEY=your-voicelive-api-key
    AZURE_VOICELIVE_ENDPOINT=wss://api.voicelive.com/v1
-   AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
-   AZURE_VOICELIVE_VOICE=alloy
+   AZURE_VOICELIVE_API_VERSION=2025-10-01
+   AZURE_VOICELIVE_MODEL=gpt-realtime
+   AZURE_VOICELIVE_VOICE=en-US-Ava:DragonHDLatestNeural
    AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful assistant. Keep your responses concise.
+   AZURE_VOICELIVE_AGENT_ID=<your_agent_id>
+   AZURE_VOICELIVE_PROJECT_NAME=<your_project_name>
    ```
 
-   You can copy the `.env.template` file and fill in your values:
+   You can copy the `.env_sample` file and fill in your values:
 
    ```bash
-   cp ../.env.template ./.env
+   cp ../.env_sample ./.env
    ```
 
 ## Running the samples
@@ -77,6 +80,12 @@ Most samples support additional command-line arguments. For example:
 python basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy
 ```
 
+For Azure authentication instead of API key:
+
+```bash
+python basic_voice_assistant_async.py --use-token-credential
+```
+
 Use the `--help` flag to see all available options:
 
 ```bash
@@ -86,7 +95,19 @@ python basic_voice_assistant_async.py --help
 ## Sample descriptions
 
 - **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
-- **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
+
+- **function_calling_sample_async.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to define functions (`get_current_time`, `get_current_weather`), handle function calls from the AI model, and process results with audio playback.
+
+- **voice_assistant_w_proactive_greeting_async.py**: Shows two proactive greeting strategies:
+  1. invoking a server-generated greeting by sending a `response.create` event;
+  2. sending a pre-generated assistant greeting using a raw `response.create` event with `pre_generated_assistant_message`.
+
+  **Tips**
+  
+  - Send the proactive event(s) immediately after `SESSION_UPDATED` and before starting microphone capture to avoid overlap if the user speaks early.
+  - If you might repeat the greeting (e.g. reconnect), guard with a flag like `self.conversation_started`.
+
+- **agent_voice_assistant_async.py**: Demonstrates integration with Azure AI Foundry agents, showing how to connect a voice assistant to an agent backend. This sample also demonstrates conversation logging to track user and agent interactions.
 
 ## Troubleshooting
 
