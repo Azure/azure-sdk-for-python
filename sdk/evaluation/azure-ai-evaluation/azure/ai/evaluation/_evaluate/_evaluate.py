@@ -2314,6 +2314,29 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     return metric
 
 
+def _is_primary_metric(metric_name: str, testing_criteria: str) -> bool:
+    """
+    Check if the given metric name is a primary metric.
+
+    :param metric_name: The name of the metric
+    :type metric_name: str
+    :return: True if the metric is a primary metric, False otherwise
+    :rtype: bool
+    """
+    if (
+        not _is_none_or_nan(metric_name)
+        and not _is_none_or_nan(testing_criteria)
+        and testing_criteria in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS
+        and isinstance(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria], list)
+        and len(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria]) > 1
+        and metric_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria]
+        and metric_name.lower() != _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria][0].lower()
+    ):
+        return False
+    else:
+        return True
+
+
 def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logger) -> Dict[str, Any]:
     """
     Calculate summary statistics for AOAI evaluation results.
@@ -2343,10 +2366,17 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
             )
             for result_item in aoai_result["results"]:
+                is_primary_metric = True
                 if isinstance(result_item, dict):
+                    testing_criteria = result_item.get("name", "")
+                    is_primary_metric = _is_primary_metric(result_item.get("metric", ""), testing_criteria)
+                    if not is_primary_metric:
+                        logger.info(
+                            f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
+                        )
+                        continue
                     # Check if the result has a 'passed' field
                     if "passed" in result_item and result_item["passed"] is not None:
-                        testing_criteria = result_item.get("name", "")
                         if testing_criteria not in result_counts_stats:
                             result_counts_stats[testing_criteria] = {
                                 "testing_criteria": testing_criteria,
