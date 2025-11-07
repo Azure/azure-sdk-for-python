@@ -68,3 +68,4 @@ combine-as-imports = true
 [tool.azure-sdk-build]
 verifytypes = false  # has unknown dependencies
 pyright = false
+breaking = false # the pipeline is running on py39
