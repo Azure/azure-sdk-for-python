@@ -31,7 +31,7 @@ if __name__ == "__main__":
 **Note**
 If your langgraph agent was not using langgraph's builtin [MessageState](https://langchain-ai.github.io/langgraph/concepts/low_level/?h=messagesstate#messagesstate), you should implement your own `LanggraphStateConverter` and provide to `from_langgraph`.
 
-Reference this [example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agentserver-langgraph/samples/custom_state/main.py) for more details.
+Reference this [example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-langgraph/samples/custom_state/main.py) for more details.
 
 
 ## Troubleshooting
@@ -43,7 +43,7 @@ If it works on local by failed on cloud. Check your logs in the application insi
 
 ## Next steps
 
-Please visit [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agentserver-langgraph/samples) folder. There are several samples for you to build your agent with azure-ai-agentserver
+Please visit [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-langgraph/samples) folder. There are several samples for you to build your agent with azure-ai-agentserver-* packages
 
 
 ## Contributing
