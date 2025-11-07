@@ -14,7 +14,7 @@ DESCRIPTION:
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
     for more information.
 
-    This sample is inspired from the OpenAI example here:
+    This sample is inspired by the OpenAI example here:
     https://platform.openai.com/docs/guides/structured-outputs/supported-schemas
 
 USAGE:
@@ -70,9 +70,6 @@ with project_client:
                     name="CalendarEvent", schema=CalendarEvent.model_json_schema()
                 )
             ),
-            # text=PromptAgentDefinitionText(
-            #     format={"type": "json_schema", "name": "CalendarEvent", "schema": CalendarEvent.model_json_schema()}
-            # ),
             instructions="""
                 You are a helpful assistant that extracts calendar event information from the input user messages,
                 and returns it in the desired structured output format.
