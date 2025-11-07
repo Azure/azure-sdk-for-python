@@ -104,8 +104,8 @@ class _EvaluatorMetricMapping:
         "bleu_score": ["bleu"],
         "coherence": ["coherence"],
         "document_retrieval": [
-            "ndcg@3",
             "xdcg@3",
+            "ndcg@3",
             "fidelity",
             "top1_relevance",
             "top3_max_relevance",
