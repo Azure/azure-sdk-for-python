@@ -4,12 +4,15 @@
 # ------------------------------------
 import abc
 import logging
+import threading
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Dict, Type
+from weakref import WeakValueDictionary
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ..._internal import within_credential_chain
+from .utils import get_running_async_lock_class
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,8 +21,38 @@ class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
+        self._global_lock: Optional[Any] = None
+        self._global_lock_init_lock = threading.Lock()
+        self._active_locks: WeakValueDictionary[tuple, Any] = WeakValueDictionary()
+        self._lock_class_type: Optional[Type] = None
+
         # https://github.com/python/mypy/issues/5887
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
+
+    @property
+    def _lock_class(self) -> Type:
+        if self._lock_class_type is None:
+            self._lock_class_type = get_running_async_lock_class()
+        return self._lock_class_type
+
+    async def _get_request_lock(self, lock_key: tuple) -> Any:
+        # Initialize global lock if needed, using threading.Lock for thread-safe initialization
+        if self._global_lock is None:
+            with self._global_lock_init_lock:
+                if self._global_lock is None:
+                    self._global_lock = self._lock_class()
+
+        lock = self._active_locks.get(lock_key)
+        if lock is not None:
+            return lock
+
+        async with self._global_lock:
+            # Double-check in case another coroutine created it while we waited
+            lock = self._active_locks.get(lock_key)
+            if lock is None:
+                lock = self._lock_class()
+                self._active_locks[lock_key] = lock
+            return lock
 
     @abc.abstractmethod
     async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessTokenInfo]:
@@ -132,19 +165,29 @@ class GetTokenMixin(abc.ABC):
             token = await self._acquire_token_silently(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
-            if not token:
-                self._last_request_time = int(time.time())
-                token = await self._request_token(
-                    *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
-                )
-            elif self._should_refresh(token):
-                try:
-                    self._last_request_time = int(time.time())
-                    token = await self._request_token(
+            if not token or self._should_refresh(token):
+                # Get the lock specific to this scope combination
+                lock_key = (tuple(sorted(scopes)), claims, tenant_id, enable_cae)
+                lock = await self._get_request_lock(lock_key)
+
+                async with lock:
+                    # Double-check in case another coroutine refreshed the token while we waited for the lock
+                    current_token = await self._acquire_token_silently(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
-                except Exception:  # pylint:disable=broad-except
-                    pass
+                    if current_token and not self._should_refresh(current_token):
+                        token = current_token
+                    else:
+                        try:
+                            token = await self._request_token(
+                                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                            )
+                        except Exception:  # pylint:disable=broad-except
+                            self._last_request_time = int(time.time())
+                            # Only raise if we don't have a token to return
+                            if not token:
+                                raise
+
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",
@@ -163,3 +206,19 @@ class GetTokenMixin(abc.ABC):
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_global_lock"]
+        del state["_lock_class_type"]
+        del state["_global_lock_init_lock"]
+        del state["_active_locks"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        self._global_lock_init_lock = threading.Lock()
+        self._active_locks = WeakValueDictionary()
+        self._global_lock = None
+        self._lock_class_type = None

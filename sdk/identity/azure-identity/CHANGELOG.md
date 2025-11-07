@@ -16,6 +16,8 @@
 
 ### Other Changes
 
+- Add lock-based concurrency control to asynchronous token requests. This addresses race conditions where multiple coroutines could simultaneously request tokens for the same scopes, resulting in redundant authentication requests. ([#43889](https://github.com/Azure/azure-sdk-for-python/pull/43889))
+
 ## 1.26.0b1 (2025-11-07)
 
 ### Features Added
