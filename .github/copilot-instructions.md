@@ -14,7 +14,11 @@
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
 **REQUIRED CONDITIONS:**
+- **FIRST AND FOREMOST, ALWAYS** run the [`azsdk_verify_setup`](../eng/common/instructions/azsdk-tools/verify-setup.instructions.md) MCP tool to check the user's environment **BEFORE proceeding with any other operations.**
 - To use Azure MCP tool calls, users must have PowerShell installed. Provide [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) if not installed, and recommend restarting the IDE to start the MCP server.
+
+**FORBIDDEN ACTIONS:**
+❌ Run other MCP tools if you haven't yet run `azsdk_verify_setup` in the session.
 
 ---
 
