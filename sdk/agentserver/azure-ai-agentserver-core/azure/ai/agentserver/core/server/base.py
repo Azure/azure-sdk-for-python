@@ -60,7 +60,7 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
             request_context.set(ctx)
 
     def set_run_context_to_context_var(self, run_context):
-        agent_id = ""
+        agent_id, agent_name = "", ""
         agent_obj = run_context.get_agent_id_object()
         if agent_obj:
             agent_name = getattr(agent_obj, "name", "")
@@ -72,6 +72,7 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
             "azure.ai.agentshosting.conversation_id": run_context.conversation_id or "",
             "azure.ai.agentshosting.streaming": str(run_context.stream or False),
             "gen_ai.agent.id": agent_id,
+            "gen_ai.agent.name": agent_name,
             "gen_ai.provider.name": "AzureAI Hosted Agents",
             "gen_ai.response.id": run_context.response_id or "",
         }
@@ -87,7 +88,7 @@ class FoundryCBAgent:
             context = request.state.agent_run_context
             ctx = request_context.get()
             with self.tracer.start_as_current_span(
-                name=f"ContainerAgentsAdapter-{context.response_id}",
+                name=f"HostedAgents-{context.response_id}",
                 attributes=ctx,
                 kind=trace.SpanKind.SERVER,
             ):
