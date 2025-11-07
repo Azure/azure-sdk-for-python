@@ -436,8 +436,8 @@ class TestFineTuningAsync(TestBase):
                 pre_finetuned_model = self.test_finetuning_params["sft"]["openai"]["deployment"]["pre_finetuned_model"]
                 deployment_name = f"{self.test_finetuning_params['sft']['openai']['deployment']['deployment_name']}-async-{int(time.time())}"
                 
-                resource_group = kwargs.get("azure_ai_projects_tests_azure_resource_group", "")
-                account_name = kwargs.get("azure_ai_projects_tests_azure_aoai_account", "")
+                resource_group = kwargs.get("azure_ai_projects_azure_resource_group", "")
+                account_name = kwargs.get("azure_ai_projects_azure_aoai_account", "")
                 
                 assert resource_group, "Azure resource group is required for deployment test"
                 assert account_name, "Azure OpenAI account name is required for deployment test"

@@ -8,17 +8,17 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `.fine_tuning_jobs` methods to create DPO (Direct Preference Optimization) fine-tuning jobs.
-    Supported OAI Models: GPT 4o, 4.1, 4.1-mini, 4.1-nano, gpt-4o-mini
+    Supported OpenAI models: GPT-4o, GPT-4.1, GPT-4.1-mini, GPT-4.1-nano, and GPT-4o-mini.
 
 USAGE:
     python sample_finetuning_dpo_job.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity openai python-dotenv
+    pip install azure-ai-projects>=2.0.0b1 azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `gpt-4o` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
@@ -33,7 +33,7 @@ from pathlib import Path
 
 load_dotenv()
 
-endpoint = os.environ["PROJECT_ENDPOINT"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "gpt-4o-mini")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "dpo_training_set.jsonl"))

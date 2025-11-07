@@ -7,26 +7,28 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
-    .fine_tuning.jobs methods to create, get, list, cancel, pause, resume, list events and list checkpoints supervised fine-tuning jobs.
-    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management Client and perform inference on the deployed model.
-    Supported OAI Models: GPT 4o, 4o-mini, 4.1, 4.1-mini
+    .fine_tuning.jobs methods to create, get, list, cancel, pause, resume, list events 
+    and list checkpoints supervised fine-tuning jobs.
+    It also shows how to deploy the fine-tuned model using Azure Cognitive Services Management 
+    Client and perform inference on the deployed model.
+    Supported OpenAI models: GPT 4o, 4o-mini, 4.1, 4.1-mini
 
 USAGE:
     python sample_finetuning_supervised_job_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity openai python-dotenv aiohttp azure-mgmt-cognitiveservices
+    pip install azure-ai-projects>=2.0.0b1 azure-identity openai python-dotenv aiohttp azure-mgmt-cognitiveservices
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `gpt-4.1` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
     4) VALIDATION_FILE_PATH - Optional. Path to the validation data file. Default to the `data` folder.
-    5) AZURE_SUBSCRIPTION_ID - Required. Your Azure subscription ID for fine-tuned model deployment and inferencing.
-    6) AZURE_RESOURCE_GROUP - Required. The resource group name containing your Azure OpenAI resource.
-    7) AZURE_AOAI_ACCOUNT - Required. The name of your Azure OpenAI account for fine-tuned model deployment and inferencing.
+    5) AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID - Required. Your Azure subscription ID for fine-tuned model deployment and inferencing.
+    6) AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP - Required. The resource group name containing your Azure OpenAI resource.
+    7) AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT - Required. The name of your Azure OpenAI account for fine-tuned model deployment and inferencing.
 """
 
 import asyncio
@@ -42,7 +44,7 @@ from pathlib import Path
 load_dotenv()
 
 # For fine-tuning
-endpoint = os.environ["PROJECT_ENDPOINT"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "gpt-4.1")
 script_dir = Path(__file__).parent
 training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "sft_training_set.jsonl"))
@@ -51,9 +53,9 @@ validation_file_path = os.environ.get(
 )
 
 # For Deployment and inferencing on model
-subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
-resource_group = os.environ.get("AZURE_RESOURCE_GROUP")
-account_name = os.environ.get("AZURE_AOAI_ACCOUNT")
+subscription_id = os.environ.get("AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID")
+resource_group = os.environ.get("AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP")
+account_name = os.environ.get("AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT")
 
 
 async def main():

@@ -44,9 +44,9 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
-    azure_ai_projects_tests_azure_subscription_id="00000000-0000-0000-0000-000000000000",
-    azure_ai_projects_tests_azure_resource_group="sanitized-resource-group",
-    azure_ai_projects_tests_azure_aoai_account="sanitized-aoai-account",
+    azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_azure_resource_group="sanitized-resource-group",
+    azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
 )
 
 
@@ -174,7 +174,7 @@ class TestBase(AzureRecordedTestCase):
     # helper function: create cognitive services management client using environment variables
     def create_cognitive_services_management_client(self, **kwargs) -> CognitiveServicesManagementClient:
         # fetch environment variables
-        subscription_id = kwargs.pop("azure_ai_projects_tests_azure_subscription_id")
+        subscription_id = kwargs.pop("azure_ai_projects_azure_subscription_id")
         credential = self.get_credential(CognitiveServicesManagementClient, is_async=False)
 
         # create and return client
@@ -187,7 +187,7 @@ class TestBase(AzureRecordedTestCase):
 
     # helper function: create async cognitive services management client using environment variables
     def create_cognitive_services_management_client_async(self, **kwargs) -> CognitiveServicesManagementClientAsync:
-        subscription_id = kwargs.pop("azure_ai_projects_tests_azure_subscription_id")
+        subscription_id = kwargs.pop("azure_ai_projects_azure_subscription_id")
         credential = self.get_credential(CognitiveServicesManagementClientAsync, is_async=True)
 
         client = CognitiveServicesManagementClientAsync(
