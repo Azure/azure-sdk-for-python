@@ -31,10 +31,8 @@ USAGE:
     3) BING_PROJECT_CONNECTION_ID - The Bing project connection ID, as found in the "Connections" tab in your Azure AI Foundry project.
 """
 
-from asyncio import events
 import os
 from dotenv import load_dotenv
-from azure.ai.projects.models._models import ResponseCompletedEvent
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
