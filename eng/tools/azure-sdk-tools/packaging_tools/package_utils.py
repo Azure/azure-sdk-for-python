@@ -77,13 +77,12 @@ def change_log_generate(
     *,
     last_stable_release: Optional[str] = None,
     prefolder: Optional[str] = None,
-    is_multiapi: bool = False,
 ):
     if not last_version:
         return "### Other Changes\n\n  - Initial version"
 
     # try new changelog tool
-    if prefolder and not is_multiapi:
+    if prefolder:
         try:
             tox_cache_path = Path(prefolder, package_name, ".tox")
             if tox_cache_path.exists():
