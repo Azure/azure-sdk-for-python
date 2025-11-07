@@ -1,12 +1,22 @@
 # Release History
 
-## 1.0.1 (2025-10-28)
+## 1.1.0 (2025-11-03)
 
 ### Features Added
 
 - Added support for Agent configuration through the new `AgentConfig` model
 - Added `agent` field to `ResponseSession` model to support agent-based conversations
 - The `AgentConfig` model includes properties for agent type, name, description, agent_id, and thread_id
+
+## 1.1.0b1 (2025-10-06)
+
+### Features Added
+
+- **AgentConfig Support**: Re-introduced `AgentConfig` functionality with enhanced capabilities:
+  - `AgentConfig` model added back to public API with full import and export support
+  - `agent` field re-added to `ResponseSession` model for session-level agent configuration
+  - Updated cross-language package mappings to include `AgentConfig` support
+  - Provides foundation for advanced agent configuration scenarios
 
 ## 1.0.0 (2025-10-01)
 

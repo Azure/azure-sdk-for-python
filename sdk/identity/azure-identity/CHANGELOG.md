@@ -1,14 +1,10 @@
 # Release History
 
-## 1.25.2 (Unreleased)
+## 1.26.0b1 (2025-11-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for `WorkloadIdentityCredential` identity binding mode in AKS environments. This feature addresses Entra's limitation on the number of federated identity credentials (FICs) per managed identity by utilizing an AKS proxy that handles FIC exchanges on behalf of pods. ([#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287))
 
 ## 1.25.1 (2025-10-06)
 
