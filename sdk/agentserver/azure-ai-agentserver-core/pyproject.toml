@@ -1,0 +1,70 @@
+[project]
+name = "azure-ai-agentserver-core"
+dynamic = ["version", "readme"]
+description = "Agents server adapter for Azure AI"
+requires-python = ">=3.10"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["azure", "azure sdk"]
+
+dependencies = [
+    "azure-monitor-opentelemetry>=1.5.0",
+    "azure-ai-projects",
+    "azure-ai-agents>=1.2.0b5",
+    "azure-core>=1.35.0",
+    "azure-identity",
+    "openai>=1.80.0",
+    "opentelemetry-api>=1.35",
+    "opentelemetry-exporter-otlp-proto-http",
+    "starlette>=0.45.0",
+    "uvicorn>=0.31.0",
+]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.core._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+lint.select = ["E", "F", "B", "I"]   # E=pycodestyle errors, F=Pyflakes, B=bugbear, I=import sort
+lint.ignore = []
+fix = false
+exclude = [
+    "**/azure/ai/agentserver/core/models/",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["azure.ai.agentserver.core"]
+combine-as-imports = true
+
+[tool.azure-sdk-build]
+verifytypes = false  # has unknown dependencies
+pyright = false

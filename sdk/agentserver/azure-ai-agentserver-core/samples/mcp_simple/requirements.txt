@@ -1,0 +1,2 @@
+langchain-mcp-adapters==0.1.11
+azure-ai-agentserver-core

@@ -1,0 +1,10 @@
+{
+  "reportTypeCommentUsage": true,
+  "reportMissingImports": false,
+  "pythonVersion": "3.11",
+  "exclude": [
+    "./samples"
+  ],
+  "extraPaths": [
+  ]
+}
