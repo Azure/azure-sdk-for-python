@@ -4,5 +4,5 @@ trigger: none
 extends:
     template: /eng/pipelines/templates/stages/python-analyze-weekly-standalone.yml
     parameters:
-      ServiceDirectory: ai
+      ServiceDirectory: agentserver
 
