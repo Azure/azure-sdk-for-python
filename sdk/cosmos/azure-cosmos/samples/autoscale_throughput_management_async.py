@@ -61,7 +61,9 @@ CONTAINER_ID = config.settings['container_id']
 async def create_database_with_autoscale(client, database_id):
     """
     Create a database with autoscale throughput asynchronously.
-    
+    Setting throughput settings, like autoscale, on a database level is *not* recommended,
+    and should only be done if you are aware of the implications of shared throughput across containers.
+
     Autoscale throughput automatically scales between 10% and 100% of the maximum throughput
     based on your workload demands.
     
