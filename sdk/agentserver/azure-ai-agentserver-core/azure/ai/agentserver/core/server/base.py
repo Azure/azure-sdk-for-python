@@ -56,7 +56,7 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         request_id = request.headers.get("X-Request-Id", None)
         if request_id:
             ctx = request_context.get() or {}
-            ctx["azure.ai.agentshosting.x-request-id"] = request_id
+            ctx["azure.ai.agentserver.x-request-id"] = request_id
             request_context.set(ctx)
 
     def set_run_context_to_context_var(self, run_context):
@@ -68,9 +68,9 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
             agent_id = f"{agent_name}:{agent_version}"
 
         res = {
-            "azure.ai.agentshosting.response_id": run_context.response_id or "",
-            "azure.ai.agentshosting.conversation_id": run_context.conversation_id or "",
-            "azure.ai.agentshosting.streaming": str(run_context.stream or False),
+            "azure.ai.agentserver.response_id": run_context.response_id or "",
+            "azure.ai.agentserver.conversation_id": run_context.conversation_id or "",
+            "azure.ai.agentserver.streaming": str(run_context.stream or False),
             "gen_ai.agent.id": agent_id,
             "gen_ai.agent.name": agent_name,
             "gen_ai.provider.name": "AzureAI Hosted Agents",
@@ -278,7 +278,7 @@ class FoundryCBAgent:
 
     def get_trace_attributes(self):
         return {
-            "service.name": "azure.ai.agentshosting",
+            "service.name": "azure.ai.agentserver",
         }
 
     def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
