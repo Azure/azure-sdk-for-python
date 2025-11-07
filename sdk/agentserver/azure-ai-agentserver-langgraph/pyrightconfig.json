@@ -9,9 +9,7 @@
     "reportCallIssue": "warning",
 
     "exclude": [
-        "**/tests/**",
         "**/samples/**",
-        "**/setup.py",
         "**/conftest.py"
     ]
 }

@@ -58,4 +58,4 @@ combine-as-imports = true
 
 [tool.azure-sdk-build]
 breaking = false
-pyright = false
+# pyright = false
