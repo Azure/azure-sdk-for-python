@@ -20,8 +20,7 @@
 ### Breaking Changes
 
   - Model `OperationProgressResult` instance variable `object_type` has been moved under property `properties`
-  - Parameter `storage_redundancy` of `Storage.__init__` is now required
-  - Deleted or renamed model `Provisioning`
+  - Deleted unused model `Provisioning`
 
 ## 1.0.0b3 (2024-11-18)
 
