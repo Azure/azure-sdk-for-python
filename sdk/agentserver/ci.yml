@@ -44,3 +44,7 @@ extends:
     Artifacts:
     - name: azure-ai-agentserver-core
       safeName: azureaiagentservercore
+    - name: azure-ai-agentserver-agentframework
+      safeName: azureaiagentserveragentframework
+    - name: azure-ai-agentserver-langgraph
+      safeName: azureaiagentserverlanggraph
