@@ -65,10 +65,14 @@ with project_client:
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            # BUG? text=PromptAgentDefinitionText(format=ResponseTextFormatConfigurationJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())),
             text=PromptAgentDefinitionText(
-                format={"type": "json_schema", "name": "CalendarEvent", "schema": CalendarEvent.model_json_schema()}
+                format=ResponseTextFormatConfigurationJsonSchema(
+                    name="CalendarEvent", schema=CalendarEvent.model_json_schema()
+                )
             ),
+            # text=PromptAgentDefinitionText(
+            #     format={"type": "json_schema", "name": "CalendarEvent", "schema": CalendarEvent.model_json_schema()}
+            # ),
             instructions="""
                 You are a helpful assistant that extracts calendar event information from the input user messages,
                 and returns it in the desired structured output format.
