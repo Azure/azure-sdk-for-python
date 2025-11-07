@@ -10,7 +10,7 @@ from typing import Optional
 EPOCH_AS_FILETIME = 116444736000000000  # January 1, 1970 as MS filetime
 HUNDREDS_OF_NANOSECONDS = 10000000
 
-SERVICE_PORT_NUMBERS = {
+DEVSTORE_PORTS = {
     "blob": 10000,
     "dfs": 10000,
     "queue": 10001,
@@ -68,6 +68,6 @@ def _get_development_storage_endpoint(service: str) -> str:
     :return: The development storage endpoint.
     :rtype: str
     """
-    if service.lower() not in SERVICE_PORT_NUMBERS:
+    if service.lower() not in DEVSTORE_PORTS:
         raise ValueError(f"Unsupported service name: {service}")
-    return f"http://127.0.0.1:{SERVICE_PORT_NUMBERS[service]}/{DEVSTORE_ACCOUNT_NAME}"
+    return f"http://127.0.0.1:{DEVSTORE_PORTS[service]}/{DEVSTORE_ACCOUNT_NAME}"
