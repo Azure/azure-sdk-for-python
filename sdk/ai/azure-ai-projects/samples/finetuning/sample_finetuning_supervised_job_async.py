@@ -35,7 +35,8 @@ import time
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
+from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
+from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 from pathlib import Path
 
 load_dotenv()
@@ -125,24 +126,39 @@ async def main():
                 ).fine_tuned_model
                 deployment_name = "gpt-4-1-fine-tuned"
 
-                with CognitiveServicesManagementClient(
+                async with CognitiveServicesManagementClientAsync(
                     credential=credential, subscription_id=subscription_id
                 ) as cogsvc_client:
 
-                    deployment = cogsvc_client.deployments.begin_create_or_update(
+                    deployment_model = DeploymentModel(
+                        format="OpenAI",
+                        name=fine_tuned_model_name,
+                        version="1"
+                    )
+                    
+                    deployment_properties = DeploymentProperties(
+                        model=deployment_model
+                    )
+                    
+                    deployment_sku = Sku(
+                        name="Standard",
+                        capacity=250
+                    )
+                    
+                    deployment_config = Deployment(
+                        properties=deployment_properties,
+                        sku=deployment_sku
+                    )
+
+                    deployment = await cogsvc_client.deployments.begin_create_or_update(
                         resource_group_name=resource_group,
                         account_name=account_name,
                         deployment_name=deployment_name,
-                        deployment={
-                            "properties": {
-                                "model": {"format": "OpenAI", "name": fine_tuned_model_name, "version": "1"},
-                            },
-                            "sku": {"capacity": 250, "name": "standard"},
-                        },
+                        deployment=deployment_config
                     )
 
                     while deployment.status() not in ["succeeded", "failed"]:
-                        time.sleep(30)
+                        await asyncio.sleep(30)
                         print(f"Status: {deployment.status()}")
 
                 print(f"Testing fine-tuned model via deployment: {deployment_name}")

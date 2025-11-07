@@ -5,10 +5,12 @@
 
 import time
 import pytest
+import asyncio
 from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live_and_not_recording
+from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
 
 @pytest.mark.skipif(
@@ -421,3 +423,90 @@ class TestFineTuningAsync(TestBase):
                 print(f"[test_finetuning_sft_oss_async] Cancelled job: {fine_tuning_job.id}")
 
                 await self._cleanup_test_files_async(openai_client, train_file, validation_file)
+
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_sft_pre_finetuning_job_deploy_infer_async(self, **kwargs):
+
+        async with self.create_async_client(**kwargs) as project_client:
+            
+            async with await project_client.get_openai_client() as openai_client:
+                
+                # Use predefined values from test_base for consistency
+                pre_finetuned_model = self.test_finetuning_params["sft"]["openai"]["deployment"]["pre_finetuned_model"]
+                deployment_name = f"{self.test_finetuning_params['sft']['openai']['deployment']['deployment_name']}-async-{int(time.time())}"
+                
+                resource_group = kwargs.get("azure_ai_projects_tests_azure_resource_group", "")
+                account_name = kwargs.get("azure_ai_projects_tests_azure_aoai_account", "")
+                
+                assert resource_group, "Azure resource group is required for deployment test"
+                assert account_name, "Azure OpenAI account name is required for deployment test"
+                
+                print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Deploying model: {pre_finetuned_model}, Deployment name: {deployment_name}")
+                
+                async with self.create_cognitive_services_management_client_async(**kwargs) as cogsvc_client:
+                    
+                    deployment_model = DeploymentModel(
+                        format="OpenAI",
+                        name=pre_finetuned_model,
+                        version="1"
+                    )
+                    
+                    deployment_properties = DeploymentProperties(
+                        model=deployment_model
+                    )
+                    
+                    deployment_sku = Sku(
+                        name="Standard",
+                        capacity=1
+                    )
+                    
+                    deployment_config = Deployment(
+                        properties=deployment_properties,
+                        sku=deployment_sku
+                    )
+                    
+                    deployment_operation = await cogsvc_client.deployments.begin_create_or_update(
+                        resource_group_name=resource_group,
+                        account_name=account_name,
+                        deployment_name=deployment_name,
+                        deployment=deployment_config
+                    )
+                    
+                    # Wait for deployment to complete
+                    max_wait_time = 300
+                    start_time = time.time()
+                    
+                    while (deployment_operation.status() not in ["succeeded", "failed"] and 
+                           time.time() - start_time < max_wait_time):
+                        await asyncio.sleep(30)
+                        print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Deployment status: {deployment_operation.status()}")
+                    
+                    final_status = deployment_operation.status()
+                    print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Final deployment status: {final_status}")
+                    
+                    if final_status == "succeeded":
+                        print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Testing inference on deployed model")
+                        
+                        response = await openai_client.chat.completions.create(
+                            model=deployment_name,
+                            messages=[{"role": "user", "content": "Hello, how are you?"}],
+                            max_tokens=50
+                        )
+                        
+                        assert response.choices is not None, "Response choices should not be None"
+                        assert len(response.choices) > 0, "Response should have at least one choice"
+                        assert response.choices[0].message is not None, "Message should not be None"
+                        assert response.choices[0].message.content is not None, "Message content should not be None"
+                        
+                        print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Inference successful: {response.choices[0].message.content[:100]}")
+                        
+                        await cogsvc_client.deployments.begin_delete(
+                            resource_group_name=resource_group,
+                            account_name=account_name,
+                            deployment_name=deployment_name
+                        )
+                        print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Started deployment cleanup")
+                    
+                    else:
+                        print(f"[test_sft_pre_finetuning_job_deploy_infer_async] Deployment failed or timed out: {final_status}")

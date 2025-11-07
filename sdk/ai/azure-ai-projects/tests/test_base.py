@@ -32,6 +32,8 @@ from azure.ai.projects.models._models import AgentObject, AgentVersionObject
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
 from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
+from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
 
 # Load secrets from environment variables
 servicePreparer = functools.partial(
@@ -42,6 +44,9 @@ servicePreparer = functools.partial(
     azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
+    azure_ai_projects_tests_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_tests_azure_resource_group="sanitized-resource-group",
+    azure_ai_projects_tests_azure_aoai_account="sanitized-aoai-account",
 )
 
 
@@ -97,7 +102,13 @@ class TestBase(AzureRecordedTestCase):
 
     test_finetuning_params = {
         "sft": {
-            "openai": {"model_name": "gpt-4.1"},
+            "openai": {
+                "model_name": "gpt-4.1",
+                "deployment": {
+                    "deployment_name": "gpt-4-1-fine-tuned-test",
+                    "pre_finetuned_model": "ft:gpt-4.1:azure-ai-test::ABCD1234",
+                }
+            },
             "oss": {"model_name": "Ministral-3B"},
             "training_file_name": "sft_training_set.jsonl",
             "validation_file_name": "sft_validation_set.jsonl",
@@ -156,6 +167,32 @@ class TestBase(AzureRecordedTestCase):
         client = AsyncAIProjectClient(
             endpoint=endpoint,
             credential=credential,
+        )
+
+        return client
+
+    # helper function: create cognitive services management client using environment variables
+    def create_cognitive_services_management_client(self, **kwargs) -> CognitiveServicesManagementClient:
+        # fetch environment variables
+        subscription_id = kwargs.pop("azure_ai_projects_tests_azure_subscription_id")
+        credential = self.get_credential(CognitiveServicesManagementClient, is_async=False)
+
+        # create and return client
+        client = CognitiveServicesManagementClient(
+            credential=credential,
+            subscription_id=subscription_id
+        )
+
+        return client
+
+    # helper function: create async cognitive services management client using environment variables
+    def create_cognitive_services_management_client_async(self, **kwargs) -> CognitiveServicesManagementClientAsync:
+        subscription_id = kwargs.pop("azure_ai_projects_tests_azure_subscription_id")
+        credential = self.get_credential(CognitiveServicesManagementClientAsync, is_async=True)
+
+        client = CognitiveServicesManagementClientAsync(
+            credential=credential,
+            subscription_id=subscription_id
         )
 
         return client
