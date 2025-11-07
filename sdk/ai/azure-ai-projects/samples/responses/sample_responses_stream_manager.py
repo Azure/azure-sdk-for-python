@@ -22,15 +22,7 @@ USAGE:
 """
 
 import os
-import httpx
 from dotenv import load_dotenv
-from openai.types.responses import (
-    ResponseTextDeltaEvent,
-    ResponseCompletedEvent,
-    ResponseTextDoneEvent,
-    ResponseCreatedEvent,
-)
-
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.ai.projects import AIProjectClient
 
@@ -69,12 +61,12 @@ with project_client:
 
         # Process streaming events as they arrive
         for event in responses_stream_manager:
-            if isinstance(event, ResponseCreatedEvent):
+            if event.type == "response.created":
                 print(f"Stream response created with ID: {event.response.id}")
-            elif isinstance(event, ResponseTextDeltaEvent):
+            elif event.type == "response.output_text.delta":
                 print(f"Delta: {event.delta}")
-            elif isinstance(event, ResponseTextDoneEvent):
+            elif event.type == "response.text.done":
                 print(f"Response done with full message: {event.text}")
-            elif isinstance(event, ResponseCompletedEvent):
+            elif event.type == "response.completed":
                 print(f"Response completed with full message: {event.response.output_text}")
         # [END response_stream_method]
