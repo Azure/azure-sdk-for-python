@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
 First run your agent with azure-ai-agentserver-agentframework locally.
 
-If it works on local by failed on cloud. Check your logs in the application insight connected to your Azure AI Foundry Project.
+If it works on local but failed on cloud. Check your logs in the application insight connected to your Azure AI Foundry Project.
 
 
 ## Next steps

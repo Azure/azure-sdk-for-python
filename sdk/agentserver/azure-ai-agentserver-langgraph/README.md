@@ -38,7 +38,7 @@ Reference this [example](https://github.com/Azure/azure-sdk-for-python/blob/main
 
 First run your agent with azure-ai-agentserver-langgraph locally.
 
-If it works on local by failed on cloud. Check your logs in the application insight connected to your Azure AI Foundry Project.
+If it works on local but failed on cloud. Check your logs in the application insight connected to your Azure AI Foundry Project.
 
 
 ## Next steps
