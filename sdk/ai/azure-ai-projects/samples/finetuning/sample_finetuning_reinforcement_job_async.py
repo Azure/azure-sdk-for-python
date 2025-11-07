@@ -77,10 +77,10 @@ async def main():
                     training_file=train_file.id,
                     validation_file=validation_file.id,
                     model=model_name,
-                    method={
+                    method={  # type: ignore[arg-type]
                         "type": "reinforcement",
                         "reinforcement": {
-                            "grader": grader,
+                            "grader": grader,  # type: ignore[typeddict-item]
                             "hyperparameters": {
                                 "n_epochs": 1,
                                 "batch_size": 4,

@@ -33,7 +33,6 @@ USAGE:
 
 import asyncio
 import os
-import time
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
@@ -53,9 +52,9 @@ validation_file_path = os.environ.get(
 )
 
 # For Deployment and inferencing on model
-subscription_id = os.environ.get("AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID")
-resource_group = os.environ.get("AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP")
-account_name = os.environ.get("AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT")
+subscription_id = os.environ["AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID"]
+resource_group = os.environ["AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP"]
+account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
 
 
 async def main():

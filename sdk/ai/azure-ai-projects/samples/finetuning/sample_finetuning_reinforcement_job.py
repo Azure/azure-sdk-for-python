@@ -26,6 +26,7 @@ USAGE:
 """
 
 import os
+from typing import Any, Dict
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -57,7 +58,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 validation_file = openai_client.files.create(file=f, purpose="fine-tune")
             print(f"Uploaded validation file with ID: {validation_file.id}")
 
-            grader = {
+            grader: Dict[str, Any] = {
                 "name": "Response Quality Grader",
                 "type": "score_model",
                 "model": "o3-mini",
@@ -75,10 +76,10 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
                 training_file=train_file.id,
                 validation_file=validation_file.id,
                 model=model_name,
-                method={
+                method={  # type: ignore[arg-type]
                     "type": "reinforcement",
                     "reinforcement": {
-                        "grader": grader,
+                        "grader": grader,  # type: ignore[typeddict-item]
                         "hyperparameters": {
                             "n_epochs": 1,
                             "batch_size": 4,

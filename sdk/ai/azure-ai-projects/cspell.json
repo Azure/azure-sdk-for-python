@@ -17,6 +17,9 @@
         "inpainting",
         "CSDL",
         "fstring",
+        "Ministral",
+        "Qwen",
+        "cogsvc"
     ],
     "ignorePaths": [
       "*.csv",

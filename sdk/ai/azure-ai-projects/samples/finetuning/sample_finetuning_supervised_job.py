@@ -52,9 +52,9 @@ validation_file_path = os.environ.get(
 )
 
 # For Deployment and inferencing on model
-subscription_id = os.environ.get("AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID")
-resource_group = os.environ.get("AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP")
-account_name = os.environ.get("AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT")
+subscription_id = os.environ["AZURE_AI_PROJECTS_AZURE_SUBSCRIPTION_ID"]
+resource_group = os.environ["AZURE_AI_PROJECTS_AZURE_RESOURCE_GROUP"]
+account_name = os.environ["AZURE_AI_PROJECTS_AZURE_AOAI_ACCOUNT"]
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
