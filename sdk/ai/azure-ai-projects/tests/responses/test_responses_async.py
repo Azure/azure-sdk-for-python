@@ -6,18 +6,16 @@
 # cSpell:disable
 
 import pytest
-from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from test_base import TestBase, recorded_by_proxy_async_httpx, servicePreparer
 
 
-class TestResponses(TestBase):
+class TestResponsesAsync(TestBase):
 
+    # To run this test:
+    # pytest tests\agents\test_responses_async.py::TestResponsesAsync::test_responses_async -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with AOAI client",
-    )
-    async def test_responses(self, **kwargs):
+    @recorded_by_proxy_async_httpx
+    async def test_responses_async(self, **kwargs):
 
         model = self.test_agents_params["model_deployment_name"]
 

@@ -8,16 +8,14 @@
 # import os
 import pytest
 from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
-from devtools_testutils import is_live_and_not_recording
 
 
 class TestResponses(TestBase):
+
+    # To run this test:
+    # pytest tests\agents\test_responses.py::TestResponses::test_responses -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
-    # recorded_by_proxy_httpx
+    @recorded_by_proxy_httpx
     def test_responses(self, **kwargs):
         """
         Test creating a responses call (no Agents, no Conversation).
