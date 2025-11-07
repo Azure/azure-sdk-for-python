@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -34,16 +35,22 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText, ResponseTextFormatConfigurationJsonSchema
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    PromptAgentDefinitionText,
+    ResponseTextFormatConfigurationJsonSchema,
+)
 from pydantic import BaseModel
 
 load_dotenv()
+
 
 class CalendarEvent(BaseModel):
     model_config = {"extra": "forbid"}
     name: str
     date: str
     participants: list[str]
+
 
 project_client = AIProjectClient(
     endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
@@ -58,8 +65,10 @@ with project_client:
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            #BUG? text=PromptAgentDefinitionText(format=ResponseTextFormatConfigurationJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())),
-            text=PromptAgentDefinitionText(format={"type": "json_schema", "name": "CalendarEvent", "schema": CalendarEvent.model_json_schema()}),
+            # BUG? text=PromptAgentDefinitionText(format=ResponseTextFormatConfigurationJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())),
+            text=PromptAgentDefinitionText(
+                format={"type": "json_schema", "name": "CalendarEvent", "schema": CalendarEvent.model_json_schema()}
+            ),
             instructions="""
                 You are a helpful assistant that extracts calendar event information from the input user messages,
                 and returns it in the desired structured output format.
