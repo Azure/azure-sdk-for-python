@@ -261,7 +261,7 @@ class FoundryCBAgent:
 
     def init_tracing(self):
         exporter = os.environ.get(Constants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(Constants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        app_insights_conn_str = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
         if exporter or app_insights_conn_str:
             from opentelemetry.sdk.resources import Resource
             from opentelemetry.sdk.trace import TracerProvider

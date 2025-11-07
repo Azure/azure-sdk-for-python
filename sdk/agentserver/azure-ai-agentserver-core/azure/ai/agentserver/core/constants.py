@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 class Constants:
     # well-known environment variables
-    APPLICATION_INSIGHTS_CONNECTION_STRING = "_AGENT_RUNTIME_APP_INSIGHTS_CONNECTION_STRING"
     AZURE_AI_PROJECT_ENDPOINT = "AZURE_AI_PROJECT_ENDPOINT"
     AGENT_ID = "AGENT_ID"
     AGENT_NAME = "AGENT_NAME"
