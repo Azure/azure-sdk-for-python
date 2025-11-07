@@ -98,7 +98,7 @@ with DefaultAzureCredential() as credential:
                 "name": "Similarity",
                 "evaluator_name": "builtin.similarity",
                 "data_mapping": {
-                    "response": "{{item.answer}}",
+                    "response": "{{item.response}}",
                     "ground_truth": "{{item.ground_truth}}"
                 },
                 "initialization_parameters": {
@@ -111,7 +111,7 @@ with DefaultAzureCredential() as credential:
                 "name": "ROUGEScore",
                 "evaluator_name": "builtin.rouge_score",
                 "data_mapping": {
-                    "response": "{{item.answer}}",
+                    "response": "{{item.response}}",
                     "ground_truth": "{{item.ground_truth}}"
                 },
                 "initialization_parameters": {
@@ -126,7 +126,7 @@ with DefaultAzureCredential() as credential:
                 "name": "METEORScore",
                 "evaluator_name": "builtin.meteor_score",
                 "data_mapping": {
-                    "response": "{{item.answer}}",
+                    "response": "{{item.response}}",
                     "ground_truth": "{{item.ground_truth}}"
                 },
                 "initialization_parameters": {
@@ -138,7 +138,7 @@ with DefaultAzureCredential() as credential:
                 "name": "GLEUScore",
                 "evaluator_name": "builtin.gleu_score",
                 "data_mapping": {
-                    "response": "{{item.answer}}",
+                    "response": "{{item.response}}",
                     "ground_truth": "{{item.ground_truth}}"
                 },
                 "initialization_parameters": {
@@ -150,7 +150,7 @@ with DefaultAzureCredential() as credential:
                 "name": "F1Score",
                 "evaluator_name": "builtin.f1_score",
                 "data_mapping": {
-                    "response": "{{item.answer}}",
+                    "response": "{{item.response}}",
                     "ground_truth": "{{item.ground_truth}}"
                 },
                 "initialization_parameters": {
@@ -162,7 +162,7 @@ with DefaultAzureCredential() as credential:
                 "name": "BLEUScore",
                 "evaluator_name": "builtin.bleu_score",
                 "data_mapping": {
-                    "response": "{{item.answer}}",
+                    "response": "{{item.response}}",
                     "ground_truth": "{{item.ground_truth}}"
                 },
                 "initialization_parameters": {
