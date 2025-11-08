@@ -12,7 +12,7 @@ from test_base import TestBase, recorded_by_proxy_async_httpx, servicePreparer
 class TestResponsesAsync(TestBase):
 
     # To run this test:
-    # pytest tests\agents\test_responses_async.py::TestResponsesAsync::test_responses_async -s
+    # pytest tests\responses\test_responses_async.py::TestResponsesAsync::test_responses_async -s
     @servicePreparer()
     @recorded_by_proxy_async_httpx
     async def test_responses_async(self, **kwargs):

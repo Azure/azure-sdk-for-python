@@ -13,7 +13,7 @@ from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
 class TestResponses(TestBase):
 
     # To run this test:
-    # pytest tests\agents\test_responses.py::TestResponses::test_responses -s
+    # pytest tests\responses\test_responses.py::TestResponses::test_responses -s
     @servicePreparer()
     @recorded_by_proxy_httpx
     def test_responses(self, **kwargs):
