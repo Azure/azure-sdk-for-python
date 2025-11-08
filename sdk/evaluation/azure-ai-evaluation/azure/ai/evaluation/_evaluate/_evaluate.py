@@ -2422,9 +2422,7 @@ def _calculate_aoai_evaluation_summary(
         if failed_count > 0:
             result_counts["failed"] += 1
         elif (
-            failed_count == 0
-            and passed_count > 0
-            and passed_count == len(aoai_result.get("results", [])) - error_count
+            failed_count == 0 and passed_count > 0 and passed_count == len(aoai_result.get("results", [])) - error_count
         ):
             result_counts["passed"] += 1
 
