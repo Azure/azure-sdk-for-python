@@ -458,7 +458,7 @@
         "result_counts": {
             "total": 2,
             "errored": 2,
-            "failed": 0,
+            "failed": 2,
             "passed": 0
         },
         "per_model_usage": [
