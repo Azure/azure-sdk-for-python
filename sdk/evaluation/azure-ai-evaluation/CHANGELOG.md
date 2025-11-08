@@ -4,8 +4,9 @@
 
 ### Bugs Fixed
 
-- Added hardcoded "scenario": "redteam" field to the query_response dictionary for all red team conversation evaluations
-- Extract the scenario field from data and include it in the evaluation properties, following the same pattern as category and taxonomy fields
+- Added redteam scenario for red team evaluations and extracted to properties, following the same pattern as category and taxonomy fields
+- Added _is_primary_metric function and integrated primary metric filtering into _calculate_aoai_evaluation_summary
+- Updated documentation for _EvaluatorMetricMapping and reordered rouge_score metrics
 
 ## 1.13.2 (2025-11-07)
 
