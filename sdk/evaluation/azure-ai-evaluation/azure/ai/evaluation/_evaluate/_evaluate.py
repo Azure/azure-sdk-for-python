@@ -2195,7 +2195,7 @@ def _convert_results_to_aoai_evaluation_results(
         f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
     # Calculate summary statistics
-    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
+    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, criteria_name_types_from_meta)
     results["_evaluation_summary"] = evaluation_summary
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
@@ -2314,7 +2314,7 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     return metric
 
 
-def _is_primary_metric(metric_name: str, testing_criteria: str) -> bool:
+def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
     """
     Check if the given metric name is a primary metric.
 
@@ -2325,19 +2325,21 @@ def _is_primary_metric(metric_name: str, testing_criteria: str) -> bool:
     """
     if (
         not _is_none_or_nan(metric_name)
-        and not _is_none_or_nan(testing_criteria)
-        and testing_criteria in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS
-        and isinstance(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria], list)
-        and len(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria]) > 1
-        and metric_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria]
-        and metric_name.lower() != _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[testing_criteria][0].lower()
+        and not _is_none_or_nan(evaluator_name)
+        and evaluator_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS
+        and isinstance(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name], list)
+        and len(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]) > 1
+        and metric_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]
+        and metric_name.lower() != _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name][0].lower()
     ):
         return False
     else:
         return True
 
 
-def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logger) -> Dict[str, Any]:
+def _calculate_aoai_evaluation_summary(
+    aoai_results: list, logger: logging.Logger, criteria_name_types_from_meta: Optional[Dict[str, Any]]
+) -> Dict[str, Any]:
     """
     Calculate summary statistics for AOAI evaluation results.
 
@@ -2369,7 +2371,16 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 is_primary_metric = True
                 if isinstance(result_item, dict):
                     testing_criteria = result_item.get("name", "")
-                    is_primary_metric = _is_primary_metric(result_item.get("metric", ""), testing_criteria)
+                    if (
+                        criteria_name_types_from_meta is not None
+                        and isinstance(criteria_name_types_from_meta, dict)
+                        and testing_criteria in criteria_name_types_from_meta
+                    ):
+                        evaluator_name = criteria_name_types_from_meta[testing_criteria].get("evaluator_name", None)
+                        criteria_type = criteria_name_types_from_meta[testing_criteria].get("type", None)
+                        if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+                            evaluator_name = evaluator_name.replace("builtin.", "")
+                        is_primary_metric = _is_primary_metric(result_item.get("metric", ""), evaluator_name)
                     if not is_primary_metric:
                         logger.info(
                             f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
