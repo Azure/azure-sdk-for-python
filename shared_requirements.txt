@@ -88,7 +88,7 @@ azure-ai-projects
 starlette
 uvicorn
 opentelemetry-exporter-otlp-proto-http
-azure-framework-azure-ai
+agent-framework-azure-ai
 langgraph
 azure-ai-agentserver-core
 langchain-azure-ai
