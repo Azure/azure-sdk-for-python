@@ -51,7 +51,14 @@ from devtools_testutils.proxy_testcase import (
     start_record_or_playback,
     stop_record_or_playback,
     get_proxy_netloc,
+    transform_request,
 )
+
+try:
+    from azure.core.pipeline.transport import RequestsTransport, AioHttpTransport
+except ImportError:  # pragma: no cover - fallback when transports unavailable
+    RequestsTransport = None
+    AioHttpTransport = None
 
 # Load secrets from environment variables
 servicePreparer = functools.partial(
@@ -497,14 +504,38 @@ def recorded_by_proxy_httpx(test_func):
 
         test_id = get_test_id()
         recording_id, variables = start_record_or_playback(test_id)
-        original_transport_func = httpx.HTTPTransport.handle_request
+        original_httpx_transport_func = httpx.HTTPTransport.handle_request  # type: ignore[union-attr]
+        original_requests_transport_func = (
+            RequestsTransport.send  # type: ignore[union-attr]
+            if RequestsTransport is not None and hasattr(RequestsTransport, "send")
+            else None
+        )
 
-        def combined_call(transport_self, request: httpx.Request) -> httpx.Response:
+        def combined_httpx_call(self, request):
             transform_httpx_request(request, recording_id)
-            result = original_transport_func(transport_self, request)
+            result = original_httpx_transport_func(self, request)
             return restore_httpx_response_url(result)
 
-        httpx.HTTPTransport.handle_request = combined_call
+        httpx.HTTPTransport.handle_request = combined_httpx_call  # type: ignore[assignment]
+
+        if original_requests_transport_func is not None:
+
+            def combined_requests_call(self, request, **call_kwargs):
+                pipeline_request = request
+                transform_request(pipeline_request, recording_id)
+                result = original_requests_transport_func(self, request, **call_kwargs)
+
+                parsed_result = url_parse.urlparse(result.request.url)
+                upstream_uri = url_parse.urlparse(result.request.headers.get("x-recording-upstream-base-uri", ""))
+                upstream_uri_dict = {
+                    "scheme": upstream_uri.scheme or parsed_result.scheme,
+                    "netloc": upstream_uri.netloc or parsed_result.netloc,
+                }
+                original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+                result.request.url = original_target
+                return result
+
+            RequestsTransport.send = combined_requests_call  # type: ignore[assignment]
 
         # Call the test function
         test_variables = None
@@ -533,7 +564,9 @@ def recorded_by_proxy_httpx(test_func):
             raise error_with_message from error
 
         finally:
-            httpx.HTTPTransport.handle_request = original_transport_func
+            httpx.HTTPTransport.handle_request = original_httpx_transport_func  # type: ignore[union-attr]
+            if original_requests_transport_func is not None:
+                RequestsTransport.send = original_requests_transport_func  # type: ignore[union-attr]
             stop_record_or_playback(test_id, recording_id, test_variables)
 
         return test_variables
@@ -595,14 +628,37 @@ def recorded_by_proxy_async_httpx(test_func):
 
         test_id = get_test_id()
         recording_id, variables = start_record_or_playback(test_id)
-        original_transport_func = httpx.AsyncHTTPTransport.handle_async_request
+        original_httpx_transport_func = httpx.AsyncHTTPTransport.handle_async_request  # type: ignore[union-attr]
+        original_aio_transport_func = (
+            AioHttpTransport.send  # type: ignore[union-attr]
+            if AioHttpTransport is not None and hasattr(AioHttpTransport, "send")
+            else None
+        )
 
-        async def combined_call(transport_self, request: httpx.Request) -> httpx.Response:
+        async def combined_httpx_call(self, request):
             transform_httpx_request(request, recording_id)
-            result = await original_transport_func(transport_self, request)
+            result = await original_httpx_transport_func(self, request)
             return restore_httpx_response_url(result)
 
-        httpx.AsyncHTTPTransport.handle_async_request = combined_call
+        httpx.AsyncHTTPTransport.handle_async_request = combined_httpx_call  # type: ignore[assignment]
+
+        if original_aio_transport_func is not None:
+
+            async def combined_aio_call(self, request, **call_kwargs):
+                transform_request(request, recording_id)
+                result = await original_aio_transport_func(self, request, **call_kwargs)
+
+                parsed_result = url_parse.urlparse(result.request.url)
+                upstream_uri = url_parse.urlparse(result.request.headers.get("x-recording-upstream-base-uri", ""))
+                upstream_uri_dict = {
+                    "scheme": upstream_uri.scheme or parsed_result.scheme,
+                    "netloc": upstream_uri.netloc or parsed_result.netloc,
+                }
+                original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+                result.request.url = original_target
+                return result
+
+            AioHttpTransport.send = combined_aio_call  # type: ignore[assignment]
 
         # Call the test function
         test_variables = None
@@ -631,7 +687,9 @@ def recorded_by_proxy_async_httpx(test_func):
             raise error_with_message from error
 
         finally:
-            httpx.AsyncHTTPTransport.handle_async_request = original_transport_func
+            httpx.AsyncHTTPTransport.handle_async_request = original_httpx_transport_func  # type: ignore[union-attr]
+            if original_aio_transport_func is not None:
+                AioHttpTransport.send = original_aio_transport_func  # type: ignore[union-attr]
             stop_record_or_playback(test_id, recording_id, test_variables)
 
         return test_variables

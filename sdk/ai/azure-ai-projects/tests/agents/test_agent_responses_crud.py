@@ -7,8 +7,8 @@
 
 from pydantic import BaseModel, Field
 import pytest
-from test_base import TestBase, servicePreparer
-from devtools_testutils import is_live_and_not_recording
+from test_base import TestBase, servicePreparer, recorded_by_proxy_httpx
+from devtools_testutils import is_live_and_not_recording, recorded_by_proxy
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     ResponseTextFormatConfigurationJsonSchema,
@@ -19,10 +19,7 @@ from azure.ai.projects.models import (
 class TestAgentResponsesCrud(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
+    @recorded_by_proxy_httpx
     def test_agent_responses_crud(self, **kwargs):
         """
         Test two-turn Responses with Agent reference and Conversation.
@@ -48,7 +45,7 @@ class TestAgentResponsesCrud(TestBase):
         DELETE /conversations/{conversation_id}              openai_client.conversations.delete()
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
-
+        breakpoint()
         model = self.test_agents_params["model_deployment_name"]
 
         # Setup

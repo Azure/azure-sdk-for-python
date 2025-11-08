@@ -157,6 +157,7 @@ def check_availability() -> int:
     try:
         http_client = get_http_client(raise_on_status=False)
         response = http_client.request(method="GET", url=PROXY_CHECK_URL, timeout=10)
+        _LOGGER.info(f"Proxy responding on {PROXY_CHECK_URL}")
         return response.status
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except SSLError as sslError:
