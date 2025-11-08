@@ -62,6 +62,6 @@ combine-as-imports = true
 breaking = false   # incompatible python version
 pyright = false
 verifytypes = false   # incompatible python version for -core
-bandit = false
 verify_keywords = false
 mindependency = false  # depends on -core package
+whl_no_aio = false
