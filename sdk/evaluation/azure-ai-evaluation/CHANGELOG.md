@@ -1,5 +1,12 @@
 # Release History
 
+## 1.13.3 (2025-11-08)
+
+### Bugs Fixed
+
+- Added hardcoded "scenario": "redteam" field to the query_response dictionary for all red team conversation evaluations
+- Extract the scenario field from data and include it in the evaluation properties, following the same pattern as category and taxonomy fields
+
 ## 1.13.2 (2025-11-07)
 
 ### Bugs Fixed
