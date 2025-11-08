@@ -2004,6 +2004,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_total_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"total_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2021,6 +2022,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_prompt_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"prompt_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2038,6 +2040,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_completion_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"completion_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2215,7 +2218,7 @@ def _is_none_or_nan(value: Any) -> bool:
         return True
     if isinstance(value, float) and math.isnan(value):
         return True
-    if isinstance(value, str) and value.lower() in ["nan", "null", "none"]:
+    if isinstance(value, str) and value.lower() in ["nan", "null", "none", ""]:
         return True
     return False
 
@@ -2470,6 +2473,9 @@ def _calculate_aoai_evaluation_summary(
                     cur_cached_tokens = usage_data.get("cached_tokens", 0)
                     if _is_none_or_nan(cur_cached_tokens):
                         cur_cached_tokens = 0
+                    logger.info(
+                        f"Model: {model_name}, cur_total_tokens: {cur_total_tokens}, {_is_none_or_nan(cur_total_tokens)}, cur_prompt_tokens: {cur_prompt_tokens}, cur_completion_tokens: {cur_completion_tokens}, cur_cached_tokens: {cur_cached_tokens}"
+                    )
                     model_stats["total_tokens"] += cur_total_tokens
                     model_stats["prompt_tokens"] += cur_prompt_tokens
                     model_stats["completion_tokens"] += cur_completion_tokens
