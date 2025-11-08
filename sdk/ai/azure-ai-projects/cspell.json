@@ -16,6 +16,8 @@
         "aread",
         "inpainting",
         "CSDL",
+        "Tadmaq",
+        "Udbk",
     ],
     "ignorePaths": [
       "*.csv",
