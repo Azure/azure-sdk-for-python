@@ -64,4 +64,4 @@ pyright = false
 verifytypes = false   # incompatible python version for -core
 verify_keywords = false
 mindependency = false  # depends on -core package
-no_whl_aio = false
+whl_no_aio = false
