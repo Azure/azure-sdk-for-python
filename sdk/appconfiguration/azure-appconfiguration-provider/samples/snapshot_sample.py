@@ -5,11 +5,16 @@
 # -------------------------------------------------------------------------
 
 from azure.appconfiguration.provider import load, SettingSelector
-from sample_utilities import get_client_modifications
+from sample_utilities import get_authority, get_credential, get_client_modifications
 import os
 
+endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+authority = get_authority(endpoint)
+credential = get_credential(authority)
 kwargs = get_client_modifications()
-connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
+# Connecting to Azure App Configuration using AAD
+config = load(endpoint=endpoint, credential=credential, **kwargs)
 
 # Loading configuration settings from a snapshot
 # Note: The snapshot must already exist in your App Configuration store
