@@ -359,6 +359,37 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertIn(FEATURE_FLAG_REFERENCE_KEY, metadata)
         self.assertIn("test_feature", metadata[FEATURE_FLAG_REFERENCE_KEY])
 
+    def test_update_ff_telemetry_metadata_max_variants(self):
+        """Test that max_variants only increases, never decreases."""
+        feature_flag = Mock(spec=FeatureFlagConfigurationSetting)
+
+        self.assertIsNone(self.provider._tracing_context.max_variants)
+
+        feature_flag_value: Dict[str, Any] = {}
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value)
+
+        # Verify max_variants remains None
+        self.assertIsNone(self.provider._tracing_context.max_variants)
+
+        # First call with 3 variants
+        feature_flag_value_3: Dict[str, Any] = {"variants": [{}, {}, {}]}  # 3 variants
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value_3)
+        self.assertEqual(self.provider._tracing_context.max_variants, 3)
+
+        # Second call with 1 variant (should not decrease)
+        feature_flag_value_1: Dict[str, Any] = {"variants": [{}]}  # 1 variant
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value_1)
+        self.assertEqual(self.provider._tracing_context.max_variants, 3)  # Should remain 3
+
+        # Third call with 5 variants (should increase)
+        feature_flag_value_5: Dict[str, Any] = {"variants": [{}, {}, {}, {}, {}]}  # 5 variants
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value_5)
+        self.assertEqual(self.provider._tracing_context.max_variants, 5)  # Should increase to 5
+
     def test_generate_allocation_id_no_allocation(self):
         """Test allocation ID generation with no allocation."""
         feature_flag_value: Dict[str, Any] = {"no_allocation": "here"}
