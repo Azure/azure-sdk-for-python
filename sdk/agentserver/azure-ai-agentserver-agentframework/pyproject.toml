@@ -1,0 +1,66 @@
+[project]
+name = "azure-ai-agentserver-agentframework"
+# Keep using your _version.py; setuptools reads it via [tool.setuptools.dynamic] below
+dynamic = ["version", "readme"]
+description = "Agents server adapter for Azure AI"
+requires-python = ">=3.10"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["azure", "azure sdk"]
+
+dependencies = [
+    "azure-ai-agentserver-core",
+    "agent-framework-azure-ai==1.0.0b251007",
+    "agent-framework-core==1.0.0b251007",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
+]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.agentframework._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+lint.select = ["E", "F", "B", "I"]   # E=pycodestyle errors, F=Pyflakes, B=bugbear, I=import sort
+lint.ignore = []
+fix = false
+
+[tool.ruff.lint.isort]
+known-first-party = ["azure.ai.agentserver.agentframework"]
+combine-as-imports = true
+
+[tool.azure-sdk-build]
+breaking = false   # incompatible python version
+pyright = false
+verifytypes = false   # incompatible python version for -core
+bandit = false
+verify_keywords = false
+mindependency = false  # depends on -core package
