@@ -2320,6 +2320,8 @@ def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
 
     :param metric_name: The name of the metric
     :type metric_name: str
+    :param evaluator_name: The name of the evaluator
+    :type evaluator_name: str
     :return: True if the metric is a primary metric, False otherwise
     :rtype: bool
     """
@@ -2368,9 +2370,9 @@ def _calculate_aoai_evaluation_summary(
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
             )
             for result_item in aoai_result["results"]:
-                is_primary_metric = True
                 if isinstance(result_item, dict):
                     testing_criteria = result_item.get("name", "")
+                    is_primary_metric = True
                     if (
                         criteria_name_types_from_meta is not None
                         and isinstance(criteria_name_types_from_meta, dict)
