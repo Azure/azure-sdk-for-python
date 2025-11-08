@@ -97,78 +97,49 @@ with DefaultAzureCredential() as credential:
                 "type": "azure_ai_evaluator",
                 "name": "Similarity",
                 "evaluator_name": "builtin.similarity",
-                "data_mapping": {
-                    "response": "{{item.response}}",
-                    "ground_truth": "{{item.ground_truth}}"
-                },
-                "initialization_parameters": {
-                    "deployment_name": f"{model_deployment_name}",
-                    "threshold": 3
-                }
+                "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+                "initialization_parameters": {"deployment_name": f"{model_deployment_name}", "threshold": 3},
             },
             {
                 "type": "azure_ai_evaluator",
                 "name": "ROUGEScore",
                 "evaluator_name": "builtin.rouge_score",
-                "data_mapping": {
-                    "response": "{{item.response}}",
-                    "ground_truth": "{{item.ground_truth}}"
-                },
+                "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
                 "initialization_parameters": {
                     "rouge_type": "rouge1",
                     "f1_score_threshold": 0.5,
                     "precision_threshold": 0.5,
-                    "recall_threshold": 0.5
-                }
+                    "recall_threshold": 0.5,
+                },
             },
             {
                 "type": "azure_ai_evaluator",
                 "name": "METEORScore",
                 "evaluator_name": "builtin.meteor_score",
-                "data_mapping": {
-                    "response": "{{item.response}}",
-                    "ground_truth": "{{item.ground_truth}}"
-                },
-                "initialization_parameters": {
-                    "threshold": 0.5
-                }
+                "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+                "initialization_parameters": {"threshold": 0.5},
             },
             {
                 "type": "azure_ai_evaluator",
                 "name": "GLEUScore",
                 "evaluator_name": "builtin.gleu_score",
-                "data_mapping": {
-                    "response": "{{item.response}}",
-                    "ground_truth": "{{item.ground_truth}}"
-                },
-                "initialization_parameters": {
-                    "threshold": 0.5
-                }
+                "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+                "initialization_parameters": {"threshold": 0.5},
             },
             {
                 "type": "azure_ai_evaluator",
                 "name": "F1Score",
                 "evaluator_name": "builtin.f1_score",
-                "data_mapping": {
-                    "response": "{{item.response}}",
-                    "ground_truth": "{{item.ground_truth}}"
-                },
-                "initialization_parameters": {
-                    "threshold": 0.5
-                }
+                "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+                "initialization_parameters": {"threshold": 0.5},
             },
             {
                 "type": "azure_ai_evaluator",
                 "name": "BLEUScore",
                 "evaluator_name": "builtin.bleu_score",
-                "data_mapping": {
-                    "response": "{{item.response}}",
-                    "ground_truth": "{{item.ground_truth}}"
-                },
-                "initialization_parameters": {
-                    "threshold": 0.5
-                }
-            }
+                "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
+                "initialization_parameters": {"threshold": 0.5},
+            },
         ]
 
         print("Creating Eval Group")
@@ -207,7 +178,7 @@ with DefaultAzureCredential() as credential:
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Report URL: {run.report_url}")
-                
+
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")

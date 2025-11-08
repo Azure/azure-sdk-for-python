@@ -35,9 +35,7 @@ def run_evaluator(
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 
     with DefaultAzureCredential() as credential:
-        with AIProjectClient(
-            endpoint=endpoint, credential=credential
-        ) as project_client:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
             print("Creating an OpenAI client from the AI Project client")
 
             client = project_client.get_openai_client()

@@ -47,9 +47,7 @@ def main() -> None:
 
     with DefaultAzureCredential() as credential:
 
-        with AIProjectClient(
-            endpoint=endpoint, credential=credential
-        ) as project_client:
+        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
             print("Creating an OpenAI client from the AI Project client")
 

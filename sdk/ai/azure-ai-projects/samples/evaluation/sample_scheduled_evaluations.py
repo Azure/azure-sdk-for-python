@@ -65,24 +65,28 @@ def main() -> None:
     print("Scheduling RedTeam based Evaluation...")
     schedule_redteam_evaluation()
 
+
 def assign_rbac():
     """
     Assign the "Azure AI User" role to the Azure AI Foundry project's Managed Identity.
     """
     load_dotenv()
-    
+
     endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "")
     resource_group_name = os.environ.get("AZURE_RESOURCE_GROUP_NAME", "")
-    
+
     if not endpoint or not subscription_id or not resource_group_name:
-        print("Error: AZURE_AI_PROJECT_ENDPOINT, AZURE_SUBSCRIPTION_ID, and AZURE_RESOURCE_GROUP_NAME environment variables are required")
+        print(
+            "Error: AZURE_AI_PROJECT_ENDPOINT, AZURE_SUBSCRIPTION_ID, and AZURE_RESOURCE_GROUP_NAME environment variables are required"
+        )
         return
-    
+
     # Parse project information from the endpoint
     # Format: https://<account_name>.services.ai.azure.com/api/projects/<project_name>
     try:
         import re
+
         pattern = r"https://(.+)\.services\.ai\.azure\.com/api/projects/(.+)"
         match = re.match(pattern, endpoint)
         if not match:
@@ -93,19 +97,21 @@ def assign_rbac():
     except Exception as e:
         print(f"Error parsing endpoint: {e}")
         return
-    
+
     with DefaultAzureCredential() as credential:
         # Initialize clients
         auth_client = AuthorizationManagementClient(credential, subscription_id)
         resource_client = ResourceManagementClient(credential, subscription_id)
-        
+
         try:
             # Get the AI Foundry project resource
             # Based on resource ID pattern: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.CognitiveServices/accounts/{account}/projects/{project}
-            
+
             # Try to find the resource group and project
-            print(f"Searching for project: {project_name} under account: {account_name} in resource group: {resource_group_name}")
-            
+            print(
+                f"Searching for project: {project_name} under account: {account_name} in resource group: {resource_group_name}"
+            )
+
             # Get the project's managed identity principal ID
             try:
                 # Get the AI project resource
@@ -115,9 +121,9 @@ def assign_rbac():
                     parent_resource_path=f"accounts/{account_name}",
                     resource_type="projects",
                     resource_name=project_name,
-                    api_version="2025-06-01"
+                    api_version="2025-06-01",
                 )
-                
+
                 # Extract the managed identity principal ID
                 if project_resource.identity and project_resource.identity.principal_id:
                     principal_id = project_resource.identity.principal_id
@@ -125,39 +131,39 @@ def assign_rbac():
                 else:
                     print("Error: Project does not have a managed identity enabled")
                     return
-                    
+
             except Exception as e:
                 print(f"Error retrieving project resource: {e}")
                 return
-            
+
             # Define the Azure AI User role definition ID
             # This is the built-in role ID for "Azure AI User"
             azure_ai_user_role_id = "64702f94-c441-49e6-a78b-ef80e0188fee"
-            
+
             # Create the scope (project level)
             scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.CognitiveServices/accounts/{account_name}/projects/{project_name}"
-            
+
             # Create role assignment
             role_assignment_name = str(uuid.uuid4())
-            
+
             print(f"Assigning 'Azure AI User' role to managed identity...")
-            
+
             role_assignment = auth_client.role_assignments.create(
                 scope=scope,
                 role_assignment_name=role_assignment_name,
                 parameters={
                     "role_definition_id": f"{scope}/providers/Microsoft.Authorization/roleDefinitions/{azure_ai_user_role_id}",
                     "principal_id": principal_id,
-                    "principal_type": "ServicePrincipal"
-                }
+                    "principal_type": "ServicePrincipal",
+                },
             )
-            
+
             print(f"Successfully assigned 'Azure AI User' role to project managed identity")
             print(f"Role assignment ID: {role_assignment.name}")
-            
+
         except Exception as e:
             print(f"Error during role assignment: {e}")
-            
+
             # Check for specific error types and provide helpful guidance
             error_message = str(e)
             if "AuthorizationFailed" in error_message:
@@ -179,12 +185,12 @@ def assign_rbac():
                 print("   - Run 'az logout && az login' in Azure CLI")
                 print("   - Or restart this application")
                 raise
-                
+
             elif "RoleAssignmentExists" in error_message:
                 print("\n✅ ROLE ASSIGNMENT ALREADY EXISTS:")
                 print("The 'Azure AI User' role is already assigned to the project's managed identity.")
                 print("No action needed - the required permissions are already in place.")
-                
+
             elif "InvalidResourceTypeNameFormat" in error_message:
                 print("\n🔧 RESOURCE FORMAT ERROR:")
                 print("The resource path format is incorrect. Please check:")
@@ -192,16 +198,17 @@ def assign_rbac():
                 print("  • Project endpoint format matches expected pattern")
                 print("  • Account and project names are properly extracted")
                 raise ValueError("Invalid resource type name format")
-                
+
             elif "NoRegisteredProviderFound" in error_message:
                 print("\n🌐 API VERSION ERROR:")
                 print("The API version or resource type is not supported in this region.")
                 print("This usually indicates a service availability issue.")
-                
+
             else:
                 print(f"\n❌ UNEXPECTED ERROR:")
                 print("An unexpected error occurred. Please check the error details above.")
                 raise
+
 
 def schedule_dataset_evaluation() -> None:
     endpoint = os.environ[
