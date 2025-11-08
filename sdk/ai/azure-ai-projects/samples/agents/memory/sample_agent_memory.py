@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.

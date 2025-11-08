@@ -5,10 +5,15 @@
 # ------------------------------------
 # cSpell:disable
 
+from pydantic import BaseModel, Field
 import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
-from azure.ai.projects.models import PromptAgentDefinition
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    ResponseTextFormatConfigurationJsonSchema,
+    PromptAgentDefinitionText,
+)
 
 
 class TestAgentResponsesCrud(TestBase):
@@ -145,6 +150,68 @@ class TestAgentResponsesCrud(TestBase):
         # print(f"Canceled response id: {canceled_response.id}")
 
         # Teardown
+        openai_client.conversations.delete(conversation_id=conversation.id)
+        print("Conversation deleted")
+
+        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+        print("Agent deleted")
+
+    # To run this tes:
+    # pytest tests\agents\test_agent_responses_crud.py::TestAgentResponsesCrud::test_agent_responses_with_structured_output -s
+    @servicePreparer()
+    @pytest.mark.skipif(
+        condition=(not is_live_and_not_recording()),
+        reason="Skipped because we cannot record network calls with OpenAI client",
+    )
+    def test_agent_responses_with_structured_output(self, **kwargs):
+        model = self.test_agents_params["model_deployment_name"]
+
+        # Setup
+        project_client = self.create_client(operation_group="agents", **kwargs)
+        openai_client = project_client.get_openai_client()
+
+        class CalendarEvent(BaseModel):
+            model_config = {"extra": "forbid"}
+            name: str
+            date: str = Field(description="Date in YYYY-MM-DD format")
+            participants: list[str]
+
+        agent = project_client.agents.create_version(
+            agent_name="MyAgent",
+            definition=PromptAgentDefinition(
+                model=model,
+                text=PromptAgentDefinitionText(
+                    format=ResponseTextFormatConfigurationJsonSchema(
+                        name="CalendarEvent", schema=CalendarEvent.model_json_schema()
+                    )
+                ),
+                instructions="""
+                    You are a helpful assistant that extracts calendar event information from the input user messages,
+                    and returns it in the desired structured output format.
+                """,
+            ),
+        )
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+        conversation = openai_client.conversations.create(
+            items=[
+                {
+                    "type": "message",
+                    "role": "user",
+                    "content": "Alice and Bob are going to a science fair this Friday, November 7, 2025.",
+                }
+            ]
+        )
+        print(f"Created conversation with initial user message (id: {conversation.id})")
+
+        response = openai_client.responses.create(
+            conversation=conversation.id,
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            input="",  # TODO: Remove 'input' once service is fixed
+        )
+        print(f"Response id: {response.id}, output text: {response.output_text}")
+        assert response.output_text == '{"name":"Science Fair","date":"2025-11-07","participants":["Alice","Bob"]}'
+
         openai_client.conversations.delete(conversation_id=conversation.id)
         print("Conversation deleted")
 

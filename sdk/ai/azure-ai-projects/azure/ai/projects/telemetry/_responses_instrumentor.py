@@ -52,6 +52,7 @@ __all__ = [
 
 _responses_traces_enabled: bool = False
 _trace_responses_content: bool = False
+_trace_binary_data: bool = False
 
 # Azure OpenAI system identifier for traces
 AZURE_OPENAI_SYSTEM = "azure.openai"
@@ -131,6 +132,14 @@ class ResponsesInstrumentor:
         :rtype: bool
         """
         return self._impl.is_content_recording_enabled()
+
+    def is_binary_data_enabled(self) -> bool:
+        """This function gets the binary data tracing value.
+
+        :return: A bool value indicating whether binary data tracing is enabled.
+        :rtype: bool
+        """
+        return self._impl.is_binary_data_enabled()
 
 
 class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attributes,too-many-statements,too-many-public-methods
@@ -389,10 +398,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false")
             )
 
+        # Check if binary data tracing is enabled
+        enable_binary_data = self._str_to_bool(os.environ.get("AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA", "false"))
+
         if not self.is_instrumented():
-            self._instrument_responses(enable_content_recording)
+            self._instrument_responses(enable_content_recording, enable_binary_data)
         else:
             self.set_enable_content_recording(enable_content_recording)
+            self.set_enable_binary_data(enable_binary_data)
 
     def uninstrument(self):
         """
@@ -430,6 +443,23 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         :rtype bool
         """
         return self._is_content_recording_enabled()
+
+    def set_enable_binary_data(self, enable_binary_data: bool = False) -> None:
+        """This function sets the binary data tracing value.
+
+        :param enable_binary_data: Indicates whether tracing of binary data (such as images) should be enabled.
+                                   This only takes effect when content recording is also enabled.
+        :type enable_binary_data: bool
+        """
+        self._set_enable_binary_data(enable_binary_data=enable_binary_data)
+
+    def is_binary_data_enabled(self) -> bool:
+        """This function gets the binary data tracing value.
+
+        :return: A bool value indicating whether binary data tracing is enabled.
+        :rtype: bool
+        """
+        return self._is_binary_data_enabled()
 
     def _set_attributes(self, span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
         for attr in attrs:
@@ -474,7 +504,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         event_body: Dict[str, Any] = {}
 
         if _trace_responses_content and content:
-            event_body["text"] = content
+            # Use consistent structured format with content array
+            event_body["content"] = [{"type": "text", "text": content}]
 
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
@@ -559,6 +590,138 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         # Use "tool" for the event name: gen_ai.tool.message
         span.span_instance.add_event(name="gen_ai.tool.message", attributes=attributes)
+
+    # pylint: disable=too-many-branches
+    def _add_structured_input_events(
+        self,
+        span: "AbstractSpan",
+        input_list: List[Any],
+        conversation_id: Optional[str] = None,
+    ) -> None:
+        """
+        Add message events for structured input (list format).
+        This handles cases like messages with images, multi-part content, etc.
+        """
+        for input_item in input_list:
+            try:
+                # Extract role - handle both dict and object
+                if isinstance(input_item, dict):
+                    role = input_item.get("role", "user")
+                    content = input_item.get("content")
+                else:
+                    role = getattr(input_item, "role", "user")
+                    content = getattr(input_item, "content", None)
+
+                if not content:
+                    continue
+
+                # Build structured event content with content parts
+                event_body: Dict[str, Any] = {}
+
+                # Only process content if content recording is enabled
+                if _trace_responses_content:
+                    content_parts = []
+                    has_non_text_content = False
+
+                    # Content can be a list of content items
+                    if isinstance(content, list):
+                        for content_item in content:
+                            content_type = None
+
+                            # Handle dict format
+                            if isinstance(content_item, dict):
+                                content_type = content_item.get("type")
+                                if content_type in ("input_text", "text"):
+                                    text = content_item.get("text")
+                                    if text:
+                                        content_parts.append({"type": "text", "text": text})
+                                elif content_type == "input_image":
+                                    has_non_text_content = True
+                                    image_part = {"type": "image"}
+                                    # Include image data if binary data tracing is enabled
+                                    if _trace_binary_data:
+                                        image_url = content_item.get("image_url")
+                                        if image_url:
+                                            image_part["image_url"] = image_url
+                                    content_parts.append(image_part)
+                                elif content_type == "input_file":
+                                    has_non_text_content = True
+                                    file_part = {"type": "file"}
+                                    # Only include filename and file_id if content recording is enabled
+                                    filename = content_item.get("filename")
+                                    if filename:
+                                        file_part["filename"] = filename
+                                    file_id = content_item.get("file_id")
+                                    if file_id:
+                                        file_part["file_id"] = file_id
+                                    # Only include file_data if binary data tracing is enabled
+                                    if _trace_binary_data:
+                                        file_data = content_item.get("file_data")
+                                        if file_data:
+                                            file_part["file_data"] = file_data
+                                    content_parts.append(file_part)
+                                elif content_type:
+                                    # Other content types (audio, video, etc.)
+                                    has_non_text_content = True
+                                    content_parts.append({"type": content_type})
+
+                            # Handle object format
+                            elif hasattr(content_item, "type"):
+                                content_type = getattr(content_item, "type", None)
+                                if content_type in ("input_text", "text"):
+                                    text = getattr(content_item, "text", None)
+                                    if text:
+                                        content_parts.append({"type": "text", "text": text})
+                                elif content_type == "input_image":
+                                    has_non_text_content = True
+                                    image_part = {"type": "image"}
+                                    # Include image data if binary data tracing is enabled
+                                    if _trace_binary_data:
+                                        image_url = getattr(content_item, "image_url", None)
+                                        if image_url:
+                                            image_part["image_url"] = image_url
+                                    content_parts.append(image_part)
+                                elif content_type == "input_file":
+                                    has_non_text_content = True
+                                    file_part = {"type": "file"}
+                                    # Only include filename and file_id if content recording is enabled
+                                    filename = getattr(content_item, "filename", None)
+                                    if filename:
+                                        file_part["filename"] = filename
+                                    file_id = getattr(content_item, "file_id", None)
+                                    if file_id:
+                                        file_part["file_id"] = file_id
+                                    # Only include file_data if binary data tracing is enabled
+                                    if _trace_binary_data:
+                                        file_data = getattr(content_item, "file_data", None)
+                                        if file_data:
+                                            file_part["file_data"] = file_data
+                                    content_parts.append(file_part)
+                                elif content_type:
+                                    # Other content types
+                                    has_non_text_content = True
+                                    content_parts.append({"type": content_type})
+
+                    # Only add content if we have content parts
+                    if content_parts:
+                        # Always use consistent structured format
+                        event_body["content"] = content_parts
+
+                # Create event attributes
+                attributes = self._create_event_attributes(
+                    conversation_id=conversation_id,
+                    message_role=role,
+                )
+                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+
+                # Add the event
+                event_name = f"gen_ai.{role}.message"
+                span.span_instance.add_event(name=event_name, attributes=attributes)
+
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Skip items that can't be processed
+                logger.debug("Failed to process structured input item: %s", input_item, exc_info=True)
+                continue
 
     def _emit_tool_call_event(
         self,
@@ -703,6 +866,35 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                         "url": getattr(result, "url", None),
                                     }
                                     tool_call["action"]["results"].append(result_data)
+
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
+
+                # Handle image_generation_call type
+                elif item_type == "image_generation_call":
+                    tool_call = {
+                        "type": "image_generation",
+                    }
+
+                    if hasattr(output_item, "id"):
+                        tool_call["id"] = output_item.id
+                    elif hasattr(output_item, "call_id"):
+                        tool_call["id"] = output_item.call_id
+
+                    # Only include image generation details if content recording is enabled
+                    if _trace_responses_content:
+                        # Include metadata fields
+                        if hasattr(output_item, "prompt"):
+                            tool_call["prompt"] = output_item.prompt
+                        if hasattr(output_item, "quality"):
+                            tool_call["quality"] = output_item.quality
+                        if hasattr(output_item, "size"):
+                            tool_call["size"] = output_item.size
+                        if hasattr(output_item, "style"):
+                            tool_call["style"] = output_item.style
+
+                        # Include the result (image data) only if binary data tracing is enabled
+                        if _trace_binary_data and hasattr(output_item, "result") and output_item.result:
+                            tool_call["result"] = output_item.result
 
                     self._emit_tool_call_event(span, tool_call, conversation_id)
 
@@ -866,6 +1058,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     span,
                     role="user",
                     content=input_text,
+                    conversation_id=conversation_id,
+                )
+            elif isinstance(input_to_check, list) and not has_tool_outputs:
+                # Handle structured input (list format) - extract text content from user messages
+                # This handles cases like image inputs with text prompts
+                self._add_structured_input_events(
+                    span,
+                    input_list=input_to_check,
                     conversation_id=conversation_id,
                 )
 
@@ -2445,6 +2645,46 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             event_name = "gen_ai.assistant.message"
 
+        elif item_type == "image_generation_call":
+            # Image generation tool call
+            role = "assistant"  # Override role for image generation calls
+            if _trace_responses_content:
+                tool_call = {
+                    "type": "image_generation",
+                }
+
+                # Add call_id as "id"
+                if hasattr(item, "call_id"):
+                    tool_call["id"] = item.call_id
+                elif hasattr(item, "id"):
+                    tool_call["id"] = item.id
+
+                # Add image generation details
+                image_gen_details: Dict[str, Any] = {}
+
+                if hasattr(item, "prompt"):
+                    image_gen_details["prompt"] = item.prompt
+
+                if hasattr(item, "quality"):
+                    image_gen_details["quality"] = item.quality
+
+                if hasattr(item, "size"):
+                    image_gen_details["size"] = item.size
+
+                if hasattr(item, "style"):
+                    image_gen_details["style"] = item.style
+
+                # Include the result (image data) only if binary data tracing is enabled
+                if _trace_binary_data and hasattr(item, "result") and item.result:
+                    image_gen_details["result"] = item.result
+
+                if image_gen_details:
+                    tool_call["image_generation"] = image_gen_details
+
+                event_body["tool_calls"] = [tool_call]
+
+            event_name = "gen_ai.assistant.message"
+
         elif item_type == "message":
             # Regular message - use text format
             if _trace_responses_content and hasattr(item, "content") and item.content:
@@ -2982,7 +3222,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """
         yield from self._generate_api_and_injector(self._all_api_list())
 
-    def _instrument_responses(self, enable_content_tracing: bool = False):
+    def _instrument_responses(self, enable_content_tracing: bool = False, enable_binary_data: bool = False):
         """This function modifies the methods of the Responses API classes to
         inject logic before calling the original methods.
         The original methods are stored as _original attributes of the methods.
@@ -2991,15 +3231,20 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                     This also controls whether function call tool function names,
                                     parameter names and parameter values are traced.
         :type enable_content_tracing: bool
+        :param enable_binary_data: Indicates whether tracing of binary data (such as images) should be enabled.
+                                   This only takes effect when content recording is also enabled.
+        :type enable_binary_data: bool
         """
         # pylint: disable=W0603
         global _responses_traces_enabled
         global _trace_responses_content
+        global _trace_binary_data
         if _responses_traces_enabled:
             return
 
         _responses_traces_enabled = True
         _trace_responses_content = enable_content_tracing
+        _trace_binary_data = enable_binary_data
 
         # Initialize metrics instruments
         self._initialize_metrics()
@@ -3049,6 +3294,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
     def _is_content_recording_enabled(self) -> bool:
         global _trace_responses_content
         return _trace_responses_content
+
+    def _set_enable_binary_data(self, enable_binary_data: bool = False) -> None:
+        global _trace_binary_data
+        _trace_binary_data = enable_binary_data
+
+    def _is_binary_data_enabled(self) -> bool:
+        global _trace_binary_data
+        return _trace_binary_data
 
     def record_error(self, span, exc):
         # pyright: ignore [reportPossiblyUnboundVariable]
