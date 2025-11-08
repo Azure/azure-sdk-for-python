@@ -31,10 +31,8 @@ USAGE:
     3) BING_PROJECT_CONNECTION_ID - The Bing project connection ID, as found in the "Connections" tab in your Azure AI Foundry project.
 """
 
-from asyncio import events
 import os
 from dotenv import load_dotenv
-from azure.ai.projects.models._models import ResponseCompletedEvent
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -100,7 +98,6 @@ with project_client:
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
-        print(event)
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
