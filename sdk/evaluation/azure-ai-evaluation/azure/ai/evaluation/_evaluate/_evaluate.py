@@ -2415,15 +2415,16 @@ def _calculate_aoai_evaluation_summary(
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
             error_count += 1
 
+        # Update overall result counts, error counts will not be considered for passed/failed
         if error_count > 0:
             result_counts["errored"] += 1
-        elif failed_count > 0:
+
+        if failed_count > 0:
             result_counts["failed"] += 1
         elif (
-            error_count == 0
-            and failed_count == 0
+            failed_count == 0
             and passed_count > 0
-            and passed_count == len(aoai_result.get("results", []))
+            and passed_count == len(aoai_result.get("results", [])) - error_count
         ):
             result_counts["passed"] += 1
 
