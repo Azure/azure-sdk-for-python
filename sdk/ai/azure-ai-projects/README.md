@@ -152,7 +152,7 @@ print(f"Created conversation with initial user message (id: {conversation.id})")
 response = openai_client.responses.create(
     conversation=conversation.id,
     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",  # TODO: Remove 'input' once service is fixed
+    input="",
 )
 print(f"Response output: {response.output_text}")
 
@@ -165,7 +165,7 @@ print(f"Added a second user message to the conversation")
 response = openai_client.responses.create(
     conversation=conversation.id,
     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-    input="",  # TODO: Remove 'input' once service is fixed
+    input="",
 )
 print(f"Response output: {response.output_text}")
 
@@ -382,7 +382,54 @@ The code below shows some evaluation operations. Full list of sample can be foun
 
 ## Tracing
 
-The AI Projects client library can be configured to emit OpenTelemetry traces for all its REST API calls. These can be viewed in the "Tracing" tab in your AI Foundry Project page, once you add an Application Insights resource and configured your application appropriately. Agent operations (via the `.agents` property) can also be instrumented, as well as OpenAI client library operations (client created by calling `get_openai_client_legacy()` method). For local debugging purposes, traces can also be omitted to the console. For more information see:
+**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
+
+You can add an Application Insights Azure resource to your Azure AI Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
+
+### Installation
+
+Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
+
+```bash
+pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+```
+
+You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
+
+To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
+
+```bash
+pip install opentelemetry-exporter-otlp
+```
+
+### How to enable tracing
+
+TBD
+
+### Enabling content recording
+
+Content recording controls whether message contents and tool call related details, such as parameters and return values, are captured with the traces. This data may include sensitive user information.
+
+To enable content recording, set the `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable to `true`. If the environment variable is not set, content recording defaults to `false`.
+
+**Important:** The environment variable only controls content recording for built-in traces. When you use custom tracing decorators on your own functions, all parameters and return values are always traced.
+
+### Disabling automatic instrumentation
+
+The AI Projects client library automatically instruments OpenAI responses and conversations operations through `AiProjectInstrumentation`. You can disable this instrumentation by setting the environment variable `AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API` to `false`. If the environment variable is not set, the responses and conversations APIs will be instrumented by default.
+
+### Tracing Binary Data
+
+Binary data are images and files sent to the service as input messages. When you enable content recording (`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` set to `true`), by default you only trace file IDs and filenames. To enable full binary data tracing, set `AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA` to `true`. In this case:
+
+- **Images**: Image URLs (including data URIs with base64-encoded content) are included
+- **Files**: File data is included if sent via the API
+
+**Important:** Binary data can contain sensitive information and may significantly increase trace size. Some trace backends and tracing implementations may have limitations on the maximum size of trace data that can be sent to and/or supported by the backend. Ensure your observability backend and tracing implementation support the expected trace payload sizes when enabling binary data tracing.
+
+### Additional resources
+
+For more information see:
 
 * [Trace AI applications using OpenAI SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application)
 * Chat-completion samples with console or Azure Monitor tracing enabled. See `samples\inference\azure-openai` folder.

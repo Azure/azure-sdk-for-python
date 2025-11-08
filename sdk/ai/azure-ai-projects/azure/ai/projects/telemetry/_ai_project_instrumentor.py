@@ -43,6 +43,7 @@ from ._utils import (
     OperationName,
     start_span,
 )
+from ._responses_instrumentor import _ResponsesInstrumentorPreview
 
 
 _Unset: Any = object()
@@ -92,6 +93,7 @@ class AIProjectInstrumentor:
         # We could support different semantic convention versions from the same library
         # and have a parameter that specifies the version to use.
         self._impl = _AIAgentsInstrumentorPreview()
+        self._responses_impl = _ResponsesInstrumentorPreview()
 
     def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
         """
@@ -113,6 +115,7 @@ class AIProjectInstrumentor:
 
         """
         self._impl.instrument(enable_content_recording)
+        self._responses_impl.instrument(enable_content_recording)
 
     def uninstrument(self) -> None:
         """
@@ -122,6 +125,7 @@ class AIProjectInstrumentor:
         of AIProjectClient methods.
         """
         self._impl.uninstrument()
+        self._responses_impl.uninstrument()
 
     def is_instrumented(self) -> bool:
         """
@@ -433,9 +437,9 @@ class _AIAgentsInstrumentorPreview:
         event_body: Dict[str, Any] = {}
         if _trace_agents_content and (instructions or additional_instructions):
             if instructions and additional_instructions:
-                event_body["content"] = f"{instructions} {additional_instructions}"
+                event_body["text"] = f"{instructions} {additional_instructions}"
             else:
-                event_body["content"] = instructions or additional_instructions
+                event_body["text"] = instructions or additional_instructions
 
         attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
@@ -490,6 +494,7 @@ class _AIAgentsInstrumentorPreview:
             reasoning_effort=reasoning_effort,
             reasoning_summary=reasoning_summary,
             structured_inputs=str(structured_inputs) if structured_inputs is not None else None,
+            gen_ai_system=AZ_AI_AGENT_SYSTEM,
         )
         if span and span.span_instance.is_recording:
             if name:
@@ -507,7 +512,9 @@ class _AIAgentsInstrumentorPreview:
         messages: Optional[List[Dict[str, str]]] = None,
         # _tool_resources: Optional["ToolResources"] = None,
     ) -> "Optional[AbstractSpan]":
-        span = start_span(OperationName.CREATE_THREAD, server_address=server_address, port=port)
+        span = start_span(
+            OperationName.CREATE_THREAD, server_address=server_address, port=port, gen_ai_system=AZ_AI_AGENT_SYSTEM
+        )
         if span and span.span_instance.is_recording:
             for message in messages or []:
                 self.add_thread_message_event(span, message)

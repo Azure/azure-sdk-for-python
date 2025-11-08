@@ -21,27 +21,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-_console_logging_enabled: bool = os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "False").lower() in (
-    "true",
-    "1",
-    "yes",
-)
-if _console_logging_enabled:
-    import sys
-
-    # Enable detailed console logs across Azure libraries
-    azure_logger = logging.getLogger("azure")
-    azure_logger.setLevel(logging.DEBUG)
-    azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-    # Exclude detailed logs for network calls associated with getting Entra ID token.
-    identity_logger = logging.getLogger("azure.identity")
-    identity_logger.setLevel(logging.ERROR)
-    # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
-    # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
-    # (which are implemented as a separate logging policy)
-    logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
-    logger.setLevel(logging.ERROR)
-
 
 def _patch_user_agent(user_agent: Optional[str]) -> str:
     # All authenticated external clients exposed by this client will have this application id
@@ -104,7 +83,25 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
 
-        kwargs.setdefault("logging_enable", _console_logging_enabled)
+        self._console_logging_enabled: bool = (
+            os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
+        )
+
+        if self._console_logging_enabled:
+            import sys
+
+            # Enable detailed console logs across Azure libraries
+            azure_logger = logging.getLogger("azure")
+            azure_logger.setLevel(logging.DEBUG)
+            azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+            # Exclude detailed logs for network calls associated with getting Entra ID token.
+            logging.getLogger("azure.identity").setLevel(logging.ERROR)
+            # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
+            # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
+            # (which are implemented as a separate logging policy)
+            logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
+
+            kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
         self._kwargs = kwargs.copy()
         self._patched_user_agent = _patch_user_agent(self._kwargs.pop("user_agent", None))
@@ -149,20 +146,19 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 "azure.identity package not installed. Please install it using 'pip install azure.identity'"
             ) from e
 
-        # TODO: Test the case where input endpoint URL has "/" at the end
-        openai_base_url = self._config.endpoint + "/openai"  # pylint: disable=protected-access
+        base_url = self._config.endpoint.rstrip("/") + "/openai"  # pylint: disable=protected-access
 
         if "default_query" not in kwargs:
             kwargs["default_query"] = {"api-version": "2025-11-15-preview"}
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
-            openai_base_url,
+            base_url,
         )
 
         http_client = None
 
-        if _console_logging_enabled:
+        if self._console_logging_enabled:
             try:
                 import httpx
             except ModuleNotFoundError as e:
@@ -200,7 +196,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                     headers = dict(request.headers)
                     self._sanitize_auth_header(headers)
                     print("Headers:")
-                    for key, value in headers.items():
+                    for key, value in sorted(headers.items()):
                         print(f"  {key}: {value}")
 
                     self._log_request_body(request)
@@ -209,12 +205,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
                     print(f"\n<== Response:\n{response.status_code} {response.reason_phrase}")
                     print("Headers:")
-                    for key, value in dict(response.headers).items():
+                    for key, value in sorted(dict(response.headers).items()):
                         print(f"  {key}: {value}")
-                    try:
-                        print(f"Body:\n {response.read().decode('utf-8')}")
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        print("Body:\n  [non-text content]")
+
+                    content = response.read()
+                    if content is None or content == b"":
+                        print("Body: [No content]")
+                    else:
+                        try:
+                            print(f"Body:\n {content.decode('utf-8')}")
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            print(f"Body (raw):\n  {content!r}")
                     print("\n")
 
                     return response
@@ -244,8 +245,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                         print(f"Body: [Cannot access content: {access_error}]")
                         return
 
-                    # Check if content is None or empty
-                    if content is None:
+                    if content is None or content == b"":
                         print("Body: [No content]")
                         return
 
@@ -262,7 +262,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 self._config.credential,  # pylint: disable=protected-access
                 "https://ai.azure.com/.default",
             ),
-            base_url=openai_base_url,
+            base_url=base_url,
             http_client=http_client,
             **kwargs,
         )

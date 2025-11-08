@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity load_dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -47,7 +47,7 @@ with project_client:
     openai_client = project_client.get_openai_client()
 
     # Retrieves latest version of an existing Agent
-    agent = project_client.agents.retrieve(agent_name=agent_name)
+    agent = project_client.agents.get(agent_name=agent_name)
     print(f"Agent retrieved (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
     # Retrieved a stored conversation
@@ -62,6 +62,6 @@ with project_client:
     print(f"Added a user message to the conversation")
 
     response = openai_client.responses.create(
-        conversation=conversation.id, extra_body={"agent": {"name": agent.name, "type": "agent_reference"}}
+        conversation=conversation.id, extra_body={"agent": {"name": agent.name, "type": "agent_reference"}}, input=""
     )
     print(f"Response output: {response.output_text}")

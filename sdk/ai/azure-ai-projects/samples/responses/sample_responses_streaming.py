@@ -12,7 +12,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity load_dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -80,12 +80,12 @@ with project_client:
 
     # Process streaming events as they arrive
     for event in stream_response:
-        if isinstance(event, ResponseCreatedEvent):
+        if event.type == "response.created":
             print(f"Stream response created with ID: {event.response.id}")
-        elif isinstance(event, ResponseTextDeltaEvent):
+        elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
-        elif isinstance(event, ResponseTextDoneEvent):
+        elif event.type == "response.text.done":
             print(f"Response done with full message: {event.text}")
-        elif isinstance(event, ResponseCompletedEvent):
+        elif event.type == "response.completed":
             print(f"Response completed with full message: {event.response.output_text}")
     # [END response_stream_method]

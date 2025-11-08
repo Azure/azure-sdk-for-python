@@ -75,6 +75,9 @@ class OperationName(Enum):
     LIST_RUN_STEPS = "list_run_steps"
     SUBMIT_TOOL_OUTPUTS = "submit_tool_outputs"
     PROCESS_THREAD_RUN = "process_thread_run"
+    RESPONSES = "responses"
+    CREATE_CONVERSATION = "create_conversation"
+    LIST_CONVERSATION_ITEMS = "list_conversation_items"
 
 
 def start_span(
@@ -95,7 +98,7 @@ def start_span(
     reasoning_effort: Optional[str] = None,
     reasoning_summary: Optional[str] = None,
     structured_inputs: Optional[str] = None,
-    gen_ai_system: Optional[str] = AZ_AI_AGENT_SYSTEM,
+    gen_ai_system: Optional[str] = None,
     gen_ai_provider: Optional[str] = AZURE_AI_AGENTS,
     kind: SpanKind = SpanKind.CLIENT,
 ) -> "Optional[AbstractSpan]":
