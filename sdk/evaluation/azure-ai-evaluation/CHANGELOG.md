@@ -1,16 +1,10 @@
 # Release History
 
-## 1.13.2 (Unreleased)
-
-### Features Added
-
-- Added App Insights redaction for agent safety result queries to prevent adversarial prompts from being stored in telemetry
-
-### Breaking Changes
+## 1.13.2 (2025-11-07)
 
 ### Bugs Fixed
 
-### Other Changes
+- Added App Insights redaction for agent safety run telemetry so adversarial prompts are not stored in collected logs.
 
 ## 1.13.1 (2025-11-05)
 
