@@ -80,6 +80,12 @@
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @lmazuel
 
+# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
+# ServiceLabel: %Speech Transcription
+
+# PRLabel: %Speech Transcription
+/sdk/cognitiveservices/azure-ai-transcription/                       @amber-yujueWang @rhurey @xitzhang
+
 # ServiceLabel: %Communication
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
