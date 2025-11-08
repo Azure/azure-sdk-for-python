@@ -35,7 +35,7 @@ extends:
     # The job "Test ubuntu2404_pypy39" in the "python - ai" pipeline hangs and eventually times out.
     # Disable it until the issue is understood.
     MatrixConfigs:
-      - Name: communication_ci_matrix
+      - Name: ai_ci_matrix
         Path: sdk/ai/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true

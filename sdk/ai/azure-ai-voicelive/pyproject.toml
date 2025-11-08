@@ -76,3 +76,6 @@ pytyped = ["py.typed"]
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
+markers = [
+    "e2e: marks end-to-end tests that span multiple components or services",
+]
