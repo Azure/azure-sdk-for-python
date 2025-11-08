@@ -146,14 +146,14 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 "azure.identity package not installed. Please install it using 'pip install azure.identity'"
             ) from e
 
-        openai_base_url = self._config.endpoint + "/openai"  # pylint: disable=protected-access
+        base_url = self._config.endpoint.rstrip("/") + "/openai"  # pylint: disable=protected-access
 
         if "default_query" not in kwargs:
             kwargs["default_query"] = {"api-version": "2025-11-15-preview"}
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
-            openai_base_url,
+            base_url,
         )
 
         http_client = None
@@ -262,7 +262,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 self._config.credential,  # pylint: disable=protected-access
                 "https://ai.azure.com/.default",
             ),
-            base_url=openai_base_url,
+            base_url=base_url,
             http_client=http_client,
             **kwargs,
         )

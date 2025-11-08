@@ -131,7 +131,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 "azure.identity package not installed. Please install it using 'pip install azure.identity'"
             ) from e
 
-        base_url = self._config.endpoint + "/openai"  # pylint: disable=protected-access
+        base_url = self._config.endpoint.rstrip("/") + "/openai"  # pylint: disable=protected-access
 
         if "default_query" not in kwargs:
             kwargs["default_query"] = {"api-version": "2025-11-15-preview"}

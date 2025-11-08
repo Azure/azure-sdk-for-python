@@ -6,9 +6,14 @@
 # cSpell:disable
 
 import pytest
+from devtools_testutils import is_live_and_not_recording
 from test_base import TestBase, recorded_by_proxy_async_httpx, servicePreparer
 
 
+@pytest.mark.skipif(
+    condition=(not is_live_and_not_recording()),
+    reason="Skipped because we cannot record network calls with OpenAI client",
+)
 class TestResponsesAsync(TestBase):
 
     # To run this test:
