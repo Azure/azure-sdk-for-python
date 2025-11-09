@@ -152,14 +152,14 @@ def _begin_single_aoai_evaluation(
     grader_name_list = []
     grader_list = []
 
-    data_source = {}
-    data_source_config = {}
+    data_source: Dict[str, Any] = {}
+    data_source_config: Dict[str, Any] = {}
 
     if kwargs.get("data_source_config") is not None:
-        data_source_config = kwargs.get("data_source_config")
+        data_source_config = kwargs.get("data_source_config", {})
 
     if kwargs.get("data_source") is not None:
-        data_source = kwargs.get("data_source")
+        data_source = kwargs.get("data_source", {})
 
     # It's expected that all graders supplied for a single eval run use the same credentials
     # so grab a client from the first grader.
@@ -176,6 +176,10 @@ def _begin_single_aoai_evaluation(
 
     # Create eval group
     LOGGER.info(f"AOAI: Creating eval group with {len(grader_list)} testing criteria...")
+
+    # Combine with the item schema with generated data outside Eval SDK
+    _combine_item_schemas(data_source_config, kwargs)
+
     eval_group_info = client.evals.create(
         data_source_config=data_source_config, testing_criteria=grader_list, metadata={"is_foundry_eval": "true"}
     )
@@ -210,6 +214,20 @@ def _begin_single_aoai_evaluation(
         grader_name_map=grader_name_map,
         expected_rows=len(data),
     )
+
+
+def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, Any]) -> None:
+    if "item_schema" not in kwargs or "properties" not in kwargs["item_schema"]:
+        return
+
+    if "item_schema" in data_source_config:
+        item_schema = kwargs["item_schema"]["required"] if "required" in kwargs["item_schema"] else []
+        for key in kwargs["item_schema"]["properties"]:
+            if key not in data_source_config["item_schema"]["properties"]:
+                data_source_config["item_schema"]["properties"][key] = kwargs["item_schema"]["properties"][key]
+
+                if key in item_schema:
+                    data_source_config["item_schema"]["required"].append(key)
 
 
 def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
