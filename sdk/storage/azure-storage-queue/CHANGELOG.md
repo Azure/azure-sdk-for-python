@@ -10,6 +10,7 @@ for the purposes of signing SAS tokens.
 of the user that is authorized to use the generated SAS URL.
 - Added support for the keyword `user_delegation_key` to `generate_queue_sas` used with 
 `user_delegation_oid` to authenticate the request to generate a new SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
 
 ## 12.14.1 (2025-10-29)
 

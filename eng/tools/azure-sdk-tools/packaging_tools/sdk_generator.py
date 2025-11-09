@@ -162,6 +162,16 @@ def main(generate_input, generate_output):
             _LOGGER.info(
                 f"[CODEGEN]({readme_or_tsp})codegen end and new package '{folder_name}/{package_name}' generated"
             )
+
+            # remove additional files when we roll back generation to Swagger
+            # NOTE: After we convert to Typespec completely, we could remove this logic block
+            if "readme.md" in readme_or_tsp:
+                for file_name in ["tsp-location.yaml", "_metadata.json"]:
+                    file_path = Path(sdk_folder, folder_name, file_name)
+                    if file_path.exists():
+                        os.remove(str(file_path))
+                        _LOGGER.info(f"remove additional file when roll back to swagger: {file_path}")
+
             try:
                 package_total.add(package_name)
                 sdk_code_path = str(Path(sdk_folder, folder_name, package_name))

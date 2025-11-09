@@ -19,6 +19,10 @@ for the SMB protocol to specify whether encryption in transit is required.
 - Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
 optional initial data to be uploaded (up to 4MB).
 
+### Bugs Fixed
+- Fixed an issue where `FileProperties` and `DirectoryProperties` did not contain timezone information for
+`change_time`, `creation_time`, and `last_write_time` attributes.
+
 ## 12.23.1 (2025-10-29)
 
 ### Bugs Fixed
