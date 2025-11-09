@@ -1,5 +1,17 @@
 # Release History
 
+## 1.13.3 (2025-11-08)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Added `scenario` property to red team evaluation request to align scores with red team concepts of attack success.
+
 ## 1.13.2 (2025-11-07)
 
 ### Bugs Fixed
