@@ -361,8 +361,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
 
     def test_update_ff_telemetry_metadata_max_variants(self):
         """Test that max_variants only increases, never decreases."""
-        feature_flag = Mock(spec=FeatureFlagConfigurationSetting)
-        feature_flag.etag = "test_etag"
+        feature_flag = FeatureFlagConfigurationSetting("test_feature")
 
         self.assertIsNone(self.provider._tracing_context.max_variants)
 
