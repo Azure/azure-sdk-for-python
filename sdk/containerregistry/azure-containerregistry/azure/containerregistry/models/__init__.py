@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AcrAccessToken,
+    AcrErrorInfo,
+    AcrErrors,
     AcrManifests,
     AcrRefreshToken,
     Annotations,
@@ -48,6 +50,7 @@ from ._enums import (  # type: ignore
     ArtifactOperatingSystem,
     ArtifactTagOrder,
     PostContentSchemaGrantType,
+    TokenGrantType,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -55,6 +58,8 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AcrAccessToken",
+    "AcrErrorInfo",
+    "AcrErrors",
     "AcrManifests",
     "AcrRefreshToken",
     "Annotations",
@@ -85,6 +90,7 @@ __all__ = [
     "ArtifactOperatingSystem",
     "ArtifactTagOrder",
     "PostContentSchemaGrantType",
+    "TokenGrantType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
