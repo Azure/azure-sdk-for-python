@@ -4,8 +4,7 @@ The AI Projects client library (in preview) is part of the Azure AI Foundry SDK,
 resources in your Azure AI Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
-* **Get an OpenAI client** using the `.get_openai_client()` client method to do "Responses" calls.
-* **Run Evaluations** to assess the performance of generative AI applications, using the `.evaluations` operations.
+* **Get an OpenAI client** using the `.get_openai_client()` client method to do "Responses" calls and "Evals" calls.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
