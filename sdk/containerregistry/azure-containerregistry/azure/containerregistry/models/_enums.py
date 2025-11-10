@@ -111,3 +111,12 @@ class PostContentSchemaGrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Grant type for exchanging access token only"""
     REFRESH_TOKEN = "refresh_token"
     """Grant type for exchanging refresh token only"""
+
+
+class TokenGrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Grant type is expected to be refresh_token."""
+
+    REFRESH_TOKEN = "refresh_token"
+    """Grant type for refreshing the token"""
+    PASSWORD = "password"
+    """Grant type for password authentication"""

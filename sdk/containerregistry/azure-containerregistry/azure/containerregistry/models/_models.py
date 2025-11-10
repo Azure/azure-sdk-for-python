@@ -45,6 +45,74 @@ class AcrAccessToken(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AcrErrorInfo(_Model):
+    """Error information.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar detail: Error details.
+    :vartype detail: dict[str, str]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error code."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error message."""
+    detail: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        detail: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcrErrors(_Model):
+    """Acr error response describing why the operation failed.
+
+    :ivar errors: Array of detailed error.
+    :vartype errors: list[~azure.containerregistry.models.AcrErrorInfo]
+    """
+
+    errors: Optional[list["_models.AcrErrorInfo"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of detailed error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        errors: Optional[list["_models.AcrErrorInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AcrManifests(_Model):
     """Manifest attributes.
 
