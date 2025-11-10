@@ -38,18 +38,13 @@
   - Added model `ProxyResource`
   - Added model `Resource`
   - Added model `TrackedResource`
-  - Added model `DefaultWafPolicyOperations`
-  - Added model `WafPolicyOperations`
+  - Added operation group `DefaultWafPolicyOperations`
+  - Added operation group `WafPolicyOperations`
 
 ### Breaking Changes
 
   - Model `AnalysisCreate` deleted or renamed its instance variable `config`
   - Model `AnalysisResult` deleted or renamed its instance variable `data`
-  - Method `NginxCertificateListResponse.__init__` removed default value `None` from its parameter `value`
-  - Method `NginxConfigurationListResponse.__init__` removed default value `None` from its parameter `value`
-  - Method `NginxDeployment.__init__` removed default value `None` from its parameter `location`
-  - Method `NginxDeploymentApiKeyListResponse.__init__` removed default value `None` from its parameter `value`
-  - Method `NginxDeploymentListResponse.__init__` removed default value `None` from its parameter `value`
   - Model `NginxDeploymentProperties` deleted or renamed its instance variable `nginx_app_protect`
   - Model `NginxDeploymentUpdateProperties` deleted or renamed its instance variable `nginx_app_protect`
   - Model `ScaleProfile` deleted or renamed its instance variable `capacity`
@@ -59,48 +54,6 @@
   - Deleted or renamed model `NginxDeploymentUpdatePropertiesNginxAppProtect`
   - Deleted or renamed model `OperationResult`
   - Deleted or renamed model `ScaleProfileCapacity`
-
-## 3.1.0b3 (2025-10-16)
-
-### Features Added
-
-  - Model `NginxManagementClient` added parameter `cloud_setting` in method `__init__`
-  - Client `NginxManagementClient` added method `send_request`
-  - Client `NginxManagementClient` added operation group `waf_policy`
-  - Client `NginxManagementClient` added operation group `default_waf_policy`
-  - Model `NginxDeploymentApiKeyRequest` added property `system_data`
-  - Model `NginxDeploymentApiKeyResponse` added property `system_data`
-  - Model `NginxDeploymentScalingProperties` added property `auto_scale_settings`
-  - Model `WebApplicationFirewallStatus` added property `waf_release`
-  - Added enum `ActionType`
-  - Added model `NginxDeploymentDefaultWafPolicyListResponse`
-  - Added model `NginxDeploymentDefaultWafPolicyProperties`
-  - Added model `NginxDeploymentScalingPropertiesAutoScaleSettings`
-  - Added model `NginxDeploymentWafPolicy`
-  - Added model `NginxDeploymentWafPolicyApplyingStatus`
-  - Added enum `NginxDeploymentWafPolicyApplyingStatusCode`
-  - Added model `NginxDeploymentWafPolicyCompilingStatus`
-  - Added enum `NginxDeploymentWafPolicyCompilingStatusCode`
-  - Added model `NginxDeploymentWafPolicyMetadata`
-  - Added model `NginxDeploymentWafPolicyMetadataProperties`
-  - Added model `NginxDeploymentWafPolicyProperties`
-  - Added model `Operation`
-  - Added enum `Origin`
-  - Added model `ProxyResource`
-  - Added model `Resource`
-  - Added model `TrackedResource`
-  - Added operation group `DefaultWafPolicyOperations`
-  - Added operation group `WafPolicyOperations`
-
-### Breaking Changes
-
-  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - Model `NginxDeploymentScalingProperties` deleted or renamed its instance variable `profiles`
-  - Deleted or renamed model `NginxCertificateListResponse`
-  - Deleted or renamed model `NginxConfigurationListResponse`
-  - Deleted or renamed model `NginxDeploymentApiKeyListResponse`
-  - Deleted or renamed model `NginxDeploymentListResponse`
-  - Deleted or renamed model `OperationResult`
 
 ## 3.1.0b2 (2025-02-23)
 
