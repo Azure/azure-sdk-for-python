@@ -115,7 +115,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 return EVALUATION_PASS_FAIL_MAPPING[False]
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
+    async def _do_eval_wflow(self, eval_input: Dict, flow) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain
@@ -134,7 +134,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 target=ErrorTarget.CONVERSATION,
             )
         # Call the prompty flow to get the evaluation result.
-        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        prompty_output_dict = await flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
         if prompty_output_dict:
@@ -189,6 +189,20 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             f"{self._result_key}_result": binary_result,
             f"{self._result_key}_threshold": self._threshold,
         }
+
+    @override
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
+        """Do a relevance evaluation with default flow.
+
+        :param eval_input: The input to the evaluator. Expected to contain
+        whatever inputs are needed for the _flow method, including context
+        and other fields depending on the child class.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+
+        return await self._do_eval_wflow(eval_input, self._flow)
 
     @staticmethod
     def _get_built_in_tool_definition(tool_name: str):

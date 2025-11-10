@@ -118,6 +118,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self.threshold = threshold
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
+        # To make sure they're not used directly
+        self._flow = None
+        self._prompty_file = None
+        
+        self._flow_wquery = self._load_flow(self._PROMPTY_FILE_WITH_QUERY, credential=credential)
+        self._flow_woquery = self._load_flow(self._PROMPTY_FILE_NO_QUERY, credential=credential)
+
+
     @overload
     def __call__(
         self,
@@ -201,42 +209,33 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
 
-        if kwargs.get("query", None):
-            self._ensure_query_prompty_loaded()
-
         return super().__call__(*args, **kwargs)
 
-    def _load_prompty_file(self, prompty_filename: str):
-        """Load the specified prompty file if not already loaded.
+    def _load_flow(self, prompty_filename: str, **kwargs) -> AsyncPrompty:
+        """Load the Prompty flow from the specified file.
 
-        :param prompty_filename: The name of the prompty file to load.
+        :param prompty_filename: The filename of the Prompty flow to load.
         :type prompty_filename: str
+        :return: The loaded Prompty flow.
+        :rtype: AsyncPrompty
         """
-        if self._prompty_file.endswith(prompty_filename):
-            return  # Already using the correct prompty file
 
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, prompty_filename)
 
-        self._prompty_file = prompty_path
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(self._model_config),
             self._DEFAULT_OPEN_API_VERSION,
             UserAgentSingleton().value,
         )
-        self._flow = AsyncPrompty.load(
-            source=self._prompty_file,
+        flow = AsyncPrompty.load(
+            source=prompty_path,
             model=prompty_model_config,
             is_reasoning_model=self._is_reasoning_model,
+            **kwargs,
         )
 
-    def _ensure_query_prompty_loaded(self):
-        """Switch to the query prompty file if not already loaded."""
-        self._load_prompty_file(self._PROMPTY_FILE_WITH_QUERY)
-
-    def _ensure_no_query_prompty_loaded(self):
-        """Switch to the no-query prompty file if not already loaded."""
-        self._load_prompty_file(self._PROMPTY_FILE_NO_QUERY)
+        return flow
 
     def _has_context(self, eval_input: dict) -> bool:
         """
@@ -269,10 +268,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
         if eval_input.get("query", None) is None:
-            self._ensure_no_query_prompty_loaded()
-            return await super()._do_eval(eval_input)
+            return await super()._do_eval_wflow(eval_input, self._flow_woquery)
 
-        self._ensure_query_prompty_loaded()
         contains_context = self._has_context(eval_input)
 
         simplified_query = simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
@@ -286,7 +283,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         }
 
         # Replace and call the parent method
-        return await super()._do_eval(simplified_eval_input)
+        return await super()._do_eval_wflow(simplified_eval_input, self._flow_wquery)
 
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
