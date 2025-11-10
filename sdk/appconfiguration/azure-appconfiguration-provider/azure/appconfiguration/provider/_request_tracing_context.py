@@ -15,6 +15,8 @@ from ._constants import (
     KubernetesEnvironmentVariable,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
+    APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE,
+    SNAPSHOT_REFERENCE_TAG,
 )
 
 # Feature flag filter names
@@ -86,6 +88,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         self.uses_load_balancing = load_balancing_enabled
         self.uses_ai_configuration = False
         self.uses_aicc_configuration = False  # AI Chat Completion
+        self.uses_snapshot_reference = False
         self.uses_telemetry = False
         self.uses_seed = False
         self.max_variants: Optional[int] = None
@@ -217,6 +220,9 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
 
         if self.is_failover_request:
             tags.append(FAILOVER_TAG)
+
+        if self.uses_snapshot_reference:
+            tags.append(SNAPSHOT_REFERENCE_TAG)
 
         # Build the correlation context string
         context_parts: List[str] = []

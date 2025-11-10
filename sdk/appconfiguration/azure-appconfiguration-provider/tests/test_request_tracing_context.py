@@ -6,6 +6,7 @@
 import unittest
 import os
 from unittest.mock import patch, Mock
+from azure.appconfiguration import ConfigurationSetting
 
 from azure.appconfiguration.provider._request_tracing_context import (
     _RequestTracingContext,
@@ -30,6 +31,9 @@ from azure.appconfiguration.provider._constants import (
     KubernetesEnvironmentVariable,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
+    SNAPSHOT_REFERENCE_TAG,
+    APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE,
+    SNAPSHOT_REF_CONTENT_TYPE,
 )
 
 
@@ -445,3 +449,128 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
             )
 
             self.assertNotIn("Correlation-Context", result)
+
+
+class TestSnapshotReferenceTracing(unittest.TestCase):
+    """Tests for snapshot reference request tracing functionality."""
+
+    def setUp(self):
+        """Set up test environment."""
+        self.context = _RequestTracingContext()
+
+    def test_request_tracing_context_initialization(self):
+        """Test that request tracing context initializes snapshot reference tracking."""
+        self.assertFalse(self.context.uses_snapshot_reference)
+
+    def test_request_tracing_context_set_snapshot_reference_usage(self):
+        """Test setting snapshot reference usage in tracing context."""
+        # Initially false
+        self.assertFalse(self.context.uses_snapshot_reference)
+
+        # Set to true
+        self.context.uses_snapshot_reference = True
+        self.assertTrue(self.context.uses_snapshot_reference)
+
+        # Set back to false
+        self.context.uses_snapshot_reference = False
+        self.assertFalse(self.context.uses_snapshot_reference)
+
+    def test_correlation_context_header_with_snapshot_reference(self):
+        """Test correlation context header when using snapshot references."""
+        self.context.uses_snapshot_reference = True
+
+        headers = {}
+        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False, False)
+
+        self.assertIn("Correlation-Context", result)
+        self.assertIn(SNAPSHOT_REFERENCE_TAG, result["Correlation-Context"])
+
+    def test_correlation_context_header_without_snapshot_reference(self):
+        """Test correlation context header when not using snapshot references."""
+        self.context.uses_snapshot_reference = False
+
+        headers = {}
+        result = self.context.update_correlation_context_header(headers, RequestType.STARTUP, 0, False, False, False)
+
+        self.assertIn("Correlation-Context", result)
+        self.assertNotIn(SNAPSHOT_REFERENCE_TAG, result["Correlation-Context"])
+
+    def test_snapshot_reference_detection_in_provider_base(self):
+        """Test that snapshot reference detection works in provider base."""
+
+        # Test with snapshot reference content type
+        snapshot_ref_setting = ConfigurationSetting(
+            key="SnapshotRef1",
+            value='{"snapshot_name": "test-snapshot"}',
+            content_type=SNAPSHOT_REF_CONTENT_TYPE,
+        )
+
+        self.assertTrue(
+            snapshot_ref_setting.content_type
+            and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in snapshot_ref_setting.content_type
+        )
+
+        # Test with regular content type
+        regular_setting = ConfigurationSetting(
+            key="RegularKey",
+            value="RegularValue",
+            content_type="application/vnd.microsoft.appconfig.kv+json",
+        )
+
+        self.assertFalse(
+            regular_setting.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in regular_setting.content_type
+        )
+
+    @patch(
+        "azure.appconfiguration.provider._azureappconfigurationproviderbase.APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE",
+        "test-profile",
+    )
+    def test_tracing_context_updated_during_processing(self, mock_profile):
+        """Test that tracing context is updated when processing configuration with snapshot references."""
+        from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
+            _AzureAppConfigurationProviderBase,
+        )
+
+        # Create provider instance with mocked dependencies
+        provider = _AzureAppConfigurationProviderBase()
+        provider._tracing_context = _RequestTracingContext()
+
+        # Create a mock configuration setting with content type that will match the mock
+        setting = ConfigurationSetting(
+            key="SnapshotRef1",
+            value='{"snapshot_name": "test-snapshot"}',
+            content_type='application/json; profile="test-profile"; charset=utf-8',
+        )
+
+        # Process the setting
+        provider._process_key_value_base(setting, {})
+
+        # Verify tracing context was updated
+        self.assertTrue(provider._tracing_context.uses_snapshot_reference)
+
+    def test_tracing_context_not_updated_for_regular_settings(self):
+        """Test that tracing context is not updated for regular settings."""
+        from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
+            _AzureAppConfigurationProviderBase,
+        )
+
+        # Create provider instance with mocked dependencies
+        provider = _AzureAppConfigurationProviderBase()
+        provider._tracing_context = _RequestTracingContext()
+
+        # Create a regular configuration setting
+        setting = ConfigurationSetting(
+            key="RegularKey",
+            value="RegularValue",
+            content_type="application/vnd.microsoft.appconfig.kv+json",
+        )
+
+        # Process the setting
+        provider._process_key_value_base(setting, {})
+
+        # Verify tracing context was not updated
+        self.assertFalse(provider._tracing_context.uses_snapshot_reference)
+
+    def test_snapshot_reference_tag_constant(self):
+        """Test that the snapshot reference tag constant has the expected value."""
+        self.assertEqual(SNAPSHOT_REFERENCE_TAG, "UsesSnapshotReference=true")

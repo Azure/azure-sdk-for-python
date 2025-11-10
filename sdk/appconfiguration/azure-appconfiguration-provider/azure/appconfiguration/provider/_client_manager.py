@@ -11,7 +11,7 @@ from typing import Tuple, Union, Dict, List, Optional, Mapping
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, AzureError
 from azure.core.credentials import TokenCredential
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
@@ -28,6 +28,8 @@ from ._client_manager_base import (
 from ._models import SettingSelector
 from ._constants import FEATURE_FLAG_PREFIX
 from ._discovery import find_auto_failover_endpoints
+from ._snapshot_reference_parser import SnapshotReferenceParser
+from ._constants import APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE
 
 
 @dataclass
@@ -260,6 +262,43 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     def __exit__(self, *args):
         self._client.__exit__(*args)
+
+    def resolve_snapshot_reference(self, setting: ConfigurationSetting, **kwargs) -> Dict[str, ConfigurationSetting]:
+        """
+        Resolve a snapshot reference configuration setting to the actual snapshot data.
+
+        :param ConfigurationSetting setting: The snapshot reference configuration setting
+        :return: A dictionary of resolved configuration settings from the snapshot
+        :rtype: Dict[str, ConfigurationSetting]
+        :raises ValueError: When the setting is not a valid snapshot reference
+        """
+        if (not setting.content_type or not (APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in setting.content_type)):
+            raise ValueError("Setting is not a snapshot reference")
+
+        try:
+            # Parse the snapshot reference
+            snapshot_name = SnapshotReferenceParser.parse(setting)
+
+            # Create a selector for the snapshot
+            snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+
+            # Use existing load_configuration_settings to load from snapshot
+            configurations = self.load_configuration_settings([snapshot_selector], **kwargs)
+
+            # Build a dictionary keyed by configuration key
+            snapshot_settings = {}
+            for config in configurations:
+                # Use lexicographic ordering - last wins for duplicate keys
+                snapshot_settings[config.key] = config
+
+            return snapshot_settings
+
+        except AzureError as e:
+            # Wrap Azure errors with more context
+            raise ValueError(
+                f"Failed to resolve snapshot reference for key '{setting.key}' "
+                f"(label: '{setting.label}'). Azure service error occurred."
+            ) from e
 
 
 class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes
