@@ -8,8 +8,32 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from ._container_registry_client import ContainerRegistryClient
+from ._download_stream import DownloadBlobStream
+from ._models import (
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
+    ArtifactManifestProperties,
+    RepositoryProperties,
+    ArtifactTagProperties,
+    GetManifestResult,
+    DigestValidationError,
+)
+from models import ArtifactManifestOrder, ArtifactTagOrder
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: list[str] = [
+    "ContainerRegistryClient",
+    "ArtifactArchitecture",
+    "ArtifactOperatingSystem",
+    "ArtifactManifestProperties",
+    "RepositoryProperties",
+    "ArtifactTagProperties",
+    "GetManifestResult",
+    "DigestValidationError",
+    "DownloadBlobStream",
+    "ArtifactManifestOrder",
+    "ArtifactTagOrder",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
