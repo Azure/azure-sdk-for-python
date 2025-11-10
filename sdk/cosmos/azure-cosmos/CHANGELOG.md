@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added merge support. See [PR 42924](https://github.com/Azure/azure-sdk-for-python/pull/42924).
+* Added support for priority_level for sync and async clients. See [PR 43917](https://github.com/Azure/azure-sdk-for-python/pull/43917)
 
 #### Breaking Changes
 
