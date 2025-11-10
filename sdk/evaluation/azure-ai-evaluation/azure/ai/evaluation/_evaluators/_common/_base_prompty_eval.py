@@ -115,7 +115,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 return EVALUATION_PASS_FAIL_MAPPING[False]
 
     @override
-    async def _do_eval_wflow(self, eval_input: Dict, flow) -> Dict[str, Union[float, str]]:  # type: ignore[override]
+    async def _do_eval_with_flow(self, eval_input: Dict, flow) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain
@@ -202,7 +202,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         :rtype: Dict
         """
 
-        return await self._do_eval_wflow(eval_input, self._flow)
+        return await self._do_eval_with_flow(eval_input, self._flow)
 
     @staticmethod
     def _get_built_in_tool_definition(tool_name: str):
