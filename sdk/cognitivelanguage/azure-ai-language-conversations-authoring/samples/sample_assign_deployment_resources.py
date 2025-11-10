@@ -64,7 +64,7 @@ def sample_assign_deployment_resources():
     details = AssignDeploymentResourcesDetails(metadata=[resource])
 
     # start assign (long-running operation)
-    poller = project_client.project.begin_assign_deployment_resources(body=details)
+    poller = project_client.project.begin_assign_project_resources(body=details)
 
     try:
         poller.result()

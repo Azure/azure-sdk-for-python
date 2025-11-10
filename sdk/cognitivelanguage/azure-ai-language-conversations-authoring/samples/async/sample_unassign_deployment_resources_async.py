@@ -53,7 +53,7 @@ async def sample_unassign_deployment_resources_async():
         details = UnassignDeploymentResourcesDetails(assigned_resource_ids=[resource_id])
 
         # start unassign (async long-running operation)
-        poller = await project_client.project.begin_unassign_deployment_resources(body=details)
+        poller = await project_client.project.begin_unassign_project_resources(body=details)
 
         try:
             await poller.result()

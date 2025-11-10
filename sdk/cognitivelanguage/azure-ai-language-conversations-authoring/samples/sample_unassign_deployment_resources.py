@@ -55,7 +55,7 @@ def sample_unassign_deployment_resources():
     details = UnassignDeploymentResourcesDetails(assigned_resource_ids=assigned_resource_ids)
 
     # start unassign (long-running operation)
-    poller = project_client.project.begin_unassign_deployment_resources(body=details)
+    poller = project_client.project.begin_unassign_project_resources(body=details)
 
     try:
         poller.result()

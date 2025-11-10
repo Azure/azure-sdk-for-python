@@ -64,7 +64,7 @@ async def sample_assign_deployment_resources_async():
         details = AssignDeploymentResourcesDetails(metadata=[resource])
 
         # start assign (async long-running operation)
-        poller = await project_client.project.begin_assign_deployment_resources(body=details)
+        poller = await project_client.project.begin_assign_project_resources(body=details)
 
         try:
             await poller.result()
