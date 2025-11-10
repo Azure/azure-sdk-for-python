@@ -81,8 +81,8 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 6.0.0b2 - Latest preview release | 3.0, 3.1, 2022-05-01, 2023-04-01, 2024-11-01, 2025-11-15-preview (default) |
-| 6.0.0b1  | 3.0, 3.1, 2022-05-01, 2023-04-01, 2024-11-01, 2025-05-15-preview (default) |
+| 6.0.0b2 - Latest preview release | 2022-05-01, 2023-04-01, 2024-11-01, 2025-11-15-preview (default) |
+| 6.0.0b1  | 2022-05-01, 2023-04-01, 2024-11-01, 2025-05-15-preview (default) |
 | 5.3.X - Latest stable release | 3.0, 3.1, 2022-05-01, 2023-04-01 (default) |
 | 5.2.X  | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
