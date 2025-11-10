@@ -3,22 +3,25 @@
 The AI Projects client library (in preview) is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your Microsoft Foundry Project. Use it to:
 
-* **Create and run Agents** using methods on the `.agents` client property.
-* **Get an OpenAI client** using the `.get_openai_client()` client method to do "Responses" calls.
-* **Run Evaluations** to assess the performance of generative AI applications, using the `.evaluations` operations.
+* **Create and run Agents** using methods on methods on the `.agents` client property.
+* **Get an OpenAI client** using `.get_openai_client()` method to run "Responses" and "Conversations" operations with your Agent.
+* **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
+* **Run Evaluations** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+`.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
+* **Run Red Team operations** to identify risks associated with your generative AI application, using the ".red_teams" operations.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods the `.indexes` operations.
 
-The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
+The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-2025-11-15-preview).
 
-[Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
+[Product documentation](https://aka.ms/azsdk/azure-ai-projects-v2/product-doc)
 | [Samples][samples]
-| [API reference](https://aka.ms/azsdk/azure-ai-projects/python/reference)
-| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
-| [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [Release history](https://aka.ms/azsdk/azure-ai-projects/python/release-history)
+| [API reference](https://aka.ms/azsdk/azure-ai-projects-v2/python/api-reference)
+| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects-v2/python/package)
+| [SDK source code](https://aka.ms/azsdk/azure-ai-projects-v2/python/code)
+| [Release history](https://aka.ms/azsdk/azure-ai-projects-v2/python/release-history)
 
 ## Reporting issues
 
@@ -40,11 +43,14 @@ To report an issue with the client library, or request additional features, plea
 ### Install the package
 
 ```bash
-pip install azure-ai-projects
+pip install --pre azure-ai-projects
 ```
 
-Note that the package [openai](https://pypi.org/project/openai/) will also need to be installed if you indent to
-use Agents.
+Note that the packages [openai](https://pypi.org/project/openai) and [azure-identity](https://pypi.org/project/azure-identity) also need to be installed if intend to call `get_openai_client()`:
+
+```bash
+pip install openai azure-identity
+```
 
 ## Key concepts
 
@@ -65,13 +71,13 @@ project_client = AIProjectClient(
 )
 ```
 
-To construct an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```bash
 pip install aiohttp
 ```
 
-and update the code above to import `asyncio`, import `AIProjectClient` from the `azure.ai.projects.aio` package, and import `DefaultAzureCredential` from the `azure.identity.aio` package:
+and run:
 
 ```python
 import os
@@ -89,14 +95,11 @@ project_client = AIProjectClient(
 
 ### Performing Responses operations using OpenAI client
 
-Your Microsoft Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers.
-Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client
-from the [openai](https://pypi.org/project/openai/) package, and execute Responses calls.
+Your Microsoft Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client from the [openai](https://pypi.org/project/openai/) package, and execute an example multi-turn "Responses" calls.
 
-The code below assumes the following:
+The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, As shown in the "Models + endpoints" tab, under the "Name" column.
 
-* `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your
-Foundry Project, As shown in the "Models + endpoints" tab, under the "Name" column.
+See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
 
 <!-- SNIPPET:sample_responses_basic.responses -->
 
@@ -119,16 +122,13 @@ print(f"Response output: {response.output_text}")
 
 <!-- END SNIPPET -->
 
-See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
-
 ### Performing Agent operations
 
-The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the
-OpenAI Responses protocol, so you will likely need to get an `OpenAI` client to do Agent operations, as shown in the example
-below.
+The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
 
-The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project,
-as shown in the "Models + endpoints" tab, under the "Name" column.
+The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
+
+See the "agents" folder in the [package samples][samples] for an extensive set of samples, including streaming, tool usage and memory store usage.
 
 <!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
@@ -177,6 +177,12 @@ print("Agent deleted")
 ```
 
 <!-- END SNIPPET -->
+
+### Evaluation
+
+Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
+
+The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
 ### Deployments operations
 
@@ -307,37 +313,6 @@ project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 
 <!-- END SNIPPET -->
 
-### Files operations
-
-The code below shows some Files operations using the OpenAI client, which allow you to upload, retrieve, list, and delete files. These operations are useful for working with files that can be used for fine-tuning and other AI model operations. Full samples can be found under the "files" folder in the [package samples][samples].
-
-<!-- SNIPPET:sample_files.files_sample-->
-
-```python
-print("Uploading file")
-with open(file_path, "rb") as f:
-    uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
-print(uploaded_file)
-
-print(f"Retrieving file metadata with ID: {uploaded_file.id}")
-retrieved_file = openai_client.files.retrieve(uploaded_file.id)
-print(retrieved_file)
-
-print(f"Retrieving file content with ID: {uploaded_file.id}")
-file_content = openai_client.files.content(uploaded_file.id)
-print(file_content.content)
-
-print("Listing all files:")
-for file in openai_client.files.list():
-    print(file)
-
-print(f"Deleting file with ID: {uploaded_file.id}")
-deleted_file = openai_client.files.delete(uploaded_file.id)
-print(f"Successfully deleted file: {deleted_file.id}")
-```
-
-<!-- END SNIPPET -->
-
 ### Indexes operations
 
 The code below shows some Indexes operations. Full samples can be found under the "indexes"
@@ -374,11 +349,36 @@ project_client.indexes.delete(name=index_name, version=index_version)
 
 <!-- END SNIPPET -->
 
-### Evaluation
+### Files operations
 
-Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
+The code below shows some Files operations using the OpenAI client, which allow you to upload, retrieve, list, and delete files. These operations are useful for working with files that can be used for fine-tuning and other AI model operations. Full samples can be found under the "files" folder in the [package samples][samples].
 
-The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
+<!-- SNIPPET:sample_files.files_sample-->
+
+```python
+print("Uploading file")
+with open(file_path, "rb") as f:
+    uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
+print(uploaded_file)
+
+print(f"Retrieving file metadata with ID: {uploaded_file.id}")
+retrieved_file = openai_client.files.retrieve(uploaded_file.id)
+print(retrieved_file)
+
+print(f"Retrieving file content with ID: {uploaded_file.id}")
+file_content = openai_client.files.content(uploaded_file.id)
+print(file_content.content)
+
+print("Listing all files:")
+for file in openai_client.files.list():
+    print(file)
+
+print(f"Deleting file with ID: {uploaded_file.id}")
+deleted_file = openai_client.files.delete(uploaded_file.id)
+print(f"Successfully deleted file: {deleted_file.id}")
+```
+
+<!-- END SNIPPET -->
 
 ## Tracing
 
@@ -468,8 +468,8 @@ The AI Projects client library automatically instruments OpenAI responses and co
 
 Binary data are images and files sent to the service as input messages. When you enable content recording (`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` set to `true`), by default you only trace file IDs and filenames. To enable full binary data tracing, set `AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA` to `true`. In this case:
 
-- **Images**: Image URLs (including data URIs with base64-encoded content) are included
-- **Files**: File data is included if sent via the API
+* **Images**: Image URLs (including data URIs with base64-encoded content) are included
+* **Files**: File data is included if sent via the API
 
 **Important:** Binary data can contain sensitive information and may significantly increase trace size. Some trace backends and tracing implementations may have limitations on the maximum size of trace data that can be sent to and/or supported by the backend. Ensure your observability backend and tracing implementation support the expected trace payload sizes when enabling binary data tracing.
 
@@ -480,11 +480,12 @@ The decorator `trace_function` is provided for tracing your own function calls u
 **Note:** The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable does not affect custom function tracing. When you use the `trace_function` decorator, all parameters and return values are always traced by default.
 
 This decorator handles various data types for function parameters and return values, and records them as attributes in the trace span. The supported data types include:
+
 * Basic data types: str, int, float, bool
 * Collections: list, dict, tuple, set
-    * Special handling for collections:
-      - If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
-      - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
+  * Special handling for collections:
+    * If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
+    * Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
 
 Object types are omitted, and the corresponding parameter is not traced.
 
@@ -612,22 +613,13 @@ Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Most contributions require
-you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.microsoft.com.
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
-When you submit a pull request, a CLA-bot will automatically determine whether
-you need to provide a CLA and decorate the PR appropriately (e.g., label,
-comment). Simply follow the instructions provided by the bot. You will only
-need to do this once across all repos using our CLA.
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information, see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
-[samples]: https://aka.ms/azsdk/azure-ai-projects/python/samples/
+[samples]: https://aka.ms/azsdk/azure-ai-projects-v2/python/samples/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
