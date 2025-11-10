@@ -33,7 +33,7 @@ To report an issue with the client library, or request additional features, plea
 
 * Python 3.9 or later.
 * An [Azure subscription][azure_sub].
-* A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
+* A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-foundry/how-to/create-projects).
 * The project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Azure AI Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
 * An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
@@ -43,11 +43,14 @@ To report an issue with the client library, or request additional features, plea
 ### Install the package
 
 ```bash
-pip install azure-ai-projects
+pip install --pre azure-ai-projects
 ```
 
-Note that the package [openai](https://pypi.org/project/openai/) will also need to be installed if you indent to
-use Agents.
+Note that the packages [openai](https://pypi.org/project/openai) and [azure-identity](https://pypi.org/project/azure-identity) will also need to be installed if you intend to use Agents.
+
+```bash
+pip install openai azure-identity
+```
 
 ## Key concepts
 
@@ -92,14 +95,11 @@ project_client = AIProjectClient(
 
 ### Performing Responses operations using OpenAI client
 
-Your Azure AI Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers.
-Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client
-from the [openai](https://pypi.org/project/openai/) package, and execute Responses calls.
+Your Azure AI Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client from the [openai](https://pypi.org/project/openai/) package, and execute an example multi-turn "Responses" calls.
 
-The code below assumes the following:
+The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, As shown in the "Models + endpoints" tab, under the "Name" column.
 
-* `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your
-Foundry Project, As shown in the "Models + endpoints" tab, under the "Name" column.
+See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
 
 <!-- SNIPPET:sample_responses_basic.responses -->
 
@@ -122,16 +122,15 @@ print(f"Response output: {response.output_text}")
 
 <!-- END SNIPPET -->
 
-See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
-
 ### Performing Agent operations
 
 The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the
-OpenAI Responses protocol, so you will likely need to get an `OpenAI` client to do Agent operations, as shown in the example
+OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example
 below.
 
-The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project,
-as shown in the "Models + endpoints" tab, under the "Name" column.
+The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
+
+See the "agents" folder in the [package samples][samples] for an extensive set of samples, including streaming, tool usage and memory store usage.
 
 <!-- SNIPPET:sample_agent_basic.prompt_agent_basic -->
 
@@ -180,6 +179,12 @@ print("Agent deleted")
 ```
 
 <!-- END SNIPPET -->
+
+### Evaluation
+
+Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
+
+The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
 ### Deployments operations
 
@@ -376,12 +381,6 @@ project_client.indexes.delete(name=index_name, version=index_version)
 ```
 
 <!-- END SNIPPET -->
-
-### Evaluation
-
-Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
-
-The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
 ## Tracing
 
