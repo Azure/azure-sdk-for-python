@@ -5512,9 +5512,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    filters: Optional[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A filter to apply. Is either a ComparisonFilter type or a CompoundFilter type."""
 
     @overload
@@ -9438,6 +9436,39 @@ class OpenApiProjectConnectionSecurityScheme(_Model):
         self,
         *,
         project_connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PagedSchedule(_Model):
+    """Paged collection of Schedule items.
+
+    :ivar value: The Schedule items on this page. Required.
+    :vartype value: list[~azure.ai.projects.models.Schedule]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.Schedule"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Schedule items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.Schedule"],
+        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload

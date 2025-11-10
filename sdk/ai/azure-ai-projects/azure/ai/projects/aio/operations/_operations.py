@@ -6962,24 +6962,30 @@ class SchedulesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace
+    @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "client_request_id", "accept"]},
+        params_added_on={"2025-11-15-preview": ["api_version", "type", "enabled", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Schedule"]:
+    async def list(
+        self,
+        *,
+        type: Optional[Union[str, _models.ScheduleTaskType]] = None,
+        enabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.PagedSchedule:
         """List all schedules.
 
-        :return: An iterator like instance of Schedule
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
+        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
+         Default value is None.
+        :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
+        :keyword enabled: Filter by the enabled status. Default value is None.
+        :paramtype enabled: bool
+        :return: PagedSchedule. The PagedSchedule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PagedSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Schedule]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6988,66 +6994,48 @@ class SchedulesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-                _request = build_schedules_list_request(
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        cls: ClsType[_models.PagedSchedule] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_schedules_list_request(
+            type=type,
+            enabled=enabled,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Schedule], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+        response = pipeline_response.http_response
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PagedSchedule, response.json())
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(

@@ -219,6 +219,7 @@
         "azure.ai.projects.models.OpenApiManagedSecurityScheme": "Azure.AI.Projects.OpenApiManagedSecurityScheme",
         "azure.ai.projects.models.OpenApiProjectConnectionAuthDetails": "Azure.AI.Projects.OpenApiProjectConnectionAuthDetails",
         "azure.ai.projects.models.OpenApiProjectConnectionSecurityScheme": "Azure.AI.Projects.OpenApiProjectConnectionSecurityScheme",
+        "azure.ai.projects.models.PagedSchedule": "Azure.Core.Page",
         "azure.ai.projects.models.PagedScheduleRun": "Azure.Core.Page",
         "azure.ai.projects.models.PendingUploadRequest": "Azure.AI.Projects.PendingUploadRequest",
         "azure.ai.projects.models.PendingUploadResponse": "Azure.AI.Projects.PendingUploadResponse",
