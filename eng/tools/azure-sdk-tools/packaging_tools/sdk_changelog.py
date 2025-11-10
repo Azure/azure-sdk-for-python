@@ -9,22 +9,13 @@ import time
 
 from typing import Any
 from .package_utils import (
-    create_package,
     change_log_generate,
     extract_breaking_change,
     get_version_info,
-    check_file,
     modify_file,
 )
 from .generate_utils import (
-    generate_packaging_files,
-    update_servicemetadata,
     judge_tag_preview,
-    format_samples_and_tests,
-    gen_dpg,
-    dpg_relative_folder,
-    gen_typespec,
-    del_outdated_generated_files,
 )
 
 logging.basicConfig(stream=sys.stdout, format="[%(levelname)s] %(message)s")
@@ -36,22 +27,21 @@ def execute_func_with_timeout(func, timeout: int = 900) -> Any:
     return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
-def main(package_path: Path, *, enable_changelog: bool = True, package_result: dict = {}):
+def get_changelog_content(package_path: Path, package_result: dict, enable_changelog: bool) -> tuple[str, str]:
 
     package_name = package_path.name
-
-    if not package_name.startswith("azure-mgmt-"):
-        _LOGGER.info(f"Skip changelog generation for data-plane package: {package_name}")
-        return
     folder_name = package_path.parent.name
 
-    tag_is_stable = package_result.get("tagIsStable")
-    if tag_is_stable is None:
-        tag_is_stable = not judge_tag_preview(str(package_path), package_name)
-
-    # Changelog generation
-    try:
+    md_output = ""
+    if not package_name.startswith("azure-mgmt-"):
+        _LOGGER.info(f"Skip changelog generation for data-plane package: {package_name}")
+        last_version, _ = get_version_info(package_name)
+    else:
+        tag_is_stable = package_result.get("tagIsStable")
+        if tag_is_stable is None:
+            tag_is_stable = not judge_tag_preview(str(package_path), package_name)
         last_version, last_stable_release = get_version_info(package_name, tag_is_stable)
+
         change_log_func = partial(
             change_log_generate,
             package_name,
@@ -61,7 +51,6 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
             prefolder=folder_name,
         )
 
-        changelog_generation_start_time = time.time()
         try:
             if enable_changelog:
                 md_output = execute_func_with_timeout(change_log_func)
@@ -78,13 +67,25 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
                     os.remove(file_path)
                     _LOGGER.info(f"Remove {file_path} which is temp file to generate changelog.")
 
+    return md_output, last_version
+
+
+def main(package_path: Path, *, enable_changelog: bool = True, package_result: dict = {}):
+
+    package_name = package_path.name
+
+    # Changelog generation
+    try:
+        changelog_generation_start_time = time.time()
+        md_output, last_version = get_changelog_content(package_path, package_result, enable_changelog)
         _LOGGER.info(f"changelog generation cost time: {int(time.time() - changelog_generation_start_time)} seconds")
-        package_result["changelog"] = {
-            "content": md_output,
-            "hasBreakingChange": "Breaking Changes" in md_output,
-            "breakingChangeItems": extract_breaking_change(md_output),
-        }
-        package_result["version"] = last_version
+        if package_result:
+            package_result["changelog"] = {
+                "content": md_output,
+                "hasBreakingChange": "Breaking Changes" in md_output,
+                "breakingChangeItems": extract_breaking_change(md_output),
+            }
+            package_result["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
 
@@ -149,6 +150,10 @@ def generate_main():
     main_logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
 
     package_path = Path(args.package_path)
+    if not package_path.exists():
+        raise ValueError(f"Provided --package-path does not exist: {args.package_path}")
+    if not package_path.is_dir():
+        raise ValueError(f"Provided --package-path is not a directory: {args.package_path}")
     if not package_path.is_absolute():
         raise ValueError("--package-path must be an absolute path")
 

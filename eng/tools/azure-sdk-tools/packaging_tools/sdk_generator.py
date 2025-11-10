@@ -35,7 +35,7 @@ from .generate_utils import (
     del_outdated_generated_files,
 )
 from .package_utils import create_package, check_file
-from .sdk_changelog import main as changelog_generate
+from .sdk_changelog import main as sdk_changelog_generate
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -229,11 +229,14 @@ def main(generate_input, generate_output):
                 _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Changelog generation
-            changelog_generate(
+            sdk_changelog_generate(
                 Path(sdk_code_path).absolute(),
                 enable_changelog=data.get("enableChangelog", True),
                 package_result=result[package_name],
             )
+
+            # update version in _verison.py and CHANGELOG.md
+            sdk_update_version()
 
             # Generate ApiView
             if data.get("runMode") in ["spec-pull-request"]:
