@@ -11,7 +11,7 @@ from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from ._async_anonymous_exchange_client import AsyncAnonymousAccessCredential
-from .._generated.aio import ContainerRegistry
+from ._client import ContainerRegistry
 from .._user_agent import USER_AGENT
 
 ClientType = TypeVar("ClientType", bound="ContainerRegistryBaseClient")

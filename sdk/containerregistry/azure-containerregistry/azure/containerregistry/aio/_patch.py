@@ -8,8 +8,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from ._async_container_registry_client import ContainerRegistryClient
+from ._async_download_stream import AsyncDownloadBlobStream
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+
+__all__: list[str] = [
+    "ContainerRegistryClient",
+    "AsyncDownloadBlobStream",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

@@ -31,7 +31,7 @@ from .._container_registry_client import (
     _return_response_and_headers,
     _return_response,
 )
-from .._generated.models import AcrErrors
+from ..models import AcrErrors
 from .._helpers import (
     _compute_digest,
     _is_tag,
