@@ -1,5 +1,11 @@
 # Release History
 
+## 1.13.4 (2025-11-09)
+
+### Bugs Fixed
+
+- Handle input data for evaluation result when evaluators.
+
 ## 1.13.3 (2025-11-08)
 
 ### Other Changes
