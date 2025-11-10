@@ -2,7 +2,6 @@
 ../../core/azure-core
 ../../core/azure-core-tracing-opentelemetry
 ../../monitor/azure-monitor-opentelemetry
-../../monitor/azure-monitor-opentelemetry-exporter
 aiohttp
 opentelemetry-sdk
 types-pyyaml

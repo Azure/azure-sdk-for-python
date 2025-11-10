@@ -695,7 +695,7 @@ def get_version_py(setup_path: str) -> Optional[str]:
 
     # Find path to _version.py recursively
     for root, dirs, files in os.walk(file_path):
-        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info") and not d.startswith(".")]
+        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info") and not d.startswith((".", "build"))]
 
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)
