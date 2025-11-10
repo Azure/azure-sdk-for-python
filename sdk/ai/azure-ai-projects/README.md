@@ -1,7 +1,7 @@
 # Azure AI Projects client library for Python
 
-The AI Projects client library (in preview) is part of the Azure AI Foundry SDK, and provides easy access to
-resources in your Azure AI Foundry Project. Use it to:
+The AI Projects client library (in preview) is part of the Microsoft Foundry SDK, and provides easy access to
+resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
 * **Get an OpenAI client** using the `.get_openai_client()` client method to do "Responses" calls.
@@ -30,10 +30,10 @@ To report an issue with the client library, or request additional features, plea
 
 * Python 3.9 or later.
 * An [Azure subscription][azure_sub].
-* A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-* The project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Azure AI Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
+* A [project in Microsoft Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
+* The project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
 * An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+  * An appropriate role assignment. see [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
 
@@ -89,7 +89,7 @@ project_client = AIProjectClient(
 
 ### Performing Responses operations using OpenAI client
 
-Your Azure AI Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers.
+Your Microsoft Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers.
 Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client
 from the [openai](https://pypi.org/project/openai/) package, and execute Responses calls.
 
@@ -384,7 +384,7 @@ The code below shows some evaluation operations. Full list of sample can be foun
 
 **Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
 
-You can add an Application Insights Azure resource to your Azure AI Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
+You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
 
 ### Installation
 

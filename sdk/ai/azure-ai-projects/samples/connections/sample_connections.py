@@ -18,7 +18,7 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry project.
     2) CONNECTION_NAME - The name of a connection, as found in the "Connected resources" tab
        in the Management Center of your AI Foundry project.
 """

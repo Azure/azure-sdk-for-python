@@ -25,9 +25,9 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Azure AI Foundry portal.
+       page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+       the "Models + endpoints" tab in your Microsoft Foundry project.
 
     NOTE:
     - Image generation must have "gpt-image-1" deployment specified in the header when creating response at this moment

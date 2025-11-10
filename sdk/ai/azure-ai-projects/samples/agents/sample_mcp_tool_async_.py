@@ -17,9 +17,9 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Azure AI Foundry portal.
+       page of your Microsoft Foundry portal.
     2) IMAGE_GEN_DEPLOYMENT_NAME - The deployment name of the image generation model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+       the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
 import asyncio
@@ -58,7 +58,7 @@ async def main():
                 # Run the code interpreter tool
                 code_interpreter_result = await session.call_tool(
                     name="code_interpreter",
-                    arguments={"code": "print('Hello from Azure AI Foundry MCP Code Interpreter tool!')"},
+                    arguments={"code": "print('Hello from Microsoft Foundry MCP Code Interpreter tool!')"},
                 )
                 print(f"\n\nCode Interpreter Output: {code_interpreter_result.content}")
 
