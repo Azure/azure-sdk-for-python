@@ -225,7 +225,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             UserAgentSingleton().value,
         )
         self._flow = AsyncPrompty.load(
-            source=self._prompty_file, model=prompty_model_config
+            source=self._prompty_file,
+            model=prompty_model_config,
+            is_reasoning_model=self._is_reasoning_model,
         )
 
     def _ensure_query_prompty_loaded(self):
