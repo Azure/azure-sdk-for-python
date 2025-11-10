@@ -148,7 +148,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -222,7 +222,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
