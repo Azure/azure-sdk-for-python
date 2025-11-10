@@ -1865,8 +1865,8 @@ def _convert_results_to_aoai_evaluation_results(
                         criteria_groups[criteria_name] = {}
 
                     criteria_groups[criteria_name][metric_name] = value
-            elif key.startswith("inputs."):
-                input_key = key.replace("inputs.", "")
+            else:
+                input_key = key.replace("inputs.", "") if key.startswith("inputs.") else key
                 if input_key not in input_groups:
                     input_groups[input_key] = value
 
@@ -2004,6 +2004,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_total_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"total_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2021,6 +2022,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_prompt_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"prompt_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2038,6 +2040,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_completion_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"completion_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2195,7 +2198,7 @@ def _convert_results_to_aoai_evaluation_results(
         f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
     # Calculate summary statistics
-    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
+    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, criteria_name_types_from_meta)
     results["_evaluation_summary"] = evaluation_summary
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
@@ -2215,7 +2218,7 @@ def _is_none_or_nan(value: Any) -> bool:
         return True
     if isinstance(value, float) and math.isnan(value):
         return True
-    if isinstance(value, str) and value.lower() in ["nan", "null", "none"]:
+    if isinstance(value, str) and value.lower() in ["nan", "null", "none", ""]:
         return True
     return False
 
@@ -2314,7 +2317,34 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     return metric
 
 
-def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logger) -> Dict[str, Any]:
+def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
+    """
+    Check if the given metric name is a primary metric.
+
+    :param metric_name: The name of the metric
+    :type metric_name: str
+    :param evaluator_name: The name of the evaluator
+    :type evaluator_name: str
+    :return: True if the metric is a primary metric, False otherwise
+    :rtype: bool
+    """
+    if (
+        not _is_none_or_nan(metric_name)
+        and not _is_none_or_nan(evaluator_name)
+        and evaluator_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS
+        and isinstance(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name], list)
+        and len(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]) > 1
+        and metric_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]
+        and metric_name.lower() != _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name][0].lower()
+    ):
+        return False
+    else:
+        return True
+
+
+def _calculate_aoai_evaluation_summary(
+    aoai_results: list, logger: logging.Logger, criteria_name_types_from_meta: Optional[Dict[str, Any]]
+) -> Dict[str, Any]:
     """
     Calculate summary statistics for AOAI evaluation results.
 
@@ -2344,9 +2374,25 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
             )
             for result_item in aoai_result["results"]:
                 if isinstance(result_item, dict):
+                    testing_criteria = result_item.get("name", "")
+                    is_primary_metric = True
+                    if (
+                        criteria_name_types_from_meta is not None
+                        and isinstance(criteria_name_types_from_meta, dict)
+                        and testing_criteria in criteria_name_types_from_meta
+                    ):
+                        evaluator_name = criteria_name_types_from_meta[testing_criteria].get("evaluator_name", None)
+                        criteria_type = criteria_name_types_from_meta[testing_criteria].get("type", None)
+                        if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+                            evaluator_name = evaluator_name.replace("builtin.", "")
+                        is_primary_metric = _is_primary_metric(result_item.get("metric", ""), evaluator_name)
+                    if not is_primary_metric:
+                        logger.info(
+                            f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
+                        )
+                        continue
                     # Check if the result has a 'passed' field
                     if "passed" in result_item and result_item["passed"] is not None:
-                        testing_criteria = result_item.get("name", "")
                         if testing_criteria not in result_counts_stats:
                             result_counts_stats[testing_criteria] = {
                                 "testing_criteria": testing_criteria,
@@ -2372,15 +2418,14 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
             error_count += 1
 
+        # Update overall result counts, error counts will not be considered for passed/failed
         if error_count > 0:
             result_counts["errored"] += 1
-        elif failed_count > 0:
+
+        if failed_count > 0:
             result_counts["failed"] += 1
         elif (
-            error_count == 0
-            and failed_count == 0
-            and passed_count > 0
-            and passed_count == len(aoai_result.get("results", []))
+            failed_count == 0 and passed_count > 0 and passed_count == len(aoai_result.get("results", [])) - error_count
         ):
             result_counts["passed"] += 1
 
@@ -2428,6 +2473,9 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                     cur_cached_tokens = usage_data.get("cached_tokens", 0)
                     if _is_none_or_nan(cur_cached_tokens):
                         cur_cached_tokens = 0
+                    logger.info(
+                        f"Model: {model_name}, cur_total_tokens: {cur_total_tokens}, {_is_none_or_nan(cur_total_tokens)}, cur_prompt_tokens: {cur_prompt_tokens}, cur_completion_tokens: {cur_completion_tokens}, cur_cached_tokens: {cur_cached_tokens}"
+                    )
                     model_stats["total_tokens"] += cur_total_tokens
                     model_stats["prompt_tokens"] += cur_prompt_tokens
                     model_stats["completion_tokens"] += cur_completion_tokens
