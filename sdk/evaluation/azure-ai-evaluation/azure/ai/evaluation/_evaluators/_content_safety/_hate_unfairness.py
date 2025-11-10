@@ -94,7 +94,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         **kwargs,
     ):
         super().__init__(
-            eval_metric=EvaluationMetrics.HATE_FAIRNESS,
+            eval_metric=EvaluationMetrics.HATE_UNFAIRNESS,
             azure_ai_project=azure_ai_project,
             credential=credential,
             conversation_aggregation_type=_AggregationType.MAX,

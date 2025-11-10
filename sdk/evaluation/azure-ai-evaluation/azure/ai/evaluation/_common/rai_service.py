@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import asyncio
 import importlib.metadata
+import logging
 import math
 import re
 import time
@@ -14,13 +15,14 @@ from urllib.parse import urlparse
 from string import Template
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._common.onedp.models import QueryResponseInlineMessage
+from azure.ai.evaluation._common.onedp._utils.model_base import SdkJSONEncoder
 from azure.core.exceptions import HttpResponseError
 
 import jwt
 
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._common.utils import is_onedp_project
@@ -37,6 +39,8 @@ from .constants import (
 )
 from .utils import get_harm_severity_level, retrieve_content_type
 
+
+LOGGER = logging.getLogger(__name__)
 
 USER_TEXT_TEMPLATE_DICT: Dict[str, Template] = {
     "DEFAULT": Template("<Human>{$query}</><System>{$response}</>"),
@@ -252,7 +256,7 @@ async def submit_request(
         http_response = await client.post(url, json=payload, headers=headers)
 
     if http_response.status_code != 202:
-        print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], http_response.text()))
+        LOGGER.error("Fail evaluating '%s' with error message: %s", payload["UserTextList"], http_response.text())
         http_response.raise_for_status()
     result = http_response.json()
     operation_id = result["location"].split("/")[-1]
@@ -933,11 +937,22 @@ def _build_sync_eval_payload(
     # Prepare context if available
     context = None
     if data.get("context") is not None:
-        context = " ".join(c["content"] for c in data["context"]["contexts"])
+        # Handle both string context and dict with contexts list
+        context_data = data["context"]
+        if isinstance(context_data, str):
+            # Context is already a string
+            context = context_data
+        elif isinstance(context_data, dict) and "contexts" in context_data:
+            # Context is a dict with contexts list
+            context = " ".join(c["content"] for c in context_data["contexts"])
+        elif isinstance(context_data, dict):
+            # Context is a dict but might be in a different format
+            # Try to get content directly or convert to string
+            context = context_data.get("content", str(context_data))
 
     # Build QueryResponseInlineMessage object
     item_content = QueryResponseInlineMessage(
-        query=data.get("query", ""),
+        query=data.get("query", "query"),  # TODO: remove default query once sync evals supports no query
         response=data.get("response", ""),
         context=context,
         tools=data.get("tool_calls"),
@@ -1076,15 +1091,28 @@ async def evaluate_with_rai_service_sync(
     :rtype: EvalRunOutputItem
     :raises: EvaluationException if project_scope is not a OneDP project
     """
+    api_version = "2025-10-15-preview"
     if not is_onedp_project(project_scope):
-        msg = "evaluate_with_rai_service_sync only supports OneDP projects. Use evaluate_with_rai_service for legacy projects."
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.RAI_CLIENT,
-            category=ErrorCategory.INVALID_VALUE,
-            blame=ErrorBlame.USER_ERROR,
-        )
+        # Get RAI service URL from discovery service and check service availability
+        token = await fetch_or_reuse_token(credential)
+        rai_svc_url = await get_rai_svc_url(project_scope, token)
+        await ensure_service_availability(rai_svc_url, token, annotation_task)
+
+        # Submit annotation request and fetch result
+        url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
+        headers = {"aml-user-token": token, "Authorization": "Bearer " + token, "Content-Type": "application/json"}
+        sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
+        sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
+
+        with get_http_client() as client:
+            http_response = client.post(url, data=sync_eval_payload_json, headers=headers)
+
+        if http_response.status_code != 200:
+            LOGGER.error("Fail evaluating with error message: %s", http_response.text())
+            http_response.raise_for_status()
+        result = http_response.json()
+
+        return result
 
     client = AIProjectClient(
         endpoint=project_scope,
@@ -1092,7 +1120,6 @@ async def evaluate_with_rai_service_sync(
         user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
     )
 
-    # Build the sync eval payload
     sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
     # Call sync_evals.create() with the JSON payload
     eval_result = client.sync_evals.create(eval=sync_eval_payload)
