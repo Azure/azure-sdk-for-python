@@ -1,5 +1,34 @@
 # Release History
 
+## 2.1.0b5 (2025-11-10)
+
+### Features Added
+
+  - Model `ServiceFabricManagedClustersManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Added model `ApplicationFetchHealthRequest`
+  - Added enum `HealthFilter`
+  - Added model `RestartDeployedCodePackageRequest`
+  - Added enum `RestartKind`
+  - Added model `RestartReplicaRequest`
+  - Added model `RuntimeApplicationHealthPolicy`
+  - Added enum `RuntimeFailureAction`
+  - Added enum `RuntimeRollingUpgradeMode`
+  - Added model `RuntimeRollingUpgradeUpdateMonitoringPolicy`
+  - Added model `RuntimeServiceTypeHealthPolicy`
+  - Added model `RuntimeUpdateApplicationUpgradeParameters`
+  - Added enum `RuntimeUpgradeKind`
+  - Model `ApplicationsOperations` added method `begin_fetch_health`
+  - Model `ApplicationsOperations` added method `begin_restart_deployed_code_package`
+  - Model `ApplicationsOperations` added method `begin_update`
+  - Model `ApplicationsOperations` added method `begin_update_upgrade`
+  - Model `ManagedClustersOperations` added method `begin_update`
+  - Model `ServicesOperations` added method `begin_restart_replica`
+
+### Breaking Changes
+
+  - Deleted or renamed method `ApplicationsOperations.update`
+  - Deleted or renamed method `ManagedClustersOperations.update`
+
 ## 2.1.0b4 (2025-08-14)
 
 ### Features Added
