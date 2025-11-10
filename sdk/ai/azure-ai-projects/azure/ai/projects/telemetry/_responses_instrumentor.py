@@ -869,6 +869,38 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                     self._emit_tool_call_event(span, tool_call, conversation_id)
 
+                # Handle azure_ai_search_call type
+                elif item_type == "azure_ai_search_call":
+                    tool_call = {
+                        "type": "azure_ai_search",
+                    }
+
+                    if hasattr(output_item, "id"):
+                        tool_call["id"] = output_item.id
+                    elif hasattr(output_item, "call_id"):
+                        tool_call["id"] = output_item.call_id
+
+                    # Only include search details if content recording is enabled
+                    if _trace_responses_content:
+                        # Add Azure AI Search specific fields
+                        if hasattr(output_item, "input") and output_item.input:
+                            tool_call["input"] = output_item.input
+
+                        if hasattr(output_item, "results") and output_item.results:
+                            tool_call["results"] = []
+                            for result in output_item.results:
+                                result_data = {}
+                                if hasattr(result, "title"):
+                                    result_data["title"] = result.title
+                                if hasattr(result, "url"):
+                                    result_data["url"] = result.url
+                                if hasattr(result, "content"):
+                                    result_data["content"] = result.content
+                                if result_data:
+                                    tool_call["results"].append(result_data)
+
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
+
                 # Handle image_generation_call type
                 elif item_type == "image_generation_call":
                     tool_call = {
@@ -942,6 +974,67 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                     self._emit_tool_call_event(span, tool_call, conversation_id)
 
+                # Handle remote_function_call_output type (remote tool calls like Azure AI Search)
+                elif item_type == "remote_function_call_output":
+                    # Extract the tool name from the output item
+                    tool_name = getattr(output_item, "name", None) if hasattr(output_item, "name") else None
+
+                    tool_call = {
+                        "type": tool_name if tool_name else "remote_function",
+                    }
+
+                    # Always include ID (needed for correlation)
+                    if hasattr(output_item, "id"):
+                        tool_call["id"] = output_item.id
+                    elif hasattr(output_item, "call_id"):
+                        tool_call["id"] = output_item.call_id
+                    # Check model_extra for call_id
+                    elif hasattr(output_item, "model_extra") and isinstance(output_item.model_extra, dict):
+                        if "call_id" in output_item.model_extra:
+                            tool_call["id"] = output_item.model_extra["call_id"]
+
+                    # Only include tool details if content recording is enabled
+                    if _trace_responses_content:
+                        # Extract data from model_extra if available (Pydantic v2 style)
+                        if hasattr(output_item, "model_extra") and isinstance(output_item.model_extra, dict):
+                            for key, value in output_item.model_extra.items():
+                                # Skip already captured fields, redundant fields (name, label), and empty/None values
+                                if (
+                                    key not in ["type", "id", "call_id", "name", "label"]
+                                    and value is not None
+                                    and value != ""
+                                ):
+                                    tool_call[key] = value
+
+                        # Also try as_dict if available
+                        if hasattr(output_item, "as_dict"):
+                            try:
+                                tool_dict = output_item.as_dict()
+                                # Extract relevant fields (exclude already captured ones and empty/None values)
+                                for key, value in tool_dict.items():
+                                    if key not in ["type", "id", "call_id", "name", "label", "role", "content"]:
+                                        # Skip empty strings and None values
+                                        if value is not None and value != "":
+                                            # Don't overwrite if already exists
+                                            if key not in tool_call:
+                                                tool_call[key] = value
+                            except Exception as e:
+                                logger.debug(f"Failed to extract data from as_dict: {e}")
+
+                        # Fallback: try common fields directly (skip if empty and skip redundant name/label)
+                        for field in ["input", "output", "results", "status", "error", "search_query", "query"]:
+                            if hasattr(output_item, field):
+                                try:
+                                    value = getattr(output_item, field)
+                                    if value is not None and value != "":
+                                        # If not already in tool_call, add it
+                                        if field not in tool_call:
+                                            tool_call[field] = value
+                                except Exception:
+                                    pass
+
+                    self._emit_tool_call_event(span, tool_call, conversation_id)
+
                 # Handle unknown/future tool call types with best effort
                 elif item_type and "_call" in item_type:
                     try:
@@ -992,6 +1085,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         input_text: Optional[str] = None,
         input_raw: Optional[Any] = None,
         stream: bool = False,  # pylint: disable=unused-argument
+        tools: Optional[List[Dict[str, Any]]] = None,
     ) -> "Optional[AbstractSpan]":
         """Start a span for responses API call."""
         # Build span name: prefer model, then assistant name, then just operation
@@ -1022,6 +1116,12 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Note: model and server_address are already set by start_span, so we don't need to set them again
             self._set_span_attribute_safe(span, "gen_ai.conversation.id", conversation_id)
             self._set_span_attribute_safe(span, "gen_ai.request.assistant_name", assistant_name)
+
+            # Set tools attribute if tools are provided
+            if tools:
+                # Convert tools list to JSON string for the attribute
+                tools_json = json.dumps(tools, ensure_ascii=False)
+                self._set_span_attribute_safe(span, "gen_ai.request.tools", tools_json)
 
             # Process input - check if it contains tool outputs
             tool_outputs = []
@@ -1309,6 +1409,23 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
     def trace_responses_create(self, function, *args, **kwargs):
         """Trace synchronous responses.create calls."""
+        # If stream=True and we're being called from responses.stream(), skip tracing
+        # The responses.stream() method internally calls create(stream=True), and
+        # trace_responses_stream() will handle the tracing for that case.
+        # We only trace direct calls to create(stream=True) from user code.
+        if kwargs.get("stream", False):
+            # Check if we're already in a stream tracing context
+            # by looking at the call stack
+            import inspect
+
+            frame = inspect.currentframe()
+            if frame and frame.f_back and frame.f_back.f_back:
+                # Check if the caller is trace_responses_stream
+                caller_name = frame.f_back.f_back.f_code.co_name
+                if caller_name in ("trace_responses_stream", "trace_responses_stream_async", "__enter__", "__aenter__"):
+                    # We're being called from responses.stream(), don't create a new span
+                    return function(*args, **kwargs)
+
         span = self._create_responses_span_from_parameters(*args, **kwargs)
 
         # Extract parameters for metrics
@@ -1441,6 +1558,23 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
     async def trace_responses_create_async(self, function, *args, **kwargs):
         """Trace asynchronous responses.create calls."""
+        # If stream=True and we're being called from responses.stream(), skip tracing
+        # The responses.stream() method internally calls create(stream=True), and
+        # trace_responses_stream() will handle the tracing for that case.
+        # We only trace direct calls to create(stream=True) from user code.
+        if kwargs.get("stream", False):
+            # Check if we're already in a stream tracing context
+            # by looking at the call stack
+            import inspect
+
+            frame = inspect.currentframe()
+            if frame and frame.f_back and frame.f_back.f_back:
+                # Check if the caller is trace_responses_stream
+                caller_name = frame.f_back.f_back.f_code.co_name
+                if caller_name in ("trace_responses_stream", "trace_responses_stream_async", "__enter__", "__aenter__"):
+                    # We're being called from responses.stream(), don't create a new span
+                    return await function(*args, **kwargs)
+
         span = self._create_responses_span_from_parameters(*args, **kwargs)
 
         # Extract parameters for metrics
@@ -1571,6 +1705,96 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     raise
             return result
 
+    def trace_responses_stream(self, function, *args, **kwargs):
+        """Trace synchronous responses.stream calls."""
+        span = self._create_responses_span_from_parameters(*args, **kwargs)
+
+        # Extract parameters for metrics
+        server_address, port = self._extract_server_info_from_client(args[0] if args else None)
+        model = self._extract_model(kwargs)
+        operation_name = "responses"
+
+        start_time = time.time()
+
+        if span is None:
+            # No tracing, just call the function
+            return function(*args, **kwargs)
+
+        # For responses.stream(), always wrap the ResponseStreamManager
+        try:
+            result = function(*args, **kwargs)
+            # Detect if it's async or sync stream manager by checking for __aenter__
+            if hasattr(result, "__aenter__"):
+                # Async stream manager
+                result = self._wrap_async_response_stream_manager(
+                    result, span, kwargs, start_time, operation_name, server_address, port, model
+                )
+            else:
+                # Sync stream manager
+                result = self._wrap_response_stream_manager(
+                    result, span, kwargs, start_time, operation_name, server_address, port, model
+                )
+            return result
+        except Exception as e:
+            duration = time.time() - start_time
+            span_attributes = {
+                "gen_ai.request.model": model,
+                "server.address": server_address,
+                "server.port": port,
+            }
+            self._record_metrics(
+                operation_type="responses",
+                duration=duration,
+                result=None,
+                span_attributes=span_attributes,
+                error_type=str(type(e).__name__),
+            )
+            self.record_error(span, e)
+            span.span_instance.end()
+            raise
+
+    def trace_responses_stream_async(self, function, *args, **kwargs):
+        """Trace asynchronous responses.stream calls."""
+        span = self._create_responses_span_from_parameters(*args, **kwargs)
+
+        # Extract parameters for metrics
+        server_address, port = self._extract_server_info_from_client(args[0] if args else None)
+        model = self._extract_model(kwargs)
+        operation_name = "responses"
+
+        start_time = time.time()
+
+        if span is None:
+            # No tracing, just call the function (don't await - it returns async context manager)
+            return function(*args, **kwargs)
+
+        # For responses.stream(), always wrap the AsyncResponseStreamManager
+        # Note: stream() itself is not async, it returns an AsyncResponseStreamManager synchronously
+        try:
+            result = function(*args, **kwargs)
+            # Wrap the AsyncResponseStreamManager
+            result = self._wrap_async_response_stream_manager(
+                result, span, kwargs, start_time, operation_name, server_address, port, model
+            )
+            return result
+        except Exception as e:
+            duration = time.time() - start_time
+            span_attributes = {
+                "gen_ai.request.model": model,
+                "server.address": server_address,
+                "server.port": port,
+            }
+            self._record_metrics(
+                operation_type="responses",
+                duration=duration,
+                result=None,
+                span_attributes=span_attributes,
+                error_type=str(type(e).__name__),
+            )
+            self.record_error(span, e)
+            span.span_instance.end()
+            raise
+
     def _wrap_streaming_response(
         self,
         stream,
@@ -1622,6 +1846,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Track all output items from streaming events (tool calls, text, etc.)
                 self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id or id
                 self.has_output_items = False
+
+                # Expose response attribute for compatibility with ResponseStreamManager
+                self.response = getattr(stream_iter, "response", None) or getattr(stream_iter, "_response", None)
 
             def append_output_content(self, content):
                 """Append content to accumulated output list."""
@@ -1887,8 +2114,80 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     pass  # Don't let cleanup exceptions mask the original exception
                 return False
 
+            def get_final_response(self):
+                """Proxy method to access the underlying stream's get_final_response if available."""
+                if hasattr(self.stream_iter, "get_final_response"):
+                    return self.stream_iter.get_final_response()
+                raise AttributeError("Underlying stream does not have 'get_final_response' method")
+
         return StreamWrapper(
             stream, span, conversation_id, instrumentor, start_time, operation_name, server_address, port, model
+        )
+
+    def _wrap_response_stream_manager(
+        self,
+        stream_manager,
+        span: "AbstractSpan",
+        original_kwargs: Dict[str, Any],
+        start_time: float,
+        operation_name: str,
+        server_address: Optional[str],
+        port: Optional[int],
+        model: Optional[str],
+    ):
+        """Wrap a ResponseStreamManager to trace the stream when it's entered."""
+        conversation_id = self._extract_conversation_id(original_kwargs)
+        instrumentor = self
+
+        class ResponseStreamManagerWrapper:
+            """Wrapper for ResponseStreamManager that adds tracing to the underlying stream."""
+
+            def __init__(
+                self,
+                manager,
+                span,
+                conversation_id,
+                instrumentor,
+                start_time,
+                operation_name,
+                server_address,
+                port,
+                model,
+            ):
+                self.manager = manager
+                self.span = span
+                self.conversation_id = conversation_id
+                self.instrumentor = instrumentor
+                self.start_time = start_time
+                self.operation_name = operation_name
+                self.server_address = server_address
+                self.port = port
+                self.model = model
+                self.wrapped_stream = None
+
+            def __enter__(self):
+                # Enter the underlying ResponseStreamManager to get the ResponseStream
+                raw_stream = self.manager.__enter__()
+                # Wrap the ResponseStream with our tracing wrapper
+                self.wrapped_stream = self.instrumentor._wrap_streaming_response(
+                    raw_stream,
+                    self.span,
+                    {"conversation": self.conversation_id} if self.conversation_id else {},
+                    self.start_time,
+                    self.operation_name,
+                    self.server_address,
+                    self.port,
+                    self.model,
+                )
+                return self.wrapped_stream
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                # Exit the underlying ResponseStreamManager
+                result = self.manager.__exit__(exc_type, exc_val, exc_tb)
+                return result
+
+        return ResponseStreamManagerWrapper(
+            stream_manager, span, conversation_id, instrumentor, start_time, operation_name, server_address, port, model
         )
 
     def _wrap_async_streaming_response(
@@ -1941,6 +2240,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 # Track all output items from streaming events (tool calls, text, etc.)
                 self.output_items = {}  # Dict[item_id, output_item] - keyed by call_id or id
                 self.has_output_items = False
+
+                # Expose response attribute for compatibility with AsyncResponseStreamManager
+                self.response = getattr(stream_async_iter, "response", None) or getattr(
+                    stream_async_iter, "_response", None
+                )
 
             def append_output_content(self, content):
                 """Append content to accumulated output list."""
@@ -2206,8 +2510,84 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     pass  # Don't let cleanup exceptions mask the original exception
                 return False
 
+            async def get_final_response(self):
+                """Proxy method to access the underlying stream's get_final_response if available."""
+                if hasattr(self.stream_async_iter, "get_final_response"):
+                    result = self.stream_async_iter.get_final_response()
+                    # If it's a coroutine, await it
+                    if hasattr(result, "__await__"):
+                        return await result
+                    return result
+                raise AttributeError("Underlying stream does not have 'get_final_response' method")
+
         return AsyncStreamWrapper(
             stream, span, conversation_id, self, start_time, operation_name, server_address, port, model
+        )
+
+    def _wrap_async_response_stream_manager(
+        self,
+        stream_manager,
+        span: "AbstractSpan",
+        original_kwargs: Dict[str, Any],
+        start_time: float,
+        operation_name: str,
+        server_address: Optional[str],
+        port: Optional[int],
+        model: Optional[str],
+    ):
+        """Wrap an AsyncResponseStreamManager to trace the stream when it's entered."""
+        conversation_id = self._extract_conversation_id(original_kwargs)
+        instrumentor = self
+
+        class AsyncResponseStreamManagerWrapper:
+            """Wrapper for AsyncResponseStreamManager that adds tracing to the underlying stream."""
+
+            def __init__(
+                self,
+                manager,
+                span,
+                conversation_id,
+                instrumentor,
+                start_time,
+                operation_name,
+                server_address,
+                port,
+                model,
+            ):
+                self.manager = manager
+                self.span = span
+                self.conversation_id = conversation_id
+                self.instrumentor = instrumentor
+                self.start_time = start_time
+                self.operation_name = operation_name
+                self.server_address = server_address
+                self.port = port
+                self.model = model
+                self.wrapped_stream = None
+
+            async def __aenter__(self):
+                # Enter the underlying AsyncResponseStreamManager to get the AsyncResponseStream
+                raw_stream = await self.manager.__aenter__()
+                # Wrap the AsyncResponseStream with our tracing wrapper
+                self.wrapped_stream = self.instrumentor._wrap_async_streaming_response(
+                    raw_stream,
+                    self.span,
+                    {"conversation": self.conversation_id} if self.conversation_id else {},
+                    self.start_time,
+                    self.operation_name,
+                    self.server_address,
+                    self.port,
+                    self.model,
+                )
+                return self.wrapped_stream
+
+            async def __aexit__(self, exc_type, exc_val, exc_tb):
+                # Exit the underlying AsyncResponseStreamManager
+                result = await self.manager.__aexit__(exc_type, exc_val, exc_tb)
+                return result
+
+        return AsyncResponseStreamManagerWrapper(
+            stream_manager, span, conversation_id, instrumentor, start_time, operation_name, server_address, port, model
         )
 
     def start_create_conversation_span(
@@ -2435,7 +2815,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         return span
 
-    def _add_conversation_item_event(  # pylint: disable=too-many-branches
+    def _add_conversation_item_event(  # pylint: disable=too-many-branches,too-many-locals
         self,
         span: "AbstractSpan",
         item: Any,
@@ -2645,6 +3025,49 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
             event_name = "gen_ai.assistant.message"
 
+        elif item_type == "azure_ai_search_call":
+            # Azure AI Search tool call
+            role = "assistant"  # Override role for Azure AI Search calls
+            if _trace_responses_content:
+                tool_call = {
+                    "type": "azure_ai_search",
+                }
+
+                # Add call_id as "id"
+                if hasattr(item, "call_id"):
+                    tool_call["id"] = item.call_id
+                elif hasattr(item, "id"):
+                    tool_call["id"] = item.id
+
+                # Add Azure AI Search details
+                azure_ai_search_details: Dict[str, Any] = {}
+
+                if hasattr(item, "status"):
+                    azure_ai_search_details["status"] = item.status
+
+                if hasattr(item, "input"):
+                    azure_ai_search_details["input"] = item.input
+
+                if hasattr(item, "results") and item.results:
+                    azure_ai_search_details["results"] = []
+                    for result in item.results:
+                        result_data = {}
+                        if hasattr(result, "title"):
+                            result_data["title"] = result.title
+                        if hasattr(result, "url"):
+                            result_data["url"] = result.url
+                        if hasattr(result, "content"):
+                            result_data["content"] = result.content
+                        if result_data:
+                            azure_ai_search_details["results"].append(result_data)
+
+                if azure_ai_search_details:
+                    tool_call["azure_ai_search"] = azure_ai_search_details
+
+                event_body["tool_calls"] = [tool_call]
+
+            event_name = "gen_ai.assistant.message"
+
         elif item_type == "image_generation_call":
             # Image generation tool call
             role = "assistant"  # Override role for image generation calls
@@ -2680,6 +3103,65 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 if image_gen_details:
                     tool_call["image_generation"] = image_gen_details
+
+                event_body["tool_calls"] = [tool_call]
+
+            event_name = "gen_ai.assistant.message"
+
+        elif item_type == "remote_function_call_output":
+            # Remote function call output (like Azure AI Search)
+            role = "assistant"  # Override role for remote function calls
+            if _trace_responses_content:
+                # Extract the tool name
+                tool_name = getattr(item, "name", None) if hasattr(item, "name") else None
+
+                tool_call = {
+                    "type": tool_name if tool_name else "remote_function",
+                }
+
+                # Add call_id as "id"
+                if hasattr(item, "id"):
+                    tool_call["id"] = item.id
+                elif hasattr(item, "call_id"):
+                    tool_call["id"] = item.call_id
+                # Check model_extra for call_id
+                elif hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
+                    if "call_id" in item.model_extra:
+                        tool_call["id"] = item.model_extra["call_id"]
+
+                # Extract data from model_extra if available (Pydantic v2 style)
+                if hasattr(item, "model_extra") and isinstance(item.model_extra, dict):
+                    for key, value in item.model_extra.items():
+                        # Skip already captured fields, redundant fields (name, label), and empty/None values
+                        if key not in ["type", "id", "call_id", "name", "label"] and value is not None and value != "":
+                            tool_call[key] = value
+
+                # Also try as_dict if available
+                if hasattr(item, "as_dict"):
+                    try:
+                        tool_dict = item.as_dict()
+                        # Extract relevant fields (exclude already captured ones and empty/None values)
+                        for key, value in tool_dict.items():
+                            if key not in ["type", "id", "call_id", "name", "label", "role", "content"]:
+                                # Skip empty strings and None values
+                                if value is not None and value != "":
+                                    # Don't overwrite if already exists
+                                    if key not in tool_call:
+                                        tool_call[key] = value
+                    except Exception as e:
+                        logger.debug(f"Failed to extract data from as_dict: {e}")
+
+                # Fallback: try common fields directly (skip if empty and skip redundant name/label)
+                for field in ["input", "output", "results", "status", "error", "search_query", "query"]:
+                    if hasattr(item, field):
+                        try:
+                            value = getattr(item, field)
+                            if value is not None and value != "":
+                                # If not already in tool_call, add it
+                                if field not in tool_call:
+                                    tool_call[field] = value
+                        except Exception:
+                            pass
 
                 event_body["tool_calls"] = [tool_call]
 
@@ -3035,6 +3517,8 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         def inner(*args, **kwargs):
             if _name == "create" and _trace_type == TraceType.RESPONSES:
                 return self.trace_responses_create(function, *args, **kwargs)
+            if _name == "stream" and _trace_type == TraceType.RESPONSES:
+                return self.trace_responses_stream(function, *args, **kwargs)
             if _name == "create" and _trace_type == TraceType.CONVERSATIONS:
                 return self.trace_conversations_create(function, *args, **kwargs)
             if _name == "list" and _trace_type == TraceType.CONVERSATIONS:
@@ -3071,6 +3555,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         async def inner(*args, **kwargs):
             if _name == "create" and _trace_type == TraceType.RESPONSES:
                 return await self.trace_responses_create_async(function, *args, **kwargs)
+            if _name == "stream" and _trace_type == TraceType.RESPONSES:
+                # stream() is not async, just returns async context manager, so don't await
+                return self.trace_responses_stream_async(function, *args, **kwargs)
             if _name == "create" and _trace_type == TraceType.CONVERSATIONS:
                 return await self.trace_conversations_create_async(function, *args, **kwargs)
             if _name == "list" and _trace_type == TraceType.CONVERSATIONS:
@@ -3107,6 +3594,16 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         "create",
                     )
                 )
+                # Add stream method
+                sync_apis.append(
+                    (
+                        responses_module.Responses,
+                        "stream",
+                        TraceType.RESPONSES,
+                        self._inject_sync,
+                        "stream",
+                    )
+                )
         except ImportError:
             pass
 
@@ -3121,6 +3618,17 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         TraceType.RESPONSES,
                         self._inject_async,
                         "create",
+                    )
+                )
+                # Add stream method - note: stream() is not async, just returns async context manager
+                # So we use _inject_sync even though it's on AsyncResponses
+                sync_apis.append(
+                    (
+                        responses_module.AsyncResponses,
+                        "stream",
+                        TraceType.RESPONSES,
+                        self._inject_sync,
+                        "stream",
                     )
                 )
         except ImportError:
