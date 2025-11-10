@@ -11,10 +11,6 @@ async def flow_side_effect(timeout, **kwargs):
     tool_calls = kwargs.get("tool_calls", [])
     query = kwargs.get("query", "")
 
-    # Handle None query case
-    if query is None:
-        query = ""
-
     # Handle built-in tool calls first - count them as relevant
     builtin_calls = 0
     custom_function_calls = []
