@@ -46,7 +46,7 @@ To report an issue with the client library, or request additional features, plea
 pip install --pre azure-ai-projects
 ```
 
-Note that the packages [openai](https://pypi.org/project/openai) and [azure-identity](https://pypi.org/project/azure-identity) will also need to be installed if you intend to use Agents.
+Note that the packages [openai](https://pypi.org/project/openai) and [azure-identity](https://pypi.org/project/azure-identity) also need to be installed if intend to call `get_openai_client()`:
 
 ```bash
 pip install openai azure-identity
@@ -71,13 +71,13 @@ project_client = AIProjectClient(
 )
 ```
 
-To construct an asynchronous client, Install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```bash
 pip install aiohttp
 ```
 
-and update the code above to import `asyncio`, import `AIProjectClient` from the `azure.ai.projects.aio` package, and import `DefaultAzureCredential` from the `azure.identity.aio` package:
+and run:
 
 ```python
 import os
@@ -124,9 +124,7 @@ print(f"Response output: {response.output_text}")
 
 ### Performing Agent operations
 
-The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the
-OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example
-below.
+The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
 
 The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
 
@@ -315,37 +313,6 @@ project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
 
 <!-- END SNIPPET -->
 
-### Files operations
-
-The code below shows some Files operations using the OpenAI client, which allow you to upload, retrieve, list, and delete files. These operations are useful for working with files that can be used for fine-tuning and other AI model operations. Full samples can be found under the "files" folder in the [package samples][samples].
-
-<!-- SNIPPET:sample_files.files_sample-->
-
-```python
-print("Uploading file")
-with open(file_path, "rb") as f:
-    uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
-print(uploaded_file)
-
-print(f"Retrieving file metadata with ID: {uploaded_file.id}")
-retrieved_file = openai_client.files.retrieve(uploaded_file.id)
-print(retrieved_file)
-
-print(f"Retrieving file content with ID: {uploaded_file.id}")
-file_content = openai_client.files.content(uploaded_file.id)
-print(file_content.content)
-
-print("Listing all files:")
-for file in openai_client.files.list():
-    print(file)
-
-print(f"Deleting file with ID: {uploaded_file.id}")
-deleted_file = openai_client.files.delete(uploaded_file.id)
-print(f"Successfully deleted file: {deleted_file.id}")
-```
-
-<!-- END SNIPPET -->
-
 ### Indexes operations
 
 The code below shows some Indexes operations. Full samples can be found under the "indexes"
@@ -378,6 +345,37 @@ for index in project_client.indexes.list_versions(name=index_name):
 
 print(f"Delete Index `{index_name}` version `{index_version}`:")
 project_client.indexes.delete(name=index_name, version=index_version)
+```
+
+<!-- END SNIPPET -->
+
+### Files operations
+
+The code below shows some Files operations using the OpenAI client, which allow you to upload, retrieve, list, and delete files. These operations are useful for working with files that can be used for fine-tuning and other AI model operations. Full samples can be found under the "files" folder in the [package samples][samples].
+
+<!-- SNIPPET:sample_files.files_sample-->
+
+```python
+print("Uploading file")
+with open(file_path, "rb") as f:
+    uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
+print(uploaded_file)
+
+print(f"Retrieving file metadata with ID: {uploaded_file.id}")
+retrieved_file = openai_client.files.retrieve(uploaded_file.id)
+print(retrieved_file)
+
+print(f"Retrieving file content with ID: {uploaded_file.id}")
+file_content = openai_client.files.content(uploaded_file.id)
+print(file_content.content)
+
+print("Listing all files:")
+for file in openai_client.files.list():
+    print(file)
+
+print(f"Deleting file with ID: {uploaded_file.id}")
+deleted_file = openai_client.files.delete(uploaded_file.id)
+print(f"Successfully deleted file: {deleted_file.id}")
 ```
 
 <!-- END SNIPPET -->
@@ -470,8 +468,8 @@ The AI Projects client library automatically instruments OpenAI responses and co
 
 Binary data are images and files sent to the service as input messages. When you enable content recording (`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` set to `true`), by default you only trace file IDs and filenames. To enable full binary data tracing, set `AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA` to `true`. In this case:
 
-- **Images**: Image URLs (including data URIs with base64-encoded content) are included
-- **Files**: File data is included if sent via the API
+* **Images**: Image URLs (including data URIs with base64-encoded content) are included
+* **Files**: File data is included if sent via the API
 
 **Important:** Binary data can contain sensitive information and may significantly increase trace size. Some trace backends and tracing implementations may have limitations on the maximum size of trace data that can be sent to and/or supported by the backend. Ensure your observability backend and tracing implementation support the expected trace payload sizes when enabling binary data tracing.
 
@@ -482,11 +480,12 @@ The decorator `trace_function` is provided for tracing your own function calls u
 **Note:** The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable does not affect custom function tracing. When you use the `trace_function` decorator, all parameters and return values are always traced by default.
 
 This decorator handles various data types for function parameters and return values, and records them as attributes in the trace span. The supported data types include:
+
 * Basic data types: str, int, float, bool
 * Collections: list, dict, tuple, set
-    * Special handling for collections:
-      - If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
-      - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
+  * Special handling for collections:
+    * If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
+    * Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
 
 Object types are omitted, and the corresponding parameter is not traced.
 
@@ -614,20 +613,11 @@ Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Most contributions require
-you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.microsoft.com.
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
-When you submit a pull request, a CLA-bot will automatically determine whether
-you need to provide a CLA and decorate the PR appropriately (e.g., label,
-comment). Simply follow the instructions provided by the bot. You will only
-need to do this once across all repos using our CLA.
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information, see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
 [samples]: https://aka.ms/azsdk/azure-ai-projects/python/samples/
