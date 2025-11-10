@@ -153,7 +153,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float]]
         """
-        if "query" not in eval_input or eval_input.get("query") is None:
+        if eval_input.get("query") is None:
             raise EvaluationException(
                 message=("Query is a required input to " "the Tool Input Accuracy evaluator."),
                 internal_message=("Query is a required input " "to the Tool Input Accuracy evaluator."),
