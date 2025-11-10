@@ -119,11 +119,6 @@ with DefaultAzureCredential() as credential:
                 "type": "azure_ai_evaluator",
                 "name": "my_custom_evaluator_code",
                 "evaluator_name": "my_custom_evaluator_code",
-                "data_mapping": {
-                    "query": "{{item.query}}",
-                    "response": "{{item.response}}",
-                    "ground_truth": "{{item.ground_truth}}",
-                },
                 "initialization_parameters": {
                     "deployment_name": f"{model_deployment_name}",
                     "pass_threshold": 0.5,
