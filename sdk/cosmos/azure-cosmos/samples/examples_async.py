@@ -153,10 +153,10 @@ async def examples_async():
                 )
 
             # All requests from this client will have Low priority by default
-            async for item in low_priority_container.query_items(
+            async for queried_item in low_priority_container.query_items(
                 query='SELECT * FROM products p WHERE p.productName = "Widget"'
             ):
-                print(json.dumps(item, indent=True))
+                print(json.dumps(queried_item, indent=True))
 
         # [END client_level_priority]
 
