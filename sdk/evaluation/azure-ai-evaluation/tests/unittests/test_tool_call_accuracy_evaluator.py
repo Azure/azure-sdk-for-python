@@ -11,6 +11,10 @@ async def flow_side_effect(timeout, **kwargs):
     tool_calls = kwargs.get("tool_calls", [])
     query = kwargs.get("query", "")
 
+    # Handle None query case
+    if query is None:
+        query = ""
+
     # Handle built-in tool calls first - count them as relevant
     builtin_calls = 0
     custom_function_calls = []
@@ -688,3 +692,41 @@ class TestToolCallAccuracyEvaluator:
         assert result is not None
         assert result[key] == 5.0
         assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_missing_query(self, mock_model_config):
+        """Test that evaluator raises exception when query is None or missing."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_good",
+                "name": "get_weather",
+                "arguments": {"location": "Paris"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "The location"}},
+                    "required": ["location"],
+                },
+            }
+        ]
+
+        # Test with query=None
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=None, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)
+
+        # Test with query not provided at all
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)

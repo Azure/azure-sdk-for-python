@@ -205,6 +205,15 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        if "query" not in eval_input or eval_input.get("query") is None:
+            raise EvaluationException(
+                message=("Query is a required input to the Tool Call Accuracy evaluator."),
+                internal_message=("Query is a required input to the Tool Call Accuracy evaluator."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            )
+
         # Single LLM call for all tool calls
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", {})
