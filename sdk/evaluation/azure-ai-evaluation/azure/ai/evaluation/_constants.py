@@ -143,7 +143,6 @@ class _EvaluatorMetricMapping:
         "hate_unfairness": ["hate_unfairness"],
         "tool_input_accuracy": ["tool_input_accuracy"],
         "task_completion": ["task_completion"],
-        "tool_success": ["tool_success"],
         "tool_call_success": ["tool_call_success"],
         "tool_selection": ["tool_selection"],
         "tool_output_utilization": ["tool_output_utilization"],
