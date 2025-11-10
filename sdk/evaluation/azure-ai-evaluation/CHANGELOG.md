@@ -1,12 +1,16 @@
 # Release History
 
-## 1.13.3 (2025-11-08)
+## 1.13.4 (2025-11-10)
 
 ### Bugs Fixed
 
-- Added redteam scenario for red team evaluations and extracted to properties, following the same pattern as category and taxonomy fields
-- Added _is_primary_metric function and integrated primary metric filtering into _calculate_aoai_evaluation_summary
-- Updated documentation for _EvaluatorMetricMapping and reordered rouge_score metrics
+- Handle input data for evaluation result when evaluators.
+
+## 1.13.3 (2025-11-08)
+
+### Other Changes
+
+- Added `scenario` property to red team evaluation request to align scores with red team concepts of attack success.
 
 ## 1.13.2 (2025-11-07)
 
