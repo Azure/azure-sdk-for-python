@@ -18,10 +18,10 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry project.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. Your model deployment name.
     3) MODEL_ENDPOINT - Required. The Azure AI Model endpoint, as found in the overview page of your
-       Azure AI Foundry project. Example: https://<account_name>.services.ai.azure.com
+       Microsoft Foundry project. Example: https://<account_name>.services.ai.azure.com
     4) MODEL_API_KEY - Required. The API key for your Azure AI Model.
 """
 import os

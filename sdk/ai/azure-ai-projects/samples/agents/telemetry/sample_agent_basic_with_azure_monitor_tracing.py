@@ -8,7 +8,7 @@ DESCRIPTION:
     This sample demonstrates how to run basic Prompt Agent operations
     using the synchronous client with telemetry tracing enabled to
     Azure Monitor. View the results in the "Tracing" tab in your
-    Azure AI Foundry project page.
+    Microsoft Foundry project page.
 
 USAGE:
     python sample_agent_basic_with_azure_monitor_tracing.py
@@ -19,9 +19,9 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Azure AI Foundry portal.
+       page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+       the "Models + endpoints" tab in your Microsoft Foundry project.
     3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """

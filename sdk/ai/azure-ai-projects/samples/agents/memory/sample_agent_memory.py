@@ -20,13 +20,13 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Azure AI Foundry portal.
+       page of your Microsoft Foundry portal.
     2) AZURE_AI_AGENT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for the agent, as found under the "Name" column in
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+       the "Models + endpoints" tab in your Microsoft Foundry project.
     3) AZURE_AI_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory, as found under the "Name" column in
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+       the "Models + endpoints" tab in your Microsoft Foundry project.
     4) AZURE_AI_EMBEDDING_MODEL_DEPLOYMENT_NAME - The deployment name of the embedding model for memory, as found under the
-       "Name" column in the "Models + endpoints" tab in your Azure AI Foundry project.
+       "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
 # import os
