@@ -27,7 +27,7 @@ try:
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
         async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-            mock_callback = AsyncMock()
+            mock_callback = Mock()
             async with await self.create_client(
                 endpoint=appconfiguration_endpoint_string,
                 keyvault_secret_url=appconfiguration_keyvault_secret_url,

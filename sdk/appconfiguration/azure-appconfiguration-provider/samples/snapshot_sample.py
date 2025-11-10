@@ -20,7 +20,7 @@ config = load(endpoint=endpoint, credential=credential, **kwargs)
 # Note: The snapshot must already exist in your App Configuration store
 snapshot_name = "my-snapshot-name"
 snapshot_selects = [SettingSelector(snapshot_name=snapshot_name)]
-config = load(connection_string=connection_string, selects=snapshot_selects, **kwargs)
+config = load(endpoint=endpoint, credential=credential, selects=snapshot_selects, **kwargs)
 
 print("Configuration settings from snapshot:")
 for key, value in config.items():
@@ -32,7 +32,7 @@ mixed_selects = [
     SettingSelector(snapshot_name=snapshot_name),  # Load all settings from snapshot
     SettingSelector(key_filter="override.*", label_filter="prod"),  # Also load specific override settings
 ]
-config_mixed = load(connection_string=connection_string, selects=mixed_selects, **kwargs)
+config_mixed = load(endpoint=endpoint, credential=credential, selects=mixed_selects, **kwargs)
 
 print("\nMixed configuration (snapshot + filtered settings):")
 for key, value in config_mixed.items():
@@ -42,7 +42,8 @@ for key, value in config_mixed.items():
 # To load feature flags from a snapshot, include the snapshot selector in the `selects` parameter and set `feature_flag_enabled=True`.
 feature_flag_selects = [SettingSelector(snapshot_name=snapshot_name)]
 config_with_flags = load(
-    connection_string=connection_string,
+    endpoint=endpoint,
+    credential=credential,
     selects=feature_flag_selects,
     feature_flag_enabled=True,
     **kwargs,
