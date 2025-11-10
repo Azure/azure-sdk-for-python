@@ -10,7 +10,7 @@ from enum import Enum
 from typing import Any, List, Mapping, Optional, Union, cast
 
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.models import (
+from .models import (
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,

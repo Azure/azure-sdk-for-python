@@ -19,7 +19,7 @@ from ._models import (
     GetManifestResult,
     DigestValidationError,
 )
-from models import ArtifactManifestOrder, ArtifactTagOrder
+from .models import ArtifactManifestOrder, ArtifactTagOrder
 
 __all__: list[str] = [
     "ContainerRegistryClient",
