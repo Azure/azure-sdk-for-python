@@ -114,7 +114,6 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             else:
                 return EVALUATION_PASS_FAIL_MAPPING[False]
 
-    @override
     async def _do_eval_with_flow(self, eval_input: Dict, flow) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.
 
