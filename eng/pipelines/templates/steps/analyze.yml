@@ -89,14 +89,14 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist ${{ parameters.AdditionalTestArgs }}'
+     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist ${{ parameters.AdditionalTestArgs }}'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
+     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
 
   - template: run_mypy.yml
     parameters:
@@ -123,7 +123,7 @@ steps:
     displayName: 'Run Keyword Validation Check'
     inputs:
       scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords ${{ parameters.AdditionalTestArgs }}'
+      arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords ${{ parameters.AdditionalTestArgs }}'
     condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
 
   - template: ../steps/run_bandit.yml
