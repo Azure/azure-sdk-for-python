@@ -95,6 +95,10 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             for job in openai_client.fine_tuning.jobs.list():
                 print(job)
 
+            print("Listing only 10 fine-tuning jobs:")
+            for job in openai_client.fine_tuning.jobs.list(limit=10):
+                print(job)
+
             print(f"Pausing fine-tuning job with ID: {fine_tuning_job.id}")
             paused_job = openai_client.fine_tuning.jobs.pause(fine_tuning_job.id)
             print(paused_job)
