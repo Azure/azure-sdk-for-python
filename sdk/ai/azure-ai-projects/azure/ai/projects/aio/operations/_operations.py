@@ -2364,7 +2364,6 @@ class MemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        conversation_id: Optional[str] = None,
         items: Optional[List[_models.ItemParam]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
@@ -2380,15 +2379,10 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword conversation_id: The conversation ID for which to search memories. Only one of
-         conversation_id or items should be provided. Default value is None.
-        :paramtype conversation_id: str
-        :keyword items: Items for which to search for relevant memories. Only one of conversation_id or
-         items should be provided. Default value is None.
+        :keyword items: Items for which to search for relevant memories. Default value is None.
         :paramtype items: list[~azure.ai.projects.models.ItemParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
-         memory search from where the last operation left off. Cannot be used together with
-         conversation_id. Default value is None.
+         memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
         :keyword options: Memory search options. Default value is None.
         :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
@@ -2445,7 +2439,6 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        conversation_id: Optional[str] = None,
         items: Optional[List[_models.ItemParam]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
@@ -2460,15 +2453,10 @@ class MemoryStoresOperations:
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword conversation_id: The conversation ID for which to search memories. Only one of
-         conversation_id or items should be provided. Default value is None.
-        :paramtype conversation_id: str
-        :keyword items: Items for which to search for relevant memories. Only one of conversation_id or
-         items should be provided. Default value is None.
+        :keyword items: Items for which to search for relevant memories. Default value is None.
         :paramtype items: list[~azure.ai.projects.models.ItemParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
-         memory search from where the last operation left off. Cannot be used together with
-         conversation_id. Default value is None.
+         memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
         :keyword options: Memory search options. Default value is None.
         :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
@@ -2494,7 +2482,6 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "conversation_id": conversation_id,
                 "items_property": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
@@ -2562,7 +2549,6 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        conversation_id: Optional[str] = None,
         items: Optional[List[_models.ItemParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
@@ -2586,7 +2572,6 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "conversation_id": conversation_id,
                 "items_property": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
@@ -2649,7 +2634,6 @@ class MemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        conversation_id: Optional[str] = None,
         items: Optional[List[_models.ItemParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
@@ -2665,15 +2649,10 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword conversation_id: The conversation ID from which to extract memories. Only one of
-         conversation_id or items should be provided. Default value is None.
-        :paramtype conversation_id: str
-        :keyword items: Conversation items from which to extract memories. Only one of conversation_id
-         or items should be provided. Default value is None.
+        :keyword items: Conversation items from which to extract memories. Default value is None.
         :paramtype items: list[~azure.ai.projects.models.ItemParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Cannot be used together with
-         conversation_id. Default value is None.
+         memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
         :keyword update_delay: Timeout period before processing the memory update in seconds.
          If a new update request is received during this period, it will cancel the current request and
@@ -2740,7 +2719,6 @@ class MemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        conversation_id: Optional[str] = None,
         items: Optional[List[_models.ItemParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
@@ -2755,15 +2733,10 @@ class MemoryStoresOperations:
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword conversation_id: The conversation ID from which to extract memories. Only one of
-         conversation_id or items should be provided. Default value is None.
-        :paramtype conversation_id: str
-        :keyword items: Conversation items from which to extract memories. Only one of conversation_id
-         or items should be provided. Default value is None.
+        :keyword items: Conversation items from which to extract memories. Default value is None.
         :paramtype items: list[~azure.ai.projects.models.ItemParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Cannot be used together with
-         conversation_id. Default value is None.
+         memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
         :keyword update_delay: Timeout period before processing the memory update in seconds.
          If a new update request is received during this period, it will cancel the current request and
@@ -2790,7 +2763,6 @@ class MemoryStoresOperations:
                 name=name,
                 body=body,
                 scope=scope,
-                conversation_id=conversation_id,
                 items=items,
                 previous_update_id=previous_update_id,
                 update_delay=update_delay,
@@ -6962,30 +6934,24 @@ class SchedulesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
+    @distributed_trace
     @api_version_validation(
         method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "type", "enabled", "accept"]},
+        params_added_on={"2025-11-15-preview": ["api_version", "client_request_id", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def list(
-        self,
-        *,
-        type: Optional[Union[str, _models.ScheduleTaskType]] = None,
-        enabled: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.PagedSchedule:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Schedule"]:
         """List all schedules.
 
-        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
-         Default value is None.
-        :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
-        :keyword enabled: Filter by the enabled status. Default value is None.
-        :paramtype enabled: bool
-        :return: PagedSchedule. The PagedSchedule is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PagedSchedule
+        :return: An iterator like instance of Schedule
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Schedule]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6994,48 +6960,66 @@ class SchedulesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PagedSchedule] = kwargs.pop("cls", None)
+                _request = build_schedules_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_schedules_list_request(
-            type=type,
-            enabled=enabled,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Schedule], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PagedSchedule, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def create_or_update(
@@ -7239,21 +7223,26 @@ class SchedulesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
+    @distributed_trace
     @api_version_validation(
         method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "schedule_id", "accept"]},
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
         api_versions_list=["2025-11-15-preview"],
     )
-    async def list_runs(self, schedule_id: str, **kwargs: Any) -> _models.PagedScheduleRun:
+    def list_runs(self, id: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduleRun"]:
         """List all schedule runs.
 
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :return: PagedScheduleRun. The PagedScheduleRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PagedScheduleRun
+        :param id: Identifier of the schedule. Required.
+        :type id: str
+        :return: An iterator like instance of ScheduleRun
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduleRun]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7262,44 +7251,64 @@ class SchedulesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PagedScheduleRun] = kwargs.pop("cls", None)
+                _request = build_schedules_list_runs_request(
+                    id=id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_schedules_list_runs_request(
-            schedule_id=schedule_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ScheduleRun], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PagedScheduleRun, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

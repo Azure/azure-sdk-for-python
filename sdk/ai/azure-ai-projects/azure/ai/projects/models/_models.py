@@ -909,106 +909,21 @@ class AnnotationUrlCitation(Annotation, discriminator="url_citation"):
         self.type = AnnotationType.URL_CITATION  # type: ignore
 
 
-class ApiError(_Model):
-    """ApiError.
-
-    :ivar code: The error code. Required.
-    :vartype code: str
-    :ivar message: A human-readable description of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error, if applicable.
-    :vartype target: str
-    :ivar details: Additional details about the error. Required.
-    :vartype details: list[~azure.ai.projects.models.ApiError]
-    :ivar innererror: The inner error, if any.
-    :vartype innererror: ~azure.ai.projects.models.ApiInnerError
-    """
-
-    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error code. Required."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable description of the error. Required."""
-    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target of the error, if applicable."""
-    details: list["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Additional details about the error. Required."""
-    innererror: Optional["_models.ApiInnerError"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The inner error, if any."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        details: list["_models.ApiError"],
-        target: Optional[str] = None,
-        innererror: Optional["_models.ApiInnerError"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ApiErrorResponse(_Model):
     """Error response for API failures.
 
     :ivar error: Required.
-    :vartype error: ~azure.ai.projects.models.ApiError
+    :vartype error: ~azure.ai.projects.models.Error
     """
 
-    error: "_models.ApiError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: "_models.ApiError",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ApiInnerError(_Model):
-    """ApiInnerError.
-
-    :ivar code: The error code. Required.
-    :vartype code: str
-    :ivar innererror: The inner error, if any.
-    :vartype innererror: ~azure.ai.projects.models.ApiInnerError
-    """
-
-    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error code. Required."""
-    innererror: Optional["_models.ApiInnerError"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The inner error, if any."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        innererror: Optional["_models.ApiInnerError"] = None,
+        error: "_models.Error",
     ) -> None: ...
 
     @overload
@@ -4510,6 +4425,65 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
         self.type = CredentialType.ENTRA_ID  # type: ignore
 
 
+class Error(_Model):
+    """Error.
+
+    :ivar code: Required.
+    :vartype code: str
+    :ivar message: Required.
+    :vartype message: str
+    :ivar param: Required.
+    :vartype param: str
+    :ivar type: Required.
+    :vartype type: str
+    :ivar details:
+    :vartype details: list[~azure.ai.projects.models.Error]
+    :ivar additional_info:
+    :vartype additional_info: dict[str, any]
+    :ivar debug_info:
+    :vartype debug_info: dict[str, any]
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    param: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    details: Optional[list["_models.Error"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    additional_info: Optional[dict[str, Any]] = rest_field(
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    debug_info: Optional[dict[str, Any]] = rest_field(
+        name="debugInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        param: str,
+        type: str,
+        details: Optional[list["_models.Error"]] = None,
+        additional_info: Optional[dict[str, Any]] = None,
+        debug_info: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EvalCompareReport(InsightResult, discriminator="EvaluationComparison"):
     """Insights from the evaluation comparison.
 
@@ -6674,145 +6648,6 @@ class InsightSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkflowActionOutputItemResource(ItemResource, discriminator="workflow_action"):
-    """WorkflowActionOutputItemResource.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    InvokeAzureAgentWorkflowActionOutputItemResource
-
-    :ivar id: Required.
-    :vartype id: str
-    :ivar created_by: The information about the creator of the item.
-    :vartype created_by: ~azure.ai.projects.models.CreatedBy
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.projects.models.WORKFLOW_ACTION
-    :ivar kind: The kind of CSDL action (e.g., 'SetVariable', 'InvokeAzureAgent'). Required.
-     Default value is None.
-    :vartype kind: str
-    :ivar action_id: Unique identifier for the action. Required.
-    :vartype action_id: str
-    :ivar parent_action_id: ID of the parent action if this is a nested action.
-    :vartype parent_action_id: str
-    :ivar previous_action_id: ID of the previous action if this action follows another.
-    :vartype previous_action_id: str
-    :ivar status: Status of the action (e.g., 'in_progress', 'completed', 'failed', 'cancelled').
-     Required. Is one of the following types: Literal["completed"], Literal["failed"],
-     Literal["in_progress"], Literal["cancelled"]
-    :vartype status: str or str or str or str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: Literal[ItemType.WORKFLOW_ACTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of CSDL action (e.g., 'SetVariable', 'InvokeAzureAgent'). Required. Default value is
-     None."""
-    action_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique identifier for the action. Required."""
-    parent_action_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """ID of the parent action if this is a nested action."""
-    previous_action_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """ID of the previous action if this action follows another."""
-    status: Literal["completed", "failed", "in_progress", "cancelled"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Status of the action (e.g., 'in_progress', 'completed', 'failed', 'cancelled'). Required. Is
-     one of the following types: Literal[\"completed\"], Literal[\"failed\"],
-     Literal[\"in_progress\"], Literal[\"cancelled\"]"""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        kind: str,
-        action_id: str,
-        status: Literal["completed", "failed", "in_progress", "cancelled"],
-        created_by: Optional["_models.CreatedBy"] = None,
-        parent_action_id: Optional[str] = None,
-        previous_action_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ItemType.WORKFLOW_ACTION  # type: ignore
-
-
-class InvokeAzureAgentWorkflowActionOutputItemResource(
-    WorkflowActionOutputItemResource, discriminator="InvokeAzureAgent"
-):  # pylint: disable=name-too-long
-    """Details about an agent invocation as part of a workflow action.
-
-    :ivar id: Required.
-    :vartype id: str
-    :ivar created_by: The information about the creator of the item.
-    :vartype created_by: ~azure.ai.projects.models.CreatedBy
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.projects.models.WORKFLOW_ACTION
-    :ivar action_id: Unique identifier for the action. Required.
-    :vartype action_id: str
-    :ivar parent_action_id: ID of the parent action if this is a nested action.
-    :vartype parent_action_id: str
-    :ivar previous_action_id: ID of the previous action if this action follows another.
-    :vartype previous_action_id: str
-    :ivar status: Status of the action (e.g., 'in_progress', 'completed', 'failed', 'cancelled').
-     Required. Is one of the following types: Literal["completed"], Literal["failed"],
-     Literal["in_progress"], Literal["cancelled"]
-    :vartype status: str or str or str or str
-    :ivar kind: Required. Default value is "InvokeAzureAgent".
-    :vartype kind: str
-    :ivar agent: Agent id. Required.
-    :vartype agent: ~azure.ai.projects.models.AgentId
-    :ivar conversation_id: ID of the conversation for the agent invocation.
-    :vartype conversation_id: str
-    :ivar response_id: The response id for the agent invocation. Required.
-    :vartype response_id: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: Literal["InvokeAzureAgent"] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"InvokeAzureAgent\"."""
-    agent: "_models.AgentId" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Agent id. Required."""
-    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """ID of the conversation for the agent invocation."""
-    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The response id for the agent invocation. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        action_id: str,
-        status: Literal["completed", "failed", "in_progress", "cancelled"],
-        agent: "_models.AgentId",
-        response_id: str,
-        created_by: Optional["_models.CreatedBy"] = None,
-        parent_action_id: Optional[str] = None,
-        previous_action_id: Optional[str] = None,
-        conversation_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = "InvokeAzureAgent"  # type: ignore
-
-
 class ItemContent(_Model):
     """ItemContent.
 
@@ -8811,7 +8646,7 @@ class MemoryStoreUpdateResult(_Model):
     :ivar result: The result of memory store update operation when status is "completed".
     :vartype result: ~azure.ai.projects.models.MemoryStoreUpdateCompletedResult
     :ivar error: Error object that describes the error when status is "failed".
-    :vartype error: ~azure.ai.projects.models.ApiError
+    :vartype error: ~azure.ai.projects.models.Error
     """
 
     update_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8829,7 +8664,7 @@ class MemoryStoreUpdateResult(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The result of memory store update operation when status is \"completed\"."""
-    error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models.Error"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error object that describes the error when status is \"failed\"."""
 
     @overload
@@ -8840,7 +8675,7 @@ class MemoryStoreUpdateResult(_Model):
         status: Union[str, "_models.MemoryStoreUpdateStatus"],
         superseded_by: Optional[str] = None,
         result: Optional["_models.MemoryStoreUpdateCompletedResult"] = None,
-        error: Optional["_models.ApiError"] = None,
+        error: Optional["_models.Error"] = None,
     ) -> None: ...
 
     @overload
@@ -9438,72 +9273,6 @@ class OpenApiProjectConnectionSecurityScheme(_Model):
         self,
         *,
         project_connection_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PagedSchedule(_Model):
-    """Paged collection of Schedule items.
-
-    :ivar value: The Schedule items on this page. Required.
-    :vartype value: list[~azure.ai.projects.models.Schedule]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.Schedule"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Schedule items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.Schedule"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PagedScheduleRun(_Model):
-    """Paged collection of ScheduleRun items.
-
-    :ivar value: The ScheduleRun items on this page. Required.
-    :vartype value: list[~azure.ai.projects.models.ScheduleRun]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.ScheduleRun"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ScheduleRun items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.ScheduleRun"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -13775,8 +13544,8 @@ class Schedule(_Model):
 class ScheduleRun(_Model):
     """Schedule run model.
 
-    :ivar id: Identifier of the schedule run. Required.
-    :vartype id: str
+    :ivar run_id: Identifier of the schedule run. Required.
+    :vartype run_id: str
     :ivar schedule_id: Identifier of the schedule. Required.
     :vartype schedule_id: str
     :ivar success: Trigger success status of the schedule run. Required.
@@ -13789,7 +13558,7 @@ class ScheduleRun(_Model):
     :vartype properties: dict[str, str]
     """
 
-    id: str = rest_field(visibility=["read"])
+    run_id: str = rest_field(name="id", visibility=["read"])
     """Identifier of the schedule run. Required."""
     schedule_id: str = rest_field(name="scheduleId", visibility=["read", "create", "update", "delete", "query"])
     """Identifier of the schedule. Required."""
@@ -13900,9 +13669,6 @@ class StructuredInputDefinition(_Model):
     :vartype description: str
     :ivar default_value: The default value for the input if no run-time value is provided.
     :vartype default_value: any
-    :ivar tool_argument_bindings: When provided, the input value is bound to the specified tool
-     arguments.
-    :vartype tool_argument_bindings: list[~azure.ai.projects.models.ToolArgumentBinding]
     :ivar schema: The JSON schema for the structured input (optional).
     :vartype schema: any
     :ivar required: Whether the input property is required when the agent is invoked.
@@ -13913,10 +13679,6 @@ class StructuredInputDefinition(_Model):
     """A human-readable description of the input."""
     default_value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The default value for the input if no run-time value is provided."""
-    tool_argument_bindings: Optional[list["_models.ToolArgumentBinding"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """When provided, the input value is bound to the specified tool arguments."""
     schema: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The JSON schema for the structured input (optional)."""
     required: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -13928,7 +13690,6 @@ class StructuredInputDefinition(_Model):
         *,
         description: Optional[str] = None,
         default_value: Optional[Any] = None,
-        tool_argument_bindings: Optional[list["_models.ToolArgumentBinding"]] = None,
         schema: Optional[Any] = None,
         required: Optional[bool] = None,
     ) -> None: ...
@@ -13953,7 +13714,7 @@ class StructuredOutputDefinition(_Model):
      emit the output. Required.
     :vartype description: str
     :ivar schema: The JSON schema for the structured output. Required.
-    :vartype schema: dict[str, any]
+    :vartype schema: any
     :ivar strict: Whether to enforce strict validation. Default ``true``. Required.
     :vartype strict: bool
     """
@@ -13963,7 +13724,7 @@ class StructuredOutputDefinition(_Model):
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of the output to emit. Used by the model to determine when to emit the output.
      Required."""
-    schema: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    schema: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The JSON schema for the structured output. Required."""
     strict: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enforce strict validation. Default ``true``. Required."""
@@ -13974,7 +13735,7 @@ class StructuredOutputDefinition(_Model):
         *,
         name: str,
         description: str,
-        schema: dict[str, Any],
+        schema: Any,
         strict: bool,
     ) -> None: ...
 
@@ -14126,41 +13887,6 @@ class TaxonomySubCategory(_Model):
         enabled: bool,
         description: Optional[str] = None,
         properties: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ToolArgumentBinding(_Model):
-    """ToolArgumentBinding.
-
-    :ivar tool_name: The name of the tool to participate in the argument binding. If not provided,
-     then all tools with matching arguments will participate in binding.
-    :vartype tool_name: str
-    :ivar argument_name: The name of the argument within the tool. Required.
-    :vartype argument_name: str
-    """
-
-    tool_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the tool to participate in the argument binding. If not provided, then all tools
-     with matching arguments will participate in binding."""
-    argument_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the argument within the tool. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        argument_name: str,
-        tool_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -14913,6 +14639,71 @@ class WeeklyRecurrenceSchedule(RecurrenceSchedule, discriminator="Weekly"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = RecurrenceType.WEEKLY  # type: ignore
+
+
+class WorkflowActionOutputItemResource(ItemResource, discriminator="workflow_action"):
+    """WorkflowActionOutputItemResource.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar created_by: The information about the creator of the item.
+    :vartype created_by: ~azure.ai.projects.models.CreatedBy
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.projects.models.WORKFLOW_ACTION
+    :ivar kind: The kind of CSDL action (e.g., 'SetVariable', 'InvokeAzureAgent'). Required.
+    :vartype kind: str
+    :ivar action_id: Unique identifier for the action. Required.
+    :vartype action_id: str
+    :ivar parent_action_id: ID of the parent action if this is a nested action.
+    :vartype parent_action_id: str
+    :ivar previous_action_id: ID of the previous action if this action follows another.
+    :vartype previous_action_id: str
+    :ivar status: Status of the action (e.g., 'in_progress', 'completed', 'failed', 'cancelled').
+     Required. Is one of the following types: Literal["completed"], Literal["failed"],
+     Literal["in_progress"], Literal["cancelled"]
+    :vartype status: str or str or str or str
+    """
+
+    type: Literal[ItemType.WORKFLOW_ACTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    kind: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The kind of CSDL action (e.g., 'SetVariable', 'InvokeAzureAgent'). Required."""
+    action_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the action. Required."""
+    parent_action_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ID of the parent action if this is a nested action."""
+    previous_action_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ID of the previous action if this action follows another."""
+    status: Literal["completed", "failed", "in_progress", "cancelled"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status of the action (e.g., 'in_progress', 'completed', 'failed', 'cancelled'). Required. Is
+     one of the following types: Literal[\"completed\"], Literal[\"failed\"],
+     Literal[\"in_progress\"], Literal[\"cancelled\"]"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        kind: str,
+        action_id: str,
+        status: Literal["completed", "failed", "in_progress", "cancelled"],
+        created_by: Optional["_models.CreatedBy"] = None,
+        parent_action_id: Optional[str] = None,
+        previous_action_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.WORKFLOW_ACTION  # type: ignore
 
 
 class WorkflowAgentDefinition(AgentDefinition, discriminator="workflow"):
