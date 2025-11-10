@@ -15,6 +15,7 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
 )
 
+# Load environment variables from .env file if it exists
 load_dotenv()
 
 
