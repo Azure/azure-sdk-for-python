@@ -1,4 +1,6 @@
-import os, sys
+import os
+import platform
+import sys
 from pathlib import Path
 from typing import Iterable
 from unittest.mock import ANY, Mock, patch
@@ -577,8 +579,8 @@ class TestDataOperations:
             )
 
     @pytest.mark.skipif(
-        sys.version_info >= (3, 13),
-        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+        platform.python_implementation() == "PyPy" or sys.version_info >= (3, 13),
+        reason="Skipping because Python version is 3.13 or above OR environment is PyPy. azureml.dataprep.rslex do not support py313 and PyPy",
     )
     def test_mount_persistent(
         self,
@@ -601,8 +603,8 @@ class TestDataOperations:
             mock_data_operations._compute_operation.update_data_mounts.assert_called_once()
 
     @pytest.mark.skipif(
-        sys.version_info >= (3, 13),
-        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+        platform.python_implementation() == "PyPy" or sys.version_info >= (3, 13),
+        reason="Skipping because Python version is 3.13 or above OR environment is PyPy. azureml.dataprep.rslex do not support py313 and PyPy",
     )
     def test_mount_non_persistent(
         self,
