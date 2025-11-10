@@ -10,9 +10,9 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from ._generated import ContainerRegistry
-from ._generated.models import PostContentSchemaGrantType
-from ._generated.operations._patch import AuthenticationOperations
+from ._client import ContainerRegistry
+from .models import PostContentSchemaGrantType
+from .operations import AuthenticationOperations
 from ._helpers import _parse_challenge, _parse_exp_time
 from ._user_agent import USER_AGENT
 
