@@ -1865,8 +1865,8 @@ def _convert_results_to_aoai_evaluation_results(
                         criteria_groups[criteria_name] = {}
 
                     criteria_groups[criteria_name][metric_name] = value
-            elif key.startswith("inputs."):
-                input_key = key.replace("inputs.", "")
+            else:
+                input_key = key.replace("inputs.", "") if key.startswith("inputs.") else key
                 if input_key not in input_groups:
                     input_groups[input_key] = value
 
