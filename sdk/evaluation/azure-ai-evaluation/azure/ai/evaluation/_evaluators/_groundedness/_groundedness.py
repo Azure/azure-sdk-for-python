@@ -206,11 +206,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         return super().__call__(*args, **kwargs)
 
-    def _ensure_query_prompty_loaded(self):
-        """Switch to the query prompty file if not already loaded."""
+    def _load_prompty_file(self, prompty_filename: str):
+        """Load the specified prompty file if not already loaded.
+
+        :param prompty_filename: The name of the prompty file to load.
+        :type prompty_filename: str
+        """
+        if self._prompty_file.endswith(prompty_filename):
+            return  # Already using the correct prompty file
 
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
+        prompty_path = os.path.join(current_dir, prompty_filename)
 
         self._prompty_file = prompty_path
         prompty_model_config = construct_prompty_model_config(
@@ -218,7 +224,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             self._DEFAULT_OPEN_API_VERSION,
             UserAgentSingleton().value,
         )
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+        self._flow = AsyncPrompty.load(
+            source=self._prompty_file, model=prompty_model_config
+        )
+
+    def _ensure_query_prompty_loaded(self):
+        """Switch to the query prompty file if not already loaded."""
+        self._load_prompty_file(self._PROMPTY_FILE_WITH_QUERY)
+
+    def _ensure_no_query_prompty_loaded(self):
+        """Switch to the no-query prompty file if not already loaded."""
+        self._load_prompty_file(self._PROMPTY_FILE_NO_QUERY)
 
     def _has_context(self, eval_input: dict) -> bool:
         """
@@ -251,8 +267,10 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
         if eval_input.get("query", None) is None:
+            self._ensure_no_query_prompty_loaded()
             return await super()._do_eval(eval_input)
 
+        self._ensure_query_prompty_loaded()
         contains_context = self._has_context(eval_input)
 
         simplified_query = simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
@@ -290,6 +308,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             else:
                 raise ex
 
+    def _is_single_entry(self, value):
+        """Determine if the input value represents a single entry, unsure is returned as False."""
+        if isinstance(value, str):
+            return True
+        if isinstance(value, list) and len(value) == 1:
+            return True
+        return False
+
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if kwargs.get("context") or kwargs.get("conversation"):
             return super()._convert_kwargs_to_eval_input(**kwargs)
@@ -309,6 +335,15 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
         context = self._get_context_from_agent_response(response, tool_definitions)
+
+        if not self._validate_context(context) and self._is_single_entry(response) and self._is_single_entry(query):
+            msg = f"{type(self).__name__}: No valid context provided or could be extracted from the query or response."
+            raise EvaluationException(
+                message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            )
 
         filtered_response = self._filter_file_search_results(response) if self._validate_context(context) else response
         return super()._convert_kwargs_to_eval_input(response=filtered_response, context=context, query=query)
