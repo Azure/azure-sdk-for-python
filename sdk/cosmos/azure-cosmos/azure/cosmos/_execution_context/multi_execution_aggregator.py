@@ -84,6 +84,12 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
+    """
+    When a split occurs, the peek() call on a document producer might raise a CosmosHttpResponseError. Current logic in __next__ 
+    doesn't handle this, which would halt query execution instead of repairing the context and continuing. added the necessary 
+    exception handling to catch partition split errors, trigger _repair_document_producer, 
+    and then transparently retry the operation.
+    """
     def __next__(self):
         """Returns the next result
 
@@ -100,7 +106,15 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 targetRangeExContext.peek()
                 self._orderByPQ.push(targetRangeExContext)
-
+            except exceptions.CosmosHttpResponseError as e:
+                print(
+                    f"DEBUG: multi_execution_aggregator - in the __next__ method  exception block and the exception is {e}")
+                if exceptions._partition_range_is_gone(e):
+                    print(
+                        f"DEBUG: multi_execution_aggregator - in the __next__ method  exception block and going to repair the document producer")
+                    self._repair_document_producer()
+                    return next(self)  # Retry fetching the next document
+                raise
             except StopIteration:
                 pass
 
