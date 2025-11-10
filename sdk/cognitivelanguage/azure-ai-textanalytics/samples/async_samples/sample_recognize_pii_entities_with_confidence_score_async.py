@@ -5,13 +5,14 @@
 # ------------------------------------
 
 """
-FILE: sample_recognize_pii_entities_async.py
+FILE: sample_recognize_pii_entities_with_confidence_score_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to run **PII entity recognition** over text (async).
+    This sample demonstrates how to run **PII entity recognition** with confidence score
+    thresholds (async), including entity-specific overrides.
 
 USAGE:
-    python sample_recognize_pii_entities_async.py
+    python sample_recognize_pii_entities_with_confidence_score_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -25,37 +26,55 @@ NOTE:
       - AZURE_TEXT_KEY
 """
 
-# [START recognize_pii_entities_async]
+# [START recognize_pii_entities_with_confidence_score_async]
 import os
 import asyncio
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
 from azure.ai.textanalytics.models import (
-    MultiLanguageTextInput,
     MultiLanguageInput,
+    MultiLanguageTextInput,
     TextPiiEntitiesRecognitionInput,
+    PiiActionContent,
+    ConfidenceScoreThreshold,
+    ConfidenceScoreThresholdOverride,
     AnalyzeTextPiiResult,
 )
 
 
-async def sample_recognize_pii_entities_async():
-    # settings
+async def sample_recognize_pii_entities_with_confidence_score_async():
+    # Settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
 
     async with TextAnalysisClient(endpoint, credential=credential) as client:
-        # input
-        text_a = (
-            "Parker Doe has repaid all of their loans as of 2020-04-25. Their SSN is 859-98-0987. "
-            "To contact them, use their phone number 800-102-1100. They are originally from Brazil and "
-            "have document ID number 998.214.865-68."
+        # Input text
+        text = (
+            "My name is John Doe. My SSN is 222-45-6789. My email is john@example.com. "
+            "John Doe is my name."
+        )
+
+        # Confidence score thresholds:
+        # - Default threshold is 0.3
+        # - SSN & Email require 0.9 minimum confidence to be returned
+        threshold = ConfidenceScoreThreshold(
+            default=0.3,
+            overrides=[
+                ConfidenceScoreThresholdOverride(value=0.9, entity="USSocialSecurityNumber"),
+                ConfidenceScoreThresholdOverride(value=0.9, entity="Email"),
+            ],
         )
 
         body = TextPiiEntitiesRecognitionInput(
             text_input=MultiLanguageTextInput(
-                multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-            )
+                multi_language_inputs=[MultiLanguageInput(id="1", text=text, language="en")]
+            ),
+            action_content=PiiActionContent(
+                pii_categories=["All"],
+                disable_entity_validation=True,
+                confidence_score_threshold=threshold,
+            ),
         )
 
         # Async (non-LRO) call
@@ -65,27 +84,28 @@ async def sample_recognize_pii_entities_async():
         if isinstance(result, AnalyzeTextPiiResult) and result.results and result.results.documents:
             for doc in result.results.documents:
                 print(f"\nDocument ID: {doc.id}")
+                print(f"Redacted Text:\n  {doc.redacted_text}\n")
+
+                print("Detected Entities (after threshold filtering):")
                 if doc.entities:
-                    print("PII Entities:")
                     for entity in doc.entities:
                         print(f"  Text: {entity.text}")
                         print(f"  Category: {entity.category}")
                         if entity.subcategory:
                             print(f"  Subcategory: {entity.subcategory}")
-                        print(f"  Offset: {entity.offset}")
-                        print(f"  Length: {entity.length}")
+                        print(f"  Masked As: {entity.mask}")
                         print(f"  Confidence score: {entity.confidence_score}\n")
                 else:
-                    print("No PII entities found for this document.")
+                    print("  No entities met the confidence threshold.")
         else:
             print("No documents in the response or unexpected result type.")
 
 
-# [END recognize_pii_entities_async]
+# [END recognize_pii_entities_with_confidence_score_async]
 
 
 async def main():
-    await sample_recognize_pii_entities_async()
+    await sample_recognize_pii_entities_with_confidence_score_async()
 
 
 if __name__ == "__main__":
