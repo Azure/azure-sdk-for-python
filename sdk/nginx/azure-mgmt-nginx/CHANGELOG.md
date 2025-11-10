@@ -1,5 +1,65 @@
 # Release History
 
+## 3.1.0b3 (2025-11-10)
+
+### Features Added
+
+  - Model `NginxManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `NginxManagementClient` added operation group `default_waf_policy`
+  - Client `NginxManagementClient` added operation group `waf_policy`
+  - Model `AnalysisCreate` added property `root_file`
+  - Model `AnalysisCreate` added property `files`
+  - Model `AnalysisCreate` added property `protected_files`
+  - Model `AnalysisCreate` added property `package`
+  - Model `AnalysisResult` added property `errors`
+  - Model `AnalysisResult` added property `diagnostics`
+  - Model `NginxDeploymentApiKeyRequest` added property `system_data`
+  - Model `NginxDeploymentApiKeyResponse` added property `system_data`
+  - Model `NginxDeploymentProperties` added property `web_application_firewall_settings`
+  - Model `NginxDeploymentProperties` added property `web_application_firewall_status`
+  - Model `NginxDeploymentUpdateProperties` added property `web_application_firewall_settings`
+  - Model `ScaleProfile` added property `min`
+  - Model `ScaleProfile` added property `max`
+  - Model `WebApplicationFirewallStatus` added property `waf_release`
+  - Added enum `ActionType`
+  - Added model `NginxDeploymentDefaultWafPolicyListResponse`
+  - Added model `NginxDeploymentDefaultWafPolicyProperties`
+  - Added model `NginxDeploymentWafPolicy`
+  - Added model `NginxDeploymentWafPolicyApplyingStatus`
+  - Added enum `NginxDeploymentWafPolicyApplyingStatusCode`
+  - Added model `NginxDeploymentWafPolicyCompilingStatus`
+  - Added enum `NginxDeploymentWafPolicyCompilingStatusCode`
+  - Added model `NginxDeploymentWafPolicyListResponse`
+  - Added model `NginxDeploymentWafPolicyMetadata`
+  - Added model `NginxDeploymentWafPolicyMetadataProperties`
+  - Added model `NginxDeploymentWafPolicyProperties`
+  - Added model `Operation`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `TrackedResource`
+  - Added model `DefaultWafPolicyOperations`
+  - Added model `WafPolicyOperations`
+
+### Breaking Changes
+
+  - Model `AnalysisCreate` deleted or renamed its instance variable `config`
+  - Model `AnalysisResult` deleted or renamed its instance variable `data`
+  - Method `NginxCertificateListResponse.__init__` removed default value `None` from its parameter `value`
+  - Method `NginxConfigurationListResponse.__init__` removed default value `None` from its parameter `value`
+  - Method `NginxDeployment.__init__` removed default value `None` from its parameter `location`
+  - Method `NginxDeploymentApiKeyListResponse.__init__` removed default value `None` from its parameter `value`
+  - Method `NginxDeploymentListResponse.__init__` removed default value `None` from its parameter `value`
+  - Model `NginxDeploymentProperties` deleted or renamed its instance variable `nginx_app_protect`
+  - Model `NginxDeploymentUpdateProperties` deleted or renamed its instance variable `nginx_app_protect`
+  - Model `ScaleProfile` deleted or renamed its instance variable `capacity`
+  - Deleted or renamed model `AnalysisCreateConfig`
+  - Deleted or renamed model `AnalysisResultData`
+  - Deleted or renamed model `NginxDeploymentPropertiesNginxAppProtect`
+  - Deleted or renamed model `NginxDeploymentUpdatePropertiesNginxAppProtect`
+  - Deleted or renamed model `OperationResult`
+  - Deleted or renamed model `ScaleProfileCapacity`
+
 ## 3.1.0b3 (2025-10-16)
 
 ### Features Added

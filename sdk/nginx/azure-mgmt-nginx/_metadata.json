@@ -1,7 +1,14 @@
 {
   "apiVersion": "2025-03-01-preview",
-  "commit": "aae85aa3e7e4fda95ea2d3abac0ba1d8159db214",
+  "commit": "d8f039ebd965e40471a082c547b103dd5dc9a33b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/nginx/Nginx.Management",
-  "emitterVersion": "0.52.1"
+  "emitterVersion": "0.52.1",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.41.3",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/nginx/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/s/azure-sdk-for-python/sdk --use=@autorest/python@6.41.3 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/nginx/resource-manager/readme.md"
 }
