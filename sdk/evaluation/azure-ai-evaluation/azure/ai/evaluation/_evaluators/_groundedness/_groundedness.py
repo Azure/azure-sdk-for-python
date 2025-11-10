@@ -226,13 +226,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, prompty_filename)
 
-        self._prompty_file = prompty_path
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(self._model_config),
             self._DEFAULT_OPEN_API_VERSION,
             UserAgentSingleton().value,
         )
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
         flow = AsyncPrompty.load(
             source=prompty_path,
             model=prompty_model_config,
