@@ -122,11 +122,75 @@ async def examples_async():
         # then Azure Cosmos DB will throttle low priority requests to allow high priority requests to execute.
         # Can be used for Read, Write, and Query operations. This is specified with the `priority` keyword.
         # the value can either be low or high.
+        
+        # Ensure we have items to query (this reuses items from earlier in the example)
+        # If running this section independently, uncomment the lines below:
+        # for i in range(1, 10):
+        #     await container.upsert_item(
+        #         dict(id="item{}".format(i), productName="Widget", productModel="Model {}".format(i))
+        #     )
+        
         async for queried_item in container.query_items(
                 query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority="High"
         ):
             print(json.dumps(queried_item, indent=True))
         # [END priority_level option]
+
+        # [START client_level_priority]
+        # Priority can also be set at the client level, which will apply to all requests made by that client.
+        # This is useful when you want all operations from a particular client to have the same priority.
+        # The client-level priority is set during client initialization with the `priority_level` parameter.
+
+        # Create a client with Low priority for all requests
+        async with CosmosClient(url, key, priority_level="Low") as low_priority_client:
+            low_priority_database = low_priority_client.get_database_client(database_name)
+            low_priority_container = low_priority_database.get_container_client(container_name)
+
+            # Add some items to query
+            for i in range(1, 4):
+                await low_priority_container.upsert_item(
+                    dict(id="low_priority_item{}".format(i), productName="Widget", productModel="Model {}".format(i))
+                )
+
+            # All requests from this client will have Low priority by default
+            async for item in low_priority_container.query_items(
+                query='SELECT * FROM products p WHERE p.productName = "Widget"'
+            ):
+                print(json.dumps(item, indent=True))
+
+        # [END client_level_priority]
+
+        # [START request_priority_precedence]
+        # Request-level priority takes precedence over client-level priority.
+        # This allows you to override the default priority for specific operations.
+
+        # Create a client with Low priority
+        async with CosmosClient(url, key, priority_level="Low") as client_with_default_priority:
+            database_with_priority = client_with_default_priority.get_database_client(database_name)
+            container_with_priority = database_with_priority.get_container_client(container_name)
+
+            # Add items with different priority levels to the container
+            await container_with_priority.upsert_item(
+                dict(id="urgent_item1", productName="Widget", priority="urgent", productModel="Urgent Model")
+            )
+            await container_with_priority.upsert_item(
+                dict(id="normal_item1", productName="Widget", priority="normal", productModel="Normal Model")
+            )
+
+            # This query will use High priority, overriding the client's Low priority setting
+            async for important_item in container_with_priority.query_items(
+                query='SELECT * FROM products p WHERE p.priority = "urgent"',
+                priority="High"  # Request-level priority overrides client-level priority
+            ):
+                print(json.dumps(important_item, indent=True))
+
+            # This query will use the client's default Low priority
+            async for normal_item in container_with_priority.query_items(
+                query='SELECT * FROM products p WHERE p.priority = "normal"'
+            ):
+                print(json.dumps(normal_item, indent=True))
+
+        # [END request_priority_precedence]
 
         # Delete items from the container.
         # The Cosmos DB SQL API does not support 'DELETE' queries,

@@ -167,6 +167,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
+        priority_level = kwargs.pop('priority_level', None)
+        if priority_level:
+            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority_level
+
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 

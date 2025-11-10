@@ -15,6 +15,9 @@ from azure.cosmos.partition_key import PartitionKey
 
 client_throughput_bucket_number = 2
 request_throughput_bucket_number = 3
+client_priority_level = "Low"
+request_priority_level = "High"
+
 def client_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(client_throughput_bucket_number))
@@ -22,6 +25,14 @@ def client_raw_response_hook(response):
 def request_raw_response_hook(response):
         assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
                 == str(request_throughput_bucket_number))
+
+def client_priority_raw_response_hook(response):
+    assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
+            == client_priority_level)
+
+def request_priority_raw_response_hook(response):
+    assert (response.http_request.headers[http_constants.HttpHeaders.PriorityLevel]
+            == request_priority_level)
 
 def partition_merge_support_response_hook(raw_response):
     header = raw_response.http_request.headers
@@ -289,6 +300,25 @@ class TestHeaders(unittest.TestCase):
         # This test only runs read API to verify if the header was set correctly, because all APIs are using the same
         # base method to set the header(GetHeaders).
         self.container.read(raw_response_hook=partition_merge_support_response_hook)
+
+    def test_client_level_priority_level(self):
+        # Test that priority level set at client level is used for all requests
+        cosmos_client.CosmosClient(self.host, self.masterKey,
+            priority_level=client_priority_level,
+            raw_response_hook=client_priority_raw_response_hook)
+
+    def test_request_precedence_priority_level(self):
+        # Test that request-level priority takes precedence over client-level priority
+        client = cosmos_client.CosmosClient(self.host, self.masterKey,
+                                   priority_level=client_priority_level)
+        created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        created_container = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        
+        # Create an item with request-level priority that overrides client-level priority
+        created_container.create_item(
+            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+            priority=request_priority_level,
+            raw_response_hook=request_priority_raw_response_hook)
 
 if __name__ == "__main__":
     unittest.main()
