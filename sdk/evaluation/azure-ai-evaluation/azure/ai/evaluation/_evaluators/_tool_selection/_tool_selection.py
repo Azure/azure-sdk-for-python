@@ -178,7 +178,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if eval_input.get("query") is None:
             raise EvaluationException(
                 message=("Query is a required input to the Tool Selection evaluator."),
-                internal_message=("Query is a required inputto the Tool Selection evaluator."),
+                internal_message=("Query is a required input to the Tool Selection evaluator."),
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
