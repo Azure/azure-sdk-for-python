@@ -15,7 +15,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python quota_limits_list.py
+    python net_app_resource_quota_limits_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-07-01-preview/QuotaLimits_List.json
+# x-ms-original-file: 2025-09-01/NetAppResourceQuotaLimits_List.json
 if __name__ == "__main__":
     main()
