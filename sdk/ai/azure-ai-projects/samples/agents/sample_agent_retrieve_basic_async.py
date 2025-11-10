@@ -22,8 +22,8 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Azure AI Foundry portal.
-    2) AGENT_NAME - The name of an existing Agent in your Azure AI Foundry project.
+       page of your Microsoft Foundry portal.
+    2) AGENT_NAME - The name of an existing Agent in your Microsoft Foundry project.
     3) CONVERSATION_ID - The ID of an existing Conversation associated with the Agent
 """
 

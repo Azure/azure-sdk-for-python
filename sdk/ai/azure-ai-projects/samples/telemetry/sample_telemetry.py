@@ -18,7 +18,7 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry project.
 """
 
 import os
