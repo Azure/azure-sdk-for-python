@@ -8,7 +8,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Manage memory stores** for Agent conversations, using the `.memory_store` operations.
 * **Run Evaluations** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
-* **Run RedTeam operations** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+* **Run Red Team operations** to identify risks associated with your generative AI application, using the ".red_teams" operations.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
