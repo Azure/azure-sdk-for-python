@@ -37,6 +37,7 @@ from azure.ai.language.conversations.authoring.models import (
     UnassignDeploymentResourcesDetails,
 )
 
+
 async def sample_unassign_deployment_resources_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -63,7 +64,9 @@ async def sample_unassign_deployment_resources_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END conversation_authoring_unassign_deployment_resources_async]
+
 
 async def main():
     await sample_unassign_deployment_resources_async()

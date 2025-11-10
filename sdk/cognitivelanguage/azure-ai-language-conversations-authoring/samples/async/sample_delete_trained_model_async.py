@@ -60,7 +60,9 @@ async def sample_delete_trained_model_async():
         status = captured.get("status_code")
         print(f"Delete Trained Model Response Status: {status}")
 
+
 # [END conversation_authoring_delete_trained_model_async]
+
 
 async def main():
     await sample_delete_trained_model_async()

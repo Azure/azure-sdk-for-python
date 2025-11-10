@@ -55,7 +55,9 @@ async def sample_get_project_async():
         print(f"Description: {details.description}")
         print(f"Language: {details.language}")
 
+
 # [END conversation_authoring_get_project_async]
+
 
 async def main():
     await sample_get_project_async()

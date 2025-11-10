@@ -1,14 +1,12 @@
 {
     "CrossLanguagePackageId": "Language.Conversations.Authoring",
     "CrossLanguageDefinitionId": {
-        "azure.ai.language.conversations.authoring.models.AssignedDeploymentResource": "Language.Conversations.Authoring.AnalyzeConversationAuthoringAssignedDeploymentResource",
+        "azure.ai.language.conversations.authoring.models.AssignedDeploymentResource": "Language.Conversations.Authoring.AnalyzeConversationAuthoringProjectResourceInfo",
         "azure.ai.language.conversations.authoring.models.AssignedProjectDeploymentMetadata": "Language.Conversations.Authoring.AnalyzeConversationAuthoringAssignedProjectDeploymentMetadata",
         "azure.ai.language.conversations.authoring.models.AssignedProjectDeploymentsMetadata": "Language.Conversations.Authoring.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata",
         "azure.ai.language.conversations.authoring.models.ConfusionMatrixCell": "Language.Conversations.Authoring.AnalyzeConversationAuthoringConfusionMatrixCell",
         "azure.ai.language.conversations.authoring.models.ConfusionMatrixRow": "Language.Conversations.Authoring.AnalyzeConversationAuthoringConfusionMatrixRow",
         "azure.ai.language.conversations.authoring.models.CreateProjectOptions": "Language.Conversations.Authoring.AnalyzeConversationAuthoringCreateProjectOptions",
-        "azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo": "Language.Conversations.Authoring.AnalyzeConversationAuthoringDataGenerationConnectionInfo",
-        "azure.ai.language.conversations.authoring.models.DeploymentResource": "Language.Conversations.Authoring.AnalyzeConversationAuthoringDeploymentResource",
         "azure.ai.language.conversations.authoring.models.EntitiesEvaluationSummary": "Language.Conversations.Authoring.AnalyzeConversationAuthoringEntitiesEvaluationSummary",
         "azure.ai.language.conversations.authoring.models.EntityEvaluationSummary": "Language.Conversations.Authoring.AnalyzeConversationAuthoringEntityEvaluationSummary",
         "azure.ai.language.conversations.authoring.models.EvalSummary": "Language.Conversations.Authoring.AnalyzeConversationAuthoringEvaluationSummary",
@@ -32,7 +30,6 @@
         "azure.ai.language.conversations.authoring.models.UtteranceIntentsEvaluationResult": "Language.Conversations.Authoring.AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult",
         "azure.ai.language.conversations.authoring.models.ProjectKind": "Language.Conversations.Authoring.ProjectKind",
         "azure.ai.language.conversations.authoring.models.OperationStatus": "Language.Conversations.Authoring.JobStatus",
-        "azure.ai.language.conversations.authoring.models.DataGenerationConnectionKind": "Language.Conversations.Authoring.AnalyzeConversationAuthoringDataGenerationConnectionKind",
         "azure.ai.language.conversations.authoring.models.TrainingMode": "Language.Conversations.Authoring.TrainingMode",
         "azure.ai.language.conversations.authoring.models.StringIndexType": "Language.Conversations.Authoring.StringIndexType",
         "azure.ai.language.conversations.authoring.models.EvaluationKind": "Language.Conversations.Authoring.EvaluationKind",

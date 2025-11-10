@@ -20,8 +20,6 @@ from ._models import (  # type: ignore
     ConfusionMatrixCell,
     ConfusionMatrixRow,
     CreateProjectOptions,
-    DataGenerationConnectionInfo,
-    DeploymentResource,
     EntitiesEvaluationSummary,
     EntityEvaluationSummary,
     EvalSummary,
@@ -46,7 +44,6 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    DataGenerationConnectionKind,
     EvaluationKind,
     OperationStatus,
     ProjectKind,
@@ -64,8 +61,6 @@ __all__ = [
     "ConfusionMatrixCell",
     "ConfusionMatrixRow",
     "CreateProjectOptions",
-    "DataGenerationConnectionInfo",
-    "DeploymentResource",
     "EntitiesEvaluationSummary",
     "EntityEvaluationSummary",
     "EvalSummary",
@@ -87,7 +82,6 @@ __all__ = [
     "UtteranceEntityEvaluationResult",
     "UtteranceEvaluationResult",
     "UtteranceIntentsEvaluationResult",
-    "DataGenerationConnectionKind",
     "EvaluationKind",
     "OperationStatus",
     "ProjectKind",

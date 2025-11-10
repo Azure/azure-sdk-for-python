@@ -36,6 +36,7 @@ from azure.ai.language.conversations.authoring.models import (
     ProjectKind,
 )
 
+
 async def sample_create_project_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
@@ -63,7 +64,9 @@ async def sample_create_project_async():
         print(f"Multilingual: {result.multilingual}")
         print(f"Description: {result.description}")
 
+
 # [END conversation_authoring_create_project_async]
+
 
 async def main():
     await sample_create_project_async()
