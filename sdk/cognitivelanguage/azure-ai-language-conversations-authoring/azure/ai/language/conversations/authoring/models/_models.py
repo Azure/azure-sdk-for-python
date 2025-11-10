@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
@@ -21,23 +21,23 @@ if TYPE_CHECKING:
 
 
 class AssignDeploymentResourcesDetails(_Model):
-    """Represents the options for assigning Azure resources to a project.
+    """Represents the payload for assigning Azure resources to a project.
 
-    :ivar metadata: Represents the metadata for the resources to be assigned. Required.
+    :ivar metadata: Represents the metadata for the project resources to be assigned. Required.
     :vartype metadata:
      list[~azure.ai.language.conversations.authoring.models._models.ResourceMetadata]
     """
 
-    metadata: List["_models._models.ResourceMetadata"] = rest_field(
-        name="resourcesMetadata", visibility=["read", "create", "update", "delete", "query"]
+    metadata: list["_models._models.ResourceMetadata"] = rest_field(
+        name="projectResources", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the metadata for the resources to be assigned. Required."""
+    """Represents the metadata for the project resources to be assigned. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        metadata: List["_models._models.ResourceMetadata"],
+        metadata: list["_models._models.ResourceMetadata"],
     ) -> None: ...
 
     @overload
@@ -52,18 +52,18 @@ class AssignDeploymentResourcesDetails(_Model):
 
 
 class AssignedDeploymentResource(_Model):
-    """Represents the assigned deployment resource.
+    """Represents the assigned project resource.
 
-    :ivar resource_id: The resource ID. Required.
+    :ivar resource_id: The Azure resource ID of the language or AI resource. Required.
     :vartype resource_id: str
-    :ivar region: The resource region. Required.
+    :ivar region: The Azure resource region. Required.
     :vartype region: str
     """
 
     resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
-    """The resource ID. Required."""
+    """The Azure resource ID of the language or AI resource. Required."""
     region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource region. Required."""
+    """The Azure resource region. Required."""
 
     @overload
     def __init__(
@@ -137,7 +137,7 @@ class AssignedProjectDeploymentsMetadata(_Model):
 
     project_name: str = rest_field(name="projectName", visibility=["read"])
     """Represents the project name. Required."""
-    deployments_metadata: List["_models.AssignedProjectDeploymentMetadata"] = rest_field(
+    deployments_metadata: list["_models.AssignedProjectDeploymentMetadata"] = rest_field(
         name="deploymentsMetadata", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the resource region. Required."""
@@ -146,7 +146,7 @@ class AssignedProjectDeploymentsMetadata(_Model):
     def __init__(
         self,
         *,
-        deployments_metadata: List["_models.AssignedProjectDeploymentMetadata"],
+        deployments_metadata: list["_models.AssignedProjectDeploymentMetadata"],
     ) -> None: ...
 
     @overload
@@ -265,7 +265,7 @@ class ConversationExportedEntity(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list component of the entity."""
-    prebuilts: Optional[List["_models._models.ExportedPrebuiltEntity"]] = rest_field(
+    prebuilts: Optional[list["_models._models.ExportedPrebuiltEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The prebuilt entities components."""
@@ -273,7 +273,7 @@ class ConversationExportedEntity(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The regex component of the entity."""
-    required_components: Optional[List[str]] = rest_field(
+    required_components: Optional[list[str]] = rest_field(
         name="requiredComponents", visibility=["read", "create", "update", "delete", "query"]
     )
     """The required components. Allowed values are 'learned', 'list', 'prebuilts' and 'regex'."""
@@ -286,9 +286,9 @@ class ConversationExportedEntity(_Model):
         description: Optional[str] = None,
         composition_mode: Optional[Union[str, "_models._enums.CompositionMode"]] = None,
         entities: Optional["_models._models.ExportedEntityList"] = None,
-        prebuilts: Optional[List["_models._models.ExportedPrebuiltEntity"]] = None,
+        prebuilts: Optional[list["_models._models.ExportedPrebuiltEntity"]] = None,
         regex: Optional["_models._models.ExportedEntityRegex"] = None,
-        required_components: Optional[List[str]] = None,
+        required_components: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -318,7 +318,7 @@ class ConversationExportedIntent(_Model):
     """The intent category. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The intent description."""
-    associated_entities: Optional[List["_models._models.ConversationExportedAssociatedEntityLabel"]] = rest_field(
+    associated_entities: Optional[list["_models._models.ConversationExportedAssociatedEntityLabel"]] = rest_field(
         name="associatedEntities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of associated entities."""
@@ -329,7 +329,7 @@ class ConversationExportedIntent(_Model):
         *,
         category: str,
         description: Optional[str] = None,
-        associated_entities: Optional[List["_models._models.ConversationExportedAssociatedEntityLabel"]] = None,
+        associated_entities: Optional[list["_models._models.ConversationExportedAssociatedEntityLabel"]] = None,
     ) -> None: ...
 
     @overload
@@ -354,7 +354,7 @@ class ExportedProjectAsset(_Model):
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     project_kind: str = rest_discriminator(
         name="projectKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -396,15 +396,15 @@ class ConversationExportedProjectAsset(ExportedProjectAsset, discriminator="Conv
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.CONVERSATION
     """
 
-    intents: Optional[List["_models._models.ConversationExportedIntent"]] = rest_field(
+    intents: Optional[list["_models._models.ConversationExportedIntent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The intents defined in the project."""
-    entities: Optional[List["_models._models.ConversationExportedEntity"]] = rest_field(
+    entities: Optional[list["_models._models.ConversationExportedEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The entities defined in the project."""
-    utterances: Optional[List["_models._models.ConversationExportedUtterance"]] = rest_field(
+    utterances: Optional[list["_models._models.ConversationExportedUtterance"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The utterances defined in the project."""
@@ -416,9 +416,9 @@ class ConversationExportedProjectAsset(ExportedProjectAsset, discriminator="Conv
     def __init__(
         self,
         *,
-        intents: Optional[List["_models._models.ConversationExportedIntent"]] = None,
-        entities: Optional[List["_models._models.ConversationExportedEntity"]] = None,
-        utterances: Optional[List["_models._models.ConversationExportedUtterance"]] = None,
+        intents: Optional[list["_models._models.ConversationExportedIntent"]] = None,
+        entities: Optional[list["_models._models.ConversationExportedEntity"]] = None,
+        utterances: Optional[list["_models._models.ConversationExportedUtterance"]] = None,
     ) -> None: ...
 
     @overload
@@ -429,7 +429,8 @@ class ConversationExportedProjectAsset(ExportedProjectAsset, discriminator="Conv
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CONVERSATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.project_kind = ProjectKind.CONVERSATION  # type: ignore
 
 
 class ConversationExportedUtterance(_Model):
@@ -450,7 +451,7 @@ class ConversationExportedUtterance(_Model):
     :vartype dataset: str or ~azure.ai.language.conversations.authoring.models.DatasetType
     """
 
-    entities: Optional[List["_models._models.ExportedUtteranceEntityLabel"]] = rest_field(
+    entities: Optional[list["_models._models.ExportedUtteranceEntityLabel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the entity labels of the utterance."""
@@ -473,7 +474,7 @@ class ConversationExportedUtterance(_Model):
         *,
         text: str,
         intent: str,
-        entities: Optional[List["_models._models.ExportedUtteranceEntityLabel"]] = None,
+        entities: Optional[list["_models._models.ExportedUtteranceEntityLabel"]] = None,
         language: Optional[str] = None,
         dataset: Optional[Union[str, "_models._enums.DatasetType"]] = None,
     ) -> None: ...
@@ -593,9 +594,9 @@ class CopyProjectState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -606,8 +607,8 @@ class CopyProjectState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -630,14 +631,14 @@ class CreateDeploymentDetails(_Model):
      provided, the deployment will be rolled out to the resources provided here as well as the
      original resource in which the project is created.
     :vartype assigned_resources:
-     list[~azure.ai.language.conversations.authoring.models.DeploymentResource]
+     list[~azure.ai.language.conversations.authoring.models._models.DeploymentResource]
     """
 
     trained_model_label: str = rest_field(
         name="trainedModelLabel", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the trained model label. Required."""
-    assigned_resources: Optional[List["_models.DeploymentResource"]] = rest_field(
+    assigned_resources: Optional[list["_models._models.DeploymentResource"]] = rest_field(
         name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the resources to be assigned to the deployment. If provided, the deployment will be
@@ -649,7 +650,7 @@ class CreateDeploymentDetails(_Model):
         self,
         *,
         trained_model_label: str,
-        assigned_resources: Optional[List["_models.DeploymentResource"]] = None,
+        assigned_resources: Optional[list["_models._models.DeploymentResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -747,7 +748,7 @@ class DataGenerationConnectionInfo(_Model):
     :vartype resource_id: str
     """
 
-    kind: Union[str, "_models.DataGenerationConnectionKind"] = rest_field(
+    kind: Union[str, "_models._enums.DataGenerationConnectionKind"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Connection type for data generation settings. Currently only supports Azure OpenAI. Required.
@@ -764,7 +765,7 @@ class DataGenerationConnectionInfo(_Model):
     def __init__(
         self,
         *,
-        kind: Union[str, "_models.DataGenerationConnectionKind"],
+        kind: Union[str, "_models._enums.DataGenerationConnectionKind"],
         deployment_name: str,
         resource_id: Optional[str] = None,
     ) -> None: ...
@@ -789,14 +790,14 @@ class DataGenerationSettings(_Model):
     :ivar data_generation_connection_info: Must be filled out to enable data generation to augment
      training data. Required.
     :vartype data_generation_connection_info:
-     ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo
+     ~azure.ai.language.conversations.authoring.models._models.DataGenerationConnectionInfo
     """
 
     enable_data_generation: bool = rest_field(
         name="enableDataGeneration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Must be explicitly set to True to enable data generation to augment training data. Required."""
-    data_generation_connection_info: "_models.DataGenerationConnectionInfo" = rest_field(
+    data_generation_connection_info: "_models._models.DataGenerationConnectionInfo" = rest_field(
         name="dataGenerationConnectionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """Must be filled out to enable data generation to augment training data. Required."""
@@ -806,7 +807,7 @@ class DataGenerationSettings(_Model):
         self,
         *,
         enable_data_generation: bool,
-        data_generation_connection_info: "_models.DataGenerationConnectionInfo",
+        data_generation_connection_info: "_models._models.DataGenerationConnectionInfo",
     ) -> None: ...
 
     @overload
@@ -821,27 +822,24 @@ class DataGenerationSettings(_Model):
 
 
 class DeleteDeploymentDetails(_Model):
-    """Represents the options for deleting a project deployment.
+    """Represents the payload for deleting a project deployment.
 
-    :ivar assigned_resource_ids: Represents the resource IDs to delete the deployment from. If not
-     provided, the deployment will be rolled out from all the resources it is deployed to. If
-     provided, it will delete the deployment only from the specified assigned resources, and leave
-     it for the rest.
+    :ivar assigned_resource_ids: Represents the Language or AIService resource IDs to unassign from
+     the project or delete the deployment from.
     :vartype assigned_resource_ids: list[str]
     """
 
-    assigned_resource_ids: Optional[List[str]] = rest_field(
+    assigned_resource_ids: Optional[list[str]] = rest_field(
         name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the resource IDs to delete the deployment from. If not provided, the deployment will
-     be rolled out from all the resources it is deployed to. If provided, it will delete the
-     deployment only from the specified assigned resources, and leave it for the rest."""
+    """Represents the Language or AIService resource IDs to unassign from the project or delete the
+     deployment from."""
 
     @overload
     def __init__(
         self,
         *,
-        assigned_resource_ids: Optional[List[str]] = None,
+        assigned_resource_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -894,9 +892,9 @@ class DeploymentDeleteFromResourcesState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -907,8 +905,8 @@ class DeploymentDeleteFromResourcesState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -931,14 +929,14 @@ class DeploymentResource(_Model):
     :vartype region: str
     :ivar assigned_aoai_resource: Represents the AOAI resource assigned for data generation.
     :vartype assigned_aoai_resource:
-     ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo
+     ~azure.ai.language.conversations.authoring.models._models.DataGenerationConnectionInfo
     """
 
     resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
     """Represents the Azure resource Id. Required."""
     region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the resource region. Required."""
-    assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = rest_field(
+    assigned_aoai_resource: Optional["_models._models.DataGenerationConnectionInfo"] = rest_field(
         name="assignedAoaiResource", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the AOAI resource assigned for data generation."""
@@ -949,7 +947,7 @@ class DeploymentResource(_Model):
         *,
         resource_id: str,
         region: str,
-        assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
+        assigned_aoai_resource: Optional["_models._models.DataGenerationConnectionInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -964,7 +962,7 @@ class DeploymentResource(_Model):
 
 
 class DeploymentResourcesState(_Model):
-    """Represents the state of a deployment resources job.
+    """Represents the state of a project resources job.
 
     :ivar job_id: The job ID. Required.
     :vartype job_id: str
@@ -1002,9 +1000,9 @@ class DeploymentResourcesState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -1015,8 +1013,8 @@ class DeploymentResourcesState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -1069,9 +1067,9 @@ class DeploymentState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -1082,8 +1080,8 @@ class DeploymentState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -1128,12 +1126,12 @@ class EntitiesEvaluationSummary(_Model):
     :vartype macro_recall: float
     """
 
-    confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"] = rest_field(
+    confusion_matrix: dict[str, "_models.ConfusionMatrixRow"] = rest_field(
         name="confusionMatrix", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the confusion matrix between two entities (the two entities can be the same). The
      matrix is between the entity that was labelled and the entity that was predicted. Required."""
-    entities: Dict[str, "_models.EntityEvaluationSummary"] = rest_field(
+    entities: dict[str, "_models.EntityEvaluationSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the entities evaluation summary. Required."""
@@ -1158,8 +1156,8 @@ class EntitiesEvaluationSummary(_Model):
     def __init__(
         self,
         *,
-        confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"],
-        entities: Dict[str, "_models.EntityEvaluationSummary"],
+        confusion_matrix: dict[str, "_models.ConfusionMatrixRow"],
+        entities: dict[str, "_models.EntityEvaluationSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -1433,9 +1431,9 @@ class EvaluationState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
     result: "_models._models.EvaluationJobResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1451,8 +1449,8 @@ class EvaluationState(_Model):
         status: Union[str, "_models.OperationStatus"],
         result: "_models._models.EvaluationJobResult",
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -1512,7 +1510,7 @@ class ExportedOrchestrationDetails(_Model):
      ~azure.ai.language.conversations.authoring.models.OrchestrationTargetProjectKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     target_project_kind: str = rest_discriminator(
         name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1569,7 +1567,8 @@ class ExportedConversationOrchestrationDetails(ExportedOrchestrationDetails, dis
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=OrchestrationTargetProjectKind.CONVERSATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = OrchestrationTargetProjectKind.CONVERSATION  # type: ignore
 
 
 class ExportedEntityList(_Model):
@@ -1580,7 +1579,7 @@ class ExportedEntityList(_Model):
      list[~azure.ai.language.conversations.authoring.models._models.ExportedEntitySublist]
     """
 
-    sublists: Optional[List["_models._models.ExportedEntitySublist"]] = rest_field(
+    sublists: Optional[list["_models._models.ExportedEntitySublist"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sub-lists of the list component."""
@@ -1589,7 +1588,7 @@ class ExportedEntityList(_Model):
     def __init__(
         self,
         *,
-        sublists: Optional[List["_models._models.ExportedEntitySublist"]] = None,
+        sublists: Optional[list["_models._models.ExportedEntitySublist"]] = None,
     ) -> None: ...
 
     @overload
@@ -1616,7 +1615,7 @@ class ExportedEntityListSynonym(_Model):
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the language of the synonyms. This is BCP-47 representation of a language. For
      example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
-    synonyms: Optional[List[str]] = rest_field(
+    synonyms: Optional[list[str]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of synonyms."""
@@ -1626,7 +1625,7 @@ class ExportedEntityListSynonym(_Model):
         self,
         *,
         language: Optional[str] = None,
-        synonyms: Optional[List[str]] = None,
+        synonyms: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1651,7 +1650,7 @@ class ExportedEntityRegex(_Model):
      list[~azure.ai.language.conversations.authoring.models._models.ExportedEntityRegexExpression]
     """
 
-    expressions: Optional[List["_models._models.ExportedEntityRegexExpression"]] = rest_field(
+    expressions: Optional[list["_models._models.ExportedEntityRegexExpression"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The regex expressions of the regex component. These expressions follow the .NET regex syntax.
@@ -1663,7 +1662,7 @@ class ExportedEntityRegex(_Model):
     def __init__(
         self,
         *,
-        expressions: Optional[List["_models._models.ExportedEntityRegexExpression"]] = None,
+        expressions: Optional[list["_models._models.ExportedEntityRegexExpression"]] = None,
     ) -> None: ...
 
     @overload
@@ -1735,7 +1734,7 @@ class ExportedEntitySublist(_Model):
 
     list_key: Optional[str] = rest_field(name="listKey", visibility=["read", "create", "update", "delete", "query"])
     """The key of the sub-list."""
-    synonyms: Optional[List["_models._models.ExportedEntityListSynonym"]] = rest_field(
+    synonyms: Optional[list["_models._models.ExportedEntityListSynonym"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The phrases of that correspond to the sub-list."""
@@ -1745,7 +1744,7 @@ class ExportedEntitySublist(_Model):
         self,
         *,
         list_key: Optional[str] = None,
-        synonyms: Optional[List["_models._models.ExportedEntityListSynonym"]] = None,
+        synonyms: Optional[list["_models._models.ExportedEntityListSynonym"]] = None,
     ) -> None: ...
 
     @overload
@@ -1831,7 +1830,8 @@ class ExportedLuisOrchestrationDetails(ExportedOrchestrationDetails, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=OrchestrationTargetProjectKind.LUIS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = OrchestrationTargetProjectKind.LUIS  # type: ignore
 
 
 class ExportedModelDetails(_Model):
@@ -1903,9 +1903,9 @@ class ExportedModelState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -1916,8 +1916,8 @@ class ExportedModelState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -2077,7 +2077,8 @@ class ExportedQuestionAnsweringOrchestrationDetails(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=OrchestrationTargetProjectKind.QUESTION_ANSWERING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.target_project_kind = OrchestrationTargetProjectKind.QUESTION_ANSWERING  # type: ignore
 
 
 class ExportedTrainedModel(_Model):
@@ -2219,9 +2220,9 @@ class ExportProjectState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
     result_uri: Optional[str] = rest_field(name="resultUrl", visibility=["read", "create", "update", "delete", "query"])
     """The URL to use in order to download the exported project."""
@@ -2234,8 +2235,8 @@ class ExportProjectState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
         result_uri: Optional[str] = None,
     ) -> None: ...
 
@@ -2289,9 +2290,9 @@ class ImportProjectState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -2302,8 +2303,8 @@ class ImportProjectState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -2414,12 +2415,12 @@ class IntentsEvaluationSummary(_Model):
     :vartype macro_recall: float
     """
 
-    confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"] = rest_field(
+    confusion_matrix: dict[str, "_models.ConfusionMatrixRow"] = rest_field(
         name="confusionMatrix", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the confusion matrix between two intents (the two intents can be the same). The
      matrix is between the intent that was labelled and the intent that was predicted. Required."""
-    intents: Dict[str, "_models.IntentEvaluationSummary"] = rest_field(
+    intents: dict[str, "_models.IntentEvaluationSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the intents evaluation summary. Required."""
@@ -2444,8 +2445,8 @@ class IntentsEvaluationSummary(_Model):
     def __init__(
         self,
         *,
-        confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"],
-        intents: Dict[str, "_models.IntentEvaluationSummary"],
+        confusion_matrix: dict[str, "_models.ConfusionMatrixRow"],
+        intents: dict[str, "_models.IntentEvaluationSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -2504,9 +2505,9 @@ class LoadSnapshotState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -2517,8 +2518,8 @@ class LoadSnapshotState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -2588,11 +2589,11 @@ class OrchestrationExportedProjectAsset(ExportedProjectAsset, discriminator="Orc
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.ORCHESTRATION
     """
 
-    intents: Optional[List["_models._models.OrchestrationExportedIntent"]] = rest_field(
+    intents: Optional[list["_models._models.OrchestrationExportedIntent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the intents of the project."""
-    utterances: Optional[List["_models._models.OrchestrationExportedUtterance"]] = rest_field(
+    utterances: Optional[list["_models._models.OrchestrationExportedUtterance"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the utterances of the project."""
@@ -2604,8 +2605,8 @@ class OrchestrationExportedProjectAsset(ExportedProjectAsset, discriminator="Orc
     def __init__(
         self,
         *,
-        intents: Optional[List["_models._models.OrchestrationExportedIntent"]] = None,
-        utterances: Optional[List["_models._models.OrchestrationExportedUtterance"]] = None,
+        intents: Optional[list["_models._models.OrchestrationExportedIntent"]] = None,
+        utterances: Optional[list["_models._models.OrchestrationExportedUtterance"]] = None,
     ) -> None: ...
 
     @overload
@@ -2616,7 +2617,8 @@ class OrchestrationExportedProjectAsset(ExportedProjectAsset, discriminator="Orc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.ORCHESTRATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.project_kind = ProjectKind.ORCHESTRATION  # type: ignore
 
 
 class OrchestrationExportedUtterance(_Model):
@@ -2740,9 +2742,9 @@ class ProjectDeletionState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -2753,8 +2755,8 @@ class ProjectDeletionState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -2785,7 +2787,7 @@ class ProjectDeployment(_Model):
     :vartype model_training_config_version: str
     :ivar assigned_resources: Represents the metadata of the assigned Azure resources. Required.
     :vartype assigned_resources:
-     list[~azure.ai.language.conversations.authoring.models.DeploymentResource]
+     list[~azure.ai.language.conversations.authoring.models.AssignedDeploymentResource]
     """
 
     deployment_name: str = rest_field(name="deploymentName", visibility=["read"])
@@ -2808,7 +2810,7 @@ class ProjectDeployment(_Model):
         name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents model training config version. Required."""
-    assigned_resources: List["_models.DeploymentResource"] = rest_field(
+    assigned_resources: list["_models.AssignedDeploymentResource"] = rest_field(
         name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the metadata of the assigned Azure resources. Required."""
@@ -2822,7 +2824,7 @@ class ProjectDeployment(_Model):
         last_deployed_on: datetime.datetime,
         deployment_expired_on: datetime.date,
         model_training_config_version: str,
-        assigned_resources: List["_models.DeploymentResource"],
+        assigned_resources: list["_models.AssignedDeploymentResource"],
     ) -> None: ...
 
     @overload
@@ -3234,9 +3236,9 @@ class SwapDeploymentsState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
 
     @overload
@@ -3247,8 +3249,8 @@ class SwapDeploymentsState(_Model):
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.OperationStatus"],
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -3474,9 +3476,9 @@ class TrainingState(_Model):
     )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    errors: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
     result: "_models.TrainingJobResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents training tasks detailed result. Required."""
@@ -3490,38 +3492,8 @@ class TrainingState(_Model):
         status: Union[str, "_models.OperationStatus"],
         result: "_models.TrainingJobResult",
         expires_on: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class UnassignDeploymentResourcesDetails(_Model):
-    """Represents the options to unassign Azure resources from a project.
-
-    :ivar assigned_resource_ids: Represents the assigned resource IDs to be unassigned. Required.
-    :vartype assigned_resource_ids: list[str]
-    """
-
-    assigned_resource_ids: List[str] = rest_field(
-        name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the assigned resource IDs to be unassigned. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        assigned_resource_ids: List[str],
+        warnings: Optional[list[ODataV4Format]] = None,
+        errors: Optional[list[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -3546,11 +3518,11 @@ class UtteranceEntitiesEvaluationResult(_Model):
      list[~azure.ai.language.conversations.authoring.models.UtteranceEntityEvaluationResult]
     """
 
-    expected_entities: List["_models.UtteranceEntityEvaluationResult"] = rest_field(
+    expected_entities: list["_models.UtteranceEntityEvaluationResult"] = rest_field(
         name="expectedEntities", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the expected entity labels. Required."""
-    predicted_entities: List["_models.UtteranceEntityEvaluationResult"] = rest_field(
+    predicted_entities: list["_models.UtteranceEntityEvaluationResult"] = rest_field(
         name="predictedEntities", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the predicted entity labels. Required."""
@@ -3559,8 +3531,8 @@ class UtteranceEntitiesEvaluationResult(_Model):
     def __init__(
         self,
         *,
-        expected_entities: List["_models.UtteranceEntityEvaluationResult"],
-        predicted_entities: List["_models.UtteranceEntityEvaluationResult"],
+        expected_entities: list["_models.UtteranceEntityEvaluationResult"],
+        predicted_entities: list["_models.UtteranceEntityEvaluationResult"],
     ) -> None: ...
 
     @overload

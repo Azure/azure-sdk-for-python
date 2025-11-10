@@ -35,9 +35,7 @@ class TestConversationsDeleteDeploymentAsync(TestConversationsAsync):
             project_client = client.get_project_client(project_name)
 
             # Begin delete; Async poller now returns None on success
-            poller = await project_client.deployment.begin_delete_deployment(
-                deployment_name=deployment_name
-            )
+            poller = await project_client.deployment.begin_delete_deployment(deployment_name=deployment_name)
 
             try:
                 await poller.result()

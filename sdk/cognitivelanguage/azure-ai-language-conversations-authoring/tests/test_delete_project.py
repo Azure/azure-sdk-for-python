@@ -38,6 +38,6 @@ class TestConversationsDeleteProjectSync(TestConversations):
             print(f"Operation failed: {e.message}")
             print(e.error)
             raise
-        
+
         # If we get here, the delete succeeded
         print(f"Delete completed. done={poller.done()} status={poller.status()}")

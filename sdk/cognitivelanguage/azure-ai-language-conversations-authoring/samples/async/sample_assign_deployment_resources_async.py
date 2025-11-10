@@ -75,7 +75,9 @@ async def sample_assign_deployment_resources_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END conversation_authoring_assign_deployment_resources_async]
+
 
 async def main():
     await sample_assign_deployment_resources_async()
