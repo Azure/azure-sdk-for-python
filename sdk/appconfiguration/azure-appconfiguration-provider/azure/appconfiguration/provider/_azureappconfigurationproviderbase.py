@@ -259,20 +259,22 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
         feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
 
-        if not endpoint.endswith("/"):
-            endpoint += "/"
-        feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
-        if feature_flag.label and not feature_flag.label.isspace():
-            feature_flag_reference += f"?label={feature_flag.label}"
-        allocation = feature_flag_value.get("allocation")
-        if allocation and allocation.get("seed"):
-            self._tracing_context.uses_seed = True
         if feature_flag_value[TELEMETRY_KEY].get("enabled"):
             self._tracing_context.uses_telemetry = True
+            if not endpoint.endswith("/"):
+                endpoint += "/"
+            feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
+            if feature_flag.label and not feature_flag.label.isspace():
+                feature_flag_reference += f"?label={feature_flag.label}"
+            
             feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
             allocation_id = self._generate_allocation_id(feature_flag_value)
             if allocation_id:
                 feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
+                
+        allocation = feature_flag_value.get("allocation")
+        if allocation and allocation.get("seed"):
+            self._tracing_context.uses_seed = True
 
         variants = feature_flag_value.get("variants")
         if variants:
