@@ -882,7 +882,7 @@ def build_project_get_project_deletion_status_request(  # pylint: disable=name-t
 def build_project_import_method_request(
     project_name: str,
     *,
-    exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+    exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -914,7 +914,7 @@ def build_project_export_request(
     project_name: str,
     *,
     string_index_type: Union[str, _models.StringIndexType],
-    exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+    exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
     asset_kind: Optional[str] = None,
     trained_model_label: Optional[str] = None,
     **kwargs: Any
@@ -2202,7 +2202,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
@@ -2251,7 +2251,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def _get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models._models.ExportProjectState:
+    def get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The new project name. Required.
@@ -2259,7 +2259,7 @@ class _ConversationAuthoringClientOperationsMixin(
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ExportProjectState. The ExportProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ExportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2273,7 +2273,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ExportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ExportProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_get_export_status_request(
             project_name=project_name,
@@ -2306,9 +2306,7 @@ class _ConversationAuthoringClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ExportProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ExportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2316,7 +2314,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models._models.ImportProjectState:
+    def get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ImportProjectState:
         """Gets the status for an import.
 
         :param project_name: The new project name. Required.
@@ -2324,7 +2322,7 @@ class _ConversationAuthoringClientOperationsMixin(
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ImportProjectState. The ImportProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ImportProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ImportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2338,7 +2336,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ImportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_get_import_status_request(
             project_name=project_name,
@@ -2371,9 +2369,7 @@ class _ConversationAuthoringClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ImportProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ImportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2462,7 +2458,7 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     def _deploy_project_initial(
-        self, deployment_name: str, body: Union[_models._models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, body: Union[_models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2525,26 +2521,67 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _begin_deploy_project(
+    def begin_deploy_project(
         self,
         deployment_name: str,
-        body: _models._models.CreateDeploymentDetails,
+        body: _models.CreateDeploymentDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Creates a new deployment or replaces an existing one.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The new deployment info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.CreateDeploymentDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_deploy_project(
+    def begin_deploy_project(
         self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Creates a new deployment or replaces an existing one.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The new deployment info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_deploy_project(
+    def begin_deploy_project(
         self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Creates a new deployment or replaces an existing one.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The new deployment info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
-    def _begin_deploy_project(
-        self, deployment_name: str, body: Union[_models._models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+    def begin_deploy_project(
+        self, deployment_name: str, body: Union[_models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
@@ -2552,8 +2589,8 @@ class DeploymentOperations:
         :type deployment_name: str
         :param body: The new deployment info. Is one of the following types: CreateDeploymentDetails,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.CreateDeploymentDetails
-         or JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.CreateDeploymentDetails or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2656,7 +2693,7 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a project deployment.
 
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -2710,7 +2747,7 @@ class DeploymentOperations:
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     def _delete_deployment_from_resources_initial(  # pylint: disable=name-too-long
-        self, deployment_name: str, body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2773,22 +2810,69 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _begin_delete_deployment_from_resources(
+    def begin_delete_deployment_from_resources(
         self,
         deployment_name: str,
-        body: _models._models.DeleteDeploymentDetails,
+        body: _models.DeleteDeploymentDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Deletes a deployment from the specified project-assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
+         The deployment will only be deleted from the specified resources, and will remain for the rest.
+         Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_delete_deployment_from_resources(
+    def begin_delete_deployment_from_resources(
         self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Deletes a deployment from the specified project-assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
+         The deployment will only be deleted from the specified resources, and will remain for the rest.
+         Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_delete_deployment_from_resources(
+    def begin_delete_deployment_from_resources(
         self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Deletes a deployment from the specified project-assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
+         The deployment will only be deleted from the specified resources, and will remain for the rest.
+         Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     @api_version_validation(
@@ -2796,8 +2880,8 @@ class DeploymentOperations:
         params_added_on={"2025-11-01": ["api_version", "project_name", "deployment_name", "content_type"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _begin_delete_deployment_from_resources(
-        self, deployment_name: str, body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+    def begin_delete_deployment_from_resources(
+        self, deployment_name: str, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes a deployment from the specified project-assigned resources.
 
@@ -2806,8 +2890,8 @@ class DeploymentOperations:
         :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
          The deployment will only be deleted from the specified resources, and will remain for the rest.
          Is one of the following types: DeleteDeploymentDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.DeleteDeploymentDetails
-         or JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2864,9 +2948,9 @@ class DeploymentOperations:
         params_added_on={"2025-11-01": ["api_version", "project_name", "deployment_name", "job_id", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
+    def get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
         self, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentDeleteFromResourcesState:
+    ) -> _models.DeploymentDeleteFromResourcesState:
         """Gets the status of an existing delete deployment from specific resources job.
 
         :param deployment_name: Represents deployment name. Required.
@@ -2875,8 +2959,7 @@ class DeploymentOperations:
         :type job_id: str
         :return: DeploymentDeleteFromResourcesState. The DeploymentDeleteFromResourcesState is
          compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models._models.DeploymentDeleteFromResourcesState
+        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentDeleteFromResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2890,7 +2973,7 @@ class DeploymentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
 
         _request = build_deployment_get_deployment_delete_from_resources_status_request(
             deployment_name=deployment_name,
@@ -2924,9 +3007,7 @@ class DeploymentOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentDeleteFromResourcesState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.DeploymentDeleteFromResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2934,9 +3015,7 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_deployment_status(
-        self, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentState:
+    def get_deployment_status(self, deployment_name: str, job_id: str, **kwargs: Any) -> _models.DeploymentState:
         """Gets the status of an existing deployment job.
 
         :param deployment_name: Represents deployment name. Required.
@@ -2944,7 +3023,7 @@ class DeploymentOperations:
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: DeploymentState. The DeploymentState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentState
+        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2958,7 +3037,7 @@ class DeploymentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeploymentState] = kwargs.pop("cls", None)
 
         _request = build_deployment_get_deployment_status_request(
             deployment_name=deployment_name,
@@ -2992,9 +3071,7 @@ class DeploymentOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.DeploymentState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3507,7 +3584,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     def _assign_deployment_resources_initial(
-        self, body: Union[_models._models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3569,21 +3646,64 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def _begin_assign_deployment_resources(
-        self,
-        body: _models._models.AssignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]: ...
+    def begin_assign_deployment_resources(
+        self, body: _models.AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
+        This API is available only via AAD authentication and not supported via subscription key
+        authentication. For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources to be assigned. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignDeploymentResourcesDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_assign_deployment_resources(
+    def begin_assign_deployment_resources(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
+        This API is available only via AAD authentication and not supported via subscription key
+        authentication. For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources to be assigned. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_assign_deployment_resources(
+    def begin_assign_deployment_resources(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
+        This API is available only via AAD authentication and not supported via subscription key
+        authentication. For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources to be assigned. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     @api_version_validation(
@@ -3591,8 +3711,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _begin_assign_deployment_resources(
-        self, body: Union[_models._models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
+    def begin_assign_deployment_resources(
+        self, body: Union[_models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
         This API is available only via AAD authentication and not supported via subscription key
@@ -3602,9 +3722,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         :param body: The new project resources to be assigned. Is one of the following types:
          AssignDeploymentResourcesDetails, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.language.conversations.authoring.models._models.AssignDeploymentResourcesDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignDeploymentResourcesDetails
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3655,7 +3774,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     def _unassign_deployment_resources_initial(
-        self, body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3717,17 +3836,52 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def _begin_unassign_deployment_resources(
-        self, body: _models._models.DeleteDeploymentDetails, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    def begin_unassign_deployment_resources(
+        self, body: _models.DeleteDeploymentDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deployment to these resources.
+
+        :param body: The list of Language or AIService Azure resource IDs to be unassigned. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_unassign_deployment_resources(
+    def begin_unassign_deployment_resources(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deployment to these resources.
+
+        :param body: The list of Language or AIService Azure resource IDs to be unassigned. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_unassign_deployment_resources(
+    def begin_unassign_deployment_resources(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deployment to these resources.
+
+        :param body: The list of Language or AIService Azure resource IDs to be unassigned. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     @api_version_validation(
@@ -3735,15 +3889,15 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _begin_unassign_deployment_resources(
-        self, body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+    def begin_unassign_deployment_resources(
+        self, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Unassign resources from a project. This disallows deployment to these resources.
 
         :param body: The list of Language or AIService Azure resource IDs to be unassigned. Is one of
          the following types: DeleteDeploymentDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.DeleteDeploymentDetails
-         or JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.DeleteDeploymentDetails or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3794,16 +3948,14 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _get_assign_deployment_resources_status(
-        self, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentResourcesState:
+    def get_assign_deployment_resources_status(self, job_id: str, **kwargs: Any) -> _models.DeploymentResourcesState:
         """Gets the status of an existing assign project resources job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
          MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentResourcesState
+        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3817,7 +3969,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeploymentResourcesState] = kwargs.pop("cls", None)
 
         _request = build_project_get_assign_deployment_resources_status_request(
             job_id=job_id,
@@ -3850,9 +4002,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentResourcesState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.DeploymentResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3865,16 +4015,14 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _get_unassign_deployment_resources_status(  # pylint: disable=name-too-long
-        self, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentResourcesState:
+    def get_unassign_deployment_resources_status(self, job_id: str, **kwargs: Any) -> _models.DeploymentResourcesState:
         """Gets the status of an existing unassign project resources job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
          MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentResourcesState
+        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3888,7 +4036,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeploymentResourcesState] = kwargs.pop("cls", None)
 
         _request = build_project_get_unassign_deployment_resources_status_request(
             job_id=job_id,
@@ -3921,9 +4069,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentResourcesState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.DeploymentResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3931,7 +4077,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     def _swap_deployments_initial(
-        self, body: Union[_models._models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3993,28 +4139,63 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def _begin_swap_deployments(
-        self, body: _models._models.SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    def begin_swap_deployments(
+        self, body: _models.SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_swap_deployments(
+    def begin_swap_deployments(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_swap_deployments(
+    def begin_swap_deployments(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
-    def _begin_swap_deployments(
-        self, body: Union[_models._models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
+    def begin_swap_deployments(
+        self, body: Union[_models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Swaps two existing deployments with each other.
 
         :param body: The job object to swap two deployments. Is one of the following types:
          SwapDeploymentsDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.SwapDeploymentsDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsDetails or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4060,13 +4241,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def _get_swap_deployments_status(self, job_id: str, **kwargs: Any) -> _models._models.SwapDeploymentsState:
+    def get_swap_deployments_status(self, job_id: str, **kwargs: Any) -> _models.SwapDeploymentsState:
         """Gets the status of an existing swap deployment job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: SwapDeploymentsState. The SwapDeploymentsState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.SwapDeploymentsState
+        :rtype: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4080,7 +4261,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.SwapDeploymentsState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SwapDeploymentsState] = kwargs.pop("cls", None)
 
         _request = build_project_get_swap_deployments_status_request(
             job_id=job_id,
@@ -4113,9 +4294,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.SwapDeploymentsState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.SwapDeploymentsState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4123,7 +4302,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_project(self, **kwargs: Any) -> _models.ProjectDetails:
+    def get_project(self, **kwargs: Any) -> _models.ProjectDetails:
         """Gets the details of a project.
 
         :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
@@ -4181,13 +4360,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models._models.ProjectDeletionState:
+    def get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models.ProjectDeletionState:
         """Gets the status for a project deletion job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ProjectDeletionState. The ProjectDeletionState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ProjectDeletionState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectDeletionState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4201,7 +4380,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ProjectDeletionState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectDeletionState] = kwargs.pop("cls", None)
 
         _request = build_project_get_project_deletion_status_request(
             job_id=job_id,
@@ -4233,9 +4412,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ProjectDeletionState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ProjectDeletionState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4244,9 +4421,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     def _import_method_initial(
         self,
-        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
+        body: Union[_models.ExportedProject, JSON, IO[bytes]],
         *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4310,39 +4487,89 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def _begin_import_method(
+    def begin_import_method(
         self,
-        body: _models._models.ExportedProject,
+        body: _models.ExportedProject,
         *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param body: The project data to import. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_import_method(
+    def begin_import_method(
         self,
         body: JSON,
         *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param body: The project data to import. Required.
+        :type body: JSON
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_import_method(
+    def begin_import_method(
         self,
         body: IO[bytes],
         *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param body: The project data to import. Required.
+        :type body: IO[bytes]
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
-    def _begin_import_method(
+    def begin_import_method(
         self,
-        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
+        body: Union[_models.ExportedProject, JSON, IO[bytes]],
         *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
@@ -4350,8 +4577,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         :param body: The project data to import. Is one of the following types: ExportedProject, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.ExportedProject or JSON
-         or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject or JSON or
+         IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
@@ -4410,7 +4637,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         self,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
@@ -4469,11 +4696,11 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _begin_export(
+    def begin_export(
         self,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
@@ -4546,13 +4773,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def _get_export_status(self, job_id: str, **kwargs: Any) -> _models._models.ExportProjectState:
+    def get_export_status(self, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ExportProjectState. The ExportProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ExportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4566,7 +4793,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ExportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ExportProjectState] = kwargs.pop("cls", None)
 
         _request = build_project_get_export_status_request(
             job_id=job_id,
@@ -4599,9 +4826,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ExportProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ExportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4609,7 +4834,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def _copy_project_authorization(
+    def copy_project_authorization(
         self,
         *,
         project_kind: Union[str, _models.ProjectKind],
@@ -4617,15 +4842,57 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         storage_input_container_name: Optional[str] = None,
         allow_overwrite: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models._models.CopyProjectDetails: ...
+    ) -> _models.CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :keyword project_kind: Represents the project kind. Known values are: "Conversation",
+         "Orchestration", and "CustomConversationSummarization". Required.
+        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword storage_input_container_name: The name of the storage container. Default value is
+         None.
+        :paramtype storage_input_container_name: str
+        :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
+         resulting copy authorization. Default value is None.
+        :paramtype allow_overwrite: bool
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _copy_project_authorization(
+    def copy_project_authorization(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.CopyProjectDetails: ...
+    ) -> _models.CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _copy_project_authorization(
+    def copy_project_authorization(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.CopyProjectDetails: ...
+    ) -> _models.CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     @api_version_validation(
@@ -4633,7 +4900,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-05-15-preview": ["api_version", "project_name", "content_type", "accept"]},
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _copy_project_authorization(
+    def copy_project_authorization(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -4641,7 +4908,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         storage_input_container_name: Optional[str] = None,
         allow_overwrite: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models._models.CopyProjectDetails:
+    ) -> _models.CopyProjectDetails:
         """Generates a copy project operation authorization to the current target Azure resource.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -4656,7 +4923,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
          resulting copy authorization. Default value is None.
         :paramtype allow_overwrite: bool
         :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.CopyProjectDetails
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4671,7 +4938,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.CopyProjectDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CopyProjectDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if project_kind is _Unset:
@@ -4721,9 +4988,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.CopyProjectDetails, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.CopyProjectDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4736,7 +5001,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def _copy_project_initial(
-        self, body: Union[_models._models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4798,17 +5063,52 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def _begin_copy_project(
-        self, body: _models._models.CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    def begin_copy_project(
+        self, body: _models.CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_copy_project(
+    def begin_copy_project(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_copy_project(
+    def begin_copy_project(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     @api_version_validation(
@@ -4816,15 +5116,15 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-05-15-preview": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _begin_copy_project(
-        self, body: Union[_models._models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
+    def begin_copy_project(
+        self, body: Union[_models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Copies an existing project to another Azure resource.
 
         :param body: The copy project info. Is one of the following types: CopyProjectDetails, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.CopyProjectDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4875,13 +5175,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-05-15-preview": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _get_copy_project_status(self, job_id: str, **kwargs: Any) -> _models._models.CopyProjectState:
+    def get_copy_project_status(self, job_id: str, **kwargs: Any) -> _models.CopyProjectState:
         """Gets the status of an existing copy project job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: CopyProjectState. The CopyProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.CopyProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4895,7 +5195,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.CopyProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CopyProjectState] = kwargs.pop("cls", None)
 
         _request = build_project_get_copy_project_status_request(
             job_id=job_id,
@@ -4928,9 +5228,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.CopyProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.CopyProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4938,7 +5236,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     def _train_initial(
-        self, body: Union[_models._models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5000,28 +5298,69 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def _begin_train(
-        self, body: _models._models.TrainingJobDetails, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.TrainingJobResult]: ...
+    def begin_train(
+        self, body: _models.TrainingJobDetails, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_train(
+    def begin_train(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.TrainingJobResult]: ...
+    ) -> LROPoller[_models.TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_train(
+    def begin_train(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.TrainingJobResult]: ...
+    ) -> LROPoller[_models.TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
-    def _begin_train(
-        self, body: Union[_models._models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
+    def begin_train(
+        self, body: Union[_models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.TrainingJobResult]:
         """Triggers a training job for a project.
 
         :param body: The training input parameters. Is one of the following types: TrainingJobDetails,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.TrainingJobDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns TrainingJobResult. The TrainingJobResult is
          compatible with MutableMapping
         :rtype:
@@ -5079,7 +5418,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
-    def _get_training_status(self, job_id: str, **kwargs: Any) -> _models.TrainingState:
+    def get_training_status(self, job_id: str, **kwargs: Any) -> _models.TrainingState:
         """Gets the status for a training job.
 
         :param job_id: The job ID. Required.
@@ -5399,7 +5738,7 @@ class ExportedModelOperations:
         params_added_on={"2025-05-15-preview": ["api_version", "project_name", "exported_model_name"]},
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _begin_delete_exported_model(self, exported_model_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_delete_exported_model(self, exported_model_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes an existing exported model.
 
         :param exported_model_name: The exported model name. Required.
@@ -5457,10 +5796,7 @@ class ExportedModelOperations:
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def _create_or_update_exported_model_initial(
-        self,
-        exported_model_name: str,
-        body: Union[_models._models.ExportedModelDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, exported_model_name: str, body: Union[_models.ExportedModelDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5523,22 +5859,63 @@ class ExportedModelOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _begin_create_or_update_exported_model(
+    def begin_create_or_update_exported_model(
         self,
         exported_model_name: str,
-        body: _models._models.ExportedModelDetails,
+        body: _models.ExportedModelDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_create_or_update_exported_model(
+    def begin_create_or_update_exported_model(
         self, exported_model_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_create_or_update_exported_model(
+    def begin_create_or_update_exported_model(
         self, exported_model_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]: ...
+    ) -> LROPoller[None]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     @api_version_validation(
@@ -5546,11 +5923,8 @@ class ExportedModelOperations:
         params_added_on={"2025-05-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _begin_create_or_update_exported_model(
-        self,
-        exported_model_name: str,
-        body: Union[_models._models.ExportedModelDetails, JSON, IO[bytes]],
-        **kwargs: Any
+    def begin_create_or_update_exported_model(
+        self, exported_model_name: str, body: Union[_models.ExportedModelDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Creates a new exported model or replaces an existing one.
 
@@ -5558,8 +5932,8 @@ class ExportedModelOperations:
         :type exported_model_name: str
         :param body: The exported model info. Is one of the following types: ExportedModelDetails,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.ExportedModelDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelDetails or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5618,9 +5992,9 @@ class ExportedModelOperations:
         },
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _get_exported_model_job_status(
+    def get_exported_model_job_status(
         self, exported_model_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.ExportedModelState:
+    ) -> _models.ExportedModelState:
         """Gets the status for an existing job to create or update an exported model.
 
         :param exported_model_name: The exported model name. Required.
@@ -5628,7 +6002,7 @@ class ExportedModelOperations:
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ExportedModelState. The ExportedModelState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportedModelState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ExportedModelState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5642,7 +6016,7 @@ class ExportedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ExportedModelState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ExportedModelState] = kwargs.pop("cls", None)
 
         _request = build_exported_model_get_exported_model_job_status_request(
             exported_model_name=exported_model_name,
@@ -5676,9 +6050,7 @@ class ExportedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ExportedModelState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ExportedModelState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5886,22 +6258,69 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _begin_evaluate_model(
+    def begin_evaluate_model(
         self,
         trained_model_label: str,
         body: _models.EvaluationDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models._models.EvaluationJobResult]: ...
+    ) -> LROPoller[_models.EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.EvaluationDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_evaluate_model(
+    def begin_evaluate_model(
         self, trained_model_label: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models._models.EvaluationJobResult]: ...
+    ) -> LROPoller[_models.EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _begin_evaluate_model(
+    def begin_evaluate_model(
         self, trained_model_label: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models._models.EvaluationJobResult]: ...
+    ) -> LROPoller[_models.EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     @api_version_validation(
@@ -5909,9 +6328,9 @@ class TrainedModelOperations:
         params_added_on={"2025-05-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _begin_evaluate_model(
+    def begin_evaluate_model(
         self, trained_model_label: str, body: Union[_models.EvaluationDetails, JSON, IO[bytes]], **kwargs: Any
-    ) -> LROPoller[_models._models.EvaluationJobResult]:
+    ) -> LROPoller[_models.EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
         :param trained_model_label: The trained model label. Required.
@@ -5923,14 +6342,14 @@ class TrainedModelOperations:
         :return: An instance of LROPoller that returns EvaluationJobResult. The EvaluationJobResult is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models._models.EvaluationJobResult]
+         ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.EvaluationJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvaluationJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -5954,10 +6373,7 @@ class TrainedModelOperations:
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(
-                _models._models.EvaluationJobResult,  # pylint: disable=protected-access
-                response.json().get("result", {}),
-            )
+            deserialized = _deserialize(_models.EvaluationJobResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -5975,13 +6391,13 @@ class TrainedModelOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models._models.EvaluationJobResult].from_continuation_token(
+            return LROPoller[_models.EvaluationJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models._models.EvaluationJobResult](
+        return LROPoller[_models.EvaluationJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -6037,7 +6453,7 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         :param trained_model_label: The trained model label. Required.
@@ -6097,9 +6513,7 @@ class TrainedModelOperations:
         },
         api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _get_evaluation_status(
-        self, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models._models.EvaluationState:
+    def get_evaluation_status(self, trained_model_label: str, job_id: str, **kwargs: Any) -> _models.EvaluationState:
         """Gets the status for an evaluation job.
 
         :param trained_model_label: The trained model label. Required.
@@ -6107,7 +6521,7 @@ class TrainedModelOperations:
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: EvaluationState. The EvaluationState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.EvaluationState
+        :rtype: ~azure.ai.language.conversations.authoring.models.EvaluationState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6121,7 +6535,7 @@ class TrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.EvaluationState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvaluationState] = kwargs.pop("cls", None)
 
         _request = build_trained_model_get_evaluation_status_request(
             trained_model_label=trained_model_label,
@@ -6155,9 +6569,7 @@ class TrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.EvaluationState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.EvaluationState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6338,9 +6750,9 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _get_load_snapshot_status(
+    def get_load_snapshot_status(
         self, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models._models.LoadSnapshotState:
+    ) -> _models.LoadSnapshotState:
         """Gets the status for loading a snapshot.
 
         :param trained_model_label: The trained model label. Required.
@@ -6348,7 +6760,7 @@ class TrainedModelOperations:
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: LoadSnapshotState. The LoadSnapshotState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.LoadSnapshotState
+        :rtype: ~azure.ai.language.conversations.authoring.models.LoadSnapshotState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6362,7 +6774,7 @@ class TrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.LoadSnapshotState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LoadSnapshotState] = kwargs.pop("cls", None)
 
         _request = build_trained_model_get_load_snapshot_status_request(
             trained_model_label=trained_model_label,
@@ -6396,9 +6808,7 @@ class TrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.LoadSnapshotState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.LoadSnapshotState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

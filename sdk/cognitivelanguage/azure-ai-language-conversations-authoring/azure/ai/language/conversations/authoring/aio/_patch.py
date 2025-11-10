@@ -10,12 +10,7 @@ from typing import Any, TYPE_CHECKING, Union, Optional
 from azure.core.credentials import AzureKeyCredential
 from ._client import ConversationAuthoringClient as AuthoringClientGenerated
 from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
-from .operations import (
-    DeploymentOperations,
-    ExportedModelOperations,
-    ProjectOperations,
-    TrainedModelOperations
-)
+from .operations import DeploymentOperations, ExportedModelOperations, ProjectOperations, TrainedModelOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -70,7 +65,7 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
     ) -> None:
         """
         Create a ConversationAuthoringClient.
-        
+
         :param str endpoint: Supported Cognitive Services endpoint, e.g.
             ``https://<resource-name>.api.cognitiveservices.azure.com``.
         :param credential: Key or token credential.
