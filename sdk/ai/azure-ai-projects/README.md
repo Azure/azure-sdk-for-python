@@ -14,14 +14,14 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods the `.indexes` operations.
 
-The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
+The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-2025-11-15-preview).
 
-[Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
+[Product documentation](https://aka.ms/azsdk/azure-ai-projects-v2/product-doc)
 | [Samples][samples]
-| [API reference](https://aka.ms/azsdk/azure-ai-projects/python/reference)
-| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
-| [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
-| [Release history](https://aka.ms/azsdk/azure-ai-projects/python/release-history)
+| [API reference](https://aka.ms/azsdk/azure-ai-projects-v2/python/api-reference)
+| [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects-v2/python/package)
+| [SDK source code](https://aka.ms/azsdk/azure-ai-projects-v2/python/code)
+| [Release history](https://aka.ms/azsdk/azure-ai-projects-v2/python/release-history)
 
 ## Reporting issues
 
@@ -620,6 +620,6 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information, see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
-[samples]: https://aka.ms/azsdk/azure-ai-projects/python/samples/
+[samples]: https://aka.ms/azsdk/azure-ai-projects-v2/python/samples/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
