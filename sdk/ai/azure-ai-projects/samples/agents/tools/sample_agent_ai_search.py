@@ -21,7 +21,8 @@ USAGE:
        page of your Azure AI Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID, as found in the "Connections" tab in your Azure AI Foundry project.
+    3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
+       as found in the "Connections" tab in your Azure AI Foundry project.
     4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
 """
 
@@ -34,6 +35,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     AzureAISearchToolResource,
     AISearchIndexResource,
+    AzureAISearchQueryType,
 )
 
 load_dotenv()
@@ -47,10 +49,11 @@ openai_client = project_client.get_openai_client()
 
 with project_client:
     agent = project_client.agents.create_version(
-        agent_name="MyAISearchAgent",
+        agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="You are a helpful assistant. You must always provide citations for answers using the tool and render them as: `[message_idx:search_idx†source]`.",
+            instructions="""You are a helpful assistant. You must always provide citations for
+            answers using the tool and render them as: `[message_idx:search_idx†source]`.""",
             tools=[
                 AzureAISearchAgentTool(
                     azure_ai_search=AzureAISearchToolResource(
@@ -58,7 +61,7 @@ with project_client:
                             AISearchIndexResource(
                                 project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
                                 index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                                query_type="simple",
+                                query_type=AzureAISearchQueryType.SIMPLE,
                             ),
                         ]
                     )
@@ -70,7 +73,8 @@ with project_client:
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     user_input = input(
-        "Enter your question for the AI Search agent available in the index (e.g., 'Tell me about the mental health services available from Premera'): \n"
+        """Enter your question for the AI Search agent available in the index
+        (e.g., 'Tell me about the mental health services available from Premera'): \n"""
     )
 
     stream_response = openai_client.responses.create(
@@ -95,7 +99,9 @@ with project_client:
                     for annotation in text_content.annotations:
                         if annotation.type == "url_citation":
                             print(
-                                f"URL Citation: {annotation.url}, Start index: {annotation.start_index}, End index: {annotation.end_index}"
+                                f"URL Citation: {annotation.url}, "
+                                f"Start index: {annotation.start_index}, "
+                                f"End index: {annotation.end_index}"
                             )
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")

@@ -21,7 +21,8 @@ USAGE:
        page of your Azure AI Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) FABRIC_PROJECT_CONNECTION_ID - The Fabric project connection ID, as found in the "Connections" tab in your Azure AI Foundry project.
+    3) FABRIC_PROJECT_CONNECTION_ID - The Fabric project connection ID,
+       as found in the "Connections" tab in your Azure AI Foundry project.
 """
 
 import os
@@ -40,16 +41,13 @@ load_dotenv()
 project_client = AIProjectClient(
     endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-    headers={
-        "x-ms-oai-response-testenv": "tip2-preview1"  # TODO: remove this line when the feature goes to production
-    },
 )
 
 openai_client = project_client.get_openai_client()
 
 with project_client:
     agent = project_client.agents.create_version(
-        agent_name="MyFabricAgent4",
+        agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant.",
