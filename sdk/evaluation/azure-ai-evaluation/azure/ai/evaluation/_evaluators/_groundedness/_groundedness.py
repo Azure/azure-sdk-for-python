@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os, logging
+import re
+import math
 from typing import Dict, List, Optional, Union, Any, Tuple
 
 from typing_extensions import overload, override
@@ -9,6 +11,7 @@ from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from ..._common.utils import (
     ErrorBlame,
     ErrorTarget,
@@ -103,20 +106,28 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
-
-        self._higher_is_better = True
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
             credential=credential,
-            _higher_is_better=self._higher_is_better,
+            _higher_is_better=True,
             **kwargs,
         )
         self._model_config = model_config
-        self.threshold = threshold
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
+
+        # To make sure they're not used directly
+        self._flow = None
+        self._prompty_file = None
+
+        self._flow_with_query = self._load_flow(
+            self._PROMPTY_FILE_WITH_QUERY, credential=credential
+        )
+        self._flow_no_query = self._load_flow(
+            self._PROMPTY_FILE_NO_QUERY, credential=credential
+        )
 
     @overload
     def __call__(
@@ -201,16 +212,18 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
 
-        if kwargs.get("query", None):
-            self._ensure_query_prompty_loaded()
-
         return super().__call__(*args, **kwargs)
 
-    def _ensure_query_prompty_loaded(self):
-        """Switch to the query prompty file if not already loaded."""
+    def _load_flow(self, prompty_filename: str, **kwargs) -> AsyncPrompty:
+        """Load the Prompty flow from the specified file.
+        :param prompty_filename: The filename of the Prompty flow to load.
+        :type prompty_filename: str
+        :return: The loaded Prompty flow.
+        :rtype: AsyncPrompty
+        """
 
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
+        prompty_path = os.path.join(current_dir, prompty_filename)
 
         self._prompty_file = prompty_path
         prompty_model_config = construct_prompty_model_config(
@@ -219,6 +232,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             UserAgentSingleton().value,
         )
         self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+        flow = AsyncPrompty.load(
+            source=prompty_path,
+            model=prompty_model_config,
+            is_reasoning_model=self._is_reasoning_model,
+            **kwargs,
+        )
+
+        return flow
 
     def _has_context(self, eval_input: dict) -> bool:
         """
@@ -226,6 +247,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         Treats None, empty strings, empty lists, and lists of empty strings as no context.
         """
         context = eval_input.get("context", None)
+        return self._validate_context(context)
+
+    def _validate_context(self, context) -> bool:
+        """
+        Validate if the provided context is non-empty and meaningful.
+        Treats None, empty strings, empty lists, and lists of empty strings as no context.
+        :param context: The context to validate
+        :type context: Union[str, List, None]
+        :return: True if context is valid and non-empty, False otherwise
+        :rtype: bool
+        """
         if not context:
             return False
         if context == "<>":  # Special marker for no context
@@ -239,7 +271,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
         if eval_input.get("query", None) is None:
-            return await super()._do_eval(eval_input)
+            return await super()._do_eval_with_flow(eval_input, self._flow_no_query)
 
         contains_context = self._has_context(eval_input)
 
@@ -254,7 +286,82 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         }
 
         # Replace and call the parent method
-        return await super()._do_eval(simplified_eval_input)
+        return await super()._do_eval_with_flow(simplified_eval_input, self._flow_with_query)
+
+    async def _do_eval_with_flow(self, eval_input: Dict, flow: AsyncPrompty) -> Dict[str, Union[float, str]]:  # type: ignore[override]
+        """Do a relevance evaluation.
+        NOTE: This is copy from parent with addition of flow parameter to allow choosing between two flows.
+        :param eval_input: The input to the evaluator. Expected to contain
+        whatever inputs are needed for the _flow method, including context
+        and other fields depending on the child class.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        if "query" not in eval_input and "response" not in eval_input:
+            raise EvaluationException(
+                message="Only text conversation inputs are supported.",
+                internal_message="Only text conversation inputs are supported.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.CONVERSATION,
+            )
+        # Call the prompty flow to get the evaluation result.
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+
+        score = math.nan
+        if prompty_output_dict:
+            llm_output = prompty_output_dict.get("llm_output", "")
+            input_token_count = prompty_output_dict.get("input_token_count", 0)
+            output_token_count = prompty_output_dict.get("output_token_count", 0)
+            total_token_count = prompty_output_dict.get("total_token_count", 0)
+            finish_reason = prompty_output_dict.get("finish_reason", "")
+            model_id = prompty_output_dict.get("model_id", "")
+            sample_input = prompty_output_dict.get("sample_input", "")
+            sample_output = prompty_output_dict.get("sample_output", "")
+            # Parse out score and reason from evaluators known to possess them.
+            if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
+                score, reason = parse_quality_evaluator_reason_score(llm_output)
+                binary_result = self._get_binary_result(score)
+                return {
+                    self._result_key: float(score),
+                    f"gpt_{self._result_key}": float(score),
+                    f"{self._result_key}_reason": reason,
+                    f"{self._result_key}_result": binary_result,
+                    f"{self._result_key}_threshold": self._threshold,
+                    f"{self._result_key}_prompt_tokens": input_token_count,
+                    f"{self._result_key}_completion_tokens": output_token_count,
+                    f"{self._result_key}_total_tokens": total_token_count,
+                    f"{self._result_key}_finish_reason": finish_reason,
+                    f"{self._result_key}_model": model_id,
+                    f"{self._result_key}_sample_input": sample_input,
+                    f"{self._result_key}_sample_output": sample_output,
+                }
+            match = re.search(r"\d", llm_output)
+            if match:
+                score = float(match.group())
+                binary_result = self._get_binary_result(score)
+            return {
+                self._result_key: float(score),
+                f"gpt_{self._result_key}": float(score),
+                f"{self._result_key}_result": binary_result,
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_prompt_tokens": input_token_count,
+                f"{self._result_key}_completion_tokens": output_token_count,
+                f"{self._result_key}_total_tokens": total_token_count,
+                f"{self._result_key}_finish_reason": finish_reason,
+                f"{self._result_key}_model": model_id,
+                f"{self._result_key}_sample_input": sample_input,
+                f"{self._result_key}_sample_output": sample_output,
+            }
+
+        binary_result = self._get_binary_result(score)
+        return {
+            self._result_key: float(score),
+            f"gpt_{self._result_key}": float(score),
+            f"{self._result_key}_result": binary_result,
+            f"{self._result_key}_threshold": self._threshold,
+        }
 
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
@@ -272,11 +379,19 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 return {
                     self._result_key: self._NOT_APPLICABLE_RESULT,
                     f"{self._result_key}_result": "pass",
-                    f"{self._result_key}_threshold": self.threshold,
+                    f"{self._result_key}_threshold": self._threshold,
                     f"{self._result_key}_reason": f"Supported tools were not called. Supported tools for groundedness are {self._SUPPORTED_TOOLS}.",
                 }
             else:
                 raise ex
+
+    def _is_single_entry(self, value):
+        """Determine if the input value represents a single entry, unsure is returned as False."""
+        if isinstance(value, str):
+            return True
+        if isinstance(value, list) and len(value) == 1:
+            return True
+        return False
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if kwargs.get("context") or kwargs.get("conversation"):
@@ -284,9 +399,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         query = kwargs.get("query")
         response = kwargs.get("response")
         tool_definitions = kwargs.get("tool_definitions")
-
-        if query and self._prompty_file != self._PROMPTY_FILE_WITH_QUERY:
-            self._ensure_query_prompty_loaded()
 
         if (not query) or (not response):  # or not tool_definitions:
             msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
@@ -298,7 +410,16 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
         context = self._get_context_from_agent_response(response, tool_definitions)
 
-        filtered_response = self._filter_file_search_results(response)
+        if not self._validate_context(context) and self._is_single_entry(response) and self._is_single_entry(query):
+            msg = f"{type(self).__name__}: No valid context provided or could be extracted from the query or response."
+            raise EvaluationException(
+                message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            )
+
+        filtered_response = self._filter_file_search_results(response) if self._validate_context(context) else response
         return super()._convert_kwargs_to_eval_input(response=filtered_response, context=context, query=query)
 
     def _filter_file_search_results(self, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
