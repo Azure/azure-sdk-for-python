@@ -561,7 +561,7 @@ def build_project_list_training_jobs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_list_deployment_resources_request(  # pylint: disable=name-too-long
+def build_project_list_project_resources_request(  # pylint: disable=name-too-long
     project_name: str,
     *,
     top: Optional[int] = None,
@@ -672,7 +672,7 @@ def build_project_list_exported_models_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_assign_deployment_resources_request(  # pylint: disable=name-too-long
+def build_project_assign_project_resources_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -698,7 +698,7 @@ def build_project_assign_deployment_resources_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_unassign_deployment_resources_request(  # pylint: disable=name-too-long
+def build_project_unassign_project_resources_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -724,7 +724,7 @@ def build_project_unassign_deployment_resources_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_get_assign_deployment_resources_status_request(  # pylint: disable=name-too-long
+def build_project_get_assign_project_resources_status_request(  # pylint: disable=name-too-long
     job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -751,7 +751,7 @@ def build_project_get_assign_deployment_resources_status_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_get_unassign_deployment_resources_status_request(  # pylint: disable=name-too-long
+def build_project_get_unassign_project_resources_status_request(  # pylint: disable=name-too-long
     job_id: str, project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3292,7 +3292,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def list_deployment_resources(
+    def list_project_resources(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> ItemPaged["_models.AssignedDeploymentResource"]:
         """Lists the Language or AIService resources assigned to the project.
@@ -3323,7 +3323,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_list_deployment_resources_request(
+                _request = build_project_list_project_resources_request(
                     project_name=self._config.project_name,
                     top=top,
                     skip=skip,
@@ -3583,7 +3583,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _assign_deployment_resources_initial(
+    def _assign_project_resources_initial(
         self, body: Union[_models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3607,7 +3607,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_assign_deployment_resources_request(
+        _request = build_project_assign_project_resources_request(
             project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3646,7 +3646,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def begin_assign_deployment_resources(
+    def begin_assign_project_resources(
         self, body: _models.AssignDeploymentResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
@@ -3666,7 +3666,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def begin_assign_deployment_resources(
+    def begin_assign_project_resources(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
@@ -3686,7 +3686,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def begin_assign_deployment_resources(
+    def begin_assign_project_resources(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
@@ -3711,7 +3711,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def begin_assign_deployment_resources(
+    def begin_assign_project_resources(
         self, body: Union[_models.AssignDeploymentResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
@@ -3737,7 +3737,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._assign_deployment_resources_initial(
+            raw_result = self._assign_project_resources_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
@@ -3773,7 +3773,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def _unassign_deployment_resources_initial(
+    def _unassign_project_resources_initial(
         self, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3797,7 +3797,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_unassign_deployment_resources_request(
+        _request = build_project_unassign_project_resources_request(
             project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3836,7 +3836,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def begin_unassign_deployment_resources(
+    def begin_unassign_project_resources(
         self, body: _models.DeleteDeploymentDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Unassign resources from a project. This disallows deployment to these resources.
@@ -3852,7 +3852,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def begin_unassign_deployment_resources(
+    def begin_unassign_project_resources(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Unassign resources from a project. This disallows deployment to these resources.
@@ -3868,7 +3868,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def begin_unassign_deployment_resources(
+    def begin_unassign_project_resources(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Unassign resources from a project. This disallows deployment to these resources.
@@ -3889,7 +3889,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def begin_unassign_deployment_resources(
+    def begin_unassign_project_resources(
         self, body: Union[_models.DeleteDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Unassign resources from a project. This disallows deployment to these resources.
@@ -3911,7 +3911,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._unassign_deployment_resources_initial(
+            raw_result = self._unassign_project_resources_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
@@ -3948,7 +3948,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def get_assign_deployment_resources_status(self, job_id: str, **kwargs: Any) -> _models.DeploymentResourcesState:
+    def get_assign_project_resources_status(self, job_id: str, **kwargs: Any) -> _models.DeploymentResourcesState:
         """Gets the status of an existing assign project resources job.
 
         :param job_id: The job ID. Required.
@@ -3971,7 +3971,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.DeploymentResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_get_assign_deployment_resources_status_request(
+        _request = build_project_get_assign_project_resources_status_request(
             job_id=job_id,
             project_name=self._config.project_name,
             api_version=self._config.api_version,
@@ -4015,7 +4015,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def get_unassign_deployment_resources_status(self, job_id: str, **kwargs: Any) -> _models.DeploymentResourcesState:
+    def get_unassign_project_resources_status(self, job_id: str, **kwargs: Any) -> _models.DeploymentResourcesState:
         """Gets the status of an existing unassign project resources job.
 
         :param job_id: The job ID. Required.
@@ -4038,7 +4038,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.DeploymentResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_get_unassign_deployment_resources_status_request(
+        _request = build_project_get_unassign_project_resources_status_request(
             job_id=job_id,
             project_name=self._config.project_name,
             api_version=self._config.api_version,
