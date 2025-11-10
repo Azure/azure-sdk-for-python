@@ -123,8 +123,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._flow = None
         self._prompty_file = None
 
-        self._flow_with_query = self._load_flow(self._PROMPTY_FILE_WITH_QUERY, credential=credential)
-        self._flow_no_query = self._load_flow(self._PROMPTY_FILE_NO_QUERY, credential=credential)
+        self._flow_with_query = self._load_flow(self._PROMPTY_FILE_WITH_QUERY, token_credential=credential)
+        self._flow_no_query = self._load_flow(self._PROMPTY_FILE_NO_QUERY, token_credential=credential)
 
     @overload
     def __call__(
