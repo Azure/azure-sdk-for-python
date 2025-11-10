@@ -178,7 +178,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -308,7 +308,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -339,7 +339,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -528,7 +528,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
@@ -563,7 +563,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
-                        self._client._config.url,  # pylint: disable=protected-access
+                        self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
                     ),
