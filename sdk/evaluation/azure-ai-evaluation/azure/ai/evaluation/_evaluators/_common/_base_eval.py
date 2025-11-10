@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import inspect
+import logging
 from abc import ABC, abstractmethod
 import json
 import copy
@@ -45,6 +46,8 @@ import copy
 P = ParamSpec("P")
 T = TypeVar("T")
 T_EvalValue = TypeVar("T_EvalValue")
+
+logger = logging.getLogger(__name__)
 
 
 class DerivedEvalInput(TypedDict, total=False):
@@ -593,7 +596,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         try:
             eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
         except Exception as e:
-            print(f"Error converting kwargs to eval_input_list: {e}")
+            logger.error(f"Error converting kwargs to eval_input_list: {e}")
             raise e
         per_turn_results = []
         # Evaluate all inputs.
@@ -630,7 +633,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
-                print(f"Error calculating binary result: {e}")
+                logger.warning(f"Error calculating binary result: {e}")
             per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 
