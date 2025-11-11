@@ -267,7 +267,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         configuration_refresh_attempted = False
         feature_flag_refresh_attempted = False
         updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
-        existing_feature_flag_usage = self._feature_filter_usage.copy()
+        existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
         try:
             if self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
@@ -317,7 +317,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
             self._replica_client_manager.backoff(client)
             # Restore feature flag usage on failure
-            self._feature_filter_usage = existing_feature_flag_usage
+            self._tracing_context.feature_filter_usage = existing_feature_flag_usage
             raise e
 
     def refresh(self, **kwargs) -> None:
