@@ -105,7 +105,7 @@ class FoundryCBAgent:
                         try:
                             first_event = next(resp)
                         except Exception as e:  # noqa: BLE001
-                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                            err_msg = _format_error(e)
                             logger.error("Generator initialization failed: %s\n%s", e, traceback.format_exc())
                             return JSONResponse({"error": err_msg}, status_code=500)
 
@@ -119,7 +119,7 @@ class FoundryCBAgent:
                                 for event in resp:
                                     yield _event_to_sse_chunk(event)
                             except Exception as e:  # noqa: BLE001
-                                err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                                err_msg = _format_error(e)
                                 logger.error("Error in non-async generator: %s\n%s", e, traceback.format_exc())
                                 payload = {"error": err_msg}
                                 yield f"event: error\ndata: {json.dumps(payload)}\n\n"
@@ -143,7 +143,7 @@ class FoundryCBAgent:
 
                             return StreamingResponse(empty_gen(), media_type="text/event-stream")
                         except Exception as e:  # noqa: BLE001
-                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                            err_msg = _format_error(e)
                             logger.error("Async generator initialization failed: %s\n%s", e, traceback.format_exc())
                             return JSONResponse({"error": err_msg}, status_code=500)
 
@@ -157,7 +157,7 @@ class FoundryCBAgent:
                                 async for event in resp:
                                     yield _event_to_sse_chunk(event)
                             except Exception as e:  # noqa: BLE001
-                                err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                                err_msg = _format_error(e)
                                 logger.error("Error in async generator: %s\n%s", e, traceback.format_exc())
                                 payload = {"error": err_msg}
                                 yield f"event: error\ndata: {json.dumps(payload)}\n\n"
@@ -309,6 +309,15 @@ def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
     if event.type:
         return f"event: {event.type}\ndata: {event_data}\n\n"
     return f"data: {event_data}\n\n"
+
+
+def _format_error(exc: Exception) -> str:
+    message = str(exc)
+    if message:
+        return message
+    if DEBUG_ERRORS:
+        return repr(exc)
+    return "Internal error"
 
 
 def _to_response(result: Union[Response, dict]) -> Response:
