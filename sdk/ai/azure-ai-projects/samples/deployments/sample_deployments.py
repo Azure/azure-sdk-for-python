@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `.deployments` methods to enumerate AI models deployed to your AI Foundry Project.
+    `.deployments` methods to enumerate AI models deployed to your Microsoft Foundry Project.
 
 USAGE:
     python sample_deployments.py

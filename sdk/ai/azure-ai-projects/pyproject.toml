@@ -65,3 +65,8 @@ pytyped = ["py.typed"]
 verifytypes = false
 sphinx = false
 
+[tool.mypy]
+exclude = [
+    "samples/evaluations/.*"
+]
+
