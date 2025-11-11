@@ -17,6 +17,7 @@ When migrating to the hybrid model design, expect these breaking changes:
 | [Additional Properties](#additional-properties-handling)                            | `additional_properties` parameter removed                 | Use direct dictionary syntax: `model["key"] = value`                              |
 | [String Representation](#string-representation-matches-rest-api)                    | Model key output changed from `snake_case` to `camelCase` | Update any code parsing model strings to expect `camelCase`                       |
 | [Serialization/Deserialization](#serialization-and-deserialization-methods-removed) | `serialize` and `deserialize` methods removed     | Use dictionary access for serialization, constructor for deserialization          |
+| [Reserved Property Names](#reserved-property-name-conflicts)                      | Conflicting names suffixed with `_property`       | Change code to use renamed property                      |
 
 ## Detailed Breaking Changes
 
@@ -272,6 +273,50 @@ serialized_dict = as_attribute_dict(model, exclude_readonly=False)
 # For old serialize(keep_readonly=False) behavior:
 serialized_dict = as_attribute_dict(model, exclude_readonly=True)
 ```
+
+### Reserved Property Name Conflicts
+
+**What changed**: Hybrid models now inherit from Python's built-in `dict`. If a REST API property name collides with a `dict` method name (e.g. `keys`, `values`, `items`, `clear`, `update`, `get`, `pop`, `popitem`, `setdefault`, `copy`), the Python emitter appends `_property` to the generated attribute to avoid masking the dictionary method.
+
+**What will break**:
+
+- Constructor calls that pass reserved names as keyword arguments: `Model(keys=...)` now raises or binds incorrectly.
+- Attribute access expecting the property value: `model.keys` now refers to the method; calling it without parentheses will not return the property data.
+
+**Before**:
+
+```python
+from azure.mgmt.test.models import Model
+
+model = Model(keys={"a": 1}, values=[1, 2, 3])
+print(model.keys)      # Property value (old behavior)
+print(model.values)    # Property value (old behavior)
+print(model.as_dict()["keys"]) # REST layer value
+```
+
+**After**:
+
+```python
+from azure.mgmt.test.models import Model
+
+# Reserved property names receive a `_property` suffix
+model = Model(keys_property={"a": 1}, values_property=[1, 2, 3])
+
+print(model.keys_property)    # ✅ Property value
+print(model.values_property)  # ✅ Property value
+print(model["keys"])          # REST layer value
+
+# Unsuffixed names are now dict methods
+print(list(model.keys()))     # ✅ Dict method listing all serialized keys in the model
+print(list(model.values()))   # ✅ Dict method listing all values
+```
+
+**Migration steps:**
+
+1. Search for any usage of reserved names as constructor keywords or attribute accesses.
+2. Append `_property` to both initialization and attribute access: `Model(keys=...)` → `Model(keys_property=...)`; `model.keys` → `model.keys_property`.
+3. Update tests and documentation references accordingly.
+4. If you had dynamic code relying on `getattr(model, name)`, ensure you add a rule to transform reserved names to `name + "_property"` first.
 
 ---
 
