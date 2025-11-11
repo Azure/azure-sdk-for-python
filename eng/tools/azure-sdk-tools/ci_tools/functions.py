@@ -540,16 +540,6 @@ def install_into_venv(venv_path_or_executable: str, requirements: List[str], wor
 
     install_targets = [r.strip() for r in requirements]
     cmd = pip_cmd + ["install"] + install_targets
-    
-    # preview version is enabled when installing dev build so pip will install dev build version from devops feed
-    if os.getenv("SETDEVVERSION", "false") == "true":
-        if pip_cmd[0] == "uv":
-            cmd.append("--prerelease=allow")
-        else:
-            cmd.append("--pre")
-
-    logger.error("^_^") # TODO debug
-    logger.error(' Installing into venv using command: {}'.format(" ".join(cmd)))
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
