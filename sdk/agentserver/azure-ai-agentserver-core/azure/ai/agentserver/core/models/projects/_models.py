@@ -52,7 +52,7 @@ class ItemResource(TypedDict):
 
 class FunctionToolCallItemResource(ItemResource):
     """Function tool call item resource with discriminator 'function_call'."""
-    type: Literal['function_call']
+    type: ReadOnly[Literal['function_call']]
     """Required. Discriminator value is \"function_call\"."""
     status: Union[str, Literal["in_progress"], Literal["completed"], Literal["incomplete"]]
     """The status of the function call."""
@@ -65,7 +65,7 @@ class FunctionToolCallItemResource(ItemResource):
 
 class FunctionToolCallOutputItemResource(ItemResource):
     """Function tool call output item resource with discriminator 'function_call_output'."""
-    type: Literal["function_call_output"]
+    type: ReadOnly[Literal["function_call_output"]]
     """Required. Discriminator value is \"function_call_output\"."""
     status: Union[str, Literal["in_progress"], Literal["completed"], Literal["incomplete"]]
     """The status of the function call."""
@@ -96,7 +96,7 @@ class LogProb(TypedDict):
 
 class ItemContentOutputText(ItemContent):
 
-    type: Literal["output_text"]
+    type: ReadOnly[Literal["output_text"]]
     """The type of the output text. Always ``output_text``. Required."""
     text: str
     """The text output from the model. Required."""
