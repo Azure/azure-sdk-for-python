@@ -5,6 +5,8 @@ import sys
 import pytest
 
 PACKAGE_NAME = "azureml-dataprep-rslex"
+IS_CPYTHON = platform.python_implementation() == "CPython"
+IS_PYPY = platform.python_implementation() == "PyPy"
 
 
 def is_package_installed(package_name):
@@ -18,24 +20,36 @@ def is_package_installed(package_name):
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestPackageInstallation:
-    """Test class to validate package installation across Python versions."""
+    """Test class to validate package installation across Python versions and environments."""
 
     @pytest.mark.skipif(
-        sys.version_info < (3, 13) and platform.python_implementation() != "PyPy",
-        reason="Skipping because Python version is below 3.13 and environment is not PyPy",
+        not (IS_CPYTHON and sys.version_info >= (3, 13)),
+        reason="Skipping because environment is not >= cpython 3.13",
     )
-    def test_package_not_installed_in_unsupported_environment(self):
-        """Ensure azureml-dataprep-rslex is NOT installed in Python 3.13+ or PyPy environment."""
+    def test_package_not_installed_in_cpython_3_13():
         assert not is_package_installed(
             PACKAGE_NAME
-        ), f"{PACKAGE_NAME} should not be installed in Python 3.13+ or PyPy environment."
+        ), f"{PACKAGE_NAME} should not be installed in CPython 3.13 or above environment."
 
     @pytest.mark.skipif(
-        sys.version_info >= (3, 13) or platform.python_implementation() == "PyPy",
-        reason="Skipping because Python version is 3.13 or above or environment is PyPy",
+        not (IS_CPYTHON and sys.version_info < (3, 13)),
+        reason="Skipping because environment is not below cpython 3.13",
     )
-    def test_package_installed_in_supported_environment(self):
-        """Ensure azureml-dataprep-rslex IS installed in Python < 3.13 and not PyPy environment."""
-        assert is_package_installed(
+    def test_package_installed_below_cpython_3_13():
+        assert is_package_installed(PACKAGE_NAME), f"{PACKAGE_NAME} should be installed in CPython < 3.13."
+
+    @pytest.mark.skipif(
+        not (IS_PYPY and sys.version_info >= (3, 10)),
+        reason="Skipping because environment is not >= pypy 3.10",
+    )
+    def test_package_not_installed_in_pypy_3_10():
+        assert not is_package_installed(
             PACKAGE_NAME
-        ), f"{PACKAGE_NAME} should be installed in Python < 3.13 and not PyPy environment."
+        ), f"{PACKAGE_NAME} should not be installed in PyPy 3.10 or above environment."
+
+    @pytest.mark.skipif(
+        not (IS_PYPY and sys.version_info < (3, 10)),
+        reason="Skipping because environment is not below pypy 3.10",
+    )
+    def test_package_installed_below_pypy_3_10():
+        assert is_package_installed(PACKAGE_NAME), f"{PACKAGE_NAME} should be installed in PyPy < 3.10 environment."

@@ -28,6 +28,9 @@ from azure.ai.ml.exceptions import ErrorTarget
 from azure.ai.ml.operations import DataOperations, DatastoreOperations
 from azure.core.paging import ItemPaged
 
+IS_CPYTHON = platform.python_implementation() == "CPython"
+IS_PYPY = platform.python_implementation() == "PyPy"
+
 
 @pytest.fixture
 def mock_datastore_operation(
@@ -579,8 +582,8 @@ class TestDataOperations:
             )
 
     @pytest.mark.skipif(
-        platform.python_implementation() == "PyPy" or sys.version_info >= (3, 13),
-        reason="Skipping because Python version is 3.13 or above OR environment is PyPy. azureml.dataprep.rslex do not support py313 and PyPy",
+        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
+        reason="Skipping because CPython version is >=3.13 or PyPy version is >=3.10. azureml.dataprep.rslex do not support it",
     )
     def test_mount_persistent(
         self,
@@ -603,8 +606,8 @@ class TestDataOperations:
             mock_data_operations._compute_operation.update_data_mounts.assert_called_once()
 
     @pytest.mark.skipif(
-        platform.python_implementation() == "PyPy" or sys.version_info >= (3, 13),
-        reason="Skipping because Python version is 3.13 or above OR environment is PyPy. azureml.dataprep.rslex do not support py313 and PyPy",
+        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
+        reason="Skipping because CPython version is >=3.13 or PyPy version is >=3.10. azureml.dataprep.rslex do not support it",
     )
     def test_mount_non_persistent(
         self,
