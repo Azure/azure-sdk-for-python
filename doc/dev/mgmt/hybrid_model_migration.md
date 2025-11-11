@@ -280,7 +280,7 @@ serialized_dict = as_attribute_dict(model, exclude_readonly=True)
 
 **What will break**:
 
-- Constructor calls that pass reserved names as keyword arguments: `Model(keys=...)` now raises or binds incorrectly.
+- Constructor calls that pass reserved names as keyword arguments: `Model(keys=...)` will now pass the argument to the underlying `dict` constructor, which means the property value will not be set as expected and may result in a `TypeError` or unexpected behavior.
 - Attribute access expecting the property value: `model.keys` now refers to the method; calling it without parentheses will not return the property data.
 
 **Before**:
