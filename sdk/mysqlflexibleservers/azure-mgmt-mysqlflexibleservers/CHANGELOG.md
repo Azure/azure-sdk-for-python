@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (2025-11-11)
+## 1.1.0b1 (2025-11-11)
 
 ### Features Added
 
@@ -29,12 +29,14 @@
   - Added model `ServerBackupPropertiesV2`
   - Added model `ServerPropertiesForUpdate`
   - Added model `ValidateBackupResponseProperties`
-  - Model `LongRunningBackupOperations` added method `begin_delete`
-  - Added model `PrivateEndpointConnectionsOperations`
-  - Added model `PrivateLinkResourcesOperations`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+  - Operation group `LongRunningBackupOperations` added method `begin_delete`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for mgration.
   - Model `AdvancedThreatProtectionForUpdate` deleted or renamed its instance variable `state`
   - Model `AzureADAdministrator` deleted or renamed its instance variable `administrator_type`
   - Model `AzureADAdministrator` deleted or renamed its instance variable `login`
