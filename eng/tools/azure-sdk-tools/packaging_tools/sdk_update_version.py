@@ -6,13 +6,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
-from .generate_utils import (
-    judge_tag_preview,
-)
 from .package_utils import (
-    change_log_generate,
-    extract_breaking_change,
-    get_version_info,
     modify_file,
 )
 from .sdk_changelog import get_changelog_content
@@ -141,6 +135,9 @@ def main(
 
     if version is None:
         version = calculate_next_version_proc(changelog_content, last_version, tag_is_stable)
+
+    if package_result:
+        package_result["version"] = version
 
     # edit _version.py
     version_files = list(package_path.rglob("**/_version.py"))

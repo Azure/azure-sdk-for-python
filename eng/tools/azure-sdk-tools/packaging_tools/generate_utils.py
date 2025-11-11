@@ -158,18 +158,6 @@ def generate_packaging_and_ci_files(package_path: Path):
                 setup_py.unlink()
 
         call_build_config(package_name, str(package_path.parent))
-
-        # load pyproject.toml and replace "azure-core" with "azure-mgmt" (after codegen fix bug, we could remove this logic)
-        if pyproject_toml.exists():
-            with open(pyproject_toml, "rb") as f:
-                pyproject_content = toml.load(f)
-            if pyproject_content.get("project"):
-                for idx in range(len(pyproject_content["project"].get("dependencies", []))):
-                    if pyproject_content["project"]["dependencies"][idx].startswith("azure-core"):
-                        pyproject_content["project"]["dependencies"][idx] = "azure-mgmt-core>=1.6.0"
-
-            with open(pyproject_toml, "wb") as f:
-                tomlw.dump(pyproject_content, f)
     else:
         if not pyproject_toml.exists():
             with open(pyproject_toml, "w") as file_out:
