@@ -15,7 +15,7 @@ from azure.mgmt.mysqlflexibleservers import MySQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-mysqlflexibleservers
 # USAGE
-    python private_link_resources_list.py
+    python long_running_backup_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_link_resources.list_by_server(
-        resource_group_name="Default",
-        server_name="test-svr",
-    )
-    for item in response:
-        print(item)
+    client.long_running_backup.begin_delete(
+        resource_group_name="TestGroup",
+        server_name="mysqltestserver",
+        backup_name="testback",
+    ).result()
 
 
-# x-ms-original-file: 2025-06-01-preview/PrivateLinkResourcesList.json
+# x-ms-original-file: 2025-06-01-preview/LongRunningBackupDelete.json
 if __name__ == "__main__":
     main()
