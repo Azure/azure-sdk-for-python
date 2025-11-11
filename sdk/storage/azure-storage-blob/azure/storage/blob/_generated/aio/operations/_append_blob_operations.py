@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -35,7 +35,7 @@ from ...operations._append_blob_operations import (
 from .._configuration import AzureBlobStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class AppendBlobOperations:
@@ -62,7 +62,7 @@ class AppendBlobOperations:
         self,
         content_length: int,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
@@ -215,7 +215,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -390,7 +393,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -441,6 +447,9 @@ class AppendBlobOperations:
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
         file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
+        source_encryption_key: Optional[str] = None,
+        source_encryption_key_sha256: Optional[str] = None,
+        source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -483,6 +492,17 @@ class AppendBlobOperations:
         :type copy_source_authorization: str
         :param file_request_intent: Valid value is backup. "backup" Default value is None.
         :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
+        :param source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
+         the source data provided in the request. Default value is None.
+        :type source_encryption_key: str
+        :param source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
+         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
+        :type source_encryption_key_sha256: str
+        :param source_encryption_algorithm: The algorithm used to produce the source encryption key
+         hash. Currently, the only accepted value is "AES256". Must be provided if the
+         x-ms-source-encryption-key is provided. Known values are: "None" and "AES256". Default value is
+         None.
+        :type source_encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -582,6 +602,9 @@ class AppendBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             file_request_intent=file_request_intent,
+            source_encryption_key=source_encryption_key,
+            source_encryption_key_sha256=source_encryption_key_sha256,
+            source_encryption_algorithm=source_encryption_algorithm,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -598,7 +621,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -719,7 +745,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

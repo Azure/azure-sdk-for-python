@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -29,7 +29,7 @@ from .._configuration import AzureBlobStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -45,7 +45,7 @@ def build_create_request(
     blob_content_language: Optional[str] = None,
     blob_content_md5: Optional[bytes] = None,
     blob_cache_control: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     lease_id: Optional[str] = None,
     blob_content_disposition: Optional[str] = None,
     encryption_key: Optional[str] = None,
@@ -68,7 +68,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -178,7 +178,7 @@ def build_append_block_request(
 
     comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -275,13 +275,16 @@ def build_append_block_from_url_request(
     request_id_parameter: Optional[str] = None,
     copy_source_authorization: Optional[str] = None,
     file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
+    source_encryption_key: Optional[str] = None,
+    source_encryption_key_sha256: Optional[str] = None,
+    source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -359,6 +362,18 @@ def build_append_block_from_url_request(
         )
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
+    if source_encryption_key is not None:
+        _headers["x-ms-source-encryption-key"] = _SERIALIZER.header(
+            "source_encryption_key", source_encryption_key, "str"
+        )
+    if source_encryption_key_sha256 is not None:
+        _headers["x-ms-source-encryption-key-sha256"] = _SERIALIZER.header(
+            "source_encryption_key_sha256", source_encryption_key_sha256, "str"
+        )
+    if source_encryption_algorithm is not None:
+        _headers["x-ms-source-encryption-algorithm"] = _SERIALIZER.header(
+            "source_encryption_algorithm", source_encryption_algorithm, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -381,7 +396,7 @@ def build_seal_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["seal"] = kwargs.pop("comp", _params.pop("comp", "seal"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
+    version: Literal["2026-04-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -442,7 +457,7 @@ class AppendBlobOperations:
         self,
         content_length: int,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
@@ -595,7 +610,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -770,7 +788,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -821,6 +842,9 @@ class AppendBlobOperations:
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
         file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
+        source_encryption_key: Optional[str] = None,
+        source_encryption_key_sha256: Optional[str] = None,
+        source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -863,6 +887,17 @@ class AppendBlobOperations:
         :type copy_source_authorization: str
         :param file_request_intent: Valid value is backup. "backup" Default value is None.
         :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
+        :param source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
+         the source data provided in the request. Default value is None.
+        :type source_encryption_key: str
+        :param source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
+         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
+        :type source_encryption_key_sha256: str
+        :param source_encryption_algorithm: The algorithm used to produce the source encryption key
+         hash. Currently, the only accepted value is "AES256". Must be provided if the
+         x-ms-source-encryption-key is provided. Known values are: "None" and "AES256". Default value is
+         None.
+        :type source_encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -962,6 +997,9 @@ class AppendBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             file_request_intent=file_request_intent,
+            source_encryption_key=source_encryption_key,
+            source_encryption_key_sha256=source_encryption_key_sha256,
+            source_encryption_algorithm=source_encryption_algorithm,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -978,7 +1016,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1099,7 +1140,10 @@ class AppendBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
