@@ -33,7 +33,6 @@
   - Model `Operation` instance variable `service_specification` has been moved under property `operation_properties`
   - Model `Permissions` renamed instance variable `keys` to `keys_property`
   - Model `PrivateEndpointConnectionItem` instance variables `private_endpoint`, `private_link_service_connection_state`, and `provisioning_state` have been moved under property `properties`
-  - Deleted or renamed model `IdentityType`
   - Deleted or renamed model `ProxyResourceWithoutSystemData`
   - Deleted or renamed model `Resource`
 
