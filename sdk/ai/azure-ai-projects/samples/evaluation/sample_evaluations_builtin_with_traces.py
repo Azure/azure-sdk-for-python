@@ -164,8 +164,8 @@ def main() -> None:
             print("\nCreating Eval Group")
             eval_object = client.evals.create(
                 name="agent_trace_eval_group",
-                data_source_config=data_source_config,
-                testing_criteria=testing_criteria,
+                data_source_config=data_source_config, # type: ignore
+                testing_criteria=testing_criteria, # type: ignore
             )
             print("Eval Group created")
 

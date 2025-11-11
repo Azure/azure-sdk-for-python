@@ -19,11 +19,14 @@
         "fstring",
         "aiprojectclient",
         "Tadmaq",
-        "Udbk",
+        "Udbk"
     ],
     "ignorePaths": [
-      "*.csv",
-      "*.json",
-      "*.jsonl"
+        "*.csv",
+        "*.json",
+        "*.jsonl"
+    ],
+    "words": [
+        "Pxqzykebv"
     ]
 }

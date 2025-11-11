@@ -71,8 +71,8 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Agent Response Evaluation",
-        data_source_config=data_source_config,
-        testing_criteria=testing_criteria,
+        data_source_config=data_source_config, # type: ignore
+        testing_criteria=testing_criteria, # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

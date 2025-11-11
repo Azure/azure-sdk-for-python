@@ -270,8 +270,8 @@ def schedule_dataset_evaluation() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="label model test with dataset ID",
-                data_source_config=data_source_config,
-                testing_criteria=testing_criteria,
+                data_source_config=data_source_config, # type: ignore # type: ignore
+                testing_criteria=testing_criteria, # type: ignore
             )
             print(f"Eval Group created")
 
@@ -331,7 +331,7 @@ def schedule_redteam_evaluation() -> None:
             print("Creating an OpenAI client from the AI Project client")
             client = project_client.get_openai_client()
 
-            agent_versions = project_client.agents.retrieve(agent_name=agent_name)
+            agent_versions = project_client.agents.retrieve(agent_name=agent_name) # type: ignore
             agent = agent_versions.versions.latest
             agent_version = agent.version
             print(f"Retrieved agent: {agent_name}, version: {agent_version}")
@@ -346,8 +346,8 @@ def schedule_redteam_evaluation() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name=eval_group_name,
-                data_source_config=data_source_config,
-                testing_criteria=testing_criteria,
+                data_source_config=data_source_config, # type: ignore
+                testing_criteria=testing_criteria, # type: ignore # type: ignore
             )
             print(f"Eval Group created for red teaming: {eval_group_name}")
 
@@ -360,7 +360,7 @@ def schedule_redteam_evaluation() -> None:
             target = AzureAIAgentTarget(
                 name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
             )
-            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target)
+            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) # type: ignore
             print("Creating Eval Taxonomies")
             eval_taxonomy_input = EvaluationTaxonomy(
                 description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input

@@ -143,8 +143,8 @@ with DefaultAzureCredential() as credential:
         print("Creating Eval Group")
         eval_object = client.evals.create(
             name="aoai graders test",
-            data_source_config=data_source_config,
-            testing_criteria=testing_criteria,
+            data_source_config=data_source_config, # type: ignore
+            testing_criteria=testing_criteria, # type: ignore
         )
         print(f"Eval Group created")
 
