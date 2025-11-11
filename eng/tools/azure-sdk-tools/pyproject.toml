@@ -33,7 +33,6 @@ dependencies = [
 generate_package = "packaging_tools.generate_package:generate_main"
 generate_sdk = "packaging_tools.generate_sdk:generate_main"
 generate_client = "packaging_tools.generate_client:generate_main"
-
 perfstress = "devtools_testutils.perfstress_tests:run_perfstress_cmd"
 perfstressdebug = "devtools_testutils.perfstress_tests:run_perfstress_debug_cmd"
 sdk_generator = "packaging_tools.sdk_generator:generate_main"
