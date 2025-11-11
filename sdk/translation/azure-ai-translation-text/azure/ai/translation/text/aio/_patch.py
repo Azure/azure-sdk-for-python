@@ -131,7 +131,7 @@ class TextTranslationClient(ServiceClientGenerated):
     :keyword str region: Used for National Clouds.
     :keyword str resource_id: Used with both a TokenCredential combined with a region.
     :keyword str audience: Scopes of the credentials.
-    :keyword  str api_version: Default value is "3.0". Note that overriding this default value may
+    :keyword  str api_version: Default value is "2025-10-01-preview". Note that overriding this default value may
      result in unsupported behavior.
     """
 
@@ -144,7 +144,7 @@ class TextTranslationClient(ServiceClientGenerated):
         endpoint: Optional[str] = None,
         resource_id: Optional[str] = None,
         audience: Optional[str] = None,
-        api_version: str = "3.0",
+        api_version: str = "2025-10-01-preview",
         **kwargs
     ): ...
 
@@ -155,15 +155,15 @@ class TextTranslationClient(ServiceClientGenerated):
         credential: AzureKeyCredential,
         region: Optional[str] = None,
         endpoint: Optional[str] = None,
-        api_version: str = "3.0",
+        api_version: str = "2025-10-01-preview",
         **kwargs
     ): ...
 
     @overload
-    def __init__(self, *, endpoint: str, api_version: str = "3.0", **kwargs): ...
+    def __init__(self, *, endpoint: str, api_version: str = "2025-10-01-preview", **kwargs): ...
 
     def __init__(self, **kwargs):
-        api_version = kwargs.get("api_version", "3.0")
+        api_version = kwargs.get("api_version", "2025-10-01-preview")
         set_authentication_policy(kwargs.get("credential"), kwargs)
         translation_endpoint = get_translation_endpoint(
             kwargs.pop("endpoint", "https://api.cognitive.microsofttranslator.com"), api_version
