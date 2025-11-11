@@ -1,4 +1,5 @@
 import json
+import platform
 import re
 from contextlib import contextmanager
 from pathlib import Path
@@ -364,6 +365,10 @@ class TestPipelineJobValidate:
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestDSLPipelineJobValidate:
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_str(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
 
@@ -384,6 +389,10 @@ class TestDSLPipelineJobValidate:
         }
         validate_result.resolve_location_for_diagnostics(source_path=pipeline2.component._source_path)
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_with_none_parameter_no_default_optional_false(self) -> None:
         default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
 
@@ -458,6 +467,10 @@ class TestDSLPipelineJobValidate:
             "jobs.default_optional_component.inputs.required_input": "Required input 'required_input' for component 'default_optional_component' not provided."
         }
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_with_none_parameter_binding_to_two_component_inputs(self) -> None:
         default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
 
@@ -499,6 +512,10 @@ class TestDSLPipelineJobValidate:
             "inputs.optional_param_with_default": "Required input 'optional_param_with_default' for pipeline 'pipeline_with_default_optional_parameters' not provided."
         }
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_dsl_pipeline_distribution_as_command_inputs(self) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
@@ -518,6 +535,10 @@ class TestDSLPipelineJobValidate:
         }
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_dsl_pipeline_component_validate_compute(self) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(path)
@@ -557,6 +578,10 @@ class TestDSLPipelineJobValidate:
         assert validate_result.passed is True
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_job_error_when_nested_component_has_no_concrete_type(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(path)
@@ -584,6 +609,10 @@ class TestDSLPipelineJobValidate:
             "jobs.sub_pipeline.jobs.microsoftsamples_command_component_basic.compute": "Compute not set",
         }
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_optional_link_to_required(self):
         default_optional_func = load_component(str(components_dir / "default_optional_component.yml"))
 
@@ -620,6 +649,10 @@ class TestDSLPipelineJobValidate:
             "inputs.required_input": "Pipeline optional Input binding to required inputs: ['default_optional_component.inputs.required_input']"
         }
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_node_unknown_property_setting(self) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(path)
@@ -640,6 +673,10 @@ class TestDSLPipelineJobValidate:
             dsl_pipeline._validate(raise_error=True)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_node_required_field_missing(self) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(path)
@@ -665,6 +702,10 @@ class TestDSLPipelineJobValidate:
         validation_result = dsl_pipeline._validate()
         assert validation_result.error_messages == {"jobs.node2.limits": "Missing data for required field."}
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_node_schema_validation(self) -> None:
         path = "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
         batch_inference1 = load_component(path)
@@ -689,6 +730,10 @@ class TestDSLPipelineJobValidate:
             pipeline._validate()
             mock_logging.assert_not_called()
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_node_base_path_resolution(self):
         # load with a different root_base_path first as nested.schema will be initialized only once by default
         test_path = "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/pipeline.yml"
@@ -709,6 +754,10 @@ class TestDSLPipelineJobValidate:
         # return origin value as no base path change
         assert pipeline_job.jobs["r_iris_example"].component.code == "../../../python"
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_dsl_pipeline_with_use_node_with_multiple_output_as_input(self):
         path = "./tests/test_configs/components/merge_outputs_component.yml"
         component_func1 = load_component(path)
@@ -732,6 +781,10 @@ class TestDSLPipelineJobValidate:
             assert "Exactly 1 output is required, got 2. ({'component_out_path_1': <azure.ai.m" in ex.__str__()
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_dsl_pipeline_with_compute_binding(self):
         path = "./tests/test_configs/components/merge_outputs_component.yml"
         component_func1 = load_component(path)
@@ -793,6 +846,10 @@ class TestDSLPipelineJobValidate:
         validation_result = job._validate_compute_is_set()
         assert validation_result.passed
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_dsl_data_transfer_import_pipeline_with_invalid_outputs(self) -> None:
         query_source_snowflake = "select * from TPCH_SF1000.PARTSUPP limit 10"
         connection_target_azuresql = "azureml:my_snowflake_connection"
@@ -828,6 +885,10 @@ class TestDSLPipelineJobValidate:
             "folder for file_system",
         }
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_dsl_data_transfer_export_pipeline_with_invalid_inputs(self) -> None:
         connection_target_azuresql = "azureml:my_export_azuresqldb_connection"
         table_name = "dbo.Persons"
