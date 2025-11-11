@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import ComputeLimitClient  # type: ignore
+from ._client import ComputeLimitMgmtClient  # type: ignore
 from ._version import VERSION
 
 __version__ = VERSION
@@ -25,7 +25,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ComputeLimitClient",
+    "ComputeLimitMgmtClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

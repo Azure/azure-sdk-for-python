@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.computelimit.aio import ComputeLimitClient
+from azure.mgmt.computelimit import ComputeLimitMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeLimitSharedLimitsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeLimitMgmtSharedLimitsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ComputeLimitClient, is_async=True)
+        self.client = self.create_mgmt_client(ComputeLimitMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_shared_limits_get(self, resource_group):
-        response = await self.client.shared_limits.get(
+    @recorded_by_proxy
+    def test_shared_limits_get(self, resource_group):
+        response = self.client.shared_limits.get(
             location="str",
             name="str",
         )
@@ -31,9 +30,9 @@ class TestComputeLimitSharedLimitsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_shared_limits_create(self, resource_group):
-        response = await self.client.shared_limits.create(
+    @recorded_by_proxy
+    def test_shared_limits_create(self, resource_group):
+        response = self.client.shared_limits.create(
             location="str",
             name="str",
             resource={
@@ -61,9 +60,9 @@ class TestComputeLimitSharedLimitsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_shared_limits_delete(self, resource_group):
-        response = await self.client.shared_limits.delete(
+    @recorded_by_proxy
+    def test_shared_limits_delete(self, resource_group):
+        response = self.client.shared_limits.delete(
             location="str",
             name="str",
         )
@@ -72,11 +71,11 @@ class TestComputeLimitSharedLimitsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_shared_limits_list_by_subscription_location_resource(self, resource_group):
+    @recorded_by_proxy
+    def test_shared_limits_list_by_subscription_location_resource(self, resource_group):
         response = self.client.shared_limits.list_by_subscription_location_resource(
             location="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

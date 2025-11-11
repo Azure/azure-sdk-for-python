@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ComputeLimitClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ComputeLimitClient.
+class ComputeLimitMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for ComputeLimitMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

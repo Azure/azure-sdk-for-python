@@ -44,7 +44,7 @@ from ...operations._operations import (
     build_shared_limits_get_request,
     build_shared_limits_list_by_subscription_location_resource_request,
 )
-from .._configuration import ComputeLimitClientConfiguration
+from .._configuration import ComputeLimitMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -58,14 +58,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computelimit.aio.ComputeLimitClient`'s
+        :class:`~azure.mgmt.computelimit.aio.ComputeLimitMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeLimitClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -162,14 +162,14 @@ class GuestSubscriptionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computelimit.aio.ComputeLimitClient`'s
+        :class:`~azure.mgmt.computelimit.aio.ComputeLimitMgmtClient`'s
         :attr:`guest_subscriptions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeLimitClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -563,14 +563,14 @@ class SharedLimitsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computelimit.aio.ComputeLimitClient`'s
+        :class:`~azure.mgmt.computelimit.aio.ComputeLimitMgmtClient`'s
         :attr:`shared_limits` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeLimitClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

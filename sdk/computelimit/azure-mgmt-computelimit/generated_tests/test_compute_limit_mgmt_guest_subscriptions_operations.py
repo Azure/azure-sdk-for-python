@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.computelimit import ComputeLimitClient
+from azure.mgmt.computelimit import ComputeLimitMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeLimitSharedLimitsOperations(AzureMgmtRecordedTestCase):
+class TestComputeLimitMgmtGuestSubscriptionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ComputeLimitClient)
+        self.client = self.create_mgmt_client(ComputeLimitMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_shared_limits_get(self, resource_group):
-        response = self.client.shared_limits.get(
+    def test_guest_subscriptions_get(self, resource_group):
+        response = self.client.guest_subscriptions.get(
             location="str",
-            name="str",
+            guest_subscription_id="str",
         )
 
         # please add some check logic here by yourself
@@ -31,19 +31,14 @@ class TestComputeLimitSharedLimitsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_shared_limits_create(self, resource_group):
-        response = self.client.shared_limits.create(
+    def test_guest_subscriptions_create(self, resource_group):
+        response = self.client.guest_subscriptions.create(
             location="str",
-            name="str",
+            guest_subscription_id="str",
             resource={
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "limit": 0,
-                    "provisioningState": "str",
-                    "resourceName": {"value": "str", "localizedValue": "str"},
-                    "unit": "str",
-                },
+                "properties": {"provisioningState": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -61,10 +56,10 @@ class TestComputeLimitSharedLimitsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_shared_limits_delete(self, resource_group):
-        response = self.client.shared_limits.delete(
+    def test_guest_subscriptions_delete(self, resource_group):
+        response = self.client.guest_subscriptions.delete(
             location="str",
-            name="str",
+            guest_subscription_id="str",
         )
 
         # please add some check logic here by yourself
@@ -72,8 +67,8 @@ class TestComputeLimitSharedLimitsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_shared_limits_list_by_subscription_location_resource(self, resource_group):
-        response = self.client.shared_limits.list_by_subscription_location_resource(
+    def test_guest_subscriptions_list_by_subscription_location_resource(self, resource_group):
+        response = self.client.guest_subscriptions.list_by_subscription_location_resource(
             location="str",
         )
         result = [r for r in response]

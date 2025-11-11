@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.computelimit import ComputeLimitClient
+from azure.mgmt.computelimit import ComputeLimitMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.computelimit import ComputeLimitClient
 
 
 def main():
-    client = ComputeLimitClient(
+    client = ComputeLimitMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

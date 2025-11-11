@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import ComputeLimitClientConfiguration
+from ._configuration import ComputeLimitMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import GuestSubscriptionsOperations, Operations, SharedLimitsOperations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ComputeLimitClient:
+class ComputeLimitMgmtClient:
     """Microsoft Azure Compute Limit Resource Provider.
 
     :ivar operations: Operations operations
@@ -64,7 +64,7 @@ class ComputeLimitClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ComputeLimitClientConfiguration(
+        self._config = ComputeLimitMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
