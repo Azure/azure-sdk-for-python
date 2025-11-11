@@ -170,7 +170,6 @@ class CheckFile:
         self.sdk_folder = package_info["path"][0].split("/")[-1]
         self.tag_is_stable = package_info["tagIsStable"]
         self.target_release_date = package_info["targetReleaseDate"] or current_time()
-        self.allow_invalid_next_version = package_info["allowInvalidNextVersion"]
         self._next_version = None
         self.version_suggestion = ""
 
@@ -355,31 +354,6 @@ class CheckFile:
     def has_invalid_next_version(self) -> bool:
         return self.next_version == "0.0.0"
 
-    def check_version(self):
-        if self.has_invalid_next_version and not self.allow_invalid_next_version:
-            _LOGGER.info(f"next version is invalid, skip check _version.py")
-            return
-        self.edit_all_version_file()
-
-    def check_changelog_file(self):
-        if self.has_invalid_next_version and not self.allow_invalid_next_version:
-            _LOGGER.info(f"next version is invalid, skip check CHANGELOG.md")
-            return
-
-        def edit_changelog_proc(content: List[str]):
-            next_version = self.next_version
-            if next_version == "1.0.0b1":
-                content.clear()
-                content.append("# Release History\n")
-            content[1:1] = [
-                "\n",
-                f"## {next_version}{self.version_suggestion} ({self.target_release_date})\n\n",
-                self.get_changelog(),
-                "\n",
-            ]
-
-        modify_file(str(Path(self.sdk_code_path()) / "CHANGELOG.md"), edit_changelog_proc)
-
     def check_dev_requirement(self):
         file = Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}/dev_requirements.txt")
         content = ["-e ../../../eng/tools/azure-sdk-tools\n", "-e ../../identity/azure-identity\naiohttp\n"]
@@ -443,8 +417,6 @@ class CheckFile:
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
         self.check_sdk_readme()
-        self.check_version()
-        self.check_changelog_file()
         self.check_dev_requirement()
         self.check_pyproject_toml()
 

@@ -173,7 +173,7 @@ def main(
 
     modify_file(str(changelog_path), edit_changelog_file)
     if unchanged:
-        _LOGGER.warning(f"No version line found in CHANGELOG.md to update for {package_path}.")
+        _LOGGER.warning(f"No version line found in {changelog_path} to update.")
 
 
 def generate_main():
