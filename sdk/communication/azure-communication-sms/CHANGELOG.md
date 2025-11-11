@@ -4,14 +4,21 @@
 
 ### Features Added
 
-- Added `TelcoMessagingClient` as a unified client providing access to all SMS-related operations through organized sub-clients.
-- Added `DeliveryReportsClient` for retrieving SMS delivery reports.
-- Added `OptOutsClient` for managing SMS opt-out lists.
-- Enhanced documentation with comprehensive examples for all new clients.
-- Added sample files demonstrating usage of the new clients.
-- `SmsClient.send` now supports `delivery_report_timeout_in_seconds` option (60-43200 seconds). If no delivery report is received within the configured time, the service generates an Expired report.
-- `SmsClient.send` now supports MessagingConnect option, where clients can pass `messaging_connect_api_key` and `messaging_connect_partner_name` for Messaging Connect feature to enable SMS delivery through partner networks.
-- All clients now support optional `api_version` parameter to specify a custom API version. Supports both direct instantiation and `from_connection_string` methods.
+- Added delivery report methods into `SmsClient` and `SmsClient` (async):
+  - `get_delivery_report()` is now a direct method on `SmsClient`
+  - `get_delivery_report()` is now a direct method on `SmsClient` (async)
+- Added `get_opt_outs_client()` method to `SmsClient` for accessing opt-out functionality:
+  - Provides access to `OptOutsClient` for managing SMS opt-out lists
+  - Supports hierarchical client pattern for better organization of SMS-related functionality
+- Added support for `MessagingConnect` options in SMS sending to enable partner connectivity:
+  - Use `messaging_connect_partner_name` and `messaging_connect_partner_params` for flexible partner configuration
+- Added support for `delivery_report_timeout_in_seconds` option to configure delivery report timeout (60-43200 seconds)
+- Added token credential support to `OptOutsClient` for managed identity authentication:
+  - `OptOutsClient` now supports both `AzureKeyCredential` and `TokenCredential` authentication
+
+### Other Changes
+
+- Introduced API versioning with default version set to `2026-01-23`
 
 ## 1.1.0 (2024-10-03)
 

@@ -134,8 +134,8 @@ class TestOptOutsClientAsync(aiounittest.AsyncTestCase):
 
     async def test_context_manager(self):
         """Test async context manager functionality"""
-        with patch("azure.communication.sms._generated.aio._azure_communication_sms_service.AzureCommunicationSMSService.__aenter__") as mock_enter:
-            with patch("azure.communication.sms._generated.aio._azure_communication_sms_service.AzureCommunicationSMSService.__aexit__") as mock_exit:
+        with patch("azure.communication.sms._generated.aio.AzureCommunicationSMSService.__aenter__") as mock_enter:
+            with patch("azure.communication.sms._generated.aio.AzureCommunicationSMSService.__aexit__") as mock_exit:
                 mock_enter.return_value = AsyncMock()
                 mock_exit.return_value = AsyncMock()
                 

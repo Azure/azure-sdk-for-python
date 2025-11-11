@@ -10,7 +10,7 @@
 FILE: delivery_reports_sample.py
 
 DESCRIPTION:
-    This sample demonstrates how to use the DeliveryReportsClient to retrieve 
+    This sample demonstrates how to use the SmsClient to retrieve 
     delivery reports for SMS messages.
 
 USAGE:
@@ -22,24 +22,24 @@ USAGE:
 """
 
 import os
-from azure.communication.sms import DeliveryReportsClient
+from azure.communication.sms import SmsClient
 
 def main():
-    # [START create_delivery_reports_client]
+    # [START create_sms_client]
     # Get connection string from environment variable
     connection_string = os.environ["COMMUNICATION_SERVICES_CONNECTION_STRING"]
     
-    # Create DeliveryReportsClient from connection string
-    delivery_reports_client = DeliveryReportsClient.from_connection_string(connection_string)
-    # [END create_delivery_reports_client]
+    # Create SmsClient from connection string
+    sms_client = SmsClient.from_connection_string(connection_string)
+    # [END create_sms_client]
     
     # Get message ID from environment
     message_id = os.environ.get("SMS_MESSAGE_ID", "sample-message-id")
     
     # [START get_delivery_status]
     try:
-        # Retrieve delivery report for the message
-        delivery_report = delivery_reports_client.get_status(message_id)
+        # Retrieve delivery report for the message using SmsClient
+        delivery_report = sms_client.get_delivery_report(message_id)
         
         if delivery_report:
             print(f"Delivery report retrieved successfully for message ID: {message_id}")

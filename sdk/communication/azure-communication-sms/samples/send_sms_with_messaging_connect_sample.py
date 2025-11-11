@@ -12,7 +12,7 @@ FILE: send_sms_with_messaging_connect_sample.py
 DESCRIPTION:
     This sample demonstrates how to send an SMS message using the Messaging Connect feature.
     Messaging Connect allows you to use partner networks for SMS delivery by providing
-    an API key and partner name.
+    partner-specific parameters and partner name.
 
 USAGE:
     python send_sms_with_messaging_connect_sample.py
@@ -41,15 +41,20 @@ def main():
 
     # [START send_sms_with_messaging_connect]
     try:
-        # Send SMS using Messaging Connect partner
+        # Example 1: Basic partner parameters with API key
+        basic_partner_params = {
+            "apiKey": messaging_connect_api_key
+        }
+
+        # Send SMS using Messaging Connect partner with basic parameters
         sms_responses = sms_client.send(
             from_=sender_phone_number,
             to=recipient_phone_number,
             message="Hello! This SMS is sent via Messaging Connect partner network.",
             enable_delivery_report=True,
-            messaging_connect_api_key=messaging_connect_api_key,
+            messaging_connect_partner_params=basic_partner_params,
             messaging_connect_partner_name=messaging_connect_partner_name,
-            tag="messaging-connect-sample"
+            tag="messaging-connect-basic"
         )
 
         for sms_response in sms_responses:
@@ -59,7 +64,6 @@ def main():
                 print(f"   To: {sms_response.to}")
                 print(f"   HTTP Status: {sms_response.http_status_code}")
                 print(f"   Partner: {messaging_connect_partner_name}")
-                print(f"   API Key: {messaging_connect_api_key[:8]}...")  # Show only first 8 chars for security
             else:
                 print(f"❌ Failed to send SMS to {sms_response.to}")
                 print(f"   Error: {sms_response.error_message}")
@@ -69,9 +73,47 @@ def main():
         print(f"❌ Error sending SMS: {e}")
     # [END send_sms_with_messaging_connect]
 
+    # [START send_sms_with_custom_messaging_connect]
+    try:
+        # Example 2: Custom partner parameters (for partners with specific requirements)
+        custom_partner_params = {
+            "apiKey": messaging_connect_api_key,
+            "routingPriority": "high",
+            "enableFallback": True,
+            "customParam": "value123",
+            "numericParam": 42
+        }
+
+        # Send SMS using Messaging Connect partner with custom parameters
+        sms_responses = sms_client.send(
+            from_=sender_phone_number,
+            to=recipient_phone_number,
+            message="Hello! This SMS uses custom partner parameters.",
+            enable_delivery_report=True,
+            messaging_connect_partner_params=custom_partner_params,
+            messaging_connect_partner_name=messaging_connect_partner_name,
+            tag="messaging-connect-custom"
+        )
+
+        for sms_response in sms_responses:
+            if sms_response.successful:
+                print(f"✅ SMS with custom params sent successfully!")
+                print(f"   Message ID: {sms_response.message_id}")
+                print(f"   To: {sms_response.to}")
+                print(f"   Custom params used: {len(custom_partner_params)} parameters")
+            else:
+                print(f"❌ Failed to send SMS with custom params to {sms_response.to}")
+                print(f"   Error: {sms_response.error_message}")
+                
+    except Exception as e:
+        print(f"❌ Error sending SMS with custom params: {e}")
+    # [END send_sms_with_custom_messaging_connect]
+
     print("\nℹ️  Messaging Connect Information:")
-    print("   - Both API key and partner name must be provided together")
-    print("   - The API key is associated with your account in the partner portal")
+    print("   - Both partner_params and partner_name must be provided together")
+    print("   - Partner_params is a flexible dictionary containing partner-specific configuration")
+    print("   - Common parameters include 'apiKey', but partners may require additional fields")
+    print("   - Examples: {'apiKey': 'key'}, {'customparam': 5, 'anotherparam': True}")
     print("   - Partner name specifies which Messaging Connect partner to use")
     print("   - This feature enables SMS delivery through partner networks")
 

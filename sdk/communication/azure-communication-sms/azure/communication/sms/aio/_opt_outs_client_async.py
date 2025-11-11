@@ -9,7 +9,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
+from .._generated.aio._client import AzureCommunicationSMSService
 from .._generated.models import OptOutRequest, OptOutRecipient, OptOutResponseItem
 from .._models import OptOutResult, OptOutCheckResult
 from .._shared.auth_policy_utils import get_authentication_policy
@@ -64,7 +64,8 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
             raise ValueError("invalid credential from connection string.")
 
         self._endpoint = endpoint
-        self._authentication_policy = get_authentication_policy(endpoint, credential)
+        self._credential = credential  # Store credential for sub-clients
+        self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
         
         # If api_version is provided, pass it to the service client
         service_kwargs = kwargs.copy()
@@ -139,16 +140,19 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         request = OptOutRequest(from_property=from_, recipients=recipients)
         
         response = await self._sms_service_client.opt_outs.add(
-            body=request.serialize(),
+            body=request,
             **kwargs
         )
 
+        # Handle both dictionary responses (from tests) and model objects (from API)
+        items = response.get('value', []) if isinstance(response, dict) else response.value
+
         return [
             OptOutResult(
-                to=item["to"],
-                http_status_code=item["httpStatusCode"],
-                error_message=item.get("errorMessage")
-            ) for item in response["value"]
+                to=item.get('to', '') if isinstance(item, dict) else item.to,
+                http_status_code=item.get('httpStatusCode', 0) if isinstance(item, dict) else item.http_status_code,
+                error_message=item.get('errorMessage') if isinstance(item, dict) else item.error_message
+            ) for item in items
         ]
 
     @distributed_trace_async
@@ -186,16 +190,19 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         request = OptOutRequest(from_property=from_, recipients=recipients)
         
         response = await self._sms_service_client.opt_outs.remove(
-            body=request.serialize(),
+            body=request,
             **kwargs
         )
 
+        # Handle both dictionary responses (from tests) and model objects (from API)
+        items = response.get('value', []) if isinstance(response, dict) else response.value
+
         return [
             OptOutResult(
-                to=item["to"],
-                http_status_code=item["httpStatusCode"],
-                error_message=item.get("errorMessage")
-            ) for item in response["value"]
+                to=item.get('to', '') if isinstance(item, dict) else item.to,
+                http_status_code=item.get('httpStatusCode', 0) if isinstance(item, dict) else item.http_status_code,
+                error_message=item.get('errorMessage') if isinstance(item, dict) else item.error_message
+            ) for item in items
         ]
 
     @distributed_trace_async
@@ -233,17 +240,20 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         request = OptOutRequest(from_property=from_, recipients=recipients)
         
         response = await self._sms_service_client.opt_outs.check(
-            body=request.serialize(),
+            body=request,
             **kwargs
         )
 
+        # Handle both dictionary responses (from tests) and model objects (from API)
+        items = response.get('value', []) if isinstance(response, dict) else response.value
+
         return [
             OptOutCheckResult(
-                to=item["to"],
-                http_status_code=item["httpStatusCode"],
-                is_opted_out=item.get("isOptedOut", False),
-                error_message=item.get("errorMessage")
-            ) for item in response["value"]
+                to=item.get('to', '') if isinstance(item, dict) else item.to,
+                http_status_code=item.get('httpStatusCode', 0) if isinstance(item, dict) else item.http_status_code,
+                is_opted_out=item.get('isOptedOut', False) if isinstance(item, dict) else (item.is_opted_out or False),
+                error_message=item.get('errorMessage') if isinstance(item, dict) else item.error_message
+            ) for item in items
         ]
 
     async def __aenter__(self) -> "OptOutsClient":

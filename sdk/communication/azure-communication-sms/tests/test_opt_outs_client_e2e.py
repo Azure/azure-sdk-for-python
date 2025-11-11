@@ -110,6 +110,30 @@ class TestOptOutsClient(ACSSMSTestCase):
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
+    @recorded_by_proxy
+    def test_add_opt_out_from_managed_identity(self):
+        """Test opt-out operations using token credential (managed identity)"""
+        if not is_live():
+            credential = FakeTokenCredential()
+        else:
+            credential = get_credential()
+        opt_outs_client = OptOutsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
+
+        # Add a single phone number to opt-out list using token credential
+        opt_out_results = opt_outs_client.add_opt_out(from_=self.phone_number, to=self.phone_number)
+
+        assert len(opt_out_results) == 1
+        self.verify_successful_opt_out_response(opt_out_results[0])
+
+        # Test check opt-out status with token credential
+        check_results = opt_outs_client.check_opt_out(from_=self.phone_number, to=self.phone_number)
+        assert len(check_results) == 1
+
+        # Test remove opt-out with token credential
+        remove_results = opt_outs_client.remove_opt_out(from_=self.phone_number, to=self.phone_number)
+        assert len(remove_results) == 1
+        self.verify_successful_opt_out_response(remove_results[0])
+
     def verify_successful_opt_out_response(self, opt_out_response):
         if self.is_live:
             assert opt_out_response.to == self.phone_number

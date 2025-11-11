@@ -40,17 +40,28 @@ class TestOptOutsClient(unittest.TestCase):
 
         self.assertTrue("invalid credential from connection string." in str(context.exception))
 
-    def test_add_opt_out_success(self):
+    @patch("azure.communication.sms._generated.operations.OptOutsOperations.add")
+    def test_add_opt_out_success(self, mock_add):
         """Test successful opt-out addition"""
-        with patch("azure.communication.sms._generated.operations.OptOutsOperations.add") as mock_add:
-            mock_add.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 202}]}
-            
-            client = OptOutsClient(self.endpoint, self.credential)
-            result = client.add_opt_out(from_=self.from_phone, to=self.to_phone)
-            
-            self.assertIsNotNone(result)
-            self.assertEqual(len(result), 1)
-            mock_add.assert_called_once()
+        from azure.communication.sms._generated.models import OptOutResponse, OptOutResponseItem
+        
+        mock_response = OptOutResponse(
+            value=[
+                OptOutResponseItem(
+                    to=self.to_phone,
+                    http_status_code=202,
+                    error_message=None
+                )
+            ]
+        )
+        mock_add.return_value = mock_response
+        
+        client = OptOutsClient(self.endpoint, self.credential)
+        result = client.add_opt_out(from_=self.from_phone, to=self.to_phone)
+        
+        self.assertIsNotNone(result)
+        self.assertEqual(len(result), 1)
+        mock_add.assert_called_once()
 
     def test_remove_opt_out_success(self):
         """Test successful opt-out removal"""
@@ -90,10 +101,16 @@ class TestOptOutsClient(unittest.TestCase):
         mock_add.assert_called_once()
         call_args = mock_add.call_args
         # Check that the request was created with correct from_ and recipients
-        request_dict = call_args.kwargs['body']
-        self.assertEqual(request_dict["from"], self.from_phone)
-        self.assertEqual(len(request_dict["recipients"]), 1)
-        self.assertEqual(request_dict["recipients"][0]["to"], self.to_phone)
+        request_obj = call_args.kwargs['body']
+        # Handle both dict and model object formats
+        if hasattr(request_obj, 'from_property'):
+            self.assertEqual(request_obj.from_property, self.from_phone)
+            self.assertEqual(len(request_obj.recipients), 1)
+            self.assertEqual(request_obj.recipients[0].to, self.to_phone)
+        else:
+            self.assertEqual(request_obj["from"], self.from_phone)
+            self.assertEqual(len(request_obj["recipients"]), 1)
+            self.assertEqual(request_obj["recipients"][0]["to"], self.to_phone)
 
     @patch("azure.communication.sms._generated.operations.OptOutsOperations.remove")
     def test_remove_opt_out_parameters(self, mock_remove):
@@ -107,10 +124,16 @@ class TestOptOutsClient(unittest.TestCase):
         mock_remove.assert_called_once()
         call_args = mock_remove.call_args
         # Check that the request was created with correct from_ and recipients
-        request_dict = call_args.kwargs['body']
-        self.assertEqual(request_dict["from"], self.from_phone)
-        self.assertEqual(len(request_dict["recipients"]), 1)
-        self.assertEqual(request_dict["recipients"][0]["to"], self.to_phone)
+        request_obj = call_args.kwargs['body']
+        # Handle both dict and model object formats
+        if hasattr(request_obj, 'from_property'):
+            self.assertEqual(request_obj.from_property, self.from_phone)
+            self.assertEqual(len(request_obj.recipients), 1)
+            self.assertEqual(request_obj.recipients[0].to, self.to_phone)
+        else:
+            self.assertEqual(request_obj["from"], self.from_phone)
+            self.assertEqual(len(request_obj["recipients"]), 1)
+            self.assertEqual(request_obj["recipients"][0]["to"], self.to_phone)
 
     @patch("azure.communication.sms._generated.operations.OptOutsOperations.check")
     def test_check_opt_out_parameters(self, mock_check):
@@ -124,10 +147,16 @@ class TestOptOutsClient(unittest.TestCase):
         mock_check.assert_called_once()
         call_args = mock_check.call_args
         # Check that the request was created with correct from_ and recipients
-        request_dict = call_args.kwargs['body']
-        self.assertEqual(request_dict["from"], self.from_phone)
-        self.assertEqual(len(request_dict["recipients"]), 1)
-        self.assertEqual(request_dict["recipients"][0]["to"], self.to_phone)
+        request_obj = call_args.kwargs['body']
+        # Handle both dict and model object formats
+        if hasattr(request_obj, 'from_property'):
+            self.assertEqual(request_obj.from_property, self.from_phone)
+            self.assertEqual(len(request_obj.recipients), 1)
+            self.assertEqual(request_obj.recipients[0].to, self.to_phone)
+        else:
+            self.assertEqual(request_obj["from"], self.from_phone)
+            self.assertEqual(len(request_obj["recipients"]), 1)
+            self.assertEqual(request_obj["recipients"][0]["to"], self.to_phone)
 
     def test_opt_out_error_response(self):
         """Test opt-out operation with error response"""
