@@ -784,7 +784,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call", "tool_call": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}',
                 },
             },
         ]
@@ -980,7 +980,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call", "tool_call": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}',
                 },
             },
         ]
@@ -1152,7 +1152,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*"}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call", "tool_call": {"type": "function", "id": "*"}}]}',
                 },
             },
         ]
@@ -1342,7 +1342,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*"}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call", "tool_call": {"type": "function", "id": "*"}}]}',
                 },
             },
         ]
@@ -2282,9 +2282,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
-            print(
-                "Deployment Name ------------------------------------------------------------------ :", deployment_name
-            )
 
             conversation = client.conversations.create()
 
@@ -3351,7 +3348,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call", "tool_call": {"type": "function", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}',
                 },
             },
         ]
@@ -3484,7 +3481,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "assistant",
-                    "gen_ai.event.content": '{"tool_calls": [{"type": "function", "id": "*"}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call", "tool_call": {"type": "function", "id": "*"}}]}',
                 },
             },
         ]
