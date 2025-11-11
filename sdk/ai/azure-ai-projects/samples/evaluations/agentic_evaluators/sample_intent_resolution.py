@@ -209,17 +209,6 @@ def main() -> None:
                 },
             ]
 
-            tool_definition = {
-                "name": "get_order",
-                "description": "Get the details of a specific order.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "order_id": {"type": "string", "description": "The order ID to get the details for."}
-                    },
-                },
-            }
-
             print("Creating Eval Run with Inline Data")
             eval_run_object = client.evals.runs.create(
                 eval_id=eval_object.id,
@@ -244,14 +233,6 @@ def main() -> None:
                             ),
                             # Example 4: Complex conversation without tool definitions
                             SourceFileContentContent(item={"query": complex_query, "response": complex_response}),
-                            # Example 5: Complex conversation with single tool definition
-                            SourceFileContentContent(
-                                item={
-                                    "query": complex_query,
-                                    "response": complex_response,
-                                    "tool_definitions": tool_definition,
-                                }
-                            ),
                         ],
                     ),
                 ),
