@@ -64,7 +64,8 @@ with project_client:
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="You are a helpful agent that can use Bing Custom Search tools to assist users. Use the available Bing Custom Search tools to answer questions and perform tasks.",
+            instructions="""You are a helpful agent that can use Bing Custom Search tools to assist users. 
+            Use the available Bing Custom Search tools to answer questions and perform tasks.""",
             tools=[bing_custom_search_tool],
         ),
     )
