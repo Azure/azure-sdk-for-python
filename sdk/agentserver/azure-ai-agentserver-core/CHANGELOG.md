@@ -1,6 +1,15 @@
 # Release History
 
 
+## 1.0.0b3 (2025-11-11)
+
+### Bugs Fixed
+
+- Fixed Id generator format.
+
+- Fixed trace initialization for agent-framework.
+
+
 ## 1.0.0b2 (2025-11-10)
 
 ### Bugs Fixed
