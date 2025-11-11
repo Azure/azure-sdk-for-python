@@ -730,14 +730,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Helper to emit a single tool call event."""
-        event_body: Dict[str, Any] = {
-            "content": [
-                {
-                    "type": "tool_call",
-                    "tool_call": tool_call
-                }
-            ]
-        }
+        event_body: Dict[str, Any] = {"content": [{"type": "tool_call", "tool_call": tool_call}]}
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
             message_role="assistant",
