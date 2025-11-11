@@ -2,6 +2,8 @@
     "CrossLanguagePackageId": "ContainerRegistryService",
     "CrossLanguageDefinitionId": {
         "azure.containerregistry.models.AcrAccessToken": "ContainerRegistryService.AcrAccessToken",
+        "azure.containerregistry.models.AcrErrorInfo": "ContainerRegistryService.AcrErrorInfo",
+        "azure.containerregistry.models.AcrErrors": "ContainerRegistryService.AcrErrors",
         "azure.containerregistry.models.AcrManifests": "ContainerRegistryService.AcrManifests",
         "azure.containerregistry.models.AcrRefreshToken": "ContainerRegistryService.AcrRefreshToken",
         "azure.containerregistry.models.Annotations": "ContainerRegistryService.Annotations",
@@ -32,6 +34,7 @@
         "azure.containerregistry.models.ArtifactOperatingSystem": "ContainerRegistryService.ArtifactOperatingSystem",
         "azure.containerregistry.models.ArtifactManifestOrder": "ContainerRegistryService.ArtifactManifestOrder",
         "azure.containerregistry.models.PostContentSchemaGrantType": "ContainerRegistryService.PostContentSchemaGrantType",
+        "azure.containerregistry.models.TokenGrantType": "ContainerRegistryService.TokenGrantType",
         "azure.containerregistry.operations.ContainerRegistryOperations.check_docker_v2_support": "ContainerRegistryService.ContainerRegistry.checkDockerV2Support",
         "azure.containerregistry.aio.operations.ContainerRegistryOperations.check_docker_v2_support": "ContainerRegistryService.ContainerRegistry.checkDockerV2Support",
         "azure.containerregistry.operations.ContainerRegistryOperations.get_manifest": "ContainerRegistryService.ContainerRegistry.getManifest",
