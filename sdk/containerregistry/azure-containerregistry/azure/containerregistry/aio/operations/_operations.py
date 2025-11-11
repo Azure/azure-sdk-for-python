@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -333,12 +333,19 @@ class ContainerRegistryOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Docker-Content-Digest"] = self._deserialize(
+            "str", response.headers.get("Docker-Content-Digest")
+        )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete_manifest(self, name: str, reference: str, **kwargs: Any) -> None:
@@ -385,7 +392,7 @@ class ContainerRegistryOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1107,7 +1114,7 @@ class ContainerRegistryOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1446,15 +1453,15 @@ class ContainerRegistryBlobOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_blob(self, name: str, digest: str, **kwargs: Any) -> None:
+    async def get_blob(self, name: str, digest: str, **kwargs: Any) -> Optional[AsyncIterator[bytes]]:
         """Retrieve the blob from the registry identified by digest.
 
         :param name: Name of the image (including the namespace). Required.
         :type name: str
         :param digest: Digest of a BLOB. Required.
         :type digest: str
-        :return: None
-        :rtype: None
+        :return: AsyncIterator[bytes] or None
+        :rtype: AsyncIterator[bytes] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1468,7 +1475,7 @@ class ContainerRegistryBlobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_container_registry_blob_get_blob_request(
             name=name,
@@ -1482,19 +1489,39 @@ class ContainerRegistryBlobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 307]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Docker-Content-Digest"] = self._deserialize(
+                "str", response.headers.get("Docker-Content-Digest")
+            )
+
+        if response.status_code == 307:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def check_blob_exists(self, name: str, digest: str, **kwargs: Any) -> bool:
@@ -1540,12 +1567,22 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 307]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Docker-Content-Digest"] = self._deserialize(
+                "str", response.headers.get("Docker-Content-Digest")
+            )
+
+        if response.status_code == 307:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
     @distributed_trace_async
@@ -1592,12 +1629,17 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Docker-Content-Digest"] = self._deserialize(
+            "str", response.headers.get("Docker-Content-Digest")
+        )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def mount_blob(self, name: str, *, from_parameter: str, mount: str, **kwargs: Any) -> None:
@@ -1646,12 +1688,19 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+        response_headers["Docker-Content-Digest"] = self._deserialize(
+            "str", response.headers.get("Docker-Content-Digest")
+        )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_upload_status(self, location: str, **kwargs: Any) -> None:
@@ -1701,8 +1750,12 @@ class ContainerRegistryBlobOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
+        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def upload_chunk(self, location: str, value: bytes, **kwargs: Any) -> None:
@@ -1754,12 +1807,17 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
+        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def complete_upload(
@@ -1990,12 +2048,16 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [206]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def check_chunk_exists(self, name: str, digest: str, *, range: str, **kwargs: Any) -> bool:
@@ -2045,12 +2107,16 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
 
