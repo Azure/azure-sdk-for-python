@@ -133,4 +133,4 @@ class FoundryIdGenerator(IdGenerator):
         if len(segment) < string_length + partition_key_length:
             raise ValueError(f"Id '{id_str}' does not contain a valid id.")
 
-        return segment[-partition_key_length:]
+        return segment[:partition_key_length]
