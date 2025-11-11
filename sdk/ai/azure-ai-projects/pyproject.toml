@@ -14,7 +14,7 @@ name = "azure-ai-projects"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Corporation Azure Ai Projects Client Library for Python"
+description = "Microsoft Corporation Azure AI Projects Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -41,7 +41,7 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.projects._version.VERSION"}

@@ -111,7 +111,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
-    def get_openai_client(self, **kwargs) -> "OpenAI":  # type: ignore[name-defined]  # pylint: disable=too-many-statements
+    def get_openai_client(self, **kwargs: Any) -> "OpenAI":  # type: ignore[name-defined]  # pylint: disable=too-many-statements
         """Get an authenticated OpenAI client from the `openai` package.
 
         Keyword arguments are passed to the OpenAI client constructor.

@@ -96,7 +96,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace_async
-    async def get_openai_client(self, **kwargs) -> "AsyncOpenAI":  # type: ignore[name-defined]  # pylint: disable=too-many-statements
+    async def get_openai_client(self, **kwargs: Any) -> "AsyncOpenAI":  # type: ignore[name-defined]  # pylint: disable=too-many-statements
         """Get an authenticated AsyncOpenAI client from the `openai` package.
 
         Keyword arguments are passed to the AsyncOpenAI client constructor.
