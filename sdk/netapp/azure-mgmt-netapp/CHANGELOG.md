@@ -66,6 +66,7 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `BackupPatch` instance variable `label` has been moved under property `properties`
   - Model `BackupPolicyPatch` instance variables `backup_policy_id`, `provisioning_state`, `daily_backups_to_keep`, `weekly_backups_to_keep`, `monthly_backups_to_keep`, `volumes_assigned`, `enabled`, and `volume_backups` have been moved under property `properties`
   - Model `CapacityPool` instance variables `pool_id`, `size`, `service_level`, `provisioning_state`, `total_throughput_mibps`, `utilized_throughput_mibps`, `custom_throughput_mibps`, `qos_type`, `cool_access`, and `encryption_type` have been moved under property `properties`
