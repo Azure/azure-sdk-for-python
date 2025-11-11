@@ -311,7 +311,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return True
         if isinstance(value, list) and len(value) == 1:
             return True
-        
         return False
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
