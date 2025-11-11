@@ -307,7 +307,7 @@ print(model.values_property)  # ✅ Property value
 print(model["keys"])          # REST layer value
 
 # Unsuffixed names are now dict methods
-print(list(model.keys()))     # ✅ Dict method listing all serialized keys in the model
+print(list(model.keys()))     # ✅ Dict method listing all keys in the model
 print(list(model.values()))   # ✅ Dict method listing all values
 ```
 
