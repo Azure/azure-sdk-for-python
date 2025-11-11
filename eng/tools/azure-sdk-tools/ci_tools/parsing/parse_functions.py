@@ -202,7 +202,7 @@ def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
     # Ignore any modules with name starts with "_"
     # For e.g. _generated, _shared etc
     # Ignore build, which is created when installing a package from source.
-    # Ignore tests, which may have an __init__.py but is not part of the package.
+    # Ignore tests, which is not part of the package.
     return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x == "tests" or x in EXCLUDE)]
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
