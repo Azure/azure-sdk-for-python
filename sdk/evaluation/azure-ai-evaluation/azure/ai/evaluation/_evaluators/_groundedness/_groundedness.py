@@ -306,11 +306,13 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 raise ex
 
     def _is_single_entry(self, value):
-        """Determine if the input value represents a single entry, unsure is returned as False."""
+        """Determine if the input value represents a single entry; otherwise return False."""
         if isinstance(value, str):
             return True
         if isinstance(value, list) and len(value) == 1:
             return True
+        
+        return False
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if kwargs.get("context") or kwargs.get("conversation"):
