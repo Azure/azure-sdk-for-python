@@ -11,10 +11,6 @@ Use the client library to:
 
 [Source code][source_code] | [Package (PyPI)][pypi_package] | [API reference documentation][api_reference] | [Product documentation][product_docs]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691._
-
 ## Getting started
 
 ### Prerequisites
@@ -50,8 +46,8 @@ az cognitiveservices account create \
 
 In order to interact with the Azure AI Speech Transcription service, you'll need to create an instance of the [TranscriptionClient][transcription_client] class. The client supports two authentication methods:
 
-1. **API Key Authentication** - Using `AzureKeyCredential` with your Speech resource's API key
-2. **Azure Active Directory (Azure AD) Authentication** - Using `DefaultAzureCredential` or other token credentials from `azure-identity`
+1. **Azure Active Directory (Azure AD) Authentication** - Using `DefaultAzureCredential` or other token credentials from `azure-identity`
+2. **API Key Authentication** - Using `AzureKeyCredential` with your Speech resource's API key
 
 #### Get credentials
 
