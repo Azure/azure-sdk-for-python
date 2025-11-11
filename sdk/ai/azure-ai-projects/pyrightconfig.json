@@ -9,6 +9,5 @@
     "./../../evaluation/azure-ai-evaluation",
     "./../../identity/azure-identity",
     "./../../monitor/azure-monitor-opentelemetry",
-    "./../azure-ai-inference"
   ]
 }
