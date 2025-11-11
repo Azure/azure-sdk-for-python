@@ -5,12 +5,12 @@
 # ------------------------------------
 
 """
-FILE: sample_assign_deployment_resources.py
+FILE: sample_assign_project_resources.py
 DESCRIPTION:
     This sample demonstrates how to assign deployment resources to a Conversation Authoring project.
 
 USAGE:
-    python sample_assign_deployment_resources.py
+    python sample_assign_project_resources.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
@@ -30,7 +30,7 @@ OPTIONAL ENV VARS:
     RESOURCE_REGION      # defaults to "<region>"
 """
 
-# [START conversation_authoring_assign_deployment_resources]
+# [START conversation_authoring_assign_project_resources]
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -41,7 +41,7 @@ from azure.ai.language.conversations.authoring.models import (
 )
 
 
-def sample_assign_deployment_resources():
+def sample_assign_project_resources():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
 
@@ -76,11 +76,11 @@ def sample_assign_deployment_resources():
         print(e.error)
 
 
-# [END conversation_authoring_assign_deployment_resources]
+# [END conversation_authoring_assign_project_resources]
 
 
 def main():
-    sample_assign_deployment_resources()
+    sample_assign_project_resources()
 
 
 if __name__ == "__main__":

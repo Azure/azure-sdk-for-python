@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_unassign_deployment_resources.py
+FILE: sample_unassign_project_resources.py
 
 DESCRIPTION:
     This sample demonstrates how to unassign deployment resources from a Conversation Authoring project.
 
 USAGE:
-    python sample_unassign_deployment_resources.py
+    python sample_unassign_project_resources.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
@@ -29,7 +29,7 @@ OPTIONAL ENV VARS:
     RESOURCE_ID    # defaults to "<azure-resource-id>"
 """
 
-# [START conversation_authoring_unassign_deployment_resources]
+# [START conversation_authoring_unassign_project_resources]
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
@@ -39,7 +39,7 @@ from azure.ai.language.conversations.authoring.models import (
 )
 
 
-def sample_unassign_deployment_resources():
+def sample_unassign_project_resources():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -67,11 +67,11 @@ def sample_unassign_deployment_resources():
         print(e.error)
 
 
-# [END conversation_authoring_unassign_deployment_resources]
+# [END conversation_authoring_unassign_project_resources]
 
 
 def main():
-    sample_unassign_deployment_resources()
+    sample_unassign_project_resources()
 
 
 if __name__ == "__main__":

@@ -5,11 +5,11 @@
 # ------------------------------------
 
 """
-FILE: sample_assign_deployment_resources_async.py
+FILE: sample_assign_project_resources_async.py
 DESCRIPTION:
     This sample demonstrates how to assign deployment resources to a Conversation Authoring project (async).
 USAGE:
-    python sample_assign_deployment_resources_async.py
+    python sample_assign_project_resources_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
@@ -29,7 +29,7 @@ OPTIONAL ENV VARS:
     RESOURCE_REGION      # defaults to "<region>"
 """
 
-# [START conversation_authoring_assign_deployment_resources_async]
+# [START conversation_authoring_assign_project_resources_async]
 import os
 import asyncio
 from azure.identity import DefaultAzureCredential
@@ -41,7 +41,7 @@ from azure.ai.language.conversations.authoring.models import (
 )
 
 
-async def sample_assign_deployment_resources_async():
+async def sample_assign_project_resources_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
 
@@ -76,11 +76,11 @@ async def sample_assign_deployment_resources_async():
             print(e.error)
 
 
-# [END conversation_authoring_assign_deployment_resources_async]
+# [END conversation_authoring_assign_project_resources_async]
 
 
 async def main():
-    await sample_assign_deployment_resources_async()
+    await sample_assign_project_resources_async()
 
 
 if __name__ == "__main__":

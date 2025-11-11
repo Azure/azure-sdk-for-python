@@ -5,11 +5,11 @@
 # ------------------------------------
 
 """
-FILE: sample_unassign_deployment_resources_async.py
+FILE: sample_unassign_project_resources_async.py
 DESCRIPTION:
     This sample demonstrates how to unassign deployment resources from a Conversation Authoring project (async).
 USAGE:
-    python sample_unassign_deployment_resources_async.py
+    python sample_unassign_project_resources_async.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_CONVERSATIONS_AUTHORING_ENDPOINT
@@ -27,7 +27,7 @@ OPTIONAL ENV VARS:
     RESOURCE_ID    # defaults to "<azure-resource-id>"
 """
 
-# [START conversation_authoring_unassign_deployment_resources_async]
+# [START conversation_authoring_unassign_project_resources_async]
 import os
 import asyncio
 from azure.identity import DefaultAzureCredential
@@ -38,7 +38,7 @@ from azure.ai.language.conversations.authoring.models import (
 )
 
 
-async def sample_unassign_deployment_resources_async():
+async def sample_unassign_project_resources_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -65,11 +65,11 @@ async def sample_unassign_deployment_resources_async():
             print(e.error)
 
 
-# [END conversation_authoring_unassign_deployment_resources_async]
+# [END conversation_authoring_unassign_project_resources_async]
 
 
 async def main():
-    await sample_unassign_deployment_resources_async()
+    await sample_unassign_project_resources_async()
 
 
 if __name__ == "__main__":
