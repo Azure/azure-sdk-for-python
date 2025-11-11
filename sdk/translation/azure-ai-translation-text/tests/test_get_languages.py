@@ -27,9 +27,9 @@ class TestGetLanguages(TextTranslationTest):
         client = self.create_getlanguage_client(endpoint)
         response = client.get_supported_languages(scope="translation")
 
-        assert len(response.translation) > 0
+        assert response.translation
         translations = response.translation["af"]
-        assert translations.dir is not None
+        assert translations.directionality is not None
         assert translations.name is not None
         assert translations.native_name is not None
 
