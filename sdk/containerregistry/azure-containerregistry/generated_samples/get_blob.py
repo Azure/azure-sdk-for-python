@@ -30,10 +30,11 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    client.container_registry_blob.get_blob(
+    response = client.container_registry_blob.get_blob(
         name="prod/bash",
         digest="sha256:16463e0c481e161aabb735437d30b3c9c7391c2747cc564bb927e843b73dcb39",
     )
+    print(response)
 
 
 # x-ms-original-file: 2021-07-01/GetBlob.json
