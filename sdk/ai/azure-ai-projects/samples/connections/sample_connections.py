@@ -20,7 +20,7 @@ USAGE:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
     2) CONNECTION_NAME - The name of a connection, as found in the "Connected resources" tab
-       in the Management Center of your AI Foundry project.
+       in the Management Center of your Microsoft Foundry project.
 """
 
 import os

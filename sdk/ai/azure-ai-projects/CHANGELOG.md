@@ -1,15 +1,25 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 2.0.0b1 (2025-11-11)
 
 ### Features added
 
-* New Agent operations (now built on top OpenAI's "Responses" protocol) were added to the `AIProjectClient`.
-This package no longer depends on the `azure-ai-agents` package. See `samples\agents` folder.
+* The client library now uses version `2025-11-15-preview` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-2025-11-15-preview).
+* New Agent operations (now built on top of OpenAI's `Responses` protocol) were added to the `AIProjectClient`.
+This package no longer depends on `azure-ai-agents` package. See `samples\agents` folder.
+* New Evaluation operations. See methods on properties `.evaluation_rules`, `.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules`.
+* New Memory Store operations. See methods on the property `.memory_store`.
+
+### Breaking changes
+
+* The implementation of `.get_openai_client()` method was updated to return an authenticated
+OpenAI client from the openai package, configure to run Responses operations on your Foundry Project endpoint.
 
 ### Sample updates
 
-* Added `files` samples for operations create, delete, list, retrieve and content.
+* Added new Agent samples. See `samples\agents` folder.
+* Added new Evaluation samples. See `samples\evaluations` folder.
+* Added `files` samples for operations create, delete, list, retrieve and content. See `samples\files` folder.
 
 ## 1.1.0b4 (2025-09-12)
 
