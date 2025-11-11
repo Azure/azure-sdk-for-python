@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,11 +7,9 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
-import urllib.parse
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -26,7 +23,6 @@ from azure.core.exceptions import (
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -34,15 +30,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._utils.serialization import Deserializer, Serializer
-from ...operations._server_threat_protection_settings_operations import (
-    build_create_or_update_request,
-    build_get_request,
-    build_list_by_server_request,
-)
+from ...operations._server_threat_protection_settings_operations import build_create_or_update_request
 from .._configuration import PostgreSQLManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ServerThreatProtectionSettingsOperations:
@@ -66,164 +59,12 @@ class ServerThreatProtectionSettingsOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def list_by_server(
-        self, resource_group_name: str, server_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ServerThreatProtectionSettingsModel"]:
-        """Get a list of server's Threat Protection state.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :return: An iterator like instance of either ServerThreatProtectionSettingsModel or the result
-         of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ServerThreatProtectionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_list_by_server_request(
-                    resource_group_name=resource_group_name,
-                    server_name=server_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ServerThreatProtectionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def get(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        threat_protection_name: Union[str, _models.ThreatProtectionName],
-        **kwargs: Any
-    ) -> _models.ServerThreatProtectionSettingsModel:
-        """Get a server's Advanced Threat Protection settings.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :param threat_protection_name: The name of the Threat Protection state. "Default" Required.
-        :type threat_protection_name: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
-        :return: ServerThreatProtectionSettingsModel or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ServerThreatProtectionSettingsModel] = kwargs.pop("cls", None)
-
-        _request = build_get_request(
-            resource_group_name=resource_group_name,
-            server_name=server_name,
-            threat_protection_name=threat_protection_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("ServerThreatProtectionSettingsModel", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: Union[_models.ServerThreatProtectionSettingsModel, IO[bytes]],
+        parameters: Union[_models.AdvancedThreatProtectionSettingsModel, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -247,7 +88,7 @@ class ServerThreatProtectionSettingsOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "ServerThreatProtectionSettingsModel")
+            _json = self._serialize.body(parameters, "AdvancedThreatProtectionSettingsModel")
 
         _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -271,18 +112,23 @@ class ServerThreatProtectionSettingsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -297,11 +143,11 @@ class ServerThreatProtectionSettingsOperations:
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: _models.ServerThreatProtectionSettingsModel,
+        parameters: _models.AdvancedThreatProtectionSettingsModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ServerThreatProtectionSettingsModel]:
+    ) -> AsyncLROPoller[None]:
         """Creates or updates a server's Advanced Threat Protection settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -309,19 +155,18 @@ class ServerThreatProtectionSettingsOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param threat_protection_name: The name of the Threat Protection state. "Default" Required.
+        :param threat_protection_name: Name of the advanced threat protection settings. "Default"
+         Required.
         :type threat_protection_name: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
-        :param parameters: The Advanced Threat Protection state for the flexible server. Required.
+        :param parameters: The Advanced Threat Protection state for the server. Required.
         :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel
+         ~azure.mgmt.postgresqlflexibleservers.models.AdvancedThreatProtectionSettingsModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either ServerThreatProtectionSettingsModel
-         or the result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -335,7 +180,7 @@ class ServerThreatProtectionSettingsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ServerThreatProtectionSettingsModel]:
+    ) -> AsyncLROPoller[None]:
         """Creates or updates a server's Advanced Threat Protection settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -343,18 +188,17 @@ class ServerThreatProtectionSettingsOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param threat_protection_name: The name of the Threat Protection state. "Default" Required.
+        :param threat_protection_name: Name of the advanced threat protection settings. "Default"
+         Required.
         :type threat_protection_name: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
-        :param parameters: The Advanced Threat Protection state for the flexible server. Required.
+        :param parameters: The Advanced Threat Protection state for the server. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either ServerThreatProtectionSettingsModel
-         or the result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -364,9 +208,9 @@ class ServerThreatProtectionSettingsOperations:
         resource_group_name: str,
         server_name: str,
         threat_protection_name: Union[str, _models.ThreatProtectionName],
-        parameters: Union[_models.ServerThreatProtectionSettingsModel, IO[bytes]],
+        parameters: Union[_models.AdvancedThreatProtectionSettingsModel, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ServerThreatProtectionSettingsModel]:
+    ) -> AsyncLROPoller[None]:
         """Creates or updates a server's Advanced Threat Protection settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -374,17 +218,16 @@ class ServerThreatProtectionSettingsOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param threat_protection_name: The name of the Threat Protection state. "Default" Required.
+        :param threat_protection_name: Name of the advanced threat protection settings. "Default"
+         Required.
         :type threat_protection_name: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionName
-        :param parameters: The Advanced Threat Protection state for the flexible server. Is either a
-         ServerThreatProtectionSettingsModel type or a IO[bytes] type. Required.
+        :param parameters: The Advanced Threat Protection state for the server. Is either a
+         AdvancedThreatProtectionSettingsModel type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either ServerThreatProtectionSettingsModel
-         or the result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel]
+         ~azure.mgmt.postgresqlflexibleservers.models.AdvancedThreatProtectionSettingsModel or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -392,7 +235,7 @@ class ServerThreatProtectionSettingsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ServerThreatProtectionSettingsModel] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -412,11 +255,9 @@ class ServerThreatProtectionSettingsOperations:
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ServerThreatProtectionSettingsModel", pipeline_response.http_response)
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -428,12 +269,10 @@ class ServerThreatProtectionSettingsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ServerThreatProtectionSettingsModel].from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ServerThreatProtectionSettingsModel](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

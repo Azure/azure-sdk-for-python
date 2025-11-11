@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -43,7 +43,8 @@ from ...operations._virtual_endpoints_operations import (
 from .._configuration import PostgreSQLManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class VirtualEndpointsOperations:
@@ -72,7 +73,7 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpointResource, IO[bytes]],
+        parameters: Union[_models.VirtualEndpoint, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -96,7 +97,7 @@ class VirtualEndpointsOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "VirtualEndpointResource")
+            _json = self._serialize.body(parameters, "VirtualEndpoint")
 
         _request = build_create_request(
             resource_group_name=resource_group_name,
@@ -120,18 +121,23 @@ class VirtualEndpointsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -146,30 +152,28 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: _models.VirtualEndpointResource,
+        parameters: _models.VirtualEndpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.VirtualEndpointResource]:
-        """Creates a new virtual endpoint for PostgreSQL flexible server.
+    ) -> AsyncLROPoller[None]:
+        """Creates a pair of virtual endpoints for a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: The required parameters for creating or updating virtual endpoints.
+        :param parameters: Parameters required to create or update a pair of virtual endpoints.
          Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either VirtualEndpointResource or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -183,26 +187,24 @@ class VirtualEndpointsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.VirtualEndpointResource]:
-        """Creates a new virtual endpoint for PostgreSQL flexible server.
+    ) -> AsyncLROPoller[None]:
+        """Creates a pair of virtual endpoints for a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: The required parameters for creating or updating virtual endpoints.
+        :param parameters: Parameters required to create or update a pair of virtual endpoints.
          Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either VirtualEndpointResource or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -212,26 +214,23 @@ class VirtualEndpointsOperations:
         resource_group_name: str,
         server_name: str,
         virtual_endpoint_name: str,
-        parameters: Union[_models.VirtualEndpointResource, IO[bytes]],
+        parameters: Union[_models.VirtualEndpoint, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.VirtualEndpointResource]:
-        """Creates a new virtual endpoint for PostgreSQL flexible server.
+    ) -> AsyncLROPoller[None]:
+        """Creates a pair of virtual endpoints for a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: The required parameters for creating or updating virtual endpoints. Is
-         either a VirtualEndpointResource type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource or
-         IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either VirtualEndpointResource or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
+        :param parameters: Parameters required to create or update a pair of virtual endpoints. Is
+         either a VirtualEndpoint type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -239,7 +238,7 @@ class VirtualEndpointsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualEndpointResource] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -259,11 +258,9 @@ class VirtualEndpointsOperations:
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualEndpointResource", pipeline_response.http_response)
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -275,15 +272,13 @@ class VirtualEndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.VirtualEndpointResource].from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.VirtualEndpointResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _update_initial(
         self,
@@ -338,18 +333,23 @@ class VirtualEndpointsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -368,26 +368,23 @@ class VirtualEndpointsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.VirtualEndpointResource]:
-        """Updates an existing virtual endpoint. The request body can contain one to many of the
-        properties present in the normal virtual endpoint definition.
+    ) -> AsyncLROPoller[None]:
+        """Updates a pair of virtual endpoints for a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: The required parameters for updating a server. Required.
+        :param parameters: Parameters required to update a pair of virtual endpoints. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResourceForPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either VirtualEndpointResource or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -401,26 +398,23 @@ class VirtualEndpointsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.VirtualEndpointResource]:
-        """Updates an existing virtual endpoint. The request body can contain one to many of the
-        properties present in the normal virtual endpoint definition.
+    ) -> AsyncLROPoller[None]:
+        """Updates a pair of virtual endpoints for a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: The required parameters for updating a server. Required.
+        :param parameters: Parameters required to update a pair of virtual endpoints. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either VirtualEndpointResource or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -432,25 +426,22 @@ class VirtualEndpointsOperations:
         virtual_endpoint_name: str,
         parameters: Union[_models.VirtualEndpointResourceForPatch, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.VirtualEndpointResource]:
-        """Updates an existing virtual endpoint. The request body can contain one to many of the
-        properties present in the normal virtual endpoint definition.
+    ) -> AsyncLROPoller[None]:
+        """Updates a pair of virtual endpoints for a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :param parameters: The required parameters for updating a server. Is either a
+        :param parameters: Parameters required to update a pair of virtual endpoints. Is either a
          VirtualEndpointResourceForPatch type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResourceForPatch
          or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either VirtualEndpointResource or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -458,7 +449,7 @@ class VirtualEndpointsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualEndpointResource] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -478,11 +469,9 @@ class VirtualEndpointsOperations:
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("VirtualEndpointResource", pipeline_response.http_response)
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -494,15 +483,13 @@ class VirtualEndpointsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.VirtualEndpointResource].from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.VirtualEndpointResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _delete_initial(
         self, resource_group_name: str, server_name: str, virtual_endpoint_name: str, **kwargs: Any
@@ -546,12 +533,18 @@ class VirtualEndpointsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -564,14 +557,14 @@ class VirtualEndpointsOperations:
     async def begin_delete(
         self, resource_group_name: str, server_name: str, virtual_endpoint_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a virtual endpoint.
+        """Deletes a pair of virtual endpoints.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -623,18 +616,18 @@ class VirtualEndpointsOperations:
     @distributed_trace_async
     async def get(
         self, resource_group_name: str, server_name: str, virtual_endpoint_name: str, **kwargs: Any
-    ) -> _models.VirtualEndpointResource:
-        """Gets information about a virtual endpoint.
+    ) -> _models.VirtualEndpoint:
+        """Gets information about a pair of virtual endpoints.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param virtual_endpoint_name: The name of the virtual endpoint. Required.
+        :param virtual_endpoint_name: Base name of the virtual endpoints. Required.
         :type virtual_endpoint_name: str
-        :return: VirtualEndpointResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource
+        :return: VirtualEndpoint or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -649,7 +642,7 @@ class VirtualEndpointsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.VirtualEndpointResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VirtualEndpoint] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             resource_group_name=resource_group_name,
@@ -671,10 +664,13 @@ class VirtualEndpointsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualEndpointResource", pipeline_response.http_response)
+        deserialized = self._deserialize("VirtualEndpoint", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -684,25 +680,24 @@ class VirtualEndpointsOperations:
     @distributed_trace
     def list_by_server(
         self, resource_group_name: str, server_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualEndpointResource"]:
-        """List all the servers in a given resource group.
+    ) -> AsyncItemPaged["_models.VirtualEndpoint"]:
+        """Lists pair of virtual endpoints associated to a server.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :return: An iterator like instance of either VirtualEndpointResource or the result of
-         cls(response)
+        :return: An iterator like instance of either VirtualEndpoint or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.VirtualEndpointsListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VirtualEndpointsList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -743,7 +738,7 @@ class VirtualEndpointsOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("VirtualEndpointsListResult", pipeline_response)
+            deserialized = self._deserialize("VirtualEndpointsList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -760,7 +755,10 @@ class VirtualEndpointsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
