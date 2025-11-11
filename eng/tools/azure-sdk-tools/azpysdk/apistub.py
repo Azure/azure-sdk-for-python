@@ -39,8 +39,10 @@ def get_package_wheel_path(pkg_root: str, out_path: str) -> tuple[str, Optional[
         return pkg_path, out_token_path
     pkg_path = pkg_root
     # If the package is not a wheel and out_path is given, the token file output path should be the same as the target package path
-    if out_path:
+    if out_path:            
         out_token_path = os.path.join(out_path, os.path.basename(pkg_path))
+        if not os.path.exists(out_token_path):
+            os.makedirs(out_token_path, exist_ok=True)
     return pkg_path, out_token_path
 
 
@@ -104,8 +106,7 @@ class apistub(Check):
             pkg_path, out_token_path = get_package_wheel_path(package_dir, staging_directory)
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
-            # cmds = [executable, "-m", "apistub", "--pkg-path", pkg_path]
-            cmds = ["apistubgen", "--pkg-path", pkg_path]
+            cmds = [executable, "-m", "apistub", "--pkg-path", pkg_path]
 
             if out_token_path:
                 cmds.extend(["--out-path", out_token_path])
