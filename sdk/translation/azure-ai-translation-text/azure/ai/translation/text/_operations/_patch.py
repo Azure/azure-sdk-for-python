@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -208,7 +209,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
         """Implementation of translate that handles multiple input types.
-        
+
         This method automatically converts a list of TranslateInputItem objects
         into the required TranslateBody format before calling the parent implementation.
         """
@@ -218,11 +219,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         else:
             request_body = cast(Union[_models.TranslateBody, IO[bytes]], body)
 
-        result = super().translate(
-            body=request_body,
-            client_trace_id=client_trace_id,
-            **kwargs
-        )
+        result = super().translate(body=request_body, client_trace_id=client_trace_id, **kwargs)
 
         return result.value
 
@@ -424,7 +421,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
         """Implementation of transliterate that handles multiple input types.
-        
+
         This method automatically converts simplified inputs (List[str], List[InputTextItem])
         into the required TransliterateBody format before calling the parent implementation.
         """

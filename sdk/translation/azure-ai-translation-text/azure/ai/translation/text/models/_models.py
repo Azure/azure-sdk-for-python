@@ -169,9 +169,9 @@ class LanguageScript(_Model):
     :ivar native_name: Display name of the language in the locale native for the language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     """
 
     code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -180,8 +180,8 @@ class LanguageScript(_Model):
     """Display name of the script in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName", visibility=["read", "create", "update", "delete", "query"])
     """Display name of the language in the locale native for the language. Required."""
-    directionality: Union[str, "_models.LanguageDirectionality"] = rest_field(
-        name="dir", visibility=["read", "create", "update", "delete", "query"]
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
      Required. Known values are: \"ltr\" and \"rtl\"."""
@@ -193,7 +193,7 @@ class LanguageScript(_Model):
         code: str,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
+        dir: Union[str, "_models.LanguageDirectionality"],
     ) -> None: ...
 
     @overload
@@ -328,8 +328,8 @@ class TranslateInputItem(_Model):
      complete element. Possible values are: plain (default) or html. Known values are: "Plain" and
      "Html".
     :vartype text_type: str or ~azure.ai.translation.text.models.TextType
-    :ivar translation_targets: Translation target parameters. Required.
-    :vartype translation_targets: list[~azure.ai.translation.text.models.TranslationTarget]
+    :ivar targets: Translation target parameters. Required.
+    :vartype targets: list[~azure.ai.translation.text.models.TranslationTarget]
     """
 
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -351,9 +351,7 @@ class TranslateInputItem(_Model):
      well-formed,
      complete element. Possible values are: plain (default) or html. Known values are: \"Plain\" and
      \"Html\"."""
-    translation_targets: list["_models.TranslationTarget"] = rest_field(
-        name="targets", visibility=["read", "create", "update", "delete", "query"]
-    )
+    targets: list["_models.TranslationTarget"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Translation target parameters. Required."""
 
     @overload
@@ -361,7 +359,7 @@ class TranslateInputItem(_Model):
         self,
         *,
         text: str,
-        translation_targets: list["_models.TranslationTarget"],
+        targets: list["_models.TranslationTarget"],
         script: Optional[str] = None,
         language: Optional[str] = None,
         text_type: Optional[Union[str, "_models.TextType"]] = None,
@@ -389,9 +387,9 @@ class TranslationLanguage(_Model):
     :ivar native_name: Display name of the language in the locale native for this language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     :ivar models: LLM models supported for translation. Required.
     :vartype models: list[str]
     """
@@ -400,8 +398,8 @@ class TranslationLanguage(_Model):
     """Display name of the language in the locale requested via Accept-Language header. Required."""
     native_name: str = rest_field(name="nativeName", visibility=["read", "create", "update", "delete", "query"])
     """Display name of the language in the locale native for this language. Required."""
-    directionality: Union[str, "_models.LanguageDirectionality"] = rest_field(
-        name="dir", visibility=["read", "create", "update", "delete", "query"]
+    dir: Union[str, "_models.LanguageDirectionality"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """Directionality, which is rtl for right-to-left languages or ltr for left-to-right languages.
      Required. Known values are: \"ltr\" and \"rtl\"."""
@@ -414,7 +412,7 @@ class TranslationLanguage(_Model):
         *,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
+        dir: Union[str, "_models.LanguageDirectionality"],
     ) -> None: ...
 
     @overload
@@ -676,9 +674,9 @@ class TransliterableScript(LanguageScript):
     :ivar native_name: Display name of the language in the locale native for the language.
      Required.
     :vartype native_name: str
-    :ivar directionality: Directionality, which is rtl for right-to-left languages or ltr for
-     left-to-right languages. Required. Known values are: "ltr" and "rtl".
-    :vartype directionality: str or ~azure.ai.translation.text.models.LanguageDirectionality
+    :ivar dir: Directionality, which is rtl for right-to-left languages or ltr for left-to-right
+     languages. Required. Known values are: "ltr" and "rtl".
+    :vartype dir: str or ~azure.ai.translation.text.models.LanguageDirectionality
     :ivar to_scripts: List of scripts available to convert text to. Required.
     :vartype to_scripts: list[~azure.ai.translation.text.models.LanguageScript]
     """
@@ -695,7 +693,7 @@ class TransliterableScript(LanguageScript):
         code: str,
         name: str,
         native_name: str,
-        directionality: Union[str, "_models.LanguageDirectionality"],
+        dir: Union[str, "_models.LanguageDirectionality"],
         to_scripts: list["_models.LanguageScript"],
     ) -> None: ...
 
