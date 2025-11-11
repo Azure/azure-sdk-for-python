@@ -153,11 +153,15 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # File values
     CANNOT_DELETE_FILE_OR_DIRECTORY = "CannotDeleteFileOrDirectory"
     CLIENT_CACHE_FLUSH_DELAY = "ClientCacheFlushDelay"
+    CONTAINER_QUOTA_DOWNGRADE_NOT_ALLOWED = "ContainerQuotaDowngradeNotAllowed"
     DELETE_PENDING = "DeletePending"
     DIRECTORY_NOT_EMPTY = "DirectoryNotEmpty"
     FILE_LOCK_CONFLICT = "FileLockConflict"
     FILE_SHARE_PROVISIONED_BANDWIDTH_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedBandwidthDowngradeNotAllowed"
+    FILE_SHARE_PROVISIONED_BANDWIDTH_INVALID = "FileShareProvisionedBandwidthInvalid"
     FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedIopsDowngradeNotAllowed"
+    FILE_SHARE_PROVISIONED_IOPS_INVALID = "FileShareProvisionedIopsInvalid"
+    FILE_SHARE_PROVISIONED_STORAGE_INVALID = "FileShareProvisionedStorageInvalid"
     INVALID_FILE_OR_DIRECTORY_PATH_NAME = "InvalidFileOrDirectoryPathName"
     PARENT_NOT_FOUND = "ParentNotFound"
     READ_ONLY_ATTRIBUTE = "ReadOnlyAttribute"
@@ -171,7 +175,10 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SHARE_SNAPSHOT_NOT_FOUND = "ShareSnapshotNotFound"
     SHARE_SNAPSHOT_OPERATION_NOT_SUPPORTED = "ShareSnapshotOperationNotSupported"
     SHARE_HAS_SNAPSHOTS = "ShareHasSnapshots"
-    CONTAINER_QUOTA_DOWNGRADE_NOT_ALLOWED = "ContainerQuotaDowngradeNotAllowed"
+    TOTAL_SHARES_PROVISIONED_CAPACITY_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedCapacityExceedsAccountLimit"
+    TOTAL_SHARES_PROVISIONED_IOPS_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedIopsExceedsAccountLimit"
+    TOTAL_SHARES_PROVISIONED_BANDWIDTH_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedBandwidthExceedsAccountLimit"
+    TOTAL_SHARES_COUNT_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesCountExceedsAccountLimit"
 
     # DataLake values
     CONTENT_LENGTH_MUST_BE_ZERO = "ContentLengthMustBeZero"
