@@ -730,7 +730,14 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Helper to emit a single tool call event."""
-        event_body: Dict[str, Any] = {"content": {"tool_calls": [tool_call]}}
+        event_body: Dict[str, Any] = {
+            "content": [
+                {
+                    "type": "tool_call",
+                    "tool_call": tool_call
+                }
+            ]
+        }
         attributes = self._create_event_attributes(
             conversation_id=conversation_id,
             message_role="assistant",
@@ -2897,7 +2904,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                     tool_call["function"] = function_details
 
-                event_body["content"] = {"tool_calls": [tool_call]}
+                event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
 
             event_name = "gen_ai.assistant.message"
 
@@ -2937,7 +2944,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if file_search_details:
                     tool_call["file_search"] = file_search_details
 
-                event_body["content"] = {"tool_calls": [tool_call]}
+                event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
 
             event_name = "gen_ai.assistant.message"
 
@@ -2983,7 +2990,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if code_interpreter_details:
                     tool_call["code_interpreter"] = code_interpreter_details
 
-                event_body["content"] = {"tool_calls": [tool_call]}
+                event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
 
             event_name = "gen_ai.assistant.message"
 
@@ -3021,7 +3028,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if web_search_details:
                     tool_call["web_search"] = web_search_details
 
-                event_body["content"] = {"tool_calls": [tool_call]}
+                event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
 
             event_name = "gen_ai.assistant.message"
 
@@ -3064,7 +3071,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if azure_ai_search_details:
                     tool_call["azure_ai_search"] = azure_ai_search_details
 
-                event_body["content"] = {"tool_calls": [tool_call]}
+                event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
 
             event_name = "gen_ai.assistant.message"
 
@@ -3104,7 +3111,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                 if image_gen_details:
                     tool_call["image_generation"] = image_gen_details
 
-                event_body["content"] = {"tool_calls": [tool_call]}
+                event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
 
             event_name = "gen_ai.assistant.message"
 
@@ -3163,7 +3170,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         except Exception:
                             pass
 
-                event_body["content"] = {"tool_calls": [tool_call]}
+                event_body["content"] = [{"type": "tool_call", "tool_call": tool_call}]
 
             event_name = "gen_ai.assistant.message"
 
