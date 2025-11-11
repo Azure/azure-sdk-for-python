@@ -103,21 +103,11 @@
   - Deleted or renamed model `VolumeGroupList`
   - Deleted or renamed model `VolumeList`
   - Deleted or renamed model `VolumeQuotaRulesList`
-  - Method `NetAppResourceOperations.begin_update_network_sibling_set` renamed its instance variable `network_sibling_set_id` to `body`
-  - Method `NetAppResourceOperations.begin_update_network_sibling_set` renamed its instance variable `subnet_id` to `body`
-  - Method `NetAppResourceOperations.begin_update_network_sibling_set` renamed its instance variable `network_sibling_set_state_id` to `body`
-  - Method `NetAppResourceOperations.begin_update_network_sibling_set` renamed its instance variable `network_features` to `body`
-  - Method `NetAppResourceOperations.check_file_path_availability` renamed its instance variable `name` to `body`
-  - Method `NetAppResourceOperations.check_file_path_availability` renamed its instance variable `subnet_id` to `body`
-  - Method `NetAppResourceOperations.check_file_path_availability` renamed its instance variable `availability_zone` to `body`
-  - Method `NetAppResourceOperations.check_name_availability` renamed its instance variable `name` to `body`
-  - Method `NetAppResourceOperations.check_name_availability` renamed its instance variable `type` to `body`
-  - Method `NetAppResourceOperations.check_name_availability` renamed its instance variable `resource_group` to `body`
-  - Method `NetAppResourceOperations.check_quota_availability` renamed its instance variable `name` to `body`
-  - Method `NetAppResourceOperations.check_quota_availability` renamed its instance variable `type` to `body`
-  - Method `NetAppResourceOperations.check_quota_availability` renamed its instance variable `resource_group` to `body`
-  - Method `NetAppResourceOperations.query_network_sibling_set` renamed its instance variable `network_sibling_set_id` to `body`
-  - Method `NetAppResourceOperations.query_network_sibling_set` renamed its instance variable `subnet_id` to `body`
+  - Method `NetAppResourceOperations.begin_update_network_sibling_set` parameters `network_sibling_set_id`, `subnet_id`, `network_sibling_set_state_id` and `network_features` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_file_path_availability` parameters `name`, `subnet_id`, and `availability_zone` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_name_availability` parameters `name`, `type`, and `resource_group` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.check_quota_availability` parameters `name`, `type`, and `resource_group` have been moved under `positional_or_keyword` parameter `body`
+  - Method `NetAppResourceOperations.query_network_sibling_set` parameters `network_sibling_set_id` and `subnet_id` have been moved under `positional_or_keyword` parameter `body`
   - Method `VolumesOperations.begin_delete` changed its parameter `force_delete` from `positional_or_keyword` to `keyword_only`
 
 ## 14.0.0b4 (2025-10-24)
