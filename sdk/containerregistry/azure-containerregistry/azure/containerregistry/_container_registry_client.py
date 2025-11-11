@@ -174,8 +174,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 # Construct URL
                 url = "/acr/v1/_catalog"
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.endpoint",
                         self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
@@ -200,8 +200,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 url = next_link
                 query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.endpoint",
                         self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
@@ -521,8 +521,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 # Construct URL
                 url = "/acr/v1/{name}/_tags"
                 path_format_arguments = {
-                    "url": self._client._serialize.url(  # pylint: disable=protected-access
-                        "self._config.url",
+                    "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                        "self._config.endpoint",
                         self._client._config.endpoint,  # pylint: disable=protected-access
                         "str",
                         skip_quote=True,
