@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -5,12 +6,12 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an AI agent with Azure AI Search capabilities
-    using the AzureAISearchAgentTool and synchronous Azure AI Projects client. The agent can search
-    indexed content and provide responses with citations from search results.
+    This sample demonstrates how to create an AI agent with Bing Custom Search capabilities
+    using the BingCustomSearchAgentTool and synchronous Azure AI Projects client. The agent can search
+    custom search instances and provide responses with relevant results.
 
 USAGE:
-    python sample_agent_ai_search.py
+    python sample_agent_bing_custom_search.py
 
     Before running the sample:
 
@@ -21,9 +22,9 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
+    3) BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID - The Bing Custom Search project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
+    4) BING_CUSTOM_SEARCH_INSTANCE_NAME - The Bing Custom Search instance name
 """
 
 import os
@@ -31,11 +32,10 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureAISearchAgentTool,
     PromptAgentDefinition,
-    AzureAISearchToolResource,
-    AISearchIndexResource,
-    AzureAISearchQueryType,
+    BingCustomSearchAgentTool,
+    BingCustomSearchToolParameters,
+    BingCustomSearchConfiguration,
 )
 
 load_dotenv()
@@ -45,41 +45,38 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
+# Get the OpenAI client for responses and conversations
 openai_client = project_client.get_openai_client()
+
+bing_custom_search_tool = BingCustomSearchAgentTool(
+    bing_custom_search_preview=BingCustomSearchToolParameters(
+        search_configurations=[
+            BingCustomSearchConfiguration(
+                project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
+                instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
+            )
+        ]
+    )
+)
 
 with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a helpful assistant. You must always provide citations for
-            answers using the tool and render them as: `[message_idx:search_idx†source]`.""",
-            tools=[
-                AzureAISearchAgentTool(
-                    azure_ai_search=AzureAISearchToolResource(
-                        indexes=[
-                            AISearchIndexResource(
-                                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
-                                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                                query_type=AzureAISearchQueryType.SIMPLE,
-                            ),
-                        ]
-                    )
-                )
-            ],
+            instructions="You are a helpful agent that can use Bing Custom Search tools to assist users. Use the available Bing Custom Search tools to answer questions and perform tasks.",
+            tools=[bing_custom_search_tool],
         ),
-        description="You are a helpful agent.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     user_input = input(
-        "Enter your question for the AI Search agent available in the index "
-        "(e.g., 'Tell me about the mental health services available from Premera'): \n"
+        "Enter your question for the Bing Custom Search agent " "(e.g., 'Tell me more about foundry agent service'): \n"
     )
 
+    # Send initial request that will trigger the Bing Custom Search tool
     stream_response = openai_client.responses.create(
         stream=True,
-        tool_choice="required",
         input=user_input,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
@@ -107,6 +104,5 @@ with project_client:
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
-    print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
