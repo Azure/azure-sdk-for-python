@@ -136,7 +136,9 @@ def main(generate_input, generate_output):
                     python_tag=python_tag,
                 )
             else:
-                codegen_config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+                codegen_config = gen_dpg(
+                    readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder)
+                )
             _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"Fail to generate sdk for {readme_or_tsp}: {str(e)}")
@@ -189,14 +191,11 @@ def main(generate_input, generate_output):
                 _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
                 continue
 
-
-
             # format samples and tests
             try:
                 format_samples_and_tests(sdk_code_path)
             except Exception as e:
                 _LOGGER.warning(f"Fail to format samples and tests for {package_name} in {readme_or_tsp}: {str(e)}")
-
 
             # Setup package locally
             try:
@@ -207,7 +206,6 @@ def main(generate_input, generate_output):
             except Exception as e:
                 _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
 
-            
             # Changelog generation
             sdk_changelog_generate(
                 Path(sdk_code_path).absolute(),
@@ -217,8 +215,7 @@ def main(generate_input, generate_output):
 
             # update version in _verison.py and CHANGELOG.md
             sdk_update_version(Path(sdk_code_path).absolute(), package_result=result[package_name])
-            
-            
+
             # update metadata files including "_metadata.json/pyproject.toml/setup.py/dev_requirements.txt"
             sdk_update_metadata(
                 Path(sdk_code_path).absolute(),
