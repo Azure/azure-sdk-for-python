@@ -17,7 +17,7 @@ When migrating to the hybrid model design, expect these breaking changes:
 | [Additional Properties](#additional-properties-handling)                            | `additional_properties` parameter removed                 | Use direct dictionary syntax: `model["key"] = value`                              |
 | [String Representation](#string-representation-matches-rest-api)                    | Model key output changed from `snake_case` to `camelCase` | Update any code parsing model strings to expect `camelCase`                       |
 | [Serialization/Deserialization](#serialization-and-deserialization-methods-removed) | `serialize` and `deserialize` methods removed     | Use dictionary access for serialization, constructor for deserialization          |
-| [Reserved Property Names](#reserved-property-name-conflicts)                      | Conflicting names suffixed with `_property`       | Change code to use renamed property                      |
+| [Reserved Property Names](#reserved-property-name-conflicts)                      | Conflicting names suffixed with `_property`       | Update code to use `_property` suffix: `model.keys` → `model.keys_property`      |
 
 ## Detailed Breaking Changes
 
