@@ -44,7 +44,7 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-# Get the OpenAI client for responses and conversations
+# Get the OpenAI client for responses
 openai_client = project_client.get_openai_client()
 
 sharepoint_tool = SharepointAgentTool(
@@ -97,5 +97,6 @@ with project_client:
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
+    print("Cleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
