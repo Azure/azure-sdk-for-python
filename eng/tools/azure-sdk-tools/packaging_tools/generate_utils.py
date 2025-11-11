@@ -113,11 +113,10 @@ def call_build_config(package_name: str, folder_name: str):
     # )
 
 
-def generate_packaging_files(package_name, folder_name):
+def generate_packaging_and_ci_files(package_path: Path):
     # replace sdk_packaging.toml with pyproject.toml
-    output_path = Path(folder_name) / package_name
-    pyproject_toml = output_path / CONF_NAME
-    sdk_packaging_toml = output_path / OLD_CONF_NAME
+    pyproject_toml = package_path / CONF_NAME
+    sdk_packaging_toml = package_path / OLD_CONF_NAME
     if sdk_packaging_toml.exists():
         if pyproject_toml.exists():
             # update related items in pyproject.toml then delete sdk_packaging.toml
@@ -147,9 +146,10 @@ def generate_packaging_files(package_name, folder_name):
             _LOGGER.info(f"rename {sdk_packaging_toml} to {pyproject_toml}")
             sdk_packaging_toml.rename(pyproject_toml)
 
+    package_name = package_path.name
     if "azure-mgmt-" in package_name:
         # if codegen generate pyproject.toml instead of setup.py, we delete existing setup.py
-        setup_py = output_path / "setup.py"
+        setup_py = package_path / "setup.py"
         if setup_py.exists():
             _LOGGER.info(f"delete {setup_py} since codegen generate pyproject.toml")
             with open(pyproject_toml, "rb") as f:
@@ -157,7 +157,7 @@ def generate_packaging_files(package_name, folder_name):
             if pyproject_content.get("project"):
                 setup_py.unlink()
 
-        call_build_config(package_name, folder_name)
+        call_build_config(package_name, str(package_path.parent))
 
         # load pyproject.toml and replace "azure-core" with "azure-mgmt" (after codegen fix bug, we could remove this logic)
         if pyproject_toml.exists():
@@ -175,27 +175,26 @@ def generate_packaging_files(package_name, folder_name):
             with open(pyproject_toml, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
 
-    # add ci.yaml
+    # add ci.yml
     generate_ci(
         template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
-        folder_path=Path(folder_name),
+        folder_path=package_path.parent,
         package_name=package_name,
     )
 
 
-def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
-    package_folder = Path(sdk_folder, folder_name, package_name)
-    if not package_folder.exists():
-        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
+def update_metadata_json(package_path: Path, pipeline_input, codegen_config, spec_folder, input_readme):
+    if not package_path.exists():
+        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_path}")
         return
-    for_swagger_gen = "meta" in config
+    for_swagger_gen = "meta" in codegen_config
     # remove old _meta.json
-    old_metadata_folder = package_folder / "_meta.json"
+    old_metadata_folder = package_path / "_meta.json"
     if old_metadata_folder.exists():
         os.remove(old_metadata_folder)
         _LOGGER.info(f"Remove old metadata file: {old_metadata_folder}")
 
-    metadata_folder = package_folder / "_metadata.json"
+    metadata_folder = package_path / "_metadata.json"
     if metadata_folder.exists():
         with open(metadata_folder, "r") as file_in:
             metadata = json.load(file_in)
@@ -204,14 +203,14 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 
     metadata.update(
         {
-            "commit": data["headSha"],
-            "repository_url": data["repoHttpsUrl"],
+            "commit": pipeline_input["headSha"],
+            "repository_url": pipeline_input["repoHttpsUrl"],
         }
     )
     if for_swagger_gen:
         readme_file = str(Path(spec_folder, input_readme))
-        global_conf = config["meta"]
-        local_conf = config.get("projects", {}).get(readme_file, {})
+        global_conf = codegen_config["meta"]
+        local_conf = codegen_config.get("projects", {}).get(readme_file, {})
 
         if "resource-manager" in input_readme:
             cmd = ["autorest", input_readme]
@@ -231,11 +230,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         )
     else:
         metadata["typespec_src"] = input_readme
-        metadata.update(config)
+        metadata.update(codegen_config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
 
-    metadata_file_path = package_folder / "_metadata.json"
+    metadata_file_path = package_path / "_metadata.json"
     with metadata_file_path.open("w") as writer:
         json.dump(metadata, writer, indent=2)
     _LOGGER.info(f"Saved metadata to {metadata_file_path}")

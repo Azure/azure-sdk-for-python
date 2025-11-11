@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 import pytest
-from packaging_tools.generate_utils import update_servicemetadata
+from packaging_tools.generate_utils import update_metadata_json
 
 
 """
@@ -74,14 +74,13 @@ class TestServiceMetadata(unittest.TestCase):
             metadata_file_path = os.path.join(package_folder, "_metadata.json")
             manifest_file = os.path.join(package_folder, "MANIFEST.in")
             os.makedirs(package_folder)
+            package_path = Path(self.sdk_folder, self.folder_name, self.package_name)
 
             # Test MANIFEST.in does not exist
-            update_servicemetadata(
-                sdk_folder=self.sdk_folder,
-                data=self.data,
-                config=self.config,
-                folder_name=self.folder_name,
-                package_name=self.package_name,
+            update_metadata_json(
+                package_path=package_path,
+                pipeline_input=self.data,
+                codegen_config=self.config,
                 spec_folder=self.spec_folder,
                 input_readme=self.input_readme,
             )
@@ -93,12 +92,10 @@ class TestServiceMetadata(unittest.TestCase):
             # Test update metadata
             with open(metadata_file_path, "w") as f:
                 json.dump({"autorest": "3.0.0"}, f, indent=2)
-            update_servicemetadata(
-                sdk_folder=self.sdk_folder,
-                data=self.data,
-                config=self.config,
-                folder_name=self.folder_name,
-                package_name=self.package_name,
+            update_metadata_json(
+                package_path=package_path,
+                pipeline_input=self.data,
+                codegen_config=self.config,
                 spec_folder=self.spec_folder,
                 input_readme=self.input_readme,
             )
@@ -112,12 +109,10 @@ class TestServiceMetadata(unittest.TestCase):
             # Test update MANIFEST.in
             with open(manifest_file, "w") as f:
                 f.write(MANIFEST_TEMP)
-            update_servicemetadata(
-                sdk_folder=self.sdk_folder,
-                data=self.data,
-                config=self.config,
-                folder_name=self.folder_name,
-                package_name=self.package_name,
+            update_metadata_json(
+                package_path=package_path,
+                pipeline_input=self.data,
+                codegen_config=self.config,
                 spec_folder=self.spec_folder,
                 input_readme=self.input_readme,
             )
@@ -126,12 +121,10 @@ class TestServiceMetadata(unittest.TestCase):
             assert os.path.isfile(manifest_file) == True
 
             # Test update MANIFEST.in again
-            update_servicemetadata(
-                sdk_folder=self.sdk_folder,
-                data=self.data,
-                config=self.config,
-                folder_name=self.folder_name,
-                package_name=self.package_name,
+            update_metadata_json(
+                package_path=package_path,
+                pipeline_input=self.data,
+                codegen_config=self.config,
                 spec_folder=self.spec_folder,
                 input_readme=self.input_readme,
             )

@@ -25,8 +25,6 @@ from .swaggertosdk.SwaggerToSdkCore import (
 from .generate_sdk import generate
 from .generate_utils import (
     get_package_names,
-    generate_packaging_files,
-    update_servicemetadata,
     judge_tag_preview,
     format_samples_and_tests,
     gen_dpg,
@@ -36,6 +34,8 @@ from .generate_utils import (
 )
 from .package_utils import create_package, check_file
 from .sdk_changelog import main as sdk_changelog_generate
+from .sdk_update_version import main as sdk_update_version
+from .sdk_update_metadata import main as sdk_update_metadata
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -109,13 +109,13 @@ def main(generate_input, generate_output):
     run_in_pipeline = data.get("runMode") is not None
     for input_type, readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
-        config = None
+        codegen_config = None
         try:
             code_generation_start_time = time.time()
             if input_type == "relatedTypeSpecProjectFolder":
                 if run_in_pipeline:
                     del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
-                config = gen_typespec(
+                codegen_config = gen_typespec(
                     readme_or_tsp,
                     spec_folder,
                     data["headSha"],
@@ -126,7 +126,7 @@ def main(generate_input, generate_output):
             elif "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
-                config = generate(
+                codegen_config = generate(
                     CONFIG_FILE,
                     sdk_folder,
                     [],
@@ -136,7 +136,7 @@ def main(generate_input, generate_output):
                     python_tag=python_tag,
                 )
             else:
-                config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+                codegen_config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             _LOGGER.info(f"code generation cost time: {int(time.time() - code_generation_start_time)} seconds")
         except Exception as e:
             _LOGGER.error(f"Fail to generate sdk for {readme_or_tsp}: {str(e)}")
@@ -181,7 +181,6 @@ def main(generate_input, generate_output):
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
-                    package_entry["allowInvalidNextVersion"] = data.get("allowInvalidNextVersion", False)
                     result[package_name] = package_entry
                 else:
                     result[package_name]["path"].append(folder_name)
@@ -190,11 +189,7 @@ def main(generate_input, generate_output):
                 _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
                 continue
 
-            # Generate packaging files
-            try:
-                generate_packaging_files(package_name, folder_name)
-            except Exception as e:
-                _LOGGER.warning(f"Fail to generate packaging files for {package_name} in {readme_or_tsp}: {str(e)}")
+
 
             # format samples and tests
             try:
@@ -202,22 +197,6 @@ def main(generate_input, generate_output):
             except Exception as e:
                 _LOGGER.warning(f"Fail to format samples and tests for {package_name} in {readme_or_tsp}: {str(e)}")
 
-            # Update metadata
-            try:
-                if config is not None:
-                    update_servicemetadata(
-                        sdk_folder,
-                        data,
-                        config,
-                        folder_name,
-                        package_name,
-                        spec_folder,
-                        readme_or_tsp,
-                    )
-                else:
-                    _LOGGER.warning(f"Skip metadata update for {package_name} as config is not available")
-            except Exception as e:
-                _LOGGER.warning(f"Fail to update meta: {str(e)}")
 
             # Setup package locally
             try:
@@ -228,6 +207,7 @@ def main(generate_input, generate_output):
             except Exception as e:
                 _LOGGER.warning(f"Fail to setup package {package_name} in {readme_or_tsp}: {str(e)}")
 
+            
             # Changelog generation
             sdk_changelog_generate(
                 Path(sdk_code_path).absolute(),
@@ -236,7 +216,17 @@ def main(generate_input, generate_output):
             )
 
             # update version in _verison.py and CHANGELOG.md
-            sdk_update_version()
+            sdk_update_version(Path(sdk_code_path).absolute(), package_result=result[package_name])
+            
+            
+            # update metadata files including "_metadata.json/pyproject.toml/setup.py/dev_requirements.txt"
+            sdk_update_metadata(
+                Path(sdk_code_path).absolute(),
+                pipeline_input=data,
+                codegen_config=codegen_config,
+                spec_folder=spec_folder,
+                readme_or_tsp=readme_or_tsp,
+            )
 
             # Generate ApiView
             if data.get("runMode") in ["spec-pull-request"]:
