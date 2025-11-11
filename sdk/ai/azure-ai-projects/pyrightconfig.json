@@ -3,6 +3,7 @@
   "reportMissingImports": false,
   "pythonVersion": "3.11",
   "exclude": [
+    "**/samples/evaluations/**"
   ],
   "extraPaths": [
     "./../../core/azure-core",
