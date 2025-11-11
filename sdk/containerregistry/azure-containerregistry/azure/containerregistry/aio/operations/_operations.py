@@ -1821,12 +1821,19 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
+        response_headers["Docker-Content-Digest"] = self._deserialize(
+            "str", response.headers.get("Docker-Content-Digest")
+        )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def cancel_upload(self, location: str, **kwargs: Any) -> None:
@@ -1920,12 +1927,17 @@ class ContainerRegistryBlobOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
+        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_chunk(self, name: str, digest: str, *, range: str, **kwargs: Any) -> None:
