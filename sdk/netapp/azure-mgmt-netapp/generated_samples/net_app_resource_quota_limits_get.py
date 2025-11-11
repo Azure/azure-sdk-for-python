@@ -15,7 +15,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python buckets_update.py
+    python net_app_resource_quota_limits_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,22 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.buckets.begin_update(
-        resource_group_name="myRG",
-        account_name="account1",
-        pool_name="pool1",
-        volume_name="volume1",
-        bucket_name="bucket1",
-        body={
-            "properties": {
-                "permissions": "ReadWrite",
-                "server": {"certificateObject": "<REDACTED>", "fqdn": "fullyqualified.domainname.com"},
-            }
-        },
-    ).result()
+    response = client.net_app_resource_quota_limits.get(
+        location="eastus",
+        quota_limit_name="totalCoolAccessVolumesPerSubscription",
+    )
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/Buckets_Update.json
+# x-ms-original-file: 2025-09-01/NetAppResourceQuotaLimits_Get.json
 if __name__ == "__main__":
     main()
