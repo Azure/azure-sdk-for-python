@@ -60,7 +60,8 @@ with project_client:
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="You are a helpful agent that can use SharePoint tools to assist users. Use the available SharePoint tools to answer questions and perform tasks.",
+            instructions="""You are a helpful agent that can use SharePoint tools to assist users. 
+            Use the available SharePoint tools to answer questions and perform tasks.""",
             tools=[sharepoint_tool],
         ),
     )
