@@ -132,7 +132,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
-        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for the
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for the
             client. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
@@ -168,9 +168,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if throughput_bucket:
             self.default_headers[http_constants.HttpHeaders.ThroughputBucket] = throughput_bucket
 
-        priority_level = kwargs.pop('priority_level', None)
-        if priority_level:
-            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority_level
+        priority = kwargs.pop('priority', None)
+        if priority:
+            self.default_headers[http_constants.HttpHeaders.PriorityLevel] = priority
 
         # Keeps the latest response headers from the server.
         self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()

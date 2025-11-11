@@ -139,10 +139,10 @@ async def examples_async():
         # [START client_level_priority]
         # Priority can also be set at the client level, which will apply to all requests made by that client.
         # This is useful when you want all operations from a particular client to have the same priority.
-        # The client-level priority is set during client initialization with the `priority_level` parameter.
+        # The client-level priority is set during client initialization with the `priority` parameter.
 
         # Create a client with Low priority for all requests
-        async with CosmosClient(url, key, priority_level="Low") as low_priority_client:
+        async with CosmosClient(url, key, priority="Low") as low_priority_client:
             low_priority_database = low_priority_client.get_database_client(database_name)
             low_priority_container = low_priority_database.get_container_client(container_name)
 
@@ -165,7 +165,7 @@ async def examples_async():
         # This allows you to override the default priority for specific operations.
 
         # Create a client with Low priority
-        async with CosmosClient(url, key, priority_level="Low") as client_with_default_priority:
+        async with CosmosClient(url, key, priority="Low") as client_with_default_priority:
             database_with_priority = client_with_default_priority.get_database_client(database_name)
             container_with_priority = database_with_priority.get_container_client(container_name)
 

@@ -129,10 +129,10 @@ for queried_item in container.query_items(
 # [START client_level_priority]
 # Priority can also be set at the client level, which will apply to all requests made by that client.
 # This is useful when you want all operations from a particular client to have the same priority.
-# The client-level priority is set during client initialization with the `priority_level` parameter.
+# The client-level priority is set during client initialization with the `priority` parameter.
 
 # Create a client with Low priority for all requests
-low_priority_client = CosmosClient(url, key, priority_level="Low")
+low_priority_client = CosmosClient(url, key, priority="Low")
 low_priority_database = low_priority_client.get_database_client(database_name)
 low_priority_container = low_priority_database.get_container_client(container_name)
 
@@ -156,21 +156,21 @@ for queried_item in low_priority_container.query_items(
 # This allows you to override the default priority for specific operations.
 
 # Create a client with Low priority
-client_with_default_priority = CosmosClient(url, key, priority_level="Low")
+client_with_default_priority = CosmosClient(url, key, priority="Low")
 database_with_priority = client_with_default_priority.get_database_client(database_name)
 container_with_priority = database_with_priority.get_container_client(container_name)
 
 # Add items with different priority levels to the container
 container_with_priority.upsert_item(
-    dict(id="urgent_item1", productName="Widget", priority="urgent", productModel="Urgent Model")
+    dict(id="urgent_item1", productName="Widget", priority="high", productModel="High Priority Model")
 )
 container_with_priority.upsert_item(
-    dict(id="normal_item1", productName="Widget", priority="normal", productModel="Normal Model")
+    dict(id="normal_item1", productName="Widget", priority="low", productModel="Low Priority Model")
 )
 
 # This query will use High priority, overriding the client's Low priority setting
 for important_item in container_with_priority.query_items(
-    query='SELECT * FROM products p WHERE p.priority = "urgent"',
+    query='SELECT * FROM products p WHERE p.priority = "high"',
     enable_cross_partition_query=True,
     priority="High"  # Request-level priority overrides client-level priority
 ):
@@ -178,7 +178,7 @@ for important_item in container_with_priority.query_items(
 
 # This query will use the client's default Low priority
 for normal_item in container_with_priority.query_items(
-    query='SELECT * FROM products p WHERE p.priority = "normal"',
+    query='SELECT * FROM products p WHERE p.priority = "low"',
     enable_cross_partition_query=True
 ):
     print(json.dumps(normal_item, indent=True))
