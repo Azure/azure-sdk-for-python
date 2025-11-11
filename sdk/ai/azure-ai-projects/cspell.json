@@ -18,10 +18,15 @@
         "CSDL",
         "fstring",
         "aiprojectclient",
+        "Tadmaq",
+        "Udbk"
     ],
     "ignorePaths": [
-      "*.csv",
-      "*.json",
-      "*.jsonl"
+        "*.csv",
+        "*.json",
+        "*.jsonl"
+    ],
+    "words": [
+        "Pxqzykebv"
     ]
 }
