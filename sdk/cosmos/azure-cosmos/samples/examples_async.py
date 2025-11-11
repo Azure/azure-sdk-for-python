@@ -123,13 +123,6 @@ async def examples_async():
         # Can be used for Read, Write, and Query operations. This is specified with the `priority` keyword.
         # the value can either be low or high.
         
-        # Ensure we have items to query (this reuses items from earlier in the example)
-        # If running this section independently, uncomment the lines below:
-        # for i in range(1, 10):
-        #     await container.upsert_item(
-        #         dict(id="item{}".format(i), productName="Widget", productModel="Model {}".format(i))
-        #     )
-        
         async for queried_item in container.query_items(
                 query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority="High"
         ):
@@ -171,22 +164,22 @@ async def examples_async():
 
             # Add items with different priority levels to the container
             await container_with_priority.upsert_item(
-                dict(id="urgent_item1", productName="Widget", priority="urgent", productModel="Urgent Model")
+                dict(id="urgent_item1", productName="Widget", priority="Low", productModel="Low Priority Model")
             )
             await container_with_priority.upsert_item(
-                dict(id="normal_item1", productName="Widget", priority="normal", productModel="Normal Model")
+                dict(id="normal_item1", productName="Widget", priority="High", productModel="High Priority Model")
             )
 
             # This query will use High priority, overriding the client's Low priority setting
             async for important_item in container_with_priority.query_items(
-                query='SELECT * FROM products p WHERE p.priority = "urgent"',
+                query='SELECT * FROM products p WHERE p.priority = "High"',
                 priority="High"  # Request-level priority overrides client-level priority
             ):
                 print(json.dumps(important_item, indent=True))
 
             # This query will use the client's default Low priority
             async for normal_item in container_with_priority.query_items(
-                query='SELECT * FROM products p WHERE p.priority = "normal"'
+                query='SELECT * FROM products p WHERE p.priority = "Low"'
             ):
                 print(json.dumps(normal_item, indent=True))
 

@@ -162,15 +162,15 @@ container_with_priority = database_with_priority.get_container_client(container_
 
 # Add items with different priority levels to the container
 container_with_priority.upsert_item(
-    dict(id="urgent_item1", productName="Widget", priority="high", productModel="High Priority Model")
+    dict(id="urgent_item1", productName="Widget", priority="High", productModel="High Priority Model")
 )
 container_with_priority.upsert_item(
-    dict(id="normal_item1", productName="Widget", priority="low", productModel="Low Priority Model")
+    dict(id="normal_item1", productName="Widget", priority="Low", productModel="Low Priority Model")
 )
 
 # This query will use High priority, overriding the client's Low priority setting
 for important_item in container_with_priority.query_items(
-    query='SELECT * FROM products p WHERE p.priority = "high"',
+    query='SELECT * FROM products p WHERE p.priority = "High"',
     enable_cross_partition_query=True,
     priority="High"  # Request-level priority overrides client-level priority
 ):
@@ -178,7 +178,7 @@ for important_item in container_with_priority.query_items(
 
 # This query will use the client's default Low priority
 for normal_item in container_with_priority.query_items(
-    query='SELECT * FROM products p WHERE p.priority = "low"',
+    query='SELECT * FROM products p WHERE p.priority = "Low"',
     enable_cross_partition_query=True
 ):
     print(json.dumps(normal_item, indent=True))
