@@ -46,7 +46,7 @@ class AgentRunContext:
     def get_agent_id_object(self) -> AgentId:
         agent = self.request.get("agent")
         if not agent:
-            return None   # type: ignore
+            return None  # type: ignore
         return AgentId(
             {
                 "type": agent.type,
@@ -57,7 +57,7 @@ class AgentRunContext:
 
     def get_conversation_object(self) -> ResponseConversation1:
         if not self._conversation_id:
-            return None   # type: ignore
+            return None  # type: ignore
         return ResponseConversation1(id=self._conversation_id)
 
 
@@ -72,5 +72,5 @@ def _deserialize_create_response(payload: dict) -> CreateResponse:
 
 def _deserialize_agent_reference(payload: dict) -> AgentReference:
     if not payload:
-        return None   # type: ignore
+        return None  # type: ignore
     return AgentReference(**payload)

@@ -14,7 +14,7 @@ from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
-from azure.ai.agentserver.core.logger import get_logger
+from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
 from azure.ai.agentserver.core.models import (
     CreateResponse,
     Response as OpenAIResponse,
@@ -77,7 +77,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def init_tracing(self):
         exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(AdapterConstants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
         if project_endpoint:

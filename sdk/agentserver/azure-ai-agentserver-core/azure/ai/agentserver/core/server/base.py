@@ -21,7 +21,7 @@ from starlette.routing import Route
 from starlette.types import ASGIApp
 
 from ..constants import Constants
-from ..logger import get_logger, request_context
+from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, request_context
 from ..models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
@@ -93,7 +93,7 @@ class FoundryCBAgent:
                 kind=trace.SpanKind.SERVER,
             ):
                 try:
-                    logger.info("Start processing CreateResponse request:")
+                    logger.info("Start processing CreateResponse request.")
 
                     context_carrier = {}
                     TraceContextTextMapPropagator().inject(context_carrier)
@@ -126,7 +126,7 @@ class FoundryCBAgent:
                                 yield "data: [DONE]\n\n"
                                 error_sent = True
                             finally:
-                                logger.info("End of processing CreateResponse request:")
+                                logger.info("End of processing CreateResponse request.")
                                 otel_context.detach(token)
                                 if not error_sent:
                                     yield "data: [DONE]\n\n"
@@ -261,7 +261,7 @@ class FoundryCBAgent:
 
     def init_tracing(self):
         exporter = os.environ.get(Constants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(Constants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        app_insights_conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         if exporter or app_insights_conn_str:
             from opentelemetry.sdk.resources import Resource
             from opentelemetry.sdk.trace import TracerProvider

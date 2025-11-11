@@ -88,7 +88,7 @@ class FoundryIdGenerator(IdGenerator):
 
         infix = infix or ""
         prefix_part = f"{prefix}{delimiter}" if prefix else ""
-        return f"{prefix_part}{entropy}{infix}{pkey}"
+        return f"{prefix_part}{infix}{pkey}{entropy}"
 
     @staticmethod
     def _secure_entropy(string_length: int) -> str:

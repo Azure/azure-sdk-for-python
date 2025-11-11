@@ -28,6 +28,8 @@ default_log_config = {
 
 request_context = contextvars.ContextVar("request_context", default=None)
 
+APPINSIGHT_CONNSTR_ENV_NAME = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+
 
 def get_dimensions():
     env_values = {name: value for name, value in vars(Constants).items() if not name.startswith("_")}
@@ -58,9 +60,9 @@ def get_project_endpoint():
 
 def get_application_insights_connstr():
     try:
-        conn_str = os.environ.get(Constants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         if not conn_str:
-            print("environment variable APPLICATION_INSIGHTS_CONNECTION_STRING not set.")
+            print(f"environment variable {APPINSIGHT_CONNSTR_ENV_NAME} not set.")
             project_endpoint = get_project_endpoint()
             if project_endpoint:
                 # try to get the project connected application insights
@@ -72,7 +74,7 @@ def get_application_insights_connstr():
                 if not conn_str:
                     print(f"no connected application insights found for project:{project_endpoint}")
                 else:
-                    os.environ[Constants.APPLICATION_INSIGHTS_CONNECTION_STRING] = conn_str
+                    os.environ[APPINSIGHT_CONNSTR_ENV_NAME] = conn_str
         return conn_str
     except Exception as e:
         print(f"failed to get application insights with error: {e}")
