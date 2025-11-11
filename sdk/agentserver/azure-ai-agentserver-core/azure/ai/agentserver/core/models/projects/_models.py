@@ -10,7 +10,7 @@
 
 from .utils.model_base  import Model as _Model
 from typing import Literal, Union, Dict, Optional, List, Any
-from typing_extensions import NotRequired, TypedDict, TypeAlias
+from typing_extensions import NotRequired, TypedDict, TypeAlias, ReadOnly
 from ._enums import ItemType, ServiceTier, ToolChoiceOptions, ResponseTextFormatConfigurationType, ToolType, ResponseErrorCode
 import datetime
 
@@ -38,7 +38,7 @@ class CreatedBy(TypedDict):
     """The response on which the item is created."""
 
 class ItemResource(TypedDict):
-    type: Union[str, Literal[
+    type: ReadOnly[Literal[
         "message", "file_search_call", "function_call", "function_call_output", 
         "computer_call", "computer_call_output", "web_search_call", "reasoning", 
         "item_reference", "image_generation_call", "code_interpreter_call",
@@ -52,7 +52,7 @@ class ItemResource(TypedDict):
 
 class FunctionToolCallItemResource(ItemResource):
     """Function tool call item resource with discriminator 'function_call'."""
-    type: Literal[ItemType.FUNCTION_CALL] # TODO: how to best represent this?
+    type: Literal['function_call']
     """Required. Discriminator value is \"function_call\"."""
     status: Union[str, Literal["in_progress"], Literal["completed"], Literal["incomplete"]]
     """The status of the function call."""
@@ -65,7 +65,7 @@ class FunctionToolCallItemResource(ItemResource):
 
 class FunctionToolCallOutputItemResource(ItemResource):
     """Function tool call output item resource with discriminator 'function_call_output'."""
-    type: Literal[ItemType.FUNCTION_CALL_OUTPUT] # TODO: how to best represent this?
+    type: Literal["function_call_output"]
     """Required. Discriminator value is \"function_call_output\"."""
     status: Union[str, Literal["in_progress"], Literal["completed"], Literal["incomplete"]]
     """The status of the function call."""
@@ -75,7 +75,7 @@ class FunctionToolCallOutputItemResource(ItemResource):
     """The output returned from the function call."""
 
 class ItemContent(TypedDict):
-    type: Union[str, Literal[
+    type: ReadOnly[Literal[
         "input_text", "input_audio", "input_image", "input_file", 
         "output_text", "output_audio", "refusal"
     ]]
