@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=logging-fstring-interpolation
+# pylint: disable=logging-fstring-interpolation,no-name-in-module
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
