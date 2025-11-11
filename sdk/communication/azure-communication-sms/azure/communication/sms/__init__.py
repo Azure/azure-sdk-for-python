@@ -27,7 +27,7 @@ from ._models import SmsSendResult, OptOutResult, OptOutCheckResult
 
 __all__ = [
     "SmsClient",
-    "OptOutsClient",  # Still exposed for backward compatibility
+    "OptOutsClient",  # Exposed for direct access (alternative to hierarchical pattern)
     "SmsSendResult",
     "OptOutResult",
     "OptOutCheckResult",

@@ -75,46 +75,41 @@ def main():
 
     # [START send_sms_with_custom_messaging_connect]
     try:
-        # Example 2: Custom partner parameters (for partners with specific requirements)
-        custom_partner_params = {
-            "apiKey": messaging_connect_api_key,
-            "routingPriority": "high",
-            "enableFallback": True,
-            "customParam": "value123",
-            "numericParam": 42
+        # Example 2: Using only apiKey for partner parameters (recommended for simplicity)
+        simple_partner_params = {
+            "apiKey": messaging_connect_api_key
         }
 
-        # Send SMS using Messaging Connect partner with custom parameters
+        # Send SMS using Messaging Connect partner with simple apiKey-only parameters
         sms_responses = sms_client.send(
             from_=sender_phone_number,
             to=recipient_phone_number,
-            message="Hello! This SMS uses custom partner parameters.",
+            message="Hello! This SMS uses MessagingConnect with apiKey authentication.",
             enable_delivery_report=True,
-            messaging_connect_partner_params=custom_partner_params,
+            messaging_connect_partner_params=simple_partner_params,
             messaging_connect_partner_name=messaging_connect_partner_name,
-            tag="messaging-connect-custom"
+            tag="messaging-connect-simple"
         )
 
         for sms_response in sms_responses:
             if sms_response.successful:
-                print(f"✅ SMS with custom params sent successfully!")
+                print(f"✅ SMS with MessagingConnect sent successfully!")
                 print(f"   Message ID: {sms_response.message_id}")
                 print(f"   To: {sms_response.to}")
-                print(f"   Custom params used: {len(custom_partner_params)} parameters")
+                print(f"   Partner: {messaging_connect_partner_name}")
             else:
-                print(f"❌ Failed to send SMS with custom params to {sms_response.to}")
+                print(f"❌ Failed to send SMS to {sms_response.to}")
                 print(f"   Error: {sms_response.error_message}")
                 
     except Exception as e:
-        print(f"❌ Error sending SMS with custom params: {e}")
+        print(f"❌ Error sending SMS with MessagingConnect: {e}")
     # [END send_sms_with_custom_messaging_connect]
 
-    print("\nℹ️  Messaging Connect Information:")
-    print("   - Both partner_params and partner_name must be provided together")
-    print("   - Partner_params is a flexible dictionary containing partner-specific configuration")
-    print("   - Common parameters include 'apiKey', but partners may require additional fields")
-    print("   - Examples: {'apiKey': 'key'}, {'customparam': 5, 'anotherparam': True}")
-    print("   - Partner name specifies which Messaging Connect partner to use")
+    print("\nℹ️  MessagingConnect Information:")
+    print("   - Both messaging_connect_partner_params and messaging_connect_partner_name must be provided together")
+    print("   - Partner_params typically contains 'apiKey' for authentication")
+    print("   - Example: {'apiKey': 'your-partner-api-key'}")
+    print("   - Partner name specifies which MessagingConnect partner to use")
     print("   - This feature enables SMS delivery through partner networks")
 
 if __name__ == "__main__":

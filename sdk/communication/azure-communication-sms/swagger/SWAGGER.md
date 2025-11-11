@@ -38,17 +38,6 @@ models-mode: msrest
 
 ``` yaml
 directive:
-  - from: swagger-document
-    where: $.definitions
-    transform: >
-      delete $.BadRequestErrorResponse;
-      delete $.ErrorDetail;
-      delete $.ErrorResponse;
-      delete $.StandardErrorResponse;
-```
-
-``` yaml
-directive:
   # Update SMS send operation to only expect 202 (success) responses
   # Remove 400 and 401 error responses so they become unexpected and throw HttpResponseException
   - from: swagger-document
