@@ -191,6 +191,19 @@ def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:
             if value:
                 metadata[field] = value
 
+def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
+    """
+    Given a list of subdirectories, return those that are not part of the package source and should be skipped.
+
+    :param List[str] subdirs: List of subdirectory names
+    :rtype: List[str]
+    :return: Filtered list of subdirectory names to skip
+    """
+    # Ignore any modules with name starts with "_"
+    # For e.g. _generated, _shared etc
+    # Ignore build, which is created when installing a package from source.
+    # Ignore tests, which may have an __init__.py but is not part of the package.
+    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x == "tests" or x in EXCLUDE)]
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
     """
@@ -207,11 +220,7 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
     namespace = None
 
     for root, subdirs, files in os.walk(package_root_path):
-        # Ignore any modules with name starts with "_"
-        # For e.g. _generated, _shared etc
-        # Ignore build, which is created when installing a package from source.
-        # Ignore tests, which may have an __init__.py but is not part of the package.
-        dirs_to_skip = [x for x in subdirs if x.startswith(("_", ".", "test", "build")) or x in EXCLUDE]
+        dirs_to_skip = get_dirs_to_skip(subdirs)
         for d in dirs_to_skip:
             logging.debug("Dirs to skip: {}".format(dirs_to_skip))
             subdirs.remove(d)
@@ -695,8 +704,9 @@ def get_version_py(setup_path: str) -> Optional[str]:
 
     # Find path to _version.py recursively
     for root, dirs, files in os.walk(file_path):
+        dirs_to_skip = get_dirs_to_skip(dirs)
         dirs[:] = [
-            d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info") and not d.startswith((".", "build"))
+            d for d in dirs if d not in dirs_to_skip
         ]
 
         if VERSION_PY in files:
