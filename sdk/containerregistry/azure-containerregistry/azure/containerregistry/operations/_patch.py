@@ -27,6 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from ..operations import AuthenticationOperations as AuthenticationOperationsGenerated
 
+from .._utils.model_base import _deserialize, _failsafe_deserialize
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -148,7 +149,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.url", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -159,9 +160,9 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
+            error = _failsafe_deserialize(_models.AcrErrors, response.json())
             raise HttpResponseError(response=response, model=error)
-        deserialized = self._deserialize("AcrRefreshToken", pipeline_response)
+        deserialized = _deserialize(_models.AcrRefreshToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -222,7 +223,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.url", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -233,9 +234,9 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
+            error = _failsafe_deserialize(_models.AcrErrors, response.json())
             raise HttpResponseError(response=response, model=error)
-        deserialized = self._deserialize("AcrAccessToken", pipeline_response)
+        deserialized = _deserialize(_models.AcrAccessToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
