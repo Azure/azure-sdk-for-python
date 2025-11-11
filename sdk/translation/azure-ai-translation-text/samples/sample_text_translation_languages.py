@@ -49,7 +49,7 @@ def get_text_translation_languages():
             f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
         )
         print(
-            f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+            f"Number of supported models for translation: {len(response.models) if response.models is not None else 0}"
         )
 
         if response.translation is not None:
@@ -62,10 +62,8 @@ def get_text_translation_languages():
             for key, value in response.transliteration.items():
                 print(f"{key} -- name: {value.name}, supported script count: {len(value.scripts)}")
 
-        if response.dictionary is not None:
-            print("Dictionary Languages:")
-            for key, value in response.dictionary.items():
-                print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
+        if response.models is not None:
+            print(f"Models: {', '.join(response.models)}")
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -88,7 +86,7 @@ def get_text_translation_languages_scope():
             f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
         )
         print(
-            f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+            f"Number of supported models for translation: {len(response.models) if response.models is not None else 0}"
         )
 
         if response.translation is not None:
@@ -101,10 +99,8 @@ def get_text_translation_languages_scope():
             for key, value in response.transliteration.items():
                 print(f"{key} -- name: {value.name}, supported script count: {len(value.scripts)}")
 
-        if response.dictionary is not None:
-            print("Dictionary Languages:")
-            for key, value in response.dictionary.items():
-                print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
+        if response.models is not None:
+            print(f"Models: {', '.join(response.models)}")
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -127,7 +123,7 @@ def get_text_translation_languages_culture():
             f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
         )
         print(
-            f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+            f"Number of supported models for translation: {len(response.models) if response.models is not None else 0}"
         )
 
         if response.translation is not None:
@@ -140,10 +136,8 @@ def get_text_translation_languages_culture():
             for key, value in response.transliteration.items():
                 print(f"{key} -- name: {value.name}, supported script count: {len(value.scripts)}")
 
-        if response.dictionary is not None:
-            print("Dictionary Languages:")
-            for key, value in response.dictionary.items():
-                print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
+        if response.models is not None:
+            print(f"Models: {', '.join(response.models)}")
 
     except HttpResponseError as exception:
         if exception.error is not None:

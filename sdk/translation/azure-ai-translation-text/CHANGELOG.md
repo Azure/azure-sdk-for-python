@@ -8,7 +8,7 @@
 
 ### Breaking Changes
 
-- Dictionary, sentence boundaries and text alignments features have been removed, and relevant classes and properties have been removed.
+- Dictionary, sentence boundaries and text alignments features have been removed, and relevant models and properties have been removed.
 - 
 
 ### Bugs Fixed

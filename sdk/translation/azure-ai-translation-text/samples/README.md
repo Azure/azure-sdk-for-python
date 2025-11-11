@@ -18,15 +18,12 @@ Translator Service is a cloud-based neural machine translation service that is p
 * Get Supported Languages
 * Translate
 * Transliterate
-* Break Sentence
-* Dictionary Lookup
-* Dictionary Examples
 
 See the [README][README] of the Text Translator client library for more information, including useful links and instructions.
 
 # Create Client
 
-Text Translation service is using two types of endpoints - Global and Custom. You can find more information in the [v3 Translator reference][TranslatorReference].
+Text Translation service is using two types of endpoints - Global and Custom. You can find more information in the [Translator reference][TranslatorReference].
 
 ## Global Endpoint
 
@@ -143,7 +140,7 @@ try:
         f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
     )
     print(
-        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+        f"Number of supported models for translation: {len(response.models) if response.models is not None else 0}"
     )
 
     if response.translation is not None:
@@ -156,10 +153,8 @@ try:
         for key, value in response.transliteration.items():
             print(f"{key} -- name: {value.name}, supported script count: {len(value.scripts)}")
 
-    if response.dictionary is not None:
-        print("Dictionary Languages:")
-        for key, value in response.dictionary.items():
-            print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
+    if response.models is not None:
+        print(f"Models: {', '.join(response.models)}")
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -188,7 +183,7 @@ try:
         f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
     )
     print(
-        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+        f"Number of supported models for translation: {len(response.models) if response.models is not None else 0}"
     )
 
     if response.translation is not None:
@@ -201,10 +196,8 @@ try:
         for key, value in response.transliteration.items():
             print(f"{key} -- name: {value.name}, supported script count: {len(value.scripts)}")
 
-    if response.dictionary is not None:
-        print("Dictionary Languages:")
-        for key, value in response.dictionary.items():
-            print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
+    if response.models is not None:
+        print(f"Models: {', '.join(response.models)}")
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -234,7 +227,7 @@ try:
         f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
     )
     print(
-        f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+        f"Number of supported models for translation: {len(response.models) if response.models is not None else 0}"
     )
 
     if response.translation is not None:
@@ -247,10 +240,8 @@ try:
         for key, value in response.transliteration.items():
             print(f"{key} -- name: {value.name}, supported script count: {len(value.scripts)}")
 
-    if response.dictionary is not None:
-        print("Dictionary Languages:")
-        for key, value in response.dictionary.items():
-            print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
+    if response.models is not None:
+        print(f"Models: {', '.join(response.models)}")
 
 except HttpResponseError as exception:
     if exception.error is not None:
@@ -575,79 +566,6 @@ except HttpResponseError as exception:
 
 <!-- END SNIPPET -->
 
-### Include alignments into translations
-
-You can ask translation service to include alignment projection from source text to translated text.
-
-<!-- SNIPPET: sample_text_translation_translate.get_text_translation_alignment -->
-
-```python
-try:
-    include_alignment = True
-    to_language = ["cs"]
-    input_text_elements = ["The answer lies in machine translation."]
-
-    response = text_translator.translate(
-        body=input_text_elements, to_language=to_language, include_alignment=include_alignment
-    )
-    translation = response[0] if response else None
-
-    if translation:
-        detected_language = translation.detected_language
-        if detected_language:
-            print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
-            )
-        for translated_text in translation.translations:
-            print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.alignment:
-                print(f"Alignments: {translated_text.alignment.proj}")
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-```
-
-<!-- END SNIPPET -->
-
-### Include sentence length
-
-You can ask translator service to include sentence boundaries for the input text and the translated text.
-
-<!-- SNIPPET: sample_text_translation_translate.get_text_translation_sentence_length -->
-
-```python
-try:
-    include_sentence_length = True
-    to_language = ["cs"]
-    input_text_elements = ["The answer lies in machine translation. This is a test."]
-
-    response = text_translator.translate(
-        body=input_text_elements, to_language=to_language, include_sentence_length=include_sentence_length
-    )
-    translation = response[0] if response else None
-
-    if translation:
-        detected_language = translation.detected_language
-        if detected_language:
-            print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
-            )
-        for translated_text in translation.translations:
-            print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
-            if translated_text.sent_len:
-                print(f"Source Sentence length: {translated_text.sent_len.src_sent_len}")
-                print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-```
-
-<!-- END SNIPPET -->
-
 ### Custom Translator
 
 You can get translations from a customized system built with [Custom Translator](https://learn.microsoft.com/azure/cognitive-services/translator/customization). Add the Category ID from your Custom Translator [project details](https://learn.microsoft.com/azure/cognitive-services/translator/custom-translator/how-to-create-project#view-project-details) to this parameter to use your deployed customized system.
@@ -721,141 +639,6 @@ except HttpResponseError as exception:
 
 <!-- END SNIPPET -->
 
-# Break Sentence
-
-### Break Sentence with language and script parameters
-
-When the input language is known, you can provide those to the service call.
-
-<!-- SNIPPET: sample_text_translation_break_sentence.get_text_sentence_boundaries -->
-
-```python
-try:
-    from_language = "zh-Hans"
-    source_script = "Latn"
-    input_text_elements = ["zhè shì gè cè shì。"]
-
-    response = text_translator.find_sentence_boundaries(
-        body=input_text_elements, language=from_language, script=source_script
-    )
-    sentence_boundaries = response[0] if response else None
-
-    if sentence_boundaries:
-        detected_language = sentence_boundaries.detected_language
-        if detected_language:
-            print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
-            )
-        print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.sent_len:
-            print(boundary)
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-    raise
-```
-
-<!-- END SNIPPET -->
-
-### Break Sentence with auto-detection
-
-You can omit source language of the input text. In this case, API will try to auto-detect the language.
-
-<!-- SNIPPET: sample_text_translation_break_sentence.get_text_sentence_boundaries_auto -->
-
-```python
-try:
-    input_text_elements = ["This is a test. This is the second sentence."]
-
-    response = text_translator.find_sentence_boundaries(body=input_text_elements)
-    sentence_boundaries = response[0] if response else None
-
-    if sentence_boundaries:
-        detected_language = sentence_boundaries.detected_language
-        if detected_language:
-            print(
-                f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}."
-            )
-        print(f"The detected sentence boundaries:")
-        for boundary in sentence_boundaries.sent_len:
-            print(boundary)
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-```
-
-<!-- END SNIPPET -->
-
-# Dictionary
-
-### Dictionary Lookup
-
-Returns equivalent words for the source term in the target language.
-
-<!-- SNIPPET: sample_text_translation_dictionary_lookup.get_text_translation_dictionary_lookup -->
-
-```python
-try:
-    from_language = "en"
-    to_language = "es"
-    input_text_elements = ["fly"]
-
-    response = text_translator.lookup_dictionary_entries(
-        body=input_text_elements, from_language=from_language, to_language=to_language
-    )
-    dictionary_entry = response[0] if response else None
-
-    if dictionary_entry:
-        print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
-        print(
-            f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}."
-        )
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-    raise
-```
-
-<!-- END SNIPPET -->
-
-### Dictionary Examples
-
-Returns grammatical structure and context examples for the source term and target term pair.
-
-<!-- SNIPPET: sample_text_translation_dictionary_examples.get_text_translation_dictionary_examples -->
-
-```python
-try:
-    from_language = "en"
-    to_language = "es"
-    input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
-
-    response = text_translator.lookup_dictionary_examples(
-        body=input_text_elements, from_language=from_language, to_language=to_language
-    )
-    dictionary_entry = response[0] if response else None
-
-    if dictionary_entry:
-        print(f"For the given input {len(dictionary_entry.examples)} entries were found in the dictionary.")
-        print(
-            f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'."
-        )
-
-except HttpResponseError as exception:
-    if exception.error is not None:
-        print(f"Error Code: {exception.error.code}")
-        print(f"Message: {exception.error.message}")
-raise
-```
-
-<!-- END SNIPPET -->
-
 * [Create Client][client_sample]
 * [Translate][translate_sample]
 * [Transliterate][transliterate_sample]
@@ -874,5 +657,5 @@ raise
 [static_access_token_credential]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/tests/static_access_token_credential.py
 
 [Container]: https://learn.microsoft.com/azure/ai-services/translator/containers/overview
-[TranslatorReference]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference
+[TranslatorReference]: https://learn.microsoft.com/en-us/azure/ai-services/translator/text-translation/preview/overview
 [SovereignClouds]: https://learn.microsoft.com/azure/ai-services/translator/sovereign-clouds
