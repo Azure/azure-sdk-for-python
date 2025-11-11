@@ -89,7 +89,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         redirect_uri: str = ""
         if self._parsed_url:
             try:
-                redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
+                redirect_uri = "http://{}:{}{}".format(self._parsed_url.hostname, self._parsed_url.port, self._parsed_url.path)
                 server = self._server_class(self._parsed_url.hostname, self._parsed_url.port, timeout=self._timeout)
             except socket.error as ex:
                 raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri) from ex
