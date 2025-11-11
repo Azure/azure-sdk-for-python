@@ -2282,9 +2282,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
             deployment_name = self.test_agents_params["model_deployment_name"]
-            print(
-                "Deployment Name ------------------------------------------------------------------ :", deployment_name
-            )
 
             conversation = client.conversations.create()
 
