@@ -10117,18 +10117,16 @@ class Response(_Model):
          and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_.
         :vartype text: ~azure.ai.projects.models.ResponseText
         :ivar tools: An array of tools the model may call while generating a response. You
-         can specify which tool to use by setting the ``tool_choice`` parameter.
+         can specify which tool to use by setting the _tool_choice_ parameter.
          The two categories of tools you can provide the model are:
-         * _Built-in tools_: Tools that are provided by OpenAI that extend the
-         model's capabilities, like [web search](https://platform.openai.com/docs/guides/tools-web-search)
-         or [file search](https://platform.openai.com/docs/guides/tools-file-search). Learn more about
-         [built-in tools](https://platform.openai.com/docs/guides/tools).
-         * _Function calls (custom tools)_: Functions that are defined by you,
-         enabling the model to call your own code. Learn more about
-         [function calling](https://platform.openai.com/docs/guides/function-calling).
+
+         * Built-in tools: Tools that are provided by OpenAI that extend the
+           model's capabilities, like web search or file search.
+         * Function calls (custom tools): Functions that are defined by you,
+           enabling the model to call your own code.
         :vartype tools: list[~azure.ai.projects.models.Tool]
         :ivar tool_choice: How the model should select which tool (or tools) to use when generating
-         a response. See the ``tools`` parameter to see how to specify which tools
+         a response. See the tools parameter to see how to specify which tools
          the model can call. Is either a Union[str, "_models.ToolChoiceOptions"] type or a
          ToolChoiceObject type.
         :vartype tool_choice: str or ~azure.ai.projects.models.ToolChoiceOptions or
@@ -10241,20 +10239,20 @@ class Response(_Model):
      and `Structured Outputs <https://platform.openai.com/docs/guides/structured-outputs>`_."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of tools the model may call while generating a response. You
-     can specify which tool to use by setting the ``tool_choice`` parameter.
+     can specify which tool to use by setting the tool_choice parameter.
      The two categories of tools you can provide the model are:
-     * _Built-in tools_: Tools that are provided by OpenAI that extend the
-     model's capabilities, like [web search](https://platform.openai.com/docs/guides/tools-web-search)
-     or [file search](https://platform.openai.com/docs/guides/tools-file-search). Learn more about
-     [built-in tools](https://platform.openai.com/docs/guides/tools).
-     * _Function calls (custom tools)_: Functions that are defined by you,
-     enabling the model to call your own code. Learn more about
-     [function calling](https://platform.openai.com/docs/guides/function-calling)."""
+
+     * Built-in tools: Tools that are provided by OpenAI that extend the
+       model's capabilities, like web search or file search. Learn more about
+       built-in tools at https://platform.openai.com/docs/guides/tools.
+     * Function calls (custom tools): Functions that are defined by you,
+       enabling the model to call your own code. Learn more about
+       function calling at https://platform.openai.com/docs/guides/function-calling."""
     tool_choice: Optional[Union[str, "_models.ToolChoiceOptions", "_models.ToolChoiceObject"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """How the model should select which tool (or tools) to use when generating
-     a response. See the ``tools`` parameter to see how to specify which tools
+     a response. See the tools parameter to see how to specify which tools
      the model can call. Is either a Union[str, \"_models.ToolChoiceOptions\"] type or a
      ToolChoiceObject type."""
     prompt: Optional["_models.Prompt"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
