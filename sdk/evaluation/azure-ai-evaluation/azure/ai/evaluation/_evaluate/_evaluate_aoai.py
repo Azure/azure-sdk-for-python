@@ -217,7 +217,12 @@ def _begin_single_aoai_evaluation(
 
 
 def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, Any]) -> None:
-    if not kwargs or not kwargs.get("item_schema") or not isinstance(kwargs["item_schema"], dict) or "properties" not in kwargs["item_schema"]:
+    if (
+        not kwargs
+        or not kwargs.get("item_schema")
+        or not isinstance(kwargs["item_schema"], dict)
+        or "properties" not in kwargs["item_schema"]
+    ):
         return
 
     if "item_schema" in data_source_config:
