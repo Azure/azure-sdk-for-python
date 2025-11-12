@@ -35,12 +35,12 @@ def main():
         location="eastus",
         body={
             "name": "my-exact-filepth",
-            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
+            "subnetId": "/subscriptions/9760acf5-4638-11e7-9bdb-020073ca7778/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/CheckFilePathAvailability.json
+# x-ms-original-file: 2025-09-01/CheckFilePathAvailability.json
 if __name__ == "__main__":
     main()
