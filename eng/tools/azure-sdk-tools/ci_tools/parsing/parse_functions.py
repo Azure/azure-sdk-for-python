@@ -191,6 +191,7 @@ def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:
             if value:
                 metadata[field] = value
 
+
 def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
     """
     Given a list of subdirectories, return those that are not part of the package source and should be skipped.
@@ -199,11 +200,12 @@ def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
     :rtype: List[str]
     :return: Filtered list of subdirectory names to skip
     """
-    # Ignore any modules with name starts with "_"
-    # For e.g. _generated, _shared etc
-    # Ignore build, which is created when installing a package from source.
-    # Ignore tests, which is not part of the package.
-    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x == "tests" or x in EXCLUDE or x.endswith(".egg-info"))]
+    return [
+        x
+        for x in subdirs
+        if (x.startswith(("_", ".")) or x == "build" or x == "tests" or x in EXCLUDE or x.endswith(".egg-info"))
+    ]
+
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
     """
@@ -705,9 +707,7 @@ def get_version_py(setup_path: str) -> Optional[str]:
     # Find path to _version.py recursively
     for root, dirs, files in os.walk(file_path):
         dirs_to_skip = get_dirs_to_skip(dirs)
-        dirs[:] = [
-            d for d in dirs if d not in dirs_to_skip
-        ]
+        dirs[:] = [d for d in dirs if d not in dirs_to_skip]
 
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)
