@@ -31,7 +31,7 @@ from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from openai.types import eval_create_params
+from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
@@ -54,7 +54,7 @@ def main() -> None:
 
             client = project_client.get_openai_client()
 
-            data_source_config = eval_create_params.DataSourceConfigCustom(
+            data_source_config = DataSourceConfigCustom(
                 {
                 "type": "custom",
                 "item_schema": {
