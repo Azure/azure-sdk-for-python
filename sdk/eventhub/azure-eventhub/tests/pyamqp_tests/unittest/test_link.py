@@ -160,8 +160,7 @@ def test_max_message_size_negotiation_with_client_unlimited():
 
         expected_final_size = SERVER_MAX_MESSAGE_SIZE
         # Verifying remote_max_message_size is set correctly
-        assert link.remote_max_message_size == expected_final_size, \
-        f"Expected remote_max_message_size={expected_final_size}, got {link.remote_max_message_size}"
+        assert link.remote_max_message_size == expected_final_size, f"Expected remote_max_message_size={expected_final_size}, got {link.remote_max_message_size}"
 
 def test_receive_transfer_continuation_frame():
     session = None
