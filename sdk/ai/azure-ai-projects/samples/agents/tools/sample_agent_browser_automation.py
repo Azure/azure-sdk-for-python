@@ -93,15 +93,14 @@ with project_client:
         elif event.type == "response.output_item.done":
             item = event.item
             if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
-                call_id = getattr(item, "call_id")
-                arguments_str = getattr(item, "arguments")
+                arguments_str = getattr(item, "arguments", "{}")
 
                 # Parse the arguments string into a dictionary
-                arguments = json.loads(arguments_str) if arguments_str and isinstance(arguments_str, str) else None
-                query = arguments.get("query") if arguments and isinstance(arguments, dict) else None
+                arguments = json.loads(arguments_str)
+                query = arguments.get("query")
 
-                print(f"Call ID: {call_id if call_id is not None else 'None'}")
-                print(f"Query arguments: {query if query is not None else 'None'}")
+                print(f"Call ID: {getattr(item, 'call_id')}")
+                print(f"Query arguments: {query}")
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")

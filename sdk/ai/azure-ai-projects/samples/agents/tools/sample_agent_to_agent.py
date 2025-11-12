@@ -78,10 +78,8 @@ with project_client:
         elif event.type == "response.output_item.done":
             item = event.item
             if item.type == "remote_function_call":  # TODO: support remote_function_call schema
-                call_id = getattr(item, "call_id")
-                label = getattr(item, "label")
-                print(f"Call ID: {call_id if call_id is not None else 'None'}")
-                print(f"Label: {label if label is not None else 'None'}")
+                print(f"Call ID: {getattr(item, 'call_id')}")
+                print(f"Label: {getattr(item, 'label')}")
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
