@@ -12,7 +12,7 @@
 ### Bugs Fixed
 
 * Fixed a bug where feature flags were using the configuration refresh timer instead of the feature flag refresh timer.
-* When Loading duplicate configurations only the priority configuration will be processed.
+* When loading duplicate configurations only the priority configuration will be processed.
 
 ### Other Changes
 
