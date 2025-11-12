@@ -26,8 +26,8 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed method `ApplicationsOperations.update`
-  - Deleted or renamed method `ManagedClustersOperations.update`
+  - Renamed method `ApplicationsOperations.update` to `ApplicationsOperations.begin_update`
+  - Renamed method `ManagedClustersOperations.update` to `ManagedClustersOperations.begin_update`
 
 ## 2.1.0b4 (2025-08-14)
 
