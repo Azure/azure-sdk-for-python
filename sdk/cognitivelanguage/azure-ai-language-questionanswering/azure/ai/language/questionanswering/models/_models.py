@@ -824,7 +824,7 @@ class QueryPreferences(_Model):
     :ivar scorer: To specify what scoring algorithm is preferred. Known values are: "Classic",
      "Transformer", and "Semantic".
     :vartype scorer: str or ~azure.ai.language.questionanswering.models.Scorer
-    :ivar matching_policy: Policy for controling exact query match behavior.
+    :ivar matching_policy: Policy for controlling exact query match behavior.
     :vartype matching_policy: ~azure.ai.language.questionanswering.models.MatchingPolicy
     """
 
@@ -836,7 +836,7 @@ class QueryPreferences(_Model):
     matching_policy: Optional["_models.MatchingPolicy"] = rest_field(
         name="matchingPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Policy for controling exact query match behavior."""
+    """Policy for controlling exact query match behavior."""
 
     @overload
     def __init__(
