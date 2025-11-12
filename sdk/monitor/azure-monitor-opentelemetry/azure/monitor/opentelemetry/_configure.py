@@ -357,6 +357,7 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
     instrumentors = [
         ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
         ("azure.ai.agents.telemetry", "AIAgentsInstrumentor"),
+        ("azure.ai.projects.telemetry", "AIProjectInstrumentor"),
     ]
 
     for module_path, class_name in instrumentors:
