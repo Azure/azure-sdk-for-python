@@ -92,7 +92,7 @@ with project_client:
             print(f"\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             item = event.item
-            if item.type == "browser_automation_preview_call":  # TODO: support remote_function_call_output schema
+            if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
                 call_id = getattr(item, "call_id", None)
                 arguments_str = getattr(item, "arguments", None)
 
