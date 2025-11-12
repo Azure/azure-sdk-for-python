@@ -69,7 +69,13 @@ class generate(Check):
 
     def generate_autorest(self, folder: Path) -> None:
         readme_path = folder / "swagger" / "README.md"
-        completed_process = run(f"autorest {readme_path} --python-sdks-folder=../../", cwd=folder, shell=True, capture_output=True, text=True)
+        completed_process = run(
+            f"autorest {readme_path} --python-sdks-folder=../../",
+            cwd=folder,
+            shell=True,
+            capture_output=True,
+            text=True,
+        )
         if completed_process.returncode != 0:
             raise ValueError("Something happened with autorest: " + str(completed_process))
         logger.info("Autorest done")
