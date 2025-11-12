@@ -6,7 +6,8 @@
 import random
 import re
 import functools
-from typing import Optional
+import json
+from typing import Optional, Any, Dict
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
@@ -22,18 +23,50 @@ from azure.ai.projects.models import (
     DatasetVersion,
     DatasetType,
     DatasetCredential,
+    ItemResource,
+    ItemType,
+    ResponsesMessageRole,
+    ItemContentType,
 )
+from azure.ai.projects.models._models import AgentObject, AgentVersionObject
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
+from azure.ai.projects import AIProjectClient as AIProjectClient
+from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
+# temporary requirements for recorded_by_proxy_httpx and recorded_by_proxy_async_httpx
+import logging
+import urllib.parse as url_parse
 
+try:
+    import httpx
+except ImportError:
+    httpx = None
+
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.policies import ContentDecodePolicy
+
+from devtools_testutils import is_live_internal, is_live_and_not_recording, trim_kwargs_from_test_function
+from devtools_testutils.proxy_testcase import (
+    get_test_id,
+    start_record_or_playback,
+    stop_record_or_playback,
+    get_proxy_netloc,
+)
+
+# Load secrets from environment variables
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_tests",
-    azure_ai_projects_tests_project_endpoint="https://sanitized.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_agents_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_tracing_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_projects_tests_container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
+    azure_ai_projects_tests_container_ingress_subdomain_suffix="00000",
 )
 
 
 class TestBase(AzureRecordedTestCase):
+
     test_redteams_params = {
         # cSpell:disable-next-line
         "connection_name": "naposaniwestus3",
@@ -80,10 +113,53 @@ class TestBase(AzureRecordedTestCase):
         "connection_name": "balapvbyostoragecanary",
     }
 
+    test_files_params = {
+        "test_file_name": "test_file.jsonl",
+        "file_purpose": "fine-tune",
+    }
+
     # Regular expression describing the pattern of an Application Insights connection string.
     REGEX_APPINSIGHTS_CONNECTION_STRING = re.compile(
         r"^InstrumentationKey=[0-9a-fA-F-]{36};IngestionEndpoint=https://.+.applicationinsights.azure.com/;LiveEndpoint=https://.+.monitor.azure.com/;ApplicationId=[0-9a-fA-F-]{36}$"
     )
+
+    # helper function: create projects client using environment variables
+    def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:
+        # fetch environment variables
+        project_endpoint_env_variable = (
+            f"azure_ai_projects_tests_{operation_group}_project_endpoint"
+            if operation_group
+            else "azure_ai_projects_tests_project_endpoint"
+        )
+        endpoint = kwargs.pop(project_endpoint_env_variable)
+        credential = self.get_credential(AIProjectClient, is_async=False)
+
+        # create and return client
+        client = AIProjectClient(
+            endpoint=endpoint,
+            credential=credential,
+        )
+
+        return client
+
+    # helper function: create async projects client using environment variables
+    def create_async_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AsyncAIProjectClient:
+        # fetch environment variables
+        project_endpoint_env_variable = (
+            f"azure_ai_projects_tests_{operation_group}_project_endpoint"
+            if operation_group
+            else "azure_ai_projects_tests_project_endpoint"
+        )
+        endpoint = kwargs.pop(project_endpoint_env_variable)
+        credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+
+        # create and return async client
+        client = AsyncAIProjectClient(
+            endpoint=endpoint,
+            credential=credential,
+        )
+
+        return client
 
     @staticmethod
     def assert_equal_or_not_none(actual, expected=None):
@@ -253,3 +329,323 @@ class TestBase(AzureRecordedTestCase):
             dataset_credential.blob_reference.credential.type == "SAS"
         )  # Why is this not of type CredentialType.SAS as defined for Connections?
         assert dataset_credential.blob_reference.credential.sas_uri
+
+    @staticmethod
+    def _validate_conversation(
+        conversation: Any, *, expected_id: Optional[str] = None, expected_metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        assert conversation.id
+        assert conversation.created_at
+        if expected_id is not None:
+            assert conversation.id == expected_id
+        if expected_metadata is not None:
+            assert conversation.metadata == expected_metadata
+        print(f"Conversation validated (id: {conversation.id})")
+
+    def _validate_agent_version(
+        self, agent: AgentVersionObject, expected_name: Optional[str] = None, expected_version: Optional[str] = None
+    ) -> None:
+        assert agent is not None
+        assert isinstance(agent, AgentVersionObject)
+        assert agent.id is not None
+        if expected_name:
+            assert agent.name == expected_name
+        if expected_version:
+            assert agent.version == expected_version
+        print(f"Agent version validated (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+    def _validate_agent(
+        self, agent: AgentObject, expected_name: Optional[str] = None, expected_latest_version: Optional[str] = None
+    ) -> None:
+        assert agent is not None
+        assert isinstance(agent, AgentObject)
+        assert agent.id is not None
+        if expected_name:
+            assert agent.name == expected_name
+        if expected_latest_version:
+            assert agent.versions.latest.version == expected_latest_version
+        print(f"Agent validated (id: {agent.id}, name: {agent.name}, latest version: {agent.versions.latest.version})")
+
+    def _validate_conversation_item(
+        self,
+        item: ItemResource,
+        *,
+        expected_type: Optional[ItemType] = None,
+        expected_id: Optional[str] = None,
+        expected_role: Optional[ResponsesMessageRole] = None,
+        expected_content_type: Optional[ItemContentType] = None,
+        expected_content_text: Optional[str] = None,
+    ) -> None:
+        assert item
+
+        # From ItemResource:
+        if expected_type:
+            assert item.type == expected_type
+        else:
+            assert item.type
+        if expected_id:
+            assert item.id == expected_id
+        else:
+            assert item.id
+
+        # From ResponsesMessageItemResource:
+        if expected_type == ItemType.MESSAGE:
+            assert item.status == "completed"
+            if expected_role:
+                assert item.role == expected_role
+            else:
+                assert item.role
+
+            # From ResponsesAssistantMessageItemResource, ResponsesDeveloperMessageItemResource, ResponsesSystemMessageItemResource, ResponsesUserMessageItemResource:
+            assert len(item.content) == 1
+
+            # From ItemContent:
+            if expected_content_type:
+                assert item.content[0].type == expected_content_type
+            if expected_content_text:
+                assert item.content[0].text == expected_content_text
+        print(
+            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == ItemType.MESSAGE else 'N/A'})"
+        )
+
+    @classmethod
+    def validate_file(
+        cls,
+        file_obj,
+        *,
+        expected_file_id: Optional[str] = None,
+        expected_filename: Optional[str] = None,
+        expected_purpose: Optional[str] = None,
+    ):
+        assert file_obj is not None
+        assert file_obj.id is not None
+        assert file_obj.bytes is not None
+        assert file_obj.created_at is not None
+        assert file_obj.filename is not None
+        assert file_obj.purpose is not None
+
+        TestBase.assert_equal_or_not_none(file_obj.id, expected_file_id)
+        TestBase.assert_equal_or_not_none(file_obj.filename, expected_filename)
+        TestBase.assert_equal_or_not_none(file_obj.purpose, expected_purpose)
+
+    def _request_callback(self, pipeline_request) -> None:
+        self.pipeline_request = pipeline_request
+
+    @staticmethod
+    def _are_json_equal(json_str1: str, json_str2: str) -> bool:
+        try:
+            obj1 = json.loads(json_str1)
+            obj2 = json.loads(json_str2)
+            return obj1 == obj2
+        except json.JSONDecodeError as e:
+            print(f"Invalid JSON: {e}")
+            return False
+
+
+# The following two decorators recorded_by_proxy_httpx and recorded_by_proxy_async_httpx will be supplanted as part of #43794.
+# These are provided here temporarily to support existing tests that use httpx-based clients until they can be migrated.
+def recorded_by_proxy_httpx(test_func):
+    """Decorator that redirects httpx network requests to target the azure-sdk-tools test proxy.
+
+    Use this decorator for tests that use httpx-based clients (like OpenAI SDK) instead of Azure SDK clients.
+    It monkeypatches httpx.HTTPTransport.handle_request to route requests through the test proxy.
+
+    For more details and usage examples, refer to
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
+    """
+    if httpx is None:
+        raise ImportError("httpx is required to use recorded_by_proxy_httpx. Install it with: pip install httpx")
+
+    def record_wrap(*args, **kwargs):
+        def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
+            """Transform an httpx.Request to route through the test proxy."""
+            parsed_result = url_parse.urlparse(str(request.url))
+
+            # Store original upstream URI
+            if "x-recording-upstream-base-uri" not in request.headers:
+                request.headers["x-recording-upstream-base-uri"] = f"{parsed_result.scheme}://{parsed_result.netloc}"
+
+            # Set recording headers
+            request.headers["x-recording-id"] = recording_id
+            request.headers["x-recording-mode"] = "record" if is_live_internal() else "playback"
+
+            # Remove all request headers that start with `x-stainless`, since they contain CPU info, OS info, etc.
+            # Those change depending on which machine the tests are run on, so we cannot have a single test recording with those.
+            headers_to_remove = [key for key in request.headers.keys() if key.lower().startswith("x-stainless")]
+            for header in headers_to_remove:
+                del request.headers[header]
+
+            # Rewrite URL to proxy
+            updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
+            request.url = httpx.URL(updated_target)
+
+        def restore_httpx_response_url(response: httpx.Response) -> httpx.Response:
+            """Restore the response's request URL to the original upstream target."""
+            try:
+                parsed_resp = url_parse.urlparse(str(response.request.url))
+                upstream_uri_str = response.request.headers.get("x-recording-upstream-base-uri", "")
+                if upstream_uri_str:
+                    upstream_uri = url_parse.urlparse(upstream_uri_str)
+                    original_target = parsed_resp._replace(
+                        scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
+                    ).geturl()
+                    response.request.url = httpx.URL(original_target)
+            except Exception:
+                # Best-effort restore; don't fail the call if something goes wrong
+                pass
+            return response
+
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+
+        if is_live_and_not_recording():
+            return test_func(*args, **trimmed_kwargs)
+
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = httpx.HTTPTransport.handle_request
+
+        def combined_call(transport_self, request: httpx.Request) -> httpx.Response:
+            transform_httpx_request(request, recording_id)
+            result = original_transport_func(transport_self, request)
+            return restore_httpx_response_url(result)
+
+        httpx.HTTPTransport.handle_request = combined_call
+
+        # Call the test function
+        test_variables = None
+        test_run = False
+        try:
+            try:
+                test_variables = test_func(*args, variables=variables, **trimmed_kwargs)
+                test_run = True
+            except TypeError as error:
+                if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                    logger = logging.getLogger()
+                    logger.info(
+                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                        "`variables` parameter to make use of recorded test variables."
+                    )
+                else:
+                    raise error
+            # If the test couldn't accept `variables`, run without passing them
+            if not test_run:
+                test_variables = test_func(*args, **trimmed_kwargs)
+
+        except ResourceNotFoundError as error:
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            message = error_body.get("message") or error_body.get("Message")
+            error_with_message = ResourceNotFoundError(message=message, response=error.response)
+            raise error_with_message from error
+
+        finally:
+            httpx.HTTPTransport.handle_request = original_transport_func
+            stop_record_or_playback(test_id, recording_id, test_variables)
+
+        return test_variables
+
+    return record_wrap
+
+
+def recorded_by_proxy_async_httpx(test_func):
+    """Decorator that redirects async httpx network requests to target the azure-sdk-tools test proxy.
+
+    Use this decorator for async tests that use httpx-based clients (like OpenAI AsyncOpenAI SDK)
+    instead of Azure SDK clients. It monkeypatches httpx.AsyncHTTPTransport.handle_async_request
+    to route requests through the test proxy.
+
+    For more details and usage examples, refer to
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
+    """
+    if httpx is None:
+        raise ImportError("httpx is required to use recorded_by_proxy_async_httpx. Install it with: pip install httpx")
+
+    async def record_wrap(*args, **kwargs):
+        def transform_httpx_request(request: httpx.Request, recording_id: str) -> None:
+            """Transform an httpx.Request to route through the test proxy."""
+            parsed_result = url_parse.urlparse(str(request.url))
+
+            # Store original upstream URI
+            if "x-recording-upstream-base-uri" not in request.headers:
+                request.headers["x-recording-upstream-base-uri"] = f"{parsed_result.scheme}://{parsed_result.netloc}"
+
+            # Set recording headers
+            request.headers["x-recording-id"] = recording_id
+            request.headers["x-recording-mode"] = "record" if is_live_internal() else "playback"
+
+            # Remove all request headers that start with `x-stainless`, since they contain CPU info, OS info, etc.
+            # Those change depending on which machine the tests are run on, so we cannot have a single test recording with those.
+            headers_to_remove = [key for key in request.headers.keys() if key.lower().startswith("x-stainless")]
+            for header in headers_to_remove:
+                del request.headers[header]
+
+            # Rewrite URL to proxy
+            updated_target = parsed_result._replace(**get_proxy_netloc()).geturl()
+            request.url = httpx.URL(updated_target)
+
+        def restore_httpx_response_url(response: httpx.Response) -> httpx.Response:
+            """Restore the response's request URL to the original upstream target."""
+            try:
+                parsed_resp = url_parse.urlparse(str(response.request.url))
+                upstream_uri_str = response.request.headers.get("x-recording-upstream-base-uri", "")
+                if upstream_uri_str:
+                    upstream_uri = url_parse.urlparse(upstream_uri_str)
+                    original_target = parsed_resp._replace(
+                        scheme=upstream_uri.scheme or parsed_resp.scheme, netloc=upstream_uri.netloc
+                    ).geturl()
+                    response.request.url = httpx.URL(original_target)
+            except Exception:
+                # Best-effort restore; don't fail the call if something goes wrong
+                pass
+            return response
+
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trim_kwargs_from_test_function(test_func, trimmed_kwargs)
+
+        if is_live_and_not_recording():
+            return await test_func(*args, **trimmed_kwargs)
+
+        test_id = get_test_id()
+        recording_id, variables = start_record_or_playback(test_id)
+        original_transport_func = httpx.AsyncHTTPTransport.handle_async_request
+
+        async def combined_call(transport_self, request: httpx.Request) -> httpx.Response:
+            transform_httpx_request(request, recording_id)
+            result = await original_transport_func(transport_self, request)
+            return restore_httpx_response_url(result)
+
+        httpx.AsyncHTTPTransport.handle_async_request = combined_call
+
+        # Call the test function
+        test_variables = None
+        test_run = False
+        try:
+            try:
+                test_variables = await test_func(*args, variables=variables, **trimmed_kwargs)
+                test_run = True
+            except TypeError as error:
+                if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                    logger = logging.getLogger()
+                    logger.info(
+                        "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
+                        "`variables` parameter to make use of recorded test variables."
+                    )
+                else:
+                    raise error
+            # If the test couldn't accept `variables`, run without passing them
+            if not test_run:
+                test_variables = await test_func(*args, **trimmed_kwargs)
+
+        except ResourceNotFoundError as error:
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            message = error_body.get("message") or error_body.get("Message")
+            error_with_message = ResourceNotFoundError(message=message, response=error.response)
+            raise error_with_message from error
+
+        finally:
+            httpx.AsyncHTTPTransport.handle_async_request = original_transport_func
+            stop_record_or_playback(test_id, recording_id, test_variables)
+
+        return test_variables
+
+    return record_wrap
