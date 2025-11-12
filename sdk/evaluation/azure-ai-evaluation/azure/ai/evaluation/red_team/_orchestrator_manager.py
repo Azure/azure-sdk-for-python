@@ -74,9 +74,45 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
             ) as e:
                 prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
                 logger.warning(
-                    f"Network error{prompt_detail} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
+                    f"Retrying network error{prompt_detail} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
                 )
                 await asyncio.sleep(2)
+                raise
+            except ValueError as e:
+                # Treat missing converted prompt text as a transient transport issue so tenacity will retry.
+                if "Converted prompt text is None" in str(e):
+                    prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
+                    logger.warning(
+                        f"Endpoint produced empty converted prompt{prompt_detail} for {strategy_name}/{risk_category_name}; retrying."
+                    )
+                    await asyncio.sleep(2)
+                    raise httpx.HTTPError(
+                        "Converted prompt text is None; treating as transient endpoint failure"
+                    ) from e
+                raise
+            except Exception as e:
+                message = str(e)
+                cause = e.__cause__
+                if "Error sending prompt with conversation ID" in message and isinstance(
+                    cause,
+                    (
+                        httpx.HTTPError,
+                        httpx.ConnectTimeout,
+                        httpx.ReadTimeout,
+                        httpcore.ReadTimeout,
+                        asyncio.TimeoutError,
+                        ConnectionError,
+                        TimeoutError,
+                        OSError,
+                        ValueError,
+                    ),
+                ):
+                    prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
+                    logger.warning(
+                        f"Wrapped network error{prompt_detail} for {strategy_name}/{risk_category_name}: {message}. Retrying."
+                    )
+                    await asyncio.sleep(2)
+                    raise httpx.HTTPError(message) from cause
                 raise
 
         return wrapper
