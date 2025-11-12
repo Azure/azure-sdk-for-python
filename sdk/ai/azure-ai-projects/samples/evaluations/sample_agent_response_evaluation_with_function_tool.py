@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -28,12 +28,15 @@ USAGE:
 import json
 import os
 import time
+from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, Tool, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
@@ -117,7 +120,7 @@ with project_client:
     )
     print(f"Response output: {response.output_text} (id: {response.id})")
 
-    data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
+    data_source_config = DataS {"type": "azure_ai_source", "scenario": "responses"}
     testing_criteria = [
         {
             "type": "azure_ai_evaluator",
@@ -130,7 +133,7 @@ with project_client:
     ]
     eval_object = openai_client.evals.create(
         name="Agent Response Evaluation",
-        data_source_config=data_source_config, # type: ignore
+        data_source_config=data_source_config,
         testing_criteria=testing_criteria, # type: ignore
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
@@ -144,8 +147,8 @@ with project_client:
         },
     }
 
-    response_eval_run = openai_client.evals.runs.create(
-        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source
+    response_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
+        eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
     )
     print(f"Evaluation run created (id: {response_eval_run.id})")
 
@@ -171,10 +174,8 @@ with project_client:
         print(f"Eval Run Report URL: {response_eval_run.report_url}")
         print("\n✗ Evaluation run failed.")
 
-    # Optional cleanup: Uncomment the following lines to delete the evaluation after running the sample.
-    # This helps avoid resource clutter or unnecessary charges.
-    # openai_client.evals.delete(eval_id=eval_object.id)
-    # print("Evaluation deleted")
+    openai_client.evals.delete(eval_id=eval_object.id)
+    print("Evaluation deleted")
 
     project_client.agents.delete(agent_name=agent.name)
     print("Agent deleted")

@@ -31,6 +31,7 @@ from pprint import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from openai.types import eval_create_params
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
@@ -53,7 +54,8 @@ def main() -> None:
 
             client = project_client.get_openai_client()
 
-            data_source_config = {
+            data_source_config = eval_create_params.DataSourceConfigCustom(
+                {
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
@@ -66,7 +68,7 @@ def main() -> None:
                     "required": ["response"],
                 },
                 "include_sample_schema": True,
-            }
+            })
 
             testing_criteria = [
                 {
@@ -81,7 +83,7 @@ def main() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="Test Tool Call Success Evaluator with inline data",
-                data_source_config=data_source_config,  # type: ignore
+                data_source_config=data_source_config,
                 testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
