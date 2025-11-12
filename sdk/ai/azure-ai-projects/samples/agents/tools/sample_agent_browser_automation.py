@@ -93,12 +93,12 @@ with project_client:
         elif event.type == "response.output_item.done":
             item = event.item
             if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
-                call_id = getattr(item, "call_id", None)
-                arguments_str = getattr(item, "arguments", None)
+                call_id = getattr(item, "call_id")
+                arguments_str = getattr(item, "arguments")
 
                 # Parse the arguments string into a dictionary
                 arguments = json.loads(arguments_str) if arguments_str and isinstance(arguments_str, str) else None
-                query = arguments.get("query", None) if arguments and isinstance(arguments, dict) else None
+                query = arguments.get("query") if arguments and isinstance(arguments, dict) else None
 
                 print(f"Call ID: {call_id if call_id is not None else 'None'}")
                 print(f"Query arguments: {query if query is not None else 'None'}")
