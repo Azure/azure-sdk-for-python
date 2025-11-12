@@ -12,6 +12,7 @@ from ci_tools.logging import logger
 
 TOMLI_VERSION = "2.0.1"
 
+
 class generate(Check):
     def __init__(self) -> None:
         super().__init__()
@@ -43,16 +44,10 @@ class generate(Check):
             self.install_dev_reqs(executable, args, package_dir)
 
             try:
-                install_into_venv(
-                    executable,
-                    [
-                        f"tomli=={TOMLI_VERSION}"
-                    ],
-                    package_dir
-                )
+                install_into_venv(executable, [f"tomli=={TOMLI_VERSION}"], package_dir)
             except CalledProcessError as e:
                 logger.error(f"Failed to install tomli in the virtual environment for {package_name}: {e}")
-                results.append(1)
+                results.append(e.returncode)
                 continue
 
             try:
