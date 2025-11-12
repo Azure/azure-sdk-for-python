@@ -64,7 +64,7 @@ with project_client:
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question for Fabric (e.g., 'Tell me about sales records'): \n")
+    user_input = input("Enter your question (e.g., 'Tell me about sales records'): \n")
 
     response = openai_client.responses.create(
         tool_choice="required",

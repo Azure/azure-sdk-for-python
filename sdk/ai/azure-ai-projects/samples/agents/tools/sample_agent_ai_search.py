@@ -72,10 +72,7 @@ with project_client:
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input(
-        """Enter your question for the AI Search agent available in the index
-        (e.g., 'Tell me about the mental health services available from Premera'): \n"""
-    )
+    user_input = input("Enter your question (e.g., 'Tell me about mental health services'): \n")
 
     stream_response = openai_client.responses.create(
         stream=True,

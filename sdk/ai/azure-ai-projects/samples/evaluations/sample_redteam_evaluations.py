@@ -60,7 +60,7 @@ def main() -> None:
             print("Creating an OpenAI client from the AI Project client")
             client = project_client.get_openai_client()
 
-            agent_versions = project_client.agents.retrieve(agent_name=agent_name) # type: ignore
+            agent_versions = project_client.agents.get(agent_name=agent_name)
             agent = agent_versions.versions.latest
             agent_version = agent.version
             print(f"Retrieved agent: {agent_name}, version: {agent_version}")
