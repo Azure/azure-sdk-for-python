@@ -110,8 +110,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
     :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
      metric output.
-    :keyword bool enable_trace_based_sampling_for_logs: Boolean value to determine whether to enable trace based sampling
-     for logs. Defaults to `False`
+    :keyword bool enable_trace_based_sampling_for_logs: Boolean value to determine whether to enable trace based 
+     sampling for logs. Defaults to `False`
     :rtype: None
     """
 
@@ -206,7 +206,6 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     try:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
         from azure.monitor.opentelemetry.exporter.export.logs import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
