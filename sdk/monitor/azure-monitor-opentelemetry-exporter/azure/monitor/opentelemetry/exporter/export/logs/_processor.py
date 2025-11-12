@@ -20,7 +20,7 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
 
         :param exporter: The LogRecordExporter to use for exporting logs.
         :param options: Optional configuration dictionary. Supported options:
-                        - enableTraceBasedSamplingForLogs (bool): Enable trace-based sampling for logs.
+                        - enable_trace_based_sampling(bool): Enable trace-based sampling for logs.
         """
         super().__init__(log_exporter)
         self._options = options or {}
