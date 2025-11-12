@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.trafficmanager import TrafficManagerManagementClient
 
 """
@@ -63,6 +65,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/stable/2022-04-01/examples/Profile-PUT-WithEndpoints.json
+# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/TrafficManager/stable/2022-04-01/examples/Profile-PUT-WithEndpoints.json
 if __name__ == "__main__":
     main()

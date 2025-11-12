@@ -1,5 +1,16 @@
 # Release History
 
+## 2.0.0 (2025-11-12)
+
+### Features Added
+
+  - Model `TrafficManagerManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ProfileListResult` added property `next_link`
+
+### Breaking Changes
+
+  - Method `ProfileListResult.__init__` removed default value `None` from its parameter `value`
+
 ## 1.1.0 (2023-06-16)
 
 ### Features Added

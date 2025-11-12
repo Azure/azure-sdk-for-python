@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,16 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
-class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(_serialization.Model):
+class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Parameters supplied to check Traffic Manager name operation.
 
     :ivar name: The name of the resource.
@@ -69,7 +68,7 @@ class CloudErrorBody(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -109,7 +108,7 @@ class DeleteOperationResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.operation_result = None
+        self.operation_result: Optional[bool] = None
 
 
 class DnsConfig(_serialization.Model):
@@ -152,7 +151,7 @@ class DnsConfig(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.relative_name = relative_name
-        self.fqdn = None
+        self.fqdn: Optional[str] = None
         self.ttl = ttl
 
 
@@ -210,33 +209,8 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Fully qualified resource Id for the resource. Ex -
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}.
-        :paramtype id: str
-        :keyword name: The name of the resource.
-        :paramtype name: str
-        :keyword type: The type of the resource. Ex- Microsoft.Network/trafficManagerProfiles.
-        :paramtype type: str
-        """
-        super().__init__(id=id, name=name, type=type, **kwargs)
-
-
-class Endpoint(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Endpoint(ProxyResource):
     """Class representing a Traffic Manager endpoint.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -336,9 +310,9 @@ class Endpoint(ProxyResource):  # pylint: disable=too-many-instance-attributes
         min_child_endpoints: Optional[int] = None,
         min_child_endpoints_i_pv4: Optional[int] = None,
         min_child_endpoints_i_pv6: Optional[int] = None,
-        geo_mapping: Optional[List[str]] = None,
-        subnets: Optional[List["_models.EndpointPropertiesSubnetsItem"]] = None,
-        custom_headers: Optional[List["_models.EndpointPropertiesCustomHeadersItem"]] = None,
+        geo_mapping: Optional[list[str]] = None,
+        subnets: Optional[list["_models.EndpointPropertiesSubnetsItem"]] = None,
+        custom_headers: Optional[list["_models.EndpointPropertiesCustomHeadersItem"]] = None,
         always_serve: Optional[Union[str, "_models.AlwaysServe"]] = None,
         **kwargs: Any
     ) -> None:
@@ -544,8 +518,8 @@ class HeatMapModel(ProxyResource):
         type: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        endpoints: Optional[List["_models.HeatMapEndpoint"]] = None,
-        traffic_flows: Optional[List["_models.TrafficFlow"]] = None,
+        endpoints: Optional[list["_models.HeatMapEndpoint"]] = None,
+        traffic_flows: Optional[list["_models.TrafficFlow"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -628,8 +602,8 @@ class MonitorConfig(_serialization.Model):
         interval_in_seconds: Optional[int] = None,
         timeout_in_seconds: Optional[int] = None,
         tolerated_number_of_failures: Optional[int] = None,
-        custom_headers: Optional[List["_models.MonitorConfigCustomHeadersItem"]] = None,
-        expected_status_code_ranges: Optional[List["_models.MonitorConfigExpectedStatusCodeRangesItem"]] = None,
+        custom_headers: Optional[list["_models.MonitorConfigCustomHeadersItem"]] = None,
+        expected_status_code_ranges: Optional[list["_models.MonitorConfigExpectedStatusCodeRangesItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -700,7 +674,7 @@ class MonitorConfigCustomHeadersItem(_serialization.Model):
         self.value = value
 
 
-class MonitorConfigExpectedStatusCodeRangesItem(_serialization.Model):
+class MonitorConfigExpectedStatusCodeRangesItem(_serialization.Model):  # pylint: disable=name-too-long
     """Min and max value of a status code range.
 
     :ivar min: Min status code.
@@ -762,7 +736,7 @@ class TrackedResource(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -784,7 +758,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Profile(TrackedResource):
     """Class representing a Traffic Manager profile.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
@@ -844,15 +818,15 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
         profile_status: Optional[Union[str, "_models.ProfileStatus"]] = None,
         traffic_routing_method: Optional[Union[str, "_models.TrafficRoutingMethod"]] = None,
         dns_config: Optional["_models.DnsConfig"] = None,
         monitor_config: Optional["_models.MonitorConfig"] = None,
-        endpoints: Optional[List["_models.Endpoint"]] = None,
+        endpoints: Optional[list["_models.Endpoint"]] = None,
         traffic_view_enrollment_status: Optional[Union[str, "_models.TrafficViewEnrollmentStatus"]] = None,
-        allowed_endpoint_record_types: Optional[List[Union[str, "_models.AllowedEndpointRecordType"]]] = None,
+        allowed_endpoint_record_types: Optional[list[Union[str, "_models.AllowedEndpointRecordType"]]] = None,
         max_return: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -906,29 +880,41 @@ class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
 
 class ProfileListResult(_serialization.Model):
-    """The list Traffic Manager profiles operation response.
+    """The response of a Profile list operation.
 
-    :ivar value: Gets the list of Traffic manager profiles.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Profile items on this page. Required.
     :vartype value: list[~azure.mgmt.trafficmanager.models.Profile]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Profile]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Profile"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Profile"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: Gets the list of Traffic manager profiles.
+        :keyword value: The Profile items on this page. Required.
         :paramtype value: list[~azure.mgmt.trafficmanager.models.Profile]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class QueryExperience(_serialization.Model):
     """Class representing a Traffic Manager HeatMap query experience properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar endpoint_id: The id of the endpoint from the 'endpoints' array which these queries were
      routed to. Required.
@@ -989,7 +975,7 @@ class Region(_serialization.Model):
         *,
         code: Optional[str] = None,
         name: Optional[str] = None,
-        regions: Optional[List["_models.Region"]] = None,
+        regions: Optional[list["_models.Region"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1032,7 +1018,7 @@ class TrafficFlow(_serialization.Model):
         source_ip: Optional[str] = None,
         latitude: Optional[float] = None,
         longitude: Optional[float] = None,
-        query_experiences: Optional[List["_models.QueryExperience"]] = None,
+        query_experiences: Optional[list["_models.QueryExperience"]] = None,
         **kwargs: Any
     ) -> None:
         """

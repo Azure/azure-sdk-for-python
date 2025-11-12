@@ -1,0 +1,11 @@
+{
+  "commit": "7af251884c18b83370aec1a86f4ce823dd3bc091",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.42.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/trafficmanager/resource-manager/Microsoft.Network/TrafficManager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=D:\\spec-config\\azure-sdk-for-python\\sdk --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/trafficmanager/resource-manager/Microsoft.Network/TrafficManager/readme.md"
+}
