@@ -7,7 +7,7 @@ import json
 import os
 import traceback
 from abc import abstractmethod
-from typing import Any, AsyncGenerator, Generator, Union
+from typing import Any, AsyncGenerator, Generator, Optional, Union
 
 import uvicorn
 from opentelemetry import context as otel_context, trace
@@ -28,6 +28,9 @@ from ..models import (
 )
 from .common.agent_run_context import AgentRunContext
 
+from ..client.tools.aio._client import AzureAIToolClient
+from ..client.tools._utils._model_base import ToolDefinition, UserInfo
+
 logger = get_logger()
 DEBUG_ERRORS = os.environ.get(Constants.AGENT_DEBUG_ERRORS, "false").lower() == "true"
 
@@ -37,15 +40,17 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
 
     async def dispatch(self, request: Request, call_next):
+        user_info = {}
         if request.url.path in ("/runs", "/responses"):
             try:
+                user_info = self.set_user_info_to_context_var(request)
                 self.set_request_id_to_context_var(request)
                 payload = await request.json()
             except Exception as e:
                 logger.error(f"Invalid JSON payload: {e}")
                 return JSONResponse({"error": f"Invalid JSON payload: {e}"}, status_code=400)
             try:
-                request.state.agent_run_context = AgentRunContext(payload)
+                request.state.agent_run_context = AgentRunContext(payload, user_info)
                 self.set_run_context_to_context_var(request.state.agent_run_context)
             except Exception as e:
                 logger.error(f"Context build failed: {e}.", exc_info=True)
@@ -80,9 +85,34 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
         ctx.update(res)
         request_context.set(ctx)
 
+    def set_user_info_to_context_var(self, request):
+        user_info = {}
+        try:
+            object_id_header = request.headers.get("x-aml-oid", None)
+            tenant_id_header = request.headers.get("x-aml-tenant-id", None)
+            app_id_header = request.headers.get("x-aml-appid", None)
+            aml_idtyp = request.headers.get("x-aml-idtyp", None)
+            user_info = {
+                "object_id": object_id_header,
+                "tenant_id": tenant_id_header,
+                "app_id": app_id_header,
+                "id_type": aml_idtyp,
+            }
+            if user_info:
+                user_info = json.loads(user_info)
+        except Exception as e:
+            logger.error(f"Failed to parse X-User-Info header: {e}", exc_info=True)
+        if user_info:
+            ctx = request_context.get() or {}
+            for key, value in user_info.items():
+                ctx[f"azure.ai.agentserver.user.{key}"] = str(value)
+            request_context.set(ctx)
+        return user_info
+
 
 class FoundryCBAgent:
-    def __init__(self):
+    def __init__(self, credentials):
+        self.credentials = credentials
         async def runs_endpoint(request):
             # Set up tracing context and span
             context = request.state.agent_run_context
@@ -303,7 +333,17 @@ class FoundryCBAgent:
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
 
+    def get_tool_client(self, tools: Optional[list[ToolDefinition]], user_info: Optional[UserInfo]) -> AzureAIToolClient:
+        if not self.credentials:
+            raise ValueError("Credentials are required to create Tool Client.")
+        return AzureAIToolClient(
+            endpoint=os.getenv("AZURE_AI_TOOLS_ENDPOINT"),
+            credential=self.credentials,
+            tools = tools,
+            user = user_info,
+        )
 
+    
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
     event_data = json.dumps(event.as_dict())
     if event.type:

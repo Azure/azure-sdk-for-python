@@ -5,7 +5,7 @@
 # mypy: disable-error-code="assignment,arg-type"
 import os
 import re
-from typing import Optional
+from typing import TYPE_CHECKING, Awaitable, Protocol, Union
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph
@@ -20,8 +20,31 @@ from .models import (
     LanggraphStateConverter,
 )
 from .models.utils import is_state_schema_valid
+from .tool_client import ToolClient
 
+if TYPE_CHECKING:
+    from typing import Optional
+    from azure.core.credentials_async import AsyncTokenCredential
+    
 logger = get_logger()
+
+
+class GraphFactory(Protocol):
+    """Protocol for graph factory functions.
+    
+    A graph factory is a callable that takes a ToolClient and returns
+    a CompiledStateGraph, either synchronously or asynchronously.
+    """
+    
+    def __call__(self, tool_client: ToolClient) -> Union[CompiledStateGraph, Awaitable[CompiledStateGraph]]:
+        """Create a CompiledStateGraph using the provided ToolClient.
+        
+        :param tool_client: The ToolClient instance with access to Azure AI tools.
+        :type tool_client: ToolClient
+        :return: A compiled LangGraph state graph, or an awaitable that resolves to one.
+        :rtype: Union[CompiledStateGraph, Awaitable[CompiledStateGraph]]
+        """
+        ...
 
 
 class LangGraphAdapter(FoundryCBAgent):
@@ -29,33 +52,91 @@ class LangGraphAdapter(FoundryCBAgent):
     Adapter for LangGraph Agent.
     """
 
-    def __init__(self, graph: CompiledStateGraph, state_converter: Optional[LanggraphStateConverter] = None):
+    def __init__(self, graph: Union[CompiledStateGraph, GraphFactory], credentials: "Optional[AsyncTokenCredential]" = None, state_converter: "Optional[LanggraphStateConverter]" = None):
         """
-        Initialize the LangGraphAdapter with a CompiledStateGraph.
+        Initialize the LangGraphAdapter with a CompiledStateGraph or a function that returns one.
 
-        :param graph: The LangGraph StateGraph to adapt.
-        :type graph: CompiledStateGraph
+        :param graph: The LangGraph StateGraph to adapt, or a callable that takes ToolClient and returns CompiledStateGraph (sync or async).
+        :type graph: Union[CompiledStateGraph, GraphFactory]
+        :param credentials: Azure credentials for authentication.
+        :type credentials: Optional[AsyncTokenCredential]
         :param state_converter: custom state converter. Required if graph state is not MessagesState.
         :type state_converter: Optional[LanggraphStateConverter]
         """
-        super().__init__()
-        self.graph = graph
+        super().__init__(credentials=credentials)
+        self._graph_or_factory: Union[CompiledStateGraph, GraphFactory] = graph
+        self._resolved_graph: "Optional[CompiledStateGraph]" = None
         self.azure_ai_tracer = None
-        if not state_converter:
-            if is_state_schema_valid(self.graph.builder.state_schema):
-                self.state_converter = LanggraphMessageStateConverter()
+        
+        # If graph is already compiled, validate and set up state converter
+        if isinstance(graph, CompiledStateGraph):
+            self._resolved_graph = graph
+            if not state_converter:
+                if is_state_schema_valid(self._resolved_graph.builder.state_schema):
+                    self.state_converter = LanggraphMessageStateConverter()
+                else:
+                    raise ValueError("state_converter is required for non-MessagesState graph.")
             else:
-                raise ValueError("state_converter is required for non-MessagesState graph.")
+                self.state_converter = state_converter
         else:
+            # Defer validation until graph is resolved
             self.state_converter = state_converter
 
+    @property
+    def graph(self) -> "Optional[CompiledStateGraph]":
+        """
+        Get the resolved graph. This property provides backward compatibility.
+        
+        :return: The resolved CompiledStateGraph if available, None otherwise.
+        :rtype: Optional[CompiledStateGraph]
+        """
+        return self._resolved_graph
+
     async def agent_run(self, context: AgentRunContext):
+        # Resolve graph if it's a factory function
+        if self._resolved_graph is None:
+            await self._resolve_graph(context)
+        
         input_data = self.state_converter.request_to_state(context)
         logger.debug(f"Converted input data: {input_data}")
         if not context.stream:
             response = await self.agent_run_non_stream(input_data, context)
             return response
         return self.agent_run_astream(input_data, context)
+
+    async def _resolve_graph(self, context: AgentRunContext):
+        """
+        Resolve the graph if it's a factory function.
+        Creates a ToolClient and calls the factory function with it.
+        """
+        if callable(self._graph_or_factory):
+            logger.debug("Resolving graph from factory function")
+            
+            
+            # Create ToolClient with credentials
+            tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
+            tool_client_wrapper = ToolClient(tool_client)
+            
+            # Call the factory function with ToolClient
+            # Support both sync and async factories
+            import inspect
+            result = self._graph_or_factory(tool_client_wrapper)
+            if inspect.iscoroutine(result):
+                self._resolved_graph = await result
+            else:
+                self._resolved_graph = result
+            
+            # Now validate and set up state converter if not already set
+            if not self.state_converter:
+                if is_state_schema_valid(self._resolved_graph.builder.state_schema):
+                    self.state_converter = LanggraphMessageStateConverter()
+                else:
+                    raise ValueError("state_converter is required for non-MessagesState graph.")
+            
+            logger.debug("Graph resolved successfully")
+        else:
+            # Should not reach here, but just in case
+            self._resolved_graph = self._graph_or_factory
 
     def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
         # set env vars for langsmith
@@ -101,7 +182,7 @@ class LangGraphAdapter(FoundryCBAgent):
         try:
             config = self.create_runnable_config(context)
             stream_mode = self.state_converter.get_stream_mode(context)
-            result = await self.graph.ainvoke(input_data, config=config, stream_mode=stream_mode)
+            result = await self._resolved_graph.ainvoke(input_data, config=config, stream_mode=stream_mode)
             output = self.state_converter.state_to_response(result, context)
             return output
         except Exception as e:
@@ -124,7 +205,7 @@ class LangGraphAdapter(FoundryCBAgent):
             logger.info(f"Starting streaming agent run {context.response_id}")
             config = self.create_runnable_config(context)
             stream_mode = self.state_converter.get_stream_mode(context)
-            stream = self.graph.astream(input=input_data, config=config, stream_mode=stream_mode)
+            stream = self._resolved_graph.astream(input=input_data, config=config, stream_mode=stream_mode)
             async for result in self.state_converter.state_to_response_stream(stream, context):
                 yield result
         except Exception as e:

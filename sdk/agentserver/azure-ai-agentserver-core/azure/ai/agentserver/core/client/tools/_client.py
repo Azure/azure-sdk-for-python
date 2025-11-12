@@ -12,7 +12,7 @@ from azure.core.credentials import TokenCredential
 from ._configuration import AzureAIToolClientConfiguration
 from .operations._operations import MCPToolsOperations, RemoteToolsOperations
 from ._utils._model_base import InvocationPayloadBuilder
-from ._model_base import ToolDescriptor, ToolSource
+from ._model_base import FoundryTool, ToolSource
 	
 class AzureAITool:
 	"""Azure AI tool wrapper for invocation.
@@ -37,13 +37,13 @@ class AzureAITool:
 			:caption: Using an AzureAITool instance.
 	"""
 
-	def __init__(self, client: "AzureAIToolClient", descriptor: ToolDescriptor) -> None:
+	def __init__(self, client: "AzureAIToolClient", descriptor: FoundryTool) -> None:
 		"""Initialize an Azure AI Tool.
 		
 		:param client: Parent client instance for making API calls.
 		:type client: AzureAIToolClient
 		:param descriptor: Tool descriptor containing metadata and configuration.
-		:type descriptor: ~Tool_Client.models.ToolDescriptor
+		:type descriptor: ~Tool_Client.models.FoundryTool
 		"""
 		self._client = client
 		self._descriptor = descriptor
@@ -136,17 +136,16 @@ class AzureAIToolClient:
 		self._mcp_tools = MCPToolsOperations(client=self._client, config=self._config)
 		self._remote_tools = RemoteToolsOperations(client=self._client, config=self._config)
 	
-	def list_tools(self) -> List[AzureAITool]:
+	def list_tools(self) -> List[FoundryTool]:
 		"""List all available tools from configured sources.
 		
 		Retrieves tools from both MCP servers and Azure AI Tools API endpoints,
-		returning them as AzureAITool instances ready for invocation.
-
+		returning them as FoundryTool instances ready for invocation.
 		:return: List of available tools from all configured sources.
 		:rtype: List[~AzureAITool]
-		:raises ~Tool_Client.exceptions.OAuthConsentRequiredError:
+		:raises ~exceptions.OAuthConsentRequiredError:
 			Raised when the service requires user OAuth consent.
-		:raises ~Tool_Client.exceptions.MCPToolApprovalRequiredError:
+		:raises ~exceptions.MCPToolApprovalRequiredError:
 			Raised when tool access requires human approval.
 		:raises ~azure.core.exceptions.HttpResponseError:
 			Raised for HTTP communication failures.
@@ -155,29 +154,31 @@ class AzureAIToolClient:
 
 		existing_names: set[str] = set()
 
-		descriptors: List[ToolDescriptor] = []
+		tools: List[FoundryTool] = []
 
 		# Fetch MCP tools
-		mcp_descriptors = self._mcp_tools.list_tools(existing_names)
-		descriptors.extend(mcp_descriptors)
+		mcp_tools = self._mcp_tools.list_tools(existing_names)
+		tools.extend(mcp_tools)
 
 		# Fetch Tools API tools
-		tools_api_descriptors = self._remote_tools.resolve_tools(existing_names)
-		descriptors.extend(tools_api_descriptors)
+		tools_api_tools = self._remote_tools.resolve_tools(existing_names)
+		tools.extend(tools_api_tools)
 
-		return [AzureAITool(self, descriptor) for descriptor in descriptors]
+		for tool in tools:
+			tool.invoker = lambda tool=tool, *args,  **kwargs: self.invoke_tool(tool, *args, **kwargs)
+		return tools
 	
 	def invoke_tool(
 		self,
-		tool: Union[AzureAITool, str, ToolDescriptor],
+		tool: Union[str, FoundryTool],
 		*args: Any,
 		**kwargs: Any,
 	) -> Any:
 		"""Invoke a tool by instance, name, or descriptor.
 		
 		:param tool: Tool to invoke, specified as an AzureAITool instance,
-			tool name string, or ToolDescriptor.
-		:type tool: Union[~AzureAITool, str, ~Tool_Client.models.ToolDescriptor]
+			tool name string, or FoundryTool.
+		:type tool: Union[str, ~FoundryTool]
 		:param args: Positional arguments to pass to the tool
 		"""
 		descriptor = self._resolve_tool_descriptor(tool)
@@ -185,12 +186,12 @@ class AzureAIToolClient:
 		return self._invoke_tool(descriptor, payload, **kwargs)
 	
 	def _resolve_tool_descriptor(
-		self, tool: Union[AzureAITool, str, ToolDescriptor]
-	) -> ToolDescriptor:
+		self, tool: Union[AzureAITool, str, FoundryTool]
+	) -> FoundryTool:
 		"""Resolve a tool reference to a descriptor."""
 		if isinstance(tool, AzureAITool):
 			return tool._descriptor
-		if isinstance(tool, ToolDescriptor):
+		if isinstance(tool, FoundryTool):
 			return tool
 		if isinstance(tool, str):
 			# Fetch all tools and find matching descriptor
@@ -199,9 +200,9 @@ class AzureAIToolClient:
 				if descriptor.name == tool or descriptor.key == tool:
 					return descriptor
 			raise KeyError(f"Unknown tool: {tool}")
-		raise TypeError("Tool must be an AzureAITool, ToolDescriptor, or registered name/key")
+		raise TypeError("Tool must be an AzureAITool, FoundryTool, or registered name/key")
 	
-	def _invoke_tool(self, descriptor: ToolDescriptor, arguments: Mapping[str, Any], **kwargs: Any) -> Any:
+	def _invoke_tool(self, descriptor: FoundryTool, arguments: Mapping[str, Any], **kwargs: Any) -> Any:
 		"""Invoke a tool descriptor."""
 		if descriptor.source is ToolSource.MCP_TOOLS:
 			return self._mcp_tools.invoke_tool(descriptor, arguments)

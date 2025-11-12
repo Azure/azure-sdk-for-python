@@ -7,7 +7,7 @@ import logging
 from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Tuple, Union
 from azure.core import PipelineClient
 from .._configuration import AzureAIToolClientConfiguration
-from .._model_base import ToolDescriptor, ToolSource, UserInfo
+from .._model_base import FoundryTool, ToolSource, UserInfo
 
 from .._utils._model_base import ToolsResponse, ToolDescriptorBuilder, ToolConfigurationParser, ResolveToolsRequest
 from .._utils._model_base import to_remote_server, MCPToolsListResponse, MetadataMapper
@@ -118,7 +118,7 @@ def process_list_tools_response(
 	response: HttpResponse,
 	named_mcp_tools: Any,
 	existing_names: set
-) -> List[ToolDescriptor]:
+) -> List[FoundryTool]:
 	"""Process list_tools response and build descriptors.
 	
 	:param response: HTTP response with MCP tools
@@ -138,7 +138,7 @@ def process_resolve_tools_response(
 	response: HttpResponse,
 	remote_tools: Any,
 	existing_names: set
-) -> List[ToolDescriptor]:
+) -> List[FoundryTool]:
 	"""Process resolve_tools response and build descriptors.
 	
 	:param response: HTTP response with remote tools
@@ -175,7 +175,7 @@ def build_list_tools_request(
 
 def build_invoke_mcp_tool_request(
 	api_version: str,
-	tool: ToolDescriptor,
+	tool: FoundryTool,
 	arguments: Mapping[str, Any],
 	**kwargs: Any
 ) -> Tuple[HttpRequest, MutableMapping]:
@@ -229,7 +229,7 @@ def build_resolve_tools_request(
 def build_invoke_remote_tool_request(
 	agent_name: str,
 	api_version: str,
-	tool: ToolDescriptor,
+	tool: FoundryTool,
 	user: UserInfo,
 	arguments: Mapping[str, Any]
 ) -> Tuple[HttpRequest, MutableMapping]:
@@ -289,11 +289,11 @@ class MCPToolsOperations:
 		self._endpoint_path = MCP_ENDPOINT_PATH
 		self._api_version = API_VERSION
 		
-	def list_tools(self, existing_names: set, **kwargs: Any) -> List[ToolDescriptor]:
+	def list_tools(self, existing_names: set, **kwargs: Any) -> List[FoundryTool]:
 		"""List MCP tools.
 
 		:return: List of tool descriptors from MCP server.
-		:rtype: List[ToolDescriptor]
+		:rtype: List[FoundryTool]
 		"""
 		_request, error_map, remaining_kwargs = build_list_tools_request(self._api_version, kwargs)
 		response = format_and_execute_request(self._client, _request, self._config.endpoint, **remaining_kwargs)
@@ -302,14 +302,14 @@ class MCPToolsOperations:
 	
 	def invoke_tool(
 		self,
-		tool: ToolDescriptor,
+		tool: FoundryTool,
 		arguments: Mapping[str, Any],
 		**kwargs: Any
 	) -> Any:
 		"""Invoke an MCP tool.
 
-		:param tool: Tool descriptor to invoke.
-		:type tool: ToolDescriptor
+		:param tool: Tool descriptor for the tool to invoke.
+		:type tool: FoundryTool
 		:param arguments: Input arguments for the tool.
 		:type arguments: Mapping[str, Any]
 		:return: Result of the tool invocation.
@@ -352,7 +352,7 @@ def build_mcptools_list_tools_request(
 		_url = f"/mcp_tools"
 		return HttpRequest(method="POST", url=_url, headers=_headers, params=_params, **kwargs)
 
-def prepare_mcptools_invoke_tool_request_content(tool: ToolDescriptor, arguments: Mapping[str, Any], tool_overrides: Dict[str, Dict[str, str]]) -> Any:
+def prepare_mcptools_invoke_tool_request_content(tool: FoundryTool, arguments: Mapping[str, Any], tool_overrides: Dict[str, Dict[str, str]]) -> Any:
 
 	params = {
 			"name": tool.name,
@@ -424,11 +424,11 @@ class RemoteToolsOperations:
 		self.agent = self._config.agent_name.strip() if self._config.agent_name and self._config.agent_name.strip() else "$default"
 		self._api_version = API_VERSION
 
-	def resolve_tools(self, existing_names: set, **kwargs: Any) -> List[ToolDescriptor]:
+	def resolve_tools(self, existing_names: set, **kwargs: Any) -> List[FoundryTool]:
 		"""Resolve remote tools from Azure AI Tools API.
 
 		:return: List of tool descriptors from Tools API.
-		:rtype: List[ToolDescriptor]
+		:rtype: List[FoundryTool]
 		"""
 		result = build_resolve_tools_request(self.agent, self._api_version, self._config.tool_config, self._config.user, kwargs)
 		if result[0] is None:
@@ -441,13 +441,13 @@ class RemoteToolsOperations:
 	
 	def invoke_tool(
 		self,
-		tool: ToolDescriptor,
+		tool: FoundryTool,
 		arguments: Mapping[str, Any],
 	) -> Any:
 		"""Invoke a remote tool.
 
 		:param tool: Tool descriptor to invoke.
-		:type tool: ToolDescriptor
+		:type tool: FoundryTool
 		:param arguments: Input arguments for the tool.
 		:type arguments: Mapping[str, Any]
 		:return: Result of the tool invocation.
@@ -458,7 +458,7 @@ class RemoteToolsOperations:
 		handle_response_error(response, error_map)
 		return process_invoke_remote_tool_response(response)
 	
-def prepare_remotetools_invoke_tool_request_content(tool: ToolDescriptor,  user: UserInfo, arguments: Mapping[str, Any]) -> Any:
+def prepare_remotetools_invoke_tool_request_content(tool: FoundryTool,  user: UserInfo, arguments: Mapping[str, Any]) -> Any:
 	payload = {
 			"toolName": tool.name,
 			"arguments": dict(arguments),

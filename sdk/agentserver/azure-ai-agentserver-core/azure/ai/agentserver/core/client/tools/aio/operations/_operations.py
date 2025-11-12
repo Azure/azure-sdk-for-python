@@ -33,7 +33,7 @@ from ...operations._operations import (
 	build_invoke_remote_tool_request,
 	process_invoke_remote_tool_response,
 )
-from ..._model_base import ToolDescriptor, ToolSource, UserInfo
+from ..._model_base import FoundryTool, ToolSource, UserInfo
 
 from ..._utils._model_base import ToolsResponse, ToolDescriptorBuilder, ToolConfigurationParser, ResolveToolsRequest
 from ..._utils._model_base import to_remote_server, MCPToolsListResponse, MetadataMapper
@@ -72,11 +72,11 @@ class MCPToolsOperations:
 		self._endpoint_path = MCP_ENDPOINT_PATH
 		self._api_version = API_VERSION
 		
-	async def list_tools(self, existing_names: set, **kwargs: Any) -> List[ToolDescriptor]:
+	async def list_tools(self, existing_names: set, **kwargs: Any) -> List[FoundryTool]:
 		"""List MCP tools.
 
 		:return: List of tool descriptors from MCP server.
-		:rtype: List[ToolDescriptor]
+		:rtype: List[FoundryTool]
 		"""
 		_request, error_map, remaining_kwargs = build_list_tools_request(self._api_version, kwargs)
 		
@@ -91,14 +91,14 @@ class MCPToolsOperations:
 	
 	async def invoke_tool(
 		self,
-		tool: ToolDescriptor,
+		tool: FoundryTool,
 		arguments: Mapping[str, Any],
 		**kwargs: Any
 	) -> Any:
 		"""Invoke an MCP tool.
 
-		:param tool: Tool descriptor to invoke.
-		:type tool: ToolDescriptor
+		:param tool: Tool descriptor for the tool to invoke.
+		:type tool: FoundryTool
 		:param arguments: Input arguments for the tool.
 		:type arguments: Mapping[str, Any]
 		:return: Result of the tool invocation.
@@ -137,11 +137,11 @@ class RemoteToolsOperations:
 		self.agent = self._config.agent_name.strip() if self._config.agent_name and self._config.agent_name.strip() else "$default"
 		self._api_version = API_VERSION
 
-	async def resolve_tools(self, existing_names: set, **kwargs: Any) -> List[ToolDescriptor]:
+	async def resolve_tools(self, existing_names: set, **kwargs: Any) -> List[FoundryTool]:
 		"""Resolve remote tools from Azure AI Tools API.
 
 		:return: List of tool descriptors from Tools API.
-		:rtype: List[ToolDescriptor]
+		:rtype: List[FoundryTool]
 		"""
 		result = build_resolve_tools_request(self.agent, self._api_version, self._config.tool_config, self._config.user, kwargs)
 		if result[0] is None:
@@ -160,13 +160,13 @@ class RemoteToolsOperations:
 	
 	async def invoke_tool(
 		self,
-		tool: ToolDescriptor,
+		tool: FoundryTool,
 		arguments: Mapping[str, Any],
 	) -> Any:
 		"""Invoke a remote tool.
 
 		:param tool: Tool descriptor to invoke.
-		:type tool: ToolDescriptor
+		:type tool: FoundryTool
 		:param arguments: Input arguments for the tool.
 		:type arguments: Mapping[str, Any]
 		:return: Result of the tool invocation.

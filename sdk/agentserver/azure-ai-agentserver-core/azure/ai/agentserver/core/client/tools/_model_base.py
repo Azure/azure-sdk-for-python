@@ -5,8 +5,10 @@
 from enum import Enum
 import json
 
-from typing import Any, List, Mapping, Optional
+from typing import Any, Awaitable, Callable, List, Mapping, Optional
 from dataclasses import dataclass
+import asyncio
+import inspect
 
 class ToolSource(str, Enum):
 	"""Identifies the origin of a tool.
@@ -45,7 +47,7 @@ class ToolDefinition:
 	
 
 @dataclass
-class ToolDescriptor:
+class FoundryTool:
 	"""Lightweight description of a tool that can be invoked.
 	
 	Represents metadata and configuration for a single tool, including its
@@ -54,13 +56,13 @@ class ToolDescriptor:
 	:ivar str key: Unique identifier for this tool.
 	:ivar str name: Display name of the tool.
 	:ivar str description: Human-readable description of what the tool does.
-	:ivar ~Tool_Client.models.ToolSource source:
+	:ivar ~ToolSource source:
 		Origin of the tool (MCP_TOOLS or REMOTE_TOOLS).
 	:ivar dict metadata: Raw metadata from the API response.
 	:ivar dict input_schema:
 		JSON schema describing the tool's input parameters, or None.
-	:ivar Any tool_config:
-		Optional tool configuration object, or None.
+	:ivar ToolDefinition tool_definition:
+		Optional tool definition object, or None.
 	"""
 
 	key: str
@@ -69,7 +71,30 @@ class ToolDescriptor:
 	source: ToolSource
 	metadata: Mapping[str, Any]
 	input_schema: Optional[Mapping[str, Any]] = None
-	tool_definition: ToolDefinition = None
+	tool_definition: Optional[ToolDefinition] = None
+	invoker: Optional[Callable[..., Awaitable[Any]]] = None
+
+	async def invoke(self, *args: Any, **kwargs: Any) -> Any:
+		"""Invoke the tool asynchronously.
+
+		:param args: Positional arguments to pass to the tool.
+		:param kwargs: Keyword arguments to pass to the tool.
+		:return: The result from the tool invocation.
+		:rtype: Any
+		"""
+		if not self.invoker:
+			raise NotImplementedError("No invoker function defined for this tool.")
+		if inspect.iscoroutinefunction(self.invoker):
+			return await self.invoker(*args, **kwargs)
+		else:
+			result = self.invoker(*args, **kwargs)
+			# If the result is awaitable (e.g., a coroutine), await it
+			if inspect.iscoroutine(result) or hasattr(result, '__await__'):
+				return await result
+			return result
+	
+	async def __call__(self, *args: Any, **kwargs: Any) -> Any:
+		return await self.invoke(*args, **kwargs)
 
 
 class UserInfo:

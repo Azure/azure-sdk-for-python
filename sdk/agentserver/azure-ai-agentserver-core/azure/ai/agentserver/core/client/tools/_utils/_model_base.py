@@ -6,19 +6,19 @@
 from dataclasses import dataclass, asdict, is_dataclass
 from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Optional, Set, Tuple
 
-from .._model_base import ToolDefinition, ToolDescriptor, ToolSource, UserInfo
+from .._model_base import ToolDefinition, FoundryTool, ToolSource, UserInfo
 
 
 
 class ToolDescriptorBuilder:
-	"""Builds ToolDescriptor objects from raw tool data."""
+	"""Builds FoundryTool objects from raw tool data."""
 
 	@staticmethod
 	def build_descriptors(
 		raw_tools: Iterable[Mapping[str, Any]],
 		source: ToolSource,
 		existing_names: Set[str],
-	) -> List[ToolDescriptor]:
+	) -> List[FoundryTool]:
 		"""Build tool descriptors from raw tool data.
 		
 		Parameters
@@ -32,10 +32,10 @@ class ToolDescriptorBuilder:
 			
 		Returns
 		-------
-		List[ToolDescriptor]
+		List[FoundryTool]
 			List of built tool descriptors
 		"""
-		descriptors: List[ToolDescriptor] = []
+		descriptors: List[FoundryTool] = []
 		for raw in raw_tools:
 			# Convert dataclass objects to dictionaries
 			if is_dataclass(raw) and not isinstance(raw, type):
@@ -49,7 +49,7 @@ class ToolDescriptorBuilder:
 			description = description or ""
 			resolved_name = NameResolver.ensure_unique_name(name, existing_names)
 
-			descriptor = ToolDescriptor(
+			descriptor = FoundryTool(
 				key=key,
 				name=resolved_name,
 				description=description,

@@ -9,7 +9,7 @@ from azure.core.pipeline import policies
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-from ._utils._model_base import ToolConfigurationParser
+from ._utils._model_base import ToolConfigurationParser, UserInfo, ToolDefinition
 
 class AzureAIToolClientConfiguration:
 	"""Configuration for Azure AI Tool Client.
@@ -58,8 +58,8 @@ class AzureAIToolClientConfiguration:
 
 		# Tool configuration
 		self.agent_name: str = kwargs.pop("agent_name", "$default")
-		self.tools: Optional[List[Mapping[str, Any]]] = kwargs.pop("tools", None)
-		self.user: Optional[Mapping[str, Any]] = kwargs.pop("user", None)	
+		self.tools: Optional[List[ToolDefinition]] = kwargs.pop("tools", None)
+		self.user: Optional[UserInfo] = kwargs.pop("user", None)	
 		
 		# Initialize tool configuration parser
 		
