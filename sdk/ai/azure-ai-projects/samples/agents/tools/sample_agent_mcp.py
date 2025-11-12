@@ -41,14 +41,13 @@ project_client = AIProjectClient(
 # Get the OpenAI client for responses and conversations
 openai_client = project_client.get_openai_client()
 
+# [START tool_declaration]
 mcp_tool = MCPTool(
     server_label="api-specs",
     server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
     require_approval="always",
 )
-
-# Create tools list with proper typing for the agent definition
-tools: list[Tool] = [mcp_tool]
+# [END tool_declaration]
 
 with project_client:
     agent = project_client.agents.create_version(
@@ -56,7 +55,7 @@ with project_client:
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
-            tools=tools,
+            tools=[mcp_tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")

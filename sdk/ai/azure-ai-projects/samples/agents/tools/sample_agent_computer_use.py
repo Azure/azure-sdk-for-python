@@ -62,7 +62,9 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-computer_use_tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+# [START tool_declaration]
+tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+# [END tool_declaration]
 
 with project_client:
     agent = project_client.agents.create_version(
@@ -74,7 +76,7 @@ with project_client:
             
             Be direct and efficient. When you reach the search results page, read and describe the actual search result titles and descriptions you can see.
             """,
-            tools=[computer_use_tool],
+            tools=[tool],
         ),
         description="Computer automation agent with screen interaction capabilities.",
     )

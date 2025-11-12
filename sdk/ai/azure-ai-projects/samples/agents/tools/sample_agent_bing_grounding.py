@@ -52,23 +52,23 @@ project_client = AIProjectClient(
 
 openai_client = project_client.get_openai_client()
 
+# [START tool_declaration]
+tool = BingGroundingAgentTool(
+    bing_grounding=BingGroundingSearchToolParameters(
+        search_configurations=[
+            BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
+        ]
+    )
+)
+# [END tool_declaration]
+
 with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant.",
-            tools=[
-                BingGroundingAgentTool(
-                    bing_grounding=BingGroundingSearchToolParameters(
-                        search_configurations=[
-                            BingGroundingSearchConfiguration(
-                                project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"]
-                            )
-                        ]
-                    )
-                )
-            ],
+            tools=[tool],
         ),
         description="You are a helpful agent.",
     )
