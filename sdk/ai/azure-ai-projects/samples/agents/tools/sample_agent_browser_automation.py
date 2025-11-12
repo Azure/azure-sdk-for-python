@@ -36,10 +36,6 @@ from azure.ai.projects.models import (
     BrowserAutomationToolParameters,
     BrowserAutomationToolConnectionParameters,
 )
-from typing import Any, MutableMapping
-
-JSON = MutableMapping[str, Any]
-
 load_dotenv()
 
 project_client = AIProjectClient(
