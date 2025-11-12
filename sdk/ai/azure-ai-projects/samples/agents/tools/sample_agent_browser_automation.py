@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,12 +5,12 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an AI agent with Bing Custom Search capabilities
-    using the BingCustomSearchAgentTool and synchronous Azure AI Projects client. The agent can search
-    custom search instances and provide responses with relevant results.
+    This sample demonstrates how to create an AI agent with Browser Automation capabilities
+    using the BrowserAutomationAgentTool and synchronous Azure AI Projects client. The agent can
+    perform automated web browsing tasks and provide responses based on web interactions.
 
 USAGE:
-    python sample_agent_bing_custom_search.py
+    python sample_agent_browser_automation.py
 
     Before running the sample:
 
@@ -22,22 +21,21 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID - The Bing Custom Search project connection ID,
+    3) BROWSER_AUTOMATION_PROJECT_CONNECTION_ID - The browser automation project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) BING_CUSTOM_SEARCH_INSTANCE_NAME - The Bing Custom Search instance name
 """
 
 import os
+import json
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingCustomSearchAgentTool,
-    BingCustomSearchToolParameters,
-    BingCustomSearchConfiguration,
+    BrowserAutomationAgentTool,
+    BrowserAutomationToolParameters,
+    BrowserAutomationToolConnectionParameters,
 )
-
 load_dotenv()
 
 project_client = AIProjectClient(
@@ -45,17 +43,13 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
-# Get the OpenAI client for responses
 openai_client = project_client.get_openai_client()
 
-bing_custom_search_tool = BingCustomSearchAgentTool(
-    bing_custom_search_preview=BingCustomSearchToolParameters(
-        search_configurations=[
-            BingCustomSearchConfiguration(
-                project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
-                instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
-            )
-        ]
+browser_automation_tool = BrowserAutomationAgentTool(
+    browser_automation_preview=BrowserAutomationToolParameters(
+        connection=BrowserAutomationToolConnectionParameters(
+            project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
+        )
     )
 )
 
@@ -64,19 +58,24 @@ with project_client:
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a helpful agent that can use Bing Custom Search tools to assist users. 
-            Use the available Bing Custom Search tools to answer questions and perform tasks.""",
-            tools=[bing_custom_search_tool],
+            instructions="""You are an Agent helping with browser automation tasks. 
+            You can answer questions, provide information, and assist with various tasks 
+            related to web browsing using the Browser Automation tool available to you.""",
+            tools=[browser_automation_tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question (e.g., 'Tell me more about foundry agent service'): \n")
-
-    # Send initial request that will trigger the Bing Custom Search tool
     stream_response = openai_client.responses.create(
         stream=True,
-        input=user_input,
+        tool_choice="required",
+        input="""
+            Your goal is to report the percent of Microsoft year-to-date stock price change.
+            To do that, go to the website finance.yahoo.com.
+            At the top of the page, you will find a search bar.
+            Enter the value 'MSFT', to get information about the Microsoft stock price.
+            At the top of the resulting page you will see a default chart of Microsoft stock price.
+            Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.""",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 
@@ -88,21 +87,20 @@ with project_client:
         elif event.type == "response.text.done":
             print(f"\nFollow-up response done!")
         elif event.type == "response.output_item.done":
-            if event.item.type == "message":
-                item = event.item
-                if item.content[-1].type == "output_text":
-                    text_content = item.content[-1]
-                    for annotation in text_content.annotations:
-                        if annotation.type == "url_citation":
-                            print(
-                                f"URL Citation: {annotation.url}, "
-                                f"Start index: {annotation.start_index}, "
-                                f"End index: {annotation.end_index}"
-                            )
+            item = event.item
+            if item.type == "browser_automation_preview_call":  # TODO: support browser_automation_preview_call schema
+                arguments_str = getattr(item, "arguments", "{}")
+
+                # Parse the arguments string into a dictionary
+                arguments = json.loads(arguments_str)
+                query = arguments.get("query")
+
+                print(f"Call ID: {getattr(item, 'call_id')}")
+                print(f"Query arguments: {query}")
         elif event.type == "response.completed":
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
-    print("Cleaning up...")
+    print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
