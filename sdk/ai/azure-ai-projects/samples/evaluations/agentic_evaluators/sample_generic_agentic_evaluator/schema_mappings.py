@@ -10,7 +10,7 @@ evaluator_to_data_source_config = {
         "item_schema": {
             "type": "object",
             "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-            "required": [],
+            "required": ["query", "response"],
         },
         "include_sample_schema": True,
     },
@@ -19,7 +19,7 @@ evaluator_to_data_source_config = {
         "item_schema": {
             "type": "object",
             "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-            "required": [],
+            "required": ["response"],
         },
         "include_sample_schema": True,
     },

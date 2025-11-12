@@ -58,7 +58,7 @@ def main() -> None:
                 "item_schema": {
                     "type": "object",
                     "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-                    "required": [],
+                    "required": ["query", "response"],
                 },
                 "include_sample_schema": True,
             }
