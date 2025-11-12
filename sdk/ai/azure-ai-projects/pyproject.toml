@@ -35,15 +35,13 @@ dependencies = [
     "azure-core>=1.35.0",
     "typing-extensions>=4.6.0",
     "azure-storage-blob>=12.15.0",
-    "azure-ai-agents>=1.2.0b3",
 ]
 dynamic = [
-    "version",
-    "readme"
+"version", "readme"
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.projects._version.VERSION"}
@@ -65,3 +63,9 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 verifytypes = false
+
+[tool.mypy]
+exclude = [
+    "samples/evaluations/.*"
+]
+

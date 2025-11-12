@@ -97,14 +97,15 @@ class _EvaluatorMetricMapping:
     """
     Static mapping of evaluator names to their metric names, based on assets.json.
     The 'builtin.' prefix is removed from the evaluator name keys.
+    If an evaluator maps to multiple metrics, all metric names are included in the list, and the first one is considered the primary metric.
     """
 
     EVALUATOR_NAME_METRICS_MAPPINGS = {
         "bleu_score": ["bleu"],
         "coherence": ["coherence"],
         "document_retrieval": [
-            "ndcg@3",
             "xdcg@3",
+            "ndcg@3",
             "fidelity",
             "top1_relevance",
             "top3_max_relevance",
@@ -119,7 +120,7 @@ class _EvaluatorMetricMapping:
         "meteor_score": ["meteor"],
         "relevance": ["relevance"],
         "response_completeness": ["response_completeness"],
-        "rouge_score": ["rouge_precision", "rouge_recall", "rouge_f1_score"],
+        "rouge_score": ["rouge_f1_score", "rouge_precision", "rouge_recall"],
         "groundedness_pro": ["groundedness_pro"],
         "similarity": ["similarity"],
         "intent_resolution": ["intent_resolution"],
@@ -142,7 +143,7 @@ class _EvaluatorMetricMapping:
         "hate_unfairness": ["hate_unfairness"],
         "tool_input_accuracy": ["tool_input_accuracy"],
         "task_completion": ["task_completion"],
-        "tool_success": ["tool_success"],
+        "tool_call_success": ["tool_call_success"],
         "tool_selection": ["tool_selection"],
         "tool_output_utilization": ["tool_output_utilization"],
         "task_navigation_efficiency": ["task_navigation_efficiency"],

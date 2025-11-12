@@ -6,10 +6,8 @@
 import base64
 import hashlib
 import json
-import os
 import time
 import datetime
-from importlib.metadata import version, PackageNotFoundError
 from threading import Lock
 import logging
 from typing import (
@@ -33,20 +31,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
 )
 from ._models import SettingSelector
 from ._constants import (
-    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
-    ServiceFabricEnvironmentVariable,
-    AzureFunctionEnvironmentVariable,
-    AzureWebAppEnvironmentVariable,
-    ContainerAppEnvironmentVariable,
-    KubernetesEnvironmentVariable,
     NULL_CHAR,
-    CUSTOM_FILTER_KEY,
-    PERCENTAGE_FILTER_KEY,
-    TIME_WINDOW_FILTER_KEY,
-    TARGETING_FILTER_KEY,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
     TELEMETRY_KEY,
     METADATA_KEY,
     ETAG_KEY,
@@ -58,6 +43,8 @@ from ._constants import (
     FEATURE_FLAG_KEY,
 )
 from ._refresh_timer import _RefreshTimer
+from ._request_tracing_context import _RequestTracingContext
+
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
@@ -126,6 +113,16 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
 
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
+
+    # Validate feature flag selectors don't use snapshots
+    feature_flag_selectors = kwargs.get("feature_flag_selectors")
+    if feature_flag_selectors:
+        for selector in feature_flag_selectors:
+            if hasattr(selector, "snapshot_name") and selector.snapshot_name is not None:
+                raise ValueError(
+                    "snapshot_name cannot be used with feature_flag_selectors. "
+                    "Use snapshot_name with regular selects instead to load feature flags from snapshots."
+                )
 
     # Determine Key Vault usage
     uses_key_vault = (
@@ -237,10 +234,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
-        self._feature_filter_usage: Dict[str, bool] = {}
-        self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
-        self._uses_ai_configuration = False
-        self._uses_aicc_configuration = False  # AI Chat Completion
+        self._tracing_context = _RequestTracingContext(kwargs.pop("load_balancing_enabled", False))
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
@@ -266,39 +260,36 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         :param feature_flag_value: The feature flag value dictionary to update.
         :type feature_flag_value: Dict[str, Any]
         """
-        if TELEMETRY_KEY in feature_flag_value:
-            if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
-                feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+        if TELEMETRY_KEY not in feature_flag_value:
+            # Initialize telemetry dictionary if not present
+            feature_flag_value[TELEMETRY_KEY] = {}
 
+        # Update telemetry metadata for application insights/logging in feature management
+        if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+        feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+        if feature_flag_value[TELEMETRY_KEY].get("enabled"):
+            self._tracing_context.uses_telemetry = True
             if not endpoint.endswith("/"):
                 endpoint += "/"
             feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
             if feature_flag.label and not feature_flag.label.isspace():
                 feature_flag_reference += f"?label={feature_flag.label}"
-            if feature_flag_value[TELEMETRY_KEY].get("enabled"):
-                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-                allocation_id = self._generate_allocation_id(feature_flag_value)
-                if allocation_id:
-                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
-    def _update_feature_filter_telemetry(self, feature_flag: FeatureFlagConfigurationSetting):
-        """
-        Track feature filter usage for App Configuration telemetry.
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+            allocation_id = self._generate_allocation_id(feature_flag_value)
+            if allocation_id:
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
-        :param feature_flag: The feature flag to analyze for filter usage.
-        :type feature_flag: FeatureFlagConfigurationSetting
-        """
-        if feature_flag.filters:
-            for filter in feature_flag.filters:
-                if filter.get("name") in PERCENTAGE_FILTER_NAMES:
-                    self._feature_filter_usage[PERCENTAGE_FILTER_KEY] = True
-                elif filter.get("name") in TIME_WINDOW_FILTER_NAMES:
-                    self._feature_filter_usage[TIME_WINDOW_FILTER_KEY] = True
-                elif filter.get("name") in TARGETING_FILTER_NAMES:
-                    self._feature_filter_usage[TARGETING_FILTER_KEY] = True
-                else:
-                    self._feature_filter_usage[CUSTOM_FILTER_KEY] = True
+        allocation = feature_flag_value.get("allocation")
+        if allocation and allocation.get("seed"):
+            self._tracing_context.uses_seed = True
+
+        variants = feature_flag_value.get("variants")
+        if variants:
+            # Update Usage Data for Telemetry
+            self._tracing_context.update_max_variants(len(variants))
 
     @staticmethod
     def _generate_allocation_id(feature_flag_value: Dict[str, JSON]) -> Optional[str]:
@@ -477,9 +468,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             # Feature flags are of type json, but don't treat them as such
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
-                    self._uses_ai_configuration = True
+                    self._tracing_context.uses_ai_configuration = True
                 if APP_CONFIG_AICC_MIME_PROFILE in config.content_type:
-                    self._uses_aicc_configuration = True
+                    self._tracing_context.uses_aicc_configuration = True
                 return json.loads(config.value)
             except json.JSONDecodeError:
                 try:
@@ -500,7 +491,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     ) -> Dict[str, Any]:
         if feature_flags:
             # Reset feature flag usage
-            self._feature_filter_usage = {}
+            self._tracing_context.reset_feature_filter_usage()
             processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
             self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
 
@@ -512,7 +503,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
         feature_flag_value = json.loads(feature_flag.value)
         self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
-        self._update_feature_filter_telemetry(feature_flag)
+        self._tracing_context.update_feature_filter_telemetry(feature_flag)
         return feature_flag_value
 
     def _update_watched_settings(
@@ -568,73 +559,14 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         :return: The updated headers dictionary.
         :rtype: Dict[str, str]
         """
-        if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
-            return headers
-        correlation_context = f"RequestType={request_type}"
-
-        if len(self._feature_filter_usage) > 0:
-            filters_used = ""
-            if CUSTOM_FILTER_KEY in self._feature_filter_usage:
-                filters_used = CUSTOM_FILTER_KEY
-            if PERCENTAGE_FILTER_KEY in self._feature_filter_usage:
-                filters_used += ("+" if filters_used else "") + PERCENTAGE_FILTER_KEY
-            if TIME_WINDOW_FILTER_KEY in self._feature_filter_usage:
-                filters_used += ("+" if filters_used else "") + TIME_WINDOW_FILTER_KEY
-            if TARGETING_FILTER_KEY in self._feature_filter_usage:
-                filters_used += ("+" if filters_used else "") + TARGETING_FILTER_KEY
-            correlation_context += f",Filters={filters_used}"
-
-        correlation_context += self._uses_feature_flags()
-
-        if uses_key_vault:
-            correlation_context += ",UsesKeyVault"
-        host_type = ""
-        if AzureFunctionEnvironmentVariable in os.environ:
-            host_type = "AzureFunction"
-        elif AzureWebAppEnvironmentVariable in os.environ:
-            host_type = "AzureWebApp"
-        elif ContainerAppEnvironmentVariable in os.environ:
-            host_type = "ContainerApp"
-        elif KubernetesEnvironmentVariable in os.environ:
-            host_type = "Kubernetes"
-        elif ServiceFabricEnvironmentVariable in os.environ:
-            host_type = "ServiceFabric"
-        if host_type:
-            correlation_context += f",Host={host_type}"
-
-        if replica_count > 0:
-            correlation_context += f",ReplicaCount={replica_count}"
-
-        if is_failover_request:
-            correlation_context += ",Failover"
-
-        features = ""
-
-        if self._uses_load_balancing:
-            features += "LB+"
-
-        if self._uses_ai_configuration:
-            features += "AI+"
-
-        if self._uses_aicc_configuration:
-            features += "AICC+"
-
-        if features:
-            correlation_context += f",Features={features[:-1]}"
-
-        headers["Correlation-Context"] = correlation_context
-        return headers
-
-    def _uses_feature_flags(self) -> str:
-        if not self._feature_flag_enabled:
-            return ""
-        package_name = "featuremanagement"
-        try:
-            feature_management_version = version(package_name)
-            return f",FMPyVer={feature_management_version}"
-        except PackageNotFoundError:
-            pass
-        return ""
+        return self._tracing_context.update_correlation_context_header(
+            headers=headers,
+            request_type=request_type,
+            replica_count=replica_count,
+            uses_key_vault=uses_key_vault,
+            feature_flag_enabled=self._feature_flag_enabled,
+            is_failover_request=is_failover_request,
+        )
 
     def _deduplicate_settings(
         self, configuration_settings: List[ConfigurationSetting]

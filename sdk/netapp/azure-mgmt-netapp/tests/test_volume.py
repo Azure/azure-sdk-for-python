@@ -44,9 +44,7 @@ def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA
         + setup.PERMA_SUBNET,
         network_features="Standard",
     )
-    volume_body = Volume(
-    location=location,
-    properties=volume_properties)
+    volume_body = Volume(location=location, properties=volume_properties)
 
     return volume_body
 
@@ -109,9 +107,7 @@ def create_dp_volume(
         volume_type="DataProtection",
         data_protection=data_protection,
     )
-    volume_body = Volume(
-    location=location,
-    properties=volume_properties)
+    volume_body = Volume(location=location, properties=volume_properties)
     destination_volume = client.volumes.begin_create_or_update(
         rg, account_name, pool_name, volume_name, volume_body
     ).result()
@@ -159,10 +155,7 @@ def create_migration_volume(
         volume_type="Migration",
         data_protection=data_protection,
     )
-    volume_body = Volume(
-        location=location,
-        properties=volume_properties
-    )
+    volume_body = Volume(location=location, properties=volume_properties)
     destination_volume = client.volumes.begin_create_or_update(
         rg, account_name, pool_name, volume_name, volume_body
     ).result()
@@ -640,19 +633,16 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
                 creation_token=volumeName1,
                 service_level=ServiceLevel.PREMIUM,  # cannot differ from pool
                 subnet_id="/subscriptions/"
-                    + SUBSID
-                    + "/resourceGroups/"
-                    + setup.TEST_RG
-                    + "/providers/Microsoft.Network/virtualNetworks/"
-                    + setup.PERMA_VNET
-                    + "/subnets/"
-                    + setup.PERMA_SUBNET,
+                + SUBSID
+                + "/resourceGroups/"
+                + setup.TEST_RG
+                + "/providers/Microsoft.Network/virtualNetworks/"
+                + setup.PERMA_VNET
+                + "/subnets/"
+                + setup.PERMA_SUBNET,
                 network_features=NetworkFeatures.STANDARD,
             )
-            volume_body = Volume(
-                location=setup.LOCATION,
-                properties=volume_properties
-            )
+            volume_body = Volume(location=setup.LOCATION, properties=volume_properties)
             volume = self.client.volumes.begin_create_or_update(
                 setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, volume_body
             ).result()

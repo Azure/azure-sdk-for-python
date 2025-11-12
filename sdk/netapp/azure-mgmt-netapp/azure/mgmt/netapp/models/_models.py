@@ -1215,414 +1215,6 @@ class BreakReplicationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Bucket(ProxyResource):
-    """Bucket resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar properties: Bucket properties.
-    :vartype properties: ~azure.mgmt.netapp.models.BucketProperties
-    """
-
-    properties: Optional["_models.BucketProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Bucket properties."""
-
-    __flattened_items = ["path", "file_system_user", "provisioning_state", "status", "server", "permissions"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.BucketProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class BucketCredentialsExpiry(_Model):
-    """The bucket's Access and Secret key pair Expiry Time expressed as the number of days from now.
-
-    :ivar key_pair_expiry_days: The number of days from now until the newly generated Access and
-     Secret key pair will expire.
-    :vartype key_pair_expiry_days: int
-    """
-
-    key_pair_expiry_days: Optional[int] = rest_field(
-        name="keyPairExpiryDays", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The number of days from now until the newly generated Access and Secret key pair will expire."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key_pair_expiry_days: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BucketGenerateCredentials(_Model):
-    """Bucket Access Key, Secret Key, and Expiry date and time of the key pair.
-
-    :ivar access_key: The Access Key that is required along with the Secret Key to access the
-     bucket.
-    :vartype access_key: str
-    :ivar secret_key: The Secret Key that is required along with the Access Key to access the
-     bucket.
-    :vartype secret_key: str
-    :ivar key_pair_expiry: The bucket's Access and Secret key pair expiry date and time (in UTC).
-    :vartype key_pair_expiry: ~datetime.datetime
-    """
-
-    access_key: Optional[str] = rest_field(name="accessKey", visibility=["read"])
-    """The Access Key that is required along with the Secret Key to access the bucket."""
-    secret_key: Optional[str] = rest_field(name="secretKey", visibility=["read"])
-    """The Secret Key that is required along with the Access Key to access the bucket."""
-    key_pair_expiry: Optional[datetime.datetime] = rest_field(
-        name="keyPairExpiry", visibility=["read"], format="rfc3339"
-    )
-    """The bucket's Access and Secret key pair expiry date and time (in UTC)."""
-
-
-class BucketPatch(ProxyResource):
-    """Bucket resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar properties: Bucket properties.
-    :vartype properties: ~azure.mgmt.netapp.models.BucketPatchProperties
-    """
-
-    properties: Optional["_models.BucketPatchProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Bucket properties."""
-
-    __flattened_items = ["path", "file_system_user", "provisioning_state", "server", "permissions"]
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.BucketPatchProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
-        super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
-
-
-class BucketPatchProperties(_Model):
-    """Bucket resource properties for a Patch operation.
-
-    :ivar path: The volume path mounted inside the bucket.
-    :vartype path: str
-    :ivar file_system_user: File System user having access to volume data. For Unix, this is the
-     user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
-     user details are mutually exclusive, meaning one or other must be supplied, but not both.
-    :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-     "Creating", "Patching", "Deleting", "Moving", "Failed", and "Succeeded".
-    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
-    :ivar server: Properties of the server managing the lifecycle of volume buckets.
-    :vartype server: ~azure.mgmt.netapp.models.BucketServerPatchProperties
-    :ivar permissions: Access permissions for the bucket. Either ReadOnly or ReadWrite. Known
-     values are: "ReadOnly" and "ReadWrite".
-    :vartype permissions: str or ~azure.mgmt.netapp.models.BucketPatchPermissions
-    """
-
-    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The volume path mounted inside the bucket."""
-    file_system_user: Optional["_models.FileSystemUser"] = rest_field(
-        name="fileSystemUser", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """File System user having access to volume data. For Unix, this is the user's uid and gid. For
-     Windows, this is the user's username. Note that the Unix and Windows user details are mutually
-     exclusive, meaning one or other must be supplied, but not both."""
-    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
-    server: Optional["_models.BucketServerPatchProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of the server managing the lifecycle of volume buckets."""
-    permissions: Optional[Union[str, "_models.BucketPatchPermissions"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Access permissions for the bucket. Either ReadOnly or ReadWrite. Known values are: \"ReadOnly\"
-     and \"ReadWrite\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        path: Optional[str] = None,
-        file_system_user: Optional["_models.FileSystemUser"] = None,
-        server: Optional["_models.BucketServerPatchProperties"] = None,
-        permissions: Optional[Union[str, "_models.BucketPatchPermissions"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BucketProperties(_Model):
-    """Bucket resource properties.
-
-       :ivar path: The volume path mounted inside the bucket. The default is the root path '/' if no
-        value is provided when the bucket is created.
-       :vartype path: str
-       :ivar file_system_user: File System user having access to volume data. For Unix, this is the
-        user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
-        user details are mutually exclusive, meaning one or other must be supplied, but not both.
-       :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-       :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-        "Creating", "Patching", "Deleting", "Moving", "Failed", and "Succeeded".
-       :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
-       :ivar status: The bucket credentials status. There states:
-    "NoCredentialsSet": Access and Secret key pair have not been generated.
-    "CredentialsExpired": Access and Secret key pair have expired.
-    "Active": The certificate has been installed and credentials are unexpired. Known values are:
-        "NoCredentialsSet", "CredentialsExpired", and "Active".
-       :vartype status: str or ~azure.mgmt.netapp.models.CredentialsStatus
-       :ivar server: Properties of the server managing the lifecycle of volume buckets.
-       :vartype server: ~azure.mgmt.netapp.models.BucketServerProperties
-       :ivar permissions: Access permissions for the bucket. Either ReadOnly or ReadWrite. The default
-        is ReadOnly if no value is provided during bucket creation. Known values are: "ReadOnly" and
-        "ReadWrite".
-       :vartype permissions: str or ~azure.mgmt.netapp.models.BucketPermissions
-    """
-
-    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The volume path mounted inside the bucket. The default is the root path '/' if no value is
-     provided when the bucket is created."""
-    file_system_user: Optional["_models.FileSystemUser"] = rest_field(
-        name="fileSystemUser", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """File System user having access to volume data. For Unix, this is the user's uid and gid. For
-     Windows, this is the user's username. Note that the Unix and Windows user details are mutually
-     exclusive, meaning one or other must be supplied, but not both."""
-    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
-    status: Optional[Union[str, "_models.CredentialsStatus"]] = rest_field(visibility=["read"])
-    """The bucket credentials status. There states:
- \"NoCredentialsSet\": Access and Secret key pair have not been generated.
- \"CredentialsExpired\": Access and Secret key pair have expired.
- \"Active\": The certificate has been installed and credentials are unexpired. Known values are:
-     \"NoCredentialsSet\", \"CredentialsExpired\", and \"Active\"."""
-    server: Optional["_models.BucketServerProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of the server managing the lifecycle of volume buckets."""
-    permissions: Optional[Union[str, "_models.BucketPermissions"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Access permissions for the bucket. Either ReadOnly or ReadWrite. The default is ReadOnly if no
-     value is provided during bucket creation. Known values are: \"ReadOnly\" and \"ReadWrite\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        path: Optional[str] = None,
-        file_system_user: Optional["_models.FileSystemUser"] = None,
-        server: Optional["_models.BucketServerProperties"] = None,
-        permissions: Optional[Union[str, "_models.BucketPermissions"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BucketServerPatchProperties(_Model):
-    """Properties of the server managing the lifecycle of volume buckets.
-
-    :ivar fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed by
-     the server certificate.
-    :vartype fqdn: str
-    :ivar certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-     certificate and private key. It is used to authenticate the user and allows access to volume
-     data in a read-only manner.
-    :vartype certificate_object: str
-    """
-
-    fqdn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The host part of the bucket URL, resolving to the bucket IP address and allowed by the server
-     certificate."""
-    certificate_object: Optional[str] = rest_field(name="certificateObject", visibility=["create", "update"])
-    """A base64-encoded PEM file, which includes both the bucket server's certificate and private key.
-     It is used to authenticate the user and allows access to volume data in a read-only manner."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        fqdn: Optional[str] = None,
-        certificate_object: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BucketServerProperties(_Model):
-    """Properties of the server managing the lifecycle of volume buckets.
-
-    :ivar fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed by
-     the server certificate.
-    :vartype fqdn: str
-    :ivar certificate_common_name: Certificate Common Name taken from the certificate installed on
-     the bucket server.
-    :vartype certificate_common_name: str
-    :ivar certificate_expiry_date: The bucket server's certificate expiry date.
-    :vartype certificate_expiry_date: ~datetime.datetime
-    :ivar ip_address: The bucket server's IPv4 address.
-    :vartype ip_address: str
-    :ivar certificate_object: A base64-encoded PEM file, which includes both the bucket server's
-     certificate and private key. It is used to authenticate the user and allows access to volume
-     data in a read-only manner.
-    :vartype certificate_object: str
-    """
-
-    fqdn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The host part of the bucket URL, resolving to the bucket IP address and allowed by the server
-     certificate."""
-    certificate_common_name: Optional[str] = rest_field(name="certificateCommonName", visibility=["read"])
-    """Certificate Common Name taken from the certificate installed on the bucket server."""
-    certificate_expiry_date: Optional[datetime.datetime] = rest_field(
-        name="certificateExpiryDate", visibility=["read"], format="rfc3339"
-    )
-    """The bucket server's certificate expiry date."""
-    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
-    """The bucket server's IPv4 address."""
-    certificate_object: Optional[str] = rest_field(name="certificateObject", visibility=["create", "update"])
-    """A base64-encoded PEM file, which includes both the bucket server's certificate and private key.
-     It is used to authenticate the user and allows access to volume data in a read-only manner."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        fqdn: Optional[str] = None,
-        certificate_object: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class CapacityPool(TrackedResource):
     """Capacity pool resource.
 
@@ -1874,34 +1466,6 @@ class CheckAvailabilityResponse(_Model):
         is_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.InAvailabilityReasonType"]] = None,
         message: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CifsUser(_Model):
-    """The effective CIFS username when accessing the volume data.
-
-    :ivar username: The CIFS user's username.
-    :vartype username: str
-    """
-
-    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The CIFS user's username."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        username: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2411,45 +1975,6 @@ class FilePathAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemUser(_Model):
-    """File System user having access to volume data. For Unix, this is the user's uid and gid. For
-    Windows, this is the user's username. Note that the Unix and Windows user details are mutually
-    exclusive, meaning one or other must be supplied, but not both.
-
-    :ivar nfs_user: The effective NFS User ID and Group ID when accessing the volume data.
-    :vartype nfs_user: ~azure.mgmt.netapp.models.NfsUser
-    :ivar cifs_user: The effective CIFS username when accessing the volume data.
-    :vartype cifs_user: ~azure.mgmt.netapp.models.CifsUser
-    """
-
-    nfs_user: Optional["_models.NfsUser"] = rest_field(
-        name="nfsUser", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The effective NFS User ID and Group ID when accessing the volume data."""
-    cifs_user: Optional["_models.CifsUser"] = rest_field(
-        name="cifsUser", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The effective CIFS username when accessing the volume data."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        nfs_user: Optional["_models.NfsUser"] = None,
-        cifs_user: Optional["_models.CifsUser"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class GetGroupIdListForLDAPUserRequest(_Model):
     """Get group Id list for LDAP User request.
 
@@ -2859,6 +2384,39 @@ class ListQuotaReportResponse(_Model):
         self,
         *,
         value: Optional[list["_models.QuotaReport"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListReplicationsRequest(_Model):
+    """Body for the list replications endpoint. If supplied, the body will be used as a filter for
+    example to exclude deleted replications. If omitted, the endpoint returns all replications.
+
+    :ivar exclude: Exclude Replications filter. 'None' returns all replications, 'Deleted' excludes
+     deleted replications. Default is 'None'. Known values are: "None" and "Deleted".
+    :vartype exclude: str or ~azure.mgmt.netapp.models.Exclude
+    """
+
+    exclude: Optional[Union[str, "_models.Exclude"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Exclude Replications filter. 'None' returns all replications, 'Deleted' excludes deleted
+     replications. Default is 'None'. Known values are: \"None\" and \"Deleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        exclude: Optional[Union[str, "_models.Exclude"]] = None,
     ) -> None: ...
 
     @overload
@@ -3436,39 +2994,6 @@ class NetworkSiblingSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NfsUser(_Model):
-    """The effective NFS User ID and Group ID when accessing the volume data.
-
-    :ivar user_id: The NFS user's UID.
-    :vartype user_id: int
-    :ivar group_id: The NFS user's GID.
-    :vartype group_id: int
-    """
-
-    user_id: Optional[int] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
-    """The NFS user's UID."""
-    group_id: Optional[int] = rest_field(name="groupId", visibility=["read", "create", "update", "delete", "query"])
-    """The NFS user's GID."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        user_id: Optional[int] = None,
-        group_id: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class NicInfo(_Model):
     """NIC information and list of volumes for which the NIC has the primary mount ip address.
 
@@ -3933,8 +3458,10 @@ class QuotaAvailabilityRequest(_Model):
     :vartype name: str
     :ivar type: Resource type used for verification. Required. Known values are:
      "Microsoft.NetApp/netAppAccounts", "Microsoft.NetApp/netAppAccounts/capacityPools",
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes", and
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots".
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots",
+     "Microsoft.NetApp/netAppAccounts/backupVaults/backups", and
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups".
     :vartype type: str or ~azure.mgmt.netapp.models.CheckQuotaNameResourceTypes
     :ivar resource_group: Resource group name. Required.
     :vartype resource_group: str
@@ -3947,8 +3474,10 @@ class QuotaAvailabilityRequest(_Model):
     )
     """Resource type used for verification. Required. Known values are:
      \"Microsoft.NetApp/netAppAccounts\", \"Microsoft.NetApp/netAppAccounts/capacityPools\",
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\", and
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\"."""
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\",
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\",
+     \"Microsoft.NetApp/netAppAccounts/backupVaults/backups\", and
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups\"."""
     resource_group: str = rest_field(name="resourceGroup", visibility=["read", "create", "update", "delete", "query"])
     """Resource group name. Required."""
 
@@ -4379,6 +3908,13 @@ class Replication(_Model):
     :vartype remote_volume_resource_id: str
     :ivar remote_volume_region: The remote region for the other end of the Volume Replication.
     :vartype remote_volume_region: str
+    :ivar mirror_state: The status of the replication. Known values are: "Uninitialized",
+     "Mirrored", and "Broken".
+    :vartype mirror_state: str or ~azure.mgmt.netapp.models.ReplicationMirrorState
+    :ivar replication_creation_time: Replication creation time.
+    :vartype replication_creation_time: ~datetime.datetime
+    :ivar replication_deletion_time: Replication deletion time.
+    :vartype replication_deletion_time: ~datetime.datetime
     """
 
     replication_id: Optional[str] = rest_field(name="replicationId", visibility=["read"])
@@ -4400,6 +3936,19 @@ class Replication(_Model):
         name="remoteVolumeRegion", visibility=["read", "create", "update", "delete", "query"]
     )
     """The remote region for the other end of the Volume Replication."""
+    mirror_state: Optional[Union[str, "_models.ReplicationMirrorState"]] = rest_field(
+        name="mirrorState", visibility=["read"]
+    )
+    """The status of the replication. Known values are: \"Uninitialized\", \"Mirrored\", and
+     \"Broken\"."""
+    replication_creation_time: Optional[datetime.datetime] = rest_field(
+        name="replicationCreationTime", visibility=["read"], format="rfc3339"
+    )
+    """Replication creation time."""
+    replication_deletion_time: Optional[datetime.datetime] = rest_field(
+        name="replicationDeletionTime", visibility=["read"], format="rfc3339"
+    )
+    """Replication deletion time."""
 
     @overload
     def __init__(
@@ -4593,8 +4142,10 @@ class ResourceNameAvailabilityRequest(_Model):
     :vartype name: str
     :ivar type: Resource type used for verification. Required. Known values are:
      "Microsoft.NetApp/netAppAccounts", "Microsoft.NetApp/netAppAccounts/capacityPools",
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes", and
-     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots".
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots",
+     "Microsoft.NetApp/netAppAccounts/backupVaults/backups", and
+     "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups".
     :vartype type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
     :ivar resource_group: Resource group name. Required.
     :vartype resource_group: str
@@ -4607,8 +4158,10 @@ class ResourceNameAvailabilityRequest(_Model):
     )
     """Resource type used for verification. Required. Known values are:
      \"Microsoft.NetApp/netAppAccounts\", \"Microsoft.NetApp/netAppAccounts/capacityPools\",
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\", and
-     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\"."""
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes\",
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots\",
+     \"Microsoft.NetApp/netAppAccounts/backupVaults/backups\", and
+     \"Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups\"."""
     resource_group: str = rest_field(name="resourceGroup", visibility=["read", "create", "update", "delete", "query"])
     """Resource group name. Required."""
 
@@ -6441,73 +5994,73 @@ class VolumePatch(_Model):
 class VolumePatchProperties(_Model):
     """Patchable volume properties.
 
-       :ivar service_level: The service level of the file system. Known values are: "Standard",
-        "Premium", "Ultra", "StandardZRS", and "Flexible".
-       :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
-       :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-        quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-        100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-        exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
-       :vartype usage_threshold: int
-       :ivar export_policy: Set of export policy rules.
-       :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
-       :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
-       :vartype protocol_types: list[str]
-       :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
-        this will be accepted as input only for manual qosType volume.
-       :vartype throughput_mibps: float
-       :ivar data_protection: DataProtection type volumes include an object containing details of the
-        replication.
-       :vartype data_protection: ~azure.mgmt.netapp.models.VolumePatchPropertiesDataProtection
-       :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
-       :vartype is_default_quota_enabled: bool
-       :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
-       :vartype default_user_quota_in_ki_bs: int
-       :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
-       :vartype default_group_quota_in_ki_bs: int
-       :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
-        digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
-        selects permission for the owner of the file: read (4), write (2) and execute (1). Third
-        selects permissions for other users in the same group. the fourth for other users not in the
-        group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-        users.
-       :vartype unix_permissions: str
-       :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
-       :vartype cool_access: bool
-       :ivar coolness_period: Specifies the number of days after which data that is not accessed by
-        clients will be tiered.
-       :vartype coolness_period: int
-       :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
-        behavior from the cool tier to standard storage based on the read pattern for cool access
-        enabled volumes. The possible values for this field are:
-    Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-        is the default.
-    OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-        sequential and random reads.
-    Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-        "Default", "OnRead", and "Never".
-       :vartype cool_access_retrieval_policy: str or
-        ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
-       :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
-        moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
-        in both the Snapshot copies and the active file system to the cool tier tier. This policy is
-        the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
-        associated with the active file system to the cool tier. Known values are: "Auto" and
-        "SnapshotOnly".
-       :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
-       :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
-        snapshot directory which provides access to each of the volume's snapshots.
-       :vartype snapshot_directory_visible: bool
-       :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
-        Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
-        "Enabled".
-       :vartype smb_access_based_enumeration: str or
-        ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
-       :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
-        SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
-       :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
+    :ivar service_level: The service level of the file system. Known values are: "Standard",
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
+    :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
+    :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
+     quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+    :vartype usage_threshold: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str]
+    :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
+     this will be accepted as input only for manual qosType volume.
+    :vartype throughput_mibps: float
+    :ivar data_protection: DataProtection type volumes include an object containing details of the
+     replication.
+    :vartype data_protection: ~azure.mgmt.netapp.models.VolumePatchPropertiesDataProtection
+    :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
+    :vartype is_default_quota_enabled: bool
+    :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
+    :vartype default_user_quota_in_ki_bs: int
+    :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
+    :vartype default_group_quota_in_ki_bs: int
+    :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
+     digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
+     selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+     selects permissions for other users in the same group. the fourth for other users not in the
+     group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     users.
+    :vartype unix_permissions: str
+    :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
+    :vartype cool_access: bool
+    :ivar coolness_period: Specifies the number of days after which data that is not accessed by
+     clients will be tiered.
+    :vartype coolness_period: int
+    :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
+     behavior from the cool tier to standard storage based on the read pattern for cool access
+     enabled volumes. The possible values for this field are:
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     is the default.
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     sequential and random reads.
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     "Default", "OnRead", and "Never".
+    :vartype cool_access_retrieval_policy: str or
+     ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
+    :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
+     snapshot directory which provides access to each of the volume's snapshots.
+    :vartype snapshot_directory_visible: bool
+    :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
+     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
+     "Enabled".
+    :vartype smb_access_based_enumeration: str or
+     ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
+    :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
     """
 
     service_level: Optional[Union[str, "_models.ServiceLevel"]] = rest_field(
@@ -6575,11 +6128,11 @@ class VolumePatchProperties(_Model):
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
      storage based on the read pattern for cool access enabled volumes. The possible values for this
      field are:
- Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
      is the default.
- OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
      sequential and random reads.
- Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
      \"Default\", \"OnRead\", and \"Never\"."""
     cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = rest_field(
         name="coolAccessTieringPolicy", visibility=["read", "create", "update", "delete", "query"]
@@ -6709,208 +6262,208 @@ class VolumePatchPropertiesExportPolicy(_Model):
 class VolumeProperties(_Model):
     """Volume properties.
 
-       :ivar file_system_id: Unique FileSystem Identifier.
-       :vartype file_system_id: str
-       :ivar creation_token: A unique file path for the volume. Used when creating mount targets.
-        Required.
-       :vartype creation_token: str
-       :ivar service_level: The service level of the file system. Known values are: "Standard",
-        "Premium", "Ultra", "StandardZRS", and "Flexible".
-       :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
-       :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-        quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-        100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-        exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
-        Required.
-       :vartype usage_threshold: int
-       :ivar export_policy: Set of export policy rules.
-       :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
-       :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
-       :vartype protocol_types: list[str]
-       :ivar provisioning_state: Azure lifecycle management.
-       :vartype provisioning_state: str
-       :ivar snapshot_id: Resource identifier used to identify the Snapshot.
-       :vartype snapshot_id: str
-       :ivar delete_base_snapshot: If enabled (true) the snapshot the volume was created from will be
-        automatically deleted after the volume create operation has finished.  Defaults to false.
-       :vartype delete_base_snapshot: bool
-       :ivar backup_id: Resource identifier used to identify the Backup.
-       :vartype backup_id: str
-       :ivar baremetal_tenant_id: Unique Baremetal Tenant Identifier.
-       :vartype baremetal_tenant_id: str
-       :ivar subnet_id: The Azure Resource URI for a delegated subnet. Must have the delegation
-        Microsoft.NetApp/volumes. Required.
-       :vartype subnet_id: str
-       :ivar network_features: The original value of the network features type available to the volume
-        at the time it was created. Known values are: "Basic", "Standard", "Basic_Standard", and
-        "Standard_Basic".
-       :vartype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
-       :ivar effective_network_features: The effective value of the network features type available to
-        the volume, or current effective state of update. Known values are: "Basic", "Standard",
-        "Basic_Standard", and "Standard_Basic".
-       :vartype effective_network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
-       :ivar network_sibling_set_id: Network Sibling Set ID for the the group of volumes sharing
-        networking resources.
-       :vartype network_sibling_set_id: str
-       :ivar storage_to_network_proximity: Provides storage to network proximity information for the
-        volume. Known values are: "Default", "T1", "T2", and "AcrossT2".
-       :vartype storage_to_network_proximity: str or
-        ~azure.mgmt.netapp.models.VolumeStorageToNetworkProximity
-       :ivar mount_targets: List of mount targets.
-       :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
-       :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
-        Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
-       :vartype volume_type: str
-       :ivar data_protection: DataProtection type volumes include an object containing details of the
-        replication.
-       :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-       :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
-        clone volume, if the parent pool does not have enough space to accommodate the volume after
-        split, it will be automatically resized, which will lead to increased billing. To accept
-        capacity pool size auto grow and create a short term clone volume, set the property as
-        accepted. Known values are: "Accepted" and "Declined".
-       :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
-        ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
-       :ivar is_restoring: Restoring.
-       :vartype is_restoring: bool
-       :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
-        snapshot directory which provides access to each of the volume's snapshots (defaults to true).
-       :vartype snapshot_directory_visible: bool
-       :ivar kerberos_enabled: Describe if a volume is KerberosEnabled. To be use with swagger version
-        2020-05-01 or later.
-       :vartype kerberos_enabled: bool
-       :ivar security_style: The security style of volume, default unix, defaults to ntfs for dual
-        protocol or CIFS protocol. Known values are: "ntfs" and "unix".
-       :vartype security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
-       :ivar smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
-        SMB/DualProtocol volume. To be used with swagger version 2020-08-01 or later.
-       :vartype smb_encryption: bool
-       :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
-        Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
-        "Enabled".
-       :vartype smb_access_based_enumeration: str or
-        ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
-       :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
-        SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
-       :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
-       :ivar smb_continuously_available: Enables continuously available share property for smb volume.
-        Only applicable for SMB volume.
-       :vartype smb_continuously_available: bool
-       :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
-        this will be accepted as input only for manual qosType volume.
-       :vartype throughput_mibps: float
-       :ivar actual_throughput_mibps: Actual throughput in MiB/s for auto qosType volumes calculated
-        based on size and serviceLevel.
-       :vartype actual_throughput_mibps: float
-       :ivar encryption_key_source: Source of key used to encrypt data in volume. Applicable if NetApp
-        account has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive)
-        are: 'Microsoft.NetApp, Microsoft.KeyVault'. Known values are: "Microsoft.NetApp" and
-        "Microsoft.KeyVault".
-       :vartype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
-       :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
-        It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
-        'Microsoft.KeyVault'.
-       :vartype key_vault_private_endpoint_resource_id: str
-       :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
-       :vartype ldap_enabled: bool
-       :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
-        are: "ActiveDirectory" and "OpenLDAP".
-       :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
-       :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
-       :vartype cool_access: bool
-       :ivar coolness_period: Specifies the number of days after which data that is not accessed by
-        clients will be tiered.
-       :vartype coolness_period: int
-       :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
-        behavior from the cool tier to standard storage based on the read pattern for cool access
-        enabled volumes. The possible values for this field are:
-    Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-        is the default.
-    OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-        sequential and random reads.
-    Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
-        "Default", "OnRead", and "Never".
-       :vartype cool_access_retrieval_policy: str or
-        ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
-       :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
-        moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
-        in both the Snapshot copies and the active file system to the cool tier tier. This policy is
-        the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
-        associated with the active file system to the cool tier. Known values are: "Auto" and
-        "SnapshotOnly".
-       :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
-       :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
-        digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
-        selects permission for the owner of the file: read (4), write (2) and execute (1). Third
-        selects permissions for other users in the same group. the fourth for other users not in the
-        group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-        users.
-       :vartype unix_permissions: str
-       :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
-        the percentage completion of this cloning process. When this value is empty/null there is no
-        cloning process currently happening on this volume. This value will update every 5 minutes
-        during cloning.
-       :vartype clone_progress: int
-       :ivar file_access_logs: Flag indicating whether file access logs are enabled for the volume,
-        based on active diagnostic settings present on the volume. Known values are: "Enabled" and
-        "Disabled".
-       :vartype file_access_logs: str or ~azure.mgmt.netapp.models.FileAccessLogs
-       :ivar avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution (AVS)
-        datastore purpose. Known values are: "Enabled" and "Disabled".
-       :vartype avs_data_store: str or ~azure.mgmt.netapp.models.AvsDataStore
-       :ivar data_store_resource_id: Data store resource unique identifier.
-       :vartype data_store_resource_id: list[str]
-       :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
-       :vartype is_default_quota_enabled: bool
-       :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
-       :vartype default_user_quota_in_ki_bs: int
-       :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
-        isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
-       :vartype default_group_quota_in_ki_bs: int
-       :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
-        order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
-       :vartype maximum_number_of_files: int
-       :ivar volume_group_name: Volume Group Name.
-       :vartype volume_group_name: str
-       :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
-        volume group.
-       :vartype capacity_pool_resource_id: str
-       :ivar proximity_placement_group: Proximity placement group associated with the volume.
-       :vartype proximity_placement_group: str
-       :ivar t2_network: T2 network information.
-       :vartype t2_network: str
-       :ivar volume_spec_name: Volume spec name is the application specific designation or identifier
-        for the particular volume in a volume group for e.g. data, log.
-       :vartype volume_spec_name: str
-       :ivar encrypted: Specifies if the volume is encrypted or not. Only available on volumes created
-        or updated after 2022-01-01.
-       :vartype encrypted: bool
-       :ivar placement_rules: Application specific placement rules for the particular volume.
-       :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
-       :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
-        volume. Known values are: "Enabled" and "Disabled".
-       :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
-       :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
-        This refers to the logical availability zone where the volume resides.
-       :vartype provisioned_availability_zone: str
-       :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
-       :vartype is_large_volume: bool
-       :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
-       :vartype originating_resource_id: str
-       :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
-        bytes.
-       :vartype inherited_size_in_bytes: int
-       :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-        "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-        "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-        "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-        "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-        "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-        "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-        "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-        "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-       :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
+    :ivar file_system_id: Unique FileSystem Identifier.
+    :vartype file_system_id: str
+    :ivar creation_token: A unique file path for the volume. Used when creating mount targets.
+     Required.
+    :vartype creation_token: str
+    :ivar service_level: The service level of the file system. Known values are: "Standard",
+     "Premium", "Ultra", "StandardZRS", and "Flexible".
+    :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
+    :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
+     quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+     Required.
+    :vartype usage_threshold: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str]
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    :ivar snapshot_id: Resource identifier used to identify the Snapshot.
+    :vartype snapshot_id: str
+    :ivar delete_base_snapshot: If enabled (true) the snapshot the volume was created from will be
+     automatically deleted after the volume create operation has finished.  Defaults to false.
+    :vartype delete_base_snapshot: bool
+    :ivar backup_id: Resource identifier used to identify the Backup.
+    :vartype backup_id: str
+    :ivar baremetal_tenant_id: Unique Baremetal Tenant Identifier.
+    :vartype baremetal_tenant_id: str
+    :ivar subnet_id: The Azure Resource URI for a delegated subnet. Must have the delegation
+     Microsoft.NetApp/volumes. Required.
+    :vartype subnet_id: str
+    :ivar network_features: The original value of the network features type available to the volume
+     at the time it was created. Known values are: "Basic", "Standard", "Basic_Standard", and
+     "Standard_Basic".
+    :vartype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
+    :ivar effective_network_features: The effective value of the network features type available to
+     the volume, or current effective state of update. Known values are: "Basic", "Standard",
+     "Basic_Standard", and "Standard_Basic".
+    :vartype effective_network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
+    :ivar network_sibling_set_id: Network Sibling Set ID for the the group of volumes sharing
+     networking resources.
+    :vartype network_sibling_set_id: str
+    :ivar storage_to_network_proximity: Provides storage to network proximity information for the
+     volume. Known values are: "Default", "T1", "T2", and "AcrossT2".
+    :vartype storage_to_network_proximity: str or
+     ~azure.mgmt.netapp.models.VolumeStorageToNetworkProximity
+    :ivar mount_targets: List of mount targets.
+    :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
+    :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
+     Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+    :vartype volume_type: str
+    :ivar data_protection: DataProtection type volumes include an object containing details of the
+     replication.
+    :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
+    :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
+     clone volume, if the parent pool does not have enough space to accommodate the volume after
+     split, it will be automatically resized, which will lead to increased billing. To accept
+     capacity pool size auto grow and create a short term clone volume, set the property as
+     accepted. Known values are: "Accepted" and "Declined".
+    :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
+     ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
+    :ivar is_restoring: Restoring.
+    :vartype is_restoring: bool
+    :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
+     snapshot directory which provides access to each of the volume's snapshots (defaults to true).
+    :vartype snapshot_directory_visible: bool
+    :ivar kerberos_enabled: Describe if a volume is KerberosEnabled. To be use with swagger version
+     2020-05-01 or later.
+    :vartype kerberos_enabled: bool
+    :ivar security_style: The security style of volume, default unix, defaults to ntfs for dual
+     protocol or CIFS protocol. Known values are: "ntfs" and "unix".
+    :vartype security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
+    :ivar smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
+     SMB/DualProtocol volume. To be used with swagger version 2020-08-01 or later.
+    :vartype smb_encryption: bool
+    :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
+     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
+     "Enabled".
+    :vartype smb_access_based_enumeration: str or
+     ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
+    :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
+    :ivar smb_continuously_available: Enables continuously available share property for smb volume.
+     Only applicable for SMB volume.
+    :vartype smb_continuously_available: bool
+    :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
+     this will be accepted as input only for manual qosType volume.
+    :vartype throughput_mibps: float
+    :ivar actual_throughput_mibps: Actual throughput in MiB/s for auto qosType volumes calculated
+     based on size and serviceLevel.
+    :vartype actual_throughput_mibps: float
+    :ivar encryption_key_source: Source of key used to encrypt data in volume. Applicable if NetApp
+     account has encryption.keySource = 'Microsoft.KeyVault'. Possible values (case-insensitive)
+     are: 'Microsoft.NetApp, Microsoft.KeyVault'. Known values are: "Microsoft.NetApp" and
+     "Microsoft.KeyVault".
+    :vartype encryption_key_source: str or ~azure.mgmt.netapp.models.EncryptionKeySource
+    :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
+     It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+     'Microsoft.KeyVault'.
+    :vartype key_vault_private_endpoint_resource_id: str
+    :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
+    :vartype ldap_enabled: bool
+    :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
+     are: "ActiveDirectory" and "OpenLDAP".
+    :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
+    :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
+    :vartype cool_access: bool
+    :ivar coolness_period: Specifies the number of days after which data that is not accessed by
+     clients will be tiered.
+    :vartype coolness_period: int
+    :ivar cool_access_retrieval_policy: coolAccessRetrievalPolicy determines the data retrieval
+     behavior from the cool tier to standard storage based on the read pattern for cool access
+     enabled volumes. The possible values for this field are:
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     is the default.
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     sequential and random reads.
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     "Default", "OnRead", and "Never".
+    :vartype cool_access_retrieval_policy: str or
+     ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
+    :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
+     digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
+     selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+     selects permissions for other users in the same group. the fourth for other users not in the
+     group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     users.
+    :vartype unix_permissions: str
+    :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
+     the percentage completion of this cloning process. When this value is empty/null there is no
+     cloning process currently happening on this volume. This value will update every 5 minutes
+     during cloning.
+    :vartype clone_progress: int
+    :ivar file_access_logs: Flag indicating whether file access logs are enabled for the volume,
+     based on active diagnostic settings present on the volume. Known values are: "Enabled" and
+     "Disabled".
+    :vartype file_access_logs: str or ~azure.mgmt.netapp.models.FileAccessLogs
+    :ivar avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution (AVS)
+     datastore purpose. Known values are: "Enabled" and "Disabled".
+    :vartype avs_data_store: str or ~azure.mgmt.netapp.models.AvsDataStore
+    :ivar data_store_resource_id: Data store resource unique identifier.
+    :vartype data_store_resource_id: list[str]
+    :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
+    :vartype is_default_quota_enabled: bool
+    :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
+    :vartype default_user_quota_in_ki_bs: int
+    :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
+     isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
+    :vartype default_group_quota_in_ki_bs: int
+    :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
+     order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
+    :vartype maximum_number_of_files: int
+    :ivar volume_group_name: Volume Group Name.
+    :vartype volume_group_name: str
+    :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
+     volume group.
+    :vartype capacity_pool_resource_id: str
+    :ivar proximity_placement_group: Proximity placement group associated with the volume.
+    :vartype proximity_placement_group: str
+    :ivar t2_network: T2 network information.
+    :vartype t2_network: str
+    :ivar volume_spec_name: Volume spec name is the application specific designation or identifier
+     for the particular volume in a volume group for e.g. data, log.
+    :vartype volume_spec_name: str
+    :ivar encrypted: Specifies if the volume is encrypted or not. Only available on volumes created
+     or updated after 2022-01-01.
+    :vartype encrypted: bool
+    :ivar placement_rules: Application specific placement rules for the particular volume.
+    :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+     volume. Known values are: "Enabled" and "Disabled".
+    :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
+    :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
+     This refers to the logical availability zone where the volume resides.
+    :vartype provisioned_availability_zone: str
+    :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
+    :vartype is_large_volume: bool
+    :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
+    :vartype originating_resource_id: str
+    :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
+     bytes.
+    :vartype inherited_size_in_bytes: int
+    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
+     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
+     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
+     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
+     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
+     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
+     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
+     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
+     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
+    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
     """
 
     file_system_id: Optional[str] = rest_field(name="fileSystemId", visibility=["read"])
@@ -7060,11 +6613,11 @@ class VolumeProperties(_Model):
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
      storage based on the read pattern for cool access enabled volumes. The possible values for this
      field are:
- Default - Data will be pulled from cool tier to standard storage on random reads. This policy
+     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
      is the default.
- OnRead - All client-driven data read is pulled from cool tier to standard storage on both
+     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
      sequential and random reads.
- Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
+     Never - No client-driven data is pulled from cool tier to standard storage. Known values are:
      \"Default\", \"OnRead\", and \"Never\"."""
     cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = rest_field(
         name="coolAccessTieringPolicy", visibility=["read", "create", "update", "delete", "query"]
@@ -7435,8 +6988,8 @@ class VolumeQuotaRulesProperties(_Model):
     """Volume Quota Rule properties.
 
     :ivar provisioning_state: Gets the status of the VolumeQuotaRule at the time the operation was
-     called. Known values are: "Accepted", "Creating", "Patching", "Deleting", "Moving", "Failed",
-     and "Succeeded".
+     called. Known values are: "Accepted", "Creating", "Patching", "Updating", "Deleting", "Moving",
+     "Failed", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
     :ivar quota_size_in_ki_bs: Size of quota.
     :vartype quota_size_in_ki_bs: int
@@ -7453,8 +7006,8 @@ class VolumeQuotaRulesProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Gets the status of the VolumeQuotaRule at the time the operation was called. Known values are:
-     \"Accepted\", \"Creating\", \"Patching\", \"Deleting\", \"Moving\", \"Failed\", and
-     \"Succeeded\"."""
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", \"Moving\", \"Failed\",
+     and \"Succeeded\"."""
     quota_size_in_ki_bs: Optional[int] = rest_field(
         name="quotaSizeInKiBs", visibility=["read", "create", "update", "delete", "query"]
     )

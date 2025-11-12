@@ -64,26 +64,6 @@ class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheduled backup"""
 
 
-class BucketPatchPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Access permissions for the bucket. Either ReadOnly or ReadWrite."""
-
-    READ_ONLY = "ReadOnly"
-    """Read-only access to bucket."""
-    READ_WRITE = "ReadWrite"
-    """Read-write access to bucket."""
-
-
-class BucketPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Access permissions for the bucket. Either ReadOnly or ReadWrite. The default is ReadOnly if no
-    value is provided during bucket creation.
-    """
-
-    READ_ONLY = "ReadOnly"
-    """Read-only access to bucket."""
-    READ_WRITE = "ReadWrite"
-    """Read-write access to bucket."""
-
-
 class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource type used for verification."""
 
@@ -93,6 +73,13 @@ class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_SNAPSHOTS = (
         "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
     )
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_BACKUP_VAULTS_BACKUPS = "Microsoft.NetApp/netAppAccounts/backupVaults/backups"
+    """ANF Backup under a volume , deprecated, use
+    ``Microsoft.NetApp/netAppAccounts/backupVaults/backups`` instead."""
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_BACKUPS = (
+        "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups"
+    )
+    """ANF Backup under a Backup Vault"""
 
 
 class CheckQuotaNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -104,6 +91,13 @@ class CheckQuotaNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_SNAPSHOTS = (
         "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
     )
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_BACKUP_VAULTS_BACKUPS = "Microsoft.NetApp/netAppAccounts/backupVaults/backups"
+    """ANF Backup under a volume , deprecated, use
+    ``Microsoft.NetApp/netAppAccounts/backupVaults/backups`` instead."""
+    MICROSOFT_NET_APP_NET_APP_ACCOUNTS_CAPACITY_POOLS_VOLUMES_BACKUPS = (
+        "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/backups"
+    )
+    """ANF Backup under a Backup Vault"""
 
 
 class ChownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -118,12 +112,12 @@ class ChownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class CoolAccessRetrievalPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
-        storage based on the read pattern for cool access enabled volumes. The possible values for this
-        field are:
+    storage based on the read pattern for cool access enabled volumes. The possible values for this
+    field are:
     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-        is the default.
+    is the default.
     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-        sequential and random reads.
+    sequential and random reads.
     Never - No client-driven data is pulled from cool tier to standard storage.
     """
 
@@ -155,22 +149,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
-
-
-class CredentialsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The bucket credentials status. There states:
-    "NoCredentialsSet": Access and Secret key pair have not been generated.
-    "CredentialsExpired": Access and Secret key pair have expired.
-    "Active": The certificate has been installed and credentials are unexpired.
-    """
-
-    NO_CREDENTIALS_SET = "NoCredentialsSet"
-    """Access and Secret key pair have not been generated."""
-    CREDENTIALS_EXPIRED = "CredentialsExpired"
-    """Access and Secret key pair have expired."""
-    ACTIVE = "Active"
-    """The certificate has been installed on the bucket server and the bucket credentials are
-    unexpired."""
 
 
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -210,6 +188,17 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SRC = "src"
     DST = "dst"
+
+
+class Exclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An option to filter out replications. 'None' returns all replications, 'Deleted' excludes
+    deleted replications. Default is 'None'.
+    """
+
+    NONE = "None"
+    """'None' returns all replications"""
+    DELETED = "Deleted"
+    """'Deleted' excludes deleted replications"""
 
 
 class ExternalReplicationSetupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -329,19 +318,21 @@ class NetAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the VolumeQuotaRule at the time the operation was called."""
 
     ACCEPTED = "Accepted"
-    """Accepted"""
+    """Resource has been Accepted"""
     CREATING = "Creating"
-    """Creating"""
+    """Resource is being Created"""
     PATCHING = "Patching"
-    """Patching"""
+    """Resource is being Patched"""
+    UPDATING = "Updating"
+    """Resource is updating"""
     DELETING = "Deleting"
-    """Deleting"""
+    """Resource is being Deleted"""
     MOVING = "Moving"
-    """Moving"""
+    """Resource is being Moved"""
     FAILED = "Failed"
-    """Failed"""
+    """Resource has Failed"""
     SUCCEEDED = "Succeeded"
-    """Succeeded"""
+    """Resource has Succeeded"""
 
 
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -394,6 +385,17 @@ class RegionStorageToNetworkProximity(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Standard T2 and AcrossT2 network connectivity."""
     T1_AND_T2_AND_ACROSS_T2 = "T1AndT2AndAcrossT2"
     """Standard T1, T2 and AcrossT2 network connectivity."""
+
+
+class ReplicationMirrorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the replication."""
+
+    UNINITIALIZED = "Uninitialized"
+    """Destination volume has not been initialized"""
+    MIRRORED = "Mirrored"
+    """Destination volume has been initialized and is ready"""
+    BROKEN = "Broken"
+    """Destination volume is RW, replication relationship has been broken off"""
 
 
 class ReplicationSchedule(str, Enum, metaclass=CaseInsensitiveEnumMeta):

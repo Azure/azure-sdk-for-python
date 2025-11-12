@@ -40,6 +40,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-07-01-preview/Snapshots_SingleFileRestore.json
+# x-ms-original-file: 2025-09-01/Snapshots_SingleFileRestore.json
 if __name__ == "__main__":
     main()

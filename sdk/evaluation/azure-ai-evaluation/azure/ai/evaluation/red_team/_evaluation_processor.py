@@ -119,6 +119,7 @@ class EvaluationProcessor:
             query_response = {
                 "query": "query",
                 "response": " ".join(assistant_messages),
+                "scenario": "redteam",
             }
 
             # Add context to query_response if found

@@ -1,6 +1,6 @@
 import random
 import string
-from azure.mgmt.netapp.models import SubvolumeInfo, SubvolumePatchRequest,SubvolumePatchParams
+from azure.mgmt.netapp.models import SubvolumeInfo, SubvolumePatchRequest, SubvolumePatchParams
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from test_volume import (
     create_volume,
@@ -139,7 +139,7 @@ class TestNetAppSubvolume(AzureMgmtRecordedTestCase):
                 subvolume_info.name
                 == setup.PERMA_ACCOUNT + "/" + setup.PERMA_POOL + "/" + volumeName1 + "/" + subvolumeName
             )
-            #assert subvolume_info.path == "/sub_vol_update.txt"
+            # assert subvolume_info.path == "/sub_vol_update.txt"
         finally:
             # delete
             delete_subvolume(

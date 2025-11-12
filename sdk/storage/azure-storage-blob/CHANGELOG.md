@@ -10,6 +10,7 @@ conditionally perform `BlobClient`'s `set_blob_tags` and `get_blob_tags` operati
 APIs, which specifies the full path to start listing paths from.
 - Added support for the keyword `user_delegation_oid` to `generate_blob_sas` and `generate_container_sas`, which
 specifies the Entra ID of the user that is authorized to use the generated SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
 
 ## 12.27.1 (2025-10-29)
 

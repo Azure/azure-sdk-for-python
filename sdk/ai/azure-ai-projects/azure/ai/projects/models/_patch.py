@@ -7,7 +7,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Dict
-from ._patch_evaluations import EvaluatorIds
 from ._models import CustomCredential as CustomCredentialGenerated
 
 
@@ -25,7 +24,6 @@ class CustomCredential(CustomCredentialGenerated):
 
 
 __all__: List[str] = [
-    "EvaluatorIds",
     "CustomCredential",
 ]  # Add all objects you want publicly available to users at this package level
 

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
+import platform
 from unittest.mock import patch
 
 import pytest
@@ -100,6 +101,10 @@ class TestTelemetryValue:
         assert v["node_type"] == '{"automl": 1}'
         assert v["node_source"] == '{"BUILDER": 1}'
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Test relies on CPython-specific bytecode optimization and is not intended for PyPy",
+    )
     def test_dsl_pipeline_telemetry_value(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
 
@@ -117,6 +122,10 @@ class TestTelemetryValue:
         assert v["node_source"] == '{"YAML.COMPONENT": 1}'
 
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_dsl_subpipeline_telemetry_value(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(path)

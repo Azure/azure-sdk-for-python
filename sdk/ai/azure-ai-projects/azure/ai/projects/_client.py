@@ -17,25 +17,33 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AgentsOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
-    EvaluationsOperations,
+    EvaluationRulesOperations,
+    EvaluationTaxonomiesOperations,
+    EvaluatorsOperations,
     IndexesOperations,
+    InsightsOperations,
+    MemoryStoresOperations,
     RedTeamsOperations,
+    SchedulesOperations,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClient:
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
+    :ivar agents: AgentsOperations operations
+    :vartype agents: azure.ai.projects.operations.AgentsOperations
+    :ivar memory_stores: MemoryStoresOperations operations
+    :vartype memory_stores: azure.ai.projects.operations.MemoryStoresOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
-    :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.projects.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
     :ivar indexes: IndexesOperations operations
@@ -44,22 +52,30 @@ class AIProjectClient:
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar red_teams: RedTeamsOperations operations
     :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
-    :param endpoint: Project endpoint. In the form
-     "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project
-     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project>`_"
-    if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
-     form
-    "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
-     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name>`_"
-     if you want to explicitly
-    specify the Foundry Project name. Required.
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
+    :ivar evaluation_taxonomies: EvaluationTaxonomiesOperations operations
+    :vartype evaluation_taxonomies: azure.ai.projects.operations.EvaluationTaxonomiesOperations
+    :ivar evaluators: EvaluatorsOperations operations
+    :vartype evaluators: azure.ai.projects.operations.EvaluatorsOperations
+    :ivar insights: InsightsOperations operations
+    :vartype insights: azure.ai.projects.operations.InsightsOperations
+    :ivar schedules: SchedulesOperations operations
+    :vartype schedules: azure.ai.projects.operations.SchedulesOperations
+    :param endpoint: Foundry Project endpoint in the form
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}".
+     If you only have one Project in your Foundry Hub, or to target the default Project
+     in your Hub, use the form
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project". Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     "2025-11-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
@@ -88,12 +104,22 @@ class AIProjectClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.memory_stores = MemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evaluation_rules = EvaluationRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.evaluation_taxonomies = EvaluationTaxonomiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.insights = InsightsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

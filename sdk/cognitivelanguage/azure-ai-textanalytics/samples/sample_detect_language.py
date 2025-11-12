@@ -46,14 +46,10 @@ def sample_detect_language():
     client = TextAnalysisClient(endpoint, credential=credential)
 
     # Build input
-    text_a = (
-        "Sentences in different languages."
-    )
+    text_a = "Sentences in different languages."
 
     body = TextLanguageDetectionInput(
-        text_input=LanguageDetectionTextInput(
-            language_inputs=[LanguageInput(id="A", text=text_a)]
-        )
+        text_input=LanguageDetectionTextInput(language_inputs=[LanguageInput(id="A", text=text_a)])
     )
 
     # Sync (non-LRO) call
@@ -77,6 +73,7 @@ def sample_detect_language():
             print(f"Confidence score: {dl.confidence_score}")
         else:
             print("No detected language returned for this document.")
+
 
 # [END detect_language]
 

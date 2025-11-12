@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import unittest
-import os
 import time
 import datetime
 import json
@@ -18,32 +17,17 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     is_json_content_type,
     _build_watched_setting,
     sdk_allowed_kwargs,
-    _RefreshTimer,
     AzureAppConfigurationProviderBase,
 )
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import (
-    REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
-    ServiceFabricEnvironmentVariable,
-    AzureFunctionEnvironmentVariable,
-    AzureWebAppEnvironmentVariable,
-    ContainerAppEnvironmentVariable,
-    KubernetesEnvironmentVariable,
     NULL_CHAR,
-    CUSTOM_FILTER_KEY,
-    PERCENTAGE_FILTER_KEY,
-    TIME_WINDOW_FILTER_KEY,
-    TARGETING_FILTER_KEY,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
     TELEMETRY_KEY,
     METADATA_KEY,
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
-    APP_CONFIG_AI_MIME_PROFILE,
-    APP_CONFIG_AICC_MIME_PROFILE,
 )
+from azure.appconfiguration.provider._refresh_timer import _RefreshTimer
 
 
 class TestDelayFailure(unittest.TestCase):
@@ -66,153 +50,6 @@ class TestDelayFailure(unittest.TestCase):
             called_delay = mock_sleep.call_args[0][0]
             self.assertGreater(called_delay, 2)
             self.assertLess(called_delay, 4)
-
-
-class TestUpdateCorrelationContextHeader(unittest.TestCase):
-    """Test the _update_correlation_context_header instance method."""
-
-    def setUp(self):
-        """Set up test environment."""
-        self.headers = {}
-        self.request_type = "Test"
-        self.replica_count = 2
-        self.is_failover_request = False
-
-        # Create provider instance with test configuration
-        self.provider = AzureAppConfigurationProviderBase(
-            endpoint="https://test.azconfig.io",
-            feature_flag_enabled=True,
-        )
-        # Set up provider state for testing
-        self.provider._feature_filter_usage = {}
-        self.provider._uses_key_vault = False
-        self.provider._uses_load_balancing = False
-        self.provider._uses_ai_configuration = False
-        self.provider._uses_aicc_configuration = False
-
-    def test_disabled_tracing_returns_unchanged_headers(self):
-        """Test that tracing disabled returns headers unchanged."""
-        with patch.dict(os.environ, {REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE: "true"}):
-            result = self.provider._update_correlation_context_header(
-                self.headers,
-                self.request_type,
-                self.replica_count,
-                self.is_failover_request,
-            )
-            self.assertEqual(result, {})
-
-    def test_basic_correlation_context(self):
-        """Test basic correlation context generation."""
-        result = self.provider._update_correlation_context_header(
-            self.headers,
-            self.request_type,
-            self.replica_count,
-            self.is_failover_request,
-        )
-        self.assertIn("Correlation-Context", result)
-        self.assertIn("RequestType=Test", result["Correlation-Context"])
-        self.assertIn("ReplicaCount=2", result["Correlation-Context"])
-
-    def test_feature_filters_in_correlation_context(self):
-        """Test feature filters are included in correlation context."""
-        # Set up feature filters in provider
-        self.provider._feature_filter_usage = {
-            CUSTOM_FILTER_KEY: True,
-            PERCENTAGE_FILTER_KEY: True,
-            TIME_WINDOW_FILTER_KEY: True,
-            TARGETING_FILTER_KEY: True,
-        }
-        result = self.provider._update_correlation_context_header(
-            self.headers,
-            self.request_type,
-            self.replica_count,
-            self.is_failover_request,
-        )
-        context = result["Correlation-Context"]
-        self.assertIn("Filters=", context)
-        self.assertIn(CUSTOM_FILTER_KEY, context)
-        self.assertIn(PERCENTAGE_FILTER_KEY, context)
-        self.assertIn(TIME_WINDOW_FILTER_KEY, context)
-        self.assertIn(TARGETING_FILTER_KEY, context)
-
-    def test_host_type_detection(self):
-        """Test host type detection in various environments."""
-        test_cases = [
-            (AzureFunctionEnvironmentVariable, "AzureFunction"),
-            (AzureWebAppEnvironmentVariable, "AzureWebApp"),
-            (ContainerAppEnvironmentVariable, "ContainerApp"),
-            (KubernetesEnvironmentVariable, "Kubernetes"),
-            (ServiceFabricEnvironmentVariable, "ServiceFabric"),
-        ]
-
-        for env_var, expected_host in test_cases:
-            with patch.dict(os.environ, {env_var: "test_value"}, clear=True):
-                result = self.provider._update_correlation_context_header(
-                    {},
-                    self.request_type,
-                    self.replica_count,
-                    self.is_failover_request,
-                )
-                self.assertIn(f"Host={expected_host}", result["Correlation-Context"])
-
-    def test_features_in_correlation_context(self):
-        """Test that features are included in correlation context."""
-        # Configure provider with all features enabled
-        self.provider._uses_load_balancing = True
-        self.provider._uses_ai_configuration = True
-        self.provider._uses_aicc_configuration = True
-
-        result = self.provider._update_correlation_context_header(
-            self.headers,
-            self.request_type,
-            self.replica_count,
-            self.is_failover_request,
-        )
-        context = result["Correlation-Context"]
-        self.assertIn("Features=LB+AI+AICC", context)
-
-    def test_failover_request_in_correlation_context(self):
-        """Test that failover request is included in correlation context."""
-        result = self.provider._update_correlation_context_header(
-            self.headers,
-            self.request_type,
-            self.replica_count,
-            False,  # uses key vault
-            True,  # is_failover_request=True
-        )
-        self.assertIn("Failover", result["Correlation-Context"])
-
-
-class TestUsesFeatureFlags(unittest.TestCase):
-    """Test the _uses_feature_flags instance method."""
-
-    def setUp(self):
-        """Set up test environment."""
-        self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
-
-    def test_no_feature_flags_returns_empty(self):
-        """Test that no feature flags returns empty string."""
-        self.provider._feature_flag_enabled = False
-        result = self.provider._uses_feature_flags()
-        self.assertEqual(result, "")
-
-    @patch("azure.appconfiguration.provider._azureappconfigurationproviderbase.version")
-    def test_feature_flags_with_version(self, mock_version):
-        """Test that feature flags with version returns version string."""
-        mock_version.return_value = "1.0.0"
-        self.provider._feature_flag_enabled = True
-        result = self.provider._uses_feature_flags()
-        self.assertEqual(result, ",FMPyVer=1.0.0")
-
-    @patch("azure.appconfiguration.provider._azureappconfigurationproviderbase.version")
-    def test_feature_flags_without_package(self, mock_version):
-        """Test that feature flags without package returns empty string."""
-        from importlib.metadata import PackageNotFoundError
-
-        mock_version.side_effect = PackageNotFoundError()
-        self.provider._feature_flag_enabled = True
-        result = self.provider._uses_feature_flags()
-        self.assertEqual(result, "")
 
 
 class TestIsJsonContentType(unittest.TestCase):
@@ -500,26 +337,6 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
             result = self.provider._process_key_value_base(config)
             self.assertEqual(result, '{"invalid": json}')  # Should return as string
 
-    def test_process_key_value_base_ai_configuration(self):
-        """Test processing AI configuration content type."""
-        config = Mock()
-        config.content_type = f"application/json; {APP_CONFIG_AI_MIME_PROFILE}"
-        config.value = '{"ai_config": "value"}'
-
-        result = self.provider._process_key_value_base(config)
-        self.assertTrue(self.provider._uses_ai_configuration)
-        self.assertEqual(result, {"ai_config": "value"})
-
-    def test_process_key_value_base_aicc_configuration(self):
-        """Test processing AI Chat Completion configuration content type."""
-        config = Mock()
-        config.content_type = f"application/json; {APP_CONFIG_AICC_MIME_PROFILE}"
-        config.value = '{"aicc_config": "value"}'
-
-        result = self.provider._process_key_value_base(config)
-        self.assertTrue(self.provider._uses_aicc_configuration)
-        self.assertEqual(result, {"aicc_config": "value"})
-
     def test_update_ff_telemetry_metadata(self):
         """Test feature flag telemetry processing."""
         feature_flag = Mock(spec=FeatureFlagConfigurationSetting)
@@ -542,22 +359,36 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertIn(FEATURE_FLAG_REFERENCE_KEY, metadata)
         self.assertIn("test_feature", metadata[FEATURE_FLAG_REFERENCE_KEY])
 
-    def test_update_feature_filter_telemetry(self):
-        """Test feature flag app config telemetry tracking."""
-        feature_flag = Mock(spec=FeatureFlagConfigurationSetting)
-        feature_flag.filters = [
-            {"name": PERCENTAGE_FILTER_NAMES[0]},
-            {"name": TIME_WINDOW_FILTER_NAMES[0]},
-            {"name": "CustomFilter"},
-            {"name": TARGETING_FILTER_NAMES[0]},
-        ]
+    def test_update_ff_telemetry_metadata_max_variants(self):
+        """Test that max_variants only increases, never decreases."""
+        feature_flag = FeatureFlagConfigurationSetting("test_feature")
 
-        self.provider._update_feature_filter_telemetry(feature_flag)
+        self.assertIsNone(self.provider._tracing_context.max_variants)
 
-        self.assertTrue(self.provider._feature_filter_usage[PERCENTAGE_FILTER_KEY])
-        self.assertTrue(self.provider._feature_filter_usage[TIME_WINDOW_FILTER_KEY])
-        self.assertTrue(self.provider._feature_filter_usage[CUSTOM_FILTER_KEY])
-        self.assertTrue(self.provider._feature_filter_usage[TARGETING_FILTER_KEY])
+        feature_flag_value: Dict[str, Any] = {}
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value)
+
+        # Verify max_variants remains None
+        self.assertIsNone(self.provider._tracing_context.max_variants)
+
+        # First call with 3 variants
+        feature_flag_value_3: Dict[str, Any] = {"variants": [{}, {}, {}]}  # 3 variants
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value_3)
+        self.assertEqual(self.provider._tracing_context.max_variants, 3)
+
+        # Second call with 1 variant (should not decrease)
+        feature_flag_value_1: Dict[str, Any] = {"variants": [{}]}  # 1 variant
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value_1)
+        self.assertEqual(self.provider._tracing_context.max_variants, 3)  # Should remain 3
+
+        # Third call with 5 variants (should increase)
+        feature_flag_value_5: Dict[str, Any] = {"variants": [{}, {}, {}, {}, {}]}  # 5 variants
+
+        self.provider._update_ff_telemetry_metadata("", feature_flag, feature_flag_value_5)
+        self.assertEqual(self.provider._tracing_context.max_variants, 5)  # Should increase to 5
 
     def test_generate_allocation_id_no_allocation(self):
         """Test allocation ID generation with no allocation."""

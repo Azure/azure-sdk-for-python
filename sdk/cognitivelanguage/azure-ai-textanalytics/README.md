@@ -81,7 +81,8 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 6.0.0b1 - Latest preview release | 3.0, 3.1, 2022-05-01, 2023-04-01, 2024-11-01, 2024-11-15-preview, 2025-05-15-preview (default) |
+| 6.0.0b2 - Latest preview release | 2022-05-01, 2023-04-01, 2024-11-01, 2025-11-15-preview (default) |
+| 6.0.0b1  | 2022-05-01, 2023-04-01, 2024-11-01, 2025-05-15-preview (default) |
 | 5.3.X - Latest stable release | 3.0, 3.1, 2022-05-01, 2023-04-01 (default) |
 | 5.2.X  | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
@@ -253,14 +254,16 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 The following section provides several code snippets covering some of the most common Language service tasks, including:
 
-- [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
-- [Recognize Entities](#recognize-entities "Recognize entities")
-- [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
-- [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
-- [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
-- [Detect Language](#detect-language "Detect language")
-- [Healthcare Entities Analysis](#healthcare-entities-analysis "Healthcare Entities Analysis")
-- [Multiple Analysis](#multiple-analysis "Multiple analysis")
+- [Analyze Sentiment][analyze_sentiment_sample]
+- [Recognize Entities][recognize_entities_sample]
+- [Recognize Linked Entities][recognize_linked_entities_sample]
+- [Recognize PII Entities][recognize_pii_entities_sample]
+- [Recognize PII Entities with multiple redaction policies][recognize_pii_entities_with_redaction_policies_sample]
+- [Recognize PII Entities with confidence score][recognize_pii_entities_with_confidence_score_sample]
+- [Extract Key Phrases][extract_key_phrases_sample]
+- [Detect Language][detect_language_sample]
+- [Healthcare Entities Analysis][analyze_healthcare_entities_sample]
+- [Multiple Analysis][analyze_sample]
 - [Custom Entity Recognition][recognize_custom_entities_sample]
 - [Custom Single Label Classification][single_label_classify_sample]
 - [Custom Multi Label Classification][multi_label_classify_sample]
@@ -672,14 +675,10 @@ def sample_detect_language():
     client = TextAnalysisClient(endpoint, credential=credential)
 
     # Build input
-    text_a = (
-        "Sentences in different languages."
-    )
+    text_a = "Sentences in different languages."
 
     body = TextLanguageDetectionInput(
-        text_input=LanguageDetectionTextInput(
-            language_inputs=[LanguageInput(id="A", text=text_a)]
-        )
+        text_input=LanguageDetectionTextInput(language_inputs=[LanguageInput(id="A", text=text_a)])
     )
 
     # Sync (non-LRO) call
@@ -793,12 +792,12 @@ def sample_analyze_healthcare_entities():
                 print(f"Kind: {op_result.kind}")
 
                 hc_result = op_result.results
-                for doc in (hc_result.documents or []):
+                for doc in hc_result.documents or []:
                     print(f"\nDocument ID: {doc.id}")
 
                     # Entities
                     print("Entities:")
-                    for entity in (doc.entities or []):
+                    for entity in doc.entities or []:
                         print(f"  Text: {entity.text}")
                         print(f"  Category: {entity.category}")
                         print(f"  Offset: {entity.offset}")
@@ -812,9 +811,9 @@ def sample_analyze_healthcare_entities():
 
                     # Relations
                     print("Relations:")
-                    for relation in (doc.relations or []):
+                    for relation in doc.relations or []:
                         print(f"  Relation type: {relation.relation_type}")
-                        for rel_entity in (relation.entities or []):
+                        for rel_entity in relation.entities or []:
                             print(f"    Role: {rel_entity.role}")
                             print(f"    Ref: {rel_entity.ref}")
                         print()
@@ -883,9 +882,7 @@ def sample_analyze():
         " offers services for childcare in case you want that."
     )
 
-    text_b = (
-        "Sentences in different languages."
-    )
+    text_b = "Sentences in different languages."
 
     text_c = (
         "That was the best day of my life! We went on a 4 day trip where we stayed at Hotel Foo. They had"
@@ -943,7 +940,7 @@ def sample_analyze():
                     print(f"    Confidence score: {entity.confidence_score}")
                     print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
 
         # --- Key Phrases ---
@@ -955,7 +952,7 @@ def sample_analyze():
                     print(f"    {kp}")
                 print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
 ```
 
@@ -1031,6 +1028,8 @@ Common scenarios
 - Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 - Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
 - Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample] ([async version][recognize_pii_entities_sample_async])
+- Recognize personally identifiable information(Multiple redaction policies): [sample_recognize_pii_entities_with_redaction_policies.py][recognize_pii_entities_with_redaction_policies_sample] ([async version][recognize_pii_entities_with_redaction_policies_sample_async])
+- Recognize personally identifiable information(Confidence score): [sample_recognize_pii_entities_with_confidence_score.py][recognize_pii_entities_with_confidence_score_sample] ([async version][recognize_pii_entities_with_confidence_score_sample_async])
 - Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 - Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 - Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
@@ -1127,6 +1126,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
 [recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
 [recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
+[recognize_pii_entities_with_redaction_policies_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_redaction_policies.py
+[recognize_pii_entities_with_redaction_policies_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_redaction_policies_async.py
+[recognize_pii_entities_with_confidence_score_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities_with_confidence_score.py
+[recognize_pii_entities_with_confidence_score_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_with_confidence_score_async.py
 [analyze_healthcare_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities.py
 [analyze_healthcare_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_async.py
 [analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_actions.py

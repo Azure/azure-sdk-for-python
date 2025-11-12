@@ -10,6 +10,31 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentKind."""
+
+    PROMPT = "prompt"
+    HOSTED = "hosted"
+    CONTAINER_APP = "container_app"
+    WORKFLOW = "workflow"
+
+
+class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentProtocol."""
+
+    ACTIVITY_PROTOCOL = "activity_protocol"
+    RESPONSES = "responses"
+
+
+class AnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AnnotationType."""
+
+    FILE_CITATION = "file_citation"
+    URL_CITATION = "url_citation"
+    FILE_PATH = "file_path"
+    CONTAINER_FILE_CITATION = "container_file_citation"
+
+
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
@@ -71,6 +96,56 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASELINE = "baseline"
     """Represents the baseline direct adversarial probing, which is used by attack strategies as the
     attack objective."""
+    INDIRECT_JAILBREAK = "indirect_jailbreak"
+    """Represents indirect jailbreak attacks that use complex methods to bypass AI safeguards."""
+    TENSE = "tense"
+    """Alters the tense of the text, changing its temporal context."""
+    MULTI_TURN = "multi_turn"
+    """Creates multi-turn conversations to simulate extended interactions."""
+    CRESCENDO = "crescendo"
+    """Gradually increases the intensity or complexity of the attack over time."""
+
+
+class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available query types for Azure AI Search tool."""
+
+    SIMPLE = "simple"
+    """Query type ``simple``"""
+    SEMANTIC = "semantic"
+    """Query type ``semantic``"""
+    VECTOR = "vector"
+    """Query type ``vector``"""
+    VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
+    """Query type ``vector_simple_hybrid``"""
+    VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
+    """Query type ``vector_semantic_hybrid``"""
+
+
+class CodeInterpreterOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CodeInterpreterOutputType."""
+
+    LOGS = "logs"
+    IMAGE = "image"
+
+
+class ComputerActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ComputerActionType."""
+
+    SCREENSHOT = "screenshot"
+    CLICK = "click"
+    DOUBLE_CLICK = "double_click"
+    SCROLL = "scroll"
+    TYPE = "type"
+    WAIT = "wait"
+    KEYPRESS = "keypress"
+    DRAG = "drag"
+    MOVE = "move"
+
+
+class ComputerToolCallOutputItemOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A computer screenshot image used with the computer use tool."""
+
+    SCREENSHOT = "computer_screenshot"
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -94,6 +169,8 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Application Insights"""
     CUSTOM = "CustomKeys"
     """Custom Keys"""
+    REMOTE_TOOL = "RemoteTool"
+    """Remote tool"""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -109,6 +186,8 @@ class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom credential"""
     NONE = "None"
     """No credential"""
+    AGENTIC_IDENTITY = "AgenticIdentityToken"
+    """Agentic identity credential"""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -120,6 +199,25 @@ class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """URI folder."""
 
 
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Days of the week for recurrence schedule."""
+
+    SUNDAY = "Sunday"
+    """Sunday."""
+    MONDAY = "Monday"
+    """Monday."""
+    TUESDAY = "Tuesday"
+    """Tuesday."""
+    WEDNESDAY = "Wednesday"
+    """Wednesday."""
+    THURSDAY = "Thursday"
+    """Thursday."""
+    FRIDAY = "Friday"
+    """Friday."""
+    SATURDAY = "Saturday"
+    """Saturday."""
+
+
 class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DeploymentType."""
 
@@ -127,11 +225,90 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment"""
 
 
-class EvaluationTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Allowed types of evaluation targets."""
+class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation action."""
 
-    MODEL_RESPONSE_GENERATION = "modelResponseGeneration"
-    """Evaluation target that uses a model for response generation."""
+    CONTINUOUS_EVALUATION = "continuousEvaluation"
+    """Continuous evaluation."""
+    HUMAN_EVALUATION = "humanEvaluation"
+    """Human evaluation."""
+
+
+class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation rule event."""
+
+    RESPONSE_COMPLETED = "responseCompleted"
+    """Response completed."""
+    MANUAL = "manual"
+    """Manual trigger."""
+
+
+class EvaluationTaxonomyInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation taxonomy input."""
+
+    AGENT = "agent"
+    """Agent"""
+    POLICY = "policy"
+    """Policy."""
+
+
+class EvaluatorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The category of the evaluator."""
+
+    QUALITY = "quality"
+    """Quality"""
+    SAFETY = "safety"
+    """Risk & Safety"""
+    AGENTS = "agents"
+    """Agents"""
+
+
+class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of evaluator definition."""
+
+    PROMPT = "prompt"
+    """Prompt-based definition"""
+    CODE = "code"
+    """Code-based definition"""
+    PROMPT_AND_CODE = "prompt_and_code"
+    """Prompt & Code Based definition"""
+    SERVICE = "service"
+    """Service-based evaluator"""
+    OPENAI_GRADERS = "openai_graders"
+    """OpenAI graders"""
+
+
+class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of the metric indicating whether a higher value is better, a lower value is
+    better, or neutral.
+    """
+
+    INCREASE = "increase"
+    """It indicates a higher value is better for this metric"""
+    DECREASE = "decrease"
+    """It indicates a lower value is better for this metric"""
+    NEUTRAL = "neutral"
+    """It indicates no preference for this metric direction"""
+
+
+class EvaluatorMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the evaluator."""
+
+    ORDINAL = "ordinal"
+    """Ordinal metric representing categories that can be ordered or ranked."""
+    CONTINUOUS = "continuous"
+    """Continuous metric representing values in a continuous range."""
+    BOOLEAN = "boolean"
+    """Boolean metric representing true/false values"""
+
+
+class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the evaluator."""
+
+    BUILT_IN = "builtin"
+    """Built-in evaluator (Microsoft provided)"""
+    CUSTOM = "custom"
+    """Custom evaluator"""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -145,6 +322,126 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed Azure Search"""
 
 
+class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The request of the insights."""
+
+    EVALUATION_RUN_CLUSTER_INSIGHT = "EvaluationRunClusterInsight"
+    """Insights on an Evaluation run result."""
+    AGENT_CLUSTER_INSIGHT = "AgentClusterInsight"
+    """Cluster Insight on an Agent."""
+    EVALUATION_COMPARISON = "EvaluationComparison"
+    """Evaluation Comparison."""
+
+
+class ItemContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Multi-modal input and output contents."""
+
+    INPUT_TEXT = "input_text"
+    INPUT_AUDIO = "input_audio"
+    INPUT_IMAGE = "input_image"
+    INPUT_FILE = "input_file"
+    OUTPUT_TEXT = "output_text"
+    OUTPUT_AUDIO = "output_audio"
+    REFUSAL = "refusal"
+
+
+class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ItemType."""
+
+    MESSAGE = "message"
+    FILE_SEARCH_CALL = "file_search_call"
+    FUNCTION_CALL = "function_call"
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    COMPUTER_CALL = "computer_call"
+    COMPUTER_CALL_OUTPUT = "computer_call_output"
+    WEB_SEARCH_CALL = "web_search_call"
+    REASONING = "reasoning"
+    ITEM_REFERENCE = "item_reference"
+    IMAGE_GENERATION_CALL = "image_generation_call"
+    CODE_INTERPRETER_CALL = "code_interpreter_call"
+    LOCAL_SHELL_CALL = "local_shell_call"
+    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    MCP_CALL = "mcp_call"
+    STRUCTURED_OUTPUTS = "structured_outputs"
+    WORKFLOW_ACTION = "workflow_action"
+    MEMORY_SEARCH_CALL = "memory_search_call"
+    OAUTH_CONSENT_REQUEST = "oauth_consent_request"
+
+
+class LocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LocationType."""
+
+    APPROXIMATE = "approximate"
+
+
+class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Memory item kind."""
+
+    USER_PROFILE = "user_profile"
+    """User profile information extracted from conversations."""
+    CHAT_SUMMARY = "chat_summary"
+    """Summary of chat conversations."""
+
+
+class MemoryOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Memory operation kind."""
+
+    CREATE = "create"
+    """Create a new memory item."""
+    UPDATE = "update"
+    """Update an existing memory item."""
+    DELETE = "delete"
+    """Delete an existing memory item."""
+
+
+class MemoryStoreKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of memory store implementation to use."""
+
+    DEFAULT = "default"
+    """The default memory store implementation."""
+
+
+class MemoryStoreUpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of a memory store update operation."""
+
+    QUEUED = "queued"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    SUPERSEDED = "superseded"
+
+
+class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication type for OpenApi endpoint. Allowed types are:
+
+    * Anonymous (no authentication required)
+    * Project Connection (requires project_connection_id to endpoint, as setup in AI Foundry)
+    * Managed_Identity (requires audience for identity based auth).
+    """
+
+    ANONYMOUS = "anonymous"
+    PROJECT_CONNECTION = "project_connection"
+    MANAGED_IDENTITY = "managed_identity"
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
+
+
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of pending upload."""
 
@@ -152,6 +449,151 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No pending upload."""
     BLOB_REFERENCE = "BlobReference"
     """Blob Reference is the only supported type."""
+
+
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """**o-series models only**
+
+    Constrains effort on reasoning for
+    `reasoning models <https://platform.openai.com/docs/guides/reasoning>`_.
+    Currently supported values are ``low``, ``medium``, and ``high``. Reducing
+    reasoning effort can result in faster responses and fewer tokens used
+    on reasoning in a response.
+    """
+
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
+class ReasoningItemSummaryPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ReasoningItemSummaryPartType."""
+
+    SUMMARY_TEXT = "summary_text"
+
+
+class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recurrence type."""
+
+    HOURLY = "Hourly"
+    """Hourly recurrence pattern."""
+    DAILY = "Daily"
+    """Daily recurrence pattern."""
+    WEEKLY = "Weekly"
+    """Weekly recurrence pattern."""
+    MONTHLY = "Monthly"
+    """Monthly recurrence pattern."""
+
+
+class ResponseErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The error code for the response."""
+
+    SERVER_ERROR = "server_error"
+    RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
+    INVALID_PROMPT = "invalid_prompt"
+    VECTOR_STORE_TIMEOUT = "vector_store_timeout"
+    INVALID_IMAGE = "invalid_image"
+    INVALID_IMAGE_FORMAT = "invalid_image_format"
+    INVALID_BASE64_IMAGE = "invalid_base64_image"
+    INVALID_IMAGE_URL = "invalid_image_url"
+    IMAGE_TOO_LARGE = "image_too_large"
+    IMAGE_TOO_SMALL = "image_too_small"
+    IMAGE_PARSE_ERROR = "image_parse_error"
+    IMAGE_CONTENT_POLICY_VIOLATION = "image_content_policy_violation"
+    INVALID_IMAGE_MODE = "invalid_image_mode"
+    IMAGE_FILE_TOO_LARGE = "image_file_too_large"
+    UNSUPPORTED_IMAGE_MEDIA_TYPE = "unsupported_image_media_type"
+    EMPTY_IMAGE_FILE = "empty_image_file"
+    FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image"
+    IMAGE_FILE_NOT_FOUND = "image_file_not_found"
+
+
+class ResponsesMessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The collection of valid roles for responses message items."""
+
+    SYSTEM = "system"
+    DEVELOPER = "developer"
+    USER = "user"
+    ASSISTANT = "assistant"
+
+
+class ResponseStreamEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ResponseStreamEventType."""
+
+    RESPONSE_AUDIO_DELTA = "response.audio.delta"
+    RESPONSE_AUDIO_DONE = "response.audio.done"
+    RESPONSE_AUDIO_TRANSCRIPT_DELTA = "response.audio_transcript.delta"
+    RESPONSE_AUDIO_TRANSCRIPT_DONE = "response.audio_transcript.done"
+    RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA = "response.code_interpreter_call_code.delta"
+    RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE = "response.code_interpreter_call_code.done"
+    RESPONSE_CODE_INTERPRETER_CALL_COMPLETED = "response.code_interpreter_call.completed"
+    RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS = "response.code_interpreter_call.in_progress"
+    RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING = "response.code_interpreter_call.interpreting"
+    RESPONSE_COMPLETED = "response.completed"
+    RESPONSE_CONTENT_PART_ADDED = "response.content_part.added"
+    RESPONSE_CONTENT_PART_DONE = "response.content_part.done"
+    RESPONSE_CREATED = "response.created"
+    ERROR = "error"
+    RESPONSE_FILE_SEARCH_CALL_COMPLETED = "response.file_search_call.completed"
+    RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS = "response.file_search_call.in_progress"
+    RESPONSE_FILE_SEARCH_CALL_SEARCHING = "response.file_search_call.searching"
+    RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
+    RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+    RESPONSE_IN_PROGRESS = "response.in_progress"
+    RESPONSE_FAILED = "response.failed"
+    RESPONSE_INCOMPLETE = "response.incomplete"
+    RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
+    RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
+    RESPONSE_REFUSAL_DELTA = "response.refusal.delta"
+    RESPONSE_REFUSAL_DONE = "response.refusal.done"
+    RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED = "response.output_text.annotation.added"
+    RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
+    RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
+    RESPONSE_REASONING_SUMMARY_PART_ADDED = "response.reasoning_summary_part.added"
+    RESPONSE_REASONING_SUMMARY_PART_DONE = "response.reasoning_summary_part.done"
+    RESPONSE_REASONING_SUMMARY_TEXT_DELTA = "response.reasoning_summary_text.delta"
+    RESPONSE_REASONING_SUMMARY_TEXT_DONE = "response.reasoning_summary_text.done"
+    RESPONSE_WEB_SEARCH_CALL_COMPLETED = "response.web_search_call.completed"
+    RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS = "response.web_search_call.in_progress"
+    RESPONSE_WEB_SEARCH_CALL_SEARCHING = "response.web_search_call.searching"
+    RESPONSE_IMAGE_GENERATION_CALL_COMPLETED = "response.image_generation_call.completed"
+    RESPONSE_IMAGE_GENERATION_CALL_GENERATING = "response.image_generation_call.generating"
+    RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS = "response.image_generation_call.in_progress"
+    RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE = "response.image_generation_call.partial_image"
+    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call.arguments_delta"
+    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call.arguments_done"
+    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
+    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+    RESPONSE_MCP_LIST_TOOLS_COMPLETED = "response.mcp_list_tools.completed"
+    RESPONSE_MCP_LIST_TOOLS_FAILED = "response.mcp_list_tools.failed"
+    RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS = "response.mcp_list_tools.in_progress"
+    RESPONSE_QUEUED = "response.queued"
+    RESPONSE_REASONING_DELTA = "response.reasoning.delta"
+    RESPONSE_REASONING_DONE = "response.reasoning.done"
+    RESPONSE_REASONING_SUMMARY_DELTA = "response.reasoning_summary.delta"
+    RESPONSE_REASONING_SUMMARY_DONE = "response.reasoning_summary.done"
+
+
+class ResponseTextFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An object specifying the format that the model must output.
+
+    Configuring ``{ "type": "json_schema" }`` enables Structured Outputs,
+    which ensures the model will match your supplied JSON schema. Learn more in the
+    `Structured Outputs guide <https://platform.openai.com/docs/guides/structured-outputs>`_.
+
+    The default format is ``{ "type": "text" }`` with no additional options.
+
+    **Not recommended for gpt-4o and newer models:**
+
+    Setting to ``{ "type": "json_object" }`` enables the older JSON mode, which
+    ensures the message the model generates is valid JSON. Using ``json_schema``
+    is preferred for models that support it.
+    """
+
+    TEXT = "text"
+    JSON_SCHEMA = "json_schema"
+    JSON_OBJECT = "json_object"
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,3 +607,160 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content of a sexual nature."""
     SELF_HARM = "SelfHarm"
     """Represents content related to self-harm."""
+    PROTECTED_MATERIAL = "ProtectedMaterial"
+    """Represents content that involves illegal activities."""
+    CODE_VULNERABILITY = "CodeVulnerability"
+    """Represents content that contains vulnerabilities in code."""
+    UNGROUNDED_ATTRIBUTES = "UngroundedAttributes"
+    """Represents content that lacks a solid grounding in fact."""
+    PROHIBITED_ACTIONS = "ProhibitedActions"
+    """Represents content that involves prohibited actions."""
+    SENSITIVE_DATA_LEAKAGE = "SensitiveDataLeakage"
+    """Represents content that involves sensitive data leakage."""
+    TASK_ADHERENCE = "TaskAdherence"
+    """Represents content that involves task adherence."""
+
+
+class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of sample used in the analysis."""
+
+    EVALUATION_RESULT_SAMPLE = "EvaluationResultSample"
+    """A sample from the evaluation result."""
+
+
+class ScheduleProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Schedule provisioning status."""
+
+    CREATING = "Creating"
+    """Represents the creation status of the schedule."""
+    UPDATING = "Updating"
+    """Represents the updating status of the schedule."""
+    DELETING = "Deleting"
+    """Represents the deleting status of the schedule."""
+    SUCCEEDED = "Succeeded"
+    """Represents the succeeded status of the schedule."""
+    FAILED = "Failed"
+    """Represents the failed status of the schedule."""
+
+
+class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the task."""
+
+    EVALUATION = "Evaluation"
+    """Evaluation task."""
+    INSIGHT = "Insight"
+    """Insight task."""
+
+
+class ServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the processing type used for serving the request.
+
+    * If set to 'auto', then the request will be processed with the service tier
+      configured in the Project settings. Unless otherwise configured, the Project will use
+      'default'.
+    * If set to 'default', then the request will be processed with the standard
+      pricing and performance for the selected model.
+    * If set to '[flex](https://platform.openai.com/docs/guides/flex-processing)'
+      or 'priority', then the request will be processed with the corresponding service
+      tier. [Contact sales](https://openai.com/contact-sales) to learn more about Priority
+      processing.
+    * When not set, the default behavior is 'auto'.
+
+    When the ``service_tier`` parameter is set, the response body will include the ``service_tier``
+    value based on the processing mode actually used to serve the request. This response value
+    may be different from the value set in the parameter.
+    """
+
+    AUTO = "auto"
+    DEFAULT = "default"
+    FLEX = "flex"
+    SCALE = "scale"
+    PRIORITY = "priority"
+
+
+class ToolChoiceObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates that the model should use a built-in tool to generate a response.
+    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
+    """
+
+    FILE_SEARCH = "file_search"
+    FUNCTION = "function"
+    COMPUTER = "computer_use_preview"
+    WEB_SEARCH = "web_search_preview"
+    IMAGE_GENERATION = "image_generation"
+    CODE_INTERPRETER = "code_interpreter"
+    MCP = "mcp"
+
+
+class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls which (if any) tool is called by the model.
+
+    ``none`` means the model will not call any tool and instead generates a message.
+
+    ``auto`` means the model can pick between generating a message or calling one or
+    more tools.
+
+    ``required`` means the model must call one or more tools.
+    """
+
+    NONE = "none"
+    AUTO = "auto"
+    REQUIRED = "required"
+
+
+class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A tool that can be used to generate a response."""
+
+    FILE_SEARCH = "file_search"
+    FUNCTION = "function"
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    MCP = "mcp"
+    CODE_INTERPRETER = "code_interpreter"
+    IMAGE_GENERATION = "image_generation"
+    LOCAL_SHELL = "local_shell"
+    BING_GROUNDING = "bing_grounding"
+    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+    FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
+    SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
+    AZURE_AI_SEARCH = "azure_ai_search"
+    OPENAPI = "openapi"
+    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
+    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+    A2A_PREVIEW = "a2a_preview"
+    AZURE_FUNCTION = "azure_function"
+    MEMORY_SEARCH = "memory_search"
+
+
+class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Treatment Effect Type."""
+
+    TOO_FEW_SAMPLES = "TooFewSamples"
+    """Not enough samples to determine treatment effect."""
+    INCONCLUSIVE = "Inconclusive"
+    """No significant difference between treatment and baseline."""
+    CHANGED = "Changed"
+    """Indicates the metric changed with statistical significance, but the direction is neutral."""
+    IMPROVED = "Improved"
+    """Indicates the treatment significantly improved the metric compared to baseline."""
+    DEGRADED = "Degraded"
+    """Indicates the treatment significantly degraded the metric compared to baseline."""
+
+
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the trigger."""
+
+    CRON = "Cron"
+    """Cron based trigger."""
+    RECURRENCE = "Recurrence"
+    """Recurrence based trigger."""
+    ONE_TIME = "OneTime"
+    """One-time trigger."""
+
+
+class WebSearchActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of WebSearchActionType."""
+
+    SEARCH = "search"
+    OPEN_PAGE = "open_page"
+    FIND = "find"

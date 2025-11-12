@@ -157,8 +157,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
 
             # Assert the processed value is as expected
             assert processed_value == {"key": "value"}
-            assert provider._uses_ai_configuration == False
-            assert provider._uses_aicc_configuration == False
+            assert provider._tracing_context.uses_ai_configuration == False
+            assert provider._tracing_context.uses_aicc_configuration == False
 
             mock_client_manager.load_configuration_settings.return_value = [
                 {
@@ -175,8 +175,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             )
 
             assert processed_value == {"key": "value"}
-            assert provider._uses_ai_configuration == True
-            assert provider._uses_aicc_configuration == False
+            assert provider._tracing_context.uses_ai_configuration == True
+            assert provider._tracing_context.uses_aicc_configuration == False
 
             mock_client_manager.load_configuration_settings.return_value = [
                 {
@@ -193,8 +193,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             )
 
             assert processed_value == {"key": "value"}
-            assert provider._uses_ai_configuration == True
-            assert provider._uses_aicc_configuration == True
+            assert provider._tracing_context.uses_ai_configuration == True
+            assert provider._tracing_context.uses_aicc_configuration == True
 
     @recorded_by_proxy
     @app_config_decorator

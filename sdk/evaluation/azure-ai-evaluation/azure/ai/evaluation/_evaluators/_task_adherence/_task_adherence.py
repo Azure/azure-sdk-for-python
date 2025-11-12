@@ -63,7 +63,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "task_adherence.prompty"
     _RESULT_KEY = "task_adherence"
-    _OPTIONAL_PARAMS = []
+    _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 0
 
@@ -175,7 +175,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         if isinstance(content, list):
                             for item in content:
                                 if isinstance(item, dict):
-                                    if item.get("type") == "text":
+                                    if item.get("type", None) in ("text", "input_text", "output_text"):
                                         assistant_parts.append(item.get("text", ""))
                                     elif item.get("type") == "tool_call":
                                         tool_parts.append(str(item.get("tool_call", "")))

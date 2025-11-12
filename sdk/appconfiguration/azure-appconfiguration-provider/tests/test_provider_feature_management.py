@@ -23,8 +23,10 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         )
         assert len(client.keys()) == 1
         assert FEATURE_MANAGEMENT_KEY in client
-        assert has_feature_flag(client, "Alpha")
-        assert "telemetry" not in get_feature_flag(client, "Alpha")
+        alpha = get_feature_flag(client, "Alpha")
+        assert alpha
+        assert "telemetry" in alpha
+        assert "enabled" not in alpha.get("telemetry")
 
     # method: load
     @recorded_by_proxy

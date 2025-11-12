@@ -1,16 +1,34 @@
 # Release History
 
-## 1.13.2 (Unreleased)
+## 1.13.5 (Unreleased)
 
 ### Features Added
-
-- Added App Insights redaction for agent safety result queries to prevent adversarial prompts from being stored in telemetry
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- **TaskAdherenceEvaluator:** treat tool definitions as optional so evaluations with only query/response inputs no longer raise “Either 'conversation' or individual inputs must be provided.”
+
 ### Other Changes
+
+## 1.13.4 (2025-11-10)
+
+### Bugs Fixed
+
+- Handle input data for evaluation result when evaluators.
+
+## 1.13.3 (2025-11-08)
+
+### Other Changes
+
+- Added `scenario` property to red team evaluation request to align scores with red team concepts of attack success.
+
+## 1.13.2 (2025-11-07)
+
+### Bugs Fixed
+
+- Added App Insights redaction for agent safety run telemetry so adversarial prompts are not stored in collected logs.
 
 ## 1.13.1 (2025-11-05)
 

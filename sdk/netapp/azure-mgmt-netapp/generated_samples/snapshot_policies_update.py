@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/SnapshotPolicies_Update.json
+# x-ms-original-file: 2025-09-01/SnapshotPolicies_Update.json
 if __name__ == "__main__":
     main()

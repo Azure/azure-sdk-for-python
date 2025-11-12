@@ -1,0 +1,5 @@
+python-dotenv>=1.0.0
+langchain_community==0.4.0
+beautifulsoup4==4.14.2
+azure-ai-agentserver-core
+azure-ai-agentserver-langgraph

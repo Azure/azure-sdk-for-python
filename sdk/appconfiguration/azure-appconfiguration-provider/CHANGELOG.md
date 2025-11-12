@@ -15,6 +15,8 @@
 
 ### Other Changes
 
+* Updated Request Tracing
+
 ## 2.2.0 (2025-08-08)
 
 ### Features Added

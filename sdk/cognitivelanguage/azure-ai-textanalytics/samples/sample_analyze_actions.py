@@ -59,9 +59,7 @@ def sample_analyze():
         " offers services for childcare in case you want that."
     )
 
-    text_b = (
-        "Sentences in different languages."
-    )
+    text_b = "Sentences in different languages."
 
     text_c = (
         "That was the best day of my life! We went on a 4 day trip where we stayed at Hotel Foo. They had"
@@ -119,7 +117,7 @@ def sample_analyze():
                     print(f"    Confidence score: {entity.confidence_score}")
                     print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
 
         # --- Key Phrases ---
@@ -131,8 +129,9 @@ def sample_analyze():
                     print(f"    {kp}")
                 print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
+
 
 # [END analyze]
 

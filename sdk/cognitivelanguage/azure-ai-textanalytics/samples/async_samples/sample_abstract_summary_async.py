@@ -132,9 +132,9 @@ async def sample_text_abstractive_summarization_async():
 
                     # Documents summarized by this action
                     results = op_result.results
-                    for doc in (results.documents or []):
+                    for doc in results.documents or []:
                         print(f"\nDocument ID: {doc.id}")
-                        for s in (doc.summaries or []):
+                        for s in doc.summaries or []:
                             print(f"  Summary: {s.text}")
                             if s.contexts:
                                 for c in s.contexts:
@@ -148,6 +148,8 @@ async def sample_text_abstractive_summarization_async():
                         )
                     except Exception:
                         print("\n[Non-abstractive action present]")
+
+
 # [END text_abstractive_summarization_async]
 
 

@@ -60,7 +60,8 @@
         "uniqueAzConfigName": "[format('{0}-{1}', parameters('baseName'), parameters('azConfigPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('azConfigPrefix'), parameters('azConfigEndpointSuffix'))]",
         "azureKeyVaultUrl": "[format('https://{0}{1}/', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
-        "azureKeyVaultSecretUrl": "[format('https://{0}{1}/secrets/TestSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
+        "azureKeyVaultSecretUrl": "[format('https://{0}{1}/secrets/TestSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
+        "azureKeyVaultSecretUrl2": "[format('https://{0}{1}/secrets/TestSecret2', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
     },
     "resources": [
         {
@@ -211,6 +212,10 @@
         "APPCONFIGURATION_KEYVAULT_SECRET_URL": {
             "type": "string",
             "value": "[variables('azureKeyVaultSecretUrl')]"
+        },
+        "APPCONFIGURATION_KEYVAULT_SECRET_URL2": {
+            "type": "string",
+            "value": "[variables('azureKeyVaultSecretUrl2')]"
         }
     }
 }

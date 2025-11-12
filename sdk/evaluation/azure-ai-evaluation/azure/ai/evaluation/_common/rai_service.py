@@ -921,8 +921,10 @@ def _build_sync_eval_payload(
     :rtype: Dict
     """
 
-    # Build properties/metadata (category, taxonomy, etc.)
+    # Build properties/metadata (scenario, category, taxonomy, etc.)
     properties = {}
+    if data.get("scenario") is not None:
+        properties["scenario"] = data["scenario"]
     if data.get("risk_sub_type") is not None:
         properties["category"] = data["risk_sub_type"]
     if data.get("taxonomy") is not None:
