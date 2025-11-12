@@ -60,8 +60,8 @@ class TestTranslation(TextTranslationTest):
 
         input_text_element = TranslateInputItem(
             text="<span class=notranslate>今天是怎么回事是</span>非常可怕的",
-            targets=[TranslationTarget(language="zh-chs")],
-            language="en",
+            targets=[TranslationTarget(language="en")],
+            language="zh-chs",
             text_type=TextType.HTML
         )
         response = client.translate(body=[input_text_element])
@@ -81,7 +81,7 @@ class TestTranslation(TextTranslationTest):
         input_text_element = TranslateInputItem(
             text="hudha akhtabar.",
             targets=[TranslationTarget(language="zh-Hans", script="Latn")],
-            language="en",
+            language="ar",
             script="Latn"
         )
         response = client.translate(body=[input_text_element])
