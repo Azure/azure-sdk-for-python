@@ -74,6 +74,7 @@ class TestConfigurations(TestCase):
             views=["test_view"],
             logger_name="test_logger",
             span_processors=["test_processor"],
+            enable_trace_based_sampling=True,
         )
 
         self.assertEqual(configurations["connection_string"], "test_cs")
@@ -107,6 +108,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["views"], ["test_view"])
         self.assertEqual(configurations["logger_name"], "test_logger")
         self.assertEqual(configurations["span_processors"], ["test_processor"])
+        self.assertEqual(configurations["enable_trace_based_sampling"], True)
 
     @patch.dict("os.environ", {}, clear=True)
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
@@ -141,6 +143,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["logger_name"], "")
         self.assertEqual(configurations["span_processors"], [])
         self.assertEqual(configurations["views"], [])
+        self.assertEqual(configurations["enable_trace_based_sampling"], False)
 
     @patch.dict(
         "os.environ",
