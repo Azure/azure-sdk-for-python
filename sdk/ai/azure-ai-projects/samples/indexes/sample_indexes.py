@@ -14,11 +14,11 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry project.
     2) INDEX_NAME - Optional. The name of the Index to create and use in this sample.
     3) INDEX_VERSION - Optional. The version of the Index to create and use in this sample.
     4) AI_SEARCH_CONNECTION_NAME - Optional. The name of an existing AI Search connection to use in this sample.

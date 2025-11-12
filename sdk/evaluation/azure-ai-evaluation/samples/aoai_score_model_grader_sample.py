@@ -193,7 +193,7 @@ def demonstrate_score_model_grader():
         # 1. Configure Azure OpenAI model using environment variables
         model_config = AzureOpenAIModelConfiguration(
             azure_endpoint=os.environ.get("endpoint"),
-            api_key=os.environ.get("key"),
+            api_key=os.environ.get("api_key"),
             azure_deployment=os.environ.get("deployment_name"),
             api_version="2024-12-01-preview",
         )
