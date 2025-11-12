@@ -91,44 +91,52 @@ def test_max_message_size_negotiation_with_client_unlimited():
     """
     Test AMQP attach frame negotiation where client sends max_message_size=0 ( unlimited )
     and server responds with its limit (20MB), resulting in final size of 20MB.
-    
     """
+    # Test constants to improve maintainability and reduce duplication
+    TEST_LINK_NAME = "test_link"
+    TEST_SOURCE_ADDRESS = "test_source"
+    TEST_TARGET_ADDRESS = "test_target"
+    TEST_HANDLE = 3
+    TEST_SND_SETTLE_MODE = 0
+    TEST_RCV_SETTLE_MODE = 1
+    SERVER_MAX_MESSAGE_SIZE = 20 * 1024 * 1024
+
     mock_session = Mock()
     mock_connection = Mock()
     mock_session._connection = mock_connection
 
-    SERVER_MAX_MESSAGE_SIZE = 20 * 1024 * 1024 
-
     link = Link(
         mock_session,
-        3,
-        name="test_link",
+        TEST_HANDLE,
+        name=TEST_LINK_NAME,
         role=False,  # Sender role
-        source_address="test_source", 
-        target_address="test_target",
+        source_address=TEST_SOURCE_ADDRESS, 
+        target_address=TEST_TARGET_ADDRESS,
         network_trace=False,
         network_trace_params={},
         max_message_size=LINK_MAX_MESSAGE_SIZE
     )
 
     # Verifying that client sends 0 (unlimited) in attach frame
-    assert link.max_message_size == 0, f"Expected client max_message_size=0, got {link._max_message_size}"
+    assert link.max_message_size == 0, f"Expected client max_message_size=0, got {link.max_message_size}"
+    
     # Simulating server's attach response with 20MB limit, Mock incoming attach frame from server
     mock_attach_frame = [
-    "test_link",          
-    3,                    
-    False,               
-    0,                    
-    1,                    
-    Source(address="test_source"),  
-    Target(address="test_target"), 
-    None,                 
-    False,              
-    None,                 
-    20 * 1024 * 1024,     
-    None,                 
-    None,                 
-    None,      ]
+        TEST_LINK_NAME,                           # 0: name
+        TEST_HANDLE,                              # 1: handle
+        False,                                    # 2: role
+        TEST_SND_SETTLE_MODE,                     # 3: snd-settle-mode
+        TEST_RCV_SETTLE_MODE,                     # 4: rcv-settle-mode
+        Source(address=TEST_SOURCE_ADDRESS),      # 5: source
+        Target(address=TEST_TARGET_ADDRESS),      # 6: target
+        None,                                     # 7: unsettled
+        False,                                    # 8: incomplete-unsettled
+        None,                                     # 9: initial-delivery-count
+        SERVER_MAX_MESSAGE_SIZE,                  # 10: max-message-size
+        None,                                     # 11: offered_capabilities
+        None,                                     # 12: desired_capabilities
+        None,                                     # 13: remote_properties
+    ]
 
     # Testing _outgoing_attach()
     with patch.object(link, '_outgoing_attach') as mock_outgoing_attach:
