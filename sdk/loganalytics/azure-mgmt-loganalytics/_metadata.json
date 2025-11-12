@@ -1,0 +1,11 @@
+{
+  "commit": "b40ebb26621eef12eb91a11a08793f507cdd367f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.42.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/OperationalInsights/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/OperationalInsights/readme.md"
+}

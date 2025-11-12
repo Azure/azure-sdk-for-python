@@ -21,11 +21,11 @@ class TestLogAnalyticsManagementAvailableServiceTiersOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_workspace(self, resource_group):
+    async def test_available_service_tiers_list_by_workspace(self, resource_group):
         response = await self.client.available_service_tiers.list_by_workspace(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
