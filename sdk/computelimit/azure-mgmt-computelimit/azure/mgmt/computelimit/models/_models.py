@@ -157,8 +157,6 @@ class GuestSubscription(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
-    __flattened_items = ["provisioning_state"]
-
     @overload
     def __init__(
         self,
@@ -174,25 +172,7 @@ class GuestSubscription(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
 
 
 class GuestSubscriptionProperties(_Model):
@@ -353,8 +333,6 @@ class SharedLimit(ProxyResource):
     )
     """The resource-specific properties for this resource."""
 
-    __flattened_items = ["resource_name", "limit", "unit", "provisioning_state"]
-
     @overload
     def __init__(
         self,
@@ -370,25 +348,7 @@ class SharedLimit(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
-        for k, v in _flattened_input.items():
-            setattr(self, k, v)
-
-    def __getattr__(self, name: str) -> Any:
-        if name in self.__flattened_items:
-            if self.properties is None:
-                return None
-            return getattr(self.properties, name)
-        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if key in self.__flattened_items:
-            if self.properties is None:
-                self.properties = self._attr_to_rest_field["properties"]._class_type()
-            setattr(self.properties, key, value)
-        else:
-            super().__setattr__(key, value)
 
 
 class SharedLimitProperties(_Model):

@@ -1,78 +1,61 @@
-# Computelimit Management client library for Python
-<!-- write necessary description of service -->
+# Microsoft Azure SDK for Python
+
+This is the Microsoft Azure Computelimit Management Client Library.
+This package has been tested with Python 3.9+.
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
+
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
+
+### Prerequisites
+
+- Python 3.9+ is required to use this package.
+- [Azure subscription](https://azure.microsoft.com/free/)
 
 ### Install the package
 
 ```bash
-python -m pip install azure-mgmt-computelimit
+pip install azure-mgmt-computelimit
+pip install azure-identity
 ```
 
-#### Prequisites
+### Authentication
 
-- Python 3.9 or later is required to use this package.
-- You need an [Azure subscription][azure_sub] to use this package.
-- An existing Computelimit Management instance.
+By default, [Azure Active Directory](https://aka.ms/awps/aad) token authentication depends on correct configuration of the following environment variables.
 
-#### Create with an Azure Active Directory Credential
-To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
-provide an instance of the desired credential type obtained from the
-[azure-identity][azure_identity_credentials] library.
+- `AZURE_CLIENT_ID` for Azure client ID.
+- `AZURE_TENANT_ID` for Azure tenant ID.
+- `AZURE_CLIENT_SECRET` for Azure client secret.
 
-To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip]
+In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
 
-After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
-
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
-
-Use the returned token credential to authenticate the client:
+With above configuration, client can be authenticated by following code:
 
 ```python
->>> from azure.mgmt.computelimit import ComputeLimitClient
->>> from azure.identity import DefaultAzureCredential
->>> client = ComputeLimitClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.computelimit import ComputeLimitClient
+import os
+
+sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
+client = ComputeLimitClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
 
-```python
->>> from azure.mgmt.computelimit import ComputeLimitClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+Code samples for this package can be found at:
+- [Search Computelimit Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
+- [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
->>> client = ComputeLimitClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
 
-```
+## Troubleshooting
 
-## Contributing
+## Next steps
 
-This project welcomes contributions and suggestions. Most contributions require
-you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution.
-For details, visit https://cla.microsoft.com.
+## Provide Feedback
 
-When you submit a pull request, a CLA-bot will automatically determine whether
-you need to provide a CLA and decorate the PR appropriately (e.g., label,
-comment). Simply follow the instructions provided by the bot. You will only
-need to do this once across all repos using our CLA.
-
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
-
-<!-- LINKS -->
-[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
-[azure_sub]: https://azure.microsoft.com/free/
+If you encounter any bugs or have suggestions, please file an issue in the
+[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
+section of the project. 
