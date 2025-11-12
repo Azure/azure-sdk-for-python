@@ -46,8 +46,8 @@ class ACRExchangeClient(object):
         self._endpoint = endpoint
         self.credential_scopes = kwargs.get("credential_scopes", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
+            endpoint=endpoint,
             credential=credential,
-            url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
             **kwargs
