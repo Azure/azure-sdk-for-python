@@ -50,6 +50,7 @@ from azure.ai.projects.models import (
     RiskCategory,
 )
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.ai.projects.models import (
     DatasetVersion,
 )
@@ -236,7 +237,7 @@ def schedule_dataset_evaluation() -> None:
 
             client = project_client.get_openai_client()
 
-            data_source_config = {
+            data_source_config = DataSourceConfigCustom({
                 "type": "custom",
                 "item_schema": {
                     "type": "object",
@@ -249,7 +250,7 @@ def schedule_dataset_evaluation() -> None:
                     "required": [],
                 },
                 "include_sample_schema": True,
-            }
+            })
 
             testing_criteria = [
                 {
@@ -271,7 +272,7 @@ def schedule_dataset_evaluation() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="label model test with dataset ID",
-                data_source_config=data_source_config,  # type: ignore # type: ignore
+                data_source_config=data_source_config,
                 testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
@@ -348,7 +349,7 @@ def schedule_redteam_evaluation() -> None:
             eval_object = client.evals.create(
                 name=eval_group_name,
                 data_source_config=data_source_config,  # type: ignore
-                testing_criteria=testing_criteria,  # type: ignore # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created for red teaming: {eval_group_name}")
 

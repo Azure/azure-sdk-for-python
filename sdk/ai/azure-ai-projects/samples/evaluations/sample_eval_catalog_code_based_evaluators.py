@@ -25,13 +25,14 @@ USAGE:
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorVersion, EvaluatorCategory, EvaluatorDefinitionType
+from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
 
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.eval_create_params import DataSourceConfigCustom
 
 from azure.core.paging import ItemPaged
 import time
@@ -100,7 +101,7 @@ with DefaultAzureCredential() as credential:
 
         print("Creating an OpenAI client from the AI Project client")
         client = project_client.get_openai_client()
-        data_source_config = {
+        data_source_config = DataSourceConfigCustom({
             "type": "custom",
             "item_schema": {
                 "type": "object",
@@ -112,7 +113,7 @@ with DefaultAzureCredential() as credential:
                 "required": [],
             },
             "include_sample_schema": True,
-        }
+        })
 
         testing_criteria = [
             {
@@ -129,7 +130,7 @@ with DefaultAzureCredential() as credential:
         print("Creating Eval Group")
         eval_object = client.evals.create(
             name="label model test with inline data",
-            data_source_config=data_source_config,  # type: ignore
+            data_source_config=data_source_config,
             testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Eval Group created")

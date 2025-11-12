@@ -37,10 +37,10 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     DatasetVersion,
 )
-import json
 import time
 from pprint import pprint
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.eval_create_params import DataSourceConfigCustom
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -79,7 +79,7 @@ with DefaultAzureCredential() as credential:
 
         client = project_client.get_openai_client()
 
-        data_source_config = {
+        data_source_config = DataSourceConfigCustom({
             "type": "custom",
             "item_schema": {
                 "type": "object",
@@ -92,7 +92,7 @@ with DefaultAzureCredential() as credential:
                 "required": [],
             },
             "include_sample_schema": True,
-        }
+        })
 
         testing_criteria = [
             {
@@ -143,7 +143,7 @@ with DefaultAzureCredential() as credential:
         print("Creating Eval Group")
         eval_object = client.evals.create(
             name="aoai graders test",
-            data_source_config=data_source_config,  # type: ignore
+            data_source_config=data_source_config,
             testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Eval Group created")

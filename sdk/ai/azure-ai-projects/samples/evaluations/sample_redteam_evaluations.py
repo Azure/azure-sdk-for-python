@@ -77,7 +77,7 @@ def main() -> None:
             eval_object = client.evals.create(
                 name=eval_group_name,
                 data_source_config=data_source_config,  # type: ignore
-                testing_criteria=testing_criteria,  # type: ignore # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created for red teaming: {eval_group_name}")
 
