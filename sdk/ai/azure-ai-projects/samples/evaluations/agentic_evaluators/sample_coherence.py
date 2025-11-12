@@ -54,15 +54,17 @@ def main() -> None:
 
             client = project_client.get_openai_client()
 
-            data_source_config = DataSourceConfigCustom({
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-                    "required": ["query", "response"],
-                },
-                "include_sample_schema": True,
-            })
+            data_source_config = DataSourceConfigCustom(
+                {
+                    "type": "custom",
+                    "item_schema": {
+                        "type": "object",
+                        "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
+                        "required": ["query", "response"],
+                    },
+                    "include_sample_schema": True,
+                }
+            )
 
             testing_criteria = [
                 {

@@ -54,26 +54,28 @@ def main() -> None:
 
             client = project_client.get_openai_client()
 
-            data_source_config = DataSourceConfigCustom({
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "context": {"type": "string"},
-                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "tool_definitions": {
-                            "anyOf": [
-                                {"type": "string"},
-                                {"type": "object"},
-                                {"type": "array", "items": {"type": "object"}},
-                            ]
+            data_source_config = DataSourceConfigCustom(
+                {
+                    "type": "custom",
+                    "item_schema": {
+                        "type": "object",
+                        "properties": {
+                            "context": {"type": "string"},
+                            "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                            "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                            "tool_definitions": {
+                                "anyOf": [
+                                    {"type": "string"},
+                                    {"type": "object"},
+                                    {"type": "array", "items": {"type": "object"}},
+                                ]
+                            },
                         },
+                        "required": ["response"],
                     },
-                    "required": ["response"],
-                },
-                "include_sample_schema": True,
-            })
+                    "include_sample_schema": True,
+                }
+            )
 
             testing_criteria = [
                 {

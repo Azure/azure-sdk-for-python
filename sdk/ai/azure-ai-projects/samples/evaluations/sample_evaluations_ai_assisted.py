@@ -79,18 +79,20 @@ with DefaultAzureCredential() as credential:
 
         client = project_client.get_openai_client()
 
-        data_source_config = DataSourceConfigCustom({
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "response": {"type": "string"},
-                    "ground_truth": {"type": "string"},
+        data_source_config = DataSourceConfigCustom(
+            {
+                "type": "custom",
+                "item_schema": {
+                    "type": "object",
+                    "properties": {
+                        "response": {"type": "string"},
+                        "ground_truth": {"type": "string"},
+                    },
+                    "required": [],
                 },
-                "required": [],
-            },
-            "include_sample_schema": False,
-        })
+                "include_sample_schema": False,
+            }
+        )
 
         testing_criteria = [
             {

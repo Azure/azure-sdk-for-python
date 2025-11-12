@@ -159,19 +159,21 @@ with DefaultAzureCredential() as credential:
 
         print("Creating an OpenAI client from the AI Project client")
         client = project_client.get_openai_client()
-        data_source_config = DataSourceConfigCustom({
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                    "ground_truth": {"type": "string"},
+        data_source_config = DataSourceConfigCustom(
+            {
+                "type": "custom",
+                "item_schema": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string"},
+                        "response": {"type": "string"},
+                        "ground_truth": {"type": "string"},
+                    },
+                    "required": ["query", "response", "ground_truth"],
                 },
-                "required": ["query", "response", "ground_truth"],
-            },
-            "include_sample_schema": True,
-        })
+                "include_sample_schema": True,
+            }
+        )
 
         testing_criteria = [
             {
