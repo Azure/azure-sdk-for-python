@@ -2,7 +2,17 @@
 
 ## 3.0.0 (2025-11-12)
 
+### Breaking Changes
 
+  - Deleted or renamed client `TrafficManagerManagementClient`
+  - Model `Endpoint` instance variables `target_resource_id`, `target`, `endpoint_status`, `weight`, `priority`, `endpoint_location`, `endpoint_monitor_status`, `min_child_endpoints`, `min_child_endpoints_i_pv4`, `min_child_endpoints_i_pv6`, `geo_mapping`, `subnets`, `custom_headers`, and `always_serve` have been moved under property `properties`
+  - Model `HeatMapModel` instance variables `start_time`, `end_time`, `endpoints`, and `traffic_flows` have been moved under property `properties`
+  - Model `Profile` instance variables `profile_status`, `traffic_routing_method`, `dns_config`, `monitor_config`, `endpoints`, `traffic_view_enrollment_status`, `allowed_endpoint_record_types`, and `max_return` have been moved under property `properties`
+  - Model `TrafficManagerGeographicHierarchy` instance variable `geographic_hierarchy` has been moved under property `properties`
+  - Model `UserMetricsModel` instance variable `key` has been moved under property `properties`
+  - Method `HeatMapOperations.get` changed its parameter `top_left` from `positional_or_keyword` to `keyword_only`
+  - Method `HeatMapOperations.get` changed its parameter `bot_right` from `positional_or_keyword` to `keyword_only`
+  - Method `HeatMapOperations.get` inserted a `positional_or_keyword` parameter `heat_map_type`
 
 ## 2.0.0 (2025-11-12)
 
