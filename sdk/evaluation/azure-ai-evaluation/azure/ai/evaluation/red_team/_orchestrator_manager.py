@@ -78,6 +78,23 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
                 )
                 await asyncio.sleep(2)
                 raise
+            except Exception as e:
+                # Handle NonRetryableError and other unexpected exceptions
+                # NonRetryableError should not be retried and should fail immediately
+                prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
+                error_name = getattr(e, "__class__", type(e)).__name__
+
+                if error_name == "NonRetryableError":
+                    logger.error(
+                        f"Non-retryable error{prompt_detail} for {strategy_name}/{risk_category_name}: {str(e)}"
+                    )
+                    # Re-raise immediately without retrying
+                    raise
+                else:
+                    logger.warning(
+                        f"Unexpected error{prompt_detail} for {strategy_name}/{risk_category_name}: {error_name}: {str(e)}"
+                    )
+                    raise
 
         return wrapper
 
