@@ -203,7 +203,7 @@ def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
     return [
         x
         for x in subdirs
-        if (x.startswith(("_", ".")) or x == "build" or x == "tests" or x in EXCLUDE or x.endswith(".egg-info"))
+        if (x.startswith(("_", ".")) or x == "build" or x in EXCLUDE or x.endswith(".egg-info"))
     ]
 
 
