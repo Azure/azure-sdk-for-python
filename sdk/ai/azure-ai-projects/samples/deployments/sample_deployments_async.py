@@ -6,18 +6,18 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
-    `.deployments` methods to enumerate AI models deployed to your AI Foundry Project.
+    `.deployments` methods to enumerate AI models deployed to your Microsoft Foundry Project.
 
 USAGE:
     python sample_deployments_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity aiohttp python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" azure-identity aiohttp python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry project.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the deployment to retrieve.
     3) MODEL_PUBLISHER - Optional. The publisher of the model to filter by.
     4) MODEL_NAME - Optional. The name of the model to filter by.

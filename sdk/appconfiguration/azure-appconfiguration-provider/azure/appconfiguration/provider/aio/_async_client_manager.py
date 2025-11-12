@@ -15,6 +15,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
+    SnapshotComposition,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from .._client_manager_base import (
@@ -46,7 +47,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
-        **kwargs
+        **kwargs,
     ) -> Self:
         """
         Creates a new instance of the _AsyncConfigurationClientWrapper class, using the provided credential to
@@ -68,7 +69,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -95,7 +96,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -138,9 +139,20 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     async def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
         configuration_settings = []
         for select in selects:
-            configurations = self._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
-            )
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                snapshot = await self._client.get_snapshot(select.snapshot_name)
+                if snapshot.composition_type != SnapshotComposition.KEY:
+                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
+                configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+            else:
+                # Use traditional filtering when not loading from a snapshot
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
             async for config in configurations:
                 if not isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
@@ -156,11 +168,13 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
+            # Handle None key_filter by converting to empty string
+            key_filter = select.key_filter if select.key_filter is not None else ""
             feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + select.key_filter,
+                key_filter=FEATURE_FLAG_PREFIX + key_filter,
                 label_filter=select.label_filter,
                 tags_filter=select.tag_filters,
-                **kwargs
+                **kwargs,
             )
             async for feature_flag in feature_flags:
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
@@ -265,7 +279,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         min_backoff_sec,
         max_backoff_sec,
         load_balancing_enabled,
-        **kwargs
+        **kwargs,
     ):
         super(AsyncConfigurationClientManager, self).__init__(
             endpoint,
@@ -276,7 +290,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             min_backoff_sec,
             max_backoff_sec,
             load_balancing_enabled,
-            **kwargs
+            **kwargs,
         )
         self._original_connection_string = connection_string
         self._credential = credential
@@ -373,7 +387,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
                 elif self._credential:
@@ -384,7 +398,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
