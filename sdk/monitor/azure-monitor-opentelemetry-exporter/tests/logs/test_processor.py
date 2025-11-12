@@ -83,8 +83,8 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             # Parent on_emit should be called because trace-based sampling is disabled
             parent_on_emit_mock.assert_called_once()
 
-    def test_on_emit_with_trace_based_sampling_enabled_and_unsampled_trace(self):
-        """Test on_emit filters logs when trace-based sampling is enabled and trace is unsampled."""
+    def test_on_emit_with_trace_based_sampling_enabled_and_unsampled_trace(self): # cspell:disable-line
+        """Test on_emit filters logs when trace-based sampling is enabled and trace is unsampled.""" # cspell:disable-line
         processor = _AzureBatchLogRecordProcessor(
             self._exporter,
             options={"enable_trace_based_sampling": True}
@@ -116,7 +116,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             # Mock only the parent class's on_emit method
             with mock.patch('opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit') as parent_on_emit_mock:
                 processor.on_emit(log_record)
-                # Parent on_emit should NOT be called because trace is unsampled and filtering is enabled
+                # Parent on_emit should NOT be called because trace is unsampled and filtering is enabled # cspell:disable-line
                 parent_on_emit_mock.assert_not_called()
 
     def test_on_emit_with_trace_based_sampling_enabled_and_sampled_trace(self):
@@ -223,13 +223,13 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         
         mock_context = mock.Mock()
 
-        # Create unsampled span context
-        mock_span_context_unsampled = mock.Mock()
-        mock_span_context_unsampled.is_valid = True
-        mock_span_context_unsampled.trace_flags.sampled = False
+        # Create unsampled span context # cspell:disable-line
+        mock_span_context_unsampled = mock.Mock() # cspell:disable-line
+        mock_span_context_unsampled.is_valid = True # cspell:disable-line
+        mock_span_context_unsampled.trace_flags.sampled = False # cspell:disable-line
 
-        mock_span_unsampled = mock.Mock()
-        mock_span_unsampled.get_span_context.return_value = mock_span_context_unsampled
+        mock_span_unsampled = mock.Mock() # cspell:disable-line
+        mock_span_unsampled.get_span_context.return_value = mock_span_context_unsampled # cspell:disable-line
 
         # Create sampled span context
         mock_span_context_sampled = mock.Mock()
@@ -239,7 +239,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
         mock_span_sampled = mock.Mock()
         mock_span_sampled.get_span_context.return_value = mock_span_context_sampled
 
-        log_record_unsampled = _logs.LogData(
+        log_record_unsampled = _logs.LogData( # cspell:disable-line
             _logs.LogRecord(
                 timestamp=1646865018558419456,
                 trace_id=125960616039069540489478540494783893221,
@@ -247,7 +247,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
                 severity_text="INFO",
                 trace_flags=TraceFlags.DEFAULT,
                 severity_number=SeverityNumber.INFO,
-                body="Unsampled log",
+                body="Unsampled log", # cspell:disable-line
                 context=mock_context
             ),
             InstrumentationScope("test_name"),
@@ -269,9 +269,9 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
 
         with mock.patch("azure.monitor.opentelemetry.exporter.export.logs._processor.get_current_span") as get_span_mock:
             with mock.patch('opentelemetry.sdk._logs.export.BatchLogRecordProcessor.on_emit') as parent_on_emit_mock:
-                # Test unsampled log is filtered
-                get_span_mock.return_value = mock_span_unsampled
-                processor.on_emit(log_record_unsampled)
+                # Test unsampled log is filtered # cspell:disable-line
+                get_span_mock.return_value = mock_span_unsampled # cspell:disable-line
+                processor.on_emit(log_record_unsampled) # cspell:disable-line
                 parent_on_emit_mock.assert_not_called()
 
                 # Reset mock
