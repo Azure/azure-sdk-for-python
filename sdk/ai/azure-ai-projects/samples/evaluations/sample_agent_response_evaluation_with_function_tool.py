@@ -164,6 +164,8 @@ with project_client:
         print(f"Eval Run Report URL: {response_eval_run.report_url}")
         print("\n✗ Evaluation run failed.")
 
+    # Optional cleanup: Uncomment the following lines to delete the evaluation after running the sample.
+    # This helps avoid resource clutter or unnecessary charges.
     # openai_client.evals.delete(eval_id=eval_object.id)
     # print("Evaluation deleted")
 
