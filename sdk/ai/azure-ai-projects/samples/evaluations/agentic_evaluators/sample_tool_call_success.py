@@ -11,7 +11,7 @@ DESCRIPTION:
     for Tool Success evaluator using inline dataset content.
 
 USAGE:
-    python sample_tool_success.py
+    python sample_tool_call_success.py
 
     Before running the sample:
 
@@ -71,8 +71,8 @@ def main() -> None:
             testing_criteria = [
                 {
                     "type": "azure_ai_evaluator",
-                    "name": "tool_success",
-                    "evaluator_name": "builtin.tool_success",
+                    "name": "tool_call_success",
+                    "evaluator_name": "builtin.tool_call_success",
                     "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
                     "data_mapping": {"tool_definitions": "{{item.tool_definitions}}", "response": "{{item.response}}"},
                 }
@@ -80,7 +80,7 @@ def main() -> None:
 
             print("Creating Eval Group")
             eval_object = client.evals.create(
-                name="Test Tool Success Evaluator with inline data",
+                name="Test Tool Call Success Evaluator with inline data",
                 data_source_config=data_source_config,  # type: ignore
                 testing_criteria=testing_criteria,  # type: ignore
             )

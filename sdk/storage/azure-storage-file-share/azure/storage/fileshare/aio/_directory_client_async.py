@@ -348,16 +348,6 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             NFS only. The owning group of the directory.
         :keyword str file_mode:
             NFS only. The file mode of the directory.
-        :keyword file_property_semantics:
-            SMB only. Specifies permissions to be configured. Default value is None.
-            If not specified or None is passed, New will be the default. Possible values are:
-
-                New - forcefully add the ARCHIVE attribute flag and alter the permissions specified in
-                x-ms-file-permission to inherit missing permissions from the parent.
-
-                Restore - apply changes without further modification.
-
-        :paramtype file_property_semantics: Literal["New", "Restore"]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
