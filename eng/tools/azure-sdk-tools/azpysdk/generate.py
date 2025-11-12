@@ -20,7 +20,7 @@ class generate(Check):
     def register(
         self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
     ) -> None:
-        """Register the generate check. The generate check installs generate and runs generate against the target package to regenerate the code."""
+        """Register the generate check. The generate check regenerates the code using autorest or tsp-client based on the package configuration."""
         parents = parent_parsers or []
         p = subparsers.add_parser("generate", parents=parents, help="Run the generate check to regenerate the code.")
         p.set_defaults(func=self.run)
