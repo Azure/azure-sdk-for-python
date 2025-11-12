@@ -14,7 +14,32 @@ from ... import models as _models
 from ._operations import _TextTranslationClientOperationsMixin as TextTranslationClientOperationsMixinGenerated
 
 
-class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinGenerated):
+class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinGenerated):
+
+    @overload
+    async def translate(
+        self,
+        body: List[str],
+        *,
+        to_language: List[str],
+        from_language: Optional[str] = None,
+        client_trace_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> List[_models.TranslatedTextItem]:
+        """Translate text to the specified target language.
+
+        This is a simplified overload that accepts a list of strings as input
+        and translates them to the specified target language.
+
+        :param body: List of text strings to translate. Required.
+        :type body: list[str]
+        :param to_language: Language code to translate the input text into. Required.
+        :type to_language: str
+        :param from_language: Language code of the input text. If not specified, the service will
+         attempt to detect the language automatically. Default value is None.
+        """
+
     @overload
     async def translate(
         self,
@@ -202,23 +227,48 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
     async def translate(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
-        body: Union[List[_models.TranslateInputItem], IO[bytes]],
+        body: Union[List[str], List[_models.TranslateInputItem], IO[bytes]],
         *,
+        to_language: Optional[List[str]] = None,
+        from_language: Optional[str] = None,
         client_trace_id: Optional[str] = None,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
         """Implementation of translate that handles multiple input types.
 
-        This method automatically converts a list of TranslateInputItem objects
-        into the required TranslateBody format before calling the parent implementation.
+        This method automatically converts different input types into the required TranslateBody format.
         """
         request_body: Union[_models.TranslateBody, IO[bytes]]
-        if isinstance(body, list) and all(isinstance(item, _models.TranslateInputItem) for item in body):
-            request_body = _models.TranslateBody(inputs=body)
+        
+        if isinstance(body, list):
+            if all(isinstance(item, _models.TranslateInputItem) for item in body):
+                # Handle List[TranslateInputItem]
+                request_body = _models.TranslateBody(inputs=cast(List[_models.TranslateInputItem], body))
+            elif all(isinstance(item, str) for item in body):
+                # Handle List[str] - convert to TranslateInputItem with targets
+                targets = [_models.TranslationTarget(language=lang) for lang in (to_language or [])]
+                inputs = [
+                    _models.TranslateInputItem(
+                        text=cast(str, text), 
+                        targets=targets, 
+                        language=from_language
+                    ) 
+                    for text in cast(List[str], body)
+                ]
+                request_body = _models.TranslateBody(inputs=inputs)
+            else:
+                raise ValueError("Invalid body type: list must contain either all strings or all TranslateInputItem objects")
         else:
+            # Handle IO[bytes]
             request_body = cast(Union[_models.TranslateBody, IO[bytes]], body)
 
-        result = await super().translate(body=request_body, client_trace_id=client_trace_id, **kwargs)
+        result = await super().translate(
+            body=request_body, 
+            content_type=content_type, 
+            client_trace_id=client_trace_id, 
+            **kwargs
+        )
 
         return result.value
 
@@ -417,6 +467,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
         from_script: str,
         to_script: str,
         client_trace_id: Optional[str] = None,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
         """Implementation of transliterate that handles multiple input types.
@@ -447,7 +498,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixinG
 
 
 __all__: List[str] = [
-    "TextTranslationClientOperationsMixin"
+    "_TextTranslationClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
