@@ -202,304 +202,334 @@ Agents can be enhanced with specialized tools for various capabilities. Tools ar
 
 These tools work immediately without requiring external connections.
 
-**Code Interpreter** - Write and run Python code in a sandboxed environment, process files and work with diverse data formats. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter)
+* **Code Interpreter**
 
-<!-- SNIPPET:sample_agent_code_interpreter.tool_declaration -->
+  Write and run Python code in a sandboxed environment, process files and work with diverse data formats. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter)
 
-```python
-# Load the CSV file to be processed
-asset_file_path = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
-)
+  <!-- SNIPPET:sample_agent_code_interpreter.tool_declaration -->
 
-# Upload the CSV file for the code interpreter
-file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
-tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
-```
+  ```python
+  # Load the CSV file to be processed
+  asset_file_path = os.path.abspath(
+      os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
+  )
 
-<!-- END SNIPPET -->
+  # Upload the CSV file for the code interpreter
+  file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
+  tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
+  ```
 
-*After calling `responses.create()`, check for generated files in response annotations (type `container_file_citation`) and download them using `openai_client.containers.files.content.retrieve()`.*
+  <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_code_interpreter.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_code_interpreter.py).
+  *After calling `responses.create()`, check for generated files in response annotations (type `container_file_citation`) and download them using `openai_client.containers.files.content.retrieve()`.*
 
-**File Search** - Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search)
+  See the full sample code in [sample_agent_code_interpreter.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_code_interpreter.py).
 
-<!-- SNIPPET:sample_agent_file_search.tool_declaration -->
+* **File Search**
 
-```python
-# Create vector store for file search
-vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
-print(f"Vector store created (id: {vector_store.id})")
+  Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search)
 
-# Load the file to be indexed for search
-asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
+  <!-- SNIPPET:sample_agent_file_search.tool_declaration -->
 
-# Upload file to vector store
-file = openai_client.vector_stores.files.upload_and_poll(
-    vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
-)
-print(f"File uploaded to vector store (id: {file.id})")
+  ```python
+  # Create vector store for file search
+  vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
+  print(f"Vector store created (id: {vector_store.id})")
 
-tool = FileSearchTool(vector_store_ids=[vector_store.id])
-```
+  # Load the file to be indexed for search
+  asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
 
-<!-- END SNIPPET -->
+  # Upload file to vector store
+  file = openai_client.vector_stores.files.upload_and_poll(
+      vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
+  )
+  print(f"File uploaded to vector store (id: {file.id})")
 
-See the full sample code in [sample_agent_file_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_file_search.py).
+  tool = FileSearchTool(vector_store_ids=[vector_store.id])
+  ```
 
-**Image Generation** - Generate images based on text prompts with customizable resolution, quality, and style settings:
+  <!-- END SNIPPET -->
 
-<!-- SNIPPET:sample_agent_image_generation.tool_declaration -->
+  See the full sample code in [sample_agent_file_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_file_search.py).
 
-```python
-tool = ImageGenTool(quality="low", size="1024x1024")
-```
+* **Image Generation**
 
-<!-- END SNIPPET -->
+  Generate images based on text prompts with customizable resolution, quality, and style settings:
 
-After calling `responses.create()`, you can download file using the returned response:
-<!-- SNIPPET:sample_agent_image_generation.download_image -->
+  <!-- SNIPPET:sample_agent_image_generation.tool_declaration -->
 
-```python
-image_data = [output.result for output in response.output if output.type == "image_generation_call"]
+  ```python
+  tool = ImageGenTool(quality="low", size="1024x1024")
+  ```
 
-if image_data and image_data[0]:
-    print("Downloading generated image...")
-    filename = "microsoft.png"
-    file_path = os.path.abspath(filename)
+  <!-- END SNIPPET -->
 
-    with open(file_path, "wb") as f:
-        f.write(base64.b64decode(image_data[0]))
-```
+  After calling `responses.create()`, you can download file using the returned response:
+  <!-- SNIPPET:sample_agent_image_generation.download_image -->
 
-<!-- END SNIPPET -->
+  ```python
+  image_data = [output.result for output in response.output if output.type == "image_generation_call"]
 
-See the full sample code in [sample_agent_image_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_image_generation.py).
+  if image_data and image_data[0]:
+      print("Downloading generated image...")
+      filename = "microsoft.png"
+      file_path = os.path.abspath(filename)
 
+      with open(file_path, "wb") as f:
+          f.write(base64.b64decode(image_data[0]))
+  ```
 
-**Web Search** - Perform general web searches to retrieve current information from the internet. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-web-search)
+  <!-- END SNIPPET -->
 
-<!-- SNIPPET:sample_agent_web_search.tool_declaration -->
-
-```python
-tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
-```
-
-<!-- END SNIPPET -->
-
-See the full sample code in [sample_agent_web_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_web_search.py).
-
-**Computer Use** - Enable agents to interact directly with computer systems for task automation and system operations:
-
-<!-- SNIPPET:sample_agent_computer_use.tool_declaration -->
-
-```python
-tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
-```
-
-<!-- END SNIPPET -->
-
-*After calling `responses.create()`, process the response in an interaction loop. Handle `computer_call` output items and provide screenshots as `computer_call_output` with `computer_screenshot` type to continue the interaction.*
-
-See the full sample code in [sample_agent_computer_use.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_computer_use.py).
-
-**Model Context Protocol (MCP)** - Integrate MCP servers to extend agent capabilities with standardized tools and resources. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp)
-
-<!-- SNIPPET:sample_agent_mcp.tool_declaration -->
-
-```python
-mcp_tool = MCPTool(
-    server_label="api-specs",
-    server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
-    require_approval="always",
-)
-```
-
-<!-- END SNIPPET -->
-
-*After calling `responses.create()`, check for `mcp_approval_request` items in the response output. Send back `McpApprovalResponse` with your approval decision to allow the agent to continue its work.*
-
-See the full sample code in [sample_agent_mcp.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_mcp.py).
+  See the full sample code in [sample_agent_image_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_image_generation.py).
 
 
-**Function Tool** - Define custom functions that allow agents to interact with external APIs, databases, or application logic. [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling)
+* **Web Search**
 
-<!-- SNIPPET:sample_agent_function_tool.tool_declaration -->
+  Perform general web searches to retrieve current information from the internet. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-web-search)
 
-```python
-tool = FunctionTool(
-    name="get_horoscope",
-    parameters={
-        "type": "object",
-        "properties": {
-            "sign": {
-                "type": "string",
-                "description": "An astrological sign like Taurus or Aquarius",
-            },
-        },
-        "required": ["sign"],
-        "additionalProperties": False,
-    },
-    description="Get today's horoscope for an astrological sign.",
-    strict=True,
-)
-```
+  <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
 
-<!-- END SNIPPET -->
+  ```python
+  tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
+  ```
 
-*After calling `responses.create()`, process `function_call` items from response output, execute your function logic with the provided arguments, and send back `FunctionCallOutput` with the results.*
+  <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_function_tool.py).
+  See the full sample code in [sample_agent_web_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_web_search.py).
+
+* **Computer Use**
+
+  Enable agents to interact directly with computer systems for task automation and system operations:
+
+  <!-- SNIPPET:sample_agent_computer_use.tool_declaration -->
+
+  ```python
+  tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+  ```
+
+  <!-- END SNIPPET -->
+
+  *After calling `responses.create()`, process the response in an interaction loop. Handle `computer_call` output items and provide screenshots as `computer_call_output` with `computer_screenshot` type to continue the interaction.*
+
+  See the full sample code in [sample_agent_computer_use.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_computer_use.py).
+
+* **Model Context Protocol (MCP)**
+
+  Integrate MCP servers to extend agent capabilities with standardized tools and resources. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp)
+
+  <!-- SNIPPET:sample_agent_mcp.tool_declaration -->
+
+  ```python
+  mcp_tool = MCPTool(
+      server_label="api-specs",
+      server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+      require_approval="always",
+  )
+  ```
+
+  <!-- END SNIPPET -->
+
+  *After calling `responses.create()`, check for `mcp_approval_request` items in the response output. Send back `McpApprovalResponse` with your approval decision to allow the agent to continue its work.*
+
+  See the full sample code in [sample_agent_mcp.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_mcp.py).
+
+
+* **Function Tool**
+
+  Define custom functions that allow agents to interact with external APIs, databases, or application logic. [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling)
+
+  <!-- SNIPPET:sample_agent_function_tool.tool_declaration -->
+
+  ```python
+  tool = FunctionTool(
+      name="get_horoscope",
+      parameters={
+          "type": "object",
+          "properties": {
+              "sign": {
+                  "type": "string",
+                  "description": "An astrological sign like Taurus or Aquarius",
+              },
+          },
+          "required": ["sign"],
+          "additionalProperties": False,
+      },
+      description="Get today's horoscope for an astrological sign.",
+      strict=True,
+  )
+  ```
+
+  <!-- END SNIPPET -->
+
+  *After calling `responses.create()`, process `function_call` items from response output, execute your function logic with the provided arguments, and send back `FunctionCallOutput` with the results.*
+
+  See the full sample code in [sample_agent_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_function_tool.py).
 
 #### Connection-Based Tools
 
 These tools require configuring connections in your AI Foundry project and use `project_connection_id`.
 
-**Azure AI Search** - Integrate with Azure AI Search indexes for powerful knowledge retrieval and semantic search capabilities:
+* **Azure AI Search**
 
-<!-- SNIPPET:sample_agent_ai_search.tool_declaration -->
+  Integrate with Azure AI Search indexes for powerful knowledge retrieval and semantic search capabilities:
 
-```python
-tool = AzureAISearchAgentTool(
-    azure_ai_search=AzureAISearchToolResource(
-        indexes=[
-            AISearchIndexResource(
-                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
-                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                query_type=AzureAISearchQueryType.SIMPLE,
-            ),
-        ]
-    )
-)
-```
+  <!-- SNIPPET:sample_agent_ai_search.tool_declaration -->
 
-<!-- END SNIPPET -->
+  ```python
+  tool = AzureAISearchAgentTool(
+      azure_ai_search=AzureAISearchToolResource(
+          indexes=[
+              AISearchIndexResource(
+                  project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
+                  index_name=os.environ["AI_SEARCH_INDEX_NAME"],
+                  query_type=AzureAISearchQueryType.SIMPLE,
+              ),
+          ]
+      )
+  )
+  ```
 
-See the full sample code in [sample_agent_ai_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_ai_search.py).
+  <!-- END SNIPPET -->
 
-**Bing Grounding** - Ground agent responses with real-time web search results from Bing to provide up-to-date information:
+  See the full sample code in [sample_agent_ai_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_ai_search.py).
 
-<!-- SNIPPET:sample_agent_bing_grounding.tool_declaration -->
+* **Bing Grounding**
 
-```python
-tool = BingGroundingAgentTool(
-    bing_grounding=BingGroundingSearchToolParameters(
-        search_configurations=[
-            BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
-        ]
-    )
-)
-```
+  Ground agent responses with real-time web search results from Bing to provide up-to-date information:
 
-<!-- END SNIPPET -->
+  <!-- SNIPPET:sample_agent_bing_grounding.tool_declaration -->
 
-See the full sample code in [sample_agent_bing_grounding.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_bing_grounding.py).
+  ```python
+  tool = BingGroundingAgentTool(
+      bing_grounding=BingGroundingSearchToolParameters(
+          search_configurations=[
+              BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
+          ]
+      )
+  )
+  ```
 
-**Bing Custom Search** - Use custom-configured Bing search instances for domain-specific or filtered web search results:
+  <!-- END SNIPPET -->
 
-<!-- SNIPPET:sample_agent_bing_custom_search.tool_declaration -->
+  See the full sample code in [sample_agent_bing_grounding.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_bing_grounding.py).
 
-```python
-tool = BingCustomSearchAgentTool(
-    bing_custom_search_preview=BingCustomSearchToolParameters(
-        search_configurations=[
-            BingCustomSearchConfiguration(
-                project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
-                instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
-            )
-        ]
-    )
-)
-```
+* **Bing Custom Search**
 
-<!-- END SNIPPET -->
+  Use custom-configured Bing search instances for domain-specific or filtered web search results:
 
-See the full sample code in [sample_agent_bing_custom_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_bing_custom_search.py).
+  <!-- SNIPPET:sample_agent_bing_custom_search.tool_declaration -->
 
-**Microsoft Fabric** - Connect to and query Microsoft Fabric:
+  ```python
+  tool = BingCustomSearchAgentTool(
+      bing_custom_search_preview=BingCustomSearchToolParameters(
+          search_configurations=[
+              BingCustomSearchConfiguration(
+                  project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
+                  instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
+              )
+          ]
+      )
+  )
+  ```
 
-<!-- SNIPPET:sample_agent_fabric.tool_declaration -->
+  <!-- END SNIPPET -->
 
-```python
-tool = MicrosoftFabricAgentTool(
-    fabric_dataagent_preview=FabricDataAgentToolParameters(
-        project_connections=[ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])]
-    )
-)
-```
+  See the full sample code in [sample_agent_bing_custom_search.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_bing_custom_search.py).
 
-<!-- END SNIPPET -->
+* **Microsoft Fabric**
 
-See the full sample code in [sample_agent_fabric.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_fabric.py).
+  Connect to and query Microsoft Fabric:
 
-**SharePoint** - Access and search SharePoint documents, lists, and sites for enterprise knowledge integration:
+  <!-- SNIPPET:sample_agent_fabric.tool_declaration -->
 
-<!-- SNIPPET:sample_agent_sharepoint.tool_declaration -->
+  ```python
+  tool = MicrosoftFabricAgentTool(
+      fabric_dataagent_preview=FabricDataAgentToolParameters(
+          project_connections=[ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])]
+      )
+  )
+  ```
 
-```python
-tool = SharepointAgentTool(
-    sharepoint_grounding_preview=SharepointGroundingToolParameters(
-        project_connections=[
-            ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
-        ]
-    )
-)
-```
+  <!-- END SNIPPET -->
 
-<!-- END SNIPPET -->
+  See the full sample code in [sample_agent_fabric.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_fabric.py).
 
-See the full sample code in [sample_agent_sharepoint.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_sharepoint.py).
+* **SharePoint**
 
-**Browser Automation** - Automate browser interactions for web scraping, testing, and interaction with web applications:
+  Access and search SharePoint documents, lists, and sites for enterprise knowledge integration:
 
-<!-- SNIPPET:sample_agent_browser_automation.tool_declaration -->
+  <!-- SNIPPET:sample_agent_sharepoint.tool_declaration -->
 
-```python
-tool = BrowserAutomationAgentTool(
-    browser_automation_preview=BrowserAutomationToolParameters(
-        connection=BrowserAutomationToolConnectionParameters(
-            project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
-        )
-    )
-)
-```
+  ```python
+  tool = SharepointAgentTool(
+      sharepoint_grounding_preview=SharepointGroundingToolParameters(
+          project_connections=[
+              ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
+          ]
+      )
+  )
+  ```
 
-<!-- END SNIPPET -->
+  <!-- END SNIPPET -->
 
-See the full sample code in [sample_agent_browser_automation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_browser_automation.py).
+  See the full sample code in [sample_agent_sharepoint.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_sharepoint.py).
+
+* **Browser Automation**
+
+  Automate browser interactions for web scraping, testing, and interaction with web applications:
+
+  <!-- SNIPPET:sample_agent_browser_automation.tool_declaration -->
+
+  ```python
+  tool = BrowserAutomationAgentTool(
+      browser_automation_preview=BrowserAutomationToolParameters(
+          connection=BrowserAutomationToolConnectionParameters(
+              project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
+          )
+      )
+  )
+  ```
+
+  <!-- END SNIPPET -->
+
+  See the full sample code in [sample_agent_browser_automation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_browser_automation.py).
 
 
-**MCP with Project Connection** - MCP integration using project-specific connections for accessing connected MCP servers:
+* **MCP with Project Connection**
 
-<!-- SNIPPET:sample_agent_mcp_with_project_connection.tool_declaration -->
+  MCP integration using project-specific connections for accessing connected MCP servers:
 
-```python
-tool = MCPTool(
-    server_label="api-specs",
-    server_url="https://api.githubcopilot.com/mcp",
-    require_approval="always",
-    project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
-)
-```
+  <!-- SNIPPET:sample_agent_mcp_with_project_connection.tool_declaration -->
 
-<!-- END SNIPPET -->
+  ```python
+  tool = MCPTool(
+      server_label="api-specs",
+      server_url="https://api.githubcopilot.com/mcp",
+      require_approval="always",
+      project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
+  )
+  ```
 
-See the full sample code in [sample_agent_mcp_with_project_connection.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_mcp_with_project_connection.py).
+  <!-- END SNIPPET -->
 
-**Agent-to-Agent (A2A)** - Enable multi-agent collaboration where agents can communicate and delegate tasks to other specialized agents:
+  See the full sample code in [sample_agent_mcp_with_project_connection.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_mcp_with_project_connection.py).
 
-<!-- SNIPPET:sample_agent_to_agent.tool_declaration -->
+* **Agent-to-Agent (A2A)**
 
-```python
-tool = A2ATool(
-    project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
-)
-```
+  Enable multi-agent collaboration where agents can communicate and delegate tasks to other specialized agents:
 
-<!-- END SNIPPET -->
+  <!-- SNIPPET:sample_agent_to_agent.tool_declaration -->
 
-See the full sample code in [sample_agent_to_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_to_agent.py).
+  ```python
+  tool = A2ATool(
+      project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
+  )
+  ```
+
+  <!-- END SNIPPET -->
+
+  See the full sample code in [sample_agent_to_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools/sample_agent_to_agent.py).
 
 For complete working examples of all tools, see the [sample tools directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/tools).
 
