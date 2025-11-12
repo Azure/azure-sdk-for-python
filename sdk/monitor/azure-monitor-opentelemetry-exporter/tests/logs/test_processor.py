@@ -1,6 +1,5 @@
 import os
 import unittest
-import MagicMock
 from unittest import mock
 
 from opentelemetry.sdk import _logs
