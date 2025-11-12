@@ -199,7 +199,7 @@ class CheckFile:
         if not version:
             _LOGGER.info(f"Can not find the version from CHANGELOG.md for {self.package_name}")
         
-        is_stable = "b" in version
+        is_stable = "b" not in version
         if pyproject_toml.exists():
             with open(pyproject_toml, "rb") as fd:
                 toml_data = toml.load(fd)
