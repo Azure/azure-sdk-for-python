@@ -5,7 +5,7 @@
 # mypy: disable-error-code="assignment,arg-type"
 import os
 import re
-from typing import TYPE_CHECKING, Awaitable, Protocol, Union
+from typing import TYPE_CHECKING, Any, Awaitable, Protocol, Union, Optional
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph
@@ -23,7 +23,6 @@ from .models.utils import is_state_schema_valid
 from .tool_client import ToolClient
 
 if TYPE_CHECKING:
-    from typing import Optional
     from azure.core.credentials_async import AsyncTokenCredential
     
 logger = get_logger()
@@ -52,7 +51,7 @@ class LangGraphAdapter(FoundryCBAgent):
     Adapter for LangGraph Agent.
     """
 
-    def __init__(self, graph: Union[CompiledStateGraph, GraphFactory], credentials: "Optional[AsyncTokenCredential]" = None, state_converter: "Optional[LanggraphStateConverter]" = None):
+    def __init__(self, graph: Union[CompiledStateGraph, GraphFactory], credentials: "Optional[AsyncTokenCredential]" = None, state_converter: "Optional[LanggraphStateConverter]" = None, **kwargs: Any) -> None:
         """
         Initialize the LangGraphAdapter with a CompiledStateGraph or a function that returns one.
 
@@ -63,7 +62,7 @@ class LangGraphAdapter(FoundryCBAgent):
         :param state_converter: custom state converter. Required if graph state is not MessagesState.
         :type state_converter: Optional[LanggraphStateConverter]
         """
-        super().__init__(credentials=credentials)
+        super().__init__(credentials=credentials, **kwargs)
         self._graph_or_factory: Union[CompiledStateGraph, GraphFactory] = graph
         self._resolved_graph: "Optional[CompiledStateGraph]" = None
         self.azure_ai_tracer = None
@@ -93,21 +92,38 @@ class LangGraphAdapter(FoundryCBAgent):
         return self._resolved_graph
 
     async def agent_run(self, context: AgentRunContext):
-        # Resolve graph if it's a factory function
-        if self._resolved_graph is None:
-            await self._resolve_graph(context)
-        
-        input_data = self.state_converter.request_to_state(context)
-        logger.debug(f"Converted input data: {input_data}")
-        if not context.stream:
-            response = await self.agent_run_non_stream(input_data, context)
-            return response
-        return self.agent_run_astream(input_data, context)
+        # Resolve graph - always resolve if it's a factory function to get fresh graph each time
+        # For factories, get a new graph instance per request to avoid concurrency issues
+        tool_client = None
+        try:
+            if callable(self._graph_or_factory):
+                graph, tool_client = await self._resolve_graph_for_request(context)
+            elif self._resolved_graph is None:
+                await self._resolve_graph(context)
+                graph = self._resolved_graph
+            else:
+                graph = self._resolved_graph
+            
+            input_data = self.state_converter.request_to_state(context)
+            logger.debug(f"Converted input data: {input_data}")
+            if not context.stream:
+                response = await self.agent_run_non_stream(input_data, context, graph)
+                return response
+            return self.agent_run_astream(input_data, context, graph, tool_client)
+        finally:
+            # Close tool_client if it was created for this request
+            if tool_client is not None:
+                try:
+                    await tool_client._tool_client.close()
+                    logger.debug("Closed tool_client after request processing")
+                except Exception as e:
+                    logger.warning(f"Error closing tool_client: {e}")
 
     async def _resolve_graph(self, context: AgentRunContext):
         """
-        Resolve the graph if it's a factory function.
+        Resolve the graph if it's a factory function (for single-use/first-time resolution).
         Creates a ToolClient and calls the factory function with it.
+        This is used for the initial resolution to set up state_converter.
         """
         if callable(self._graph_or_factory):
             logger.debug("Resolving graph from factory function")
@@ -126,7 +142,7 @@ class LangGraphAdapter(FoundryCBAgent):
             else:
                 self._resolved_graph = result
             
-            # Now validate and set up state converter if not already set
+            # Validate and set up state converter if not already set from initialization
             if not self.state_converter:
                 if is_state_schema_valid(self._resolved_graph.builder.state_schema):
                     self.state_converter = LanggraphMessageStateConverter()
@@ -137,6 +153,42 @@ class LangGraphAdapter(FoundryCBAgent):
         else:
             # Should not reach here, but just in case
             self._resolved_graph = self._graph_or_factory
+
+    async def _resolve_graph_for_request(self, context: AgentRunContext):
+        """
+        Resolve a fresh graph instance for a single request to avoid concurrency issues.
+        Creates a ToolClient and calls the factory function with it.
+        This method returns a new graph instance and the tool_client for cleanup.
+        
+        :param context: The context for the agent run.
+        :type context: AgentRunContext
+        :return: A tuple of (compiled graph instance, tool_client wrapper).
+        :rtype: tuple[CompiledStateGraph, ToolClient]
+        """
+        logger.debug("Resolving fresh graph from factory function for request")
+        
+        # Create ToolClient with credentials
+        tool_client = self.get_tool_client(tools = context.get_tools(), user_info = context.get_user_info())
+        tool_client_wrapper = ToolClient(tool_client)
+        
+        # Call the factory function with ToolClient
+        # Support both sync and async factories
+        import inspect
+        result = self._graph_or_factory(tool_client_wrapper)
+        if inspect.iscoroutine(result):
+            graph = await result
+        else:
+            graph = result
+        
+        # Ensure state converter is set up (use existing one or create new)
+        if not self.state_converter:
+            if is_state_schema_valid(graph.builder.state_schema):
+                self.state_converter = LanggraphMessageStateConverter()
+            else:
+                raise ValueError("state_converter is required for non-MessagesState graph.")
+        
+        logger.debug("Fresh graph resolved successfully for request")
+        return graph, tool_client_wrapper
 
     def init_tracing_internal(self, exporter_endpoint=None, app_insights_conn_str=None):
         # set env vars for langsmith
@@ -166,7 +218,7 @@ class LangGraphAdapter(FoundryCBAgent):
         attrs["service.namespace"] = "azure.ai.agentserver.langgraph"
         return attrs
 
-    async def agent_run_non_stream(self, input_data: dict, context: AgentRunContext):
+    async def agent_run_non_stream(self, input_data: dict, context: AgentRunContext, graph: CompiledStateGraph):
         """
         Run the agent with non-streaming response.
 
@@ -174,6 +226,8 @@ class LangGraphAdapter(FoundryCBAgent):
         :type input_data: dict
         :param context: The context for the agent run.
         :type context: AgentRunContext
+        :param graph: The compiled graph instance to use for this request.
+        :type graph: CompiledStateGraph
 
         :return: The response of the agent run.
         :rtype: dict
@@ -182,14 +236,14 @@ class LangGraphAdapter(FoundryCBAgent):
         try:
             config = self.create_runnable_config(context)
             stream_mode = self.state_converter.get_stream_mode(context)
-            result = await self._resolved_graph.ainvoke(input_data, config=config, stream_mode=stream_mode)
+            result = await graph.ainvoke(input_data, config=config, stream_mode=stream_mode)
             output = self.state_converter.state_to_response(result, context)
             return output
         except Exception as e:
             logger.error(f"Error during agent run: {e}")
             raise e
 
-    async def agent_run_astream(self, input_data: dict, context: AgentRunContext):
+    async def agent_run_astream(self, input_data: dict, context: AgentRunContext, graph: CompiledStateGraph, tool_client: "Optional[ToolClient]" = None):
         """
         Run the agent with streaming response.
 
@@ -197,6 +251,10 @@ class LangGraphAdapter(FoundryCBAgent):
         :type input_data: dict
         :param context: The context for the agent run.
         :type context: AgentRunContext
+        :param graph: The compiled graph instance to use for this request.
+        :type graph: CompiledStateGraph
+        :param tool_client: Optional ToolClient to close after streaming completes.
+        :type tool_client: Optional[ToolClient]
 
         :return: An async generator yielding the response stream events.
         :rtype: AsyncGenerator[dict]
@@ -205,12 +263,20 @@ class LangGraphAdapter(FoundryCBAgent):
             logger.info(f"Starting streaming agent run {context.response_id}")
             config = self.create_runnable_config(context)
             stream_mode = self.state_converter.get_stream_mode(context)
-            stream = self._resolved_graph.astream(input=input_data, config=config, stream_mode=stream_mode)
+            stream = graph.astream(input=input_data, config=config, stream_mode=stream_mode)
             async for result in self.state_converter.state_to_response_stream(stream, context):
                 yield result
         except Exception as e:
             logger.error(f"Error during streaming agent run: {e}")
             raise e
+        finally:
+            # Close tool_client if provided
+            if tool_client is not None:
+                try:
+                    await tool_client._tool_client.close()
+                    logger.debug("Closed tool_client after streaming completed")
+                except Exception as e:
+                    logger.warning(f"Error closing tool_client in stream: {e}")
 
     def create_runnable_config(self, context: AgentRunContext) -> RunnableConfig:
         """

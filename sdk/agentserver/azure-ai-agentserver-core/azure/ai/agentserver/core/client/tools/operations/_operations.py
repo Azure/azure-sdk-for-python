@@ -465,10 +465,19 @@ def prepare_remotetools_invoke_tool_request_content(tool: FoundryTool,  user: Us
 			"remoteServer": to_remote_server(tool.tool_definition).to_dict(),
 		}
 	if user:
-		payload["user"] = {
-			"objectId": user.objectId,
-			"tenantId": user.tenantId,
-		}
+		# Handle both UserInfo objects and dictionaries
+		if isinstance(user, dict):
+			if user.get("objectId") and user.get("tenantId"):
+				payload["user"] = {
+					"objectId": user["objectId"],
+					"tenantId": user["tenantId"],
+				}
+		elif hasattr(user, "objectId") and hasattr(user, "tenantId"):
+			if user.objectId and user.tenantId:
+				payload["user"] = {
+					"objectId": user.objectId,
+					"tenantId": user.tenantId,
+				}
 	return payload
 
 def build_remotetools_invoke_tool_request(

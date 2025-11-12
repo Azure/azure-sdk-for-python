@@ -40,8 +40,8 @@ def create_graph_factory():
     """Create a factory function that builds a graph with ToolClient.
     
     This function returns a factory that takes a ToolClient and returns
-    a CompiledStateGraph. The graph is created at runtime when the agent
-    first runs, allowing it to access the latest tool configuration.
+    a CompiledStateGraph. The graph is created at runtime for every request,
+    allowing it to access the latest tool configuration dynamically.
     """
     
     async def graph_factory(tool_client: ToolClient) -> CompiledStateGraph:
@@ -104,11 +104,11 @@ async def quickstart():
     graph_factory = create_graph_factory()
     
     # Pass the factory function to from_langgraph instead of a compiled graph
-    # The graph will be created on first agent run with access to ToolClient
+    # The graph will be created on every agent run with access to ToolClient
     print("Creating LangGraph adapter with factory function...")
-    adapter = from_langgraph(graph_factory, credentials=credential)
+    adapter = from_langgraph(graph_factory, credentials=credential, tools=[{"type": "image_generation", "model":"gpt-image-1"}], project_endpoint=project_endpoint)
     
-    print("Adapter created! Graph will be built on first run.")
+    print("Adapter created! Graph will be built on every request.")
     return adapter
 
 
@@ -118,7 +118,7 @@ async def main():  # pragma: no cover - sample entrypoint
     
     if adapter:
         print("\nStarting agent server...")
-        print("The graph factory will be called when the first request arrives.")
+        print("The graph factory will be called for every request that arrives.")
         await adapter.run_async()
 
 

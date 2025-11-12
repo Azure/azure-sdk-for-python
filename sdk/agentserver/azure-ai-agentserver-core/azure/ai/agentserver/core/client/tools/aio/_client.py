@@ -163,9 +163,14 @@ class AzureAIToolClient:
 		tools.extend(tools_api_tools)
 
 		for tool in tools:
-			tool.invoker = lambda tool=tool, *args,  **kwargs: self.invoke_tool(tool, *args, **kwargs)
+			# Capture tool in a closure to avoid shadowing issues
+			def make_invoker(captured_tool):
+				async def _invoker(*args, **kwargs):
+					return await self.invoke_tool(captured_tool, *args, **kwargs)
+				return _invoker
+			tool.invoker = make_invoker(tool)
 
-		return [AzureAITool(self, tool) for tool in tools]
+		return tools
 
 	async def invoke_tool(
 		self,

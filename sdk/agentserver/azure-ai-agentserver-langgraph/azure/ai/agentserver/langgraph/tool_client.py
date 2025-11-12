@@ -6,7 +6,7 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from langchain_core.tools import StructuredTool
-from langchain_core.pydantic_v1 import BaseModel, Field, create_model
+from pydantic import BaseModel, Field, create_model
 
 if TYPE_CHECKING:
     from azure.ai.agentserver.core.client.tools.aio import AzureAIToolClient, FoundryTool
@@ -120,7 +120,7 @@ class ToolClient:
         # Create an async function that invokes the tool
         async def tool_func(**kwargs: Any) -> str:
             """Invoke the Azure AI tool."""
-            result = await azure_tool.invoke(**kwargs)
+            result = await azure_tool(**kwargs)
             # Convert result to string for LangChain compatibility
             if isinstance(result, dict):
                 import json

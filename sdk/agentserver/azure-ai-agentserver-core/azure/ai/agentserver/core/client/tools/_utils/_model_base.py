@@ -131,7 +131,7 @@ class ToolMetadataExtractor:
 		Optional[Mapping[str, Any]]
 			Input schema if found
 		"""
-		for key in ("input_schema", "schema", "parameters"):
+		for key in ("input_schema", "inputSchema", "schema", "parameters"):
 			if key in raw and isinstance(raw[key], Mapping):
 				return raw[key]
 		nested = raw.get("definition") or raw.get("tool")
@@ -579,7 +579,7 @@ class ResolveToolsRequest:
 		:param UserInfo user: User information.
 		"""
 		self.remoteservers = remoteservers
-		self.user = user
+		self.user: UserInfo = user
 	
 	def to_dict(self) -> Dict[str, Any]:
 		"""Convert to dictionary for JSON serialization."""
@@ -587,7 +587,21 @@ class ResolveToolsRequest:
 			"remoteservers": [rs.to_dict() for rs in self.remoteservers]
 		}
 		if self.user:
-			result["user"] = self.user.to_dict()
+			# Handle both UserInfo objects and dictionaries
+			if isinstance(self.user, dict):
+				# Validate required fields for dict
+				if self.user.get("objectId") and self.user.get("tenantId"):
+					result["user"] = {
+						"objectId": self.user["objectId"],
+						"tenantId": self.user["tenantId"]
+					}
+			elif hasattr(self.user, "objectId") and hasattr(self.user, "tenantId"):
+				# UserInfo object
+				if self.user.objectId and self.user.tenantId:
+					result["user"] = {
+						"objectId": self.user.objectId,
+						"tenantId": self.user.tenantId
+					}
 		return result
 	
 	

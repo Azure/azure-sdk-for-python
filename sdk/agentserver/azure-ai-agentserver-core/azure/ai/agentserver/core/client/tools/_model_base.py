@@ -74,7 +74,38 @@ class FoundryTool:
 	tool_definition: Optional[ToolDefinition] = None
 	invoker: Optional[Callable[..., Awaitable[Any]]] = None
 
-	async def invoke(self, *args: Any, **kwargs: Any) -> Any:
+	def invoke(self, *args: Any, **kwargs: Any) -> Any:
+		"""Invoke the tool synchronously.
+
+		:param args: Positional arguments to pass to the tool.
+		:param kwargs: Keyword arguments to pass to the tool.
+		:return: The result from the tool invocation.
+		:rtype: Any
+		"""
+
+		
+		if not self.invoker:
+			raise NotImplementedError("No invoker function defined for this tool.")
+		if inspect.iscoroutinefunction(self.invoker):
+			# If the invoker is async, check if we're already in an event loop
+			try:
+				loop = asyncio.get_running_loop()
+				# We're in a running loop, can't use asyncio.run()
+				raise RuntimeError(
+					"Cannot call invoke() on an async tool from within an async context. "
+					"Use 'await tool.ainvoke(...)' or 'await tool(...)' instead."
+				)
+			except RuntimeError as e:
+				if "no running event loop" in str(e).lower():
+					# No running loop, safe to use asyncio.run()
+					return asyncio.run(self.invoker(*args, **kwargs))
+				else:
+					# Re-raise our custom error
+					raise
+		else:
+			return self.invoker(*args, **kwargs)
+
+	async def ainvoke(self, *args: Any, **kwargs: Any) -> Any:
 		"""Invoke the tool asynchronously.
 
 		:param args: Positional arguments to pass to the tool.
@@ -82,6 +113,7 @@ class FoundryTool:
 		:return: The result from the tool invocation.
 		:rtype: Any
 		"""
+
 		if not self.invoker:
 			raise NotImplementedError("No invoker function defined for this tool.")
 		if inspect.iscoroutinefunction(self.invoker):
@@ -93,8 +125,15 @@ class FoundryTool:
 				return await result
 			return result
 	
-	async def __call__(self, *args: Any, **kwargs: Any) -> Any:
-		return await self.invoke(*args, **kwargs)
+	def __call__(self, *args: Any, **kwargs: Any) -> Any:
+
+		# Check if the invoker is async
+		if self.invoker and inspect.iscoroutinefunction(self.invoker):
+			# Return coroutine for async context
+			return self.ainvoke(*args, **kwargs)
+		else:
+			# Use sync invoke
+			return self.invoke(*args, **kwargs)
 
 
 class UserInfo:

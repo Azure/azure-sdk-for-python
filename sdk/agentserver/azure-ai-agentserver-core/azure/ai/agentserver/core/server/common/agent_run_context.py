@@ -21,6 +21,7 @@ class AgentRunContext:
         self._conversation_id = self._id_generator.conversation_id
         self._stream = self.request.get("stream", False)
         self._user_info = kwargs.get("user_info", {})
+        self._agent_tools = kwargs.get("agent_tools", [])
 
     @property
     def raw_payload(self) -> dict:
@@ -64,14 +65,15 @@ class AgentRunContext:
         return ResponseConversation1(id=self._conversation_id)
 
     def get_tools(self) -> list:
-        return self.request.get("tools", [])
+        # request tools take precedence over agent tools
+        request_tools = self.request.get("tools", [])
+        if not request_tools:
+            return self._agent_tools
+        
+        return request_tools
     
     def get_user_info(self) -> dict:
         return self._user_info
-    
-    def get_tool_client(self) -> AzureAIToolClient:
-        return self._tool_client
-
 def _deserialize_create_response(payload: dict) -> CreateResponse:
     _deserialized = CreateResponse(**payload)
 
