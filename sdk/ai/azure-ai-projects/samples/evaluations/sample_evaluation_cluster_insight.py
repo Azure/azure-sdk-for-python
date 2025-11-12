@@ -30,6 +30,7 @@ import os
 import time
 import json
 import tempfile
+from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.ai.projects.models._enums import OperationState
@@ -38,6 +39,8 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
@@ -104,7 +107,7 @@ with project_client:
         raise ValueError("Dataset ID is None")
 
     # Create an eval run using the uploaded dataset
-    eval_run = openai_client.evals.runs.create(
+    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name="Eval Run",
         data_source=CreateEvalJSONLRunDataSourceParam(source=SourceFileID(id=dataset.id, type="file_id"), type="jsonl"),

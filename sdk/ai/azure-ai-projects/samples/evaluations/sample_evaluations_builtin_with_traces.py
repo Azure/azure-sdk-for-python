@@ -184,7 +184,7 @@ def main() -> None:
                     "start_time": start_time.isoformat(),
                     "end_time": end_time.isoformat(),
                 },
-                data_source={
+                data_source={  # type: ignore
                     "type": "azure_ai_traces",
                     "trace_ids": trace_ids,
                     "lookback_hours": trace_query_hours,

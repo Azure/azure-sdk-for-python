@@ -39,6 +39,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
 )
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
@@ -110,7 +111,7 @@ with project_client:
 
     # Wait for both evaluation runs to complete
     runs_to_wait = [eval_run_1, eval_run_2]
-    completed_runs = {}
+    completed_runs: dict[str, RunRetrieveResponse] = {}
 
     while len(completed_runs) < len(runs_to_wait):
         for eval_run in runs_to_wait:

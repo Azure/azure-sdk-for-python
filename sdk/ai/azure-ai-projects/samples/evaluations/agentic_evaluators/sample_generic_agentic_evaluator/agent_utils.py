@@ -5,11 +5,9 @@
 # ------------------------------------
 
 from dotenv import load_dotenv
-import json
 import os
 import time
 from pprint import pprint
-from samples.evaluation.sample_agentic_evaluators.sample_generic_agentic_evaluator.agent_utils import pprint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
