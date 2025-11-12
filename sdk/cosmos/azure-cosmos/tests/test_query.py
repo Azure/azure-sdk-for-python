@@ -774,8 +774,8 @@ class TestQuery(unittest.TestCase):
         # Create test documents
         doc1_id = 'doc1_' + str(uuid.uuid4())
         doc2_id = 'doc2_' + str(uuid.uuid4())
-        created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value': 1})
-        created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value': 2})
+        created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value1': 1})
+        created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value1': 2})
 
         # Test 1: Explicitly passing parameters=None should not cause TypeError
         query = 'SELECT * FROM c'
@@ -798,7 +798,7 @@ class TestQuery(unittest.TestCase):
         self.assertEqual(results[0]['id'], doc1_id)
 
         # Test 3: Verify parameterized query still works with actual parameters
-        query_with_params = 'SELECT * FROM c WHERE c.value = @value'
+        query_with_params = 'SELECT * FROM c WHERE c.value1 = @value'
         query_iterable = created_collection.query_items(
             query=query_with_params,
             parameters=[{'name': '@value', 'value': 2}],

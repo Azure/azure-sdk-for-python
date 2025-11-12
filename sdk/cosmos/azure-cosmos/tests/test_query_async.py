@@ -764,15 +764,14 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Create test documents
         doc1_id = 'doc1_' + str(uuid.uuid4())
         doc2_id = 'doc2_' + str(uuid.uuid4())
-        await created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value': 1})
-        await created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value': 2})
+        await created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value1': 1})
+        await created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value1': 2})
 
         # Test 1: Explicitly passing parameters=None should not cause TypeError
         query = 'SELECT * FROM c'
         query_iterable = created_collection.query_items(
             query=query,
-            parameters=None,
-            enable_cross_partition_query=True
+            parameters=None
         )
         results = [item async for item in query_iterable]
         assert len(results) == 2
@@ -788,11 +787,10 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert results[0]['id'] == doc1_id
 
         # Test 3: Verify parameterized query still works with actual parameters
-        query_with_params = 'SELECT * FROM c WHERE c.value = @value'
+        query_with_params = 'SELECT * FROM c WHERE c.value1 = @value'
         query_iterable = created_collection.query_items(
             query=query_with_params,
-            parameters=[{'name': '@value', 'value': 2}],
-            enable_cross_partition_query=True
+            parameters=[{'name': '@value', 'value': 2}]
         )
         results = [item async for item in query_iterable]
         assert len(results) == 1
@@ -800,8 +798,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         # Test 4: Query without parameters argument should work (default behavior)
         query_iterable = created_collection.query_items(
-            query=query,
-            enable_cross_partition_query=True
+            query=query
         )
         results = [item async for item in query_iterable]
         assert len(results) == 2
