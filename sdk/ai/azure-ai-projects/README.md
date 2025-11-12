@@ -535,7 +535,7 @@ For complete working examples of all tools, see the [sample tools directory](htt
 
 ### Evaluation
 
-Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
+Evaluation in Azure AI Project client library provides quantitative, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
 
 The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
 
