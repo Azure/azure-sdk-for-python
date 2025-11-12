@@ -203,7 +203,7 @@ def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
     # For e.g. _generated, _shared etc
     # Ignore build, which is created when installing a package from source.
     # Ignore tests, which is not part of the package.
-    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x == "tests" or x in EXCLUDE)]
+    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x == "tests" or x in EXCLUDE or x.endswith(".egg-info"))]
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
     """
