@@ -357,7 +357,7 @@ def schedule_redteam_evaluation() -> None:
             print("Eval Group Response:")
             pprint(eval_object_response)
 
-            risk_categories_for_taxonomy:list[Union[str, RiskCategory]] = [RiskCategory.PROHIBITED_ACTIONS]
+            risk_categories_for_taxonomy: list[Union[str, RiskCategory]] = [RiskCategory.PROHIBITED_ACTIONS]
             target = AzureAIAgentTarget(
                 name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
             )

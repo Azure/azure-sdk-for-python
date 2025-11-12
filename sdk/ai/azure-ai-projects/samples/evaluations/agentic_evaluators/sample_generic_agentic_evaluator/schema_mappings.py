@@ -4,8 +4,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from openai.types.eval_create_params import DataSourceConfigCustom
+
+
 evaluator_to_data_source_config = {
-    "coherence": {
+    "coherence": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -13,8 +16,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response"],
         },
         "include_sample_schema": True,
-    },
-    "fluency": {
+    }),
+    "fluency": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -22,8 +25,8 @@ evaluator_to_data_source_config = {
             "required": ["response"],
         },
         "include_sample_schema": True,
-    },
-    "groundedness": {
+    }),
+    "groundedness": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -38,8 +41,8 @@ evaluator_to_data_source_config = {
             "required": ["response"],
         },
         "include_sample_schema": True,
-    },
-    "intent_resolution": {
+    }),
+    "intent_resolution": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -51,8 +54,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response"],
         },
         "include_sample_schema": True,
-    },
-    "relevance": {
+    }),
+    "relevance": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -60,8 +63,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response"],
         },
         "include_sample_schema": True,
-    },
-    "response_completeness": {
+    }),
+    "response_completeness": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -69,8 +72,8 @@ evaluator_to_data_source_config = {
             "required": ["ground_truth", "response"],
         },
         "include_sample_schema": True,
-    },
-    "task_adherence": {
+    }),
+    "task_adherence": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -82,8 +85,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response"],
         },
         "include_sample_schema": True,
-    },
-    "task_completion": {
+    }),
+    "task_completion": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -95,8 +98,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response"],
         },
         "include_sample_schema": True,
-    },
-    "tool_call_accuracy": {
+    }),
+    "tool_call_accuracy": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -109,8 +112,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "tool_definitions"],
         },
         "include_sample_schema": True,
-    },
-    "tool_input_accuracy": {
+    }),
+    "tool_input_accuracy": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -122,8 +125,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response", "tool_definitions"],
         },
         "include_sample_schema": True,
-    },
-    "tool_output_utilization": {
+    }),
+    "tool_output_utilization": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -135,8 +138,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response"],
         },
         "include_sample_schema": True,
-    },
-    "tool_selection": {
+    }),
+    "tool_selection": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -149,8 +152,8 @@ evaluator_to_data_source_config = {
             "required": ["query", "response", "tool_definitions"],
         },
         "include_sample_schema": True,
-    },
-    "tool_success": {
+    }),
+    "tool_success": DataSourceConfigCustom({
         "type": "custom",
         "item_schema": {
             "type": "object",
@@ -161,7 +164,7 @@ evaluator_to_data_source_config = {
             "required": ["response"],
         },
         "include_sample_schema": True,
-    },
+    }),
 }
 
 evaluator_to_data_mapping = {
