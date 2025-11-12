@@ -69,8 +69,7 @@ class generate(Check):
 
     def generate_autorest(self, folder: Path) -> None:
         readme_path = folder / "swagger" / "README.md"
-        completed_process = run(f"autorest {readme_path} --python-sdks-folder=../../", cwd=folder, shell=True)
-
+        completed_process = run(f"autorest {readme_path} --python-sdks-folder=../../", cwd=folder, shell=True, capture_output=True, text=True)
         if completed_process.returncode != 0:
             raise ValueError("Something happened with autorest: " + str(completed_process))
         logger.info("Autorest done")
@@ -80,7 +79,7 @@ class generate(Check):
 
         if not tsp_location_path.exists():
             raise ValueError(
-                "Didn't find a tsp_location.yaml in local directory. Please make sure a valid "
+                "Didn't find a tsp-location.yaml in local directory. Please make sure a valid "
                 "tsp-location.yaml file exists before running this command, for more information "
                 "on how to create one, see: "
                 "https://github.com/Azure/azure-sdk-tools/tree/main/tools/tsp-client/README.md"
