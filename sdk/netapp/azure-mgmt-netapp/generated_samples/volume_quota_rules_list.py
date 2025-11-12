@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-07-01-preview/VolumeQuotaRules_List.json
+# x-ms-original-file: 2025-09-01/VolumeQuotaRules_List.json
 if __name__ == "__main__":
     main()

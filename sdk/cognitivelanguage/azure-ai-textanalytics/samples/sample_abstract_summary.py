@@ -84,13 +84,9 @@ def sample_text_abstractive_summarization():
         "the quality of life in the communities.”"
     )
 
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
-    action = AbstractiveSummarizationOperationAction(
-        name="Abstractive Summarization"
-    )
+    action = AbstractiveSummarizationOperationAction(name="Abstractive Summarization")
 
     # Start long-running operation (sync)
     poller = client.begin_analyze_text_job(
@@ -134,15 +130,13 @@ def sample_text_abstractive_summarization():
 
                 # Documents summarized by this action
                 results = op_result.results
-                for doc in (results.documents or []):
+                for doc in results.documents or []:
                     print(f"\nDocument ID: {doc.id}")
-                    for s in (doc.summaries or []):
+                    for s in doc.summaries or []:
                         print(f"  Summary: {s.text}")
                         if s.contexts:
                             for c in s.contexts:
-                                print(
-                                    f"    Context offset={c.offset}, length={c.length}"
-                                )
+                                print(f"    Context offset={c.offset}, length={c.length}")
             else:
                 # Other action kinds, if present
                 try:
@@ -152,6 +146,7 @@ def sample_text_abstractive_summarization():
                     )
                 except Exception:
                     print("\n[Non-abstractive action present]")
+
 
 # [END text_abstractive_summarization]
 
