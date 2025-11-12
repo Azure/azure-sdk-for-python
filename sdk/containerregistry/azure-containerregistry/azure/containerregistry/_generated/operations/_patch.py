@@ -1,13 +1,16 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
-from .._serialization import Serializer
+from .._utils.serialization import Serializer
+from .._utils.model_base import _deserialize
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -30,12 +33,6 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
-
-
-
-
-
 
 def build_exchange_aad_access_token_for_acr_refresh_token_request(
     **kwargs  # type: Any
@@ -161,7 +158,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -174,7 +171,8 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-        deserialized = self._deserialize("AcrRefreshToken", pipeline_response)
+        #deserialized = self._deserialize("AcrRefreshToken", pipeline_response)
+        deserialized = _deserialize(_models.AcrRefreshToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -235,7 +233,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -248,16 +246,17 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-        deserialized = self._deserialize("AcrAccessToken", pipeline_response)
+        deserialized = _deserialize(_models.AcrAccessToken, response.json())
+        
 
         if cls:
             return cls(pipeline_response, deserialized, {})
         return deserialized
 
 
-__all__ = [
-    "AuthenticationOperations"
-]  # type: List[str]  # Add all objects you want publicly available to users at this package level
+__all__: list[str] = [
+    "AuthenticationOperations",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
