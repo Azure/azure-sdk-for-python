@@ -722,10 +722,10 @@ class MetadataRecord(_Model):
 
 class PrebuiltQueryMatchingPolicy(MatchingPolicy, discriminator="Prebuilt"):
     """Represents fields for Prebuilt query matching. Prebuilt weights will be used for giving
-    preference to question and answer columns when quering AI search.
+    preference to question and answer columns when querying AI search.
 
     :ivar kind: Matching policy kind. Required. Prebuilt weights will be used for giving preference
-     to question and answer columns when quering AI search
+     to question and answer columns when querying AI search
     :vartype kind: str or ~azure.ai.language.questionanswering.models.PREBUILT
     :ivar fields: List of fields to filter during query. For ex if only "questions" is used then
      query will be filtered on that column.
@@ -738,7 +738,7 @@ class PrebuiltQueryMatchingPolicy(MatchingPolicy, discriminator="Prebuilt"):
 
     kind: Literal[MatchingPolicyKind.PREBUILT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Matching policy kind. Required. Prebuilt weights will be used for giving preference to question
-     and answer columns when quering AI search"""
+     and answer columns when querying AI search"""
     fields: Optional[list[Union[str, "_models.MatchingPolicyFieldsType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
