@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AdministratorListResult(_serialization.Model):
@@ -41,7 +35,7 @@ class AdministratorListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AzureADAdministrator"]] = None,
+        value: Optional[list["_models.AzureADAdministrator"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -62,7 +56,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -91,10 +85,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
@@ -104,7 +98,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -123,7 +117,7 @@ class AdvancedThreatProtection(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -174,9 +168,9 @@ class AdvancedThreatProtection(ProxyResource):
         :paramtype state: str or ~azure.mgmt.mysqlflexibleservers.models.AdvancedThreatProtectionState
         """
         super().__init__(**kwargs)
-        self.creation_time = None
+        self.creation_time: Optional[datetime.datetime] = None
         self.state = state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.AdvancedThreatProtectionProvisioningState"]] = None
 
 
 class AdvancedThreatProtectionForUpdate(_serialization.Model):
@@ -206,19 +200,18 @@ class AdvancedThreatProtectionForUpdate(_serialization.Model):
 
 
 class AdvancedThreatProtectionListResult(_serialization.Model):
-    """A list of the server's Advanced Threat Protection configurations.
+    """The response of a AdvancedThreatProtection list operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: Array of results.
+    :ivar value: The AdvancedThreatProtection items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.AdvancedThreatProtection]
-    :ivar next_link: Link to retrieve next page of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
         "value": {"readonly": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -226,11 +219,14 @@ class AdvancedThreatProtectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.AdvancedThreatProtection"]] = None
+        self.next_link = next_link
 
 
 class AzureADAdministrator(ProxyResource):
@@ -239,7 +235,7 @@ class AzureADAdministrator(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -359,7 +355,7 @@ class Backup(_serialization.Model):
         self.backup_retention_days = backup_retention_days
         self.backup_interval_hours = backup_interval_hours
         self.geo_redundant_backup = geo_redundant_backup
-        self.earliest_restore_date = None
+        self.earliest_restore_date: Optional[datetime.datetime] = None
 
 
 class BackupRequestBase(_serialization.Model):
@@ -422,36 +418,13 @@ class BackupAndExportRequest(BackupRequestBase):
         self.target_details = target_details
 
 
-class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetail"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class BackupAndExportResponse(ProxyResource, ErrorResponse):  # pylint: disable=too-many-instance-attributes
-    """Represents BackupAndExport API Response.
+class BackupAndExportResponse(ProxyResource):
+    """Represents BackupAndExportAPI Response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -461,6 +434,8 @@ class BackupAndExportResponse(ProxyResource, ErrorResponse):  # pylint: disable=
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.mysqlflexibleservers.models.SystemData
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
     :ivar status: The operation status. Known values are: "Pending", "InProgress", "Succeeded",
      "Failed", "CancelInProgress", and "Canceled".
     :vartype status: str or ~azure.mgmt.mysqlflexibleservers.models.OperationStatus
@@ -488,11 +463,11 @@ class BackupAndExportResponse(ProxyResource, ErrorResponse):  # pylint: disable=
     }
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetail"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "error": {"key": "error", "type": "ErrorDetail"},
         "status": {"key": "status", "type": "str"},
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
@@ -535,7 +510,7 @@ class BackupAndExportResponse(ProxyResource, ErrorResponse):  # pylint: disable=
          key-value pairs.
         :paramtype backup_metadata: str
         """
-        super().__init__(error=error, **kwargs)
+        super().__init__(**kwargs)
         self.error = error
         self.status = status
         self.start_time = start_time
@@ -544,10 +519,6 @@ class BackupAndExportResponse(ProxyResource, ErrorResponse):  # pylint: disable=
         self.datasource_size_in_bytes = datasource_size_in_bytes
         self.data_transferred_in_bytes = data_transferred_in_bytes
         self.backup_metadata = backup_metadata
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
 
 
 class OperationProgressResponseType(_serialization.Model):
@@ -705,15 +676,14 @@ class CapabilitiesListResult(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of supported capabilities.
+    :ivar value: The CapabilityProperties items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.CapabilityProperties]
-    :ivar next_link: Link to retrieve next page of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
         "value": {"readonly": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -721,11 +691,14 @@ class CapabilitiesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.CapabilityProperties"]] = None
+        self.next_link = next_link
 
 
 class Capability(ProxyResource):
@@ -734,7 +707,7 @@ class Capability(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -787,10 +760,10 @@ class Capability(ProxyResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.supported_geo_backup_regions = None
-        self.supported_flexible_server_editions = None
-        self.supported_server_versions = None
-        self.supported_features = None
+        self.supported_geo_backup_regions: Optional[list[str]] = None
+        self.supported_flexible_server_editions: Optional[list["_models.ServerEditionCapabilityV2"]] = None
+        self.supported_server_versions: Optional[list["_models.ServerVersionCapabilityV2"]] = None
+        self.supported_features: Optional[list["_models.FeatureProperty"]] = None
 
 
 class CapabilityProperties(_serialization.Model):
@@ -829,10 +802,10 @@ class CapabilityProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.zone = None
-        self.supported_ha_mode = None
-        self.supported_geo_backup_regions = None
-        self.supported_flexible_server_editions = None
+        self.zone: Optional[str] = None
+        self.supported_ha_mode: Optional[list[str]] = None
+        self.supported_geo_backup_regions: Optional[list[str]] = None
+        self.supported_flexible_server_editions: Optional[list["_models.ServerEditionCapability"]] = None
 
 
 class CapabilitySetsList(_serialization.Model):
@@ -840,15 +813,14 @@ class CapabilitySetsList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of supported capability sets.
+    :ivar value: The CapabilitySetsList items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.Capability]
-    :ivar next_link: Link to retrieve next page of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
         "value": {"readonly": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -856,20 +828,23 @@ class CapabilitySetsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Capability"]] = None
+        self.next_link = next_link
 
 
-class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Configuration(ProxyResource):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -959,15 +934,15 @@ class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attribu
         super().__init__(**kwargs)
         self.value = value
         self.current_value = current_value
-        self.description = None
-        self.documentation_link = None
-        self.default_value = None
-        self.data_type = None
-        self.allowed_values = None
+        self.description: Optional[str] = None
+        self.documentation_link: Optional[str] = None
+        self.default_value: Optional[str] = None
+        self.data_type: Optional[str] = None
+        self.allowed_values: Optional[str] = None
         self.source = source
-        self.is_read_only = None
-        self.is_config_pending_restart = None
-        self.is_dynamic_config = None
+        self.is_read_only: Optional[Union[str, "_models.IsReadOnly"]] = None
+        self.is_config_pending_restart: Optional[Union[str, "_models.IsConfigPendingRestart"]] = None
+        self.is_dynamic_config: Optional[Union[str, "_models.IsDynamicConfig"]] = None
 
 
 class ConfigurationForBatchUpdate(_serialization.Model):
@@ -1022,7 +997,7 @@ class ConfigurationListForBatchUpdate(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ConfigurationForBatchUpdate"]] = None,
+        value: Optional[list["_models.ConfigurationForBatchUpdate"]] = None,
         reset_all_to_default: Optional[Union[str, "_models.ResetAllToDefault"]] = None,
         **kwargs: Any
     ) -> None:
@@ -1040,11 +1015,11 @@ class ConfigurationListForBatchUpdate(_serialization.Model):
 
 
 class ConfigurationListResult(_serialization.Model):
-    """A list of server configurations.
+    """The response of a Configuration list operation.
 
-    :ivar value: The list of server configurations.
+    :ivar value: The Configuration items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.Configuration]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1054,12 +1029,12 @@ class ConfigurationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Configuration"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Configuration"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of server configurations.
+        :keyword value: The Configuration items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.Configuration]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1073,7 +1048,7 @@ class Database(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1118,11 +1093,11 @@ class Database(ProxyResource):
 
 
 class DatabaseListResult(_serialization.Model):
-    """A List of databases.
+    """The response of a Database list operation.
 
-    :ivar value: The list of databases housed in a server.
+    :ivar value: The Database items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.Database]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1132,12 +1107,12 @@ class DatabaseListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Database"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Database"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of databases housed in a server.
+        :keyword value: The Database items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.Database]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1228,8 +1203,8 @@ class DelegatedSubnetUsage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.subnet_name = None
-        self.usage = None
+        self.subnet_name: Optional[str] = None
+        self.usage: Optional[int] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1256,8 +1231,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -1296,11 +1271,32 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class FeatureProperty(_serialization.Model):
@@ -1327,8 +1323,8 @@ class FeatureProperty(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.feature_name = None
-        self.feature_value = None
+        self.feature_name: Optional[str] = None
+        self.feature_value: Optional[str] = None
 
 
 class FirewallRule(ProxyResource):
@@ -1339,7 +1335,7 @@ class FirewallRule(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1396,11 +1392,11 @@ class FirewallRule(ProxyResource):
 
 
 class FirewallRuleListResult(_serialization.Model):
-    """A list of firewall rules.
+    """The response of a FirewallRule list operation.
 
-    :ivar value: The list of firewall rules in a server.
+    :ivar value: The FirewallRule items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.FirewallRule]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1410,12 +1406,12 @@ class FirewallRuleListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.FirewallRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.FirewallRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of firewall rules in a server.
+        :keyword value: The FirewallRule items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.FirewallRule]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1446,7 +1442,7 @@ class FullBackupStoreDetails(BackupStoreDetails):
         "sas_uri_list": {"key": "sasUriList", "type": "[str]"},
     }
 
-    def __init__(self, *, sas_uri_list: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, sas_uri_list: list[str], **kwargs: Any) -> None:
         """
         :keyword sas_uri_list: SASUriList of storage containers where backup data is to be
          streamed/copied. Required.
@@ -1518,7 +1514,7 @@ class HighAvailability(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.mode = mode
-        self.state = None
+        self.state: Optional[Union[str, "_models.HighAvailabilityState"]] = None
         self.standby_availability_zone = standby_availability_zone
 
 
@@ -1552,8 +1548,8 @@ class HighAvailabilityValidationEstimation(_serialization.Model):
         :paramtype expected_standby_availability_zone: str
         """
         super().__init__(**kwargs)
-        self.estimated_downtime = None
-        self.scheduled_standby_availability_zone = None
+        self.estimated_downtime: Optional[int] = None
+        self.scheduled_standby_availability_zone: Optional[str] = None
         self.expected_standby_availability_zone = expected_standby_availability_zone
 
 
@@ -1642,7 +1638,7 @@ class LogFile(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1714,11 +1710,11 @@ class LogFile(ProxyResource):
 
 
 class LogFileListResult(_serialization.Model):
-    """A List of logFiles.
+    """The response of a LogFile list operation.
 
-    :ivar value: The list of logFiles in a server.
+    :ivar value: The LogFile items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.LogFile]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1728,12 +1724,12 @@ class LogFileListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LogFile"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.LogFile"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of logFiles in a server.
+        :keyword value: The LogFile items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.LogFile]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1741,13 +1737,13 @@ class LogFileListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class Maintenance(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Maintenance(ProxyResource):
     """Represents a maintenance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1832,25 +1828,25 @@ class Maintenance(ProxyResource):  # pylint: disable=too-many-instance-attribute
         :paramtype maintenance_start_time: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.maintenance_type = None
-        self.maintenance_state = None
+        self.maintenance_type: Optional[Union[str, "_models.MaintenanceType"]] = None
+        self.maintenance_state: Optional[Union[str, "_models.MaintenanceState"]] = None
         self.maintenance_start_time = maintenance_start_time
-        self.maintenance_end_time = None
-        self.maintenance_execution_start_time = None
-        self.maintenance_execution_end_time = None
-        self.maintenance_available_schedule_min_time = None
-        self.maintenance_available_schedule_max_time = None
-        self.maintenance_title = None
-        self.maintenance_description = None
-        self.provisioning_state = None
+        self.maintenance_end_time: Optional[datetime.datetime] = None
+        self.maintenance_execution_start_time: Optional[datetime.datetime] = None
+        self.maintenance_execution_end_time: Optional[datetime.datetime] = None
+        self.maintenance_available_schedule_min_time: Optional[datetime.datetime] = None
+        self.maintenance_available_schedule_max_time: Optional[datetime.datetime] = None
+        self.maintenance_title: Optional[str] = None
+        self.maintenance_description: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.MaintenanceProvisioningState"]] = None
 
 
 class MaintenanceListResult(_serialization.Model):
-    """A list of maintenances.
+    """The response of a Maintenance list operation.
 
-    :ivar value: The list of maintenances in a server.
+    :ivar value: The Maintenance items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.Maintenance]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1860,12 +1856,12 @@ class MaintenanceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Maintenance"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Maintenance"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of maintenances in a server.
+        :keyword value: The Maintenance items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.Maintenance]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1926,6 +1922,10 @@ class MaintenanceWindow(_serialization.Model):
     :vartype start_minute: int
     :ivar day_of_week: day of week for maintenance window.
     :vartype day_of_week: int
+    :ivar batch_of_maintenance: The batch of maintenance when enabled the custom managed
+     maintenance window of a server. Known values are: "Default", "Batch1", and "Batch2".
+    :vartype batch_of_maintenance: str or
+     ~azure.mgmt.mysqlflexibleservers.models.BatchOfMaintenance
     """
 
     _attribute_map = {
@@ -1933,6 +1933,7 @@ class MaintenanceWindow(_serialization.Model):
         "start_hour": {"key": "startHour", "type": "int"},
         "start_minute": {"key": "startMinute", "type": "int"},
         "day_of_week": {"key": "dayOfWeek", "type": "int"},
+        "batch_of_maintenance": {"key": "batchOfMaintenance", "type": "str"},
     }
 
     def __init__(
@@ -1942,6 +1943,7 @@ class MaintenanceWindow(_serialization.Model):
         start_hour: Optional[int] = None,
         start_minute: Optional[int] = None,
         day_of_week: Optional[int] = None,
+        batch_of_maintenance: Optional[Union[str, "_models.BatchOfMaintenance"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1953,12 +1955,17 @@ class MaintenanceWindow(_serialization.Model):
         :paramtype start_minute: int
         :keyword day_of_week: day of week for maintenance window.
         :paramtype day_of_week: int
+        :keyword batch_of_maintenance: The batch of maintenance when enabled the custom managed
+         maintenance window of a server. Known values are: "Default", "Batch1", and "Batch2".
+        :paramtype batch_of_maintenance: str or
+         ~azure.mgmt.mysqlflexibleservers.models.BatchOfMaintenance
         """
         super().__init__(**kwargs)
         self.custom_window = custom_window
         self.start_hour = start_hour
         self.start_minute = start_minute
         self.day_of_week = day_of_week
+        self.batch_of_maintenance = batch_of_maintenance
 
 
 class MySQLServerIdentity(_serialization.Model):
@@ -1973,7 +1980,8 @@ class MySQLServerIdentity(_serialization.Model):
     :ivar type: Type of managed service identity. "UserAssigned"
     :vartype type: str or ~azure.mgmt.mysqlflexibleservers.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: Metadata of user assigned identity.
-    :vartype user_assigned_identities: dict[str, JSON]
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.mysqlflexibleservers.models.UserAssignedIdentity]
     """
 
     _validation = {
@@ -1985,25 +1993,26 @@ class MySQLServerIdentity(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{object}"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, JSON]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword type: Type of managed service identity. "UserAssigned"
         :paramtype type: str or ~azure.mgmt.mysqlflexibleservers.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: Metadata of user assigned identity.
-        :paramtype user_assigned_identities: dict[str, JSON]
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.mysqlflexibleservers.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -2161,17 +2170,27 @@ class Network(_serialization.Model):
 
 
 class Operation(_serialization.Model):
-    """REST API operation definition.
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
-    :ivar name: The name of the operation being performed on this particular object.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
-    :ivar display: The localized display information for this particular operation or action.
+    :ivar display: Localized display information for this particular operation.
     :vartype display: ~azure.mgmt.mysqlflexibleservers.models.OperationDisplay
-    :ivar origin: The intended executor of the operation.
-    :vartype origin: str
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.mysqlflexibleservers.models.Origin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, JSON]
+    :vartype properties: dict[str, any]
     """
+
+    _validation = {
+        "name": {"readonly": True},
+        "origin": {"readonly": True},
+    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
@@ -2183,41 +2202,48 @@ class Operation(_serialization.Model):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
         display: Optional["_models.OperationDisplay"] = None,
-        origin: Optional[str] = None,
-        properties: Optional[Dict[str, JSON]] = None,
+        properties: Optional[dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: The name of the operation being performed on this particular object.
-        :paramtype name: str
-        :keyword display: The localized display information for this particular operation or action.
+        :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.mysqlflexibleservers.models.OperationDisplay
-        :keyword origin: The intended executor of the operation.
-        :paramtype origin: str
         :keyword properties: Additional descriptions for the operation.
-        :paramtype properties: dict[str, JSON]
+        :paramtype properties: dict[str, any]
         """
         super().__init__(**kwargs)
-        self.name = name
+        self.name: Optional[str] = None
         self.display = display
-        self.origin = origin
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
         self.properties = properties
 
 
 class OperationDisplay(_serialization.Model):
     """Display metadata associated with the operation.
 
-    :ivar provider: Operation resource provider name.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
     :vartype provider: str
-    :ivar resource: Resource on which the operation is performed.
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
     :vartype resource: str
-    :ivar operation: Localized friendly name for the operation.
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
     :vartype operation: str
-    :ivar description: Operation description.
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
     :vartype description: str
     """
+
+    _validation = {
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+    }
 
     _attribute_map = {
         "provider": {"key": "provider", "type": "str"},
@@ -2226,38 +2252,21 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword provider: Operation resource provider name.
-        :paramtype provider: str
-        :keyword resource: Resource on which the operation is performed.
-        :paramtype resource: str
-        :keyword operation: Localized friendly name for the operation.
-        :paramtype operation: str
-        :keyword description: Operation description.
-        :paramtype description: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
-    """A list of resource provider operations.
+    """The static parameters for a resource group based resource.
 
-    :ivar value: Collection of available operation details.
+    :ivar value: The Operation items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.Operation]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -2267,12 +2276,12 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: Collection of available operation details.
+        :keyword value: The Operation items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.Operation]
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -2335,7 +2344,7 @@ class OperationStatusResult(_serialization.Model):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
         **kwargs: Any
     ) -> None:
@@ -2359,7 +2368,7 @@ class OperationStatusResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
-        self.resource_id = None
+        self.resource_id: Optional[str] = None
         self.name = name
         self.status = status
         self.percent_complete = percent_complete
@@ -2395,9 +2404,8 @@ class OperationProgressResult(OperationStatusResult):
     :vartype operations: list[~azure.mgmt.mysqlflexibleservers.models.OperationStatusResult]
     :ivar error: If present, details of the operation error.
     :vartype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
-    :ivar object_type: Identifies the type of source operation. Known values are:
-     "BackupAndExportResponse" and "ImportFromStorageResponse".
-    :vartype object_type: str or ~azure.mgmt.mysqlflexibleservers.models.ObjectType
+    :ivar properties: The response properties specific to the operation.
+    :vartype properties: ~azure.mgmt.mysqlflexibleservers.models.OperationProgressResponseType
     """
 
     _validation = {
@@ -2416,7 +2424,7 @@ class OperationProgressResult(OperationStatusResult):
         "end_time": {"key": "endTime", "type": "iso-8601"},
         "operations": {"key": "operations", "type": "[OperationStatusResult]"},
         "error": {"key": "error", "type": "ErrorDetail"},
-        "object_type": {"key": "properties.objectType", "type": "str"},
+        "properties": {"key": "properties", "type": "OperationProgressResponseType"},
     }
 
     def __init__(
@@ -2428,8 +2436,9 @@ class OperationProgressResult(OperationStatusResult):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
+        properties: Optional["_models.OperationProgressResponseType"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2449,6 +2458,8 @@ class OperationProgressResult(OperationStatusResult):
         :paramtype operations: list[~azure.mgmt.mysqlflexibleservers.models.OperationStatusResult]
         :keyword error: If present, details of the operation error.
         :paramtype error: ~azure.mgmt.mysqlflexibleservers.models.ErrorDetail
+        :keyword properties: The response properties specific to the operation.
+        :paramtype properties: ~azure.mgmt.mysqlflexibleservers.models.OperationProgressResponseType
         """
         super().__init__(
             id=id,
@@ -2461,7 +2472,7 @@ class OperationProgressResult(OperationStatusResult):
             error=error,
             **kwargs
         )
-        self.object_type: Optional[str] = None
+        self.properties = properties
 
 
 class OperationStatusExtendedResult(OperationStatusResult):
@@ -2522,9 +2533,9 @@ class OperationStatusExtendedResult(OperationStatusResult):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        properties: Optional[dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2581,7 +2592,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class PrivateEndpointConnection(Resource):
@@ -2590,7 +2601,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2653,10 +2664,118 @@ class PrivateEndpointConnection(Resource):
          ~azure.mgmt.mysqlflexibleservers.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.group_ids = None
+        self.group_ids: Optional[list[str]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
+
+
+class PrivateEndpointConnectionListResult(_serialization.Model):
+    """The response of a PrivateEndpointConnection list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The PrivateEndpointConnection items on this page. Required.
+    :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.PrivateEndpointConnection]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: list["_models.PrivateEndpointConnection"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The PrivateEndpointConnection items on this page. Required.
+        :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.PrivateEndpointConnection]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mysqlflexibleservers.models.SystemData
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
+    }
+
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword required_zone_names: The private link resource private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[list[str]] = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(_serialization.Model):
+    """A list of private link resources.
+
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.PrivateLinkResource]
+        """
+        super().__init__(**kwargs)
+        self.value = value
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
@@ -2705,49 +2824,6 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
-class Provisioning(ProxyResource):
-    """Server backup properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.mysqlflexibleservers.models.SystemData
-    :ivar provisioning_state: The provisioning state of backup resource. Known values are:
-     "Succeeded", "Creating", "Deleting", "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.mysqlflexibleservers.models.ProvisioningState
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.provisioning_state = None
-
-
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
@@ -2757,7 +2833,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2790,7 +2866,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2802,7 +2878,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Server(TrackedResource):
     """Represents a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2810,7 +2886,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2892,6 +2968,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
+        "full_version": {"readonly": True},
         "replica_capacity": {"readonly": True, "minimum": 0},
         "state": {"readonly": True},
         "fully_qualified_domain_name": {"readonly": True},
@@ -2938,13 +3015,12 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.MySQLServerIdentity"] = None,
         sku: Optional["_models.MySQLServerSku"] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[Union[str, "_models.ServerVersion"]] = None,
-        full_version: Optional[str] = None,
         availability_zone: Optional[str] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         source_server_resource_id: Optional[str] = None,
@@ -2979,8 +3055,6 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword version: Major version of MySQL. 8.0.21 stands for MySQL 8.0, 5.7.44 stands for MySQL
          5.7. Known values are: "5.7" and "8.0.21".
         :paramtype version: str or ~azure.mgmt.mysqlflexibleservers.models.ServerVersion
-        :keyword full_version: Major version and actual engine version.
-        :paramtype full_version: str
         :keyword availability_zone: availability Zone information of the server.
         :paramtype availability_zone: str
         :keyword create_mode: The mode to create a new MySQL server. Known values are: "Default",
@@ -3023,22 +3097,22 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
-        self.full_version = full_version
+        self.full_version: Optional[str] = None
         self.availability_zone = availability_zone
         self.create_mode = create_mode
         self.source_server_resource_id = source_server_resource_id
         self.restore_point_in_time = restore_point_in_time
         self.replication_role = replication_role
-        self.replica_capacity = None
+        self.replica_capacity: Optional[int] = None
         self.data_encryption = data_encryption
-        self.state = None
-        self.fully_qualified_domain_name = None
+        self.state: Optional[Union[str, "_models.ServerState"]] = None
+        self.fully_qualified_domain_name: Optional[str] = None
         self.database_port = database_port
         self.storage = storage
         self.backup = backup
         self.high_availability = high_availability
         self.network = network
-        self.private_endpoint_connections = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
         self.maintenance_policy = maintenance_policy
         self.maintenance_window = maintenance_window
         self.import_source_properties = import_source_properties
@@ -3050,7 +3124,7 @@ class ServerBackup(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3108,11 +3182,11 @@ class ServerBackup(ProxyResource):
 
 
 class ServerBackupListResult(_serialization.Model):
-    """A list of server backups.
+    """The response of a ServerBackup list operation.
 
-    :ivar value: The list of backups of a server.
+    :ivar value: The ServerBackup items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.ServerBackup]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -3122,12 +3196,12 @@ class ServerBackupListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ServerBackup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ServerBackup"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of backups of a server.
+        :keyword value: The ServerBackup items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.ServerBackup]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -3141,7 +3215,7 @@ class ServerBackupV2(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3208,15 +3282,15 @@ class ServerBackupV2(ProxyResource):
         self.backup_type = backup_type
         self.completed_time = completed_time
         self.source = source
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ServerBackupV2ListResult(_serialization.Model):
-    """A list of server backups.
+    """The response of a ServerBackupV2 list operation.
 
-    :ivar value: The list of backups of a server.
+    :ivar value: The ServerBackupV2 items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.ServerBackupV2]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -3226,12 +3300,12 @@ class ServerBackupV2ListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ServerBackupV2"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ServerBackupV2"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of backups of a server.
+        :keyword value: The ServerBackupV2 items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.ServerBackupV2]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -3296,9 +3370,9 @@ class ServerEditionCapability(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.supported_storage_editions = None
-        self.supported_server_versions = None
+        self.name: Optional[str] = None
+        self.supported_storage_editions: Optional[list["_models.StorageEditionCapability"]] = None
+        self.supported_server_versions: Optional[list["_models.ServerVersionCapability"]] = None
 
 
 class ServerEditionCapabilityV2(_serialization.Model):
@@ -3338,14 +3412,14 @@ class ServerEditionCapabilityV2(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.default_sku = None
-        self.default_storage_size = None
-        self.supported_storage_editions = None
-        self.supported_skus = None
+        self.name: Optional[str] = None
+        self.default_sku: Optional[str] = None
+        self.default_storage_size: Optional[int] = None
+        self.supported_storage_editions: Optional[list["_models.StorageEditionCapability"]] = None
+        self.supported_skus: Optional[list["_models.SkuCapabilityV2"]] = None
 
 
-class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ServerForUpdate(_serialization.Model):
     """Parameters allowed to update for a server.
 
     :ivar identity: The cmk identity for the server.
@@ -3398,7 +3472,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         *,
         identity: Optional["_models.MySQLServerIdentity"] = None,
         sku: Optional["_models.MySQLServerSku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[Union[str, "_models.ServerVersion"]] = None,
         storage: Optional["_models.Storage"] = None,
@@ -3477,11 +3551,11 @@ class ServerGtidSetParameter(_serialization.Model):
 
 
 class ServerListResult(_serialization.Model):
-    """A list of servers.
+    """The response of a Server list operation.
 
-    :ivar value: The list of servers.
+    :ivar value: The Server items on this page.
     :vartype value: list[~azure.mgmt.mysqlflexibleservers.models.Server]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -3491,12 +3565,12 @@ class ServerListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Server"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Server"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of servers.
+        :keyword value: The Server items on this page.
         :paramtype value: list[~azure.mgmt.mysqlflexibleservers.models.Server]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -3563,8 +3637,8 @@ class ServerVersionCapability(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.supported_skus = None
+        self.name: Optional[str] = None
+        self.supported_skus: Optional[list["_models.SkuCapability"]] = None
 
 
 class ServerVersionCapabilityV2(_serialization.Model):
@@ -3587,7 +3661,7 @@ class ServerVersionCapabilityV2(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
+        self.name: Optional[str] = None
 
 
 class SkuCapability(_serialization.Model):
@@ -3622,10 +3696,10 @@ class SkuCapability(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.v_cores = None
-        self.supported_iops = None
-        self.supported_memory_per_v_core_mb = None
+        self.name: Optional[str] = None
+        self.v_cores: Optional[int] = None
+        self.supported_iops: Optional[int] = None
+        self.supported_memory_per_v_core_mb: Optional[int] = None
 
 
 class SkuCapabilityV2(_serialization.Model):
@@ -3668,12 +3742,12 @@ class SkuCapabilityV2(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.v_cores = None
-        self.supported_iops = None
-        self.supported_memory_per_v_core_mb = None
-        self.supported_zones = None
-        self.supported_ha_mode = None
+        self.name: Optional[str] = None
+        self.v_cores: Optional[int] = None
+        self.supported_iops: Optional[int] = None
+        self.supported_memory_per_v_core_mb: Optional[int] = None
+        self.supported_zones: Optional[list[str]] = None
+        self.supported_ha_mode: Optional[list[str]] = None
 
 
 class Storage(_serialization.Model):
@@ -3722,7 +3796,7 @@ class Storage(_serialization.Model):
         auto_grow: Optional[Union[str, "_models.EnableStatusEnum"]] = None,
         log_on_disk: Optional[Union[str, "_models.EnableStatusEnum"]] = None,
         auto_io_scaling: Optional[Union[str, "_models.EnableStatusEnum"]] = None,
-        storage_redundancy: Optional[Union[str, "_models.StorageRedundancyEnum"]] = None,
+        storage_redundancy: Union[str, "_models.StorageRedundancyEnum"] = "LocalRedundancy",
         **kwargs: Any
     ) -> None:
         """
@@ -3748,7 +3822,7 @@ class Storage(_serialization.Model):
         self.iops = iops
         self.auto_grow = auto_grow
         self.log_on_disk = log_on_disk
-        self.storage_sku = None
+        self.storage_sku: Optional[str] = None
         self.auto_io_scaling = auto_io_scaling
         self.storage_redundancy = storage_redundancy
 
@@ -3797,13 +3871,13 @@ class StorageEditionCapability(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.min_storage_size = None
-        self.max_storage_size = None
-        self.min_backup_retention_days = None
-        self.max_backup_retention_days = None
-        self.min_backup_interval_hours = None
-        self.max_backup_interval_hours = None
+        self.name: Optional[str] = None
+        self.min_storage_size: Optional[int] = None
+        self.max_storage_size: Optional[int] = None
+        self.min_backup_retention_days: Optional[int] = None
+        self.max_backup_retention_days: Optional[int] = None
+        self.min_backup_interval_hours: Optional[int] = None
+        self.max_backup_interval_hours: Optional[int] = None
 
 
 class SystemData(_serialization.Model):
@@ -3894,8 +3968,8 @@ class UserAssignedIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class ValidateBackupResponse(_serialization.Model):
@@ -3969,6 +4043,6 @@ class VirtualNetworkSubnetUsageResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.location = None
-        self.subscription_id = None
-        self.delegated_subnets_usage = None
+        self.location: Optional[str] = None
+        self.subscription_id: Optional[str] = None
+        self.delegated_subnets_usage: Optional[list["_models.DelegatedSubnetUsage"]] = None
