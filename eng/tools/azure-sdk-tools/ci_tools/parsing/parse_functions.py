@@ -200,11 +200,7 @@ def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
     :rtype: List[str]
     :return: Filtered list of subdirectory names to skip
     """
-    return [
-        x
-        for x in subdirs
-        if (x.startswith(("_", ".")) or x == "build" or x in EXCLUDE or x.endswith(".egg-info"))
-    ]
+    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x in EXCLUDE or x.endswith(".egg-info"))]
 
 
 def discover_namespace(package_root_path: str) -> Optional[str]:
