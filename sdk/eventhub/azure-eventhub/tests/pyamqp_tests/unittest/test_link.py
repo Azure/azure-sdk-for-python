@@ -89,7 +89,7 @@ def test_receive_transfer_frame_multiple():
 
 def test_max_message_size_negotiation_with_client_unlimited():
     """
-    Test AMQP attach frame negotiation where client sends max_message_size=0 (unlimited)
+    Test AMQP attach frame negotiation where client sends max_message_size=0 ( unlimited )
     and server responds with its limit (20MB), resulting in final size of 20MB.
     
     """
