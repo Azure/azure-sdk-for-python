@@ -19,8 +19,8 @@ class TestSamples:
 
     To run this test:
     * 'cd' to the folder '/sdk/ai/azure-ai-projects' in your azure-sdk-for-python repo.
-    * set AZURE_AI_PROJECT_ENDPOINT=<your-project-endpoint> - Define your Azure AI Foundry project endpoint used by the test.
-    * set ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
+    * set AZURE_AI_PROJECT_ENDPOINT=<your-project-endpoint> - Define your Microsoft Foundry project endpoint used by the test.
+    * set AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
     * Uncomment the two lines that start with "@pytest.mark.skip" below.
     * Run:  pytest tests\samples\test_samples.py::TestSamples
     * Load the resulting report in Excel: tests\samples\samples_report.csv
@@ -226,7 +226,7 @@ class TestSamples:
 
         Before running this test, you need to define the following environment variables:
         1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
-           Azure AI Foundry project.
+           Microsoft Foundry project.
         """
 
         self._set_env_vars(
@@ -295,7 +295,7 @@ class TestSamples:
 
         Before running this test, you need to define the following environment variables:
         1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
-           Azure AI Foundry project.
+           Microsoft Foundry project.
         """
 
         self._set_env_vars(
