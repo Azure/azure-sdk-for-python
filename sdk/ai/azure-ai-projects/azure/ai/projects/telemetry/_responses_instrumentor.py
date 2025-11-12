@@ -1719,6 +1719,9 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     conversation_id = self._extract_conversation_id(kwargs)
                     self._add_tool_call_events(span, result, conversation_id)
 
+                    # Add workflow action events (if any)
+                    self._add_workflow_action_events(span, result, conversation_id)
+
                     # Add assistant message event
                     output_text = self._extract_output_text(result)
                     if output_text:
@@ -2914,10 +2917,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         item_type = getattr(item, "type", "unknown")
         role = getattr(item, "role", None)
 
-        # Ensure role is never None (some items like workflow_action don't have a role)
-        if role is None:
-            role = "unknown"
-
         # Create event body - format depends on item type
         event_body: Dict[str, Any] = {}
 
@@ -3352,13 +3351,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Unknown item type - use generic event name
             event_name = "gen_ai.conversation.item"
 
-        # Create event attributes with the determined role
+        # Create event attributes
         event_attributes = {
             GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
             "gen_ai.conversation.item.id": item_id,
-            # "gen_ai.conversation.item.type": item_type,  # Commented out: doesn't support mixed content types
-            "gen_ai.conversation.item.role": role,  # Use the overridden role
         }
+
+        # Only add role if it's not None (workflow_action items don't have a role from API)
+        if role is not None:
+            event_attributes["gen_ai.conversation.item.role"] = role
 
         # Use JSON format for event content (consistent with responses.create)
         event_attributes["gen_ai.event.content"] = json.dumps(event_body, ensure_ascii=False)

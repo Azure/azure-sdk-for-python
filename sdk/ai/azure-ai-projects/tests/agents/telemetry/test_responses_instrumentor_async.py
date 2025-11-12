@@ -2608,7 +2608,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = project_client.get_openai_client()
+            openai_client = await project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             response = await openai_client.responses.create(
@@ -2706,7 +2706,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = project_client.get_openai_client()
+            openai_client = await project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             response = await openai_client.responses.create(
@@ -2772,13 +2772,6 @@ trigger:
             # action_id and previous_action_id should NOT be present when content recording is off
             assert "action_id" not in content["content"][0]
             assert "previous_action_id" not in content["content"][0]
-            assert isinstance(content["content"], list)
-            assert len(content["content"]) > 0
-            assert content["content"][0]["type"] == "workflow_action"
-            assert "status" in content["content"][0]
-            # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in content["content"][0]
-            assert "previous_action_id" not in content["content"][0]
 
     @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_with_content")
@@ -2815,7 +2808,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = project_client.get_openai_client()
+            openai_client = await project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             stream = await openai_client.responses.create(
@@ -2882,7 +2875,6 @@ trigger:
             assert "status" in content["content"][0]
             # With content recording ON, action_id should be present
             assert "action_id" in content["content"][0]
-            assert "status" in content["content"][0]
 
     @pytest.mark.skip(reason="recordings not working for responses API")
     @pytest.mark.usefixtures("instrument_without_content")
@@ -2919,7 +2911,7 @@ trigger:
                 definition=WorkflowAgentDefinition(workflow=workflow_yaml),
             )
 
-            openai_client = project_client.get_openai_client()
+            openai_client = await project_client.get_openai_client()
             conversation = await openai_client.conversations.create()
 
             stream = await openai_client.responses.create(
@@ -2980,17 +2972,6 @@ trigger:
 
         # Verify workflow event content structure in list items (content recording OFF)
         for event in list_workflow_events:
-            content_str = event.attributes.get("gen_ai.event.content", "{}")
-            content = json.loads(content_str)
-            assert "content" in content
-            assert isinstance(content["content"], list)
-            assert len(content["content"]) > 0
-            assert content["content"][0]["type"] == "workflow_action"
-            assert "status" in content["content"][0]
-            # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in content["content"][0]
-            assert "previous_action_id" not in content["content"][0]
-        for event in workflow_events:
             content_str = event.attributes.get("gen_ai.event.content", "{}")
             content = json.loads(content_str)
             assert "content" in content

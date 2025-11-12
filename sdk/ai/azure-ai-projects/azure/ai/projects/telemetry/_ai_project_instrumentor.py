@@ -431,17 +431,17 @@ class _AIAgentsInstrumentorPreview:
         agent_id: Optional[str] = None,
         thread_id: Optional[str] = None,
     ) -> None:
+        # Early return if no instructions to trace
         if not instructions:
             return
 
         event_body: Dict[str, Any] = {}
-        if _trace_agents_content and (instructions or additional_instructions):
+        if _trace_agents_content:
             # Combine instructions if both exist
-            combined_text = None
-            if instructions and additional_instructions:
+            if additional_instructions:
                 combined_text = f"{instructions} {additional_instructions}"
             else:
-                combined_text = instructions or additional_instructions
+                combined_text = instructions
 
             # Use standard content format
             event_body["content"] = [{"type": "text", "text": combined_text}]
@@ -594,7 +594,9 @@ class _AIAgentsInstrumentorPreview:
         if workflow_yaml:
             agent_type = "workflow"
         elif instructions or model:
-            # Prompt agent (has instructions and/or model)
+            # Prompt agent - identified by having instructions and/or a model.
+            # Note: An agent with only a model (no instructions) is treated as a prompt agent,
+            # though this is uncommon. Typically prompt agents have both model and instructions.
             agent_type = "prompt"
         else:
             # Unknown type - set to "unknown" to indicate we couldn't determine it
