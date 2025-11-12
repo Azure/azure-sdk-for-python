@@ -133,7 +133,6 @@ def apply_compatibility_filter(package_set: List[ParsedSetup]) -> List[ParsedSet
         if running_major_version in spec_set and distro_compat:
             collected_packages.append(pkg)
 
-    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
     logging.debug(
         "Package(s) omitted by compatibility filter: {}".format(
             generate_difference([origpkg.name for origpkg in package_set], [pkg.name for pkg in collected_packages])
@@ -213,9 +212,6 @@ def apply_business_filter(collected_packages: List[ParsedSetup], filter_type: st
         if omit_function_dict.get(filter_type, omit_build)(pkg.folder):
             pkg_set_ci_filtered.append(pkg)
 
-    logging.debug(
-        "Target packages after applying business filter: {}".format([pkg.name for pkg in pkg_set_ci_filtered])
-    )
     logging.debug(
         "Package(s) omitted by business filter: {}".format(
             generate_difference([pkg.name for pkg in collected_packages], [pkg.name for pkg in pkg_set_ci_filtered])
@@ -297,7 +293,6 @@ def is_package_active(pkg: ParsedSetup) -> bool:
 def apply_inactive_filter(collected_packages: List[ParsedSetup]) -> List[ParsedSetup]:
     packages = [pkg for pkg in collected_packages if is_package_active(pkg)]
 
-    logging.debug("Target packages after applying inactive filter: {}".format(collected_packages))
     logging.debug(
         "Package(s) omitted by inactive filter: {}".format(
             generate_difference([collected.name for collected in collected_packages], [pkg.name for pkg in packages])
