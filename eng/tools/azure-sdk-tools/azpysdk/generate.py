@@ -65,7 +65,7 @@ class generate(Check):
         elif (folder / "tsp-location.yaml").exists():
             self.generate_typespec(folder)
         else:
-            raise ValueError("Didn't find swagger/README.md nor tsp_location.yaml")
+            raise ValueError("Didn't find swagger/README.md nor tsp-location.yaml")
 
     def generate_autorest(self, folder: Path) -> None:
         readme_path = folder / "swagger" / "README.md"
