@@ -29,6 +29,7 @@ USAGE:
 
 from datetime import datetime
 import os
+from typing import Union
 
 from dotenv import load_dotenv
 from pprint import pprint
@@ -270,8 +271,8 @@ def schedule_dataset_evaluation() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name="label model test with dataset ID",
-                data_source_config=data_source_config, # type: ignore # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,  # type: ignore # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print(f"Eval Group created")
 
@@ -346,8 +347,8 @@ def schedule_redteam_evaluation() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name=eval_group_name,
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore # type: ignore
             )
             print(f"Eval Group created for red teaming: {eval_group_name}")
 
@@ -356,11 +357,11 @@ def schedule_redteam_evaluation() -> None:
             print("Eval Group Response:")
             pprint(eval_object_response)
 
-            risk_categories_for_taxonomy = [RiskCategory.PROHIBITED_ACTIONS]
+            risk_categories_for_taxonomy:list[Union[str, RiskCategory]] = [RiskCategory.PROHIBITED_ACTIONS]
             target = AzureAIAgentTarget(
                 name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
             )
-            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target) # type: ignore
+            agent_taxonomy_input = AgentTaxonomyInput(risk_categories=risk_categories_for_taxonomy, target=target)
             print("Creating Eval Taxonomies")
             eval_taxonomy_input = EvaluationTaxonomy(
                 description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input

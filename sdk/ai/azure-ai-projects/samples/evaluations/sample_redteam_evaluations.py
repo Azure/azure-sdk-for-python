@@ -76,8 +76,8 @@ def main() -> None:
             print("Creating Eval Group")
             eval_object = client.evals.create(
                 name=eval_group_name,
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore # type: ignore
             )
             print(f"Eval Group created for red teaming: {eval_group_name}")
 
@@ -86,7 +86,7 @@ def main() -> None:
             print("Eval Group Response:")
             pprint(eval_object_response)
 
-            risk_categories_for_taxonomy : list[Union[str, RiskCategory]] = [RiskCategory.PROHIBITED_ACTIONS]
+            risk_categories_for_taxonomy: list[Union[str, RiskCategory]] = [RiskCategory.PROHIBITED_ACTIONS]
             target = AzureAIAgentTarget(
                 name=agent_name, version=agent_version, tool_descriptions=_get_tool_descriptions(agent)
             )

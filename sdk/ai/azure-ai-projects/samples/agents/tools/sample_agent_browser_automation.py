@@ -36,6 +36,7 @@ from azure.ai.projects.models import (
     BrowserAutomationToolParameters,
     BrowserAutomationToolConnectionParameters,
 )
+
 load_dotenv()
 
 project_client = AIProjectClient(
