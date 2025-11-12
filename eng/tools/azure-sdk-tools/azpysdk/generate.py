@@ -73,8 +73,6 @@ class generate(Check):
             f"autorest {readme_path} --python-sdks-folder=../../",
             cwd=folder,
             shell=True,
-            capture_output=True,
-            text=True,
         )
         if completed_process.returncode != 0:
             raise ValueError("Something happened with autorest: " + str(completed_process))
