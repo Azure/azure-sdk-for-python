@@ -1,6 +1,6 @@
 {
   "apiVersion": "2025-08-15",
-  "commit": "278d4cb813510d2963592eb2aee9c64325a80007",
+  "commit": "98814b1d848a5371e371738ea6c223c8b3caed28",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/computelimit/resource-manager/Microsoft.ComputeLimit/ComputeLimit",
   "emitterVersion": "0.53.1"
