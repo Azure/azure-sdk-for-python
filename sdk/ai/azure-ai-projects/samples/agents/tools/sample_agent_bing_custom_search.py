@@ -71,7 +71,7 @@ with project_client:
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question " "(e.g., 'Tell me more about foundry agent service'): \n")
+    user_input = input("Enter your question (e.g., 'Tell me more about foundry agent service'): \n")
 
     # Send initial request that will trigger the Bing Custom Search tool
     stream_response = openai_client.responses.create(
