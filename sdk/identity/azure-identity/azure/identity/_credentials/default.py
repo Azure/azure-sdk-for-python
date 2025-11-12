@@ -94,8 +94,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
     :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
-    :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
-        Defaults to **True**.
+    :keyword bool exclude_visual_studio_code_credential: Whether to exclude the stored credential from VS Code.
+        Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
