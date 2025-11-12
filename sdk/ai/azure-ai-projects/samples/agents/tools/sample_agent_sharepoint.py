@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -5,12 +6,12 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an AI agent with Azure AI Search capabilities
-    using the AzureAISearchAgentTool and synchronous Azure AI Projects client. The agent can search
-    indexed content and provide responses with citations from search results.
+    This sample demonstrates how to create an AI agent with SharePoint capabilities
+    using the SharepointAgentTool and synchronous Azure AI Projects client. The agent can search
+    SharePoint content and provide responses with relevant information from SharePoint sites.
 
 USAGE:
-    python sample_agent_ai_search.py
+    python sample_agent_sharepoint.py
 
     Before running the sample:
 
@@ -21,9 +22,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
+    3) SHAREPOINT_PROJECT_CONNECTION_ID - The SharePoint project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
 """
 
 import os
@@ -31,11 +31,10 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureAISearchAgentTool,
     PromptAgentDefinition,
-    AzureAISearchToolResource,
-    AISearchIndexResource,
-    AzureAISearchQueryType,
+    SharepointAgentTool,
+    SharepointGroundingToolParameters,
+    ToolProjectConnection,
 )
 
 load_dotenv()
@@ -45,42 +44,33 @@ project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
 )
 
+# Get the OpenAI client for responses
 openai_client = project_client.get_openai_client()
+
+sharepoint_tool = SharepointAgentTool(
+    sharepoint_grounding_preview=SharepointGroundingToolParameters(
+        project_connections=[
+            ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
+        ]
+    )
+)
 
 with project_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            instructions="""You are a helpful assistant. You must always provide citations for
-            answers using the tool and render them as: `[message_idx:search_idx†source]`.""",
-            tools=[
-                AzureAISearchAgentTool(
-                    azure_ai_search=AzureAISearchToolResource(
-                        indexes=[
-                            AISearchIndexResource(
-                                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
-                                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                                query_type=AzureAISearchQueryType.SIMPLE,
-                            ),
-                        ]
-                    )
-                )
-            ],
+            instructions="""You are a helpful agent that can use SharePoint tools to assist users. 
+            Use the available SharePoint tools to answer questions and perform tasks.""",
+            tools=[sharepoint_tool],
         ),
-        description="You are a helpful agent.",
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input(
-        "Enter your question for the AI Search agent available in the index "
-        "(e.g., 'Tell me about the mental health services available from Premera'): \n"
-    )
-
+    # Send initial request that will trigger the SharePoint tool
     stream_response = openai_client.responses.create(
         stream=True,
-        tool_choice="required",
-        input=user_input,
+        input="Please summarize the last meeting notes stored in SharePoint.",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
 
@@ -107,6 +97,6 @@ with project_client:
             print(f"\nFollow-up completed!")
             print(f"Full response: {event.response.output_text}")
 
-    print("\nCleaning up...")
+    print("Cleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
