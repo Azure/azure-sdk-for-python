@@ -46,4 +46,4 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
                     span_context = span.get_span_context()
                     if span_context.is_valid and not span_context.trace_flags.sampled:
                         return
-        super().on_emit(log_data.log_record)
+        super().on_emit(log_data)
