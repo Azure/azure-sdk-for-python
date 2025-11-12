@@ -3,9 +3,12 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import asyncio # pylint: disable=do-not-import-asyncio
+import logging
+from typing import Any, MutableMapping, TypeVar, cast, Optional, Union
+from weakref import WeakKeyDictionary
 
-from typing import Any, MutableMapping, TypeVar, cast, Optional
-
+from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
@@ -17,6 +20,16 @@ from ..http_constants import HttpHeaders
 from .._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+logger = logging.getLogger("azure.cosmos.AsyncCosmosBearerTokenCredentialPolicy")
+_credential_locks: "WeakKeyDictionary[Union[AsyncTokenCredential, AsyncSupportsTokenInfo], asyncio.Lock]" = (
+    WeakKeyDictionary())
+
+def _get_credential_lock(credential: Union[AsyncTokenCredential, AsyncSupportsTokenInfo]) -> asyncio.Lock:
+    lock = _credential_locks.get(credential)
+    if lock is None:
+        lock = asyncio.Lock()
+        _credential_locks[credential] = lock
+    return lock
 
 # NOTE: This class accesses protected members (_scopes, _token) of the parent class
 # to implement fallback and scope-switching logic not exposed by the public API.
@@ -25,11 +38,24 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     AadDefaultScope = Constants.AAD_DEFAULT_SCOPE
 
-    def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None):
+    def __init__(self, credential: AsyncTokenCredential, account_scope: str, override_scope: Optional[str] = None):
         self._account_scope = account_scope
         self._override_scope = override_scope
         self._current_scope = override_scope or account_scope
+        self._credential_lock = _get_credential_lock(credential)
         super().__init__(credential, self._current_scope)
+
+    async def setup(self) -> None:
+        # have to also support get_token info
+        self._credential_lock = _get_credential_lock(self._credential)
+        # initialize the cache by requesting a token for the current scope (thread-safe)
+        async with self._credential_lock:
+            try:
+                await self._get_token()
+            except Exception: #pylint: disable=broad-exception-caught
+                logger.warning("Failed to acquire initial token for scope '%s'. Cache was not populated.",
+                               self._current_scope, exc_info=True)
+
 
     @staticmethod
     def _update_headers(headers: MutableMapping[str, str], token: str) -> None:
@@ -62,6 +88,11 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                         self._current_scope != self.AadDefaultScope and
                         "AADSTS500011" in str(ex)
                 ):
+                    logger.warning(
+                        "Received AADSTS500011 error when using scope '%s'. Falling back to default scope '%s'.",
+                        self._current_scope,
+                        self.AadDefaultScope
+                    )
                     self._scopes = (self.AadDefaultScope,)
                     self._current_scope = self.AadDefaultScope
                     tried_fallback = True
