@@ -523,6 +523,7 @@ class TestConfigure(unittest.TestCase):
         logging_handler_init_mock = Mock()
         logging_handler_mock.return_value = logging_handler_init_mock
         logger_mock = Mock()
+        custom_lrp = Mock()
         logger_mock.handlers = []
         get_logger_mock.return_value = logger_mock
         formatter_init_mock = Mock()
@@ -535,7 +536,8 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": True,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
-            "logging_formatter": formatter_init_mock
+            "logging_formatter": formatter_init_mock,
+            "log_record_processors": [custom_lrp],
         }
 
         # Patch all the necessary modules and imports
@@ -557,8 +559,8 @@ class TestConfigure(unittest.TestCase):
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
         blrp_mock.assert_called_once_with(log_exp_init_mock)
-        self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
-        lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
+        self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 3)
+        lp_init_mock.add_log_record_processor.assert_has_calls([call(custom_lrp), call(pclp_init_mock), call(blrp_init_mock)])
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
         get_logger_mock.assert_called_once_with("test")
@@ -606,6 +608,7 @@ class TestConfigure(unittest.TestCase):
             "logger_name": "test",
             "resource": TEST_RESOURCE,
             "logging_formatter": None,
+            "log_record_processors": [],
         }
         
         # Patch all the necessary modules and imports
@@ -666,7 +669,8 @@ class TestConfigure(unittest.TestCase):
             "enable_performance_counters": False,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
-            "logging_formatter": formatter_init_mock
+            "logging_formatter": formatter_init_mock,
+            "log_record_processors": [],
         }
 
         # Patch all the necessary modules and imports

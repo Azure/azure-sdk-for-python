@@ -28,6 +28,7 @@ VIEWS_ARG = "views"
 RATE_LIMITED_SAMPLER = "microsoft.rate_limited"
 FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed.percentage"
 SAMPLING_TRACES_PER_SECOND_ARG = "traces_per_second"
+LOG_RECORD_PROCESSORS_ARG = "log_record_processors"
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 
