@@ -119,7 +119,14 @@ with project_client:
 
     data_source_config = {"type": "azure_ai_source", "scenario": "responses"}
     testing_criteria = [
-        {"type": "azure_ai_evaluator", "name": "tool_call_accuracy", "evaluator_name": "builtin.tool_call_accuracy", "initialization_parameters": {"deployment_name": f"{model_deployment_name}"}}
+        {
+            "type": "azure_ai_evaluator",
+            "name": "tool_call_accuracy",
+            "evaluator_name": "builtin.tool_call_accuracy",
+            "initialization_parameters": {
+                "deployment_name": f"{model_deployment_name}"
+            }
+        }
     ]
     eval_object = openai_client.evals.create(
         name="Agent Response Evaluation",
