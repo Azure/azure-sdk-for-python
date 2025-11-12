@@ -640,6 +640,8 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
+
+
 class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
     _exporter_class = partial(AzureMonitorLogExporter, disable_offline_storage=True)
 
