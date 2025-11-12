@@ -306,7 +306,7 @@ def schedule_dataset_evaluation() -> None:
             print(f"Schedule created for dataset evaluation: {schedule_response.id}")
             pprint(schedule_response)
 
-            schedule_runs = project_client.schedules.list_runs(schedule_id=schedule_response.id)
+            schedule_runs = project_client.schedules.list_runs(id=schedule_response.id)
             print(f"Listing schedule runs for schedule id: {schedule_response.id}")
             for run in schedule_runs:
                 pprint(run)
@@ -402,7 +402,7 @@ def schedule_redteam_evaluation() -> None:
             print(f"Schedule created for red teaming: {schedule_response.id}")
             pprint(schedule_response)
 
-            schedule_runs = project_client.schedules.list_runs(schedule_id=schedule_response.id)
+            schedule_runs = project_client.schedules.list_runs(id=schedule_response.id)
             print(f"Listing schedule runs for schedule id: {schedule_response.id}")
             for run in schedule_runs:
                 pprint(run)
