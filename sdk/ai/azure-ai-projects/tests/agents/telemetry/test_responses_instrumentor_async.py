@@ -2567,3 +2567,437 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
         assert events_match == True
+
+    # ========================================
+    # Workflow Agent Tracing Tests (Async)
+    # ========================================
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_workflow_agent_non_streaming_with_content_recording(self, **kwargs):
+        """Test async workflow agent with non-streaming and content recording enabled."""
+        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            # Create a simple workflow agent
+            workflow_yaml = """
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: test_workflow
+  actions:
+    - kind: SetVariable
+      id: set_result
+      variable: Local.Result
+      value: "Workflow completed"
+"""
+            workflow_agent = await project_client.agents.create_version(
+                agent_name="test-workflow",
+                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            )
+
+            openai_client = project_client.get_openai_client()
+            conversation = await openai_client.conversations.create()
+
+            response = await openai_client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                input="Test workflow",
+                stream=False,
+            )
+
+            # List conversation items to verify workflow actions in conversation
+            items = await openai_client.conversations.items.list(conversation_id=conversation.id)
+            # Must iterate to create the span
+            items_list = []
+            async for item in items:
+                items_list.append(item)
+
+            await openai_client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(
+                agent_name=workflow_agent.name, agent_version=workflow_agent.version
+            )
+
+        # Verify workflow action events
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        assert len(spans) >= 1
+        span = spans[0]
+
+        # Check for workflow action events
+        workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
+        assert len(workflow_events) > 0
+
+        # Verify workflow event content structure
+        for event in workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+
+        # Verify conversation items listing span also has workflow actions
+        list_spans = self.exporter.get_spans_by_name("list_conversation_items")
+        assert len(list_spans) >= 1
+        list_span = list_spans[0]
+
+        # Check for workflow action events in list items span
+        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
+        assert len(list_workflow_events) > 0
+
+        # Verify workflow event content structure in list items
+        for event in list_workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # With content recording ON, action_id should be present
+            assert "action_id" in content["content"][0]
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
+        """Test async workflow agent with non-streaming and content recording disabled."""
+        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            workflow_yaml = """
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: test_workflow
+  actions:
+    - kind: SetVariable
+      id: set_result
+      variable: Local.Result
+      value: "Workflow completed"
+"""
+            workflow_agent = await project_client.agents.create_version(
+                agent_name="test-workflow",
+                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            )
+
+            openai_client = project_client.get_openai_client()
+            conversation = await openai_client.conversations.create()
+
+            response = await openai_client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                input="Test workflow",
+                stream=False,
+            )
+
+            # List conversation items to verify workflow actions in conversation
+            items = await openai_client.conversations.items.list(conversation_id=conversation.id)
+            # Must iterate to create the span
+            items_list = []
+            async for item in items:
+                items_list.append(item)
+
+            await openai_client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(
+                agent_name=workflow_agent.name, agent_version=workflow_agent.version
+            )
+
+        # Verify workflow action events (content recording off)
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        assert len(spans) >= 1
+        span = spans[0]
+
+        # Check for workflow action events - should still exist but with limited content
+        workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
+        assert len(workflow_events) > 0
+
+        # Verify workflow event content structure (no action_id/previous_action_id when content off)
+        for event in workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # action_id and previous_action_id should NOT be present when content recording is off
+            assert "action_id" not in content["content"][0]
+            assert "previous_action_id" not in content["content"][0]
+
+        # Verify conversation items listing span also has workflow actions
+        list_spans = self.exporter.get_spans_by_name("list_conversation_items")
+        assert len(list_spans) >= 1
+        list_span = list_spans[0]
+
+        # Check for workflow action events in list items span
+        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
+        assert len(list_workflow_events) > 0
+
+        # Verify workflow event content structure in list items (content recording OFF)
+        for event in list_workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # action_id and previous_action_id should NOT be present when content recording is off
+            assert "action_id" not in content["content"][0]
+            assert "previous_action_id" not in content["content"][0]
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # action_id and previous_action_id should NOT be present when content recording is off
+            assert "action_id" not in content["content"][0]
+            assert "previous_action_id" not in content["content"][0]
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_workflow_agent_streaming_with_content_recording(self, **kwargs):
+        """Test async workflow agent with streaming and content recording enabled."""
+        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            workflow_yaml = """
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: test_workflow
+  actions:
+    - kind: SetVariable
+      id: set_result
+      variable: Local.Result
+      value: "Workflow completed"
+"""
+            workflow_agent = await project_client.agents.create_version(
+                agent_name="test-workflow",
+                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            )
+
+            openai_client = project_client.get_openai_client()
+            conversation = await openai_client.conversations.create()
+
+            stream = await openai_client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                input="Test workflow",
+                stream=True,
+            )
+
+            # Consume the stream
+            async for _ in stream:
+                pass
+
+            # List conversation items to verify workflow actions in conversation
+            items = await openai_client.conversations.items.list(conversation_id=conversation.id)
+            # Must iterate to create the span
+            items_list = []
+            async for item in items:
+                items_list.append(item)
+            print(f"\n=== Async streaming test: Found {len(items_list)} conversation items ===")
+
+            await openai_client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(
+                agent_name=workflow_agent.name, agent_version=workflow_agent.version
+            )
+
+        # Verify workflow action events in streaming mode
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        assert len(spans) >= 1
+        span = spans[0]
+
+        # Check for workflow action events
+        workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
+        assert len(workflow_events) > 0
+
+        # Verify workflow event content structure
+        for event in workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+
+        # Verify conversation items listing span also has workflow actions
+        list_spans = self.exporter.get_spans_by_name("list_conversation_items")
+        assert len(list_spans) >= 1
+        list_span = list_spans[0]
+
+        # Check for workflow action events in list items span
+        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
+        assert len(list_workflow_events) > 0
+
+        # Verify workflow event content structure in list items
+        for event in list_workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # With content recording ON, action_id should be present
+            assert "action_id" in content["content"][0]
+            assert "status" in content["content"][0]
+
+    @pytest.mark.skip(reason="recordings not working for responses API")
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async
+    async def test_async_workflow_agent_streaming_without_content_recording(self, **kwargs):
+        """Test async workflow agent with streaming and content recording disabled."""
+        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+
+        self.cleanup()
+        os.environ.update(
+            {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
+        )
+        self.setup_telemetry()
+        assert False == AIProjectInstrumentor().is_content_recording_enabled()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = self.test_agents_params["model_deployment_name"]
+
+        async with project_client:
+            workflow_yaml = """
+kind: workflow
+trigger:
+  kind: OnConversationStart
+  id: test_workflow
+  actions:
+    - kind: SetVariable
+      id: set_result
+      variable: Local.Result
+      value: "Workflow completed"
+"""
+            workflow_agent = await project_client.agents.create_version(
+                agent_name="test-workflow",
+                definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            )
+
+            openai_client = project_client.get_openai_client()
+            conversation = await openai_client.conversations.create()
+
+            stream = await openai_client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                input="Test workflow",
+                stream=True,
+            )
+
+            # Consume the stream
+            async for _ in stream:
+                pass
+
+            # List conversation items to verify workflow actions in conversation
+            items = await openai_client.conversations.items.list(conversation_id=conversation.id)
+            # Must iterate to create the span
+            items_list = []
+            async for item in items:
+                items_list.append(item)
+            print(f"\n=== Async streaming test (no content recording): Found {len(items_list)} conversation items ===")
+
+            await openai_client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(
+                agent_name=workflow_agent.name, agent_version=workflow_agent.version
+            )
+
+        # Verify workflow action events (content recording off)
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        assert len(spans) >= 1
+        span = spans[0]
+
+        # Check for workflow action events - should still exist but with limited content
+        workflow_events = [e for e in span.events if e.name == "gen_ai.workflow.action"]
+        assert len(workflow_events) > 0
+
+        # Verify workflow event content structure (no action_id/previous_action_id when content off)
+        for event in workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # action_id and previous_action_id should NOT be present when content recording is off
+            assert "action_id" not in content["content"][0]
+            assert "previous_action_id" not in content["content"][0]
+
+        # Verify conversation items listing span also has workflow actions
+        list_spans = self.exporter.get_spans_by_name("list_conversation_items")
+        assert len(list_spans) >= 1
+        list_span = list_spans[0]
+
+        # Check for workflow action events in list items span
+        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
+        assert len(list_workflow_events) > 0
+
+        # Verify workflow event content structure in list items (content recording OFF)
+        for event in list_workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # action_id and previous_action_id should NOT be present when content recording is off
+            assert "action_id" not in content["content"][0]
+            assert "previous_action_id" not in content["content"][0]
+        for event in workflow_events:
+            content_str = event.attributes.get("gen_ai.event.content", "{}")
+            content = json.loads(content_str)
+            assert "content" in content
+            assert isinstance(content["content"], list)
+            assert len(content["content"]) > 0
+            assert content["content"][0]["type"] == "workflow_action"
+            assert "status" in content["content"][0]
+            # action_id and previous_action_id should NOT be present when content recording is off
+            assert "action_id" not in content["content"][0]
+            assert "previous_action_id" not in content["content"][0]

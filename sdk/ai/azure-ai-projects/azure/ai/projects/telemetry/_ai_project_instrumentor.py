@@ -436,10 +436,15 @@ class _AIAgentsInstrumentorPreview:
 
         event_body: Dict[str, Any] = {}
         if _trace_agents_content and (instructions or additional_instructions):
+            # Combine instructions if both exist
+            combined_text = None
             if instructions and additional_instructions:
-                event_body["text"] = f"{instructions} {additional_instructions}"
+                combined_text = f"{instructions} {additional_instructions}"
             else:
-                event_body["text"] = instructions or additional_instructions
+                combined_text = instructions or additional_instructions
+
+            # Use standard content format
+            event_body["content"] = [{"type": "text", "text": combined_text}]
 
         attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
         attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
@@ -481,6 +486,8 @@ class _AIAgentsInstrumentorPreview:
         reasoning_summary: Optional[str] = None,
         text: Optional[Any] = None,  # pylint: disable=unused-argument
         structured_inputs: Optional[Any] = None,
+        agent_type: Optional[str] = None,
+        workflow_yaml: Optional[str] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(
             OperationName.CREATE_AGENT,
@@ -501,7 +508,18 @@ class _AIAgentsInstrumentorPreview:
                 span.add_attribute(GEN_AI_AGENT_NAME, name)
             if description:
                 span.add_attribute(GEN_AI_AGENT_DESCRIPTION, description)
+            if agent_type:
+                span.add_attribute("gen_ai.agent.type", agent_type)
+
+            # Add instructions event (if instructions exist)
             self._add_instructions_event(span, instructions, None)
+
+            # Add workflow YAML as event if content recording is enabled and workflow exists
+            if _trace_agents_content and workflow_yaml:
+                event_body: Dict[str, Any] = {"content": [{"type": "workflow", "workflow": workflow_yaml}]}
+                attributes = self._create_event_attributes()
+                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_body, ensure_ascii=False)
+                span.span_instance.add_event(name="gen_ai.agent.workflow", attributes=attributes)
 
         return span
 
@@ -543,7 +561,7 @@ class _AIAgentsInstrumentorPreview:
 
     def _create_agent_span_from_parameters(
         self, *args, **kwargs
-    ):  # pylint: disable=too-many-statements,too-many-locals,docstring-missing-param
+    ):  # pylint: disable=too-many-statements,too-many-locals,too-many-branches,docstring-missing-param
         """Extract parameters and create span for create_agent tracing."""
         server_address_info = self.get_server_address_from_arg(args[0])
         server_address = server_address_info[0] if server_address_info else None
@@ -567,7 +585,20 @@ class _AIAgentsInstrumentorPreview:
         structured_inputs = None
         description = definition.get("description")
         tool_resources = definition.get("tool_resources")
+        workflow_yaml = definition.get("workflow")  # Extract workflow YAML for workflow agents
         # toolset = definition.get("toolset")
+
+        # Determine agent type from definition
+        # Check for workflow first (most specific)
+        agent_type = None
+        if workflow_yaml:
+            agent_type = "workflow"
+        elif instructions or model:
+            # Prompt agent (has instructions and/or model)
+            agent_type = "prompt"
+        else:
+            # Unknown type - set to "unknown" to indicate we couldn't determine it
+            agent_type = "unknown"
 
         # Extract reasoning effort and summary from reasoning if available
         reasoning_effort = None
@@ -645,6 +676,8 @@ class _AIAgentsInstrumentorPreview:
             reasoning_summary=reasoning_summary,
             text=text,
             structured_inputs=structured_inputs,
+            agent_type=agent_type,
+            workflow_yaml=workflow_yaml,
         )
 
     def trace_create_agent(self, function, *args, **kwargs):
