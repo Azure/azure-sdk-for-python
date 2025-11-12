@@ -58,6 +58,7 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
     def decorator(func):
         @retry(**retry_config["network_retry"])
         async def wrapper(*args, **kwargs):
+            prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
             try:
                 return await func(*args, **kwargs)
             except (
@@ -72,7 +73,6 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
                 httpcore.ReadTimeout,
                 httpx.HTTPStatusError,
             ) as e:
-                prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
                 logger.warning(
                     f"Retrying network error{prompt_detail} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
                 )
@@ -81,7 +81,6 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
             except ValueError as e:
                 # Treat missing converted prompt text as a transient transport issue so tenacity will retry.
                 if "Converted prompt text is None" in str(e):
-                    prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
                     logger.warning(
                         f"Endpoint produced empty converted prompt{prompt_detail} for {strategy_name}/{risk_category_name}; retrying."
                     )
@@ -93,25 +92,38 @@ def network_retry_decorator(retry_config, logger, strategy_name, risk_category_n
             except Exception as e:
                 message = str(e)
                 cause = e.__cause__
-                if "Error sending prompt with conversation ID" in message and isinstance(
-                    cause,
-                    (
-                        httpx.HTTPError,
-                        httpx.ConnectTimeout,
-                        httpx.ReadTimeout,
-                        httpcore.ReadTimeout,
-                        asyncio.TimeoutError,
-                        ConnectionError,
-                        TimeoutError,
-                        OSError,
-                        ValueError,
-                    ),
+
+                def _is_network_cause(exc: BaseException) -> bool:
+                    return isinstance(
+                        exc,
+                        (
+                            httpx.HTTPError,
+                            httpx.ConnectTimeout,
+                            httpx.ReadTimeout,
+                            httpcore.ReadTimeout,
+                            asyncio.TimeoutError,
+                            ConnectionError,
+                            TimeoutError,
+                            OSError,
+                        ),
+                    )
+
+                def _is_converted_prompt_error(exc: BaseException) -> bool:
+                    return isinstance(exc, ValueError) and "Converted prompt text is None" in str(exc)
+
+                if (
+                    "Error sending prompt with conversation ID" in message
+                    and cause
+                    and (_is_network_cause(cause) or _is_converted_prompt_error(cause))
                 ):
-                    prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
                     logger.warning(
                         f"Wrapped network error{prompt_detail} for {strategy_name}/{risk_category_name}: {message}. Retrying."
                     )
                     await asyncio.sleep(2)
+                    if _is_converted_prompt_error(cause):
+                        raise httpx.HTTPError(
+                            "Converted prompt text is None; treating as transient endpoint failure"
+                        ) from cause
                     raise httpx.HTTPError(message) from cause
                 raise
 
