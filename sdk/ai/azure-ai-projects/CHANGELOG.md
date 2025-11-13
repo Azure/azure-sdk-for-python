@@ -7,6 +7,7 @@
 ### Breaking changes
 
 * `get_openai_client()` method on the asynchronous AIProjectClient is no longer an "async" method.
+* tracing: tool call output event content format updated to be in line with other events
 
 ### Bugs Fixed
 
