@@ -34,7 +34,7 @@ def get_changelog_content(package_path: Path, package_result: dict, enable_chang
 
     if not package_name.startswith("azure-mgmt-"):
         _LOGGER.info(f"Skip changelog generation for data-plane package: {package_name}")
-        md_output = "skip changelog generation for data-plane package"
+        md_output = "skip changelog generation for data-plane package and please add changelog manually."
         last_version, _ = get_version_info(package_name)
     else:
         tag_is_stable = package_result.get("tagIsStable")
