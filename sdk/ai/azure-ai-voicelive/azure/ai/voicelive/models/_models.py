@@ -1347,7 +1347,6 @@ class ClientEventInputAudioBufferAppend(ClientEvent, discriminator="input_audio_
     mode, the audio buffer is used to detect speech and the server will decide
     when to commit. When Server VAD is disabled, you must commit the audio buffer
     manually.
-
     The client may choose how much audio to place in each event up to a maximum
     of 15 MiB, for example streaming smaller chunks from the client may allow the
     VAD to be more responsive. Unlike made other client events, the server will
@@ -1736,7 +1735,6 @@ class ClientEventResponseCreate(ClientEvent, discriminator="response.create"):
 
 class ClientEventSessionAvatarConnect(ClientEvent, discriminator="session.avatar.connect"):
     """Sent when the client connects and provides its SDP (Session Description Protocol)
-
     for avatar-related media negotiation.
 
     :ivar event_id:
@@ -2282,7 +2280,6 @@ class LogProbProperties(_Model):
 
 class OpenAIVoice(_Model):
     """OpenAI voice configuration with explicit type field.
-
     This provides a unified interface for OpenAI voices, complementing the
     existing string-based OpenAIVoiceName for backward compatibility.
 
@@ -2432,11 +2429,7 @@ class RequestSession(_Model):
     :ivar instructions: Optional instructions to guide the model's behavior throughout the session.
     :vartype instructions: str
     :ivar input_audio_sampling_rate: Input audio sampling rate in Hz. Available values:
-
-
-
      * For pcm16: 8000, 16000, 24000
-
      * For g711_alaw/g711_ulaw: 8000.
     :vartype input_audio_sampling_rate: int
     :ivar input_audio_format: Input audio format. Default is 'pcm16'. Known values are: "pcm16",
@@ -2488,11 +2481,7 @@ class RequestSession(_Model):
     """Optional instructions to guide the model's behavior throughout the session."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Input audio sampling rate in Hz. Available values:
-     
-     
-     
      * For pcm16: 8000, 16000, 24000
-     
      * For g711_alaw/g711_ulaw: 8000."""
     input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2668,7 +2657,6 @@ class Response(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The final status of the response.
-     
      One of: ``completed``, ``cancelled``, ``failed``, ``incomplete``, or ``in_progress``. Known
      values are: \"completed\", \"cancelled\", \"failed\", \"incomplete\", and \"in_progress\"."""
     status_details: Optional["_models.ResponseStatusDetails"] = rest_field(
@@ -3262,11 +3250,7 @@ class ResponseSession(_Model):
     :ivar instructions: Optional instructions to guide the model's behavior throughout the session.
     :vartype instructions: str
     :ivar input_audio_sampling_rate: Input audio sampling rate in Hz. Available values:
-
-
-
      * For pcm16: 8000, 16000, 24000
-
      * For g711_alaw/g711_ulaw: 8000.
     :vartype input_audio_sampling_rate: int
     :ivar input_audio_format: Input audio format. Default is 'pcm16'. Known values are: "pcm16",
@@ -3301,6 +3285,8 @@ class ResponseSession(_Model):
     :ivar max_response_output_tokens: Maximum number of tokens to generate in the response. Default
      is unlimited. Is either a int type or a Literal["inf"] type.
     :vartype max_response_output_tokens: int or str
+    :ivar agent: The agent configuration for the session, if applicable.
+    :vartype agent: ~azure.ai.voicelive.models.AgentConfig
     :ivar id: The unique identifier for the session.
     :vartype id: str
     """
@@ -3320,11 +3306,7 @@ class ResponseSession(_Model):
     """Optional instructions to guide the model's behavior throughout the session."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Input audio sampling rate in Hz. Available values:
-     
-     
-     
      * For pcm16: 8000, 16000, 24000
-     
      * For g711_alaw/g711_ulaw: 8000."""
     input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3370,6 +3352,8 @@ class ResponseSession(_Model):
     )
     """Maximum number of tokens to generate in the response. Default is unlimited. Is either a int
      type or a Literal[\"inf\"] type."""
+    agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent configuration for the session, if applicable."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier for the session."""
 
@@ -3395,6 +3379,7 @@ class ResponseSession(_Model):
         tool_choice: Optional["_types.ToolChoice"] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
+        agent: Optional["_models.AgentConfig"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 

@@ -53,6 +53,10 @@ from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import StorageAccountHostsMixin
 
 class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
+    container_name: str
+    blob_name: str
+    snapshot: Optional[str]
+    version_id: Optional[str]
     def __init__(
         self,
         account_url: str,
@@ -553,6 +557,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         validate_content: Optional[bool] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -563,6 +571,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         version_id: Optional[str] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, str]: ...

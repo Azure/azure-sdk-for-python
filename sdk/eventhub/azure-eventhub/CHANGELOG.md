@@ -1,14 +1,9 @@
 # Release History
 
-## 5.15.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.15.1 (2025-11-11)
 
 ### Bugs Fixed
-
-### Other Changes
+- Fixed a bug in the EventHub client where the maximum message size negotiation during the AMQP attach frame was handled incorrectly. The client now correctly sends a max message size of 0 (unlimited), allowing the server to apply its internal limit (20 MB) as intended. ([#43462](https://github.com/Azure/azure-sdk-for-python/pull/43462))
 
 ## 5.15.0 (2025-04-15)
 
@@ -21,7 +16,6 @@
 
 - Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
 - Fixed a bug so that the BufferedProducer ThreadPoolExecutor uses one worker per partition. ([#38961](https://github.com/Azure/azure-sdk-for-python/issues/38961))
-- Fixed a bug in the EventHub client where the maximum message size negotiation during the AMQP attach frame was handled incorrectly. The client now correctly sends a max message size of 0 (unlimited), allowing the server to apply its internal limit (20 MB) as intended.
 
 ### Other Changes
 

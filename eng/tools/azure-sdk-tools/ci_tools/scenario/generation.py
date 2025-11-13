@@ -341,10 +341,13 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
         if prebuilt_whl:
             whl_path = os.path.join(wheel_dir, prebuilt_whl)
         else:
-            # Create temp path if it doesn't exist
-            temp_dir = os.path.join(package_path, ".tmp_whl_dir")
-            if not os.path.exists(temp_dir):
-                os.mkdir(temp_dir)
+            if wheel_dir:
+                temp_dir = wheel_dir
+            else:
+                # Create temp path if it doesn't exist
+                temp_dir = os.path.join(package_path, ".tmp_whl_dir")
+                if not os.path.exists(temp_dir):
+                    os.mkdir(temp_dir)
 
             logging.info("Building wheel for package {}".format(parsed.name))
             create_package(req_pkg_path, temp_dir, enable_sdist=False)

@@ -62,7 +62,7 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -143,7 +143,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -211,7 +211,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -262,7 +262,7 @@ def build_undelete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -300,7 +300,7 @@ def build_set_expiry_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -351,7 +351,7 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -422,7 +422,7 @@ def build_set_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -474,7 +474,7 @@ def build_delete_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -517,7 +517,7 @@ def build_set_legal_hold_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["legalhold"] = kwargs.pop("comp", _params.pop("comp", "legalhold"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -569,7 +569,7 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -637,7 +637,7 @@ def build_acquire_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -695,7 +695,7 @@ def build_release_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -750,7 +750,7 @@ def build_renew_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -806,7 +806,7 @@ def build_change_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -862,7 +862,7 @@ def build_break_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -922,7 +922,7 @@ def build_create_snapshot_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1001,7 +1001,7 @@ def build_start_copy_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1105,7 +1105,7 @@ def build_copy_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     x_ms_requires_sync: Literal["true"] = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1199,7 +1199,7 @@ def build_abort_copy_from_url_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1245,7 +1245,7 @@ def build_set_tier_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["tier"] = kwargs.pop("comp", _params.pop("comp", "tier"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1289,7 +1289,7 @@ def build_get_account_info_request(
 
     restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1338,7 +1338,7 @@ def build_query_request(
 
     comp: Literal["query"] = kwargs.pop("comp", _params.pop("comp", "query"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1396,13 +1396,17 @@ def build_get_tags_request(
     version_id: Optional[str] = None,
     if_tags: Optional[str] = None,
     lease_id: Optional[str] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    if_match: Optional[str] = None,
+    if_none_match: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1430,6 +1434,16 @@ def build_get_tags_request(
         _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if if_modified_since is not None:
+        _headers["x-ms-blob-if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
+            "if_unmodified_since", if_unmodified_since, "rfc-1123"
+        )
+    if if_match is not None:
+        _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if if_none_match is not None:
+        _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1445,6 +1459,10 @@ def build_set_tags_request(
     request_id_parameter: Optional[str] = None,
     if_tags: Optional[str] = None,
     lease_id: Optional[str] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    if_match: Optional[str] = None,
+    if_none_match: Optional[str] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -1453,7 +1471,7 @@ def build_set_tags_request(
 
     comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1487,6 +1505,16 @@ def build_set_tags_request(
         _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if if_modified_since is not None:
+        _headers["x-ms-blob-if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
+            "if_unmodified_since", if_unmodified_since, "rfc-1123"
+        )
+    if if_match is not None:
+        _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if if_none_match is not None:
+        _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4415,6 +4443,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        blob_modified_access_conditions: Optional[_models.BlobModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlobTags:
         """The Get Tags operation enables users to get the tags associated with a blob.
@@ -4442,6 +4471,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param blob_modified_access_conditions: Parameter group. Default value is None.
+        :type blob_modified_access_conditions: ~azure.storage.blob.models.BlobModifiedAccessConditions
         :return: BlobTags or the result of cls(response)
         :rtype: ~azure.storage.blob.models.BlobTags
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4462,10 +4493,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _if_tags = None
         _lease_id = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        _if_match = None
+        _if_none_match = None
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_modified_access_conditions is not None:
+            _if_match = blob_modified_access_conditions.if_match
+            _if_modified_since = blob_modified_access_conditions.if_modified_since
+            _if_none_match = blob_modified_access_conditions.if_none_match
+            _if_unmodified_since = blob_modified_access_conditions.if_unmodified_since
 
         _request = build_get_tags_request(
             url=self._config.url,
@@ -4475,6 +4515,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             version_id=version_id,
             if_tags=_if_tags,
             lease_id=_lease_id,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -4519,6 +4563,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        blob_modified_access_conditions: Optional[_models.BlobModifiedAccessConditions] = None,
         tags: Optional[_models.BlobTags] = None,
         **kwargs: Any
     ) -> None:
@@ -4547,6 +4592,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param blob_modified_access_conditions: Parameter group. Default value is None.
+        :type blob_modified_access_conditions: ~azure.storage.blob.models.BlobModifiedAccessConditions
         :param tags: Blob tags. Default value is None.
         :type tags: ~azure.storage.blob.models.BlobTags
         :return: None or the result of cls(response)
@@ -4570,10 +4617,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _if_tags = None
         _lease_id = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        _if_match = None
+        _if_none_match = None
         if modified_access_conditions is not None:
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_modified_access_conditions is not None:
+            _if_match = blob_modified_access_conditions.if_match
+            _if_modified_since = blob_modified_access_conditions.if_modified_since
+            _if_none_match = blob_modified_access_conditions.if_none_match
+            _if_unmodified_since = blob_modified_access_conditions.if_unmodified_since
         if tags is not None:
             _content = self._serialize.body(tags, "BlobTags", is_xml=True)
         else:
@@ -4588,6 +4644,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             if_tags=_if_tags,
             lease_id=_lease_id,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
             comp=comp,
             content_type=content_type,
             version=self._config.version,

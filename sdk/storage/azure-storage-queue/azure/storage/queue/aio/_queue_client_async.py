@@ -99,6 +99,8 @@ class QueueClient(  # type: ignore [misc]
             :caption: Create the queue client with a connection string.
     """
 
+    queue_name: str
+
     def __init__(
         self,
         account_url: str,

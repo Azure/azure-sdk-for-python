@@ -912,7 +912,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
       "caseSensitive": false
     },
     {
@@ -1676,7 +1676,26 @@
         "getopenidmetadata",
         "getopenidmetadataasync",
         "aikcert",
-        "shareduks"
+        "shareduks",
+        "PKIX",
+        "tcbbaselines",
+        "Iiwg",
+        "Ijog",
+        "Ghvc",
+        "MCIs",
+        "Mdxl",
+        "Dxxf",
+        "PYSN",
+        "Aiandr",
+        "Ijoic",
+        "Jjcn",
+        "QLTI",
+        "Hhnc",
+        "Mkxzellr",
+        "Sjhual",
+        "Inki",
+        "NGZZN",
+        "Igog",
       ]
     },
     {

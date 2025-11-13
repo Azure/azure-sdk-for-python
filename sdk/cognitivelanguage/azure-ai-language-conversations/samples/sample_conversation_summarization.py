@@ -141,6 +141,8 @@ def sample_conversation_summarization():
         for error in d["errors"]:
             if isinstance(error, ConversationError):
                 print(f"  Code: {error.code} - {error.message}")
+
+
 # [END conversation_summarization]
 
 

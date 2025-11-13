@@ -2435,53 +2435,17 @@ class EvalCompareReport(InsightResult, discriminator="EvaluationComparison"):
         super().__init__(*args, type=InsightType.EVALUATION_COMPARISON, **kwargs)
 
 
-class EvalJsonlFileContentSource(_Model):
-    """OpenAI definition: Eval inline file content or jsonl input data.
+class EvalJsonlFileContent(_Model):
+    """Eval jsonl file content class.
 
-    :ivar type: The type of jsonl source. Always ``file_content``. Required. Default value is
-     "file_content".
-    :vartype type: str
-    :ivar content: The content of the jsonl file. Required.
-    :vartype content: ~azure.ai.projects.models.EvalJsonlFileContentSourceContent
-    """
-
-    type: Literal["file_content"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of jsonl source. Always ``file_content``. Required. Default value is \"file_content\"."""
-    content: "_models.EvalJsonlFileContentSourceContent" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The content of the jsonl file. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: "_models.EvalJsonlFileContentSourceContent",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["file_content"] = "file_content"
-
-
-class EvalJsonlFileContentSourceContent(_Model):
-    """EvalJsonlFileContentSourceContent.
-
-    :ivar item: Expected schema: QueryResponseInlineMessage. Required.
-    :vartype item: any
+    :ivar item: The eval jsonl file content item. Required.
+    :vartype item: ~azure.ai.projects.models.EvalJsonlFileContentItem
     :ivar sample: optional sample.
     :vartype sample: any
     """
 
-    item: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Expected schema: QueryResponseInlineMessage. Required."""
+    item: "_models.EvalJsonlFileContentItem" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The eval jsonl file content item. Required."""
     sample: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """optional sample."""
 
@@ -2489,7 +2453,7 @@ class EvalJsonlFileContentSourceContent(_Model):
     def __init__(
         self,
         *,
-        item: Any,
+        item: "_models.EvalJsonlFileContentItem",
         sample: Optional[Any] = None,
     ) -> None: ...
 
@@ -2502,6 +2466,72 @@ class EvalJsonlFileContentSourceContent(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EvalJsonlFileContentItem(_Model):
+    """Abstract eval jsonl file content item class.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EvaluatorMessage, QueryResponseInlineMessage
+
+    :ivar type: Type of the eval jsonl file content item. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the eval jsonl file content item. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvalJsonlFileContentSource(_Model):
+    """OpenAI definition: Eval inline file content or jsonl input data.
+
+    :ivar type: The type of jsonl source. Always ``file_content``. Required. Default value is
+     "file_content".
+    :vartype type: str
+    :ivar content: The content of the jsonl file. Required.
+    :vartype content: ~azure.ai.projects.models.EvalJsonlFileContent
+    """
+
+    type: Literal["file_content"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of jsonl source. Always ``file_content``. Required. Default value is \"file_content\"."""
+    content: "_models.EvalJsonlFileContent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The content of the jsonl file. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: "_models.EvalJsonlFileContent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["file_content"] = "file_content"
 
 
 class EvalResult(_Model):
@@ -3537,6 +3567,57 @@ class EvaluatorConfiguration(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EvaluatorMessage(EvalJsonlFileContentItem, discriminator="azure_ai_evaluator_messages"):
+    """Query and response excepted input messsage defintion.
+
+    :ivar type: The object type, which is always query_response_inline_message. Required. Default
+     value is "azure_ai_evaluator_messages".
+    :vartype type: str
+    :ivar query: The input query string provided by the user or system. Can be image url. Required.
+    :vartype query: list[~azure.ai.projects.models.Message]
+    :ivar response: The generated response corresponding to the input query. Can be image url.
+    :vartype response: list[~azure.ai.projects.models.Message]
+    :ivar tools: Optional list of tools or resources utilized during the evaluation or generation
+     of the response.
+    :vartype tools: list[any]
+    :ivar properties: Additional properties for the query response inline message.
+    :vartype properties: dict[str, str]
+    """
+
+    type: Literal["azure_ai_evaluator_messages"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always query_response_inline_message. Required. Default value is
+     \"azure_ai_evaluator_messages\"."""
+    query: List["_models.Message"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input query string provided by the user or system. Can be image url. Required."""
+    response: Optional[List["_models.Message"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The generated response corresponding to the input query. Can be image url."""
+    tools: Optional[List[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional list of tools or resources utilized during the evaluation or generation of the
+     response."""
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional properties for the query response inline message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        query: List["_models.Message"],
+        response: Optional[List["_models.Message"]] = None,
+        tools: Optional[List[Any]] = None,
+        properties: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_ai_evaluator_messages", **kwargs)
 
 
 class EvaluatorMetric(_Model):
@@ -4769,6 +4850,64 @@ class PromptUsageDetails(_Model):
     """The number of tokens corresponding to audio input. Required."""
     cached_tokens: int = rest_field(visibility=["read"])
     """The total number of tokens cached. Required."""
+
+
+class QueryResponseInlineMessage(EvalJsonlFileContentItem, discriminator="azure_ai_query_response_inline_message"):
+    """Query and response excepted input messsage defintion.
+
+    :ivar type: The object type, which is always query_response_inline_message. Required. Default
+     value is "azure_ai_query_response_inline_message".
+    :vartype type: str
+    :ivar query: The input query string provided by the user or system. Can be image url. Required.
+    :vartype query: str
+    :ivar response: The generated response corresponding to the input query. Can be image url.
+    :vartype response: str
+    :ivar context: Optional contextual information that may provide additional details or
+     background relevant to the query-response pair.
+    :vartype context: str
+    :ivar tools: Optional list of tools or resources utilized during the evaluation or generation
+     of the response.
+    :vartype tools: list[any]
+    :ivar properties: Additional properties for the query response inline message.
+    :vartype properties: dict[str, str]
+    """
+
+    type: Literal["azure_ai_query_response_inline_message"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always query_response_inline_message. Required. Default value is
+     \"azure_ai_query_response_inline_message\"."""
+    query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input query string provided by the user or system. Can be image url. Required."""
+    response: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The generated response corresponding to the input query. Can be image url."""
+    context: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional contextual information that may provide additional details or background relevant to
+     the query-response pair."""
+    tools: Optional[List[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional list of tools or resources utilized during the evaluation or generation of the
+     response."""
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional properties for the query response inline message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        query: str,
+        response: Optional[str] = None,
+        context: Optional[str] = None,
+        tools: Optional[List[Any]] = None,
+        properties: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_ai_query_response_inline_message", **kwargs)
 
 
 class RecurrenceTrigger(Trigger, discriminator="Recurrence"):

@@ -79,6 +79,7 @@ def _begin_aoai_evaluation(
     column_mappings: Optional[Dict[str, Dict[str, str]]],
     data: pd.DataFrame,
     run_name: str,
+    **kwargs: Any,
 ) -> List[OAIEvalRunCreationInfo]:
     """
     Use the AOAI SDK to start an evaluation of the inputted dataset against the supplied graders.
@@ -114,7 +115,7 @@ def _begin_aoai_evaluation(
             f"AOAI: Starting evaluation run {idx + 1}/{len(grader_mapping_list)} with {len(selected_graders)} grader(s)..."
         )
         all_eval_run_info.append(
-            _begin_single_aoai_evaluation(selected_graders, data, selected_column_mapping, run_name)
+            _begin_single_aoai_evaluation(selected_graders, data, selected_column_mapping, run_name, **kwargs)
         )
 
     LOGGER.info(f"AOAI: Successfully created {len(all_eval_run_info)} evaluation run(s).")
@@ -122,7 +123,11 @@ def _begin_aoai_evaluation(
 
 
 def _begin_single_aoai_evaluation(
-    graders: Dict[str, AzureOpenAIGrader], data: pd.DataFrame, column_mapping: Optional[Dict[str, str]], run_name: str
+    graders: Dict[str, AzureOpenAIGrader],
+    data: pd.DataFrame,
+    column_mapping: Optional[Dict[str, str]],
+    run_name: str,
+    **kwargs: Any,
 ) -> OAIEvalRunCreationInfo:
     """
     Use the AOAI SDK to start an evaluation of the inputted dataset against the supplied graders.
@@ -146,6 +151,16 @@ def _begin_single_aoai_evaluation(
     LOGGER.info(f"AOAI: Preparing evaluation for {len(graders)} grader(s): {list(graders.keys())}")
     grader_name_list = []
     grader_list = []
+
+    data_source: Dict[str, Any] = {}
+    data_source_config: Dict[str, Any] = {}
+
+    if kwargs.get("data_source_config") is not None:
+        data_source_config = kwargs.get("data_source_config", {})
+
+    if kwargs.get("data_source") is not None:
+        data_source = kwargs.get("data_source", {})
+
     # It's expected that all graders supplied for a single eval run use the same credentials
     # so grab a client from the first grader.
     client = list(graders.values())[0].get_client()
@@ -155,11 +170,16 @@ def _begin_single_aoai_evaluation(
         grader_list.append(grader._grader_config)
     effective_column_mapping: Dict[str, str] = column_mapping or {}
     LOGGER.info(f"AOAI: Generating data source config with {len(effective_column_mapping)} column mapping(s)...")
-    data_source_config = _generate_data_source_config(data, effective_column_mapping)
+    if data_source_config == {}:
+        data_source_config = _generate_data_source_config(data, effective_column_mapping)
     LOGGER.info(f"AOAI: Data source config generated with schema type: {data_source_config.get('type')}")
 
     # Create eval group
     LOGGER.info(f"AOAI: Creating eval group with {len(grader_list)} testing criteria...")
+
+    # Combine with the item schema with generated data outside Eval SDK
+    _combine_item_schemas(data_source_config, kwargs)
+
     eval_group_info = client.evals.create(
         data_source_config=data_source_config, testing_criteria=grader_list, metadata={"is_foundry_eval": "true"}
     )
@@ -181,7 +201,7 @@ def _begin_single_aoai_evaluation(
 
     # Create eval run
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' with {len(data)} data rows...")
-    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping)
+    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping, data_source)
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -194,6 +214,25 @@ def _begin_single_aoai_evaluation(
         grader_name_map=grader_name_map,
         expected_rows=len(data),
     )
+
+
+def _combine_item_schemas(data_source_config: Dict[str, Any], kwargs: Dict[str, Any]) -> None:
+    if (
+        not kwargs
+        or not kwargs.get("item_schema")
+        or not isinstance(kwargs["item_schema"], dict)
+        or "properties" not in kwargs["item_schema"]
+    ):
+        return
+
+    if "item_schema" in data_source_config:
+        item_schema = kwargs["item_schema"]["required"] if "required" in kwargs["item_schema"] else []
+        for key in kwargs["item_schema"]["properties"]:
+            if key not in data_source_config["item_schema"]["properties"]:
+                data_source_config["item_schema"]["properties"][key] = kwargs["item_schema"]["properties"][key]
+
+                if key in item_schema:
+                    data_source_config["item_schema"]["required"].append(key)
 
 
 def _get_evaluation_run_results(all_run_info: List[OAIEvalRunCreationInfo]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
@@ -654,7 +693,10 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
         for key in column_mapping.keys():
-            props[key] = {"type": "string"}
+            if key in input_data_df and len(input_data_df[key]) > 0 and isinstance(input_data_df[key].iloc[0], list):
+                props[key] = {"type": "array"}
+            else:
+                props[key] = {"type": "string"}
             req.append(key)
         LOGGER.info(f"AOAI: Flat schema generated with {len(props)} properties: {list(props.keys())}")
         return data_source_config
@@ -821,8 +863,11 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             # Safely fetch value
             val = row.get(df_col, None)
 
-            # Convert value to string to match schema's "type": "string" leaves.
-            str_val = _convert_value_to_string(val)
+            if isinstance(val, list):
+                str_val = val
+            else:
+                # Convert value to string to match schema's "type": "string" leaves.
+                str_val = _convert_value_to_string(val)
 
             # Insert into nested dict
             cursor = item_root
@@ -842,7 +887,10 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         for col_name in input_data_df.columns:
             if col_name not in processed_cols:
                 val = row.get(col_name, None)
-                str_val = _convert_value_to_string(val)
+                if isinstance(val, list):
+                    str_val = val
+                else:
+                    str_val = _convert_value_to_string(val)
                 item_root[col_name] = str_val
 
         content.append({WRAPPER_KEY: item_root})
@@ -863,6 +911,7 @@ def _begin_eval_run(
     run_name: str,
     input_data_df: pd.DataFrame,
     column_mapping: Dict[str, str],
+    data_source_params: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Given an eval group id and a dataset file path, use the AOAI API to
@@ -884,6 +933,10 @@ def _begin_eval_run(
 
     LOGGER.info(f"AOAI: Creating eval run '{run_name}' for eval group {eval_group_id}...")
     data_source = _get_data_source(input_data_df, column_mapping)
+
+    if data_source_params is not None:
+        data_source.update(data_source_params)
+
     eval_run = client.evals.runs.create(
         eval_id=eval_group_id,
         data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime

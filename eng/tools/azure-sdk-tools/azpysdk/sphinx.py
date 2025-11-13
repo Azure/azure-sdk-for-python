@@ -107,68 +107,6 @@ def copy_existing_docs(source: str, target: str) -> None:
         shutil.copy(os.path.join(source, file), target)
 
 
-def mgmt_apidoc(output_dir: str, target_folder: str, executable: str) -> int:
-    command_array = [
-        executable,
-        generate_mgmt_script,
-        "-p",
-        target_folder,
-        "-o",
-        output_dir,
-        "--verbose",
-    ]
-
-    try:
-        logger.info("Command to generate management sphinx sources: {}".format(command_array))
-
-        check_call(command_array)
-    except CalledProcessError as e:
-        logger.error("script failed for path {} exited with error {}".format(output_dir, e.returncode))
-        return 1
-    return 0
-
-
-def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
-    working_doc_folder = os.path.join(output_dir, "doc")
-    command_array = [
-        "sphinx-apidoc",
-        "--no-toc",
-        "--module-first",
-        "-o",
-        os.path.join(output_dir, "docgen"),  # This is the output folder
-        os.path.join(target_dir, ""),  # This is the input folder
-        os.path.join(target_dir, "test*"),  # This argument and below are "exclude" directory arguments
-        os.path.join(target_dir, "example*"),
-        os.path.join(target_dir, "sample*"),
-        os.path.join(target_dir, "setup.py"),
-        os.path.join(target_dir, "conftest.py"),
-    ]
-
-    try:
-        # if a `doc` folder exists, just leverage the sphinx sources found therein.
-        if os.path.exists(working_doc_folder):
-            logger.info("Copying files into sphinx source folder.")
-            copy_existing_docs(working_doc_folder, os.path.join(output_dir, "docgen"))
-
-        # otherwise, we will run sphinx-apidoc to generate the sources
-        else:
-            logger.info("Sphinx api-doc command: {}".format(command_array))
-            check_call(command_array)
-            # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
-            # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
-            base_path = Path(os.path.join(output_dir, "docgen/"))
-            namespace = namespace.rpartition(".")[0]
-            while namespace:
-                rst_file_to_delete = base_path / f"{namespace}.rst"
-                logger.info(f"Removing {rst_file_to_delete}")
-                rst_file_to_delete.unlink(missing_ok=True)
-                namespace = namespace.rpartition(".")[0]
-    except CalledProcessError as e:
-        logger.error("sphinx-apidoc failed for path {} exited with error {}".format(output_dir, e.returncode))
-        return 1
-    return 0
-
-
 # build helper functions
 def move_output_and_compress(target_dir: str, package_dir: str, package_name: str) -> None:
     if not os.path.exists(ci_doc_dir):
@@ -192,35 +130,6 @@ def should_build_docs(package_name: str) -> bool:
             "azure-core-tracing-opencensus",
         ]
     )
-
-
-def sphinx_build(package_dir: str, target_dir: str, output_dir: str, fail_on_warning: bool) -> int:
-    command_array = [
-        "sphinx-build",
-        "-b",
-        "html",
-        "-A",
-        "include_index_link=True",
-        "-c",
-        sphinx_conf_dir,
-        target_dir,
-        output_dir,
-    ]
-    if fail_on_warning:
-        command_array.append("-W")
-        command_array.append("--keep-going")
-
-    try:
-        logger.info("Sphinx build command: {}".format(command_array))
-        check_call(command_array, cwd=package_dir)
-    except CalledProcessError as e:
-        logger.error("sphinx-build failed for path {} exited with error {}".format(target_dir, e.returncode))
-        if in_analyze_weekly():
-            from gh_tools.vnext_issue_creator import create_vnext_issue
-
-            create_vnext_issue(package_dir, "sphinx")
-        return 1
-    return 0
 
 
 class sphinx(Check):
@@ -324,9 +233,9 @@ class sphinx(Check):
             # run apidoc
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
-                    results.append(mgmt_apidoc(doc_folder, package_dir, executable))
+                    results.append(self.mgmt_apidoc(doc_folder, package_dir, executable))
                 else:
-                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace))
+                    results.append(self.sphinx_apidoc(staging_directory, package_dir, parsed.namespace, executable))
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
 
@@ -335,12 +244,9 @@ class sphinx(Check):
                 # Only data-plane libraries run strict sphinx at the moment
                 fail_on_warning = not is_mgmt_package(package_name)
                 results.append(
-                    sphinx_build(
-                        package_dir,
-                        doc_folder,  # source
-                        site_folder,  # output
-                        fail_on_warning=fail_on_warning,
-                    )
+                    # doc_folder = source
+                    # site_folder  = output
+                    self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
                 )
 
                 if in_ci() or args.in_ci:
@@ -354,3 +260,94 @@ class sphinx(Check):
                 logger.info("Skipping sphinx build for {}".format(package_name))
 
         return max(results) if results else 0
+
+    def sphinx_build(
+        self, package_dir: str, target_dir: str, output_dir: str, fail_on_warning: bool, executable: str
+    ) -> int:
+        command_array = [
+            "sphinx-build",
+            "-b",
+            "html",
+            "-A",
+            "include_index_link=True",
+            "-c",
+            sphinx_conf_dir,
+            target_dir,
+            output_dir,
+        ]
+        if fail_on_warning:
+            command_array.append("-W")
+            command_array.append("--keep-going")
+
+        try:
+            logger.info("Sphinx build command: {}".format(command_array))
+
+            self.run_venv_command(executable, command_array, cwd=package_dir, check=True, append_executable=False)
+        except CalledProcessError as e:
+            logger.error("sphinx-build failed for path {} exited with error {}".format(target_dir, e.returncode))
+            if in_analyze_weekly():
+                from gh_tools.vnext_issue_creator import create_vnext_issue
+
+                create_vnext_issue(package_dir, "sphinx")
+            return 1
+        return 0
+
+    def mgmt_apidoc(self, output_dir: str, target_folder: str, executable: str) -> int:
+        command_array = [
+            executable,
+            generate_mgmt_script,
+            "-p",
+            target_folder,
+            "-o",
+            output_dir,
+            "--verbose",
+        ]
+
+        try:
+            logger.info("Command to generate management sphinx sources: {}".format(command_array))
+
+            self.run_venv_command(executable, command_array, cwd=target_folder, check=True, append_executable=False)
+        except CalledProcessError as e:
+            logger.error("script failed for path {} exited with error {}".format(output_dir, e.returncode))
+            return 1
+        return 0
+
+    def sphinx_apidoc(self, output_dir: str, target_dir: str, namespace: str, executable: str) -> int:
+        working_doc_folder = os.path.join(output_dir, "doc")
+        command_array = [
+            "sphinx-apidoc",
+            "--no-toc",
+            "--module-first",
+            "-o",
+            os.path.join(output_dir, "docgen"),  # This is the output folder
+            os.path.join(target_dir, ""),  # This is the input folder
+            os.path.join(target_dir, "test*"),  # This argument and below are "exclude" directory arguments
+            os.path.join(target_dir, "example*"),
+            os.path.join(target_dir, "sample*"),
+            os.path.join(target_dir, "setup.py"),
+            os.path.join(target_dir, "conftest.py"),
+        ]
+
+        try:
+            # if a `doc` folder exists, just leverage the sphinx sources found therein.
+            if os.path.exists(working_doc_folder):
+                logger.info("Copying files into sphinx source folder.")
+                copy_existing_docs(working_doc_folder, os.path.join(output_dir, "docgen"))
+
+            # otherwise, we will run sphinx-apidoc to generate the sources
+            else:
+                logger.info("Sphinx api-doc command: {}".format(command_array))
+                self.run_venv_command(executable, command_array, cwd=target_dir, check=True, append_executable=False)
+                # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
+                # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
+                base_path = Path(os.path.join(output_dir, "docgen/"))
+                namespace = namespace.rpartition(".")[0]
+                while namespace:
+                    rst_file_to_delete = base_path / f"{namespace}.rst"
+                    logger.info(f"Removing {rst_file_to_delete}")
+                    rst_file_to_delete.unlink(missing_ok=True)
+                    namespace = namespace.rpartition(".")[0]
+        except CalledProcessError as e:
+            logger.error("sphinx-apidoc failed for path {} exited with error {}".format(output_dir, e.returncode))
+            return 1
+        return 0
