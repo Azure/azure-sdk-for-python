@@ -52,6 +52,7 @@ tool = FunctionTool(
 )
 # [END tool_declaration]
 
+
 def get_horoscope(sign: str) -> str:
     """Generate a horoscope for the given astrological sign."""
     return f"{sign}: Next Tuesday you will befriend a baby otter."

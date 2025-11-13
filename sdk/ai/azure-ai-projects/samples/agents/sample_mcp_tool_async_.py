@@ -79,7 +79,7 @@ async def main():
                 )
                 async with project_client:
                     # Create a vector store
-                    openai_client = await project_client.get_openai_client()
+                    openai_client = project_client.get_openai_client()
                     vector_store = await openai_client.vector_stores.create(
                         name="sample_vector_store",
                     )
