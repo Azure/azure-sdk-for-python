@@ -784,8 +784,8 @@ extends:
                           version: 1.0.0
                         - package: azure-mgmt-peering
                           version: 1.0.0
-                        - package: azure-mgmt-playwrighttesting
-                          version: 1.0.1  
+                        - package: azure-mgmt-playwright
+                          version: 1.0.0
                         - package: azure-mgmt-playwrighttesting
                           version: 1.0.1
                         - package: azure-mgmt-policyinsights
