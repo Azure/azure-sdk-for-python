@@ -66,7 +66,7 @@ async def main():
             print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
             # Get the OpenAI async client for responses and conversations
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
 
             async with openai_client:
                 # Create a conversation thread to maintain context across multiple interactions
