@@ -65,8 +65,7 @@ class generate(Check):
             run(
                 ["autorest", str(readme_path), "--python-sdks-folder=../../"],
                 cwd=folder,
-                shell=True,
-                stdout=PIPE,
+                shell=False,
                 stderr=PIPE,
                 check=True,
             )
