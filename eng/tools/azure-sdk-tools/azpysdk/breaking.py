@@ -15,6 +15,7 @@ from ci_tools.logging import logger
 JSONDIFF_VERSION = "1.2.0"
 REPO_ROOT = discover_repo_root()
 
+
 class breaking(Check):
     def __init__(self) -> None:
         super().__init__()
