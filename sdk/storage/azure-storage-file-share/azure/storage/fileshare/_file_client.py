@@ -462,6 +462,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
+        data = kwargs.pop('data', None)
         file_http_headers = None
         if content_settings:
             file_http_headers = FileHTTPHeaders(
@@ -485,6 +486,8 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
+                optionalbody=data,
+                content_length=len(data) if data is not None else None,
                 lease_access_conditions=access_conditions,
                 headers=headers,
                 timeout=timeout,

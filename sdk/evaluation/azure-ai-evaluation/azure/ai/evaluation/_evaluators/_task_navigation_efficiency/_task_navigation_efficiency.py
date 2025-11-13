@@ -16,7 +16,7 @@ from azure.ai.evaluation._exceptions import (
 )
 
 
-class TaskNavigationEfficiencyMatchingMode(str, Enum):
+class _TaskNavigationEfficiencyMatchingMode(str, Enum):
     """
     Enumeration of task navigation efficiency matching mode.
 
@@ -49,7 +49,7 @@ class TaskNavigationEfficiencyMatchingMode(str, Enum):
     """
 
 
-class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
+class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     """
     Evaluates whether an agent's sequence of actions is efficient and follows optimal decision-making patterns.
 
@@ -58,16 +58,16 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     It also returns precision, recall, and F1 scores in properties bag.
 
     :param matching_mode: The matching mode to use. Default is "exact_match".
-    :type matching_mode: enum[str, TaskNavigationEfficiencyMatchingMode]
+    :type matching_mode: enum[str, _TaskNavigationEfficiencyMatchingMode]
 
     .. admonition:: Example:
 
         .. code-block:: python
 
-            from azure.ai.evaluation._evaluators._task_navigation_efficiency import TaskNavigationEfficiencyEvaluator
+            from azure.ai.evaluation._evaluators._task_navigation_efficiency import _TaskNavigationEfficiencyEvaluator
 
-            task_navigation_efficiency_eval = TaskNavigationEfficiencyEvaluator(
-                matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+            task_navigation_efficiency_eval = _TaskNavigationEfficiencyEvaluator(
+                matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
             )
 
             # Example 1: Using simple tool names list
@@ -100,7 +100,7 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     id = "azureai://built-in/evaluators/task_navigation_efficiency"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    matching_mode: TaskNavigationEfficiencyMatchingMode
+    matching_mode: _TaskNavigationEfficiencyMatchingMode
     """The matching mode to use."""
 
     @override
@@ -108,22 +108,22 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         self,
         *,
         matching_mode: Union[
-            str, TaskNavigationEfficiencyMatchingMode
-        ] = TaskNavigationEfficiencyMatchingMode.EXACT_MATCH,
+            str, _TaskNavigationEfficiencyMatchingMode
+        ] = _TaskNavigationEfficiencyMatchingMode.EXACT_MATCH,
     ):
         # Type checking for metric parameter
         if isinstance(matching_mode, str):
             try:
-                self.matching_mode = TaskNavigationEfficiencyMatchingMode(matching_mode)
+                self.matching_mode = _TaskNavigationEfficiencyMatchingMode(matching_mode)
             except ValueError:
                 raise ValueError(
-                    f"matching_mode must be one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'"
+                    f"matching_mode must be one of {[m.value for m in _TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'"
                 )
-        elif isinstance(matching_mode, TaskNavigationEfficiencyMatchingMode):
+        elif isinstance(matching_mode, _TaskNavigationEfficiencyMatchingMode):
             self.matching_mode = matching_mode
         else:
             raise EvaluationException(
-                f"matching_mode must be a string with one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]} or TaskNavigationEfficiencyMatchingMode enum, got {type(matching_mode)}",
+                f"matching_mode must be a string with one of {[m.value for m in _TaskNavigationEfficiencyMatchingMode]} or _TaskNavigationEfficiencyMatchingMode enum, got {type(matching_mode)}",
                 internal_message=str(matching_mode),
                 target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
                 category=ErrorCategory.INVALID_VALUE,
@@ -229,9 +229,9 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         return all(agent_counts[step] >= ground_truth_counts[step] for step in ground_truth_counts)
 
     _TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS = {
-        TaskNavigationEfficiencyMatchingMode.EXACT_MATCH: _calculate_exact_match,
-        TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH: _calculate_in_order_match,
-        TaskNavigationEfficiencyMatchingMode.ANY_ORDER_MATCH: _calculate_any_order_match,
+        _TaskNavigationEfficiencyMatchingMode.EXACT_MATCH: _calculate_exact_match,
+        _TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH: _calculate_in_order_match,
+        _TaskNavigationEfficiencyMatchingMode.ANY_ORDER_MATCH: _calculate_any_order_match,
     }
 
     @override

@@ -25,7 +25,7 @@ class TestContainerServiceManagedNamespacesOperationsAsync(AzureMgmtRecordedTest
         response = self.client.managed_namespaces.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceManagedNamespacesOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             resource_name="str",
             managed_namespace_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestContainerServiceManagedNamespacesOperationsAsync(AzureMgmtRecordedTest
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-08-02-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -98,7 +98,7 @@ class TestContainerServiceManagedNamespacesOperationsAsync(AzureMgmtRecordedTest
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 managed_namespace_name="str",
-                api_version="2025-08-02-preview",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -113,7 +113,7 @@ class TestContainerServiceManagedNamespacesOperationsAsync(AzureMgmtRecordedTest
             resource_name="str",
             managed_namespace_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-08-02-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -126,7 +126,7 @@ class TestContainerServiceManagedNamespacesOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             resource_name="str",
             managed_namespace_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself

@@ -74,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/preview/2025-08-02-preview/examples/ManagedClustersCreate_PrivateClusterFQDNSubdomain.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2025-09-01/examples/ManagedClustersCreate_PrivateClusterFQDNSubdomain.json
 if __name__ == "__main__":
     main()

@@ -963,7 +963,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name)
+            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name, **kwargs)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -1109,7 +1109,7 @@ def _build_internal_log_attributes(
 
 
 def _log_events_to_app_insights(
-    otel_logger,
+    event_logger,
     events: List[Dict[str, Any]],
     log_attributes: Dict[str, Any],
     app_insights_config: AppInsightsConfig,
@@ -1117,11 +1117,10 @@ def _log_events_to_app_insights(
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
 ) -> None:
     """
-    Log independent events directly to App Insights using OpenTelemetry logging.
-    No spans are created - events are sent as pure log records.
+    Log independent events directly to App Insights using OpenTelemetry event logging.
 
-    :param otel_logger: OpenTelemetry logger instance
-    :type otel_logger: Logger
+    :param event_logger: OpenTelemetry event logger instance
+    :type event_logger: EventLogger
     :param events: List of event data dictionaries to log
     :type events: List[Dict[str, Any]]
     :param log_attributes: Attributes dict to use for each event (already includes extra_attributes if present)
@@ -1132,8 +1131,7 @@ def _log_events_to_app_insights(
     :type data_source_item: Optional[Dict[str, Any]]
     """
 
-    from opentelemetry import trace
-    from opentelemetry.trace import SpanContext, TraceFlags, NonRecordingSpan
+    from opentelemetry._events import Event
 
     try:
         # Initialize values from AppInsights config as defaults
@@ -1179,6 +1177,7 @@ def _log_events_to_app_insights(
                 # The standard attributes are already in https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md#event-eventgen_aievaluationresult
                 metric_name = event_data.get("metric")
                 standard_log_attributes = {}
+                # This attributes makes evaluation events to go into customEvents table in App Insights
                 standard_log_attributes["microsoft.custom_event.name"] = EVALUATION_EVENT_NAME
                 standard_log_attributes["gen_ai.evaluation.name"] = metric_name
                 if event_data.get("score") is not None:
@@ -1241,24 +1240,14 @@ def _log_events_to_app_insights(
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
                 standard_log_attributes["http.client_ip"] = "0.0.0.0"
 
-                # Create context with trace_id and span_id if present (for distributed tracing correlation)
-                ctx = None
-                if trace_id:
-                    span_context = SpanContext(
-                        trace_id=trace_id,
-                        span_id=span_id if span_id else 0,  # Use extracted span_id or 0 if not available
-                        is_remote=False,
-                        trace_flags=TraceFlags(0x01),
+                event_logger.emit(
+                    Event(
+                        name=EVALUATION_EVENT_NAME,
+                        attributes=standard_log_attributes,
+                        body=EVALUATION_EVENT_NAME,
+                        trace_id=trace_id if trace_id is not None else None,
+                        span_id=span_id if span_id is not None else None,
                     )
-                    span = NonRecordingSpan(span_context)
-                    ctx = trace.set_span_in_context(span)
-
-                otel_logger.emit(
-                    timestamp=time.time_ns(),
-                    observed_timestamp=time.time_ns(),
-                    body=EVALUATION_EVENT_NAME,
-                    attributes=standard_log_attributes,
-                    context=ctx,
                 )
 
             except Exception as e:
@@ -1289,6 +1278,8 @@ def emit_eval_result_events_to_app_insights(
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.semconv.resource import ResourceAttributes
     from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+    from opentelemetry._events import get_event_logger
+    from opentelemetry.sdk._events import EventLoggerProvider
 
     if not results:
         LOGGER.debug("No results to log to App Insights")
@@ -1316,9 +1307,9 @@ def emit_eval_result_events_to_app_insights(
         # Add the Azure Monitor exporter to the logger provider
         logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
 
-        # Create a logger from OUR configured logger_provider (not the global one)
-        # This ensures the logger uses our anonymized resource
-        otel_logger = logger_provider.get_logger(__name__)
+        # Create event logger
+        event_provider = EventLoggerProvider(logger_provider)
+        event_logger = get_event_logger(__name__, event_logger_provider=event_provider)
 
         # Initialize base log attributes with extra_attributes if present, otherwise empty dict
         base_log_attributes = app_insights_config.get("extra_attributes", {})
@@ -1338,7 +1329,7 @@ def emit_eval_result_events_to_app_insights(
             log_attributes = base_log_attributes.copy()
 
             _log_events_to_app_insights(
-                otel_logger=otel_logger,
+                event_logger=event_logger,
                 events=result["results"],
                 log_attributes=log_attributes,
                 data_source_item=result["datasource_item"] if "datasource_item" in result else None,
@@ -1832,6 +1823,8 @@ def _convert_results_to_aoai_evaluation_results(
                 metrics_mapped = _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS.get(evaluator_name, [])
                 if metrics_mapped and len(metrics_mapped) > 0:
                     metrics.extend(metrics_mapped)
+                else:
+                    metrics.append(criteria_name)
             else:
                 metrics.append(criteria_name)
         elif isinstance(evaluator, AzureOpenAIGrader):
@@ -1872,8 +1865,8 @@ def _convert_results_to_aoai_evaluation_results(
                         criteria_groups[criteria_name] = {}
 
                     criteria_groups[criteria_name][metric_name] = value
-            elif key.startswith("inputs."):
-                input_key = key.replace("inputs.", "")
+            else:
+                input_key = key.replace("inputs.", "") if key.startswith("inputs.") else key
                 if input_key not in input_groups:
                     input_groups[input_key] = value
 
@@ -2011,6 +2004,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_total_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"total_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2028,6 +2022,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_prompt_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"prompt_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2045,6 +2040,7 @@ def _convert_results_to_aoai_evaluation_results(
                     )
                 elif metric_key.endswith("_completion_tokens"):
                     metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
+                    metric_value = None if _is_none_or_nan(metric_value) else metric_value
                     if metric not in result_per_metric:
                         result_per_metric[metric] = {"sample": {"usage": {"completion_tokens": metric_value}}}
                     elif metric in result_per_metric and "sample" not in result_per_metric[metric]:
@@ -2105,6 +2101,8 @@ def _convert_results_to_aoai_evaluation_results(
                     metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["indirect_attack"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["code_vulnerability"]
                     or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["protected_material"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["eci"]
+                    or metric in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS["ungrounded_attributes"]
                 ):
                     copy_label = label
                     if copy_label is not None and isinstance(copy_label, bool) and copy_label == True:
@@ -2146,20 +2144,38 @@ def _convert_results_to_aoai_evaluation_results(
                 # Create result object for this criteria
                 metrics = testing_criteria_name_types_metrics.get(criteria_name, {}).get("metrics", [])
                 for metric in metrics:
-                    result_obj = {
-                        "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
-                            "type", "azure_ai_evaluator"
-                        ),
-                        "name": criteria_name,  # Use criteria name as name
-                        "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
-                        "score": None,
-                        "label": None,
-                        "reason": None,
-                        "threshold": None,
-                        "passed": None,
-                        "sample": sample,
-                    }
-                    run_output_results.append(result_obj)
+                    should_add_error_summary = True
+                    for result in run_output_results:
+                        if result.get("name", None) == criteria_name and result.get("metric", None) == metric:
+                            rs_score = result.get("score", None)
+                            rs_threshold = result.get("threshold", None)
+                            rs_label = result.get("label", None)
+                            rs_reason = result.get("reason", None)
+                            if (
+                                _is_none_or_nan(rs_score)
+                                and _is_none_or_nan(rs_threshold)
+                                and _is_none_or_nan(rs_label)
+                                and _is_none_or_nan(rs_reason)
+                            ):
+                                run_output_results.remove(result)
+                            else:
+                                should_add_error_summary = False
+                            break  # Skip if already have result for this criteria and metric
+                    if should_add_error_summary:
+                        result_obj = {
+                            "type": testing_criteria_name_types_metrics.get(criteria_name, {}).get(
+                                "type", "azure_ai_evaluator"
+                            ),
+                            "name": criteria_name,  # Use criteria name as name
+                            "metric": metric if metric is not None else criteria_name,  # Use criteria name as metric
+                            "score": None,
+                            "label": None,
+                            "reason": None,
+                            "threshold": None,
+                            "passed": None,
+                            "sample": sample,
+                        }
+                        run_output_results.append(result_obj)
 
         # Create RunOutputItem structure
         run_output_item = {
@@ -2184,11 +2200,29 @@ def _convert_results_to_aoai_evaluation_results(
         f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
     # Calculate summary statistics
-    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
+    evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger, criteria_name_types_from_meta)
     results["_evaluation_summary"] = evaluation_summary
     logger.info(
         f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}"
     )
+
+
+def _is_none_or_nan(value: Any) -> bool:
+    """
+    Check if a value is None or NaN.
+
+    :param value: The value to check
+    :type value: Any
+    :return: True if the value is None or NaN, False otherwise
+    :rtype: bool
+    """
+    if value is None:
+        return True
+    if isinstance(value, float) and math.isnan(value):
+        return True
+    if isinstance(value, str) and value.lower() in ["nan", "null", "none", ""]:
+        return True
+    return False
 
 
 def _append_indirect_attachments_to_results(
@@ -2285,7 +2319,34 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     return metric
 
 
-def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logger) -> Dict[str, Any]:
+def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
+    """
+    Check if the given metric name is a primary metric.
+
+    :param metric_name: The name of the metric
+    :type metric_name: str
+    :param evaluator_name: The name of the evaluator
+    :type evaluator_name: str
+    :return: True if the metric is a primary metric, False otherwise
+    :rtype: bool
+    """
+    if (
+        not _is_none_or_nan(metric_name)
+        and not _is_none_or_nan(evaluator_name)
+        and evaluator_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS
+        and isinstance(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name], list)
+        and len(_EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]) > 1
+        and metric_name in _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name]
+        and metric_name.lower() != _EvaluatorMetricMapping.EVALUATOR_NAME_METRICS_MAPPINGS[evaluator_name][0].lower()
+    ):
+        return False
+    else:
+        return True
+
+
+def _calculate_aoai_evaluation_summary(
+    aoai_results: list, logger: logging.Logger, criteria_name_types_from_meta: Optional[Dict[str, Any]]
+) -> Dict[str, Any]:
     """
     Calculate summary statistics for AOAI evaluation results.
 
@@ -2305,16 +2366,35 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         logger.info(
             f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}"
         )
+        result_counts["total"] += 1
+        passed_count = 0
+        failed_count = 0
+        error_count = 0
         if isinstance(aoai_result, dict) and "results" in aoai_result:
             logger.info(
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
             )
-            result_counts["total"] += len(aoai_result["results"])
             for result_item in aoai_result["results"]:
                 if isinstance(result_item, dict):
+                    testing_criteria = result_item.get("name", "")
+                    is_primary_metric = True
+                    if (
+                        criteria_name_types_from_meta is not None
+                        and isinstance(criteria_name_types_from_meta, dict)
+                        and testing_criteria in criteria_name_types_from_meta
+                    ):
+                        evaluator_name = criteria_name_types_from_meta[testing_criteria].get("evaluator_name", None)
+                        criteria_type = criteria_name_types_from_meta[testing_criteria].get("type", None)
+                        if criteria_type == "azure_ai_evaluator" and evaluator_name.startswith("builtin."):
+                            evaluator_name = evaluator_name.replace("builtin.", "")
+                        is_primary_metric = _is_primary_metric(result_item.get("metric", ""), evaluator_name)
+                    if not is_primary_metric:
+                        logger.info(
+                            f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
+                        )
+                        continue
                     # Check if the result has a 'passed' field
                     if "passed" in result_item and result_item["passed"] is not None:
-                        testing_criteria = result_item.get("name", "")
                         if testing_criteria not in result_counts_stats:
                             result_counts_stats[testing_criteria] = {
                                 "testing_criteria": testing_criteria,
@@ -2322,11 +2402,11 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                                 "passed": 0,
                             }
                         if result_item["passed"] is True:
-                            result_counts["passed"] += 1
+                            passed_count += 1
                             result_counts_stats[testing_criteria]["passed"] += 1
 
                         elif result_item["passed"] is False:
-                            result_counts["failed"] += 1
+                            failed_count += 1
                             result_counts_stats[testing_criteria]["failed"] += 1
                     # Check if the result indicates an error status
                     elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
@@ -2334,11 +2414,22 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                         and isinstance(result_item["sample"], dict)
                         and result_item["sample"].get("error", None) is not None
                     ):
-                        result_counts["errored"] += 1
+                        error_count += 1
         elif hasattr(aoai_result, "status") and aoai_result.status == "error":
-            result_counts["errored"] += 1
+            error_count += 1
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
+            error_count += 1
+
+        # Update overall result counts, error counts will not be considered for passed/failed
+        if error_count > 0:
             result_counts["errored"] += 1
+
+        if failed_count > 0:
+            result_counts["failed"] += 1
+        elif (
+            failed_count == 0 and passed_count > 0 and passed_count == len(aoai_result.get("results", [])) - error_count
+        ):
+            result_counts["passed"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
@@ -2357,7 +2448,9 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:
                 usage_data = sample_data["usage"]
-                model_name = sample_data.get("model", "unknown")
+                model_name = sample_data.get("model", "unknown") if usage_data.get("model", "unknown") else "unknown"
+                if _is_none_or_nan(model_name):
+                    continue
                 if model_name not in model_usage_stats:
                     model_usage_stats[model_name] = {
                         "invocation_count": 0,
@@ -2370,10 +2463,25 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 model_stats = model_usage_stats[model_name]
                 model_stats["invocation_count"] += 1
                 if isinstance(usage_data, dict):
-                    model_stats["total_tokens"] += usage_data.get("total_tokens", 0)
-                    model_stats["prompt_tokens"] += usage_data.get("prompt_tokens", 0)
-                    model_stats["completion_tokens"] += usage_data.get("completion_tokens", 0)
-                    model_stats["cached_tokens"] += usage_data.get("cached_tokens", 0)
+                    cur_total_tokens = usage_data.get("total_tokens", 0)
+                    if _is_none_or_nan(cur_total_tokens):
+                        cur_total_tokens = 0
+                    cur_prompt_tokens = usage_data.get("prompt_tokens", 0)
+                    if _is_none_or_nan(cur_prompt_tokens):
+                        cur_prompt_tokens = 0
+                    cur_completion_tokens = usage_data.get("completion_tokens", 0)
+                    if _is_none_or_nan(cur_completion_tokens):
+                        cur_completion_tokens = 0
+                    cur_cached_tokens = usage_data.get("cached_tokens", 0)
+                    if _is_none_or_nan(cur_cached_tokens):
+                        cur_cached_tokens = 0
+                    logger.info(
+                        f"Model: {model_name}, cur_total_tokens: {cur_total_tokens}, {_is_none_or_nan(cur_total_tokens)}, cur_prompt_tokens: {cur_prompt_tokens}, cur_completion_tokens: {cur_completion_tokens}, cur_cached_tokens: {cur_cached_tokens}"
+                    )
+                    model_stats["total_tokens"] += cur_total_tokens
+                    model_stats["prompt_tokens"] += cur_prompt_tokens
+                    model_stats["completion_tokens"] += cur_completion_tokens
+                    model_stats["cached_tokens"] += cur_cached_tokens
 
     # Convert model usage stats to list format matching EvaluationRunPerModelUsage
     per_model_usage = []
@@ -2393,11 +2501,17 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
     for criteria_name, stats_val in result_counts_stats.items():
         if isinstance(stats_val, dict):
             logger.info(f"\r\n  Criteria: {criteria_name}, stats: {stats_val}")
+            cur_passed = stats_val.get("passed", 0)
+            if _is_none_or_nan(cur_passed):
+                cur_passed = 0
+            cur_failed_count = stats_val.get("failed", 0)
+            if _is_none_or_nan(cur_failed_count):
+                cur_failed_count = 0
             result_counts_stats_val.append(
                 {
-                    "testing_criteria": criteria_name,
-                    "passed": stats_val.get("passed", 0),
-                    "failed": stats_val.get("failed", 0),
+                    "testing_criteria": criteria_name if not _is_none_or_nan(criteria_name) else "unknown",
+                    "passed": cur_passed,
+                    "failed": cur_failed_count,
                 }
             )
     return {
