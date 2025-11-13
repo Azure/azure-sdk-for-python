@@ -3,7 +3,7 @@
 
 from typing import Optional, Dict, Any
 
-from opentelemetry.sdk._logs import LogRecordProcessor, LogData
+from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, LogExporter
 from opentelemetry.trace import get_current_span
 
