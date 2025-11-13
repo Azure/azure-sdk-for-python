@@ -816,7 +816,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{"tool_call_outputs": [{"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call_output", "tool_call_output": {"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}',
                 },
             },
             {
@@ -1012,7 +1012,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{"tool_call_outputs": [{"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call_output", "tool_call_output": {"type": "function", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}',
                 },
             },
             {
@@ -1519,10 +1519,10 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert "gen_ai.conversation.item.role" in tool_event_attrs
         assert tool_event_attrs["gen_ai.conversation.item.role"] == "tool"
 
-        # Check that content contains tool_call_outputs
+        # Check that content contains tool_call_output
         assert "gen_ai.event.content" in tool_event_attrs
         content = tool_event_attrs["gen_ai.event.content"]
-        assert "tool_call_outputs" in content
+        assert "tool_call_output" in content
         assert "temperature" in content
         assert "72°F" in content
 
@@ -3367,7 +3367,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 "attributes": {
                     "gen_ai.provider.name": "azure.openai",
                     "gen_ai.message.role": "tool",
-                    "gen_ai.event.content": '{"tool_call_outputs": [{"type": "function", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}]}',
+                    "gen_ai.event.content": '{"content": [{"type": "tool_call_output", "tool_call_output": {"type": "function", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}',
                 },
             },
             {

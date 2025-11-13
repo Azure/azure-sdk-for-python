@@ -36,6 +36,7 @@ from azure.ai.projects.models import (
     BrowserAutomationToolParameters,
     BrowserAutomationToolConnectionParameters,
 )
+
 load_dotenv()
 
 project_client = AIProjectClient(
@@ -45,13 +46,15 @@ project_client = AIProjectClient(
 
 openai_client = project_client.get_openai_client()
 
-browser_automation_tool = BrowserAutomationAgentTool(
+# [START tool_declaration]
+tool = BrowserAutomationAgentTool(
     browser_automation_preview=BrowserAutomationToolParameters(
         connection=BrowserAutomationToolConnectionParameters(
             project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
         )
     )
 )
+# [END tool_declaration]
 
 with project_client:
     agent = project_client.agents.create_version(
@@ -61,7 +64,7 @@ with project_client:
             instructions="""You are an Agent helping with browser automation tasks. 
             You can answer questions, provide information, and assist with various tasks 
             related to web browsing using the Browser Automation tool available to you.""",
-            tools=[browser_automation_tool],
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")

@@ -19,14 +19,14 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-       
+
     For Custom Prompt Based Evaluators:
-    
+
         Following are the possible outputs that can be used in the prompt definition:
-        
+
         result could be int, float or boolean based on the metric type defined.
         reason is a brief explanation for the score. (Optional)
-        
+
         - An ordinal metric with a score from 1 to 5 (int)
             ### Output Format (JSON):
             {
@@ -47,7 +47,7 @@ USAGE:
                 "result": "true",
                 "reason": "<brief explanation for the score>"
             }
-            
+
             ### Output Format (JSON):
             {
                 "result": "false",
@@ -65,8 +65,8 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.eval_create_params import DataSourceConfigCustom
 
-from azure.core.paging import ItemPaged
 from pprint import pprint
 import time
 
@@ -159,19 +159,21 @@ with DefaultAzureCredential() as credential:
 
         print("Creating an OpenAI client from the AI Project client")
         client = project_client.get_openai_client()
-        data_source_config = {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                    "ground_truth": {"type": "string"},
+        data_source_config = DataSourceConfigCustom(
+            {
+                "type": "custom",
+                "item_schema": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string"},
+                        "response": {"type": "string"},
+                        "ground_truth": {"type": "string"},
+                    },
+                    "required": ["query", "response", "ground_truth"],
                 },
-                "required": ["query", "response", "ground_truth"],
-            },
-            "include_sample_schema": True,
-        }
+                "include_sample_schema": True,
+            }
+        )
 
         testing_criteria = [
             {
@@ -190,8 +192,8 @@ with DefaultAzureCredential() as credential:
         print("Creating Eval Group")
         eval_object = client.evals.create(
             name="label model test with inline data",
-            data_source_config=data_source_config, # type: ignore
-            testing_criteria=testing_criteria, # type: ignore
+            data_source_config=data_source_config,
+            testing_criteria=testing_criteria,  # type: ignore
         )
         print(f"Eval Group created")
         pprint(eval_object)

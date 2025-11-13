@@ -67,7 +67,7 @@ async def main():
             )
             print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
 
             async with openai_client:
                 response = await openai_client.responses.create(

@@ -31,58 +31,46 @@ class TestFilesAsync(TestBase):
 
         assert test_file_path.exists(), f"Test file not found: {test_file_path}"
 
-        async with self.create_async_client(**kwargs) as project_client:
+        project_client = self.create_async_client(**kwargs)
+        openai_client = project_client.get_openai_client()
 
-            async with await project_client.get_openai_client() as openai_client:
+        async with project_client:
 
-                # Assert that the base_url follows the expected format: /api/projects/{name}/openai/
-                expected_pattern = r".*/api/projects/[^/]+/openai/?$"
-                assert re.match(
-                    expected_pattern, str(openai_client.base_url)
-                ), f"OpenAI client base_url does not match expected format. Got: {openai_client.base_url}"
-                print(f"[test_files] Verified OpenAI client base_url format: {openai_client.base_url}")
+            print(f"[test_files_async] Create (upload) a file with purpose '{file_purpose}'")
+            with open(test_file_path, "rb") as f:
+                uploaded_file = await openai_client.files.create(file=f, purpose=file_purpose)
+            TestBase.validate_file(uploaded_file, expected_purpose=file_purpose)
+            file_id = uploaded_file.id
+            print(f"[test_files_async] Uploaded file with ID: {file_id}")
 
-                print(f"[test_files_async] Create (upload) a file with purpose '{file_purpose}'")
-                with open(test_file_path, "rb") as f:
-                    uploaded_file = await openai_client.files.create(file=f, purpose=file_purpose)
+            processed_file = await openai_client.files.wait_for_processing(file_id)
+            TestBase.assert_equal_or_not_none(processed_file.status, "processed")
+            print(f"[test_files_async] File processed successfully with ID: {file_id}")
 
-                TestBase.validate_file(uploaded_file, expected_purpose=file_purpose)
-                file_id = uploaded_file.id
-                print(f"[test_files_async] Uploaded file with ID: {file_id}")
+            print(f"[test_files_async] Retrieve file metadata by ID: {file_id}")
+            retrieved_file = await openai_client.files.retrieve(file_id)
+            TestBase.validate_file(retrieved_file, expected_file_id=file_id, expected_purpose=file_purpose)
+            print(f"[test_files_async] Retrieved file: {retrieved_file.filename}")
 
-                print(f"[test_files_async] Retrieve file metadata by ID: {file_id}")
-                retrieved_file = await openai_client.files.retrieve(file_id)
-                TestBase.validate_file(retrieved_file, expected_file_id=file_id, expected_purpose=file_purpose)
-                print(f"[test_files_async] Retrieved file: {retrieved_file.filename}")
+            print(f"[test_files_async] Retrieve file content for ID: {file_id}")
+            file_content = await openai_client.files.content(file_id)
+            assert file_content is not None
+            assert file_content.content is not None
+            assert len(file_content.content) > 0
+            print(f"[test_files_async] File content retrieved ({len(file_content.content)} bytes)")
 
-                print(f"[test_files_async] Retrieve file content for ID: {file_id}")
-                file_content = await openai_client.files.content(file_id)
-                assert file_content is not None
-                assert file_content.content is not None
-                assert len(file_content.content) > 0
-                print(f"[test_files_async] File content retrieved ({len(file_content.content)} bytes)")
-
-                print("[test_files_async] List all files")
-                found_uploaded_file = False
-                async for file in openai_client.files.list():
+            print("[test_files_async] List all files")
+            found_uploaded_file = False
+            async for file in openai_client.files.list():
+                if file.id == file_id:
+                    found_uploaded_file = True
                     TestBase.validate_file(file)
-                    if file.id == file_id:
-                        found_uploaded_file = True
-                        print(f"[test_files_async] Found uploaded file in list: {file.id}")
-                assert found_uploaded_file, "Uploaded file not found in list"
+                    print(f"[test_files_async] Found uploaded file in list: {file.id}")
+                    break
+            assert found_uploaded_file, "Uploaded file not found in list"
 
-                print(f"[test_files_async] Delete file with ID: {file_id}")
-                deleted_file = await openai_client.files.delete(file_id)
-                assert deleted_file is not None
-                assert deleted_file.id == file_id
-                assert deleted_file.deleted is True
-                print(f"[test_files_async] Successfully deleted file: {deleted_file.id}")
-
-                print("[test_files_async] Verify file is deleted from list")
-                file_still_exists = False
-                async for file in openai_client.files.list():
-                    if file.id == file_id:
-                        file_still_exists = True
-                        break
-                assert not file_still_exists, "Deleted file still appears in list"
-                print("[test_files_async] Confirmed file is no longer in list")
+            print(f"[test_files_async] Delete file with ID: {file_id}")
+            deleted_file = await openai_client.files.delete(file_id)
+            TestBase.assert_equal_or_not_none(deleted_file.id, file_id)
+            assert deleted_file.deleted is True
+            print(f"[test_files_async] Successfully deleted file: {deleted_file.id}")

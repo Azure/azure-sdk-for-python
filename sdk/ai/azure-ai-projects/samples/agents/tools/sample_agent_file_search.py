@@ -32,9 +32,6 @@ from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 load_dotenv()
 
-# Load the file to be indexed for search
-asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
-
 project_client = AIProjectClient(
     endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
@@ -42,15 +39,22 @@ project_client = AIProjectClient(
 
 openai_client = project_client.get_openai_client()
 
+# [START tool_declaration]
 # Create vector store for file search
 vector_store = openai_client.vector_stores.create(name="ProductInfoStore")
 print(f"Vector store created (id: {vector_store.id})")
+
+# Load the file to be indexed for search
+asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
 
 # Upload file to vector store
 file = openai_client.vector_stores.files.upload_and_poll(
     vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
 )
 print(f"File uploaded to vector store (id: {file.id})")
+
+tool = FileSearchTool(vector_store_ids=[vector_store.id])
+# [END tool_declaration]
 
 with project_client:
     # Create agent with file search tool
@@ -59,7 +63,7 @@ with project_client:
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="You are a helpful assistant that can search through product information.",
-            tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+            tools=[tool],
         ),
         description="File search agent for product information queries.",
     )

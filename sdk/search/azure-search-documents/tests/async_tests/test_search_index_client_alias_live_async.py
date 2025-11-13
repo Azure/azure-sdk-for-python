@@ -30,7 +30,9 @@ class TestSearchClientAlias(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_alias(self, endpoint):
-        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
+        client = SearchIndexClient(
+            endpoint, get_credential(is_async=True), retry_backoff_factor=60
+        )
         aliases = ["resort", "motel"]
 
         async with client:
@@ -42,7 +44,9 @@ class TestSearchClientAlias(AzureRecordedTestCase):
 
             # point an old alias to a new index
             new_index_name = "hotel"
-            await self._test_update_alias_to_new_index(client, aliases[1], new_index_name, index_name)
+            await self._test_update_alias_to_new_index(
+                client, aliases[1], new_index_name, index_name
+            )
 
             await self._test_get_alias(client, aliases)
 
@@ -66,7 +70,9 @@ class TestSearchClientAlias(AzureRecordedTestCase):
         assert result.name == alias_name
         assert set(result.indexes) == {index_name}
 
-    async def _test_update_alias_to_new_index(self, client, alias_name, new_index, old_index):
+    async def _test_update_alias_to_new_index(
+        self, client, alias_name, new_index, old_index
+    ):
         await self._create_index(client, new_index)
         alias = SearchAlias(name=alias_name, indexes=[new_index])
         result = await client.create_or_update_alias(alias)
