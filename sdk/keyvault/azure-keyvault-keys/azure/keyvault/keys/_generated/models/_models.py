@@ -167,6 +167,124 @@ class DeletedKeyItem(_Model):
         super().__init__(*args, **kwargs)
 
 
+class EkmConnection(_Model):
+    """A EkmConnection model object.
+
+    :ivar host: EKM proxy FQDN (Fully Qualified Domain Name). Only allowed characters are a-z, A-Z,
+     0-9, hyphen (-), dot (.), and colon (:). Required.
+    :vartype host: str
+    :ivar path_prefix: Optional path prefix for the EKM proxy (if any).
+    :vartype path_prefix: str
+    :ivar server_ca_certificates: The root CA certificate chain that issued the proxy server's
+     certificate. An array of certificates in the certificate chain, each in DER format and base64
+     encoded. Required.
+    :vartype server_ca_certificates: list[str]
+    :ivar server_subject_common_name: The subject common name of the server certificate of EKM
+     Proxy.
+    :vartype server_subject_common_name: str
+    """
+
+    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """EKM proxy FQDN (Fully Qualified Domain Name). Only allowed characters are a-z, A-Z, 0-9, hyphen
+     (-), dot (.), and colon (:). Required."""
+    path_prefix: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional path prefix for the EKM proxy (if any)."""
+    server_ca_certificates: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The root CA certificate chain that issued the proxy server's certificate. An array of
+     certificates in the certificate chain, each in DER format and base64 encoded. Required."""
+    server_subject_common_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The subject common name of the server certificate of EKM Proxy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        host: str,
+        server_ca_certificates: list[str],
+        path_prefix: Optional[str] = None,
+        server_subject_common_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EkmProxyClientCertificateInfo(_Model):
+    """EKM proxy client certificate information.
+
+    :ivar ca_certificates: The client root CA certificate chain to authenticate to the EKM proxy.
+     An array of certificates in the certificate chain, each in DER format and base64 encoded.
+     Required.
+    :vartype ca_certificates: list[str]
+    :ivar subject_common_name: The subject common name of the client certificate used to
+     authenticate to the EKM proxy. Required.
+    :vartype subject_common_name: str
+    """
+
+    ca_certificates: list[str] = rest_field(visibility=["read"])
+    """The client root CA certificate chain to authenticate to the EKM proxy. An array of certificates
+     in the certificate chain, each in DER format and base64 encoded. Required."""
+    subject_common_name: str = rest_field(visibility=["read"])
+    """The subject common name of the client certificate used to authenticate to the EKM proxy.
+     Required."""
+
+
+class EkmProxyInfo(_Model):
+    """EKM proxy information.
+
+    :ivar api_version: The highest version of proxy interface API supported by the EKM Proxy.
+     Required.
+    :vartype api_version: str
+    :ivar proxy_vendor: The name of the proxy vendor. Required.
+    :vartype proxy_vendor: str
+    :ivar proxy_name: The name of the proxy product and its version. Required.
+    :vartype proxy_name: str
+    :ivar ekm_vendor: The name of the EKM vendor. Required.
+    :vartype ekm_vendor: str
+    :ivar ekm_product: The name of the EKM product and its version. Required.
+    :vartype ekm_product: str
+    """
+
+    api_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The highest version of proxy interface API supported by the EKM Proxy. Required."""
+    proxy_vendor: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the proxy vendor. Required."""
+    proxy_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the proxy product and its version. Required."""
+    ekm_vendor: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the EKM vendor. Required."""
+    ekm_product: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the EKM product and its version. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        api_version: str,
+        proxy_vendor: str,
+        proxy_name: str,
+        ekm_vendor: str,
+        ekm_product: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class GetRandomBytesRequest(_Model):
     """The get random bytes request object.
 
