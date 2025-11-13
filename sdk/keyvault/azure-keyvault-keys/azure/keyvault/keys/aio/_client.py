@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -84,12 +85,12 @@ class KeyClient(AsyncKeyVaultClientBase):
         return None
 
     def get_cryptography_client(
-            self,
-            key_name: str,
-            *,
-            key_version: Optional[str] = None,
-            **kwargs,  # pylint: disable=unused-argument
-        ) -> CryptographyClient:
+        self,
+        key_name: str,
+        *,
+        key_version: Optional[str] = None,
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> CryptographyClient:
         """Gets a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
@@ -647,7 +648,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             command=command,
             final_resource=recovered_key,
             finished=False,
-            interval=polling_interval
+            interval=polling_interval,
         )
         await polling_method.run()
 
@@ -841,9 +842,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = await self._client.import_key(
-            name, parameters=parameters, **kwargs
-        )
+        bundle = await self._client.import_key(name, parameters=parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -996,7 +995,7 @@ class KeyClient(AsyncKeyVaultClientBase):
     @distributed_trace_async
     async def get_key_attestation(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
         """Get a key and its attestation blob.
-        
+
         This method is applicable to any key stored in Azure Key Vault Managed HSM. This operation requires the keys/get
         permission.
 

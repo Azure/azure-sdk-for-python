@@ -43,11 +43,11 @@ async def test_create_key_client():
 
 class TestExamplesKeyVault(KeyVaultTestCase):
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_key_crud_operations(self, key_client, **kwargs):
-        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+        if self.is_live and os.environ["KEYVAULT_SKU"] != "premium":
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
 
         key_name = self.get_resource_name("key-name")
@@ -133,7 +133,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END delete_key]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_hsm)
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_create_oct_key(self, key_client, **kwargs):
@@ -148,7 +148,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END create_oct_key]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_key_list_operations(self, key_client, **kwargs):
@@ -195,7 +195,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_keys]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_keys_backup_restore(self, key_client, **kwargs):
@@ -230,7 +230,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END restore_key_backup]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_example_keys_recover(self, key_client, **kwargs):
