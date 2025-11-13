@@ -72,12 +72,14 @@ class breaking(Check):
 
             try:
                 cmd = [
+                    executable,
                     os.path.join(BREAKING_CHECKER_PATH, "detect_breaking_changes.py"),
                     "--target",
                     package_dir,
                 ]
-                check_call([executable] + cmd)
+                check_call(cmd)
             except CalledProcessError as e:
+                logger.error(f"Breaking check failed for {package_name}: {e}")
                 results.append(1)
                 continue
 
