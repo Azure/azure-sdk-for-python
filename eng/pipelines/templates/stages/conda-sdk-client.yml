@@ -71,6 +71,10 @@ parameters:
     displayName: 'azure-ai-vision'
     type: boolean
     default: true
+  - name: release_azure_ai_voicelive
+    displayName: 'azure-ai-voicelive'
+    type: boolean
+    default: true
   - name: release_azure_appconfiguration
     displayName: 'azure-appconfiguration'
     type: boolean
