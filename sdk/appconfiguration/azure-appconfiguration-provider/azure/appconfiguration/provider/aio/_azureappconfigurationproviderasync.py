@@ -29,6 +29,7 @@ from ._key_vault._async_secret_provider import SecretProvider
 from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE,
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
@@ -311,7 +312,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             if settings_refreshed:
                 # Configuration Settings have been refreshed
-                processed_settings = await self._process_configurations(configuration_settings)
+                processed_settings = await self._process_configurations(configuration_settings, client)
 
             processed_settings = self._process_feature_flags(processed_settings, processed_feature_flags, feature_flags)
             self._dict = processed_settings
@@ -397,7 +398,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._selects, headers=headers, **kwargs
                 )
                 watched_settings = self._update_watched_settings(configuration_settings)
-                processed_settings = await self._process_configurations(configuration_settings)
+                processed_settings = await self._process_configurations(configuration_settings, client)
 
                 if self._feature_flag_enabled:
                     feature_flags: List[FeatureFlagConfigurationSetting] = await client.load_feature_flags(
@@ -438,7 +439,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    async def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+    async def _process_configurations(
+        self, configuration_settings: List[ConfigurationSetting], client
+    ) -> Dict[str, Any]:
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
         unique_settings = self._deduplicate_settings(configuration_settings)
@@ -455,6 +458,30 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
                 if self._feature_flag_refresh_enabled:
                     self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
+            elif settings.content_type and APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in settings.content_type:
+                # Check if this is a snapshot reference
+
+                # Track snapshot reference usage for telemetry
+                self._tracing_context.uses_snapshot_reference = True
+                try:
+                    # Resolve the snapshot reference to actual settings
+                    snapshot_settings = await client.resolve_snapshot_reference(settings)
+
+                    # Recursively process the resolved snapshot settings to handle feature flags,
+                    # configuration mapping
+                    snapshot_configuration_list = list(snapshot_settings.values())
+                    resolved_settings = await self._process_configurations(snapshot_configuration_list, client)
+                    # Merge the resolved settings into our configuration
+                    configuration_settings_processed.update(resolved_settings)
+                except (ValueError, AzureError) as e:
+                    logger.warning(
+                        "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
+                        settings.key,
+                        settings.label,
+                        str(e),
+                    )
+                    # Continue processing other settings even if snapshot resolution fails
+
             else:
                 key = self._process_key_name(settings)
                 value = await self._process_key_value(settings)

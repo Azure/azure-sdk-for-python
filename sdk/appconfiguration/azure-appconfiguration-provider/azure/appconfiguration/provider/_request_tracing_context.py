@@ -15,7 +15,6 @@ from ._constants import (
     KubernetesEnvironmentVariable,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
-    APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE,
     SNAPSHOT_REFERENCE_TAG,
 )
 

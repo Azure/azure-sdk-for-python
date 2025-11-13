@@ -272,7 +272,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Dict[str, ConfigurationSetting]
         :raises ValueError: When the setting is not a valid snapshot reference
         """
-        if (not setting.content_type or not (APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in setting.content_type)):
+        if not setting.content_type or not APP_CONFIG_SNAPSHOT_REF_MIME_PROFILE in setting.content_type:
             raise ValueError("Setting is not a snapshot reference")
 
         try:

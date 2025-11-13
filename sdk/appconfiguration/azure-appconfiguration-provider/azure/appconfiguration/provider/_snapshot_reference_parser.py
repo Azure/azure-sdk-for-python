@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 
 import json
-from typing import Any
 from azure.appconfiguration import ConfigurationSetting  # type: ignore
 from ._constants import SNAPSHOT_NAME_FIELD
 

@@ -454,7 +454,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     # configuration mapping
                     snapshot_configuration_list = list(snapshot_settings.values())
                     resolved_settings = self._process_configurations(snapshot_configuration_list, client)
-                    
+
                     # Merge the resolved settings into our configuration
                     configuration_settings_processed.update(resolved_settings)
                 except (ValueError, AzureError) as e:
@@ -467,7 +467,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     # Continue processing other settings even if snapshot resolution fails
 
             else:
-                # Process regular configuration settings
                 key = self._process_key_name(settings)
                 value = self._process_key_value(settings)
                 configuration_settings_processed[key] = value
