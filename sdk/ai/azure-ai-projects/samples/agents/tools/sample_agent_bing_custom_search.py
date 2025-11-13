@@ -48,7 +48,8 @@ project_client = AIProjectClient(
 # Get the OpenAI client for responses
 openai_client = project_client.get_openai_client()
 
-bing_custom_search_tool = BingCustomSearchAgentTool(
+# [START tool_declaration]
+tool = BingCustomSearchAgentTool(
     bing_custom_search_preview=BingCustomSearchToolParameters(
         search_configurations=[
             BingCustomSearchConfiguration(
@@ -58,6 +59,7 @@ bing_custom_search_tool = BingCustomSearchAgentTool(
         ]
     )
 )
+# [END tool_declaration]
 
 with project_client:
     agent = project_client.agents.create_version(
@@ -66,7 +68,7 @@ with project_client:
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="""You are a helpful agent that can use Bing Custom Search tools to assist users. 
             Use the available Bing Custom Search tools to answer questions and perform tasks.""",
-            tools=[bing_custom_search_tool],
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")

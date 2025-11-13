@@ -37,6 +37,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.eval_create_params import DataSourceConfigCustom
 
 
 load_dotenv()
@@ -56,19 +57,20 @@ def main() -> None:
 
             data_source_config = DataSourceConfigCustom(
                 {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "tool_definitions": {
-                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                    "type": "custom",
+                    "item_schema": {
+                        "type": "object",
+                        "properties": {
+                            "tool_definitions": {
+                                "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
+                            },
+                            "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                         },
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                        "required": ["response"],
                     },
-                    "required": ["response"],
-                },
-                "include_sample_schema": True,
-            })
+                    "include_sample_schema": True,
+                }
+            )
 
             testing_criteria = [
                 {

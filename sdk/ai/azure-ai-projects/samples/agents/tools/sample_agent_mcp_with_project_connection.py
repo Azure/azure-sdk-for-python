@@ -44,16 +44,14 @@ project_client = AIProjectClient(
 # Get the OpenAI client for responses and conversations
 openai_client = project_client.get_openai_client()
 
-
-mcp_tool = MCPTool(
+# [START tool_declaration]
+tool = MCPTool(
     server_label="api-specs",
     server_url="https://api.githubcopilot.com/mcp",
     require_approval="always",
     project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
 )
-
-# Create tools list with proper typing for the agent definition
-tools: list[Tool] = [mcp_tool]
+# [END tool_declaration]
 
 with project_client:
 
@@ -63,7 +61,7 @@ with project_client:
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             instructions="Use MCP tools as needed",
-            tools=tools,
+            tools=[tool],
         ),
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
