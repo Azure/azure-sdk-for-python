@@ -50,7 +50,7 @@ async def main() -> None:
 
         async with project_client:
             # Get the OpenAI client for vector store operations
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
 
             print("Setting up file search with streaming responses...")
 

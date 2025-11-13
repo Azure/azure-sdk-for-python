@@ -47,7 +47,7 @@ async def main():
         )
 
         async with project_client:
-            openai_client = await project_client.get_openai_client()
+            openai_client = project_client.get_openai_client()
 
             # Retrieves latest version of an existing Agent
             agent = await project_client.agents.get(agent_name=agent_name)

@@ -164,8 +164,8 @@ def main() -> None:
             print("\nCreating Eval Group")
             eval_object = client.evals.create(
                 name="agent_trace_eval_group",
-                data_source_config=data_source_config, # type: ignore
-                testing_criteria=testing_criteria, # type: ignore
+                data_source_config=data_source_config,  # type: ignore
+                testing_criteria=testing_criteria,  # type: ignore
             )
             print("Eval Group created")
 
@@ -184,7 +184,7 @@ def main() -> None:
                     "start_time": start_time.isoformat(),
                     "end_time": end_time.isoformat(),
                 },
-                data_source={
+                data_source={  # type: ignore
                     "type": "azure_ai_traces",
                     "trace_ids": trace_ids,
                     "lookback_hours": trace_query_hours,
