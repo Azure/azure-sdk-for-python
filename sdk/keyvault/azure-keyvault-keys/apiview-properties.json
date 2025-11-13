@@ -4,6 +4,9 @@
         "azure.keyvault.keys._generated.models.BackupKeyResult": "KeyVault.BackupKeyResult",
         "azure.keyvault.keys._generated.models.DeletedKeyBundle": "KeyVault.DeletedKeyBundle",
         "azure.keyvault.keys._generated.models.DeletedKeyItem": "KeyVault.DeletedKeyItem",
+        "azure.keyvault.keys._generated.models.EkmConnection": "KeyVault.EkmConnection",
+        "azure.keyvault.keys._generated.models.EkmProxyClientCertificateInfo": "KeyVault.EkmProxyClientCertificateInfo",
+        "azure.keyvault.keys._generated.models.EkmProxyInfo": "KeyVault.EkmProxyInfo",
         "azure.keyvault.keys._generated.models.GetRandomBytesRequest": "KeyVault.GetRandomBytesRequest",
         "azure.keyvault.keys._generated.models.JsonWebKey": "KeyVault.JsonWebKey",
         "azure.keyvault.keys._generated.models.KeyAttestation": "KeyVault.KeyAttestation",
@@ -87,6 +90,18 @@
         "azure.keyvault.keys._generated.KeyVaultClient.get_random_bytes": "KeyVault.getRandomBytes",
         "azure.keyvault.keys._generated.aio.KeyVaultClient.get_random_bytes": "KeyVault.getRandomBytes",
         "azure.keyvault.keys._generated.KeyVaultClient.get_key_attestation": "KeyVault.getKeyAttestation",
-        "azure.keyvault.keys._generated.aio.KeyVaultClient.get_key_attestation": "KeyVault.getKeyAttestation"
+        "azure.keyvault.keys._generated.aio.KeyVaultClient.get_key_attestation": "KeyVault.getKeyAttestation",
+        "azure.keyvault.keys._generated.KeyVaultClient.get_ekm_connection": "KeyVault.getEkmConnection",
+        "azure.keyvault.keys._generated.aio.KeyVaultClient.get_ekm_connection": "KeyVault.getEkmConnection",
+        "azure.keyvault.keys._generated.KeyVaultClient.get_ekm_certificate": "KeyVault.getEkmCertificate",
+        "azure.keyvault.keys._generated.aio.KeyVaultClient.get_ekm_certificate": "KeyVault.getEkmCertificate",
+        "azure.keyvault.keys._generated.KeyVaultClient.check_ekm_connection": "KeyVault.checkEkmConnection",
+        "azure.keyvault.keys._generated.aio.KeyVaultClient.check_ekm_connection": "KeyVault.checkEkmConnection",
+        "azure.keyvault.keys._generated.KeyVaultClient.create_ekm_connection": "KeyVault.createEkmConnection",
+        "azure.keyvault.keys._generated.aio.KeyVaultClient.create_ekm_connection": "KeyVault.createEkmConnection",
+        "azure.keyvault.keys._generated.KeyVaultClient.update_ekm_connection": "KeyVault.updateEkmConnection",
+        "azure.keyvault.keys._generated.aio.KeyVaultClient.update_ekm_connection": "KeyVault.updateEkmConnection",
+        "azure.keyvault.keys._generated.KeyVaultClient.delete_ekm_connection": "KeyVault.deleteEkmConnection",
+        "azure.keyvault.keys._generated.aio.KeyVaultClient.delete_ekm_connection": "KeyVault.deleteEkmConnection"
     }
 }

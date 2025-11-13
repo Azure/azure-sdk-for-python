@@ -685,6 +685,126 @@ def build_key_vault_get_key_attestation_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_key_vault_get_ekm_connection_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_get_ekm_certificate_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/certificate"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_check_ekm_connection_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/check"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_create_ekm_connection_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm/create"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_update_ekm_connection_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_key_vault_delete_ekm_connection_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ekm"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], KeyVaultClientConfiguration]
 ):
@@ -3951,6 +4071,547 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
+        """Gets the EKM connection.
+
+        The External Key Manager (EKM) Get operation returns EKM connection. This operation requires
+        ekm/read permission.
+
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_get_ekm_connection_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_ekm_certificate(self, **kwargs: Any) -> _models.EkmProxyClientCertificateInfo:
+        """Gets the EKM proxy client certificate.
+
+        The External Key Manager (EKM) Certificate Get operation returns Proxy client certificate. This
+        operation requires ekm/read permission.
+
+        :return: EkmProxyClientCertificateInfo. The EkmProxyClientCertificateInfo is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmProxyClientCertificateInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmProxyClientCertificateInfo] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_get_ekm_certificate_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EkmProxyClientCertificateInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def check_ekm_connection(self, **kwargs: Any) -> _models.EkmProxyInfo:
+        """Checks the connectivity and authentication with the EKM proxy.
+
+        The External Key Manager (EKM) Check operation checks the connectivity and authentication with
+        the EKM proxy. This operation requires ekm/read permission.
+
+        :return: EkmProxyInfo. The EkmProxyInfo is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmProxyInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmProxyInfo] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_check_ekm_connection_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EkmProxyInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_ekm_connection(
+        self, ekm_connection: _models.EkmConnection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Required.
+        :type ekm_connection: ~azure.keyvault.keys._generated.models.EkmConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_ekm_connection(
+        self, ekm_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Required.
+        :type ekm_connection: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_ekm_connection(
+        self, ekm_connection: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Required.
+        :type ekm_connection: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_ekm_connection(
+        self, ekm_connection: Union[_models.EkmConnection, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Is one of the following types:
+         EkmConnection, JSON, IO[bytes] Required.
+        :type ekm_connection: ~azure.keyvault.keys._generated.models.EkmConnection or JSON or IO[bytes]
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ekm_connection, (IOBase, bytes)):
+            _content = ekm_connection
+        else:
+            _content = json.dumps(ekm_connection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_key_vault_create_ekm_connection_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_ekm_connection(
+        self, ekm_connection: _models.EkmConnection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Required.
+        :type ekm_connection: ~azure.keyvault.keys._generated.models.EkmConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_ekm_connection(
+        self, ekm_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Required.
+        :type ekm_connection: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_ekm_connection(
+        self, ekm_connection: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Required.
+        :type ekm_connection: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_ekm_connection(
+        self, ekm_connection: Union[_models.EkmConnection, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Is one of the following types:
+         EkmConnection, JSON, IO[bytes] Required.
+        :type ekm_connection: ~azure.keyvault.keys._generated.models.EkmConnection or JSON or IO[bytes]
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ekm_connection, (IOBase, bytes)):
+            _content = ekm_connection
+        else:
+            _content = json.dumps(ekm_connection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_key_vault_update_ekm_connection_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
+        """Deletes the EKM connection.
+
+        The External Key Manager (EKM) deletes the existing EKM connection. If the EKM connection does
+        not already exists, this operation fails. This operation requires ekm/delete permission.
+
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.keys._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_delete_ekm_connection_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
