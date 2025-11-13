@@ -700,6 +700,6 @@ except HttpResponseError as exception:
 [static_access_token_credential]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/tests/static_access_token_credential.py
 
 [Container]: https://learn.microsoft.com/azure/ai-services/translator/containers/overview
-[TranslatorReference]: https://learn.microsoft.com/en-us/azure/ai-services/translator/text-translation/preview/overview
+[TranslatorReference]: https://learn.microsoft.com/azure/ai-services/translator/text-translation/preview/overview
 [SovereignClouds]: https://learn.microsoft.com/azure/ai-services/translator/sovereign-clouds
-[Azure AI Translation Resources]: https://learn.microsoft.com/en-us/azure/ai-services/translator/how-to/create-translator-resource?tabs=foundry
+[Azure AI Translation Resources]: https://learn.microsoft.com/azure/ai-services/translator/how-to/create-translator-resource?tabs=foundry
