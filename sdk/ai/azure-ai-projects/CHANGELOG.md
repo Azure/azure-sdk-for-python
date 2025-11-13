@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 ### Sample updates
+* Added `finetuning` samples for operations create, retrieve, list, list_events, list_checkpoints, cancel, pause and resume. Also, these samples includes various finetuning techniques like Supervised (SFT), Reinforcement (RFT) and Direct performance optimization (DPO).
 
 ## 2.0.0b1 (2025-11-11)
 
