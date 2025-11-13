@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add `trace_based_sampling` logger parameters to filter logs
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
 - Performance Counters
   ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
 - Adding more diagnostic log message IDs

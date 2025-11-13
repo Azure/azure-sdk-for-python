@@ -3,6 +3,8 @@
 ## 1.0.0b45 (Unreleased)
 
 ### Features Added
+- Added new log record processor to support Trace Based Sampling
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
 - Added Operation Name Propagation for Dependencies and Logs
   ([#43588](https://github.com/Azure/azure-sdk-for-python/pull/43588))
 - Added local storage support for multiple users on the same Linux system

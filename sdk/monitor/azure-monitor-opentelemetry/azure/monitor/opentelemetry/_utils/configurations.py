@@ -46,6 +46,7 @@ from azure.monitor.opentelemetry._constants import (
     VIEWS_ARG,
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
+    ENABLE_TRACE_BASED_SAMPLING_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
@@ -79,6 +80,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_enable_live_metrics(configurations)
     _default_enable_performance_counters(configurations)
     _default_views(configurations)
+    _default_enable_trace_based_sampling(configurations)
 
     return configurations
 
@@ -248,3 +250,6 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if "enabled" not in library_options:
         return False
     return library_options["enabled"] is True
+
+def _default_enable_trace_based_sampling(configurations):
+    configurations.setdefault(ENABLE_TRACE_BASED_SAMPLING_ARG, False)
