@@ -28,6 +28,7 @@ This repo is currently migrating all checks from a slower `tox`-based framework,
 |`verify_keywords`| Verify that the keyword 'azure sdk' is present in the targeted package's keywords. | `azpysdk verify_keywords .` |
 |`import_all`| Installs the package w/ default dependencies, then attempts to `import *` from the base namespace. Ensures that all imports will resolve after a base install and import. | `azpysdk import_all .` |
 |`generate`| Regenerates the code. | `azpysdk generate .` |
+|`breaking`| Checks for breaking changes. | `azpysdk breaking .` |
 
 ## Common arguments
 

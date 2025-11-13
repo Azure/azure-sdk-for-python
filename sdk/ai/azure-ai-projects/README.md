@@ -716,57 +716,127 @@ with open(file_path, "rb") as f:
     uploaded_file = openai_client.files.create(file=f, purpose="fine-tune")
 print(uploaded_file)
 
-print(f"Retrieving file metadata with ID: {uploaded_file.id}")
-retrieved_file = openai_client.files.retrieve(uploaded_file.id)
+print("Waits for the given file to be processed, default timeout is 30 mins")
+processed_file = openai_client.files.wait_for_processing(uploaded_file.id)
+print(processed_file)
+
+print(f"Retrieving file metadata with ID: {processed_file.id}")
+retrieved_file = openai_client.files.retrieve(processed_file.id)
 print(retrieved_file)
 
-print(f"Retrieving file content with ID: {uploaded_file.id}")
-file_content = openai_client.files.content(uploaded_file.id)
+print(f"Retrieving file content with ID: {processed_file.id}")
+file_content = openai_client.files.content(processed_file.id)
 print(file_content.content)
 
 print("Listing all files:")
 for file in openai_client.files.list():
     print(file)
 
-print(f"Deleting file with ID: {uploaded_file.id}")
-deleted_file = openai_client.files.delete(uploaded_file.id)
+print(f"Deleting file with ID: {processed_file.id}")
+deleted_file = openai_client.files.delete(processed_file.id)
 print(f"Successfully deleted file: {deleted_file.id}")
 ```
 
 <!-- END SNIPPET -->
 
-## Tracing
+### Fine-tuning operations
 
-**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
+The code below shows Fine-tuning operations using the OpenAI client, which allow you to create, retrieve, list, cancel, pause, resume, and manage fine-tuning jobs. These operations support various fine-tuning techniques like Supervised Fine-Tuning (SFT), Reinforcement Fine-Tuning (RFT), and Direct Performance Optimization (DPO). Full samples can be found under the "finetuning" folder in the [package samples][samples].
 
-You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
-
-### Installation
-
-Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
-
-```bash
-pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
-```
-
-You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
-
-To connect to Aspire Dashboard or another OpenTelemetry compatible backend, install OTLP exporter:
-
-```bash
-pip install opentelemetry-exporter-otlp
-```
-
-### How to enable tracing
-
-Here is a code sample that shows how to enable Azure Monitor tracing:
-
-<!-- SNIPPET:sample_agent_basic_with_azure_monitor_tracing.setup_azure_monitor_tracing -->
+<!-- SNIPPET:sample_finetuning_supervised_job.finetuning_supervised_job_sample-->
 
 ```python
-# Enable Azure Monitor tracing
-application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
-configure_azure_monitor(connection_string=application_insights_connection_string)
+print("Uploading training file...")
+with open(training_file_path, "rb") as f:
+    train_file = openai_client.files.create(file=f, purpose="fine-tune")
+print(f"Uploaded training file with ID: {train_file.id}")
+
+print("Uploading validation file...")
+with open(validation_file_path, "rb") as f:
+    validation_file = openai_client.files.create(file=f, purpose="fine-tune")
+print(f"Uploaded validation file with ID: {validation_file.id}")
+
+# For OpenAI model supervised fine-tuning jobs, "Standard" is the default training type.
+# To use global standard training, uncomment the extra_body parameter below.
+print("Creating supervised fine-tuning job")
+fine_tuning_job = openai_client.fine_tuning.jobs.create(
+    training_file=train_file.id,
+    validation_file=validation_file.id,
+    model=model_name,
+    method={
+        "type": "supervised",
+        "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
+    },
+    # extra_body={"trainingType":"GlobalStandard"}
+)
+print(fine_tuning_job)
+
+print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
+retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+print(retrieved_job)
+
+print("Listing all fine-tuning jobs:")
+for job in openai_client.fine_tuning.jobs.list():
+    print(job)
+
+print("Listing only 10 fine-tuning jobs:")
+for job in openai_client.fine_tuning.jobs.list(limit=10):
+    print(job)
+
+print(f"Pausing fine-tuning job with ID: {fine_tuning_job.id}")
+paused_job = openai_client.fine_tuning.jobs.pause(fine_tuning_job.id)
+print(paused_job)
+
+print(f"Resuming fine-tuning job with ID: {fine_tuning_job.id}")
+resumed_job = openai_client.fine_tuning.jobs.resume(fine_tuning_job.id)
+print(resumed_job)
+
+print(f"Listing events of fine-tuning job: {fine_tuning_job.id}")
+for event in openai_client.fine_tuning.jobs.list_events(fine_tuning_job.id):
+    print(event)
+
+# Note that to retrieve the checkpoints, job needs to be in terminal state.
+print(f"Listing checkpoints of fine-tuning job: {fine_tuning_job.id}")
+for checkpoint in openai_client.fine_tuning.jobs.checkpoints.list(fine_tuning_job.id):
+    print(checkpoint)
+
+print(f"Cancelling fine-tuning job with ID: {fine_tuning_job.id}")
+cancelled_job = openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+print(f"Successfully cancelled fine-tuning job: {cancelled_job.id}, Status: {cancelled_job.status}")
+
+# Deploy model (using Azure Management SDK - azure-mgmt-cognitiveservices)
+# Note: Deployment can only be started after the fine-tuning job completes successfully.
+print(f"Getting fine-tuning job with ID: {fine_tuning_job.id}")
+fine_tuned_model_name = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id).fine_tuned_model
+deployment_name = "gpt-4-1-fine-tuned"
+
+with CognitiveServicesManagementClient(credential=credential, subscription_id=subscription_id) as cogsvc_client:
+
+    deployment_model = DeploymentModel(format="OpenAI", name=fine_tuned_model_name, version="1")
+
+    deployment_properties = DeploymentProperties(model=deployment_model)
+
+    deployment_sku = Sku(name="GlobalStandard", capacity=100)
+
+    deployment_config = Deployment(properties=deployment_properties, sku=deployment_sku)
+
+    deployment = cogsvc_client.deployments.begin_create_or_update(
+        resource_group_name=resource_group,
+        account_name=account_name,
+        deployment_name=deployment_name,
+        deployment=deployment_config,
+    )
+
+    while deployment.status() not in ["Succeeded", "Failed"]:
+        time.sleep(30)
+        print(f"Status: {deployment.status()}")
+
+print(f"Testing fine-tuned model via deployment: {deployment_name}")
+
+response = openai_client.responses.create(
+    model=deployment_name, input=[{"role": "user", "content": "Who invented the telephone?"}]
+)
+print(f"Model response: {response.output_text}")
 ```
 
 <!-- END SNIPPET -->

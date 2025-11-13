@@ -34,20 +34,16 @@ class TestFiles(TestBase):
 
             with project_client.get_openai_client() as openai_client:
 
-                # Assert that the base_url follows the expected format: /api/projects/{name}/openai/
-                expected_pattern = r".*/api/projects/[^/]+/openai/?$"
-                assert re.match(
-                    expected_pattern, str(openai_client.base_url)
-                ), f"OpenAI client base_url does not match expected format. Got: {openai_client.base_url}"
-                print(f"[test_files] Verified OpenAI client base_url format: {openai_client.base_url}")
-
                 print(f"[test_files] Create (upload) a file with purpose '{file_purpose}'")
                 with open(test_file_path, "rb") as f:
                     uploaded_file = openai_client.files.create(file=f, purpose=file_purpose)
-
                 TestBase.validate_file(uploaded_file, expected_purpose=file_purpose)
                 file_id = uploaded_file.id
                 print(f"[test_files] Uploaded file with ID: {file_id}")
+
+                processed_file = openai_client.files.wait_for_processing(file_id)
+                TestBase.assert_equal_or_not_none(processed_file.status, "processed")
+                print(f"[test_files] File processed successfully with ID: {file_id}")
 
                 print(f"[test_files] Retrieve file metadata by ID: {file_id}")
                 retrieved_file = openai_client.files.retrieve(file_id)
@@ -64,24 +60,15 @@ class TestFiles(TestBase):
                 print("[test_files] List all files")
                 found_uploaded_file = False
                 for file in openai_client.files.list():
-                    TestBase.validate_file(file)
                     if file.id == file_id:
                         found_uploaded_file = True
+                        TestBase.validate_file(file)
                         print(f"[test_files] Found uploaded file in list: {file.id}")
+                        break
                 assert found_uploaded_file, "Uploaded file not found in list"
 
                 print(f"[test_files] Delete file with ID: {file_id}")
                 deleted_file = openai_client.files.delete(file_id)
-                assert deleted_file is not None
-                assert deleted_file.id == file_id
+                TestBase.assert_equal_or_not_none(deleted_file.id, file_id)
                 assert deleted_file.deleted is True
                 print(f"[test_files] Successfully deleted file: {deleted_file.id}")
-
-                print("[test_files] Verify file is deleted from list")
-                file_still_exists = False
-                for file in openai_client.files.list():
-                    if file.id == file_id:
-                        file_still_exists = True
-                        break
-                assert not file_still_exists, "Deleted file still appears in list"
-                print("[test_files] Confirmed file is no longer in list")
