@@ -19,7 +19,7 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry portal.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `Ministral-3B` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
     4) VALIDATION_FILE_PATH - Optional. Path to the validation data file. Default to the `data` folder.
@@ -44,33 +44,40 @@ validation_file_path = os.environ.get(
 
 
 async def main():
-    async with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        await project_client.get_openai_client() as openai_client,
-    ):
 
-        print("Uploading training file...")
-        with open(training_file_path, "rb") as f:
-            train_file = await openai_client.files.create(file=f, purpose="fine-tune")
-        print(f"Uploaded training file with ID: {train_file.id}")
+    credential = DefaultAzureCredential()
 
-        print("Uploading validation file...")
-        with open(validation_file_path, "rb") as f:
-            validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
-        print(f"Uploaded validation file with ID: {validation_file.id}")
+    async with credential:
 
-        print("Creating supervised fine-tuning job")
-        fine_tuning_job = await openai_client.fine_tuning.jobs.create(
-            training_file=train_file.id,
-            validation_file=validation_file.id,
-            model=model_name,
-            method={
-                "type": "supervised",
-                "supervised": {"hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}},
-            },
-        )
-        print(fine_tuning_job)
+        project_client = AIProjectClient(endpoint=endpoint, credential=credential)
+
+        async with project_client:
+
+            openai_client = project_client.get_openai_client()
+
+            print("Uploading training file...")
+            with open(training_file_path, "rb") as f:
+                train_file = await openai_client.files.create(file=f, purpose="fine-tune")
+            print(f"Uploaded training file with ID: {train_file.id}")
+
+            print("Uploading validation file...")
+            with open(validation_file_path, "rb") as f:
+                validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
+            print(f"Uploaded validation file with ID: {validation_file.id}")
+
+            print("Creating supervised fine-tuning job")
+            fine_tuning_job = await openai_client.fine_tuning.jobs.create(
+                training_file=train_file.id,
+                validation_file=validation_file.id,
+                model=model_name,
+                method={
+                    "type": "supervised",
+                    "supervised": {
+                        "hyperparameters": {"n_epochs": 3, "batch_size": 1, "learning_rate_multiplier": 1.0}
+                    },
+                },
+            )
+            print(fine_tuning_job)
 
 
 if __name__ == "__main__":

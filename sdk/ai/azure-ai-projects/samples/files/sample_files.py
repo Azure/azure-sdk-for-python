@@ -18,7 +18,7 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry portal.
     2) FILE_PATH - Optional. Path to the file to upload. Defaults to the `data` folder.
 """
 

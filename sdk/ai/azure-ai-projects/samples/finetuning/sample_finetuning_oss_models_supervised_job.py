@@ -19,7 +19,7 @@ USAGE:
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Azure AI Foundry project.
+       Microsoft Foundry portal.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `gpt-4.1` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
     4) VALIDATION_FILE_PATH - Optional. Path to the validation data file. Default to the `data` folder.
