@@ -33,7 +33,7 @@ class TestFilesAsync(TestBase):
 
         async with self.create_async_client(**kwargs) as project_client:
 
-            async with await project_client.get_openai_client() as openai_client:
+            async with project_client.get_openai_client() as openai_client:
 
                 # Assert that the base_url follows the expected format: /api/projects/{name}/openai/
                 expected_pattern = r".*/api/projects/[^/]+/openai/?$"
