@@ -19,14 +19,14 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-       
+
     For Custom Prompt Based Evaluators:
-    
+
         Following are the possible outputs that can be used in the prompt definition:
-        
+
         result could be int, float or boolean based on the metric type defined.
         reason is a brief explanation for the score. (Optional)
-        
+
         - An ordinal metric with a score from 1 to 5 (int)
             ### Output Format (JSON):
             {
@@ -47,7 +47,7 @@ USAGE:
                 "result": "true",
                 "reason": "<brief explanation for the score>"
             }
-            
+
             ### Output Format (JSON):
             {
                 "result": "false",
