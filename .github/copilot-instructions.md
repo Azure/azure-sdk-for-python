@@ -17,6 +17,17 @@
 - Always run the [`azsdk_verify_setup`](../eng/common/instructions/azsdk-tools/verify-setup.instructions.md) tool to check the user's development environment setup for using SDK MCP tools. DO NOT PROCEED with running other tools before completing this step. Only skip for queries that don't need tools.
 - To use Azure MCP tool calls, users must have PowerShell installed. Provide [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) if not installed, and recommend restarting the IDE to start the MCP server.
 
+### RULE 4: USE VIRTUAL ENVIRONMENTS
+**ALWAYS run Python commands in a virtual environment (venv).**
+- All Python operations (pip, tox, pytest, etc.) must be executed within an activated virtual environment
+- Create a virtual environment using: `python -m venv env`
+- Activate before running commands:
+  - Windows (PowerShell): `env\Scripts\Activate.ps1`
+  - Linux/Mac: `source env/bin/activate`
+  - Windows (CMD): `env\Scripts\activate.bat`
+- Reference: [Python virtual environment documentation](https://docs.python.org/3/tutorial/venv.html)
+- Reference: [Azure SDK dev setup guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md)
+
 ---
 
 ## PYLINT OPERATIONS
@@ -27,8 +38,12 @@
 - [Official pylint guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
 - [Tox formatting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
 
+**PREREQUISITES:**
+- Ensure you are in an activated virtual environment before running pylint commands
+
 **COMMAND:**
 ```bash
+# After activating your virtual environment
 tox -e pylint --c <path_to_tox.ini> --root .
 ```
 
@@ -65,6 +80,7 @@ tox -e pylint --c <path_to_tox.ini> --root .
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
+- Ensure you are in an activated virtual environment before running MyPy commands
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
 - Use tox mcp tool for running MyPy
