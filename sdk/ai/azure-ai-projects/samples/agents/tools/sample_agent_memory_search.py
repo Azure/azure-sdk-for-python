@@ -6,10 +6,14 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to integrate memory into a prompt agent.
+    This sample demonstrates how to integrate memory into a prompt agent,
+    by using the Memory Search Tool to retrieve relevant past user messages.
+
+    For memory management, see also samples in the folder "samples/memories"
+    folder.
 
 USAGE:
-    python sample_agent_memory.py
+    python sample_agent_memory_search.py
 
     Before running the sample:
 
@@ -39,7 +43,6 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
     MemorySearchTool,
     PromptAgentDefinition,
-    AgentReference,
 )
 
 load_dotenv()
