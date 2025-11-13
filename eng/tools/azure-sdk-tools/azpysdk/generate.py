@@ -65,12 +65,16 @@ class generate(Check):
             run(
                 ["autorest", str(readme_path), "--python-sdks-folder=../../"],
                 cwd=folder,
-                shell=False,
+                shell=True,
+                stdout=PIPE,
+                stderr=PIPE,
+                check=True,
             )
         except FileNotFoundError:
             raise ValueError("autorest is not installed. Please install autorest before running this command.")
         except CalledProcessError as e:
-            raise ValueError(f"autorest encountered an unexpected error: {e}")
+            stderr_output = e.stderr.decode() if e.stderr else "No stderr output"
+            raise ValueError(f"autorest encountered an unexpected error: stderr={stderr_output}")
 
         logger.info("Autorest done")
 
@@ -92,6 +96,7 @@ class generate(Check):
                 "tsp-client is not installed. Please run: npm install -g @azure-tools/typespec-client-generator-cli"
             )
         except CalledProcessError as e:
-            raise ValueError(f"tsp-client encountered an unexpected error: {e}")
+            stderr_output = e.stderr.decode() if e.stderr else "No stderr output"
+            raise ValueError(f"tsp-client encountered an unexpected error: stderr={stderr_output}")
 
         logger.info("TypeSpec generate done")
