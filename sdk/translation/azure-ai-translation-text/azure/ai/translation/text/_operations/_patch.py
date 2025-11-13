@@ -27,17 +27,26 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
-        """Translate text to the specified target language.
+        """Translate Text.
 
-        This is a simplified overload that accepts a list of strings as input
-        and translates them to the specified target language.
+        Translates texts to the specified target languages.
 
         :param body: List of text strings to translate. Required.
         :type body: list[str]
-        :param to_language: Language code to translate the input text into. Required.
-        :type to_language: str
-        :param from_language: Language code of the input text. If not specified, the service will
-         attempt to detect the language automatically. Default value is None.
+        :keyword to_language: List of target languages of the translation outputs. The target language(s)
+         must be one of the supported languages included in the translation scope. Required.
+        :type to_language: list[str]
+        :param from_language: Language of the input text. If not specified, automatic language detection
+         is applied to determine the source language. Default value is None.
+        :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
+         value is None.
+        :paramtype client_trace_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
@@ -49,13 +58,11 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
-        # pylint: disable=line-too-long
-        """Translate text to one or more target languages.
+        """Translate text.
 
-        Translates input text to the specified target language(s). This overload accepts
-        a list of TranslateInputItem objects for structured input.
+        Translates a list of input items with specified 
 
-        :param body: List of TranslateInputItem objects containing text to translate. Required.
+        :param body: List of TranslateInputItem objects containing text and configurations for translation. Required.
         :type body: list[~azure.ai.translation.text.models.TranslateInputItem]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -63,77 +70,9 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: TranslationResult containing the translated text
-        :rtype: ~azure.ai.translation.text.models.TranslationResult
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = [
-                    {
-                        "text": "str"  # Text to translate. Required.
-                    }
-                ]
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "translations": [
-                            {
-                                "text": "str",  # A string giving the translated
-                                  text. Required.
-                                "to": "str",  # A string representing the language
-                                  code of the target language. Required.
-                                "alignment": {
-                                    "proj": "str"  # Maps input text to
-                                      translated text. The alignment information is only provided when
-                                      the request  parameter includeAlignment is true. Alignment is
-                                      returned as a string value of the following  format:
-                                      [[SourceTextStartIndex]:[SourceTextEndIndex]"u2013[TgtTextStartIndex]:[TgtTextEndIndex]].
-                                      The colon separates start and end index, the dash separates the
-                                      languages, and space separates the words.  One word may align
-                                      with zero, one, or multiple words in the other language, and the
-                                      aligned words may  be non-contiguous. When no alignment
-                                      information is available, the alignment element will be empty.
-                                      Required.
-                                },
-                                "sentLen": {
-                                    "srcSentLen": [
-                                        0  # An integer array representing
-                                          the lengths of the sentences in the input text.  The length
-                                          of the array is the number of sentences, and the values are
-                                          the length of each sentence. Required.
-                                    ],
-                                    "transSentLen": [
-                                        0  # An integer array representing
-                                          the lengths of the sentences in the translated text.  The
-                                          length of the array is the number of sentences, and the
-                                          values are the length of each sentence. Required.
-                                    ]
-                                },
-                                "transliteration": {
-                                    "script": "str",  # A string specifying the
-                                      script used in the output. Required.
-                                    "text": "str"  # A string which is the result
-                                      of converting the input string to the output script. Required.
-                                }
-                            }
-                        ],
-                        "detectedLanguage": {
-                            "language": "str",  # A string representing the code of the
-                              detected language. Required.
-                            "score": 0.0  # A float value indicating the confidence in
-                              the result. The score is between zero and one and a low score indicates a
-                              low confidence. Required.
-                        },
-                        "sourceText": {
-                            "text": "str"  # Input text in the default script of the
-                              source language. Required.
-                        }
-                    }
-                ]
         """
 
     @overload
@@ -145,11 +84,9 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
-        # pylint: disable=line-too-long
-        """Translate text to one or more target languages.
+        """Translate text.
 
-        Translates input text to the specified target language(s). This overload accepts
-        binary content for raw JSON input.
+        Translates the specified binary content for raw JSON input.
 
         :param body: Binary stream containing JSON request body. Required.
         :type body: IO[bytes]
@@ -159,70 +96,9 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: TranslationResult containing the translated text
-        :rtype: ~azure.ai.translation.text.models.TranslationResult
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "translations": [
-                            {
-                                "text": "str",  # A string giving the translated
-                                  text. Required.
-                                "to": "str",  # A string representing the language
-                                  code of the target language. Required.
-                                "alignment": {
-                                    "proj": "str"  # Maps input text to
-                                      translated text. The alignment information is only provided when
-                                      the request  parameter includeAlignment is true. Alignment is
-                                      returned as a string value of the following  format:
-                                      [[SourceTextStartIndex]:[SourceTextEndIndex]"u2013[TgtTextStartIndex]:[TgtTextEndIndex]].
-                                      The colon separates start and end index, the dash separates the
-                                      languages, and space separates the words.  One word may align
-                                      with zero, one, or multiple words in the other language, and the
-                                      aligned words may  be non-contiguous. When no alignment
-                                      information is available, the alignment element will be empty.
-                                      Required.
-                                },
-                                "sentLen": {
-                                    "srcSentLen": [
-                                        0  # An integer array representing
-                                          the lengths of the sentences in the input text.  The length
-                                          of the array is the number of sentences, and the values are
-                                          the length of each sentence. Required.
-                                    ],
-                                    "transSentLen": [
-                                        0  # An integer array representing
-                                          the lengths of the sentences in the translated text.  The
-                                          length of the array is the number of sentences, and the
-                                          values are the length of each sentence. Required.
-                                    ]
-                                },
-                                "transliteration": {
-                                    "script": "str",  # A string specifying the
-                                      script used in the output. Required.
-                                    "text": "str"  # A string which is the result
-                                      of converting the input string to the output script. Required.
-                                }
-                            }
-                        ],
-                        "detectedLanguage": {
-                            "language": "str",  # A string representing the code of the
-                              detected language. Required.
-                            "score": 0.0  # A float value indicating the confidence in
-                              the result. The score is between zero and one and a low score indicates a
-                              low confidence. Required.
-                        },
-                        "sourceText": {
-                            "text": "str"  # Input text in the default script of the
-                              source language. Required.
-                        }
-                    }
-                ]
         """
 
     def translate(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -235,10 +111,6 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TranslatedTextItem]:
-        """Implementation of translate that handles multiple input types.
-
-        This method automatically converts different input types into the required TranslateBody format.
-        """
         request_body: Union[_models.TranslateBody, IO[bytes]]
 
         if isinstance(body, list):
@@ -279,24 +151,23 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
-        """Transliterate text from one script to another.
+        """Transliterate Text.
 
-        Converts text written in one script to another script for the specified language.
-        This overload accepts a list of strings for simplified usage.
+        Transliterate Text.
 
-        :param body: List of text strings to transliterate. Required.
+        :param body: Defines the content of the request. Required.
         :type body: list[str]
-        :keyword language: Language code of the text to convert from one script to another.
+        :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
         :paramtype language: str
-        :keyword from_script: Script of the input text. Look up supported languages
-         using the transliteration scope to find input scripts available for the selected language.
-         Required.
+        :keyword from_script: Specifies the script used by the input text. Look up supported languages
+         using the transliteration scope,
+         to find input scripts available for the selected language. Required.
         :paramtype from_script: str
-        :keyword to_script: Output script. Look up supported languages using the
-         transliteration scope to find output scripts available for the selected combination
-         of input language and input script. Required.
+        :keyword to_script: Specifies the output script. Look up supported languages using the
+         transliteration scope, to find output
+         scripts available for the selected combination of input language and input script. Required.
         :paramtype to_script: str
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -304,30 +175,9 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: TransliterateResult containing the transliterated text results
-        :rtype: ~azure.ai.translation.text.models.TransliterateResult
+        :return: list of TransliteratedText
+        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # Simplified usage with list of strings
-                result = client.transliterate(
-                    body=["こんにちは", "さようなら"],
-                    language="ja",
-                    from_script="Jpan",
-                    to_script="Latn"
-                )
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "script": "str",  # A string specifying the script used in the
-                          output. Required.
-                        "text": "str"  # A string which is the result of converting the input
-                          string to the output script. Required.
-                    }
-                ]
         """
 
     @overload
@@ -342,24 +192,23 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
-        """Transliterate text from one script to another.
+        """Transliterate Text.
 
-        Converts text written in one script to another script for the specified language.
-        This overload accepts a list of InputTextItem objects for explicit control.
+        Transliterate Text.
 
-        :param body: List of InputTextItem objects containing text to transliterate. Required.
+        :param body: Defines the content of the request. Required.
         :type body: list[~azure.ai.translation.text.models.InputTextItem]
-        :keyword language: Language code of the text to convert from one script to another.
+        :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
         :paramtype language: str
-        :keyword from_script: Script of the input text. Look up supported languages
-         using the transliteration scope to find input scripts available for the selected language.
-         Required.
+        :keyword from_script: Specifies the script used by the input text. Look up supported languages
+         using the transliteration scope,
+         to find input scripts available for the selected language. Required.
         :paramtype from_script: str
-        :keyword to_script: Output script. Look up supported languages using the
-         transliteration scope to find output scripts available for the selected combination
-         of input language and input script. Required.
+        :keyword to_script: Specifies the output script. Look up supported languages using the
+         transliteration scope, to find output
+         scripts available for the selected combination of input language and input script. Required.
         :paramtype to_script: str
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -367,36 +216,9 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: TransliterateResult containing the transliterated text results
-        :rtype: ~azure.ai.translation.text.models.TransliterateResult
+        :return: list of TransliteratedText
+        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                from azure.ai.translation.text.models import InputTextItem
-
-                # Usage with InputTextItem objects
-                body = [
-                    InputTextItem(text="こんにちは"),
-                    InputTextItem(text="さようなら")
-                ]
-                result = client.transliterate(
-                    body=body,
-                    language="ja",
-                    from_script="Jpan",
-                    to_script="Latn"
-                )
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "script": "str",  # A string specifying the script used in the
-                          output. Required.
-                        "text": "str"  # A string which is the result of converting the input
-                          string to the output script. Required.
-                    }
-                ]
         """
 
     @overload
@@ -411,24 +233,23 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
-        """Transliterate text from one script to another.
+        """Transliterate Text.
 
-        Converts text written in one script to another script for the specified language.
-        This overload accepts binary content for raw JSON input.
+        Transliterate Text.
 
-        :param body: Binary stream containing JSON request body. Required.
+        :param body: Defines the content of the request. Required.
         :type body: IO[bytes]
-        :keyword language: Language code of the text to convert from one script to another.
+        :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
         :paramtype language: str
-        :keyword from_script: Script of the input text. Look up supported languages
-         using the transliteration scope to find input scripts available for the selected language.
-         Required.
+        :keyword from_script: Specifies the script used by the input text. Look up supported languages
+         using the transliteration scope,
+         to find input scripts available for the selected language. Required.
         :paramtype from_script: str
-        :keyword to_script: Output script. Look up supported languages using the
-         transliteration scope to find output scripts available for the selected combination
-         of input language and input script. Required.
+        :keyword to_script: Specifies the output script. Look up supported languages using the
+         transliteration scope, to find output
+         scripts available for the selected combination of input language and input script. Required.
         :paramtype to_script: str
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
@@ -436,22 +257,9 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: TransliterateResult containing the transliterated text results
-        :rtype: ~azure.ai.translation.text.models.TransliterateResult
+        :return: list of TransliteratedText
+        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == [
-                    {
-                        "script": "str",  # A string specifying the script used in the
-                          output. Required.
-                        "text": "str"  # A string which is the result of converting the input
-                          string to the output script. Required.
-                    }
-                ]
         """
 
     def transliterate(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -465,11 +273,6 @@ class _TextTranslationClientOperationsMixin(TextTranslationClientOperationsMixin
         content_type: str = "application/json",
         **kwargs: Any
     ) -> List[_models.TransliteratedText]:
-        """Implementation of transliterate that handles multiple input types.
-
-        This method automatically converts simplified inputs (List[str], List[InputTextItem])
-        into the required TransliterateBody format before calling the parent implementation.
-        """
         request_body: Union[_models.TransliterateBody, IO[bytes]]
         if isinstance(body, list):
             inputs: List[_models.InputTextItem] = []
