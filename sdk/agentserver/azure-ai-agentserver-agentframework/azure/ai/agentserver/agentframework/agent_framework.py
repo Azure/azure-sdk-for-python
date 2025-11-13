@@ -9,7 +9,7 @@ import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Optional, Protocol, Union, List
 import inspect
 
-from agent_framework import AgentProtocol
+from agent_framework import AgentProtocol, AIFunction
 from agent_framework.azure import AzureAIAgentClient  # pylint: disable=no-name-in-module
 from opentelemetry import trace
 
@@ -28,7 +28,6 @@ from .models.agent_framework_input_converters import AgentFrameworkInputConverte
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
-from agent_framework import AIFunction
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.constants import Constants
 from .tool_client import ToolClient
@@ -45,7 +44,7 @@ class AgentFactory(Protocol):
     An agent factory is a callable that takes a ToolClient and returns
     an AgentProtocol, either synchronously or asynchronously.
     """
-    
+
     def __call__(self, tools: List[AIFunction]) -> Union[AgentProtocol, Awaitable[AgentProtocol]]:
         """Create an AgentProtocol using the provided ToolClient.
         
@@ -74,18 +73,20 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         - Supports both streaming and non-streaming responses based on the `stream` flag.
     """
 
-    def __init__(self, agent: Union[AgentProtocol, AgentFactory], credentials: "Optional[AsyncTokenCredential]" = None, **kwargs: Any):
+    def __init__(self, agent: Union[AgentProtocol, AgentFactory],
+                 credentials: "Optional[AsyncTokenCredential]" = None,
+                 **kwargs: Any):
         """Initialize the AgentFrameworkCBAgent with an AgentProtocol or a factory function.
 
-        :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient and returns AgentProtocol (sync or async).
+        :param agent: The Agent Framework agent to adapt, or a callable that takes ToolClient
+            and returns AgentProtocol (sync or async).
         :type agent: Union[AgentProtocol, AgentFactory]
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
         """
-        super().__init__(credentials=credentials, **kwargs)
+        super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         self._agent_or_factory: Union[AgentProtocol, AgentFactory] = agent
         self._resolved_agent: "Optional[AgentProtocol]" = None
-        
         # If agent is already instantiated, use it directly
         if isinstance(agent, AgentProtocol):
             self._resolved_agent = agent
@@ -126,21 +127,24 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
         """Resolve the agent if it's a factory function (for single-use/first-time resolution).
         Creates a ToolClient and calls the factory function with it.
         This is used for the initial resolution.
+
+        :param context: The agent run context containing tools and user information.
+        :type context: AgentRunContext
         """
         if callable(self._agent_or_factory):
             logger.debug("Resolving agent from factory function")
-            
+
             # Create ToolClient with credentials
-            tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info())
+            tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info()) # pylint: disable=no-member
             tool_client_wrapper = ToolClient(tool_client)
             tools = await tool_client_wrapper.list_tools()
-            
+
             result = self._agent_or_factory(tools)
             if inspect.iscoroutine(result):
                 self._resolved_agent = await result
             else:
                 self._resolved_agent = result
-            
+
             logger.debug("Agent resolved successfully")
         else:
             # Should not reach here, but just in case
@@ -149,19 +153,18 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
     async def _resolve_agent_for_request(self, context: AgentRunContext):
 
         logger.debug("Resolving fresh agent from factory function for request")
-        
+
         # Create ToolClient with credentials
-        tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info())
+        tool_client = self.get_tool_client(tools=context.get_tools(), user_info=context.get_user_info()) # pylint: disable=no-member
         tool_client_wrapper = ToolClient(tool_client)
         tools = await tool_client_wrapper.list_tools()
-        
-        import inspect
+
         result = self._agent_or_factory(tools)
         if inspect.iscoroutine(result):
             agent = await result
         else:
             agent = result
-        
+
         logger.debug("Fresh agent resolved successfully for request")
         return agent, tool_client_wrapper
 
@@ -184,7 +187,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
             agent_client.setup_azure_ai_observability()
         self.tracer = trace.get_tracer(__name__)
 
-    async def agent_run(
+    async def agent_run(  # pylint: disable=too-many-statements
         self, context: AgentRunContext
     ) -> Union[
         OpenAIResponse,
@@ -201,7 +204,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 agent = self._resolved_agent
             else:
                 agent = self._resolved_agent
-            
+
             logger.info(f"Starting agent_run with stream={context.stream}")
             request_input = context.request.get("input")
 
@@ -248,7 +251,7 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                             try:
                                 await tool_client.close()
                                 logger.debug("Closed tool_client after streaming completed")
-                            except Exception as e:
+                            except Exception as e:  # pylint: disable=broad-exception-caught
                                 logger.warning(f"Error closing tool_client in stream: {e}")
 
                 return stream_updates()
@@ -267,5 +270,5 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
                 try:
                     await tool_client.close()
                     logger.debug("Closed tool_client after request processing")
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-exception-caught
                     logger.warning(f"Error closing tool_client: {e}")

@@ -751,8 +751,11 @@ class MCPToolsListResponse:
 		result_data = data.get("result", {})
 		tools_list = []
 		tool_definitions_map = {f"{td.type.lower()}": td for td in tool_definitions}
-
+		filter_tools = len(tool_definitions_map) > 0
 		for tool_data in result_data.get("tools", []):
+
+			if filter_tools and tool_data["name"].lower() not in tool_definitions_map:
+				continue
 			# Parse inputSchema
 			input_schema_data = tool_data.get("inputSchema", {})
 			input_schema = MCPToolSchema(

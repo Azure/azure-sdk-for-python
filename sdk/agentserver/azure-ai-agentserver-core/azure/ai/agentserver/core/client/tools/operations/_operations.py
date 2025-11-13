@@ -4,8 +4,7 @@
 # mypy: ignore-errors
 
 import json
-import logging
-from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Any, Dict, List, Mapping, MutableMapping, Tuple, Union
 from azure.core import PipelineClient
 from .._configuration import AzureAIToolClientConfiguration
 from .._model_base import FoundryTool, ToolSource, UserInfo
@@ -26,7 +25,6 @@ from azure.core.exceptions import (
     map_error,
 )
 
-logger = logging.getLogger(__name__)
 
 # Shared constants
 API_VERSION = "2025-11-15-preview"
@@ -192,7 +190,7 @@ def build_invoke_mcp_tool_request(
 	_params = {}
 	
 	_content = prepare_mcptools_invoke_tool_request_content(tool, arguments, TOOL_PROPERTY_OVERRIDES)
-	logger.info("Invoking MCP tool: %s with arguments: %s", tool.name, dict(arguments))
+
 	content = json.dumps(_content)
 	_request = build_mcptools_invoke_tool_request(api_version=api_version, headers=_headers, params=_params, content=content)
 	
@@ -370,7 +368,7 @@ def prepare_mcptools_invoke_tool_request_content(tool: FoundryTool, arguments: M
 			)
 		if meta_config:
 			params["_meta"] = meta_config
-	logger.info("Prepared MCP tool invocation params: %s", params)
+
 	payload = {
 		"jsonrpc": "2.0",
 		"id": 2,
